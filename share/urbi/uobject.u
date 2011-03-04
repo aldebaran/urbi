@@ -295,10 +295,21 @@ do (&UVar)
     var this.rtp = false;
     var this.rtp_old = false;
     owner = parent|
-    if (parent.hasSlot("__uobjectName"))
-      ownerName = parent.__uobjectName
+    if (parent === Global)
+      ownerName = "Global"
     else
-      ownerName = parent.asString|
+    {
+      if (!parent.hasSlot("__uobjectName"))
+        var parent.__uobjectName = "obj_"+uid|
+      if (!Global.hasSlot(parent.__uobjectName)
+          && !uobjects.hasSlot(parent.__uobjectName))
+      {
+        uobjects.setSlot(parent.__uobjectName, parent)|
+        if (hasSlot("Logger"))
+          Logger.warn("Copying object " + parent +" into uobjects", "UObjects")
+      }|
+      ownerName = parent.__uobjectName
+    }|
     this.initialName = name|
     var this.fullName = ownerName + "." + initialName|
     // We need to explicitly kill the at below, use this.tag for this.
@@ -588,6 +599,10 @@ var Global.uobjects_handle = function()
   nil
 };
 
+Global.uobjects.uobjectInit();
+
+Global.addProto(uobjects);
+
 // UObjects can use evaluate at initialization-time.
 UVar.new(Global,"evaluate");
 do (Global.&evaluate)
@@ -614,10 +629,6 @@ Global.&currentRunnerInUObjectUpdate.notifyAccess(function()
   &currentRunnerInUObjectUpdate.val
     = currentRunner.hasLocalSlot("$uobjectInUpdate");
 });
-
-Global.uobjects.uobjectInit();
-
-Global.addProto(uobjects);
 
 // UObject remote API.
 
