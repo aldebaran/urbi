@@ -76,12 +76,26 @@ logger.err << "something really bad happened!"|;
 \item \refSlot[System]{sleep}'s argument now defaults to
   \refSlot[Float]{inf}.
 
-\item Controlling the maximum queue size for UObject threaded notifies
-  and bound functions is now possible, see \autoref{sec:uobject:asynchronous-binding}.
+\item Controlling the maximum queue size for UObject threaded notifies and
+  bound functions is now possible, see
+  \autoref{sec:uobject:asynchronous-binding}.
 
 \item \lstinline{at} now comes in synchronous and asynchronous flavors, see
   \autoref{sec:lang:at:sync-async}.
 
+\item A new construct, \lstinline{watch}, creates an event that allows to
+  monitor any change of an expression (\autoref{sec:lang:watch}).
+\begin{urbiscript}[firstnumber=1]
+var x = 0|;
+var y = 0|;
+var e = watch(x + y)|;
+at (e?(var value))
+  echo("x + y = %s" % value);
+x = 1|;
+[00000000] *** x + y = 1
+y = 2|;
+[00000000] *** x + y = 3
+\end{urbiscript}
 \end{itemize}
 
 \subsection{Documentation}
