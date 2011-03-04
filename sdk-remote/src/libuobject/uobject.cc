@@ -42,14 +42,14 @@
 
 GD_CATEGORY(Urbi.LibUObject);
 
-#define REQUIRE(Cond, ...)                      \
-  do {                                          \
-    if (!(Cond))                                \
-    {                                           \
-      msg.client.printf(__VA_ARGS__);           \
-      GD_FERROR("Message content: %s", *msg.value); \
-      return URBI_CONTINUE;                     \
-    }                                           \
+#define REQUIRE(Cond, ...)                              \
+  do {                                                  \
+    if (!(Cond))                                        \
+    {                                                   \
+      msg.client.printf(__VA_ARGS__);                   \
+      GD_FERROR("Message content: %s", *msg.value);     \
+      return URBI_CONTINUE;                             \
+    }                                                   \
   } while (false)
 
 class HookPoint: public urbi::UObject
@@ -599,12 +599,19 @@ namespace urbi
         impl::UContextImpl::CleanupStack s_(*this);
         objects_type::iterator i = objects.find(std::string(array[1]));
         if (i == objects.end())
-          break;
-        if (objects.size() == 1)
-          exit(0);
+          GD_FWARN("delete: no such object: %s", array[1]);
         else
+        {
           delete i->second;
-        objects.erase(i);
+          objects.erase(i);
+          if (objects.empty())
+          {
+            // All the instances have been deleted, we're done with this
+            // remote.
+            GD_INFO_TRACE("Last instance deleted, quit");
+            exit(0);
+          }
+        }
       }
       break;
 
