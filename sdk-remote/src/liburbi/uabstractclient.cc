@@ -63,12 +63,6 @@ namespace urbi
   | UCallbacks.  |
   `-------------*/
 
-  enum UCallbackType
-  {
-    UCB_,
-    UCB_C,
-  };
-
   static UCallbackID nextId;
 
   class UCallbackWrapperCB: public UCallbackWrapper
