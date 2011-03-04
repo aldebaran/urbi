@@ -424,13 +424,13 @@ namespace urbi
     }
 
     static void
-    system_loadLibrary(const rObject&, const std::string& name)
+    system_loadLibrary(const rObject&, const libport::path& name)
     {
       load(name, true);
     }
 
     static void
-    system_loadModule(const rObject&, const std::string& name)
+    system_loadModule(const rObject&, const libport::path& name)
     {
       load(name, false);
     }
