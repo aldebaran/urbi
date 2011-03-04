@@ -1,8 +1,11 @@
 #! /bin/sh
-#
 
 set -x
 set -e
+
+## ----------- ##
+## Functions.  ##
+## ----------- ##
 
 find_prog ()
 {
@@ -114,6 +117,11 @@ case $OS in
   (*) exit 0;;
 esac
 
+tools=$HOME/share/tools
+vcredist="vcredist_x86-$COMP.exe"
+gostai_console="gostai-console-2.6-rc-1-5-1fc4a11-win32.exe"
+gostai_editor="gostai-editor-2.5-rc-1-17-bac088e-win32.exe"
+
 find_prog $MD5SUM gmd5sum md5sum
 MD5SUM=$find_prog_res
 test -n "$MD5SUM" ||
@@ -132,6 +140,12 @@ trap cleanup 0 1 2 13 15
 
 updir=$(dirname "$upname")
 
+
+
+## ------ ##
+## Main.  ##
+## ------ ##
+
 # my_zip represents the archive build by this slave.
 my_zip="$upname.zip"
 # other_zip represents the archive build by the other slave.
@@ -144,18 +158,14 @@ if test -r "$my_zip"                             \
   # My zip is the newest, do the merge-install.
 
   # Merge zips.
-  tools=$HOME/share/tools
-  vcredist="$tools/vcredist/vcredist_x86-$COMP.exe"
-  gostai_console="$tools/gostai-console/Gostai Console 2.5-win32.exe"
-  gostai_editor="$tools/gostai-editor/gostai-editor-2.4.1-win32.exe"
-  $srcdir/scripts/merge-install.sh -v                   \
-      --vcredist "$vcredist"                            \
-      --comp "$COMP"                                    \
-      --templateloc "$srcdir/share/templates"           \
-      --installscriptloc "$srcdir/share/installer/"     \
-      --gostai-console "$gostai_console"                \
-      --gostai-editor "$gostai_editor"                  \
-      --output "$tmp/$installer"                        \
+  $srcdir/scripts/merge-install.sh -v                           \
+      --vcredist "$tools/vcredist/$vcredist"                    \
+      --comp "$COMP"                                            \
+      --templateloc "$srcdir/share/templates"                   \
+      --installscriptloc "$srcdir/share/installer/"             \
+      --gostai-console "$tools/gostai-console/$gostai_console"  \
+      --gostai-editor "$tools/gostai-editor/$gostai_editor"     \
+      --output "$tmp/$installer"                                \
       "$my_zip" "$other_zip"
 
   # Upload the installer and its MD5.  Be sure to generate an MD5sum
