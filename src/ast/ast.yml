@@ -1511,7 +1511,7 @@ Watch:
         type: rExp
         access: rwW
   printer:
-    - '"$changed("'
+    - '"watch("'
     - ~exp
     - '")"'
 
