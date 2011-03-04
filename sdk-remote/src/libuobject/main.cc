@@ -121,15 +121,13 @@ namespace urbi
       o.server(server);
       setDefaultClient(new UClient(host, port, buflen, o));
     }
-    if (exitOnDisconnect)
-    {
-      if (!getDefaultClient() || getDefaultClient()->error())
-	std::cerr << "ERROR: failed to connect, exiting..." << std::endl
-		  << libport::exit(1);
-      getDefaultClient()->setClientErrorCallback(callback(&endProgram));
-    }
+
     if (!getDefaultClient() || getDefaultClient()->error())
-      return 1;
+      std::cerr << "ERROR: failed to connect, exiting..." << std::endl
+                << libport::exit(1);
+
+    if (exitOnDisconnect)
+      getDefaultClient()->setClientErrorCallback(callback(&endProgram));
 
 #ifdef LIBURBIDEBUG
     getDefaultClient()->setWildcardCallback(callback(&debug));
