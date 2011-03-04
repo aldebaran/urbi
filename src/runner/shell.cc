@@ -306,6 +306,11 @@ namespace runner
       {
         GD_FINFO_DUMP("StopException ignored: %s", e.what());
       }
+      catch (const sched::TerminateException&)
+      {
+        GD_INFO_DUMP("TerminateException");
+        throw;
+      }
       catch (const std::runtime_error& re)
       {
         GD_FINFO_TRACE("Serialized message error: %s", re.what());
