@@ -151,31 +151,28 @@ namespace urbi
   void
   UAbstractClient::notifyCallbacks(const UMessage& msg)
   {
-    listLock.lock();
-    bool inc = false;
+    libport::BlockLock bl(listLock);
+    bool inc = true;
     for (callbacks_type::iterator it = callbacks_.begin();
-	 it != callbacks_.end();
-         inc ? it : it++, inc = false)
-    {
+         it != callbacks_.end();
+         inc ? it++ : it, inc = true)
       if (msg.tag == it->tag
-	  || (libport::streq(it->tag, tag_error) && msg.type == MESSAGE_ERROR)
+          || (libport::streq(it->tag, tag_error) && msg.type == MESSAGE_ERROR)
           // The wild card does not match tags starting with
           // TAG_PRIVATE_PREFIX.
-	  || (libport::streq(it->tag, tag_wildcard)
+          || (libport::streq(it->tag, tag_wildcard)
               && msg.tag.compare(0,
                                  sizeof TAG_PRIVATE_PREFIX - 1,
                                  TAG_PRIVATE_PREFIX)))
       {
-	UCallbackAction ua = it->callback(msg);
-	if (ua == URBI_REMOVE)
-	{
-	  delete &it->callback;
-	  it = callbacks_.erase(it);
-	  inc = true;
-	}
+        UCallbackAction ua = it->callback(msg);
+        if (ua == URBI_REMOVE)
+        {
+          delete &it->callback;
+          it = callbacks_.erase(it);
+          inc = false;
+        }
       }
-    }
-    listLock.unlock();
   }
 
   UAbstractClient::UAbstractClient(const std::string& host,
