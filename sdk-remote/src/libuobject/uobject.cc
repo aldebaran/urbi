@@ -257,7 +257,7 @@ namespace urbi
     void RemoteUContextImpl::send(const char* a)
     {
       if (closed_)
-        GD_WARN("Write on closed remote context");
+        GD_FWARN("Write on closed remote context: \"%s\"", libport::escape(a));
       else
       {
         backend_->startPack();
@@ -270,7 +270,8 @@ namespace urbi
     void RemoteUContextImpl::send(const void* buf, size_t size)
     {
       if (closed_)
-        GD_WARN("Write on closed remote context");
+        GD_FWARN("Write on closed remote context: \"%s\"",
+                 libport::escape(std::string((const char*) buf, size)));
       else
       {
         backend_->startPack();

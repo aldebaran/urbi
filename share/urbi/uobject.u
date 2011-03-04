@@ -878,6 +878,7 @@ class Global.'external'
       lobby.sharedRTP.groupedSendVar(obj.getSlot(varname))
     }
   };
+
   function remoteNotifyChange(objname, varname, fr)
   {
     // Create a 'notifyChange' function that generates the UObject
@@ -909,6 +910,7 @@ class Global.'external'
                  v,
                  uob.getProperty(varname, "timestamp")]
     }|
+
     // Directly set it if the source UVar is from this connection
     if (getSlot(objname).hasLocalSlot("lobby")
          && getSlot(objname).lobby == lobby)
@@ -916,7 +918,9 @@ class Global.'external'
       lobby.__bindingFunc[fullname] =
         uobjects.getSlot(objname).getSlot(varname).notifyChange(f)
     }
-    else// Or use an intermediate UConnection and InputPort to handle disconnect
+    else
+    // Or use an intermediate UConnection and InputPort to handle
+    // disconnect.
     {
       // Try to put the port into source UObject if it exists, or lobby.
       var o;
@@ -1039,20 +1043,17 @@ class Global.'external'
         {}
       }
     };
+
     if (uobjects.hasLocalSlot("URTP"))
-    { // Also kill local RTP uobjects linked to this lobby.
-      for(var o: l.localSlotNames)
-      {
+      // Also kill local RTP uobjects linked to this lobby.
+      for (var o: l.localSlotNames)
         if (l.getSlot(o).isA(URTP))
           l.getSlot(o).destroy;
-      }
-    };
+
     // Unblock all pending remote function calls
     if (l.hasLocalSlot("barriers"))
       for|(var b: l.barriers)
-      {
         b.second.signal(Exception.new("Remote disconnected"))
-      }
   };
 };
 
