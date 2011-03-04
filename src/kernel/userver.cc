@@ -158,6 +158,9 @@ namespace kernel
     TIMER_INIT();
     TIMER_PUSH("server");
     urbiserver = this;
+    // If someone locks the big kernel lock and we're sleeping, wake
+    // up.
+    big_kernel_lock_.setOnLock(boost::bind(&UServer::wake_up, this));
 #ifndef WIN32
     // Use line buffering even when stdout is not a TTY.
     setlinebuf(stdout);
