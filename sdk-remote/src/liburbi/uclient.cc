@@ -213,26 +213,28 @@ namespace urbi
   void
   UClient::pongTimeout(link_type l)
   {
-    if (!*l)
-      return;
-    const char* err = "!!! Lost connection with server: ping timeout";
-    // FIXME: Choose between two differents way to alert user program.
-    clientError(err);
-    notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag, err));
-    close();
+    if (*l)
+    {
+      const char* err = "!!! Lost connection with server: ping timeout";
+      // FIXME: Choose between two differents way to alert user program.
+      clientError(err);
+      notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag, err));
+      close();
+    }
   }
 
   void
   UClient::sendPing(link_type l)
   {
-    if (!*l)
-      return;
-    pong_timeout_handler_ =
-      libport::asyncCall(boost::bind(&UClient::pongTimeout, this, link_),
-                         pong_timeout_);
-    send("%s << 1,", internalPongTag);
-    ping_sent_ = libport::utime();
-    ping_sem_++;
+    if (*l)
+    {
+      pong_timeout_handler_ =
+        libport::asyncCall(boost::bind(&UClient::pongTimeout, this, link_),
+                           pong_timeout_);
+      send("%s << 1,", internalPongTag);
+      ping_sent_ = libport::utime();
+      ping_sem_++;
+    }
   }
 
   void
