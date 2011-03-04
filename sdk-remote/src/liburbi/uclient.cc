@@ -25,6 +25,8 @@
 
 #include <liburbi/compatibility.hh>
 
+GD_CATEGORY(Urbi.Client);
+
 namespace urbi
 {
 
