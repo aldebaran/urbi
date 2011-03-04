@@ -9,6 +9,7 @@
  */
 
 #include <libport/cerrno>
+#include <libport/containers.hh>
 #include <libport/csignal>
 #include <libport/sys/prctl.h>
 #include <libport/sys/stat.h>
@@ -23,6 +24,8 @@
 #include <libport/thread.hh>
 #include <libport/unistd.h>
 
+#include <urbi/object/job.hh>
+#include <runner/runner.hh>
 #include <object/urbi/input-stream.hh>
 #include <object/urbi/output-stream.hh>
 #include <object/urbi/process.hh>
@@ -49,44 +52,20 @@ namespace urbi
 
     typedef std::vector<rProcess> processes_type;
     static processes_type processes;
-    static libport::Lockable mutex;
 
     void
-    Process::monitor_children()
+    Process::monitor_child(Process* owner)
     {
-      // FIXME: Go in sleep mode when there are no processes (with a condition)
-      while (true)
+      int status;
+      int res = waitpid(owner->pid_, &status, 0);
+      LIBPORT_USE(res);
+      assert_gt(res, 0);
       {
-        {
-          libport::BlockLock lock(mutex);
-          processes_type::iterator it = processes.begin();
-          while (it != processes.end())
-          {
-            switch (waitpid((*it)->pid_, &(*it)->status_, WNOHANG))
-            {
-            case -1:
-              errnoabort("waitpid");
-            case 0:
-              ++it;
-              break;
-            default:
-              it = processes.erase(it);
-              break;
-            }
-          }
-        }
-        // For some reason, Valgrind 3.6.0, on OS X Snow Leopard, sees
-        // errors in this sleep.
-        //
-        //  Syscall param __semwait_signal(ts) points to unaddressable byte(s)
-        //     at 0x1002AAEB6: __semwait_signal (in /usr/lib/libSystem.B.dylib)
-        //     by 0x1002F7B13: sleep (in /usr/lib/libSystem.B.dylib)
-        //     by 0x100DE7579: urbi::object::Process::monitor_children() (process.cc:55)
-        //     by 0x10004A95D: libport::_startThread(void*) (function_template.hpp:1013)
-        //     by 0x1002A9455: _pthread_start (in /usr/lib/libSystem.B.dylib)
-        //     by 0x1002A9308: thread_start (in /usr/lib/libSystem.B.dylib)
-        //   Address 0x1 is not stack'd, malloc'd or (recently) free'd
-        sleep(1);
+        libport::Synchronizer::SynchroPoint lock(kernel::server().big_kernel_lock_get());
+        owner->status_ = status;
+        foreach (runner::Runner* job, owner->joiners_)
+          // FIXME: Is there a risk we cancel a double freeze?
+          job->frozen_set(false);
       }
     }
 
@@ -133,8 +112,6 @@ namespace urbi
       DECLARE(status,   status);
       DECLARE(name,     name_);
 #  undef DECLARE
-
-      libport::startThread(boost::function0<void>(&Process::monitor_children));
     }
 
     void
@@ -235,10 +212,9 @@ namespace urbi
         }
         slot_set(SYMBOL(stdin), new OutputStream(stdin_fd[1], true));
 
-        {
-          libport::BlockLock lock(mutex);
-          processes.push_back(this);
-        }
+        // Make sure we stay alive until we're done.
+        ward_ = this;
+        libport::startThread(boost::bind(Process::monitor_child, this));
       }
       else
       {
@@ -294,8 +270,12 @@ namespace urbi
     void
     Process::join() const
     {
-      while (status_ == -1)
-        urbi::yield_for(500000);
+      if (!done())
+      {
+        runner::rRunner self = &::kernel::runner();
+        joiners_.push_back(self);
+        self->frozen_set(true);
+      }
     }
 
     bool

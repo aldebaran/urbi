@@ -55,7 +55,9 @@ namespace urbi
     `--------*/
 
     private:
-      static void monitor_children();
+      static void monitor_child(Process*);
+      rProcess ward_;
+      ATTRIBUTE_R(std::vector<runner::rRunner>, joiners, , , , mutable);
       void run_(boost::optional<std::string> outFile
                  = boost::optional<std::string>());
       std::string name_;
