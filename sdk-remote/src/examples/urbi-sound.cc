@@ -35,7 +35,7 @@
 # endif
 #endif
 
-static const char *device = "/dev/dsp";
+static const char *dsp = "/dev/dsp";
 
 using libport::program_name;
 
@@ -170,9 +170,11 @@ int main(int argc, char *argv[])
   libport::program_initialize(argc, argv);
 
   libport::OptionValue
+    arg_dev("query sound on DEVICE.val (default: micro)",
+            "device", 'd', "DEVICE"),
     arg_duration("recording duration in seconds",
-                 "duration", 'd', "DURATION"),
-    arg_out("save sound in FILE",
+                 "duration", 'D', "DURATION"),
+    arg_out(libport::format("save sound in FILE (%s)", dsp),
             "output", 'o', "FILE");
   libport::OptionFlag
     arg_no_headers("don't include the headers when saving the sound",
@@ -185,6 +187,7 @@ int main(int argc, char *argv[])
 	     << libport::opts::host
 	     << libport::opts::port
 	     << libport::opts::port_file
+             << arg_dev
              << arg_duration
              << arg_out
              << arg_no_headers;
@@ -197,23 +200,23 @@ int main(int argc, char *argv[])
     version();
 
   //16000 1 16
-  std::string output = arg_out.value(device);
-  out_to_dsp = output == device;
+  std::string output = arg_out.value(dsp);
+  out_to_dsp = output == dsp;
   if (out_to_dsp)
   {
 #ifdef HAVE_SYS_SOUNDCARD_H
     with_header = false;
-    file = fopen(device, "wb");
+    file = fopen(dsp, "wb");
     if (!file)
-      ERROR(1, "error opening device %s: %s", device, strerror(errno));
+      ERROR(1, "error opening device %s: %s", dsp, strerror(errno));
 
     int f = fileno(file);
-# define IOCTL(Name, Key, Param)                                        \
-    do {                                                                \
-      int param = Param;                                                \
-      if (ioctl(f, SNDCTL_DSP_ ## Key, &param) == -1)                   \
-        ERROR(1, "failed to set %s for %s: %s",                         \
-              device, Name, strerror(errno));                           \
+# define IOCTL(Name, Key, Param)                        \
+    do {                                                \
+      int param = Param;                                \
+      if (ioctl(f, SNDCTL_DSP_ ## Key, &param) == -1)   \
+        ERROR(1, "failed to set %s for %s: %s",         \
+              dsp, Name, strerror(errno));              \
     } while (false)
 
     IOCTL("sample size", SAMPLESIZE, 16);
@@ -253,8 +256,9 @@ int main(int argc, char *argv[])
   std::string command = SYNCLINE_WRAP
     ("var end = Channel.new(\"end\")|;\n"
      "var usound = Channel.new(\"usound\")|;\n"
-     "micro.&val.notifyChange(closure() { usound << micro.val })|;\n"
+     "micro.&val.notifyChange(closure() { usound << %s.val })|;\n"
      "{ sleep(%d); end << 1 },\n",
+     arg_dev.value("micro"),
      arg_duration.get<float>(1.));
   client.send(command);
   urbi::execute();
