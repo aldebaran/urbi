@@ -111,10 +111,9 @@ namespace urbi
   UClient::error_type
   UClient::onClose()
   {
-    if (closed_)
-      return 1;
-    UAbstractClient::onClose();
-    return 0;
+    if (!closed_)
+      UAbstractClient::onClose();
+    return !!closed_;
   }
 
   UClient::error_type
@@ -163,8 +162,10 @@ namespace urbi
       host_ = getRemoteHost();
       port_ = getRemotePort();
     }
-    catch(const std::exception&)
-    { // Ignore the error, next read attempt will trigger onError.
+    catch (const std::exception& e)
+    {
+      // Ignore the error, next read attempt will trigger onError.
+      GD_FINFO_DUMP("ignore std::exception: %s", e.what());
     }
     if (ping_interval_)
       sendPing(link_);
@@ -299,6 +300,9 @@ namespace urbi
   {
     synchronous_send_ = enable;
   }
+
+
+
 /*-----------------------.
 | Standalone functions.  |
 `-----------------------*/
