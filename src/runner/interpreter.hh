@@ -221,7 +221,7 @@ namespace runner
 
     /// Start profiling into \a profile.
     void profile_start(Profile* profile, libport::Symbol name,
-                       void* current, bool count = false);
+                       Object* current, bool count = false);
     /// Stop profiling.
     void profile_stop();
     /// Wheter there is a profiling in run.
@@ -233,7 +233,7 @@ namespace runner
     virtual void hook_resumed() const;
   private:
     mutable libport::utime_t profile_checkpoint_;
-    mutable void* profile_function_current_;
+    mutable Object* profile_function_current_;
     mutable unsigned profile_function_call_depth_;
     /// \}
 

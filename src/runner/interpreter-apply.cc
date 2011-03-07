@@ -156,7 +156,7 @@ namespace runner
 
     if (reg)
       call_stack_ << std::make_pair(msg, loc);
-    void* profile_prev = 0;
+    Object* profile_prev = 0;
 
     if (profile_)
     {
@@ -175,10 +175,10 @@ namespace runner
     }
 
     FINALLY(((call_stack_type&, call_stack_))((bool, reg))
-            ((Profile*, profile_))((void*, profile_prev))
+            ((Profile*, profile_))((Object*, profile_prev))
             ((libport::utime_t&, profile_checkpoint_))
             ((unsigned&, profile_function_call_depth_))
-            ((void*&, profile_function_current_)),
+            ((Object*&, profile_function_current_)),
             if (reg)
               call_stack_.pop_back();
             if (profile_)

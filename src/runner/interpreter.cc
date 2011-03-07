@@ -443,7 +443,7 @@ namespace runner
 
   void
   Interpreter::profile_start(Profile* profile, libport::Symbol name,
-                             void* current, bool count)
+                             Object* current, bool count)
   {
     assert(!profile_);
     assert(profile);
