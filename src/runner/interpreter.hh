@@ -32,6 +32,8 @@
 
 namespace runner
 {
+  using urbi::object::Profile;
+  using urbi::object::FunctionProfile;
 
   /// Ast executor.
   class Interpreter : public runner::Runner
@@ -216,40 +218,6 @@ namespace runner
   public:
     /// \name Profiling
     /// \{
-    /// Profiling data.
-    class Profile
-    {
-    public:
-      Profile();
-      class FunctionProfile
-      {
-      public:
-        FunctionProfile();
-        ATTRIBUTE_R(libport::Symbol, name);
-        ATTRIBUTE_R(unsigned, calls);
-        ATTRIBUTE_R(unsigned, self_time);
-        ATTRIBUTE_R(unsigned, time);
-        FunctionProfile& operator +=(const FunctionProfile& other);
-      private:
-        friend class Interpreter;
-        friend class Profile;
-      };
-      typedef boost::unordered_map<void*, FunctionProfile> FunctionProfiles;
-      ATTRIBUTE_R(unsigned, yields);
-      ATTRIBUTE_R(unsigned, wall_clock_time);
-      ATTRIBUTE_R(unsigned, total_time);
-      ATTRIBUTE_R(unsigned, function_calls);
-      ATTRIBUTE_R(unsigned, function_call_depth_max);
-      ATTRIBUTE_R(FunctionProfiles, functions_profile);
-      Profile& operator+=(const Profile& other);
-    private:
-      bool wrapper_function_seen;
-      libport::utime_t step();
-      libport::utime_t checkpoint_;
-      friend class Interpreter;
-      unsigned function_call_depth_;
-      void* function_current_;
-    };
 
     /// Start profiling into \a profile.
     void profile_start(Profile* profile);

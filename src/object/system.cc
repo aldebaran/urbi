@@ -36,6 +36,7 @@
 #include <urbi/object/list.hh>
 #include <urbi/object/object.hh>
 #include <urbi/object/path.hh>
+#include <object/profile.hh>
 #include <object/symbols.hh>
 #include <object/system.hh>
 #include <urbi/object/tag.hh>
@@ -543,13 +544,6 @@ namespace urbi
       return kernel::urbiserver->interactive_get();
     }
 
-    static bool
-    per_self_time(const runner::Interpreter::Profile::FunctionProfile& lhs,
-                  const runner::Interpreter::Profile::FunctionProfile& rhs)
-    {
-      return lhs.self_time_get() > rhs.self_time_get();
-    }
-
     static rObject
     system_profile(Object* self, Executable* action)
     {
@@ -563,59 +557,14 @@ namespace urbi
         return nil_class;
       }
 
-      runner::Interpreter::Profile p;
+      object::rProfile profile = new object::Profile;
       {
         FINALLY(((Object*, self)), ::kernel:: interpreter().profile_stop());
-        interpreter().profile_start(&p);
+        interpreter().profile_start(profile);
         objects_type args;
         args << self;
         (*action)(args);
       }
-
-      CAPTURE_GLOBAL(Profile);
-      rObject Function = Profile->slot_get(SYMBOL(Function));
-      rObject profile = Profile->call(SYMBOL(new));
-      rList calls = new List;
-
-#define DECLARE(Name, Value)                            \
-      profile->setSlot(SYMBOL_(Name), new Float(Value))
-
-      DECLARE(yields,               p.yields_get());
-      DECLARE(totalTime,            p.total_time_get() / 1000000.);
-      DECLARE(wallClockTime,        p.wall_clock_time_get() / 1000000.);
-      DECLARE(totalCalls,           p.function_calls_get());
-      DECLARE(maxFunctionCallDepth, p.function_call_depth_max_get());
-
-#undef DECLARE
-
-      typedef runner::Interpreter::Profile::FunctionProfiles FunctionProfiles;
-      typedef runner::Interpreter::Profile::FunctionProfile FunctionProfile;
-      std::vector<FunctionProfile> fps;
-      foreach (const FunctionProfiles::value_type& fp,
-               p.functions_profile_get())
-        fps << fp.second;
-
-      std::sort(fps.begin(), fps.end(), &per_self_time);
-
-      foreach (const FunctionProfile& fp, fps)
-      {
-        rObject function = Function->call(SYMBOL(new));
-        double selfTimeSeconds = fp.self_time_get() / 1000000.;
-
-#define DECLARE(Name, Value)                            \
-        function->setSlot(SYMBOL_(Name), Value)
-
-        DECLARE(name,        new String(fp.name_get()));
-        DECLARE(calls,       new Float(fp.calls_get()));
-        DECLARE(selfTime,    new Float(selfTimeSeconds));
-        DECLARE(selfTimePer, new Float(selfTimeSeconds / fp.calls_get()));
-
-#undef DECLARE
-
-        calls->insertBack(function);
-      }
-
-      profile->setSlot(SYMBOL(calls), calls);
 
       return profile;
     }

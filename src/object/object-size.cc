@@ -11,6 +11,7 @@
 #include <object/finalizable.hh>
 #include <object/format-info.hh>
 #include <object/formatter.hh>
+#include <object/profile.hh>
 #include <object/semaphore.hh>
 #include <object/socket.hh>
 #include <object/uconnection.hh>

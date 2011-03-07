@@ -26,6 +26,7 @@
 #include <ast/routine.hh>
 #include <ast/transformer.hh>
 
+#include <object/profile.hh>
 #include <object/symbols.hh>
 #include <object/system.hh>
 
@@ -168,9 +169,11 @@ namespace runner
         ++profile_->function_call_depth_;
         if (profile_->function_call_depth_ > profile_->function_call_depth_max_)
           profile_->function_call_depth_max_ = profile_->function_call_depth_;
-        ++profile_->functions_profile_[function].calls_;
-        if (profile_->functions_profile_[function].name_.empty())
-          profile_->functions_profile_[function].name_ = msg;
+        if (!profile_->functions_profile_[function])
+          profile_->functions_profile_[function] = new FunctionProfile;
+        ++profile_->functions_profile_[function]->calls_;
+        if (profile_->functions_profile_[function]->name_.empty())
+          profile_->functions_profile_[function]->name_ = msg;
       }
       else
         profile_->wrapper_function_seen = true;

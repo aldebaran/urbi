@@ -25,6 +25,7 @@
 # include <kernel/uconnection.hh>
 # include <kernel/userver.hh>
 
+# include <object/profile.hh>
 # include <object/symbols.hh>
 
 # include <runner/interpreter.hh>
