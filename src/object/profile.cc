@@ -23,7 +23,6 @@ namespace urbi
       , function_calls_(0)
       , function_call_depth_max_(0)
       , wrapper_function_seen(false)
-      , function_call_depth_(0)
     {
       proto_add(proto);
     }
@@ -35,7 +34,6 @@ namespace urbi
       , function_calls_(0)
       , function_call_depth_max_(0)
       , wrapper_function_seen(false)
-      , function_call_depth_(0)
     {
       proto_add(model);
     }

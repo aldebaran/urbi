@@ -166,9 +166,9 @@ namespace runner
         profile_prev = profile_function_current_;
         profile_function_current_ = function;
         ++profile_->function_calls_;
-        ++profile_->function_call_depth_;
-        if (profile_->function_call_depth_ > profile_->function_call_depth_max_)
-          profile_->function_call_depth_max_ = profile_->function_call_depth_;
+        ++profile_function_call_depth_;
+        if (profile_function_call_depth_ > profile_->function_call_depth_max_)
+          profile_->function_call_depth_max_ = profile_function_call_depth_;
         if (!profile_->functions_profile_[function])
           profile_->functions_profile_[function] = new FunctionProfile;
         ++profile_->functions_profile_[function]->calls_;
@@ -182,12 +182,13 @@ namespace runner
     FINALLY(((call_stack_type&, call_stack_))((bool, reg))
             ((Profile*, profile_))((void*, profile_prev))
             ((libport::utime_t&, profile_checkpoint_))
+            ((unsigned&, profile_function_call_depth_))
             ((void*&, profile_function_current_)),
             if (reg)
               call_stack_.pop_back();
             if (profile_)
             {
-              --profile_->function_call_depth_;
+              --profile_function_call_depth_;
               profile_->step(profile_checkpoint_, profile_function_current_);
               profile_function_current_ = profile_prev;
             }

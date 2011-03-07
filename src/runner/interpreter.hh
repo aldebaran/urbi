@@ -233,6 +233,7 @@ namespace runner
     Profile* profile_;
     mutable libport::utime_t profile_checkpoint_;
     mutable void* profile_function_current_;
+    mutable unsigned profile_function_call_depth_;
     /// \}
 
   public:
