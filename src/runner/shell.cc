@@ -387,10 +387,10 @@ namespace runner
       // because the lobby will lose it's reference on the connection.
       GD_FPUSH_DUMP("%s: schedule connection destruction.", name_get());
       aver(&lobby_get()->connection_get());
-      kernel::server().schedule(
-                                SYMBOL(collect_connection),
-                                boost::bind(collect_connection, &lobby_get()->connection_get())
-                                );
+      kernel::server()
+        .schedule(SYMBOL(collect_connection),
+                  boost::bind(collect_connection,
+                              &lobby_get()->connection_get()));
       GD_FPUSH_DUMP("%s: disconnecting.", name_get());
       lobby_get()->disconnect();
       stop_ = true;

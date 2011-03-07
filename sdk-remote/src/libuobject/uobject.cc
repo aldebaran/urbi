@@ -647,6 +647,7 @@ namespace urbi
                 static_cast<unsigned long>(array.size()));
         setRTPMessage(array[1], array[2]);
         break;
+
       case UEM_SETLOCAL:
       {
         REQUIRE(array.size() == 3,
@@ -665,7 +666,8 @@ namespace urbi
           }
         }
       }
-        break;
+      break;
+
       default:
         REQUIRE(false,
                 "Component Error: unknown server message type number %d\n",
