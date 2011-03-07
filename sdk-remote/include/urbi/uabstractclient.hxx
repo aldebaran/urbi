@@ -68,7 +68,7 @@ namespace urbi
   UAbstractClient::error_type
   UAbstractClient::effective_send(const void* buffer, size_t size)
   {
-    GD_CATEGORY(Urbi.UAbstractClient);
+    GD_CATEGORY(Urbi.Client.Abstract);
     GD_FINFO_DUMP("Sending: \"%s\"",
                   libport::escape(std::string(static_cast<const char*>(buffer),
                                               size)));

@@ -342,7 +342,7 @@ namespace runner
   void
   Shell::setSerializationMode(bool m, const std::string& tag)
   {
-    GD_CATEGORY(Urbi.Shell.serialize);
+    GD_CATEGORY(Urbi.Shell.Serialize);
     GD_FINFO_TRACE("setSerializationMode %s", m);
     lobby_get()->send(m ? "true" : "false", tag);
     if (m == binary_mode_)
