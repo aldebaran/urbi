@@ -233,16 +233,16 @@ namespace urbi
     if (waitingFromPollThread_)
       libport::get_io_service().reset();
     queueLock_.unlock();
+
     // syncTag is reset by the other thread.
-    UMessage *res;
-    if (waitingFromPollThread_)
-      if (!useconds)
-        libport::get_io_service().run();
-      else
-        libport::pollFor(useconds);
-    else
+    if (!waitingFromPollThread_)
       syncLock_.uget(useconds);
-    res = message_;
+    else if (useconds)
+      libport::pollFor(useconds);
+    else
+      libport::get_io_service().run();
+
+    UMessage *res = message_;
     if (!res)
       GD_ERROR("Timed out");
     else if (res->type == MESSAGE_ERROR)
