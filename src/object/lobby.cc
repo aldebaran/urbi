@@ -157,7 +157,7 @@ namespace urbi
     Lobby::send(const std::string& data, const std::string& tag)
     {
       REQUIRE_DERIVATIVE_AND_CONNECTION();
-      connection_->send((data + "\n").c_str(), data.length() + 1, tag.c_str());
+      connection_->send(data + "\n", tag.c_str());
     }
 
     void
