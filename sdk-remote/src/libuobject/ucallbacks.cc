@@ -73,8 +73,8 @@ namespace urbi
                            type, owner_->nbparam, owner_->name,
                            owner_->objname));
       else if (type == "varaccess")
-        echo("Warning: NotifyAccess facility is not available for modules in "
-             "remote mode.\n");
+        GD_WARN("NotifyAccess facility is not available for modules in "
+                "remote mode.");
     }
 
     //! UGenericCallback constructor.
