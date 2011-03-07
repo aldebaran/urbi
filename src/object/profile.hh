@@ -65,8 +65,7 @@ namespace urbi
 
     private:
       bool wrapper_function_seen;
-      libport::utime_t step();
-      libport::utime_t checkpoint_;
+      void step(libport::utime_t& checkpoint);
       friend class ::runner::Interpreter;
       unsigned function_call_depth_;
       void* function_current_;

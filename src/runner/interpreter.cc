@@ -90,6 +90,7 @@ namespace runner
                            const std::string& name)
     : Runner(lobby, sched, name)
     , profile_(0)
+    , profile_checkpoint_(0)
     , ast_(ast)
     , code_(0)
     , result_(0)
@@ -107,6 +108,7 @@ namespace runner
                            const objects_type& args)
     : Runner(lobby, sched, name)
     , profile_(0)
+    , profile_checkpoint_(0)
     , ast_(0)
     , code_(code)
     , this_(self)
@@ -123,6 +125,7 @@ namespace runner
                            const objects_type& args)
     : Runner(model, name)
     , profile_(0)
+    , profile_checkpoint_(0)
     , ast_(0)
     , code_(code)
     , args_(args)
@@ -139,6 +142,7 @@ namespace runner
 			   const std::string& name)
     : Runner(model, name)
     , profile_(0)
+    , profile_checkpoint_(0)
     , ast_(ast)
     , code_(0)
     , result_(0)
@@ -157,6 +161,7 @@ namespace runner
                            const std::string& name)
     : Runner(lobby, sched, name)
     , profile_(0)
+    , profile_checkpoint_(0)
     , ast_(0)
     , code_(0)
     , job_(job)
@@ -432,7 +437,7 @@ namespace runner
     assert(!profile_);
     assert(profile);
     profile_ = profile;
-    profile_->checkpoint_ = libport::utime();
+    profile_checkpoint_ = libport::utime();
     profile_->functions_profile_[0] = new FunctionProfile;
     profile_->functions_profile_[0]->name_ = SYMBOL(LT_profiled_GT);
     ++profile_->functions_profile_[0]->calls_;
@@ -442,7 +447,7 @@ namespace runner
   Interpreter::profile_stop()
   {
     assert(profile_);
-    profile_->step();
+    profile_->step(profile_checkpoint_);
     profile_ = 0;
   }
 
@@ -457,7 +462,7 @@ namespace runner
   {
     if (profile_)
     {
-      profile_->step();
+      profile_->step(profile_checkpoint_);
       ++profile_->yields_;
     }
   }
@@ -468,8 +473,8 @@ namespace runner
     if (profile_)
     {
       libport::utime_t now = libport::utime();
-      profile_->wall_clock_time_ += now - profile_->checkpoint_;
-      profile_->checkpoint_ = now;
+      profile_->wall_clock_time_ += now - profile_checkpoint_;
+      profile_checkpoint_ = now;
     }
   }
 

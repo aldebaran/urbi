@@ -231,6 +231,7 @@ namespace runner
   private:
     /// The current profile to fill - if any.
     Profile* profile_;
+    mutable libport::utime_t profile_checkpoint_;
     /// \}
 
   public:

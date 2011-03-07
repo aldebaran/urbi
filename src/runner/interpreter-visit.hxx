@@ -109,7 +109,7 @@ namespace runner
         Interpreter* i = static_cast<Interpreter*>(job.get());
         if (i->profile_)
         {
-          i->profile_->step();
+          i->profile_->step(i->profile_checkpoint_);
           *profile_ += *i->profile_;
           delete i->profile_;
           i->profile_ = 0;

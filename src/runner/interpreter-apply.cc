@@ -162,7 +162,7 @@ namespace runner
     {
       if (profile_->wrapper_function_seen)
       {
-        profile_->step();
+        profile_->step(profile_checkpoint_);
         profile_prev = profile_->function_current_;
         profile_->function_current_ = function;
         ++profile_->function_calls_;
@@ -180,13 +180,14 @@ namespace runner
     }
 
     FINALLY(((call_stack_type&, call_stack_))((bool, reg))
-            ((Profile*, profile_))((void*, profile_prev)),
+            ((Profile*, profile_))((void*, profile_prev))
+            ((libport::utime_t&, profile_checkpoint_)),
             if (reg)
               call_stack_.pop_back();
             if (profile_)
             {
               --profile_->function_call_depth_;
-              profile_->step();
+              profile_->step(profile_checkpoint_);
               profile_->function_current_ = profile_prev;
             }
       );
