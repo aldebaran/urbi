@@ -16,10 +16,10 @@
 
 # include <libport/attributes.hh>
 
+# include <object/profile.hh>
+# include <runner/interpreter.hh>
 # include <urbi/object/cxx-object.hh>
 # include <urbi/object/lobby.hh>
-
-# include <runner/interpreter.hh>
 
 namespace urbi
 {
@@ -85,7 +85,7 @@ namespace urbi
     private:
       void emit_backend(const objects_type& pl, bool detach);
       sched::rJob spawn_actions_job(rLobby lobby, rExecutable e,
-                                    const objects_type& args);
+                                    rProfile profile, const objects_type& args);
       rEventHandler trigger_backend(const objects_type& pl, bool detach);
 
       /** Callbacks listening on this event.
@@ -109,6 +109,7 @@ namespace urbi
         }
 
         rExecutable guard, enter, leave;
+        rProfile profile;
 	/// Number of frozen tag this Actions is marked with.
         unsigned int frozen;
         /// Whether this onEvent is synchronous
