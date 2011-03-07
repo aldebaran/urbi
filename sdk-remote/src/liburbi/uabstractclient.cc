@@ -142,6 +142,21 @@ namespace urbi
       bins.front().clear();
   }
 
+  inline
+  bool
+  matching_tag(const UMessage& msg, const char* tag)
+  {
+    return
+      msg.tag == tag
+      || (libport::streq(tag, tag_error) && msg.type == MESSAGE_ERROR)
+      // The wild card does not match tags starting with
+      // TAG_PRIVATE_PREFIX.
+      || (libport::streq(tag, tag_wildcard)
+          && msg.tag.compare(0,
+                             sizeof TAG_PRIVATE_PREFIX - 1,
+                             TAG_PRIVATE_PREFIX));
+  }
+
   void
   UAbstractClient::notifyCallbacks(const UMessage& msg)
   {
@@ -150,14 +165,7 @@ namespace urbi
     for (callbacks_type::iterator it = callbacks_.begin();
          it != callbacks_.end();
          inc ? it++ : it, inc = true)
-      if (msg.tag == it->tag
-          || (libport::streq(it->tag, tag_error) && msg.type == MESSAGE_ERROR)
-          // The wild card does not match tags starting with
-          // TAG_PRIVATE_PREFIX.
-          || (libport::streq(it->tag, tag_wildcard)
-              && msg.tag.compare(0,
-                                 sizeof TAG_PRIVATE_PREFIX - 1,
-                                 TAG_PRIVATE_PREFIX)))
+      if (matching_tag(msg, it->tag))
       {
         UCallbackAction ua = it->callback(msg);
         if (ua == URBI_REMOVE)
