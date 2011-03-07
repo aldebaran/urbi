@@ -344,13 +344,13 @@ namespace runner
   {
     GD_CATEGORY(Urbi.Shell.serialize);
     GD_FINFO_TRACE("setSerializationMode %s", m);
+    lobby_get()->send(m ? "true" : "false", tag);
     if (m == binary_mode_)
       return;
     if (!m && binary_mode_)
       throw std::runtime_error("There is no turning back from serialized mode");
     delete parser_;
     parser_ = 0;
-    lobby_get()->send("1", tag);
     binary_mode_ = m;
     if (binary_mode_)
       processSerializedMessages();
