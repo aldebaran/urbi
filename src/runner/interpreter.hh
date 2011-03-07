@@ -220,7 +220,8 @@ namespace runner
     /// \{
 
     /// Start profiling into \a profile.
-    void profile_start(Profile* profile);
+    void profile_start(Profile* profile, libport::Symbol name,
+                       void* current, bool count = false);
     /// Stop profiling.
     void profile_stop();
     /// Wheter there is a profiling in run.

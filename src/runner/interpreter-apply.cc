@@ -160,23 +160,18 @@ namespace runner
 
     if (profile_)
     {
-      if (profile_->wrapper_function_seen)
-      {
-        profile_->step(profile_checkpoint_, profile_function_current_);
-        profile_prev = profile_function_current_;
-        profile_function_current_ = function;
-        ++profile_->function_calls_;
-        ++profile_function_call_depth_;
-        if (profile_function_call_depth_ > profile_->function_call_depth_max_)
-          profile_->function_call_depth_max_ = profile_function_call_depth_;
-        if (!profile_->functions_profile_[function])
-          profile_->functions_profile_[function] = new FunctionProfile;
-        ++profile_->functions_profile_[function]->calls_;
-        if (profile_->functions_profile_[function]->name_.empty())
-          profile_->functions_profile_[function]->name_ = msg;
-      }
-      else
-        profile_->wrapper_function_seen = true;
+      profile_->step(profile_checkpoint_, profile_function_current_);
+      profile_prev = profile_function_current_;
+      profile_function_current_ = function;
+      ++profile_->function_calls_;
+      ++profile_function_call_depth_;
+      if (profile_function_call_depth_ > profile_->function_call_depth_max_)
+        profile_->function_call_depth_max_ = profile_function_call_depth_;
+      if (!profile_->functions_profile_[function])
+        profile_->functions_profile_[function] = new FunctionProfile;
+      ++profile_->functions_profile_[function]->calls_;
+      if (profile_->functions_profile_[function]->name_.empty())
+        profile_->functions_profile_[function]->name_ = msg;
     }
 
     FINALLY(((call_stack_type&, call_stack_))((bool, reg))

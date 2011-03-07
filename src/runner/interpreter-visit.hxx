@@ -74,7 +74,7 @@ namespace runner
         p = new Profile;
         // Max function call depth has to start at current depth.
         p->function_call_depth_max_ = profile_->function_call_depth_max_;
-        job->profile_start(p);
+        job->profile_start(p, libport::Symbol(), profile_function_current_);
       }
       register_child(job, collector);
       job->start_job();

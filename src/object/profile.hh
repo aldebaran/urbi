@@ -64,7 +64,6 @@ namespace urbi
       ATTRIBUTE_R(FunctionProfiles, functions_profile);
 
     private:
-      bool wrapper_function_seen;
       void step(libport::utime_t& checkpoint, void* function_current);
       friend class ::runner::Interpreter;
 

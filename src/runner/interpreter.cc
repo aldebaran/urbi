@@ -442,18 +442,21 @@ namespace runner
   `------------*/
 
   void
-  Interpreter::profile_start(Profile* profile)
+  Interpreter::profile_start(Profile* profile, libport::Symbol name,
+                             void* current, bool count)
   {
     assert(!profile_);
     assert(profile);
     profile_ = profile;
     profile_checkpoint_ = libport::utime();
-    if (!profile_->functions_profile_[0])
+    profile_function_current_ = current;
+    if (!profile_->functions_profile_[current])
     {
-      profile_->functions_profile_[0] = new FunctionProfile;
-      profile_->functions_profile_[0]->name_ = SYMBOL(LT_profiled_GT);
+      profile_->functions_profile_[current] = new FunctionProfile;
+      profile_->functions_profile_[current]->name_ = name;
     }
-    ++profile_->functions_profile_[0]->calls_;
+    if (count)
+      ++profile_->functions_profile_[current]->calls_;
   }
 
   void

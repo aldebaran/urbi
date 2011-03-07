@@ -259,7 +259,7 @@ namespace urbi
       new_runner->time_shift_set(r.time_shift_get());
       new_runner->start_job();
       if (r.profile_get())
-        new_runner->profile_start(r.profile_get());
+        new_runner->profile_start(r.profile_get(), SYMBOL(detach), code.get());
       return new_runner->as_job();
     }
 
@@ -562,7 +562,7 @@ namespace urbi
       object::rProfile profile = new object::Profile;
       {
         FINALLY(((Object*, self)), ::kernel:: interpreter().profile_stop());
-        interpreter().profile_start(profile);
+        interpreter().profile_start(profile, SYMBOL(LT_profiled_GT), action);
         objects_type args;
         args << self;
         (*action)(args);
