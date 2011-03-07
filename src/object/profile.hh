@@ -65,10 +65,9 @@ namespace urbi
 
     private:
       bool wrapper_function_seen;
-      void step(libport::utime_t& checkpoint);
+      void step(libport::utime_t& checkpoint, void* function_current);
       friend class ::runner::Interpreter;
       unsigned function_call_depth_;
-      void* function_current_;
 
       URBI_CXX_OBJECT(Profile, CxxObject);
     };

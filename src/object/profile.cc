@@ -24,7 +24,6 @@ namespace urbi
       , function_call_depth_max_(0)
       , wrapper_function_seen(false)
       , function_call_depth_(0)
-      , function_current_(0)
     {
       proto_add(proto);
     }
@@ -37,7 +36,6 @@ namespace urbi
       , function_call_depth_max_(0)
       , wrapper_function_seen(false)
       , function_call_depth_(0)
-      , function_current_(0)
     {
       proto_add(model);
     }
@@ -168,13 +166,13 @@ namespace urbi
     }
 
     void
-    Profile::step(libport::utime_t& checkpoint)
+    Profile::step(libport::utime_t& checkpoint, void* function_current)
     {
       libport::utime_t now = libport::utime();
       libport::utime_t res = now - checkpoint;
       total_time_ += res;
       wall_clock_time_ += res;
-      functions_profile_[function_current_]->self_time_ += res;
+      functions_profile_[function_current]->self_time_ += res;
       checkpoint = now;
     }
   }

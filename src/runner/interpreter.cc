@@ -91,6 +91,7 @@ namespace runner
     : Runner(lobby, sched, name)
     , profile_(0)
     , profile_checkpoint_(0)
+    , profile_function_current_(0)
     , ast_(ast)
     , code_(0)
     , result_(0)
@@ -109,6 +110,7 @@ namespace runner
     : Runner(lobby, sched, name)
     , profile_(0)
     , profile_checkpoint_(0)
+    , profile_function_current_(0)
     , ast_(0)
     , code_(code)
     , this_(self)
@@ -126,6 +128,7 @@ namespace runner
     : Runner(model, name)
     , profile_(0)
     , profile_checkpoint_(0)
+    , profile_function_current_(0)
     , ast_(0)
     , code_(code)
     , args_(args)
@@ -143,6 +146,7 @@ namespace runner
     : Runner(model, name)
     , profile_(0)
     , profile_checkpoint_(0)
+    , profile_function_current_(0)
     , ast_(ast)
     , code_(0)
     , result_(0)
@@ -162,6 +166,7 @@ namespace runner
     : Runner(lobby, sched, name)
     , profile_(0)
     , profile_checkpoint_(0)
+    , profile_function_current_(0)
     , ast_(0)
     , code_(0)
     , job_(job)
@@ -447,7 +452,7 @@ namespace runner
   Interpreter::profile_stop()
   {
     assert(profile_);
-    profile_->step(profile_checkpoint_);
+    profile_->step(profile_checkpoint_, profile_function_current_);
     profile_ = 0;
   }
 
@@ -462,7 +467,7 @@ namespace runner
   {
     if (profile_)
     {
-      profile_->step(profile_checkpoint_);
+      profile_->step(profile_checkpoint_, profile_function_current_);
       ++profile_->yields_;
     }
   }
