@@ -49,12 +49,17 @@ namespace urbi
     | Stop.  |
     `-------*/
 
-    // Use an intermediary bouncer to make sure the Executable is
-    // stored in a smart pointer, and not deleted too early.
-    static void
-    executable_bouncer(rExecutable e, objects_type args)
+    static sched::rJob
+    spawn_actions_job(rLobby lobby, rExecutable e,
+                      rProfile profile, const objects_type& args)
     {
-      (*e)(args);
+      typedef rObject(Executable::*fun_type)(objects_type);
+      runner::Interpreter& r = ::kernel::interpreter();
+      runner::Interpreter* res =
+        e->make_job(lobby, r.scheduler_get(), args, SYMBOL(event));
+      if (profile)
+        res->profile_start(profile, SYMBOL(event), e.get());
+      return res;
     }
 
     void
@@ -68,19 +73,17 @@ namespace urbi
         // Copy container to avoid in-place modification problems.
         foreach (const stop_job_type& stop_job, stop_jobs_type(stop_jobs_))
         {
-          typedef rObject(Executable::*fun_type)(objects_type);
-          sched::rJob job = new runner::Interpreter
-            (r.lobby_get(), r.scheduler_get(),
-             boost::bind(&executable_bouncer,
-                         stop_job.get<0>(), stop_job.get<1>()),
-             this, SYMBOL(onleave));
+          rActions actions = stop_job.get<0>();
+          sched::rJob job = spawn_actions_job
+            (actions->lobby ? actions->lobby : r.lobby_get(),
+             actions->leave, actions->profile, stop_job.get<1>());
           job->start_job();
         }
         r.yield_until_terminated(children);
       }
       else
         foreach (const stop_job_type& stop_job, stop_jobs_type(stop_jobs_))
-          (*stop_job.get<0>())(stop_job.get<1>());
+          (*stop_job.get<0>()->leave)(stop_job.get<1>());
 
       stop_jobs_.clear();
       source()->active_.erase(this);
@@ -132,14 +135,14 @@ namespace urbi
       {
         args << pattern;
         if (actions->leave)
-          register_stop_job(stop_job_type(actions->leave, args, detach));
+          register_stop_job(stop_job_type(actions, args, detach));
         if (actions->enter)
         {
           if (detach)
           {
-            sched::rJob job = actions->enter.get()->make_job
+            sched::rJob job = spawn_actions_job
               (actions->lobby ? actions->lobby : r.lobby_get(),
-               r.scheduler_get(), args, SYMBOL(at));
+               actions->enter, actions->profile, args);
             job->start_job();
           }
           else
