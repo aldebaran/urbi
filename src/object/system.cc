@@ -247,7 +247,7 @@ namespace urbi
                  const rCode& code,
                  const rObject& clear_tags)
     {
-      runner::Runner& r = runner();
+      runner::Interpreter& r = interpreter();
       runner::Interpreter* new_runner =
         new runner::Interpreter(interpreter(),
                                 rObject(code),
@@ -258,6 +258,8 @@ namespace urbi
 
       new_runner->time_shift_set(r.time_shift_get());
       new_runner->start_job();
+      if (r.profile_get())
+        new_runner->profile_start(r.profile_get());
       return new_runner->as_job();
     }
 

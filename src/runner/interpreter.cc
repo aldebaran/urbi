@@ -448,8 +448,11 @@ namespace runner
     assert(profile);
     profile_ = profile;
     profile_checkpoint_ = libport::utime();
-    profile_->functions_profile_[0] = new FunctionProfile;
-    profile_->functions_profile_[0]->name_ = SYMBOL(LT_profiled_GT);
+    if (!profile_->functions_profile_[0])
+    {
+      profile_->functions_profile_[0] = new FunctionProfile;
+      profile_->functions_profile_[0]->name_ = SYMBOL(LT_profiled_GT);
+    }
     ++profile_->functions_profile_[0]->calls_;
   }
 

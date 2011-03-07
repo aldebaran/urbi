@@ -225,12 +225,12 @@ namespace runner
     void profile_stop();
     /// Wheter there is a profiling in run.
     bool is_profiling() const;
+    /// The current profile to fill - if any.
+    ATTRIBUTE_R(Profile*, profile);
   protected:
     virtual void hook_preempted() const;
     virtual void hook_resumed() const;
   private:
-    /// The current profile to fill - if any.
-    Profile* profile_;
     mutable libport::utime_t profile_checkpoint_;
     mutable void* profile_function_current_;
     mutable unsigned profile_function_call_depth_;
