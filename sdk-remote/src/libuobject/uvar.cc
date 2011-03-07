@@ -195,25 +195,29 @@ namespace urbi
     localCall(linkName, "init");
 
     // Spawn a remote RTP instance and bind it.
-    // Also destroy it when this remote disconnects
+    // Also destroy it when this remote disconnects.
     std::string rLinkName = linkName + "_l";
-    URBI_SEND_COMMAND_C(*outputStream,
-      "var " << rLinkName <<" = URTP.new|\n"
-      << rLinkName << ".sourceContext = lobby.uid|\n");
+    URBI_SEND_COMMAND_C
+      (*outputStream,
+       libport::format("var %s = URTP.new|\n"
+                       "%s.sourceContext = lobby.uid|\n",
+                       rLinkName, rLinkName));
     // Now asynchronously ask the remote object to listen and to report
     // the port number.
     GD_SINFO_TRACE("fetching engine listen port...");
     backend_->setCallback(
       callback(*this, &RemoteUContextImpl::onRTPListenMessage),
       (URBI_REMOTE_RTP_INIT_CHANNEL + key).c_str());
-    URBI_SEND_COMMA_COMMAND_C(*outputStream,
-      "Channel.new(\"" URBI_REMOTE_RTP_INIT_CHANNEL + key + "\") <<"
-        + rLinkName + ".listen(\"0.0.0.0\", \"0\")");
+    URBI_SEND_COMMA_COMMAND_C
+      (*outputStream,
+       libport::format("Channel.new(\"%s%s\") << %s.listen(\"0.0.0.0\", \"0\")",
+                       URBI_REMOTE_RTP_INIT_CHANNEL, key, rLinkName));
     rtpLinks[key]  = 0; // Not ready yet.
   }
 
   UCallbackAction RemoteUContextImpl::onRTPListenMessage(const UMessage& mport)
-  { // Second stage of RTP initialization: the remote is listening.
+  {
+    // Second stage of RTP initialization: the remote is listening.
     if (mport.type != MESSAGE_DATA
         || mport.value->type != DATA_DOUBLE)
     {
@@ -456,13 +460,13 @@ namespace urbi
     std::string name = owner_->get_name();
     size_t p = name.find_first_of(".");
     if (p == name.npos)
-      throw std::runtime_error("invalid argument to unnotify: "+name);
+      throw std::runtime_error("unnotify: invalid argument: " + name);
     // Each UVar creation and each notifychange causes an 'external
     // var' message, so when the UVar dies, creation count is
     // callbacks.size +1.
     ctx->send(libport::format("UObject.unnotify(\"%s\", \"%s\", %s)|",
-                         name.substr(0, p), name.substr(p+1, name.npos),
-                         callbacks_.size()+1).c_str());
+                              name.substr(0, p), name.substr(p+1, name.npos),
+                              callbacks_.size()+1));
     libport::BlockLock bl(ctx->tableLock);
     foreach(RemoteUGenericCallbackImpl* c, callbacks_)
     {

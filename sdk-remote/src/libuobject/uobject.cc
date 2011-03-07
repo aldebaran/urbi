@@ -1024,13 +1024,11 @@ namespace urbi
       // Do not use call, we must be foreground.
       // Do not send any other message until we get a reply.
       backend_->lockQueue();
-      send("binaryMode("
-           + string_cast(mode)
-           + ",\"remotecontext_setmode\");");
-      delete backend_->waitForTag("remotecontext_setmode", 0);
-      /* Change the urbiscript outputstream to one that encapsulates in UValue
-       * and serializes.
-      */
+      const char* tag = "remotecontext_setmode";
+      send(libport::format("binaryMode(%s, \"%s\");\n", mode, tag));
+      delete backend_->waitForTag(tag, 0);
+      // Change the urbiscript outputstream to one that encapsulates
+      // in UValue and serializes.
       if (mode)
       {
         if (!oarchive)
