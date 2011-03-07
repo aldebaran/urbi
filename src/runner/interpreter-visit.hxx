@@ -151,6 +151,7 @@ namespace runner
     object::rCode exp;
     object::EventHandler* current;
     std::vector<Subscription> subscriptions;
+    object::rProfile profile;
   };
 
   LIBPORT_SPEED_INLINE object::rObject
@@ -162,17 +163,32 @@ namespace runner
     // Do not leave dependencies_log to true while registering on dependencies
     // below.
     {
+
       object::objects_type args;
       args.push_back(data->exp);
+      bool profiled = false;
       try
       {
+        const ast::Routine* ast = dynamic_cast<const ast::Routine*>
+          (data->exp->ast_get().get());
+        assert(ast);
+        libport::Symbol name(libport::format("at: %s", *ast->body_get()));
+        if (!r.profile_ && data->profile)
+        {
+          profiled = true;
+          r.profile_start(data->profile, name, data->exp.get());
+        }
         r.dependencies_log_ = true;
-        v = r.apply(data->exp, SYMBOL(UL_UL_watch), args);
+        v = r.apply(data->exp, name, args);
         r.dependencies_log_ = false;
+        if (profiled)
+          r.profile_stop();
       }
       catch (...)
       {
         r.dependencies_log_ = false;
+        if (profiled)
+          r.profile_stop();
         throw;
       }
       unsigned hooks_removed = 0;
@@ -296,15 +312,16 @@ namespace runner
       (operator()(e->exp_get().get()).get());                           \
                                                                         \
     GD_CATEGORY(Urbi.At);                                               \
-    GD_FPUSH_TRACE("Create watch event: %s", code->body_string());    \
+    GD_FPUSH_TRACE("Create watch event: %s", code->body_string());      \
                                                                         \
     object::rEvent res = new object::Event;                             \
-    WatchEventData* data =                                            \
-      new WatchEventData(res, code);                                  \
-    res->destructed_get().connect(boost::bind(&watch_stop, data));    \
+    WatchEventData* data =                                              \
+      new WatchEventData(res, code);                                    \
+    data->profile = profile_;                                           \
+    res->destructed_get().connect(boost::bind(&watch_stop, data));      \
     /* Maintain that event alive as long as it is subscribed to. */     \
-    res->subscribed_get().connect(boost::bind(watch_ward, data));     \
-    res->unsubscribed_get().connect(boost::bind(watch_unward, data)); \
+    res->subscribed_get().connect(boost::bind(watch_ward, data));       \
+    res->unsubscribed_get().connect(boost::bind(watch_unward, data));   \
     /* Test it a first time. */                                         \
     Fun(data);                                                          \
                                                                         \
