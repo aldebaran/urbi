@@ -31,8 +31,8 @@ var profile = System.profile(function() { echo("foo") });
 [:]  Yields:                    0
 [:]  Total time (us):         112
 [:]  Wall-clock time (us):    112
-[:]  Function calls:           15
-[:]  Max depth:                 4
+[:]  Function calls:           16
+[:]  Max depth:                 5
 [:]
 [:]  .-------------------------------------------------------------------.
 [:]  |   function   |   %    | cumulative |  self  |  calls  |   self    |
@@ -67,7 +67,7 @@ var profile = System.profile(function() { echo("foo") });
   The maximum function call depth reached.
 \begin{urbiassert}
 // Example continued from Construction.
-profile.maxFunctionCallDepth == 4;
+profile.maxFunctionCallDepth == 5;
 \end{urbiassert}
 
 \item[Function] See \refObject{Profile.Function}.
@@ -76,7 +76,7 @@ profile.maxFunctionCallDepth == 4;
   The total number of function calls made.
 \begin{urbiassert}
 // Example continued from Construction.
-profile.totalCalls == 15;
+profile.totalCalls == 16;
 \end{urbiassert}
 
 \item[totalTime]%
