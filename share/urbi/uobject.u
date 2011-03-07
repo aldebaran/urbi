@@ -837,8 +837,9 @@ class Global.'external'
     var fullname = objname + "." + varname|
     var obj = getSlot(objname)|
     if (isbin)
-    {  // each Binary UVar uses its own RTP connection
-      // Those are UObjects, they persist so local variables are fine.
+    {
+      // each Binary UVar uses its own RTP connection.  Those are
+      // UObjects, they persist so local variables are fine.
       (var lrtp, var rrtp) = makeRTPPair(lobby)|
       rrtp.localDeliver = fullname|
       lrtp.sendVar(obj.getSlot(varname))|
@@ -847,8 +848,8 @@ class Global.'external'
       disown(monitorRTP(lrtp, rrtp,
         closure()
         {
-                          remoteNotifyChange(objname, varname, fr)|
-                          var lobby.noRTP = true
+          remoteNotifyChange(objname, varname, fr)|
+          var lobby.noRTP = true
         }))|
     }
     else
@@ -857,7 +858,8 @@ class Global.'external'
       //wall("rtp mode for " + varname)|
       lobby.'$uobjectMutex': if (!lobby.hasSlot("sharedRTP"))
       {
-        try {
+        try
+        {
           (var lrtp, var rrtp) = makeRTPPair(lobby)|
           //wall("instanciating shared rtp for " + lobby +":" + lrtp)|
           var lobby.sharedRTP = lrtp|
@@ -1046,7 +1048,7 @@ class Global.'external'
 
     if (uobjects.hasLocalSlot("URTP"))
       // Also kill local RTP uobjects linked to this lobby.
-      for (var o: l.localSlotNames)
+      for| (var o: l.localSlotNames)
         if (l.getSlot(o).isA(URTP))
           l.getSlot(o).destroy;
 
