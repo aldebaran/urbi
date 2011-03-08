@@ -8,23 +8,23 @@
  * See the LICENSE file for more information.
  */
 
-#ifndef FACTORY_UFACTORY_HH
-# define FACTORY_UFACTORY_HH
+#ifndef MACHINE_UMACHINE_HH
+# define MACHINE_UMACHINE_HH
 
 // Include the UObject declarations.
 # include <urbi/uobject.hh>
 
 // We wrap factories.
-# include "factory.hh"
+# include "machine.hh"
 
-/// A UObject wrapping a factory object.
-class UFactory
+/// A UObject wrapping a machine object.
+class UMachine
   : public urbi::UObject
 {
 public:
   /// C++ contructor.
   /// \param name  name given to the instance.
-  UFactory(const std::string& name);
+  UMachine(const std::string& name);
 
   /// Urbi constructor.
   /// \param d  the duration of the assembly process.
@@ -32,11 +32,11 @@ public:
   /// \return 0 on success.
   int init(ufloat d);
 
-  /// Wrapper around Factory::operator().
+  /// Wrapper around Machine::operator().
   std::string assemble(std::list<std::string> components);
 
   /// Function notified when the duration is changed.
-  /// \param v   the UVar being modified (i.e., UFactory::duration).
+  /// \param v   the UVar being modified (i.e., UMachine::duration).
   /// \return 0  on success.
   int duration_set(urbi::UVar& v);
 
@@ -44,7 +44,7 @@ private:
   /// The duration of the assembly process.
   urbi::UVar duration;
 
-  /// The actual factory, wrapped in this UObject.
-//  Factory* factory;
+  /// The actual machine, wrapped in this UObject.
+  Machine* machine;
 };
-#endif // ! FACTORY_UFACTORY_HH
+#endif // ! MACHINE_UMACHINE_HH

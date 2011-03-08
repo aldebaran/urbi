@@ -11,16 +11,16 @@
 // A wrapper around Boost.Foreach.
 #include <libport/foreach.hh>
 
-#include "factory.hh"
+#include "machine.hh"
 
-Factory::Factory(float d)
+Machine::Machine(float d)
   : duration(d)
 {
-  aver(0 <= d);
+  assert(0 <= d);
 }
 
 std::string
-Factory::operator()(const strings& components) const
+Machine::operator()(const strings& components) const
 {
   // Waiting for duration seconds.
   useconds_t one_second = 1000 * 1000;

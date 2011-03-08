@@ -9,10 +9,10 @@
 # I don't know yet how to avoid this painful list.
 UOBJECTS +=					\
   test/all					\
-  test/factory					\
   test/generic					\
   test/issue-3699				\
   test/lib-urbi					\
+  test/machine					\
   test/remote					\
   test/sensor					\
   test/sensor2					\
@@ -36,10 +36,10 @@ UOBJECTS +=					\
 #  printf '%s: $(wildcard $(srcdir)/%s/*)\n' ${i%.uob} $i
 # done
 uobjects/test/all$(DLMODEXT): $(wildcard $(srcdir)/uobjects/test/all.uob/*)
-uobjects/test/factory$(DLMODEXT): $(wildcard $(srcdir)/uobjects/test/factory.uob/*)
 uobjects/test/generic$(DLMODEXT): $(wildcard $(srcdir)/uobjects/test/generic.uob/*)
 uobjects/test/issue-3699(DLMODEXT): $(wildcard $(srcdir)/uobjects/test/issue-3699.uob/*)
 uobjects/test/lib-urbi$(DLMODEXT): $(wildcard $(srcdir)/uobjects/test/liburbi.uob/*)
+uobjects/test/machine$(DLMODEXT): $(wildcard $(srcdir)/uobjects/test/machine.uob/*)
 uobjects/test/remote$(DLMODEXT): $(wildcard $(srcdir)/uobjects/test/remote.uob/*)
 uobjects/test/sensor$(DLMODEXT): $(wildcard $(srcdir)/uobjects/test/sensor.uob/*)
 uobjects/test/sensor2$(DLMODEXT): $(wildcard $(srcdir)/uobjects/test/sensor2.uob/*)

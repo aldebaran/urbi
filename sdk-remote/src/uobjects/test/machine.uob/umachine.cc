@@ -8,59 +8,58 @@
  * See the LICENSE file for more information.
  */
 
-// A wrapper around Boost.Foreach.
-#include <libport/foreach.hh>
+#include "umachine.hh"
 
-#include "ufactory.hh"
-
-// Register the UFactory UObject in the Urbi world.
-UStart(UFactory);
+// Register the UMachine UObject in the Urbi world.
+UStart(UMachine);
 
 // Bouncing the name to the UObject constructor is mandatory.
-UFactory::UFactory(const std::string& name)
+UMachine::UMachine(const std::string& name)
   : urbi::UObject(name)
-//  , factory(0)
+  , machine(0)
 {
   // Register the Urbi constructor.  This is the only mandatory
   // part of the C++ constructor.
-  UBindFunction(UFactory, init);
+  UBindFunction(UMachine, init);
 }
 
 int
-UFactory::init(ufloat d)
+UMachine::init(ufloat d)
 {
   // Failure on invalid arguments.
   if (d < 0)
     return 1;
 
   // Bind the functions, i.e., declare them to the Urbi world.
-  UBindFunction(UFactory, assemble);
+  UBindFunction(UMachine, assemble);
+  UBindThreadedFunctionRename
+    (UMachine, assemble, "threadedAssemble", urbi::LOCK_FUNCTION);
   // Bind the UVars before using them.
-  UBindVar(UFactory, duration);
+  UBindVar(UMachine, duration);
 
   // Set the duration.
   duration = d;
-  // Build the factory.
-  //factory = new Factory(d);
+  // Build the machine.
+  machine = new Machine(d);
 
   // Request that duration_set be invoked each time duration is
   // changed.  Declared after the above "duration = d" since we don't
   // want it to be triggered for this first assignment.
-  UNotifyChange(duration, &UFactory::duration_set);
+  UNotifyChange(duration, &UMachine::duration_set);
 
   // Success.
   return 0;
 }
 
 int
-UFactory::duration_set(urbi::UVar& v)
+UMachine::duration_set(urbi::UVar& v)
 {
-  //aver(factory);
+  assert(machine);
   ufloat d = static_cast<ufloat>(v);
   if (0 <= d)
   {
     // Valid value.
-    // factory->duration = d;
+    machine->duration = d;
     return 0;
   }
   else
@@ -70,24 +69,10 @@ UFactory::duration_set(urbi::UVar& v)
 
 
 std::string
-UFactory::assemble(std::list<std::string> components)
+UMachine::assemble(std::list<std::string> components)
 {
-  //aver(factory);
+  assert(machine);
 
-  // duration is in seconds.
-  useconds_t one_second = 1000 * 1000;
-  long duration_us = static_cast<int>(duration) * one_second;
-
-  // Iterate over the list of strings (using Boost.Foreach), and
-  // concatenate them in res.
-  std::string res;
-  foreach (const std::string& s, components)
-  {
-    yield_for(duration_us);
-    res += s;
-  }
-  return res;
-
-  // Bounce to Factory::operator().
-//  return (*factory)(components);
+  // Bounce to Machine::operator().
+  return (*machine)(components);
 }

@@ -8,18 +8,18 @@
  * See the LICENSE file for more information.
  */
 
-#ifndef FACTORY_FACTORY_HH
-# define FACTORY_FACTORY_HH
+#ifndef MACHINE_MACHINE_HH
+# define MACHINE_MACHINE_HH
 
 # include <urbi/uobject.hh>
 
-class Factory
+class Machine
 {
 public:
   /// Construction.
   /// \param duration  how long the assembly process takes.
   ///                  In seconds.
-  Factory(float duration);
+  Machine(float duration);
 
   /// Lists of strings.
   typedef std::list<std::string> strings;
@@ -32,4 +32,4 @@ public:
   float duration;
 };
 
-#endif // ! FACTORY_FACTORY_HH
+#endif // ! MACHINE_MACHINE_HH
