@@ -146,9 +146,19 @@ urbi_sdk_sources =				\
 REVISION_FILE = revision.sty
 BUILT_SOURCES += $(REVISION_FILE)
 CLEANFILES += config.sty
+REVISION_FILE_UPDATE =				\
+  $(VERSIONIFY) 				\
+  --directory --cache=$(top_srcdir)/.version 	\
+  --latex=$(REVISION_FILE)
 # Don't depend on .version, it changes too often.
-$(REVISION_FILE):
-	$(VERSIONIFY) --directory --cache=$(top_srcdir)/.version --latex=$@
+$(REVISION_FILE):; $(REVISION_FILE_UPDATE)
+
+# Override the default rule to ensure that the revision file is update
+# each time we update the documentation.
+$(PDFS): %.pdf: %.tex $(share_tex_dependencies)
+	$(AM_V_GEN) $(REVISION_FILE_UPDATE)
+	$(AM_V_at) $(TEXI2PDF) $(TEXI2PDFFLAGS) -o $@ $<
+
 EXTRA_DIST += $(urbi_sdk_sources)
 urbi_sdk_deps = 				\
   config.sty					\
