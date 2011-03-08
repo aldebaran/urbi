@@ -80,13 +80,11 @@ CONVERT_TO_EPS =				\
 CLEANFILES += $(PDF_IMAGES) $(EPS_IMAGES)
 
 %.eps: %.pdf
-	$(AM_V_GEN)
-	$(AM_V_at)$(CONVERT_TO_EPS)
+	$(AM_V_GEN)$(CONVERT_TO_EPS)
 # We have png => pdf => eps, but the result is poor, and it even fails
 # with old versions of ghostscript.
 %.eps: %.png
-	$(AM_V_GEN)
-	$(AM_V_at)$(CONVERT_TO_EPS)
+	$(AM_V_GEN)$(CONVERT_TO_EPS)
 CLEANFILES += $(EPS_IMAGES)
 
 
@@ -114,8 +112,7 @@ TEX4HTFLAGS = urbi-style,2,sections+
 TEXI2HTMLFLAGS += --tex4ht --tex4ht-options=$(TEX4HTFLAGS)
 TEX4HT_POST = $(abs_top_srcdir)/build-aux/bin/tex4ht-post
 %.htmldir: %.tex $(share_tex_dependencies) urbi-style.cfg
-	$(AM_V_GEN)
-	$(AM_V_at)rm -rf $@ $@.tmp
+	$(AM_V_GEN)rm -rf $@ $@.tmp
 	$(AM_V_at)$(mkdir_p) $@.tmp || true
 	$(AM_V_at)$(TEXI2HTML) $(TEXI2HTMLFLAGS) -o $@.tmp/$(notdir $*).html $<
 	$(AM_V_at)cd $@.tmp \
