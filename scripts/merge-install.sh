@@ -9,6 +9,7 @@ files=
 verbose=false
 vcredist="/mnt/share/tools/vcredist/vcredist_x86-vcxx-2008.exe"
 comp="vcxx-2008"
+version=
 installer="$HOME/.wine/drive_c/Program Files/NSIS/makensis.exe"
 installerargs="/NOCD share/installer/installer.nsh"
 # Location of installer.nsh, will create a symlink to it if set
@@ -46,6 +47,8 @@ Options:
                                 [$vcredist]
   --comp                        version of visual studio
                                 [$comp]
+  --version                     version of Urbi
+                                [$version]
   --gostai-console		Gostai console installer
 				[$gostaiconsole]
   --gostai-editor		Gostai editor installer
@@ -67,6 +70,7 @@ do
   (-t|--templateloc) shift; templateloc=$1;;
   (--vcredist) shift; vcredist=$1;;
   (--comp) shift; comp=$1;;
+  (--version) shift; version=$1;;
   (--gostai-console) shift; gostaiconsole=$1;;
   (--gostai-editor) shift; gostaieditor=$1;;
   (-d|--debug) set -x ;;
@@ -139,8 +143,8 @@ if test -n "templateloc"; then
   ln -s $templateloc share/templates
 fi
 
-verb "running '$installer' /D$comp $installerargs"
-wine "$installer" "/D$comp" $installerargs
+verb "running '$installer' /D$comp /DVERSION=$version $installerargs"
+wine "$installer" "/D$comp" "/DVERSION=$version" $installerargs
 
 if test -n "$output"; then
   mv "$dir/merge/gostai-engine-runtime.exe" "$output"

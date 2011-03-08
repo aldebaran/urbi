@@ -76,7 +76,7 @@ find_dual ()
   return 1
 }
 
-get_instaler_name ()
+get_installer_name ()
 {
   local f="$1"
   local nod="no-doc"
@@ -85,6 +85,14 @@ get_instaler_name ()
   f=${f/-$nod/}
   f=${f/.zip/.exe}
   echo "$f"
+}
+
+
+# extract the version out of the upname.
+get_version()
+{
+  echo $upname | \
+      sed 's,.*/[^0-9]*\([-0-9.]\+\)\(-g[0-9a-f]\+\)\?-.*,\1\2,'
 }
 
 
@@ -121,6 +129,7 @@ tools=$HOME/share/tools
 vcredist="vcredist_x86-$COMP.exe"
 gostai_console="gostai-console-2.6-win32.exe"
 gostai_editor="gostai-editor-2.5-win32.exe"
+version=$(get_version)
 
 find_prog $MD5SUM gmd5sum md5sum
 MD5SUM=$find_prog_res
@@ -150,7 +159,7 @@ updir=$(dirname "$upname")
 my_zip="$upname.zip"
 # other_zip represents the archive build by the other slave.
 other_zip=$(find_dual "$my_zip")
-installer=$(get_instaler_name "$(basename $my_zip)")
+installer=$(get_installer_name "$(basename $my_zip)")
 
 if test -r "$my_zip"                             \
     -a -r "$other_zip"                           \
@@ -161,6 +170,7 @@ if test -r "$my_zip"                             \
   $srcdir/scripts/merge-install.sh -v                           \
       --vcredist "$tools/vcredist/$vcredist"                    \
       --comp "$COMP"                                            \
+      --version "$version"                                      \
       --templateloc "$srcdir/share/templates"                   \
       --installscriptloc "$srcdir/share/installer/"             \
       --gostai-console "$tools/gostai-console/$gostai_console"  \

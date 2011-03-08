@@ -21,7 +21,7 @@ outFile gostai-engine-runtime.exe
 ; Text on top of the selection of the list.
 ComponentText "The following components would be installed on your system."
 
-InstallDir "$PROGRAMFILES\Gostai Engine Runtime"
+InstallDir "$PROGRAMFILES\Gostai Engine Runtime\${VERSION}"
 
 ;Get installation folder from registry if available
 InstallDirRegKey HKCU "Software\Gostai Engine" ""
@@ -42,15 +42,16 @@ Section "Urbi" opt_urbi
   File /r share
   WriteUninstaller "$INSTDIR\Uninstall.exe"
   CreateDirectory "$SMPROGRAMS\Gostai"
-  CreateShortcut  "$SMPROGRAMS\Gostai\runtime.lnk" "$INSTDIR\bin\urbi.exe" "--interactive --port 54000"
-  CreateShortcut  "$SMPROGRAMS\Gostai\uninstall.lnk" "$INSTDIR\Uninstall.exe"
+  CreateDirectory "$SMPROGRAMS\Gostai\${VERSION}"
+  CreateShortcut  "$SMPROGRAMS\Gostai\${VERSION}\runtime.lnk" "$INSTDIR\bin\urbi.exe" "--interactive --port 54000"
+  CreateShortcut  "$SMPROGRAMS\Gostai\${VERSION}\uninstall.lnk" "$INSTDIR\Uninstall.exe"
 
 ; If the documentation is not installed, use online documentation instead.
   IfFileExists $INSTDIR\share\doc\urbi-sdk\urbi-sdk.pdf 0 no_doc
-    CreateShortcut  "$SMPROGRAMS\Gostai\doc.lnk" "$INSTDIR\share\doc\urbi-sdk\urbi-sdk.pdf"
+    CreateShortcut  "$SMPROGRAMS\Gostai\${VERSION}\doc.lnk" "$INSTDIR\share\doc\urbi-sdk\urbi-sdk.pdf"
   Goto shortcuts_end
 no_doc:
-    CreateShortcut  "$SMPROGRAMS\Gostai\doc.lnk" "http://gostai.com/downloads/urbi-sdk/doc/"
+    CreateShortcut  "$SMPROGRAMS\Gostai\${VERSION}\doc.lnk" "http://gostai.com/downloads/urbi-sdk/doc/"
 shortcuts_end:
 
 ; Run vcredist to install Visual Studio libraries.
@@ -156,10 +157,10 @@ Section uninstall
   Delete  $INSTDIR\README.txt
   Delete  $INSTDIR\vcredist-x86.exe
   RMDir   $INSTDIR
-  Delete  "$SMPROGRAMS\Gostai\runtime.lnk"
-  Delete  "$SMPROGRAMS\Gostai\doc.lnk"
-  Delete  "$SMPROGRAMS\Gostai\uninstall.lnk"
-  RMDir "$SMPROGRAMS\Gostai"
+  Delete  "$SMPROGRAMS\Gostai\${VERSION}\runtime.lnk"
+  Delete  "$SMPROGRAMS\Gostai\${VERSION}\doc.lnk"
+  Delete  "$SMPROGRAMS\Gostai\${VERSION}\uninstall.lnk"
+  RMDir "$SMPROGRAMS\Gostai\${VERSION}"
   ReadEnvStr $1 VS90COMNTOOLS
   IfErrors done
   Delete  $1\..\..\VC\vcprojects\uobject.vsdir
