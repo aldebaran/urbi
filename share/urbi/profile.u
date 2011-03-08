@@ -19,7 +19,7 @@ requireFile("urbi/control.u");
 | Profiling operations.  |
 `-----------------------*/
 
-class Global.Profile
+do (Profile)
 {
   class Function
   {
@@ -100,4 +100,12 @@ class Global.Profile
     str += "  '--------------'--------'------------'--------'---------'-----------'\n"
            ")"
   };
+};
+
+do (FunctionProfile)
+{
+  function asString()
+  {
+    "Function('%s', %s, %6s, %6s)" % [name, calls, selfTimePer, selfTime]
+  }
 };

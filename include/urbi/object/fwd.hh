@@ -58,6 +58,7 @@ namespace urbi
     Macro(Float);                               \
     Macro(FormatInfo);                          \
     Macro(Formatter);                           \
+    Macro(FunctionProfile);                     \
     Macro(Hash);                                \
     Macro(InputStream);                         \
     Macro(IoService);				\
@@ -71,6 +72,7 @@ namespace urbi
     Macro(Position);                            \
     Macro(Primitive);                           \
     Macro(Process);                             \
+    Macro(Profile);                             \
     Macro(Regexp);                              \
     Macro(Semaphore);                           \
     Macro(Server);                              \

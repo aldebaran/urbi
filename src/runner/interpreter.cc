@@ -30,9 +30,10 @@
 
 #include <kernel/uconnection.hh>
 
+#include <object/profile.hh>
 #include <object/symbols.hh>
-#include <object/urbi-exception.hh>
 #include <object/system.hh>
+#include <object/urbi-exception.hh>
 
 #include <parser/uparser.hh>
 
@@ -89,6 +90,9 @@ namespace runner
                            const std::string& name)
     : Runner(lobby, sched, name)
     , profile_(0)
+    , profile_checkpoint_(0)
+    , profile_function_current_(0)
+    , profile_function_call_depth_(0)
     , ast_(ast)
     , code_(0)
     , result_(0)
@@ -106,6 +110,9 @@ namespace runner
                            const objects_type& args)
     : Runner(lobby, sched, name)
     , profile_(0)
+    , profile_checkpoint_(0)
+    , profile_function_current_(0)
+    , profile_function_call_depth_(0)
     , ast_(0)
     , code_(code)
     , this_(self)
@@ -122,6 +129,9 @@ namespace runner
                            const objects_type& args)
     : Runner(model, name)
     , profile_(0)
+    , profile_checkpoint_(0)
+    , profile_function_current_(0)
+    , profile_function_call_depth_(0)
     , ast_(0)
     , code_(code)
     , args_(args)
@@ -138,6 +148,9 @@ namespace runner
 			   const std::string& name)
     : Runner(model, name)
     , profile_(0)
+    , profile_checkpoint_(0)
+    , profile_function_current_(0)
+    , profile_function_call_depth_(0)
     , ast_(ast)
     , code_(0)
     , result_(0)
@@ -156,6 +169,9 @@ namespace runner
                            const std::string& name)
     : Runner(lobby, sched, name)
     , profile_(0)
+    , profile_checkpoint_(0)
+    , profile_function_current_(0)
+    , profile_function_call_depth_(0)
     , ast_(0)
     , code_(0)
     , job_(job)
@@ -425,83 +441,29 @@ namespace runner
   | Profiling.  |
   `------------*/
 
-  Interpreter::Profile::Profile()
-    : yields_(0)
-    , wall_clock_time_(0)
-    , total_time_(0)
-    , function_calls_(0)
-    , function_call_depth_max_(0)
-    , wrapper_function_seen(false)
-    , checkpoint_(0)
-    , function_call_depth_(0)
-    , function_current_(0)
-  {}
-
-
-  Interpreter::Profile::FunctionProfile::FunctionProfile()
-    : calls_(0)
-    , self_time_(0)
-    , time_(0)
-  {}
-
-  Interpreter::Profile::FunctionProfile&
-  Interpreter::Profile::FunctionProfile::operator+=(const FunctionProfile& rhs)
-  {
-    calls_     += rhs.calls_;
-    self_time_ += rhs.self_time_;
-    time_      += rhs.time_;
-    return *this;
-  }
-
-  Interpreter::Profile&
-  Interpreter::Profile::operator+=(const Profile& rhs)
-  {
-    yields_          += rhs.yields_;
-    wall_clock_time_ += rhs.wall_clock_time_;
-    total_time_      += rhs.total_time_;
-    function_calls_  += rhs.function_calls_;
-
-    function_call_depth_max_ = std::max(function_call_depth_max_,
-                                        rhs.function_call_depth_max_);
-
-    foreach (const FunctionProfiles::value_type& value, rhs.functions_profile_)
-    {
-      FunctionProfiles::iterator it = functions_profile_.find(value.first);
-      if (it != functions_profile_.end())
-        it->second += value.second;
-      else
-        functions_profile_.insert(value);
-    }
-    return *this;
-  }
-
-  libport::utime_t
-  Interpreter::Profile::step()
-  {
-    libport::utime_t now = libport::utime();
-    libport::utime_t res = now - checkpoint_;
-    total_time_ += res;
-    wall_clock_time_ += res;
-    functions_profile_[function_current_].self_time_ += res;
-    checkpoint_ = now;
-    return res;
-  }
-
   void
-  Interpreter::profile_start(Profile* profile)
+  Interpreter::profile_start(Profile* profile, libport::Symbol name,
+                             Object* current, bool count)
   {
     assert(!profile_);
+    assert(profile);
     profile_ = profile;
-    profile_->checkpoint_ = libport::utime();
-    profile_->functions_profile_[0].name_ = SYMBOL(LT_profiled_GT);
-    ++profile_->functions_profile_[0].calls_;
+    profile_checkpoint_ = libport::utime();
+    profile_function_current_ = current;
+    if (!profile_->functions_profile_[current])
+    {
+      profile_->functions_profile_[current] = new FunctionProfile;
+      profile_->functions_profile_[current]->name_ = name;
+    }
+    if (count)
+      ++profile_->functions_profile_[current]->calls_;
   }
 
   void
   Interpreter::profile_stop()
   {
     assert(profile_);
-    profile_->step();
+    profile_->step(profile_checkpoint_, profile_function_current_);
     profile_ = 0;
   }
 
@@ -516,7 +478,7 @@ namespace runner
   {
     if (profile_)
     {
-      profile_->step();
+      profile_->step(profile_checkpoint_, profile_function_current_);
       ++profile_->yields_;
     }
   }
@@ -527,8 +489,8 @@ namespace runner
     if (profile_)
     {
       libport::utime_t now = libport::utime();
-      profile_->wall_clock_time_ += now - profile_->checkpoint_;
-      profile_->checkpoint_ = now;
+      profile_->wall_clock_time_ += now - profile_checkpoint_;
+      profile_checkpoint_ = now;
     }
   }
 

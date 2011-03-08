@@ -98,6 +98,8 @@ dist_libuobject@LIBSFX@_la_SOURCES +=		\
   object/path.cc				\
   object/position.cc				\
   object/primitive.cc				\
+  object/profile.cc				\
+  object/profile.hh				\
   object/register.cc				\
   object/root-classes.cc			\
   object/root-classes.hh			\

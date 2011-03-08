@@ -134,7 +134,8 @@ namespace urbi
     Event::onEvent(rExecutable guard, rExecutable enter, rExecutable leave, bool sync)
     {
       rActions actions(new Actions(guard, enter, leave, sync));
-      runner::Runner& r = ::kernel::runner();
+      runner::Interpreter& r = ::kernel::interpreter();
+      actions->profile = r.profile_get();
       actions->tag_stack = r.tag_stack_get();
       actions->lobby = r.lobby_get();
       foreach (object::rTag& tag, actions->tag_stack)
@@ -203,12 +204,16 @@ namespace urbi
 
     sched::rJob
     Event::spawn_actions_job(rLobby lobby, rExecutable e,
-                             const objects_type& args)
+                             rProfile profile, const objects_type& args)
     {
       typedef rObject(Executable::*fun_type)(objects_type);
-      runner::Runner& r = ::kernel::runner();
-      return e->make_job(lobby ? lobby : r.lobby_get(), r.scheduler_get(),
-                         args, SYMBOL(at));
+      runner::Interpreter& r = ::kernel::interpreter();
+      runner::Interpreter* res =
+        e->make_job(lobby ? lobby : r.lobby_get(),
+                    r.scheduler_get(), args, SYMBOL(event));
+      if (profile)
+        res->profile_start(profile, SYMBOL(event), e.get());
+      return res;
     }
 
     void
@@ -245,9 +250,11 @@ namespace urbi
           if (detach && !actions->sync)
           {
             if (actions->enter)
-              enter = spawn_actions_job(actions->lobby, actions->enter, args);
+              enter = spawn_actions_job(actions->lobby, actions->enter,
+                                        actions->profile, args);
             if (actions->leave)
-              leave = spawn_actions_job(actions->lobby, actions->leave, args);
+              leave = spawn_actions_job(actions->lobby, actions->leave,
+                                        actions->profile, args);
 
             // Start jobs simultaneously.
             if (actions->enter)

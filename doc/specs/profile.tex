@@ -11,18 +11,11 @@
 A \lstinline|Profile| object contains information about the efficiency of a
 piece of code.
 
-\subsection{Prototypes}
+\subsection{Example}
 
-\begin{refObjects}
-\item[Object]
-\end{refObjects}
+\subsubsection{Basic profiling}
 
-\subsection{Construction}
-
-\lstinline|Profile| objects are not meant to be cloned as they are created
-by \refSlot[System]{profile} internal machinery. Lines are sorted by
-decreasing ``self time''. Note that the \lstinline|<profiled>| special
-function stands for the function given in parameter.
+One can profile a piece of code with the \refSlot[System]{profile} function.
 
 \begin{urbiscript}
 var profile = System.profile(function() { echo("foo") });
@@ -31,8 +24,8 @@ var profile = System.profile(function() { echo("foo") });
 [:]  Yields:                    0
 [:]  Total time (us):         112
 [:]  Wall-clock time (us):    112
-[:]  Function calls:           15
-[:]  Max depth:                 4
+[:]  Function calls:           16
+[:]  Max depth:                 5
 [:]
 [:]  .-------------------------------------------------------------------.
 [:]  |   function   |   %    | cumulative |  self  |  calls  |   self    |
@@ -54,6 +47,128 @@ var profile = System.profile(function() { echo("foo") });
 [:])
 \end{urbiscript}
 
+The result is a \refObject{Profile} object that contains information about
+which functions where used when evaluating the given code, how many time they
+were called, how much time was spent in them, \ldots Lines are sorted by
+decreasing ``self time''.  Note that the \lstinline|<profiled>| special
+function stands for the function given in parameter.  Every line is
+represented by a \refObject{Profile.Function} object, see its documentation
+for the meaning of every column.
+
+\subsubsection{Asynchronous profiling}
+
+If the profiled code spawns asynchronous tasks via \lstinline|detach| or
+\lstinline|at| for instance, additional statistics will be included in the
+resulting \refObject{Profile} every time the detached code is executed. This
+is extremely useful to profile asynchronous code based on \lstinline|at| for
+instance.
+
+\begin{urbiscript}
+var Global.x = false|;
+function profiled()
+{
+  at (x)
+    echo("true")
+  onleave
+    echo("false")
+}|;
+
+// This is the profiling for the creation of the 'at'. Note that the
+// condition was already evaluated once, to see whether it should trigger
+// immediately.
+var profile_async = System.profile(&profiled);
+[00000000] Profile(
+[:]  Yields:                    0
+[:]  Total time (us):         485
+[:]  Wall-clock time (us):    485
+[:]  Function calls:           15
+[:]  Max depth:                 7
+[:]
+[:]  .-------------------------------------------------------------------.
+[:]  |   function   |   %    | cumulative |  self  |  calls  |   self    |
+[:]  |              |        |    (us)    |  (us)  |         | (us/call) |
+[:]  |--------------+--------+------------+--------+---------+-----------|
+[:]  |   <profiled> |  38.14 |        185 |    185 |       1 |       185 |
+[:]  |          new |  13.20 |        249 |     64 |       1 |        64 |
+[:]  |    at: { x } |  12.37 |        309 |     60 |       1 |        60 |
+[:]  |      onEvent |  10.10 |        358 |     49 |       1 |        49 |
+[:]  |  callMessage |   5.77 |        386 |     28 |       1 |        28 |
+[:]  |          map |   5.15 |        411 |     25 |       1 |        25 |
+[:]  |     evalArgs |   3.92 |        430 |     19 |       1 |        19 |
+[:]  |        clone |   3.30 |        446 |     16 |       1 |        16 |
+[:]  |   updateSlot |   2.47 |        458 |     12 |       1 |        12 |
+[:]  |        each| |   2.06 |        468 |     10 |       1 |        10 |
+[:]  |      getSlot |   1.44 |        475 |      7 |       1 |         7 |
+[:]  |         init |   0.82 |        479 |      4 |       1 |         4 |
+[:]  |            x |   0.82 |        483 |      4 |       2 |         2 |
+[:]  |         args |   0.41 |        485 |      2 |       1 |         2 |
+[:]  '--------------'--------'------------'--------'---------'-----------'
+[:])
+
+// Trigger the at twice.
+Global.x = true;
+[00106213] true
+[00106213] *** true
+Global.x = false;
+[00172119] false
+[00172119] *** false
+
+// The profile now includes additional statistic about the evaluations of
+// the condition and the bodies of the at.
+profile_async;
+[00178623] Profile(
+[:]  Yields:                    2
+[:]  Total time (us):        1307
+[:]  Wall-clock time (us):   1307
+[:]  Function calls:           51
+[:]  Max depth:                 7
+[:]
+[:]  .-------------------------------------------------------------------.
+[:]  |   function   |   %    | cumulative |  self  |  calls  |   self    |
+[:]  |              |        |    (us)    |  (us)  |         | (us/call) |
+[:]  |--------------+--------+------------+--------+---------+-----------|
+[:]  |        event |  15.61 |        204 |    204 |       1 |       204 |
+[:]  |        event |  15.00 |        400 |    196 |       1 |       196 |
+[:]  |   <profiled> |  14.15 |        585 |    185 |       1 |       185 |
+[:]  |    at: { x } |   9.26 |        706 |    121 |       3 |    40.333 |
+[:]  |         echo |   6.12 |        786 |     80 |       2 |        40 |
+[:]  |        apply |   5.66 |        860 |     74 |       2 |        37 |
+[:]  |        lobby |   4.97 |        925 |     65 |       4 |    16.250 |
+[:]  |          new |   4.90 |        989 |     64 |       1 |        64 |
+[:]  |      onEvent |   3.75 |       1038 |     49 |       1 |        49 |
+[:]  |         send |   2.60 |       1072 |     34 |       2 |        17 |
+[:]  |  callMessage |   2.14 |       1100 |     28 |       1 |        28 |
+[:]  |      getSlot |   1.99 |       1126 |     26 |       3 |     8.667 |
+[:]  |          map |   1.91 |       1151 |     25 |       1 |        25 |
+[:]  |            + |   1.53 |       1171 |     20 |       4 |         5 |
+[:]  |     evalArgs |   1.45 |       1190 |     19 |       1 |        19 |
+[:]  |            + |   1.30 |       1207 |     17 |       2 |     8.500 |
+[:]  |        clone |   1.22 |       1223 |     16 |       1 |        16 |
+[:]  |     asString |   1.07 |       1237 |     14 |       2 |         7 |
+[:]  |        apply |   1.07 |       1251 |     14 |       2 |         7 |
+[:]  |   updateSlot |   0.92 |       1263 |     12 |       1 |        12 |
+[:]  |        lobby |   0.84 |       1274 |     11 |       4 |     2.750 |
+[:]  |        each| |   0.77 |       1284 |     10 |       1 |        10 |
+[:]  |        Lobby |   0.54 |       1291 |      7 |       4 |     1.750 |
+[:]  |            x |   0.46 |       1297 |      6 |       3 |         2 |
+[:]  |         init |   0.31 |       1301 |      4 |       1 |         4 |
+[:]  |            x |   0.31 |       1305 |      4 |       1 |         4 |
+[:]  |         args |   0.15 |       1307 |      2 |       1 |         2 |
+[:]  '--------------'--------'------------'--------'---------'-----------'
+[:])
+\end{urbiscript}
+
+\subsection{Prototypes}
+
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
+
+\subsection{Construction}
+
+\lstinline|Profile| objects are not meant to be cloned as they are created
+by \refSlot[System]{profile} internal machinery.
+
 \subsection{Slots}
 
 \begin{urbiscriptapi}
@@ -67,7 +182,7 @@ var profile = System.profile(function() { echo("foo") });
   The maximum function call depth reached.
 \begin{urbiassert}
 // Example continued from Construction.
-profile.maxFunctionCallDepth == 4;
+profile.maxFunctionCallDepth == 5;
 \end{urbiassert}
 
 \item[Function] See \refObject{Profile.Function}.
@@ -76,7 +191,7 @@ profile.maxFunctionCallDepth == 4;
   The total number of function calls made.
 \begin{urbiassert}
 // Example continued from Construction.
-profile.totalCalls == 15;
+profile.totalCalls == 16;
 \end{urbiassert}
 
 \item[totalTime]%

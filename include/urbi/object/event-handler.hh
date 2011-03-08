@@ -44,7 +44,7 @@ namespace urbi
       typedef Event::listeners_type listeners_type;
 
       /// Leave callbacks to trigger on stop.
-      typedef boost::tuple<rExecutable, objects_type, bool> stop_job_type;
+      typedef boost::tuple<rActions, objects_type, bool> stop_job_type;
       typedef std::vector<stop_job_type> stop_jobs_type;
 
       /// Listener jobs execution function.

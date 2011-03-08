@@ -48,6 +48,7 @@
 #include <object/uconnection.hh>
 #include <object/finalizable.hh>
 #include <object/ioservice.hh>
+#include <object/profile.hh>
 #include <object/semaphore.hh>
 #include <object/server.hh>
 #include <object/socket.hh>
@@ -89,6 +90,8 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER(Barrier);
     URBI_CXX_OBJECT_REGISTER(Hash);
     URBI_CXX_OBJECT_REGISTER(UConnection);
+    URBI_CXX_OBJECT_REGISTER(Profile);
+    URBI_CXX_OBJECT_REGISTER(FunctionProfile);
   } // namespace object
 } // namespace urbi
 
