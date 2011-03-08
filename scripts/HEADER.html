@@ -1,12 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html lang="en-US" xml:lang="en-US" xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <title>Urbi 2.6</title>
+    <title>Urbi 2.7</title>
     <link rel="stylesheet" type="text/css" href="style.css"></link>
   </head>
 
   <body>
-    <h1><img src="../img/2.6/cube-and-disc.png" class="title" alt="Urbi 2.6" /></h1>
+    <h1><img src="../img/2.7/cube-and-disc.png" class="title" alt="Urbi 2.7" /></h1>
 
     <div class="section">
       <p class="abstract">
@@ -16,32 +16,82 @@
 	found <a href="http://www.gostai.com/products/urbi">here</a>.
       </p>
 
-      <h2>What's new in Urbi 2.6</h2>
+      <h2>What's new in Urbi 2.7</h2>
       <div class="section">
-	<p>
-	  This release was focused on improving runtime performances,
-	  and addressing bugs.  We expect users to find some
-	  significant improvements.
-	</p>
 
-	<p>
-	  It also provides some new features such as (strict) variadic
-	  functions.  For instance:
-	</p>
-	<pre style="margin-left:60px;padding:20px;border:1px solid #000000;background:#cccccc;width:500px;">
-function variadic(var a1, var a2, var a3, var args[])
+        <p>
+          This release includes several performance improvements and
+          bug fixes in both the UObject layer, and the urbiscript
+          engine.  Noteworthy changes include:
+        </p>
+        <ul>
+          <li>
+            The Logger object allow to save log information (such as
+            errors, warnings, or traces)
+
+<pre>
+var logger = Logger.new("Category")|;
+
+logger.dump << "Low level debug message"|;
+// Nothing displayed, unless the debug level is set to DUMP.
+
+logger.warn << "something wrong happened, proceeding"|;
+[ Category ] something wrong happened, proceeding
+
+logger.err << "something really bad happened!"|;
+[ Category ] something really bad happened!
+</pre>
+          </li>
+
+          <li> Support to profile urbiscript code (including code
+            running in background such as "at" clauses).
+
+<pre>
+function Float.fact()
 {
-  echo("a1 = %s, a2 = %s, a3 = %s, args = %s"
-       % [a1, a2, a3, args]);
-}|
-variadic(1, 2, 3);
-[00000002] *** a1 = 1, a2 = 2, a3 = 3, args = []
-variadic(1, 2, 3, 4);
-[00000002] *** a1 = 1, a2 = 2, a3 = 3, args = [4]
-variadic(1, 2, 3, 4, 5);
-[00000002] *** a1 = 1, a2 = 2, a3 = 3, args = [4, 5]
-	</pre>
+  if (this <= 1)
+    this
+  else
+    this * (this - 1).fact;
+}|;
+System.profile(function() { 20.fact });
+[00009050] Profile(
+  Yields:                    0
+  Total time (us):         171
+  Wall-clock time (us):    171
+  Function calls:           78
+  Max depth:                21
 
+  .------------------------------------------------------------.
+  |  function  |   %    | cumul |  self  |  calls  |   self    |
+  |            |        |  (us) |  (us)  |         | (us/call) |
+  |------------+--------+-------+--------+---------+-----------|
+  |       fact |  70.18 |   120 |    120 |      20 |         6 |
+  |          - |  10.53 |   138 |     18 |      19 |     0.947 |
+  |         <= |   8.77 |   153 |     15 |      20 |     0.750 |
+  |          * |   8.19 |   167 |     14 |      19 |     0.737 |
+  |   profiled |   2.34 |   171 |      4 |       1 |         4 |
+  '------------'--------'-------'--------'---------'-----------'
+)
+</pre>
+          </li>
+
+          <li> A new construct, "watch", creates an event that allows
+            to monitor any change of an expression.
+
+<pre>
+var x = 0|;
+var y = 0|;
+var e = watch(x + y)|;
+at (e?(var value))
+  echo("x + y = %s" % value);
+x = 1|;
+[00000000] *** x + y = 1
+y = 2|;
+[00000000] *** x + y = 3
+</pre>
+          </li>
+        </ul>
 
 	<p>
 	  See
@@ -78,7 +128,7 @@ variadic(1, 2, 3, 4, 5);
 	    <p>
 	      The files with no architecture specified are BZip2
 	      source tarballs
-	      (<a href="urbi-sdk-2.6.tar.bz2">urbi-sdk-2.6.tar.bz2</a>).
+	      (<a href="urbi-sdk-2.7.tar.bz2">urbi-sdk-2.7.tar.bz2</a>).
 	      Use them only if you are ready to compile Urbi SDK
 	      yourself.
 	    </p>

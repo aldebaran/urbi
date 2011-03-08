@@ -119,8 +119,8 @@ esac
 
 tools=$HOME/share/tools
 vcredist="vcredist_x86-$COMP.exe"
-gostai_console="gostai-console-2.6-rc-1-5-1fc4a11-win32.exe"
-gostai_editor="gostai-editor-2.5-rc-1-17-bac088e-win32.exe"
+gostai_console="gostai-console-2.6-win32.exe"
+gostai_editor="gostai-editor-2.5-win32.exe"
 
 find_prog $MD5SUM gmd5sum md5sum
 MD5SUM=$find_prog_res
