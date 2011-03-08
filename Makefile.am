@@ -6,6 +6,17 @@
 ##
 ## See the LICENSE file for more information.
 
+## Indent so that Automake does not think this endif is its.
+ ifneq ($(MAKE_VERSION),3.82)
+  ifeq ($(MAKELEVEL),0)
+   $(warning ****************************************************)
+   $(warning *** GNU Make 3.81 is known not to work properly. ***)
+   $(warning *** GNU Make 3.82 is recommended.                ***)
+   $(warning *** This is GNU Make $(MAKE_VERSION).                       ***)
+   $(warning ****************************************************)
+  endif
+ endif
+
 include build-aux/make/init.mk
 include build-aux/make/package-version.mk
 include build-aux/make/build-aux.mk
