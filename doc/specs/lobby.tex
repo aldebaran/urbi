@@ -176,7 +176,7 @@ lobby.copyright(true);
 \item[create]
   Instantiate a new Lobby.
 \begin{urbiassert}
-Lobby.create;
+Lobby.create.isA(Lobby);
 \end{urbiassert}
 
 \item[echo](<value>, <channel> = "")%
@@ -222,16 +222,18 @@ Lobby in Lobby.instances;
   Display the end user license agreement of the \usdk.
 \begin{urbiunchecked}
 lobby.license;
-[00000000] *** END USER LICENSE AGREEMENT (1.2)
+[00000000] ***                     GNU AFFERO GENERAL PUBLIC LICENSE
+[00000000] ***                        Version 3, 19 November 2007
 [00000000] ***
-[00000000] *** PLEASE READ THIS AGREEMENT CAREFULLY.  BY USING ALL OR ANY PORTION OF
-[00000000] *** THE SOFTWARE YOU ("YOU" AND "LICENSEE") ACCEPT THE FOLLOWING TERMS
-[00000000] *** FROM GOSTAI S.A.S, FRENCH CORPORATION ("GOSTAI"), REGISTERED AT
-[00000000] *** 489 244 624 RCS PARIS.  YOU AGREE TO BE BOUND BY ALL THE TERMS AND
-[00000000] *** CONDITIONS OF THIS AGREEMENT.  YOU AGREE THAT IT IS ENFORCEABLE AS IF
-[00000000] *** IT WERE A WRITTEN NEGOTIATED AGREEMENT SIGNED BY YOU.  IF YOU DO NOT
-[00000000] *** AGREE TO THE TERMS OF THIS AGREEMENT YOU MUST NOT USE THE SOFTWARE.
+[00000000] ***  Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>
+[00000000] ***  Everyone is permitted to copy and distribute verbatim copies
+[00000000] ***  of this license document, but changing it is not allowed.
 [00000000] ***
+[00000000] ***                             Preamble
+[00000000] ***
+[00000000] ***   The GNU Affero General Public License is a free, copyleft license for
+[00000000] *** software and other kinds of works, specifically designed to ensure
+[00000000] *** cooperation with the community in the case of network server software.
 [00000000] *** [...]
 \end{urbiunchecked}
 
