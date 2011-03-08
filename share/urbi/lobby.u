@@ -73,7 +73,7 @@ do (Lobby)
   // Each each member or \a lines as a line, on \a tag.
   function echoEach(var lines, var tag = "", var prefix = "***")
   {
-    for (var line: lines)
+    for| (var line: lines)
       echo(line, tag, prefix);
   };
 
