@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2009-2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -413,21 +413,21 @@ For instance, this code might seem confusing at first:
 
 \begin{urbiscript}
 var mind = 42;
-[00000001] 42
+[00000002] 42
 function get()
 {
   echo(mind);
 }|;
 get();
-[00000000] *** 42
+[00000003] *** 42
 function Object.get()
 {
   echo(mind)
 }|;
 // Where is my mind?
 Object.get;
-[00000000:error] !!! lookup failed: mind
-[00000000:error] !!!    called from: get
+[00000004:error] !!! lookup failed: mind
+[00000004:error] !!!    called from: get
 \end{urbiscript}
 
 \paragraph{Local variables, slots and targets}
