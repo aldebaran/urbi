@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2009-2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -10,10 +10,13 @@
   {\hyperref[sec:interface:#2]{\lstinline|#2|#1 (\autoref*{sec:interface:#2})}}
 
 \newcommand{\interface}[2][]{%
+  %% It is on purpose that we pass [] to lstinline, because we do in many
+  %% other places, and that would result in index entries that makeindex is
+  %% unable to merge.
   \ifthenelse{\equal{#1}{}}{%
-    \subsection{#2\index{#2@\lstinline{#2}}}%
+    \subsection{#2\index{#2@\lstinline[]{#2}}}%
   }{%
-    \subsection{#2 (subclass of #1)\index{#2@\lstinline{#2}}}%
+    \subsection{#2 (subclass of #1)\index{#2@\lstinline[]{#2}}}%
   }%
   \defObject{Interface.#2}%
   \label{sec:interface:#2}
