@@ -248,43 +248,42 @@ If you wish to bind a function that requires a non-negligible amount of time
 to execute, you can have it execute in a separate thread by calling
 
 % Separate line since lstinline does not word-wrap and this one is quite long.
-\lstinline|UBindThreadedFunction(\var{class-name}, \var{function-name}, \var{lockMode})|.
+\lstinline|UBindThreadedFunction(\var{class-name}, \var{function-name}, \var{lock-mode})|.
 
 The function code will be executed in a separate thread without breaking the
 \us execution semantics.
 
-The \var{lockMode} argument can be used to prevent parallel execution
-of multiple bound functions if your code is not thread-safe. It can be any of
+The \var{lock-mode} argument can be used to prevent parallel execution of
+multiple bound functions if your code is not thread-safe. It can be any of
 the following values.
 \begin{itemize}
-\item \lstinline{LOCK_NONE}\\
+\item \lstindex{LOCK_NONE}\\
   No locking is performed.
-\item \lstinline{LOCK_FUNCTION}\\
+\item \lstindex{LOCK_FUNCTION}\\
   Parallel execution is limited to one instance of the bound function.
-\item \lstinline{LOCK_FUNCTION_DROP}\\
+\item \lstindex{LOCK_FUNCTION_DROP}\\
   Same as \lstinline{LOCK_FUNCTION}, but operations are dropped instead of
   being queued if one is already running.
-\item \lstinline{LOCK_FUNCTION_KEEP_ONE}\\
+\item \lstindex{LOCK_FUNCTION_KEEP_ONE}\\
   Same as \lstinline{LOCK_FUNCTION}, but the queue is limited to one, and
   subsequent calls are dropped.
-\item \lstinline{LOCK_INSTANCE}\\
+\item \lstindex{LOCK_INSTANCE}\\
   Parallel execution is limited to one bound function for each object
   instance.
-\item \lstinline{LOCK_CLASS}\\
+\item \lstindex{LOCK_CLASS}\\
   Parallel execution is limited to one bound function for the class.
-\item \lstinline{LOCK_MODULE}\\
+\item \lstindex{LOCK_MODULE}\\
   Parallel execution is limited to one bound function for the whole module
   (shared object).
 \end{itemize}
 
 Other queue sizes can be used by passing
-\lstinline{LockSpec(LOCK_FUNCTION, myQueueSize)} as \lstinline{lockMode}.
+\lstinline|LockSpec(LOCK_FUNCTION, \var{my-queue-size})| as \var{lock-mode}.
 
-There is restriction to the locking mechanism: you cannot mix multiple locking
-modes: for
-instance a function bound with \lstinline{LOCK_FUNCTION} mode will not prevent
-another function bound with \lstinline{LOCK_INSTANCE} from executing in
-parallel.
+There is a restriction to the locking mechanism: \emph{you cannot mix
+  multiple locking modes}.  For instance a function bound with
+\lstinline{LOCK_FUNCTION} mode will not prevent another function bound with
+\lstinline{LOCK_INSTANCE} from executing in parallel.
 
 You can perform your own locking using semaphores if your code needs a more
 complex locking model.
@@ -398,10 +397,12 @@ class ObjectTracker: public urbi::UObject
     // NotifyChange on our own input port
     UNotifyChange(input, &ObjectTracker::onImage);
   }
-  // Init is empty
+
+  // Init is empty.
   void init()
   {
   }
+
   // onImage is unchanged.
   void onImage(UVar& src)
   {
@@ -409,7 +410,9 @@ class ObjectTracker: public urbi::UObject
     // Processing here.
     val = processing_result;
   }
+
   UVar val;
+
   // Declare our input port.
   InputPort input;
 };
@@ -619,6 +622,7 @@ public:
   // We reuse the same USound for converted data to avoid reallocation.
   USound convertedData;
 }
+
 void SoundAlgorithm::init(UVar& dataSource)
 {
   // initialize convertedData
@@ -631,13 +635,13 @@ void SoundAlgorithm::init(UVar& dataSource)
   convertedData.sampleFormat = SAMPLE_UNSIGNED;
   UNotifyChange(dataSource, &SoundAlgorithm::onData);
 }
+
 void SoundAlgorithm::onData(UVar& v)
 {
   USound src = v;
   convert(src, convertedData);
   // Work on convertedData.
 }
-
 \end{cxx}
 
 \subsection{0-copy mode}
@@ -671,6 +675,7 @@ void OptimizedImageSource::init()
   // Start a timer.
   USetTimer(10);
 }
+
 int OptimizedImageSource::update()
 {
   <Update imageData here>
@@ -696,6 +701,7 @@ void BinaryProcessor::init()
   UBindVar(BinaryProcessor, binaryIn);
   UNotifyChange(binaryIn, &BinaryProcessor::onData);
 }
+
 void BinaryProcessor::onData(UVar& v)
 {
   const UBinary& b = v;
@@ -794,6 +800,7 @@ namespace urbi
   {
     // Here you must fill v with the serialized representation of t.
   }
+
   template<> struct uvalue_caster<MyType>
   {
     MyType operator()(UValue& v)
@@ -824,8 +831,10 @@ Here is a complete commented example to map a simple Point structure between
 struct Point
 {
   // Your struct must have a default constructor.
-  Point():x(0), y(0) {}
-  double x,y;
+  Point()
+    : x(0), y(0)
+  {}
+  double x, y;
 };
 
 // Declare the structure to the cast system. First argument is the struct,
@@ -840,11 +849,13 @@ class Global.Point: UValueSerializable
 {
   var x = 0;
   var y = 0;
+
   function init(var xx = 0, var yy = 0)
   {
     x = xx|
     y = yy
   };
+
   function asString()
   {
     "<%s, %s>" % [x, y]
@@ -884,6 +895,7 @@ ufloat MyObject::xCoord()
   return v.x;
 }
 \end{cxx}
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../urbi-sdk"
