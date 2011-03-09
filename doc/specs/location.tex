@@ -1,4 +1,4 @@
-%% Copyright (C) 2010, Gostai S.A.S.
+%% Copyright (C) 2010, 2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -53,7 +53,8 @@ Location.new(Position.new("file.u",14,25), Position.new("file.u",14,35));
   var p1 = Position.new("file.u",14,25);
   var p2 = Position.new("file.u",16,35);
   var p3 = Position.new("file.u",18,45);
-  assert {
+  assert
+  {
     Location.new(p1, p3) != Location.new(p1, p2);
     Location.new(p1, p3) == Location.new(p1, p3);
     Location.new(p1, p3) != Location.new(p2, p3);
@@ -61,7 +62,7 @@ Location.new(Position.new("file.u",14,25), Position.new("file.u",14,35));
 };
 \end{urbiscript}
 
-\item[asString]
+\item[asString]%
   Present Locations with less variability as possible as either:
   \begin{itemize}
   \item \samp{\var{file}:\var{ll}.\var{cc}}
@@ -74,37 +75,37 @@ Location.new(Position.new("file.u",14,25)).asString == "file.u:14.25";
 Location.new(Position.new(14,25)).asString == "14.25";
 
 Location.new(
-  Position.new("file.u",14,25),
-  Position.new("file.u",14,35)
+  Position.new("file.u", 14, 25),
+  Position.new("file.u", 14, 35)
 ).asString == "file.u:14.25-34";
 
 Location.new(
-  Position.new(14,25),
-  Position.new(14,35)
+  Position.new(14, 25),
+  Position.new(14, 35)
 ).asString == "14.25-34";
 
 Location.new(
-  Position.new("file.u",14,25),
-  Position.new("file.u",15,35)
+  Position.new("file.u", 14, 25),
+  Position.new("file.u", 15, 35)
 ).asString == "file.u:14.25-15.34";
 
 Location.new(
-  Position.new(14,25),
-  Position.new(15,35)
+  Position.new(14, 25),
+  Position.new(15, 35)
 ).asString == "14.25-15.34";
 \end{urbiassert}
 
-\item[begin]
+\item[begin]%
   The begin Position used by the Location.  Modifying a copy of this field
   does not modify the Location.
 \begin{urbiassert}
 Location.new(
-  Position.new("file.u",14,25),
-  Position.new("file.u",16,35)
-).begin == Position.new("file.u",14,25);
+  Position.new("file.u", 14, 25),
+  Position.new("file.u", 16, 35)
+).begin == Position.new("file.u", 14, 25);
 \end{urbiassert}
 
-\item[end]
+\item[end]%
   The end Position used by the Location.  Modifying a copy of this field
   does not modify the Location.
 \begin{urbiassert}
@@ -113,8 +114,6 @@ Location.new(
   Position.new("file.u",16,35)
 ).end == Position.new("file.u",16,35);
 \end{urbiassert}
-
-
 \end{urbiscriptapi}
 
 %%% Local Variables:

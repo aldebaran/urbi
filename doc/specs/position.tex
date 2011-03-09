@@ -1,4 +1,4 @@
-%% Copyright (C) 2010, Gostai S.A.S.
+%% Copyright (C) 2010, 2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -87,10 +87,9 @@ Position.new(2, 3) < Position.new(3, 1);
 \item[asString]
   Present as \samp{\var{file}:\var{line}.\var{column}}, the file name is
   omitted if it is not defined.
-\begin{urbiscript}
-Position.new("file.u", 2, 3);
-[00000001] file.u:2.3
-\end{urbiscript}
+\begin{urbiassert}
+Position.new("file.u", 2, 3).asString == "file.u:2.3"'
+\end{urbiassert}
 
 \item[column]
   Field which give access to the column number of the Position.
