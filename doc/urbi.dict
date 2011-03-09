@@ -1191,6 +1191,7 @@ urbiHelloWorld
 urbijava
 urbiscript
 urbiscript's
+UrbiSDK
 UrbiSDKEnv
 urbisend
 urbistarter
@@ -1280,7 +1281,9 @@ xffffff
 xFFFFFFFF
 xffffffff
 xfov
+xleftmargin
 xml
+xrightmargin
 xsltproc
 xSpeed
 xvjf
