@@ -60,7 +60,7 @@ do (Global.Dictionary)
       var res = "[" |
       for| (var k: keys)
       {
-        res += "%s%x => %x" % [sep, k.asPrintable, get(k).asPrintable] |
+        res += "%s%s => %s" % [sep, k.asPrintable, get(k).asPrintable] |
         sep = ", " |
       }|
       res +  "]"
