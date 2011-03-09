@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2009-2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -111,29 +111,33 @@ of the corresponding exception type.
 \item[Argument](<routine>, <index>, <exception>)
   During the call of \var{routine}, the instantiation of the \var{index}-nth
   argument has thrown an \var{exception}.
-\begin{urbiscript}
-Exception.Argument.new("myRoutine", 3, Exception.Type.new("19/11/2010", Date));
-[00000003] Exception.Argument `myRoutine: argument 3: unexpected "19/11/2010", expected a Date'
-\end{urbiscript}
+\begin{urbiassert}
+Exception.Argument
+  .new("myRoutine", 3, Exception.Type.new("19/11/2010", Date))
+  .asString
+== "myRoutine: argument 3: unexpected \"19/11/2010\", expected a Date";
+\end{urbiassert}
 
 \item[ArgumentType](<routine>, <index>, <effective>, <expected>)
   Deprecated exception that derives from \refSlot{Type}.  The \var{routine} was
   called with a \var{index}-nth argument of type \var{effective}
   instead of \var{expected}.
-\begin{urbiscript}
-Exception.ArgumentType.new("myRoutine", 1, "hisResult", "Expectation");
+\begin{urbiassert}
+Exception.ArgumentType
+  .new("myRoutine", 1, "hisResult", "Expectation")
+  .asString
+== "myRoutine: argument 1: unexpected \"hisResult\", expected a String";
 [00000003:warning] !!! `Exception.ArgumentType' is deprecated
-[00000003] Exception.ArgumentType `myRoutine: argument 1: unexpected "hisResult", expected a String'
-\end{urbiscript}
+\end{urbiassert}
 
 \item[Arity](<routine>, <effective>, <min>, <max> = void)
   The \var{routine} was called with an incorrect number of arguments
   (\var{effective}).  It requires at least \var{min} arguments, and,
   if specified, at most \var{max}.
-\begin{urbiscript}
-Exception.Arity.new("myRoutine", 1, 10, 23);
-[00000004] Exception.Arity `myRoutine: expected between 10 and 23 arguments, given 1'
-\end{urbiscript}
+\begin{urbiassert}
+Exception.Arity.new("myRoutine", 1, 10, 23).asString
+  == "myRoutine: expected between 10 and 23 arguments, given 1";
+\end{urbiassert}
 %% try
 %% {
 %%   Math.cos(1, 2);
@@ -142,101 +146,101 @@ Exception.Arity.new("myRoutine", 1, 10, 23);
 %% {
 %%   assert(e == Exception.Arity.new("cos", 2, 1));
 %% };
+
 \item[BadInteger](<routine>, <fmt>, <effective>)
   The \var{routine} was called with an inappropriate integer
   (\var{effective}).  Use the format \var{fmt} to create an error
   message from \var{effective}.  Derives from
   \refSlot{BadNumber}.
-\begin{urbiscript}
-Exception.BadInteger.new("myRoutine", "bad integer: %s", 12);
-[00000005] Exception.BadInteger `myRoutine: bad integer: 12'
-\end{urbiscript}
+\begin{urbiassert}
+Exception.BadInteger.new("myRoutine", "bad integer: %s", 12).asString
+  == "myRoutine: bad integer: 12";
+\end{urbiassert}
 
-\item[BadNumber](<routine>, <fmt>, <effective>)
+\item[BadNumber](<routine>, <fmt>, <effective>)%
   The \var{routine} was called with an inappropriate number
   (\var{effective}).  Use the format \var{fmt} to create an error
   message from \var{effective}.
-\begin{urbiscript}
-Exception.BadNumber.new("myRoutine", "bad number: %s", 12.34);
-[00000005] Exception.BadNumber `myRoutine: bad number: 12.34'
-\end{urbiscript}
+\begin{urbiassert}
+Exception.BadNumber.new("myRoutine", "bad number: %s", 12.34).asString
+  == "myRoutine: bad number: 12.34";
+\end{urbiassert}
 
-\item[Constness](<msg>)
+\item[Constness]%
   An attempt was made to change a constant value.
-\begin{urbiscript}
-Exception.Constness.new;
-[00000006] Exception.Constness `cannot modify const slot'
-\end{urbiscript}
+\begin{urbiassert}
+Exception.Constness.new.asString
+  == "cannot modify const slot";
+\end{urbiassert}
 
-\item[FileNotFound](<name>)
+\item[FileNotFound](<name>)%
   The file named \var{name} cannot be found.
-\begin{urbiscript}
-Exception.FileNotFound.new("foo");
-[00000007] Exception.FileNotFound `file not found: foo'
-\end{urbiscript}
+\begin{urbiassert}
+Exception.FileNotFound.new("foo").asString
+  == "file not found: foo";
+\end{urbiassert}
 
-\item[ImplicitTagComponent](<msg>)
+\item[ImplicitTagComponent](<msg>)%
   An attempt was made to create an implicit tag, a component of which
   being undefined.
-\begin{urbiscript}
-Exception.ImplicitTagComponent.new;
-[00000008] Exception.ImplicitTagComponent `invalid component in implicit tag'
-\end{urbiscript}
+\begin{urbiassert}
+Exception.ImplicitTagComponent.new.asString
+  == "invalid component in implicit tag";
+\end{urbiassert}
 
-\item[Lookup](<object>, <name>)
-  A failed name lookup was performed om \var{object} to find a slot
-  named \var{name}.  If \lstinline|Exception.Lookup.fixSpelling| is
-  true (which is the default), suggest what the user might have meant
-  to use.
-\begin{urbiscript}
-Exception.Lookup.new(Object, "GetSlot");
-[00000009] Exception.Lookup `lookup failed: Object'
-\end{urbiscript}
+\item[Lookup](<object>, <name>)%
+  A failed name lookup was performed on \var{object} to find a slot named
+  \var{name}.  Suggest what the user might have meant if
+  \lstinline|Exception.Lookup.fixSpelling| is true (which is the default).
+\begin{urbiassert}
+Exception.Lookup.new(Object, "GetSlot").asString
+  == "lookup failed: Object";
+\end{urbiassert}
 
-\item[MatchFailure]
+\item[MatchFailure]%
   A pattern matching failed.
-\begin{urbiscript}
-Exception.MatchFailure.new;
-[00000010] Exception.MatchFailure `pattern did not match'
-\end{urbiscript}
+\begin{urbiassert}
+Exception.MatchFailure.new.asString
+  == "pattern did not match";
+\end{urbiassert}
 
-\item[NegativeNumber](<routine>, <effective>)
+\item[NegativeNumber](<routine>, <effective>)%
   The \var{routine} was called with a negative number
   (\var{effective}).  Derives from \refSlot{BadNumber}.
-\begin{urbiscript}
-Exception.NegativeNumber.new("myRoutine", -12);
-[00000005] Exception.NegativeNumber `myRoutine: unexpected -12, expected non-negative number'
-\end{urbiscript}
+\begin{urbiassert}
+Exception.NegativeNumber.new("myRoutine", -12).asString
+== "myRoutine: unexpected -12, expected non-negative number";
+\end{urbiassert}
 
 \item[NonPositiveNumber](<routine>, <effective>)
   The \var{routine} was called with a non-positive number
   (\var{effective}).  Derives from \refSlot{BadNumber}.
-\begin{urbiscript}
-Exception.NonPositiveNumber.new("myRoutine", -12);
-[00000005] Exception.NonPositiveNumber `myRoutine: unexpected -12, expected positive number'
-\end{urbiscript}
+\begin{urbiassert}
+Exception.NonPositiveNumber.new("myRoutine", -12).asString
+== "myRoutine: unexpected -12, expected positive number";
+\end{urbiassert}
 
 \item[Primitive](<routine>, <msg>)
   The built-in \var{routine} encountered an error described by
   \var{msg}.
-\begin{urbiscript}
-Exception.Primitive.new("myRoutine", "cannot do that");
-[00000011] Exception.Primitive `myRoutine: cannot do that'
-\end{urbiscript}
+\begin{urbiassert}
+Exception.Primitive.new("myRoutine", "cannot do that").asString
+  == "myRoutine: cannot do that";
+\end{urbiassert}
 
 \item[Redefinition](<name>)
   An attempt was made to refine a slot named \var{name}.
-\begin{urbiscript}
-Exception.Redefinition.new("foo");
-[00000012] Exception.Redefinition `slot redefinition: foo'
-\end{urbiscript}
+\begin{urbiassert}
+Exception.Redefinition.new("foo").asString
+  == "slot redefinition: foo";
+\end{urbiassert}
 
 \item[Scheduling](<msg>)
   Something really bad has happened with the \urbi task scheduler.
-\begin{urbiscript}
-Exception.Scheduling.new("cannot schedule");
-[00000013] Exception.Scheduling `cannot schedule'
-\end{urbiscript}
+\begin{urbiassert}
+Exception.Scheduling.new("cannot schedule").asString
+  == "cannot schedule";
+\end{urbiassert}
 
 \item[Syntax](<loc>, <message>, <input>)
   Declare a syntax error in \var{input}, at location \var{loc},
@@ -247,11 +251,15 @@ Exception.Scheduling.new("cannot schedule");
   \var{loc} is really the position of the syntax error, while
   \var{location} refers to the location of the \refSlot[System]{eval}
   or \refSlot[System]{load} invocation.
-\begin{urbiscript}
-Exception.Syntax.new(Location.new(Position.new("file.u", 14, 25)),
-                     "unexpected pouCharque", "file.u");
-[00000013] Exception.Syntax `file.u:14.25: syntax error: unexpected pouCharque'
+\begin{urbiassert}
+Exception.Syntax
+  .new(Location.new(Position.new("file.u", 14, 25)),
+       "unexpected pouCharque", "file.u")
+  .asString
+== "file.u:14.25: syntax error: unexpected pouCharque";
+\end{urbiassert}
 
+\begin{urbiscript}
 try
 {
   eval("1 / / 0");
@@ -268,26 +276,26 @@ catch (var e)
 };
 \end{urbiscript}
 
-
 \item[Type](<effective>, <expected>)
   A value of type \var{effective} was received, while a value of type
   \var{expected} was expected.
-\begin{urbiscript}
-Exception.Type.new("hisResult", "Expectation");
-[00000014] Exception.Type `unexpected "hisResult", expected a String'
-\end{urbiscript}
+\begin{urbiassert}
+Exception.Type.new("hisResult", "Expectation").asString
+  == "unexpected \"hisResult\", expected a String";
+\end{urbiassert}
 
 \item[UnexpectedVoid] An attempt was made to read the value of
   \lstinline|void|.
+\begin{urbiassert}
+Exception.UnexpectedVoid.new.asString
+  == "unexpected void";
+\end{urbiassert}
 \begin{urbiscript}
-Exception.UnexpectedVoid.new;
-[00000015] Exception.UnexpectedVoid `unexpected void'
 var a = void;
 a;
 [00000016:error] !!! unexpected void
 [00000017:error] !!! lookup failed: a
 \end{urbiscript}
-
 \end{urbiscriptapi}
 
 

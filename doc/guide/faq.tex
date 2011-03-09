@@ -23,12 +23,12 @@ At random places we use \samp{+=} in \command{/bin/sh} scripts, which Ash
 (aka, \command{dash} and \command{sash}) does not support.  Please, use
 \command{bash} or \command{zsh} instead of Ash as \command{/bin/sh}.
 
-\subsection{error: `<anonymous>' is used uninitialized in this function}
+\subsection{error: `$<$anonymous$>$' is used uninitialized in this function}
 \label{sec:faq:build:uninitialized}
 
 If you encounter this error:
 
-\begin{lstlisting}[language={}]
+\begin{lstlisting}[language={},style=UrbiSDK]
 cc1plus: warnings being treated as errors
 parser/ugrammar.hh: In member function \
   `void yy::parser::yypush_(const char*, int, yy::parser::symbol_type&)':
