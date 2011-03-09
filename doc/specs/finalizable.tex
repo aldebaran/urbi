@@ -1,4 +1,4 @@
-%% Copyright (C) 2010, Gostai S.A.S.
+%% Copyright (C) 2010, 2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -68,7 +68,6 @@ instance of Finalizable from its inception.
 
 There, instead of these two invalid constructs,
 
-\begin{multicols}{2}
 \begin{urbiscript}
 class o1 : Finalizable.new
 {
@@ -78,9 +77,7 @@ class o1 : Finalizable.new
   }
 }|;
 [00000008:error] !!! apply: cannot inherit from a Finalizable without being one
-\end{urbiscript}
 
-\begin{urbiscript}
 class o2
 {
   protos = [Finalizable];
@@ -91,7 +88,6 @@ class o2
 }|;
 [00000010:error] !!! updateSlot: cannot inherit from a Finalizable without being one
 \end{urbiscript}
-\end{multicols}
 
 write:
 
