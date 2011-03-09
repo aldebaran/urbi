@@ -74,21 +74,56 @@ class Global.camera: Loadable
   };
 }|;
 
-// A channel for synclines.
-var Global.syncline = Channel.new("syncline")|;
 
-// The test itself declares its status as failed.
-function Global.testFail (var why)
-{
-  cerr << "Aborting this test: " + why|
-  System._exit(1)
-}|;
+/*---------.
+| Global.  |
+`---------*/
 
-// Skip this test.
-function Global.testSkip (var why)
+do (Global)
 {
-  cerr << "Skipping this test: " + why|
-  System._exit(176)
+  // A channel for synclines.
+  var syncline = Channel.new("syncline")|;
+
+  function testExit(var status, var why)
+  {
+    cerr << why|
+    System._exit(status)
+  }|;
+
+  // The test itself declares its status as failed.
+  function testFail(var why)
+  {
+    testExit(1, "Aborting this test: " + why)
+  }|;
+
+  // Skip this test.
+  function testSkip(var why)
+  {
+    testExit(176, "Skipping this test: " + why)
+  }|;
+
+  /*---------.
+  | skipIf.  |
+  `---------*/
+
+  // Skip tests that cannot run in some configuations.
+  function skipIfDebug ()
+  {
+    if (System.Platform.compilationModeDebug)
+      testSkip("cannot run in debug compilation-mode");
+  }|;
+
+  function skipIfSpace ()
+  {
+    if (System.Platform.compilationModeSpace)
+      testSkip("cannot run in space compilation-mode");
+  }|;
+
+  function skipIfWindows ()
+  {
+    if (System.Platform.isWindows)
+      testSkip("cannot run on Windows");
+  }|;
 }|;
 
 // Too verbose when we launch another urbi from urbi.
@@ -126,7 +161,7 @@ do (Dictionary)
 do (Directory)
 {
   var fileCreated = Event.new;
-  fileCreated.'waituntil' = function /* skip_if_no_inotify */
+  fileCreated.'waituntil' = function /* skipIfNoInotify */
   {
     testSkip("requires inotify support");
   }|;
@@ -282,28 +317,4 @@ if (System.Platform.isWindows)
       res
     });
   }
-}|;
-
-
-/*---------.
-| skipIf.  |
-`---------*/
-
-// Skip tests that cannot run in some configuations.
-function skipIfDebug ()
-{
-  if (System.Platform.compilationModeDebug)
-    testSkip("cannot run in debug compilation-mode");
-}|;
-
-function skipIfSpace ()
-{
-  if (System.Platform.compilationModeSpace)
-    testSkip("cannot run in space compilation-mode");
-}|;
-
-function skipIfWindows ()
-{
-  if (System.Platform.isWindows)
-    testSkip("cannot run on Windows");
 }|;
