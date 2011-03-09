@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2009-2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -104,7 +104,7 @@ expressions are also accepted.
 };
 \end{urbiscript}
 
-\item['<'](<other>)|\\
+\item['<'](<other>)%
   Lexicographic comparison between two tuples.
 \begin{urbiassert}
 (0, 0) < (0, 1);
@@ -112,15 +112,15 @@ expressions are also accepted.
 (0, 1) < (1, 0);
 \end{urbiassert}
 
-\item['=='](<other>)|\\
-  Whether \this and \lstinline|other| have the same
-  contents (equality-wise).
+\item['=='](<other>)%
+  Whether \this and \lstinline|other| have the same contents
+  (equality-wise).
 \begin{urbiassert}
   (1, 2) == (1, 2);
 !((1, 1) == (2, 2));
 \end{urbiassert}
 
-\item['*'](<value>)|\\
+\item['*'](<value>)%
   Return a \lstinline|Tuple| in which all elements of \this are multiplied
   by a \var{value}.
 
@@ -129,7 +129,7 @@ expressions are also accepted.
 (1, "foo") * 2 == (2, "foofoo");
 \end{urbiassert}
 
-\item['+'](<other>)|\\
+\item['+'](<other>)%
   Return a \lstinline|Tuple| in which each element of \this is summed with
   its corresponding element in the \var{other} \lstinline|Tuple|.
 
