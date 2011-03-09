@@ -36,8 +36,7 @@ do (Global.Dictionary)
   function init(var args[])
   {
     if (args.size % 2)
-      throw Exception.Primitive.new("new",
-                                    "odd number of arguments") |
+      throw Exception.Primitive.new("new", "odd number of arguments") |
     for| (var i = 0; i < args.size; i += 2)
       set(args[i], args[i + 1]) |
     this
@@ -47,22 +46,25 @@ do (Global.Dictionary)
   {
     var res = []|
     for| (var k: keys)
-      res.insertBack(Pair.new (k, get (k)))|
+      res.insertBack(Pair.new(k, get(k)))|
     res
   };
 
   function asString()
   {
-    var sep = "" |
-    var res = "[" |
-    for| (var k: keys)
+    if (empty)
+      "[ => ]"
+    else
     {
-      res += sep + k.asPrintable + " => " + get(k).asPrintable |
-      sep = ", " |
-    }|
-    if (!size)
-      res += " => " |
-    res +  "]"
+      var sep = "" |
+      var res = "[" |
+      for| (var k: keys)
+      {
+        res += "%s%x => %x" % [sep, k.asPrintable, get(k).asPrintable] |
+        sep = ", " |
+      }|
+      res +  "]"
+    }
   };
 
   function getWithDefault(name, otherwise, insert = false)
@@ -88,9 +90,8 @@ do (Global.Dictionary)
   // Compare two dictionaries.  This suppose that elements are Comparable.
   function '==' (rhs)
   {
-    if (size != rhs.size)
-      false
-    else
+    size == rhs.size
+    &&
     {
       for|(var k: keys)
         if (!rhs.has(k) || get(k) != rhs.get(k))
