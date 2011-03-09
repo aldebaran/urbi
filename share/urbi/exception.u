@@ -126,7 +126,7 @@ class Global.Exception
         if (args.size != locSize + fmtSize)
           throw Exception.Arity.new("%s.%s" % [name, "init"],
                                     args.size,
-                                    size) |
+                                    locSize + fmtSize) |
         for| (var i: locSize)
           this.updateSlot(locSlots[i], args[i]) |
         for| (var i: fmtSize)
