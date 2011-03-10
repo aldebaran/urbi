@@ -644,11 +644,13 @@ namespace urbi
                                       this, s));
         return;
       }
+      GD_FINFO_TRACE("MakeProto for %s", s->name);
       object::rObject proto = ::urbi::uobjects::uobject_make_proto(s->name);
+      GD_FINFO_TRACE("Writing class for %s", s->name);
       where->slot_set(libport::Symbol(s->name + "_class"), proto);
       // Make our first instance.
-      where->slot_set(libport::Symbol(s->name),
-                      ::urbi::uobjects::uobject_new(proto, true));
+      GD_FINFO_TRACE("Creating instance for %s", s->name);
+      rObject o = ::urbi::uobjects::uobject_new(proto, true);
     }
 
     void
@@ -1770,6 +1772,7 @@ namespace urbi
       {
         res->slot_set(SYMBOL(type), rcName);
         name = cname;
+        where->slot_set(libport::Symbol(name), res);
       }
       else
       {
