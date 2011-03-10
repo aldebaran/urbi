@@ -36,7 +36,8 @@ namespace urbi
     "grey8",
     "grey4",
     "yuv411_planar",
-    "nv12"
+    "nv12",
+    "yuv420_planar"
   };
 
   const char*
@@ -56,6 +57,8 @@ namespace urbi
     for (unsigned i = 0; i < cardinality_of(formats); ++i)
       if (s == formats[i])
         return static_cast<UImageFormat>(i);
+    GD_FWARN("Parse image format failed on %s (scanned %s)", s,
+             cardinality_of(formats));
     return IMAGE_UNKNOWN;
   }
 
