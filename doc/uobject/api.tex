@@ -490,11 +490,11 @@ The API provides two methods to have a function called periodically:
   \lstinline|UObject::removeTimer(h)| function to disable the timer.
 \end{cxxapi}
 
-\section{The special case of sensor/effector variables}
+\section{The special case of sensor/actuator variables}
 
 In \urbi, a variable can have a different meaning depending on whether you
 are reading or writing it: you can use the same variable to represent the
-target value of an effector and the current value measured by an associated
+target value of an actuator and the current value measured by an associated
 sensor. This special mode is activated by the \UObject defining the variable
 by calling \lstinline{UOwned} after calling \lstinline{UBindVar}. This call
 has the following effects:

@@ -4,6 +4,8 @@ abc
 abcdef
 accel
 AccelerationSensor
+accelerometer
+accelerometers
 accelX
 accelY
 accelZ
@@ -23,6 +25,7 @@ afoodef
 agg
 AGPL
 aibo
+Akim
 ALAudioPlayer
 ALFrameManager
 aliveJobs
@@ -84,12 +87,14 @@ asPrimitive
 asPrintable
 asProcess
 assertCall
+associativity
 asString
 AST
 ASTs
 async
 Asynchronicity
 atan
+atomicity
 attr
 AudioIn
 AudioOut
@@ -108,6 +113,7 @@ backtrace
 backtraces
 BadInteger
 BadNumber
+Baillie
 BallTracker
 basename
 basicstyle
@@ -178,6 +184,7 @@ chatTag
 checkMaster
 chk
 chmod
+Christophe
 clapCount
 classname
 classpath
@@ -200,6 +207,7 @@ Constness
 controllerArgs
 convertedData
 copyInto
+copyrightable
 copyrightHolder
 copyrightYears
 copySlot
@@ -255,6 +263,7 @@ defaultYSpeed
 defaultZSpeed
 Demaille
 DependencyWalker
+deprecations
 dequeue
 dereferenced
 deserialize
@@ -289,6 +298,7 @@ doubleValue
 doxygen
 DUMPBIN
 dumpState
+durations
 dx
 dyld
 dylib
@@ -409,6 +419,7 @@ getSlot
 getStackFrame
 getStats
 getTarget
+getter
 gettext
 getUObjectHub
 getVal
@@ -430,6 +441,7 @@ GPL
 GraphViz
 graphviz
 GSRAPI
+Guillaume
 gyrometer
 GyroSensor
 gyroX
@@ -479,6 +491,7 @@ imagemagick
 ImmutableCounter
 ImplicitTagComponent
 inBounds
+incrementation
 indices
 ing
 INI
@@ -494,6 +507,8 @@ insertBack
 insertFront
 insertUnique
 installcheck
+instantiation
+instantiations
 interruptible
 io
 IoService
@@ -542,6 +557,7 @@ kenny
 KeyError
 kneeL
 ko
+kyle
 lang
 LANGINFO
 laserAngleMax
@@ -568,6 +584,7 @@ leftFootTotalWeight
 leftSpeed
 leftSpeedCoeff
 Levenshtein
+lexicographically
 lhs
 libboost
 libcoroutine
@@ -577,6 +594,7 @@ libltdl
 LIBPLUGIN
 libport
 LIBREMOTE
+libs
 LIBSCHED
 LIBSERIALIZE
 libtool
@@ -634,6 +652,7 @@ mapFileName
 matchAgainst
 MatchFailure
 matchPattern
+Matthieu
 maxCallTime
 maxExponent
 maxFunctionCallDepth
@@ -646,6 +665,7 @@ Meccano
 memoization
 memoryName
 meq
+merchantability
 methodToFunction
 microL
 microR
@@ -712,6 +732,7 @@ myuobject
 myVar
 namespace
 NaN
+nan
 nao
 Nao's
 NaoQi
@@ -768,6 +789,7 @@ OpenLoop
 OpenSSL
 openssl
 Oper
+optimizations
 OptimizedImageSource
 Orderable
 oRTP
@@ -802,6 +824,7 @@ plusTwo
 pollFor
 pollInterval
 pollOneFor
+polymorphism
 popback
 popfront
 pos
@@ -812,6 +835,7 @@ pouCharque
 pown
 ppc
 pre
+precedences
 prepend
 prepended
 preprocessor
@@ -843,6 +867,9 @@ qualifiedIdentifier
 quux
 quuxbar
 qux
+radian
+radians
+radix
 raii
 RangeIterable
 rangemax
@@ -870,10 +897,12 @@ removeProto
 removeSlot
 removeThrowingCallbacks
 removeTimer
+representable
 req
 reqStruct
 requestValue
 requireFile
+rescale
 resendBanner
 resetConnectionStats
 resetStats
@@ -892,6 +921,7 @@ rmp
 robotis
 robotType
 rollSpeed
+Romain
 ros
 roscore
 roscpp
@@ -908,6 +938,7 @@ RotationalSpeedMotor
 rshift
 rst
 rtp
+runnable
 runningcommands
 runServer
 runtime
@@ -970,9 +1001,11 @@ shoulderPitchR
 shoulderRollR
 SIGINT
 SIGKILL
+sigmoid
 signalAll
 Sigoure
 SimulationController
+sinusoid
 sizeof
 sizeOut
 slotName
@@ -1037,6 +1070,7 @@ subscope
 subscopes
 subscriberCount
 Subsubsection
+subtypes
 succ
 sudo
 Sugarful
@@ -1079,6 +1113,7 @@ timeOut
 TimerHandle
 timeShift
 timestamp
+timestamps
 timesTen
 tmp
 toAscii
@@ -1093,7 +1128,10 @@ toUpper
 trackL
 trackR
 TrajectoryGenerator
+transferee
+transferees
 transfig
+translational
 Tri
 TriBot
 trunc
@@ -1156,6 +1194,7 @@ UndefinedEnvironmentVariable
 UnexpectedVoid
 Unix's
 unnotify
+unordered
 UNotifyAccess
 UNotifyChange
 UNotifyOnRequest
@@ -1263,6 +1302,7 @@ WIPO
 withGas
 Wl
 woot
+workspace
 writePoint
 writeToVar
 xABCDEF

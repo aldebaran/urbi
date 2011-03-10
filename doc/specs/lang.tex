@@ -1679,10 +1679,10 @@ first1({echo("Arg1"); 1},
 [00000000] *** 2
 \end{urbiscript}
 
-A function declared with no formal argument list is lazy.  Use its
-call message to manipulate its \emph{unevaluated} arguments.
-The listing below gives an example.  More information about
-this can be found in the \refObject{CallMessage} class documentation.
+A function declared with no formal argument list is lazy.  Use its call
+message to manipulate its arguments \emph{not} evaluated.  The listing below
+gives an example.  More information about this can be found in the
+\refObject{CallMessage} class documentation.
 
 \begin{urbiscript}
 function first2
@@ -3177,7 +3177,8 @@ assert(42);
 \end{urbiscript}
 
 Failed assertions are displayed in a user friendly fashion: first the
-unevaluated assertion is displayed, then the effective values are reported.
+assertion is displayed before evaluation, then the effective values are
+reported.
 
 \begin{urbiscript}
 function fail () { false }|;

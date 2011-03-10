@@ -97,7 +97,7 @@ class UnaryLazy
 // The function to cache.
 var inc = function(x) { echo("incing " + x) | x+1 } |
 // The function with cache.
-// Use "getSlot" to get the unevaluated function.
+// Use "getSlot" to get the function, not its evaluation.
 var p = UnaryLazy.new(getSlot("inc"));
 [00062847] UnaryLazy_0x78b750
 p.value(1);
@@ -137,8 +137,8 @@ Lazy.new(closure () { /* Value to make lazy */ 0 });
 
 \begin{urbiscriptapi}
 \item[==](<that>)%
-  Whether \this and \var{that} are the same source code and
-  value (an unevaluated Lazy is never equal to an evaluated one).
+  Whether \this and \var{that} are the same source code and value (an not
+  yet evaluated Lazy is never equal to an evaluated one).
 \begin{urbiassert}
 Lazy.new(closure () { 1 + 1 }) == Lazy.new(closure () { 1 + 1 });
 Lazy.new(closure () { 1 + 2 }) != Lazy.new(closure () { 2 + 1 });

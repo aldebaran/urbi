@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2009-2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -8,20 +8,18 @@
 
 \section{Socket}
 
-A \dfn{Socket} can manage asynchronous input/output network
-connections.
+A \dfn{Socket} can manage asynchronous input/output network connections.
 
 \subsection{Example}
 
 The following example demonstrates how both the \refObject{Server} and
 \refObject{Socket} object work.
 
-This simple example will establish a dialog between
-\lstinline|server| and \lstinline|client|.  The following object,
-\lstinline|Dialog|, contains the script of this exchange.  It is put
-into \lstinline|Global| so that both the server and client can read
-it.  \lstinline|Dialog.reply(var \var{s})| returns the reply to a
-message \var{s}.
+This simple example will establish a dialog between \lstinline|server| and
+\lstinline|client|.  The following object, \lstinline|Dialog|, contains the
+script of this exchange.  It is put into \lstinline|Global| so that both the
+server and client can read it.  \lstinline|Dialog.reply(var \var{s})|
+returns the reply to a message \var{s}.
 
 \begin{urbiscript}
 class Global.Dialog
@@ -45,12 +43,12 @@ class Global.Dialog
 }|;
 \end{urbiscript}
 
-The server, an instance of \refObject{Server}, expects incoming
-connections, notified by the socket's \lstinline|connection?| event.
-Once the connection establish, it listens to the \lstinline|socket|
-for incoming messages, notified by the \lstinline|received?| event.
-Its reaction to this event is to send the following line of the
-dialog.  At the end of the dialog, the socket is disconnected.
+The server, an instance of \refObject{Server}, expects incoming connections,
+notified by the socket's \lstinline|connection?| event.  Once the connection
+establish, it listens to the \lstinline|socket| for incoming messages,
+notified by the \lstinline|received?| event.  Its reaction to this event is
+to send the following line of the dialog.  At the end of the dialog, the
+socket is disconnected.
 
 \begin{urbiscript}
 var server =
@@ -92,8 +90,8 @@ every (100ms)
   Socket.poll,
 \end{urbiscript}
 
-The server is then activated, listening to incoming connections on a
-port that will be chosen by the system amongst the free ones.
+The server is then activated, listening to incoming connections on a port
+that will be chosen by the system among the free ones.
 
 \begin{urbiscript}
 server.listen("localhost", "0");
