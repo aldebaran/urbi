@@ -26,6 +26,8 @@
 
 #include "monitor.hh"
 
+GD_CATEGORY(UrbiImage);
+
 using libport::program_name;
 
 size_t imcount;
@@ -40,9 +42,14 @@ namespace
   urbi::UCallbackAction
   showImage(const urbi::UMessage &msg)
   {
-    if (msg.type != urbi::MESSAGE_DATA
+    bool ko = msg.type != urbi::MESSAGE_DATA
         || msg.value->type != urbi::DATA_BINARY
-        || msg.value->binary->type != urbi::BINARY_IMAGE)
+        || msg.value->binary->type != urbi::BINARY_IMAGE;
+    GD_FINFO_DUMP("Message on img channel, type %s, ok %s", msg.type, !ko);
+    if (msg.value)
+      GD_FINFO_DUMP("vtype %s btype %s", msg.value->type,
+                    msg.value->binary->type);
+    if (ko)
       return urbi::URBI_CONTINUE;
 
     urbi::UImage& img = msg.value->binary->image;
