@@ -161,8 +161,11 @@
     objecthub = ::urbi::baseURBIStarterHub::find(#Hub);         \
     if (objecthub)						\
       objecthub->addMember(this);				\
-    else							\
-      ::urbi::echo("Error: hub name '" #Hub "' is unknown\n");	\
+    else                                                        \
+    {                                                           \
+      GD_CATEGORY(Urbi.UObject);                                \
+      GD_FERROR("Error: hub name '%s" #Hub "' is unknown");	\
+    }                                                           \
   } while (0)
 
 

@@ -125,15 +125,6 @@ namespace urbi
     return res;
   }
 
-  /*
-    UBlendType
-    UVar::blend()
-    {
-    echo("Properties not implemented in remote mode yet.\n");
-    return UNORMAL;
-    }
-  */
-
   //! UVar destructor.
   void
   RemoteUVarImpl::clean()

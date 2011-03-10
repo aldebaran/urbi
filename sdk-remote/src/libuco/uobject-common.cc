@@ -405,10 +405,25 @@ namespace urbi
   {
     if (format)
     {
+      // This method is deprecated, there's no good reason to
+      // make it perfect.
+      char buf[BUFSIZ];
       va_list arg;
       va_start(arg, format);
-      vfprintf(stderr, format, arg);
+      // Don't print if we overflow the buffer.  It would be nice to
+      // rely on the behavior of the GNU LibC which accepts 0 as
+      // destination buffer to query the space needed.  But it is not
+      // portable (e.g., segv on OS X).  So rather, try to vsnprintf,
+      // and upon failure, revert the buffer in its previous state.
+      int r = vsnprintf(buf, sizeof buf, format, arg);
       va_end(arg);
+      // vsnprintf returns the number of characters to write.  Check
+      // that it fits.  Don't forget the ending '\0' that it does not
+      // count, but wants to add.
+      if (r < 0 || static_cast<int>(sizeof buf) <= r)
+        // Don't produce partial input.
+        buf[sizeof buf - 1] = 0;
+      GD_INFO_TRACE(buf);
     }
   }
 

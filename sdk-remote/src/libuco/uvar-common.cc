@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2010, Gostai S.A.S.
+ * Copyright (C) 2006-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -14,6 +14,8 @@
 #include <urbi/uobject.hh>
 #include <urbi/uvalue.hh>
 #include <urbi/uvar.hh>
+
+GD_CATEGORY(Urbi.UVar);
 
 namespace urbi
 {
@@ -78,12 +80,12 @@ namespace urbi
     else
     {
       // FIXME: this special case should be put in doc.
-      echo ("Unable to locate variable %s in hashtable. "
-	    "UVars being UObject attributes must be binded to be used "
-	    "in UObject C++ code. Use UBindVar. "
-	    "In any other case, this can be a memory problem. "
-	    "Please report bug.\n",
-	     name.c_str());
+      GD_FERROR ("Unable to locate variable %s in hashtable. "
+                 "UVars being UObject attributes must be bound to be used "
+                 "in UObject C++ code.  Use UBindVar.  "
+                 "In any other case, this can be a memory problem. "
+                 "Please report bug.",
+                 name);
       return false;
     }
   }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2010, Gostai S.A.S.
+ * Copyright (C) 2006-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -55,7 +55,8 @@ namespace urbi
   //! USystemMessage constructor.
   USystem::USystem()
   {
-    echo("Warning: USystem is not available for components in remote mode.\n");
+    GD_CATEGORY(Urbi.USystem);
+    GD_WARN("USystem is not available for components in remote mode.");
   }
 
   //! USystemMessage destructor.
