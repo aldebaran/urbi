@@ -152,8 +152,8 @@
   ::urbi::createUCallback(*this, 0, "eventend", this,			\
 			  (&Obj::X),(&Obj::Fun), __name + "." #X)
 
-# define UThreadedAtEnd(Obj, X, Fun, lock)                      \
-  UAtEnd(Obj, X, Fun)->>setAsync(getTaskLock(lockMode, #X))
+# define UThreadedAtEnd(Obj, X, Fun, LockMode)                  \
+  UAtEnd(Obj, X, Fun)->setAsync(getTaskLock(LockMode, #X))
 
 /// Register current object to the UObjectHub named \a Hub.
 # define URegister(Hub)						\
