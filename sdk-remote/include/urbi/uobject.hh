@@ -104,15 +104,17 @@
     return tl;                                  \
   }
 
+/// Internal, might change, do not use it directly.
+# define URBI_CREATE_CALLBACK(Kind, ...)                        \
+  ::urbi::createUCallback(*this, 0, #Kind, this, __VA_ARGS)
+
 /** Bind the function X in current Urbi object to the C++ member
  function of same name.  The return value and arguments must be of
  a basic integral or floating types, char *, std::string, UValue,
  UBinary, USound or UImage, or any type that can cast to/from
  UValue.  */
 # define UBindFunctionRename(Obj, X, Uname)                     \
-  ::urbi::createUCallback(*this, 0, "function",                 \
-                          this,                                 \
-                          (&Obj::X), __name + "." Uname)
+  URBI_CREATE_CALLBACK(function, (&Obj::X), __name + "." Uname)
 
 # define UBindFunction(Obj, X)                  \
   UBindFunctionRename(Obj, X, #X)
@@ -141,9 +143,8 @@
  time the event of same name is triggered. The function will be
  called only if the number of arguments match between the function
  prototype and the Urbi event.  */
-# define UAt(Obj, X)                                                    \
-  ::urbi::createUCallback(*this, 0, "event", this,                      \
-			  (&Obj::X), __name + "." #X)
+# define UAt(Obj, X)                                            \
+  URBI_CREATE_CALLBACK(event, (&Obj::X), __name + "." #X)
 
 /// Same as UAt() but executes the code in a separate thread.
 # define UThreadedAt(Obj, X, LockMode)                  \
@@ -157,8 +158,7 @@
  * event.
  */
 # define UAtEnd(Obj, X, Fun)					        \
-  ::urbi::createUCallback(*this, 0, "eventend", this,			\
-			  (&Obj::X), (&Obj::Fun), __name + "." #X)
+  URBI_CREATE_CALLBACK(eventend, (&Obj::X), (&Obj::Fun), __name + "." #X)
 
 # define UThreadedAtEnd(Obj, X, Fun, LockMode)                  \
   UAtEnd(Obj, X, Fun)->setAsync(getTaskLock(LockMode, #X))
