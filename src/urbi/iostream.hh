@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -14,7 +14,7 @@
 # include <libport/fifo.hh>
 # include <libport/iostream>
 
-# include <runner/runner.hh>
+# include <runner/job.hh>
 # include <urbi/export.hh>
 
 namespace urbi
@@ -53,7 +53,7 @@ namespace urbi
     Buffer buffer2_;
     Buffer* buffer_read_;
     Buffer* buffer_write_;
-    runner::rRunner frozen_;
+    runner::rJob frozen_;
     bool close_;
   };
 }

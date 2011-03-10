@@ -56,30 +56,6 @@ libport::intrusive_ptr<Type> Name##_get() const;        \
       reinterpret_cast<Type*>(Name##_.get())->call(SYMBOL(emit));       \
   }                                                                     \
 
-#define URBI_AT_HOOK(Name)                                              \
-  do                                                                    \
-  {                                                                     \
-    if (runner::Runner* r =                                             \
-        ::kernel::urbiserver->getCurrentRunnerOpt())                    \
-      if (r->dependencies_log_get())                                    \
-      {                                                                 \
-        try                                                             \
-        {                                                               \
-          r->dependencies_log_set(false);                               \
-          GD_CATEGORY(Urbi.At);                                         \
-          GD_FPUSH_TRACE("Register %s for at monitoring", #Name);       \
-          rEvent e = Name##_get();                                      \
-          r->dependencies_log_set(true);                                \
-          r->dependency_add(e);                                         \
-        }                                                               \
-        catch (...)                                                     \
-        {                                                               \
-          r->dependencies_log_set(true);                                \
-          throw;                                                        \
-        }                                                               \
-      }                                                                 \
-  }                                                                     \
-  while (false)                                                         \
 
 namespace urbi
 {

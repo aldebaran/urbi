@@ -26,7 +26,7 @@
 #include <kernel/userver.hh>
 #include <object/object-class.hh>
 #include <object/symbols.hh>
-#include <runner/runner.hh>
+#include <runner/job.hh>
 #include <urbi/object/cxx-primitive.hh>
 #include <urbi/object/dictionary.hh>
 #include <urbi/object/event.hh>
@@ -37,6 +37,9 @@
 #include <urbi/object/object.hh>
 #include <urbi/object/string.hh>
 #include <urbi/runner/raise.hh>
+
+#include <eval/send-message.hh>
+#include <eval/call.hh>
 
 namespace urbi
 {
@@ -65,7 +68,7 @@ namespace urbi
     static rObject
     object_class_dump(const objects_type& args)
     {
-      runner::Runner& r = ::kernel::runner();
+      runner::Job& r = ::kernel::runner();
 
       check_arg_count(args.size() - 1, 1, 2);
 
@@ -103,7 +106,7 @@ namespace urbi
       // For now our best choice is to dump line by line in "system" messages.
       const std::string system_header("*** ");
       foreach (const std::string& line, libport::lines(dump))
-        r.send_message(tag, system_header + line);
+        eval::send_message(r, tag, system_header + line);
       return void_class;
     }
 
@@ -137,7 +140,7 @@ namespace urbi
     object_class_callMessage (rObject target, rObject call_message)
     {
       DECLARE_LOCATION_FILE;
-      runner::Runner& r = ::kernel::runner();
+      runner::Job& r = ::kernel::runner();
 
       // We need to set the 'code' slot: make a copy of the call message.
       const rObject& message = call_message->slot_get(SYMBOL(message));
@@ -146,7 +149,7 @@ namespace urbi
       call_message->slot_update(SYMBOL(code), code);
       call_message->slot_update(SYMBOL(target), target);
       // FIXME: Sanity checks on the call message are probably required
-      return r.apply_call_message(code, msg, call_message, LOCATION_HERE);
+      return eval::call_msg(r, code, msg, call_message, LOCATION_HERE);
     }
 
     /*---------.

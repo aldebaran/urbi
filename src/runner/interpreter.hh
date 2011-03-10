@@ -13,6 +13,8 @@
  ** \brief Definition of runner::Interpreter.
  */
 
+#error "hum hum ..."
+
 #ifndef RUNNER_INTERPRETER_HH
 # define RUNNER_INTERPRETER_HH
 

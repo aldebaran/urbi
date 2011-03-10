@@ -12,7 +12,7 @@
 # define OBJECT_STRING_UVAR_HH
 
 # include <urbi/object/cxx-object.hh>
-# include <runner/runner.hh>
+# include <runner/job.hh>
 
 # include <urbi/uvalue.hh>
 
@@ -65,7 +65,7 @@ namespace urbi
       Callbacks accessInLoop_;
       /// Check and unlock getters stuck waiting.
       void checkBypassCopy();
-      void changeAccessLoop();
+      rObject changeAccessLoop(runner::Job& r);
       bool looping_;
       /// Set of runners currently in a notifyChange.
       std::vector<void*> inChange_;
@@ -79,7 +79,7 @@ namespace urbi
       URBI_ATTRIBUTE_ON_DEMAND_DECLARE(Event, changed);
     };
     /// Call some notifies on an UVar.
-    void callNotify(runner::Runner& r, rUVar self,
+    void callNotify(runner::Job& r, rUVar self,
                     UVar::Callbacks& notifyList, rObject sourceUVar);
   }
 }

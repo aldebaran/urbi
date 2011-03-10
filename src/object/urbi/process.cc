@@ -25,7 +25,8 @@
 #include <libport/unistd.h>
 
 #include <urbi/object/job.hh>
-#include <runner/runner.hh>
+#include <runner/job.hh>
+
 #include <object/urbi/input-stream.hh>
 #include <object/urbi/output-stream.hh>
 #include <object/urbi/process.hh>
@@ -63,9 +64,9 @@ namespace urbi
       {
         libport::Synchronizer::SynchroPoint lock(kernel::server().big_kernel_lock_get());
         owner->status_ = status;
-        foreach (runner::Runner* job, owner->joiners_)
+        foreach (runner::Job* job, owner->joiners_)
           // FIXME: Is there a risk we cancel a double freeze?
-          job->frozen_set(false);
+          job->state.frozen_set(false);
       }
     }
 
@@ -272,9 +273,9 @@ namespace urbi
     {
       if (!done())
       {
-        runner::rRunner self = &::kernel::runner();
+        runner::rJob self = &::kernel::runner();
         joiners_.push_back(self);
-        self->frozen_set(true);
+        self->state.frozen_set(true);
       }
     }
 

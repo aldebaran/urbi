@@ -26,15 +26,13 @@
 #include <urbi/object/lobby.hh>
 #include <urbi/object/job.hh>
 #include <urbi/object/tag.hh>
-#include <runner/interpreter.hh>
-#include <runner/runner.hh>
+
+#include <runner/job.hh>
 
 namespace urbi
 {
   namespace object
   {
-    using runner::Runner;
-
     Job::Job(const value_type& value)
       : value_(value)
     {
@@ -79,12 +77,12 @@ namespace urbi
       return value_ ? value_->name_get() : otherwise;
     }
 
-    const runner::tag_stack_type
+    const runner::State::tag_stack_type
     Job::tags()
     {
       return value_
-        ? dynamic_cast<runner::Interpreter*>(value_.get())->tag_stack_get()
-        : runner::tag_stack_type();
+        ? dynamic_cast<runner::Job*>(value_.get())->state.tag_stack_get()
+        : runner::State::tag_stack_type();
     }
 
     std::string
@@ -93,7 +91,7 @@ namespace urbi
       if (!value_)
         return "";
 
-      Runner& r = ::kernel::runner();
+      runner::Job& r = ::kernel::runner();
 
       std::stringstream status;
       switch (value_->state_get())
@@ -117,7 +115,7 @@ namespace urbi
           status << "terminated";
           break;
       }
-      if (value_ == &r)
+      if (value_.get() == &r)
         status << " (current job)";
       if (value_->frozen())
         status << " (frozen)";
@@ -137,9 +135,9 @@ namespace urbi
         return new List();
 
       List::value_type res;
-      if (const Runner* runner = dynamic_cast<Runner*>(value_.get()))
+      if (const runner::Job* r = dynamic_cast<runner::Job*>(value_.get()))
       {
-        foreach(Runner::frame_type frame, runner->backtrace_get())
+        foreach(runner::State::call_frame_type frame, r->state.backtrace_get())
           res.push_front(frame);
       }
       return new List(res);
@@ -150,7 +148,7 @@ namespace urbi
     {
       if (!value_)
         return;
-      Runner& r = ::kernel::runner();
+      runner::Job& r = ::kernel::runner();
       r.yield_until_terminated(*value_);
     }
 
@@ -159,7 +157,7 @@ namespace urbi
     {
       if (!value_)
         return;
-      Runner& r = ::kernel::runner();
+      runner::Job& r = ::kernel::runner();
       r.yield_until_things_changed();
     }
 

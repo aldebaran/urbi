@@ -27,7 +27,7 @@
 #include <object/symbols.hh>
 
 #include <urbi/runner/raise.hh>
-#include <runner/runner.hh>
+#include <eval/call.hh>
 
 DECLARE_LOCATION_FILE;
 
@@ -138,7 +138,7 @@ namespace urbi
       check_arg_count(apply_args.size(), 1, 2);
       rList args = from_urbi<rList>(apply_args[0], 0u);
 
-      runner::Runner& r = runner();
+      runner::Job& r = runner();
       libport::Symbol s = (1 < apply_args.size())
         ? libport::Symbol(from_urbi<rString>(apply_args[1], 1u)->value_get())
         : SYMBOL(apply);
@@ -146,7 +146,7 @@ namespace urbi
         RAISE("argument list must begin with `this'");
       List::value_type a = args->value_get();
 
-      return r.apply(this, s, a);
+      return eval::call_apply(r, this, s, a);
     }
 
     std::string
@@ -201,9 +201,12 @@ namespace urbi
     rObject
     Code::operator() (object::objects_type args)
     {
-      runner::Runner& r = runner();
+      runner::Job& r = runner();
       aver(!args.empty());
-      return r.apply(this, libport::Symbol::make_empty(), args);
+      return eval::call_apply(r,
+                              this,
+                              libport::Symbol::make_empty(),
+                              args);
     }
 
   } // namespace object

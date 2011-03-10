@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -12,7 +12,7 @@
 # define RUNNER_SNEAKER_HH
 
 # include <ast/ast.hh>
-# include <runner/interpreter.hh>
+# include <runner/job.hh>
 # include <sched/scheduler.hh>
 
 namespace dbg
@@ -23,15 +23,21 @@ namespace dbg
   /// \param lobby     Any lobby.
   ///
   /// \param scheduler The current scheduler.
-  void create_sneaker_if_needed
-    (object::rLobby lobby, sched::Scheduler& scheduler);
+  void create_sneaker_if_needed(object::rLobby lobby,
+                                sched::Scheduler& scheduler);
 
   /// Retrieve the current runner or the sneaker. This should be used
   /// only when debugging, when we really need a runner of some kind
   /// to execute code.
   ///
   /// \return A runner.
-  runner::Runner& runner_or_sneaker_get();
+  runner::Job& runner_or_sneaker_get();
+
+  /// Compare the current Job and determine if this is the sneaker. This is
+  /// unlikely unless you are debugging.
+  ///
+  /// \return A runner.
+  bool is_sneaker(runner::Job& job);
 
   /// The following functions will be called from the debugger. Here
   /// are some example uses:

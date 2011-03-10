@@ -13,7 +13,7 @@
 #include <urbi/object/float.hh>
 #include <object/semaphore.hh>
 #include <object/symbols.hh>
-#include <runner/runner.hh>
+#include <runner/job.hh>
 #include <sched/fwd.hh>
 
 namespace urbi
@@ -65,7 +65,7 @@ namespace urbi
     void
     Semaphore::acquire()
     {
-      runner::Runner& r = ::kernel::runner();
+      runner::Job& r = ::kernel::runner();
 
       if (--value_.first < 0)
       {

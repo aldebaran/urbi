@@ -43,9 +43,13 @@
 #include <urbi/object/job.hh>
 #include <parser/transform.hh>
 #include <runner/exception.hh>
-#include <runner/interpreter.hh>
+#include <runner/state.hh>
+#include <runner/job.hh>
 #include <urbi/runner/raise.hh>
-#include <runner/runner.hh>
+
+#include <eval/ast.hh>
+#include <eval/call.hh>
+#include <eval/send-message.hh>
 
 GD_CATEGORY(Urbi);
 
@@ -78,8 +82,10 @@ namespace urbi
       execute_parsed(parser::parse_result_type p, rObject self)
       {
         ast::rConstAst ast = parser::transform(ast::rConstExp(p));
-        runner::Interpreter& run = interpreter();
-        return run.eval(ast.get(), self ? self : rObject(run.lobby_get()));
+        runner::Job& run = interpreter();
+        return
+          eval::ast_context(run, ast.get(),
+                            self ? self : rObject(run.state.lobby_get()));
       }
 
     }
@@ -106,14 +112,14 @@ namespace urbi
     static void
     system_sleep_inf(const rObject&)
     {
-      runner::Runner& r = runner();
+      runner::Job& r = runner();
       r.yield_until_terminated(r);
     }
 
     static void
     system_sleep(const rObject& o, libport::ufloat seconds)
     {
-      runner::Runner& r = runner();
+      runner::Job& r = runner();
       if (seconds == std::numeric_limits<ufloat>::infinity())
         system_sleep_inf(o);
       else
@@ -129,7 +135,7 @@ namespace urbi
     static float
     system_shiftedTime()
     {
-      runner::Runner& r = runner();
+      runner::Job& r = runner();
       return (r.scheduler_get().get_time() - r.time_shift_get()) / 1000000.0;
     }
 
@@ -247,14 +253,13 @@ namespace urbi
                  const rCode& code,
                  const rObject& clear_tags)
     {
-      runner::Interpreter& r = interpreter();
-      runner::Interpreter* new_runner =
-        new runner::Interpreter(interpreter(),
-                                rObject(code),
-                                libport::Symbol::fresh_string(r.name_get()));
+      runner::Job& r = runner();
+      runner::Job* new_runner =
+        r.spawn_child(eval::call(code),
+                      libport::Symbol::fresh_string(r.name_get()));
 
       if (clear_tags->as_bool())
-        new_runner->tag_stack_clear();
+        new_runner->state.tag_stack_clear();
 
       new_runner->time_shift_set(r.time_shift_get());
       new_runner->start_job();
@@ -302,14 +307,16 @@ namespace urbi
     {
       // FIXME: This method sucks a bit, because show_backtrace sucks a
       // bit, because our channeling/message-sending system sucks a lot.
-      runner::Runner::backtrace_type bt = runner().backtrace_get();
+      runner::Job& r = runner();
+      runner::State::backtrace_type bt = r.state.backtrace_get();
       bt.pop_back();
-      rforeach (runner::Runner::frame_type& i, bt)
-        runner().send_message
-        ("backtrace",
-         libport::format("%s (%s)",
-                         *i->getSlot(SYMBOL(name)),
-                         *i->getSlot(SYMBOL(location))));
+      rforeach (runner::State::call_frame_type& i, bt)
+        eval::send_message(
+          r,
+          "backtrace",
+          libport::format("%s (%s)",
+                          *i->getSlot(SYMBOL(name)),
+                          *i->getSlot(SYMBOL(location))));
     }
 
     static List::value_type
@@ -318,7 +325,7 @@ namespace urbi
       List::value_type res;
       foreach (sched::rJob job, ::kernel::scheduler().jobs_get())
       {
-        rObject o = dynamic_cast<runner::Runner*>(job.get())->as_job();
+        rObject o = static_cast<runner::Job*>(job.get())->as_job();
         if (o != nil_class)
           res << o;
       }
@@ -525,7 +532,7 @@ namespace urbi
     void
     system_redefinitionMode()
     {
-      runner().redefinition_mode_set(true);
+      runner().state.redefinition_mode_set(true);
     }
 
     rPath
@@ -537,7 +544,7 @@ namespace urbi
     void
     system_noVoidError()
     {
-      runner().void_error_set(false);
+      runner().state.void_error_set(false);
     }
 
     static bool
@@ -551,8 +558,9 @@ namespace urbi
     {
       if (interpreter().is_profiling())
       {
-        runner::Exception::warn(interpreter().innermost_node()->location_get(),
-                                "already profiling");
+        runner::Exception::warn(
+          interpreter().state.innermost_node_get()->location_get(),
+          "already profiling");
         objects_type args;
         args << self;
         (*action)(args);

@@ -13,6 +13,8 @@
  ** \brief Definition of runner::Runner.
  */
 
+#error "hum hum ..."
+
 #ifndef RUNNER_RUNNER_HH
 # define RUNNER_RUNNER_HH
 
