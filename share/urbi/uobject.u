@@ -1076,12 +1076,13 @@ class Global.'external'
 /// Display statistics for all found connections
 function uobjects.connectionStats()
 {
-  for|(var c: UConnection.getAll)
+  for| (var c: UConnection.getAll)
     echo(c.asString  + " " +  c.displayStats)
 };
+
 function uobjects.resetConnectionStats()
 {
-  for|(var c: UConnection.getAll)
+  for| (var c: UConnection.getAll)
     c.resetStats
 };
 
@@ -1101,17 +1102,22 @@ class Global.UValueSerializable
     // No need to recurse here.
     var names = uvalueSerializeSlots || localSlotNames;
     for|(var s: names)
-    if (!getSlot(s).isA(Executable))
-      res[s] = getSlot(s).uvalueSerialize;
+      if (!getSlot(s).isA(Executable))
+        res[s] = getSlot(s).uvalueSerialize;
     res;
   };
 };
 
-function Object.uvalueSerialize() {this};
+function Object.uvalueSerialize()
+{
+  this
+};
+
 function List.uvalueSerialize()
 {
   map(function(x) {x.uvalueSerialize})
 };
+
 function Dictionary.uvalueSerialize()
 {
   var res = Dictionary.new |
