@@ -116,17 +116,17 @@
  *  @param Obj the UObject class name
  *  @param X the unquoted function name
  *  @param Uname the urbiscript name of the method
- *  @param lockMode (LockMode or LockSpec) which lock to use. This lock can be
+ *  @param LockMode (LockMode or LockSpec) which lock to use. This lock can be
  *         used to prevent multiple parallel execution of functions.
- *         If you use only a lockMode, operations that cannot execute in
+ *         If you use only a LockMode, operations that cannot execute in
  *         parallel will be queued. A LockSpec can be used to specify the
  *         maximum queue size.
  */
-# define UBindThreadedFunctionRename(Obj, X, Uname, lockMode)           \
-  UBindFunctionRename(Obj, X, Uname)->setAsync(getTaskLock(lockMode, Uname))
+# define UBindThreadedFunctionRename(Obj, X, Uname, LockMode)           \
+  UBindFunctionRename(Obj, X, Uname)->setAsync(getTaskLock(LockMode, Uname))
 
-# define UBindThreadedFunction(Obj, X, lockMode)        \
-  UBindThreadedFunctionRename(Obj, X, #X, lockMode)
+# define UBindThreadedFunction(Obj, X, LockMode)        \
+  UBindThreadedFunctionRename(Obj, X, #X, LockMode)
 
 
 /** Registers a function X in current object that will be called each
@@ -138,8 +138,8 @@
 			  (&Obj::X), __name + "." #X)
 
 /// Same as UAt() but executes the code in a separate thread.
-# define UThreadedAt(Obj, X, lockMode)                  \
-  UAt(Obj, X)->setAsync(getTaskLock(lockMode, #X))
+# define UThreadedAt(Obj, X, LockMode)                  \
+  UAt(Obj, X)->setAsync(getTaskLock(LockMode, #X))
 
 
 /** Registers a function \a X in current object that will be called each
