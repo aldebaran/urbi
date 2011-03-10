@@ -234,7 +234,7 @@ do (Global.UObject)
 
   function syncGet(exp, tag)
   {
-    var res;
+    var res|
     try
     {
       res = eval(exp)|
@@ -292,8 +292,9 @@ do (&UVar)
 
   function init(parent, name)
   {
-    var this.rtp = false;
-    var this.rtp_old = false;
+    nonInterruptible |
+    var this.rtp = false |
+    var this.rtp_old = false |
     owner = parent|
     if (parent === Global)
       ownerName = "Global"
@@ -338,7 +339,7 @@ do (&UVar)
       parent.getProperty = &parentGetProperty|
       parent.setProperty = &parentSetProperty|
       parent.hasProperty = &parentHasProperty
-    };
+    }|
     tag:at (rtp->changed? if rtp != rtp_old)
     {
       // Propagate to all remotes.
@@ -356,7 +357,7 @@ do (&UVar)
       lobbies -= [Lobby.systemLobby]|
       // Then ask them to use RTP and reset existing notifies.
       var chan = Channel.new('external'.MODULE_TAG)|
-      var msg = ['external'.UEM_SETRTP, fullname, rtp];
+      var msg = ['external'.UEM_SETRTP, fullname, rtp] |
       var tv = obj.getSlot(name).apply([obj]).acceptVoid|
       for|(var l: lobbies)
       {
@@ -366,8 +367,9 @@ do (&UVar)
           continue|
         var currentBindings = l.__bindingFunc.getWithDefault(fullname,nil)|
         if (currentBindings.isA(&Float))
-        { // Standard TCP notifychange, remove it...
-          removeNotifyChange(currentBindings);
+        {
+          // Standard TCP notifychange, remove it...
+          removeNotifyChange(currentBindings)|
           //... and replace it with RTP version
           'external'.setupRTP(tv.isA(Binary), ownerName, name, l, nil)
           // Do not change bindingCount.
@@ -936,7 +938,7 @@ class Global.'external'
     // disconnect.
     {
       // Try to put the port into source UObject if it exists, or lobby.
-      var o;
+      var o|
       if (!uobjects.hasSlot(fr) || uobjects.getSlot(fr).lobby != lobby)
       {
         logger.warn << "Invalid source uobject in 'external var'"|
@@ -972,12 +974,13 @@ class Global.'external'
   // send it to the remote side, and wait for the result.
   function 'function'(nargs, objname, fname, fr)
   {
+    nonInterruptible|
     var functionName = objname + "." + fname|
     var chan = Channel.new(MODULE_TAG)|
     var chan.lobby = lobby|
     var chan.source = functionName |
     if (!lobby.hasLocalSlot("barriers"))
-      var lobby.barriers = Dictionary.new;
+      var lobby.barriers = Dictionary.new|
     function f(var args[])
     {
       // Just to be safe, do not rely on asString for UObject and UVar
@@ -1000,7 +1003,7 @@ class Global.'external'
       if (res.isA(Exception))
         throw res
       else
-        res.uvalueDeserialize.unacceptVoid;
+        res.uvalueDeserialize.unacceptVoid
     }|
     Global.uobjects.getSlot(objname).setSlot(fname, f)|
     void
