@@ -28,14 +28,16 @@ namespace urbi
   UBinary::UBinary()
     : type(BINARY_NONE)
     , allocated_(true)
+    , temporary_(false)
   {
     common.data = 0;
     common.size = 0;
   }
 
-  UBinary::UBinary(const UBinary& b, bool copy)
+  UBinary::UBinary(const UBinary& b, bool copy, bool temp)
     : type(BINARY_NONE)
     , allocated_(copy)
+    , temporary_(temp)
   {
     common.data = 0;
     if (copy)
@@ -96,7 +98,19 @@ namespace urbi
       return *this;
 
     clear();
-
+    if (b.temporary_)
+    {
+      // Be safe, do not try to guess which is bigger.
+      image = b.image;
+      sound = b.sound;
+      message = b.message;
+      type = b.type;
+      UBinary& bb = const_cast<UBinary&>(b);
+      bb.common.data = 0;
+      bb.type = BINARY_NONE;
+      temporary_ = true;
+      return *this;
+    }
     type = b.type;
     message = b.message;
     common.size = b.common.size;

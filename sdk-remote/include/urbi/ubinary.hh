@@ -65,7 +65,7 @@ namespace urbi
   public:
     UBinary();
     /// Deep copy constructor.
-    UBinary(const UBinary &b, bool copy = true);
+    UBinary(const UBinary &b, bool copy = true, bool temp = false);
     explicit UBinary(const UImage&, bool copy = true);
     explicit UBinary(const USound&, bool copy = true);
 
@@ -110,6 +110,12 @@ namespace urbi
     /// Whether the memory (common.data) is managed by this object, or
     /// by the user.
     bool allocated_;
+    /** If true, content is a temporary value that can be stolen when copied.
+     * Assigning from a temporary will mark the target as temporary too.
+     * So the temporary_ property must be reset to false manually at
+     * some point.
+     */
+    bool temporary_;
   };
 
   URBI_SDK_API
