@@ -124,6 +124,8 @@ namespace urbi
       bypassMode_ = bypass;
       allocated_ = !bypass;
       value_.set(v, !bypass);
+      if (value_.type == DATA_BINARY)
+        value_.binary->temporary_ = false;
       cache_ = 0;
     }
 

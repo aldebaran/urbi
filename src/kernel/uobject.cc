@@ -1322,7 +1322,10 @@ namespace urbi
     {
       if (server().isAnotherThread())
       {
-        schedule(SYMBOL(UObject),boost::bind(&KernelUVarImpl::set, this, v));
+        UValue vv(v);
+        if (vv.type == DATA_BINARY)
+          vv.binary->temporary_ = true;
+        schedule(SYMBOL(UObject), boost::bind(&KernelUVarImpl::set, this, vv));
         return;
       }
       traceOperation(owner_, SYMBOL(traceSet));
