@@ -106,7 +106,7 @@
 
 /// Internal, might change, do not use it directly.
 # define URBI_CREATE_CALLBACK(Kind, ...)                        \
-  ::urbi::createUCallback(*this, 0, #Kind, this, __VA_ARGS)
+  ::urbi::createUCallback(*this, 0, #Kind, this, __VA_ARGS__)
 
 /** Bind the function X in current Urbi object to the C++ member
  function of same name.  The return value and arguments must be of
