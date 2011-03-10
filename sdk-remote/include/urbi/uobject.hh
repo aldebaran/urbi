@@ -122,13 +122,11 @@
  *         parallel will be queued. A LockSpec can be used to specify the
  *         maximum queue size.
  */
-# define UBindThreadedFunctionRename(Obj, X, Uname, lockMode) \
-  ::urbi::createUCallback(*this, 0, "function", static_cast<Obj*>(this), \
-                          (&Obj::X), __name + "." Uname)                 \
-  ->setAsync(getTaskLock(lockMode, Uname))
+# define UBindThreadedFunctionRename(Obj, X, Uname, lockMode)           \
+  UBindFunctionRename(Obj, X, Uname)->setAsync(getTaskLock(lockMode, Uname))
 
-# define UBindThreadedFunction(Obj, X, lockMode)                         \
-  UBindThreadedFunctionRename(Obj, X, #X, lockMode);
+# define UBindThreadedFunction(Obj, X, lockMode)        \
+  UBindThreadedFunctionRename(Obj, X, #X, lockMode)
 
 
 /** Registers a function X in current object that will be called each
