@@ -119,6 +119,83 @@ check_equal srcdir       abs_top_srcdir
 OS=$(echo "$OS" | sed -e 's/-/_/g')
 # bleeding-edge actually means Ubuntu Lucid.
 OS=$(echo "$OS" | sed -e 's/bleeding_edge/lucid/g')
+# and actually, the debug package is made on lucid too.
+if $COMPILATION_MODE_DEBUG; then
+  COMPILATION_MODE_RELEASE=false
+else
+  COMPILATION_MODE_RELEASE=true
+fi
+
+srcdir=$2
+builddir=$3
+DESTDIR=$4
+# Directories/tarballs left in this directory (updir) will be
+# published by the buildfarm's package script.
+updir=$5
+ARCH=$6       # ARM|ppc|x86|x86_64.
+OS=$7         # linux|macos|windows.
+COMP=$8       # ex. gcc4, vcxx2005.
+MODE=$9       # [release|debug]_[static|dynamic].
+prefix=${10}
+# Set release_mode depending on whether we are building a release version
+# or a development version.
+case $MODE in
+  (release*)    release_mode=true;;
+  (*)           release_mode=false;;
+esac
+
+check_equal ()
+{
+  local lhs
+  local rhs
+  eval "lhs=\$$1"
+  eval "rhs=\$$2"
+  if test "$lhs" != "$rhs"; then
+    stderr "*******************"                \
+           "$1 != $2"                           \
+           "($lhs != $rhs)"                     \
+           "proceeding with $1 = $rhs"
+    eval "$1=\$$2"
+  fi
+}
+
+# tree_copy SOURCE DEST
+# ---------------------
+# Copy a file-system tree from SOURCE to DEST.  Preserve rights etc.
+# DEST is cleared first.
+tree_copy ()
+{
+  local source=$1
+  local dest=$2
+  rm -rf "$dest"
+  mkdir -p "$dest"
+  tar -C "$source" -cf - . | tar -C "$dest" -xpBf -
+}
+
+check_equal ARCH         URBI_HOST_CPU
+check_equal COMP         URBI_HOST_COMP
+# check_equal OS           URBI_HOST_OS
+check_equal builddir     abs_top_builddir
+check_equal prefix       buildprefix
+check_equal release_mode COMPILATION_MODE_RELEASE
+check_equal srcdir       abs_top_srcdir
+
+# OS and URBI_HOST_OS.
+#
+# OS might be different from URBI_HOST_OS.  For instance
+# URBI_HOST_OS=linux, but OS=linux-bleeding-edge.  If we drop the
+# bleeding-edge part, we will make bleeding-edge tarballs not labeled
+# as such, so we might ship bleeding-edge tarballs instead of the old
+# Debian etch.
+#
+# Don't accept - in the OS.
+OS=$(echo "$OS" | sed -e 's/-/_/g')
+# bleeding-edge actually means Ubuntu Lucid.
+OS=$(echo "$OS" | sed -e 's/bleeding_edge/lucid/g')
+# and actually, the debug package is made on lucid too.
+case $OS:$COMPILATION_MODE_DEBUG in
+  (linux:true) OS="${OS}_lucid";;
+esac
 if test "$OS" = "$URBI_HOST_OS"; then
   stderr "OS = URBI_HOST_OS = $OS"
 else
