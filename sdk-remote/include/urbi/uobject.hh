@@ -46,14 +46,14 @@
  These macros can only be called from within a class inheriting from
  UObject.  They bind the UVar X within the object to a variable
  with Uname as variable name in the corresponding Urbi object.  */
-# define UBindVarRename(Obj,X,Uname) \
+# define UBindVarRename(Obj, X, Uname)          \
   (X).init(__name, Uname, ctx_)
 
-# define UBindVar(Obj,X) \
+# define UBindVar(Obj,X)                        \
   UBindVarRename(Obj, X, #X)
 
 /// Bind multiple variables in one call
-# define UBindVars(Obj, ...) \
+# define UBindVars(Obj, ...)                            \
   LIBPORT_VAARGS_APPLY(URBI_BINDVARS, Obj, __VA_ARGS__)
 
 
@@ -62,13 +62,13 @@
  These macros can only be called from within a class inheriting from
  UObject.  They bind the UEvent X within the object to a variable
  with uName as variable name in the corresponding Urbi object.  */
-# define UBindEventRename(Obj,X,Uname) \
+# define UBindEventRename(Obj, X, Uname)        \
   (X).init(__name, Uname, ctx_)
 
-# define UBindEvent(Obj,X) \
+# define UBindEvent(Obj,X)                      \
   UBindEventRename(Obj, X, #X)
 
-# define UBindEvents(Obj, ...) \
+# define UBindEvents(Obj, ...)                                  \
   LIBPORT_VAARGS_APPLY(URBI_BINDEVENTS, Obj, __VA_ARGS__)
 
 /** This macro inverts a UVar in/out accesses.
@@ -78,33 +78,38 @@
  and Urbi code affect the target value, and reads get the sensed
  value. Without this call, all operations affect the same
  underlying variable.  */
-# define UOwned(X) \
+# define UOwned(X)                              \
   (X).setOwned()
 
 /// Backward compatibility.
-# define USensor(X) \
+# define USensor(X)                             \
   UOwned(X)
 
 /// Call me inside your class declaration if you need a LOCK_CLASS task lock.
-#define CREATE_CLASS_LOCK   \
-virtual libport::ThreadPool::rTaskLock getClassTaskLock() {\
-  static libport::ThreadPool::rTaskLock tl(new libport::ThreadPool::TaskLock); \
-  return tl;  \
-}
+#define CREATE_CLASS_LOCK                       \
+  virtual                                       \
+  libport::ThreadPool::rTaskLock                \
+  getClassTaskLock()                            \
+  {                                             \
+    static libport::ThreadPool::rTaskLock       \
+      tl(new libport::ThreadPool::TaskLock);    \
+    return tl;                                  \
+  }
 
 /** Bind the function X in current Urbi object to the C++ member
  function of same name.  The return value and arguments must be of
  a basic integral or floating types, char *, std::string, UValue,
  UBinary, USound or UImage, or any type that can cast to/from
  UValue.  */
-# define UBindFunctionRename(Obj, X, Uname) \
-   ::urbi::createUCallback(*this, 0, "function", static_cast<Obj*>(this), \
+# define UBindFunctionRename(Obj, X, Uname)                     \
+  ::urbi::createUCallback(*this, 0, "function",                 \
+                          static_cast<Obj*>(this),              \
                           (&Obj::X), __name + "." Uname)
 
-# define UBindFunction(Obj, X)                                           \
+# define UBindFunction(Obj, X)                  \
   UBindFunctionRename(Obj, X, #X)
 
-# define UBindFunctions(Obj, ...)  \
+# define UBindFunctions(Obj, ...)                               \
   LIBPORT_VAARGS_APPLY(URBI_BINDFUNCTIONS, Obj, __VA_ARGS__)
 
 /** Bind the function so that it gets executed in a separate thread.
@@ -131,11 +136,11 @@ virtual libport::ThreadPool::rTaskLock getClassTaskLock() {\
  called only if the number of arguments match between the function
  prototype and the Urbi event.  */
 # define UAt(Obj, X)                                                    \
-::urbi::createUCallback(*this, 0, "event", this,                        \
+  ::urbi::createUCallback(*this, 0, "event", this,                      \
 			  (&Obj::X), __name + "." #X)
 
 /// Same as UAt() but executes the code in a separate thread.
-# define UThreadedAt(Obj, X, lockMode)                                  \
+# define UThreadedAt(Obj, X, lockMode)                  \
   UAt(Obj, X)->setAsync(getTaskLock(lockMode, #X))
 
 
@@ -149,7 +154,7 @@ virtual libport::ThreadPool::rTaskLock getClassTaskLock() {\
   ::urbi::createUCallback(*this, 0, "eventend", this,			\
 			  (&Obj::X),(&Obj::Fun), __name + "." #X)
 
-# define UThreadedAtEnd(Obj, X, Fun, lock)			        \
+# define UThreadedAtEnd(Obj, X, Fun, lock)                      \
   UAtEnd(Obj, X, Fun)->>setAsync(getTaskLock(lockMode, #X))
 
 /// Register current object to the UObjectHub named \a Hub.
@@ -167,7 +172,7 @@ virtual libport::ThreadPool::rTaskLock getClassTaskLock() {\
 # ifndef URBI
 /// Send unquoted Urbi commands to the server.
 /// Add an extra layer of parenthesis for safety.
-#   define URBI(A) \
+#   define URBI(A)                              \
   uobject_unarmorAndSend(# A)
 # endif
 

@@ -363,7 +363,7 @@ namespace urbi
       size_t slen = strlen(sendBuffer);
       size_t msize = sendBufSize - slen;
       int r = vsnprintf(sendBuffer + slen, msize, command, arg);
-      // vsprintf returns the number of characters to write.  Check
+      // vsnprintf returns the number of characters to write.  Check
       // that it fits.  Don't forget the ending '\0' that it does not
       // count, but wants to add.
       if (r < 0 || static_cast<int>(msize) <= r)
