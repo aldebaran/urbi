@@ -103,7 +103,7 @@
  UValue.  */
 # define UBindFunctionRename(Obj, X, Uname)                     \
   ::urbi::createUCallback(*this, 0, "function",                 \
-                          static_cast<Obj*>(this),              \
+                          this,                                 \
                           (&Obj::X), __name + "." Uname)
 
 # define UBindFunction(Obj, X)                  \
@@ -150,7 +150,7 @@
  */
 # define UAtEnd(Obj, X, Fun)					        \
   ::urbi::createUCallback(*this, 0, "eventend", this,			\
-			  (&Obj::X),(&Obj::Fun), __name + "." #X)
+			  (&Obj::X), (&Obj::Fun), __name + "." #X)
 
 # define UThreadedAtEnd(Obj, X, Fun, LockMode)                  \
   UAtEnd(Obj, X, Fun)->setAsync(getTaskLock(LockMode, #X))
