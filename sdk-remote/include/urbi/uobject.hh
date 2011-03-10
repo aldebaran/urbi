@@ -172,7 +172,7 @@
     else                                                        \
     {                                                           \
       GD_CATEGORY(Urbi.UObject);                                \
-      GD_FERROR("Error: hub name '%s" #Hub "' is unknown");	\
+      GD_FERROR("Error: hub name '%s' is unknown",  #Hub);      \
     }                                                           \
   } while (0)
 
@@ -262,15 +262,18 @@ namespace urbi
     LockMode lockMode;
     unsigned int maxQueueSize;
   };
+
   /** LockSpec that prevents parallel calls to the function, and drops all
    * subsequent calls while one is running.
    */
   static const LockSpec LOCK_FUNCTION_DROP = LockSpec(LOCK_FUNCTION, 1);
+
    /** LockSpec that prevents parallel calls to the function, and drops all
    * subsequent calls while one is running but one. This mode will ensure
    * maximum CPU usage.
    */
   static const LockSpec LOCK_FUNCTION_KEEP_ONE = LockSpec(LOCK_FUNCTION, 2);
+
   UObjectHub* getUObjectHub(const std::string& n);
   UObject* getUObject(const std::string& n);
   void uobject_unarmorAndSend(const char* str);
@@ -280,7 +283,6 @@ namespace urbi
   UObjectMode getRunningMode();
   bool isPluginMode();
   bool isRemoteMode();
-
 
   /// Set maximum number of threads to use for threaded calls (0=unlimited).
   URBI_SDK_API void setThreadLimit(size_t nThreads);
@@ -382,8 +384,8 @@ namespace urbi
 
     /// \internal
 #  define MakeNotify(Type, Notified,			\
-		    TypeString, Owned, Name,		\
-		    StoreArg)				\
+                     TypeString, Owned, Name,		\
+                     StoreArg)				\
     template <typename F>				\
     void UNotify##Type(Notified, F fun)			\
     {							\
@@ -396,7 +398,7 @@ namespace urbi
     {							\
 	createUCallback(*this, StoreArg, TypeString,	\
                         this, fun, Name)		\
-        ->setAsync(getTaskLock(lockMode, Name));	\
+          ->setAsync(getTaskLock(lockMode, Name));	\
     }                                                   \
     template <typename F>				\
     void UNotifyThreaded##Type(Notified, F fun,		\
@@ -404,7 +406,7 @@ namespace urbi
     {							\
 	createUCallback(*this, StoreArg, TypeString,	\
                         this, fun, Name)		\
-        ->setAsync(getTaskLock(lockMode, Name));	\
+          ->setAsync(getTaskLock(lockMode, Name));	\
     }
 
 
@@ -412,13 +414,13 @@ namespace urbi
     /// \internal Define notify by name or by passing an UVar.
 #  define MakeMetaNotify(Type, TypeString)				\
     MakeNotify(Type, UVar& v, TypeString,				\
-                      v.owned, v.get_name (),                           \
-                      v.get_temp()?new UVar(v.get_name(), ctx_):&v);    \
+               v.owned, v.get_name (),                                  \
+               v.get_temp()?new UVar(v.get_name(), ctx_):&v);           \
     MakeNotify(Type, InputPort& v, TypeString,				\
-                      v.owned, v.get_name (),                           \
-                      &v);                                              \
+               v.owned, v.get_name (),                                  \
+               &v);                                                     \
     MakeNotify(Type, const std::string& name, TypeString,		\
-                      false, name, new UVar(name, ctx_));
+               false, name, new UVar(name, ctx_));
 
     /// \internal
     MakeMetaNotify(Access, "varaccess");
@@ -431,14 +433,15 @@ namespace urbi
 
 #  ifndef SWIG
     /// \internal
-#   define MKUSetTimer(Const, Useless)                                   \
+#   define MKUSetTimer(Const, Useless)                                  \
     template <class T, class R>						\
     TimerHandle USetTimer(ufloat t, R (T::*fun) () Const)	        \
     {									\
-      return (new UTimerCallbackobj<T> (__name, t,			\
-				dynamic_cast<T*>(this),                 \
-                                boost::bind(fun, dynamic_cast<T*>(this)),\
-                                ctx_))                                  \
+      return (new UTimerCallbackobj<T>                                  \
+              (__name, t,                                               \
+               dynamic_cast<T*>(this),                                  \
+               boost::bind(fun, dynamic_cast<T*>(this)),                \
+               ctx_))                                                   \
         ->handle_get();                                                 \
     }
 
