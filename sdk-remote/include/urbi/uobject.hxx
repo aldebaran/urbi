@@ -88,7 +88,7 @@ namespace urbi
   libport::ThreadPool::rTaskLock
   UObject::getTaskLock(LockSpec m, const std::string& what)
   {
-    GD_CATEGORY(UObject);
+    GD_CATEGORY(Urbi.UObject);
     typedef libport::ThreadPool::rTaskLock rTaskLock;
     typedef libport::ThreadPool::TaskLock TaskLock;
     // Static in inlined functions are per-module.

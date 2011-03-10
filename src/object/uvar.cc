@@ -35,7 +35,7 @@
 # include <runner/interpreter.hh>
 
 
-GD_CATEGORY(UVar);
+GD_CATEGORY(Urbi.UVar);
 namespace urbi
 {
   namespace object
