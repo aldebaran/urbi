@@ -36,10 +36,18 @@
 # include <urbi/uobject-hub.hh>
 # include <urbi/ucontext.hh>
 
-// Tell our users that it is fine to use void returning functions.
-#define USE_VOID 1
+# ifndef URBI_SDK_DEPRECATED
+#  ifdef BUILDING_URBI_SDK
+#   define URBI_SDK_DEPRECATED
+#  else
+#   define URBI_SDK_DEPRECATED ATTRIBUTE_DEPRECATED
+#  endif
+# endif
 
-#define URBI_UOBJECT_VERSION 2
+// Tell our users that it is fine to use void returning functions.
+# define USE_VOID 1
+
+# define URBI_UOBJECT_VERSION 2
 
 /** Bind a variable to an object.
 
@@ -86,7 +94,7 @@
   UOwned(X)
 
 /// Call me inside your class declaration if you need a LOCK_CLASS task lock.
-#define CREATE_CLASS_LOCK                       \
+# define CREATE_CLASS_LOCK                      \
   virtual                                       \
   libport::ThreadPool::rTaskLock                \
   getClassTaskLock()                            \
@@ -193,6 +201,7 @@
     libport::BlockLock bl((C).sendBufferLock);  \
     (C) << Args << std::endl;                   \
   } while (false)
+
 /// Send \a Args (which is given to a stream and therefore can use <<)
 /// to the server.
 # define URBI_SEND(Args)			\
@@ -468,13 +477,7 @@ namespace urbi
     /// \{
     /// These functions are obsoleted, they are not supported
     /// in Urbi SDK 2.0.
-
     /// Set autogrouping facility for each new subclass created.
-#ifdef BUILDING_URBI_SDK
-# define URBI_SDK_DEPRECATED
-#else
-# define URBI_SDK_DEPRECATED ATTRIBUTE_DEPRECATED
-#endif
     URBI_SDK_DEPRECATED
     void UAutoGroup();
     /// Called when a subclass is created if autogroup is true.
@@ -488,7 +491,6 @@ namespace urbi
     /// Add a group with a 's' after the base class name.
     URBI_SDK_DEPRECATED
     bool autogroup;
-#undef DEPRECATED
     /// \}
 
     /// Void function used in USync callbacks.

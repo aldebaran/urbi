@@ -11,17 +11,17 @@
 #ifndef URBI_UCONTEXT_HH
 # define URBI_UCONTEXT_HH
 
-#include <libport/fwd.hh>
-#include <libport/utime.hh>
+# include <libport/fwd.hh>
+# include <libport/utime.hh>
 
-#include <urbi/uvalue.hh>
+# include <urbi/uvalue.hh>
 
 namespace urbi
 {
   /// Possible UObject running modes.
   enum UObjectMode
   {
-    MODE_PLUGIN=1,
+    MODE_PLUGIN = 1,
     MODE_REMOTE
   };
 
@@ -105,6 +105,7 @@ namespace urbi
   URBI_SDK_API impl::UContextImpl* getCurrentContext();
   URBI_SDK_API void setCurrentContext(impl::UContextImpl*);
 
+  ATTRIBUTE_DEPRECATED
   ATTRIBUTE_PRINTF(1, 2)
   URBI_SDK_API void echo(const char* format, ...);
 }
