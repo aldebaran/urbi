@@ -189,15 +189,19 @@ namespace urbi
                                               (*m->value->list)[6],
                                               (*m->value->list)[7]);
       // Compatibility for wire protocol 2.3-2.4.
-      URBI_SEND_COMMAND_C(*outputStream, "if (!Object.hasSlot(\"uvalueSerialize\"))"
-                          " var Object.uvalueSerialize = function() { this}");
+      URBI_SEND_COMMAND_C
+        (*outputStream,
+         "if (!Object.hasSlot(\"uvalueSerialize\"))\n"
+         "  function Object.uvalueSerialize() { this }");
       // Compatibility for versions < 2.7
-      URBI_SEND_COMMAND_C(*outputStream,
-        "if (!UObject.hasSlot(\"syncGet\"))"
-        "  var UObject.syncGet = function(exp, tag) {"
-        "    var res; try{ res = eval(exp)|Channel.new(tag) << res}"
-        "    catch (var e) { lobby.send(\"!!! \" + e, tag)"
-        " }}");
+      URBI_SEND_COMMAND_C
+        (*outputStream,
+         "if (!UObject.hasSlot(\"syncGet\"))\n"
+         "  function UObject.syncGet(exp, tag)\n"
+         "  {\n"
+         "    try { Channel.new(tag) << eval(exp) }\n"
+         "    catch (var e) { lobby.send(\"!!! \" + e, tag) }\n"
+         "  }");
 
       boost::posix_time::ptime now
         (boost::posix_time::microsec_clock::local_time());

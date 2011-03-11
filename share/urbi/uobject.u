@@ -234,11 +234,9 @@ do (Global.UObject)
 
   function syncGet(exp, tag)
   {
-    var res|
     try
     {
-      res = eval(exp)|
-      Channel.new(tag) << res
+      Channel.new(tag) << eval(exp)
     }
     catch (var e)
     {
