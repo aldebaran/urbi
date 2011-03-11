@@ -443,7 +443,7 @@ static void write_and_unfreeze(urbi::UValue& r, std::string& exception,
   else
     r = v;
   if (server().isAnotherThread())
-    server().schedule(SYMBOL(UObject),
+    server().schedule_fast(
                       boost::bind(&object::Tag::unfreeze, tag->get()));
   else
     (*tag)->unfreeze();
@@ -639,7 +639,7 @@ namespace urbi
     {
       if (server().isAnotherThread())
       {
-        server().schedule(SYMBOL(UObject),
+        server().schedule_fast(
                           boost::bind(&KernelUContextImpl::newUObjectClass,
                                       this, s));
         return;
@@ -658,7 +658,7 @@ namespace urbi
     {
       if (server().isAnotherThread())
       {
-        server().schedule(SYMBOL(UObject),
+        server().schedule_fast(
           boost::bind(&KernelUContextImpl::newUObjectHubClass, this, s));
         return;
       }
@@ -670,7 +670,7 @@ namespace urbi
     {
       if (server().isAnotherThread())
       { // Copy the data
-        server().schedule(SYMBOL(UObject),boost::bind(
+        server().schedule_fast(boost::bind(
           (void (UContextImpl::*)(const std::string&))&UContextImpl::send,
            this, std::string(str)));
         return;
@@ -683,7 +683,7 @@ namespace urbi
     {
       if (server().isAnotherThread())
       { // Copy the data
-        server().schedule(SYMBOL(UObject),boost::bind(
+        server().schedule_fast(boost::bind(
           (void (UContextImpl::*)(const std::string&))&UContextImpl::send,
            this, std::string((const char*)buf, size)));
         return;
@@ -788,7 +788,7 @@ namespace urbi
         std::string varname = v2;
         urbi::UValue val = v3;
         if (server().isAnotherThread())
-          server().schedule(SYMBOL(UObject), boost::bind(&writeFromContext,
+          server().schedule_fast(boost::bind(&writeFromContext,
                                                          ctx, varname, val));
         else
           writeFromContext(v1, v2, v3);
@@ -796,7 +796,7 @@ namespace urbi
       }
       if (server().isAnotherThread())
       {
-        server().schedule(SYMBOL(UObject),boost::bind(&KernelUContextImpl::call,
+        server().schedule_fast(boost::bind(&KernelUContextImpl::call,
                                                       this, object, method,
                                                       v1, v2, v3, v4, v5, v6));
         return;
@@ -834,7 +834,7 @@ namespace urbi
     {
       if (server().isAnotherThread())
 
-        server().schedule(SYMBOL(UObject),boost::bind(&declare_event_name,
+        server().schedule_fast(boost::bind(&declare_event_name,
                                        owner->get_name()));
       else
         declare_event_name(owner->get_name());
@@ -860,7 +860,7 @@ namespace urbi
     {
       if (server().isAnotherThread())
       {
-        server().schedule(SYMBOL(UObject),boost::bind(&KernelUContextImpl::emit,
+        server().schedule_fast(boost::bind(&KernelUContextImpl::emit,
           this, object, v1, v2, v3, v4, v5, v6, v7));
         return;
       }
@@ -891,7 +891,7 @@ namespace urbi
           arg = std::string(str+1, len-1);
         else
           arg = str;
-        server().schedule(SYMBOL(UObject),boost::bind(&unarmor_and_send, arg));
+        server().schedule_fast(boost::bind(&unarmor_and_send, arg));
         return;
       }
       // Feed this to the ghostconnection.
@@ -975,7 +975,7 @@ namespace urbi
       if (server().isAnotherThread())
       { // Return value is not that important, so lie for the sake of making
         // an asynchronous call.
-        server().schedule(SYMBOL(UObject),
+        server().schedule_fast(
           boost::bind(&KernelUObjectImpl::removeTimer, this, h));
         return true;
       }
@@ -999,7 +999,7 @@ namespace urbi
       // the 'update' call.
       if (server().isAnotherThread())
       {
-        server().schedule(SYMBOL(UObject),boost::bind(
+        server().schedule_fast(boost::bind(
           &KernelUContextImpl::setHubUpdate, this, hub, period));
         return;
       }
@@ -1046,7 +1046,7 @@ namespace urbi
     {
       if (server().isAnotherThread())
       {
-        server().schedule(SYMBOL(UObject),
+        server().schedule_fast(
                           boost::bind(&KernelUObjectImpl::initialize, this,
                                       owner));
         return;
@@ -1080,7 +1080,7 @@ namespace urbi
     {
       if (server().isAnotherThread())
       {
-        server().schedule(SYMBOL(UObject),
+        server().schedule_fast(
                           boost::bind(&KernelUObjectImpl::clean, this));
         return;
       }
@@ -1125,7 +1125,7 @@ namespace urbi
     {
       if (server().isAnotherThread())
       {
-        server().schedule(SYMBOL(UObject),
+        server().schedule_fast(
                           boost::bind(&KernelUObjectImpl::setUpdate, this,
                                       period));
         return;
@@ -1520,7 +1520,7 @@ namespace urbi
     {
       if (server().isAnotherThread())
       {
-        server().schedule(SYMBOL(UObject),boost::bind(
+        server().schedule_fast(boost::bind(
                      &KernelUGenericCallbackImpl::registerCallback, this));
         return;
       }
