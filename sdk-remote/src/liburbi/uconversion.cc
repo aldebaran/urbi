@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2010, Gostai S.A.S.
+ * Copyright (C) 2006-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -237,6 +237,28 @@ namespace urbi
                          size_t& size, int quality)
   {
     return write_jpeg(source, w, h, true, dest, size, quality);
+  }
+
+  /// Convert a buffer \a in containing a source image, (an RGB image), to a
+  /// buffer \a out for the destination Image, which will contain a Grey8
+  /// image with the formula defined in recommendation 601. ( see
+  /// http://fr.wikipedia.org/wiki/Niveau_de_gris )
+  ///
+  /// The \a sourceImage and \a destinationImage are expected to be pointers
+  /// to a valid memory area of size equal to \a bufferSize for the input
+  /// image and equal to the third for the output image.
+  int
+  convertRGBtoGrey8_601(const byte* in, size_t bufferSize,
+                        byte* out)
+  {
+    for (size_t j = 0, size_t i = 0; i < bufferSize - 2; i += 3, j++)
+    {
+      float r = in[i];
+      float g = in[i + 1];
+      float b = in[i + 2];
+      out[j]  = clamp( 0.299f * r + 0.587f * g + 0.114f * b);
+    }
+    return 1;
   }
 
   struct mem_source_mgr
@@ -495,6 +517,7 @@ namespace urbi
     {
       case IMAGE_RGB:
       case IMAGE_PPM:
+      case IMAGE_GREY8:
 	targetformat = 1;
 	break;
       case IMAGE_YCbCr:
@@ -674,6 +697,8 @@ namespace urbi
 
     //then convert to destination format
     dest.size = dest.width * dest.height * 3 + 20;
+    if (dest.imageFormat == IMAGE_GREY8)
+      dest.size = dest.width * dest.height + 20;
     dest.data = static_cast<byte*> (realloc(dest.data, dest.size));
     size_t dsz = dest.size;
     switch (dest.imageFormat)
@@ -684,6 +709,11 @@ namespace urbi
 			    dest.width * dest.height * 3, (byte*) dest.data);
 	else
 	  memcpy(dest.data, uncompressedData, dest.width * dest.height * 3);
+	break;
+      case IMAGE_GREY8:
+        assert(format == 0);
+        convertRGBto_Grey8_601((byte*) uncompressedData,
+                               dest.width * dest.height * 3, (byte*) dest.data);
 	break;
       case IMAGE_YCbCr:
 	if (format == 0)
