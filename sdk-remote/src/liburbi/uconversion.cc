@@ -712,8 +712,8 @@ namespace urbi
 	break;
       case IMAGE_GREY8:
         assert(format == 0);
-        convertRGBto_Grey8_601((byte*) uncompressedData,
-                               dest.width * dest.height * 3, (byte*) dest.data);
+        convertRGBtoGrey8_601((byte*) uncompressedData,
+                              dest.width * dest.height * 3, (byte*) dest.data);
 	break;
       case IMAGE_YCbCr:
 	if (format == 0)
