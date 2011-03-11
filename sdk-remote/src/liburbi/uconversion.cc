@@ -9,10 +9,13 @@
  */
 
 #include <libport/cstdlib>
+#include <libport/debug.hh>
 #include <libport/cstdio>
 #include <libport/format.hh>
 
 #include <urbi/uconversion.hh>
+
+GD_CATEGORY(Urbi.Convert);
 
 #ifndef NO_IMAGE_CONVERSION
 # include <csetjmp>
@@ -363,7 +366,7 @@ namespace urbi
          * return.
          */
 	jpeg_destroy_decompress(&cinfo);
-        std::cerr << "JPEG error!" << std::endl;
+        GD_ERROR("JPEG error!");
 	return 0;
       }
       jpeg_create_decompress(&cinfo);
@@ -473,8 +476,8 @@ namespace urbi
 	targetformat = -1;
 	break;
       default:
-         printf("Image conversion to format %s is not implemented\n",
-               dest.format_string());
+         GD_FERROR("Image conversion to format %s is not implemented",
+                   dest.format_string());
         return 0;
     }
     unsigned p = 0;
@@ -737,8 +740,8 @@ namespace urbi
         }
         break;
       default:
-        printf("Image conversion to format %s is not implemented\n",
-               dest.format_string());
+        GD_FERROR("Image conversion to format %s is not implemented",
+                  dest.format_string());
     }
     if (allocated)
       free(uncompressedData);
