@@ -746,36 +746,7 @@
 %javamethodmodifiers urbi::USyncClient::isCallbackThread
 "    /// @return true if the current thread is the callback thread.
  public ";
-%typemap(javaimports) urbi::USystemMessage
-"  /** USystemMessage class definition.
-      USystemMessage provides a generic container for system messages.
-   */
-"
 
-%typemap(javaimports) urbi::UStringSystemMessage
-"  /** UStringSystemMessage class definition.
-      USystemMessage provides a std::string container for system messages.
-   */
-"
-
-%javamethodmodifiers urbi::UStringSystemMessage::getMessage
-"    /// get the system message as a string
- public ";
-%typemap(javaimports) urbi::USystem
-"  /** Main USystem class definition.
-      USystem provides an interface to system information and low level
-      kernel messages. It can only be used in plugged kernel mode.
-
-      Current available channels for system messages are:
-
-      NEW_CHANNEL: send a message when a new command fail, with the name of
-		   the requested object in a UStringSystemMessage
-  */
-"
-
-%javamethodmodifiers urbi::USystem::register_channel
-"    /// Register to be notified of kernel messages on a specific channel
- public ";
 %javamethodmodifiers urbi::UTable
 "    /// Contructor.
  public ";

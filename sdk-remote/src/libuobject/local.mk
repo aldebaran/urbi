@@ -18,7 +18,6 @@ libuobject_libuobject@LIBSFX@_la_SOURCES =	\
   libuobject/remote-ucontext-impl.hh		\
   libuobject/ucallbacks.cc			\
   libuobject/uobject.cc				\
-  libuobject/usystem.cc				\
   libuobject/utimer-callback.cc			\
   libuobject/uvar.cc
 libuobject_libuobject@LIBSFX@_la_CPPFLAGS =	\

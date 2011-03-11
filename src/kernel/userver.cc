@@ -47,7 +47,6 @@
 
 #include <urbi/exit.hh>
 #include <urbi/uobject.hh>
-#include <urbi/usystem.hh>
 
 #include <kernel/userver.hh>
 #include <kernel/utypes.hh>

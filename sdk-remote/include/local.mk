@@ -50,7 +50,6 @@ urbiinclude_HEADERS =				\
   include/urbi/ustarter.hh			\
   include/urbi/ustarter.hxx			\
   include/urbi/usyncclient.hh			\
-  include/urbi/usystem.hh			\
   include/urbi/utable.hh			\
   include/urbi/utag.hh				\
   include/urbi/utimer-callback.hh		\
