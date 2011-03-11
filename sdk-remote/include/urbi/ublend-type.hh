@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -7,18 +7,6 @@
  *
  * See the LICENSE file for more information.
  */
-
-// This file is part of UObject Component Architecture\n
-// (c) 2006 Gostai S.A.S.
-//
-// Permission to use, copy, modify, and redistribute this software for
-// non-commercial use is hereby granted.
-//
-// This software is provided "as is" without warranty of any kind,
-// either expressed or implied, including but not limited to the
-// implied warranties of fitness for a particular purpose.
-//
-// For more information, comments, bug reports: http://www.urbiforge.com
 
 #ifndef URBI_UBLEND_TYPE_HH
 # define URBI_UBLEND_TYPE_HH
