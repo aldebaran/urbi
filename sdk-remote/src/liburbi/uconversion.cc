@@ -239,14 +239,6 @@ namespace urbi
     return write_jpeg(source, w, h, true, dest, size, quality);
   }
 
-  /// Convert a buffer \a in containing a source image, (an RGB image), to a
-  /// buffer \a out for the destination Image, which will contain a Grey8
-  /// image with the formula defined in recommendation 601. ( see
-  /// http://fr.wikipedia.org/wiki/Niveau_de_gris )
-  ///
-  /// The \a sourceImage and \a destinationImage are expected to be pointers
-  /// to a valid memory area of size equal to \a bufferSize for the input
-  /// image and equal to the third for the output image.
   int
   convertRGBtoGrey8_601(const byte* in, size_t bufferSize,
                         byte* out)
