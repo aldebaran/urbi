@@ -703,8 +703,9 @@ namespace kernel
         return UFAIL;
     }
     connection.received(libport::format("//#push 1 \"%1%\"\n", base));
+    typedef void(UConnection::*received_type)(const std::string&);
     finally << boost::bind
-      (static_cast<void(UConnection::*)(const std::string&)>(&UConnection::received),
+      (static_cast<received_type>(&UConnection::received),
        &connection, "//#pop\n");
     while (is->good())
     {

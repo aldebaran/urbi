@@ -344,7 +344,6 @@ public:
     std::string res((char*)i.data, i.size);
     free(i.data);
     return res;
-
   }
 
   int writeOwnByName(const std::string& name, int val)

@@ -56,6 +56,7 @@ namespace urbi
     : type(BINARY_IMAGE)
     , image(i)
     , allocated_(copy)
+    , temporary_(false)
   {
     if (copy)
     {
@@ -68,6 +69,7 @@ namespace urbi
     : type(BINARY_SOUND)
     , sound(i)
     , allocated_(copy)
+    , temporary_(false)
   {
     if (copy)
     {
