@@ -452,8 +452,10 @@ namespace urbi
   int convert(const UImage& src, UImage& dest)
   {
     //step 1: uncompress source, to have raw uncompressed rgb or ycbcr
-    bool allocated = false; // true if uncompressedData must be freed
-    byte* uncompressedData = 0;
+    bool allocated = false; // true if data must be freed
+
+    // uncompressed data.
+    byte* data = 0;
     size_t w, h;
     size_t usz;
     int format = 42; //0 rgb 1 ycbcr
@@ -496,11 +498,11 @@ namespace urbi
     {
       case IMAGE_YCbCr:
 	format = 1;
-        uncompressedData = src.data;
+        data = src.data;
 	break;
       case IMAGE_RGB:
 	format = 0;
-        uncompressedData = src.data;
+        data = src.data;
 	break;
       case IMAGE_PPM:
 	format = 0;
@@ -510,7 +512,7 @@ namespace urbi
 	while (c < 3 && p < src.size)
 	  if (src.data[p++] == '\n')
 	    ++c;
-	uncompressedData = src.data + p;
+	data = src.data + p;
 	break;
       case IMAGE_JPEG:
         // this image is allocated by the function convertJPEG* function.
@@ -519,36 +521,36 @@ namespace urbi
 	if (targetformat == 1)
 	{
 	  convertJPEGtoRGB((byte*) src.data, src.size,
-			   (byte**) &uncompressedData, usz,
+			   (byte**) &data, usz,
                            w, h);
 	  format = 0;
 	}
 	else
 	{
 	  convertJPEGtoYCrCb((byte*) src.data, src.size,
-			     (byte**) &uncompressedData, usz,
+			     (byte**) &data, usz,
                              w, h);
 	  format = 1;
 	}
 	break;
       case IMAGE_YUV422:
         format = 1;
-        uncompressedData = (byte*)malloc(src.width * src.height * 3);
+        data = (byte*)malloc(src.width * src.height * 3);
         allocated = true;
         for (unsigned i=0; i< src.width*src.height; i+=2)
         {
-          uncompressedData[i*3] = src.data[i*2];
-          uncompressedData[i*3 + 2] = src.data[i*2+1];
-          uncompressedData[i*3 + 1] = src.data[i*2+3];
-          uncompressedData[(i+1)*3] = src.data[i*2+2];
-          uncompressedData[(i+1)*3 + 2] = src.data[i*2+1];
-          uncompressedData[(i+1)*3 + 1] = src.data[i*2+3];
+          data[i*3] = src.data[i*2];
+          data[i*3 + 2] = src.data[i*2+1];
+          data[i*3 + 1] = src.data[i*2+3];
+          data[(i+1)*3] = src.data[i*2+2];
+          data[(i+1)*3 + 2] = src.data[i*2+1];
+          data[(i+1)*3 + 1] = src.data[i*2+3];
         }
         break;
       case IMAGE_YUV411_PLANAR:
         {
           format = 1;
-          uncompressedData = (byte*)malloc(src.width * src.height * 3);
+          data = (byte*)malloc(src.width * src.height * 3);
           allocated = true;
           unsigned char* cy = src.data;
           unsigned char* u = cy + w*h;
@@ -558,16 +560,16 @@ namespace urbi
           for (int x=0; x<w;++x)
             for (int y=0; y<h; ++y)
             {
-              uncompressedData[(x+y*w)*3+0] = cy[x+y*w];
-              uncompressedData[(x+y*w)*3+2] = u[x/4 + y*w/4];
-              uncompressedData[(x+y*w)*3+1] = v[x/4 + y*w/4];
+              data[(x+y*w)*3+0] = cy[x+y*w];
+              data[(x+y*w)*3+2] = u[x/4 + y*w/4];
+              data[(x+y*w)*3+1] = v[x/4 + y*w/4];
             }
         }
         break;
       case IMAGE_YUV420_PLANAR:
         {
           format = 1;
-          uncompressedData = (byte*)malloc(src.width * src.height * 3);
+          data = (byte*)malloc(src.width * src.height * 3);
           allocated = true;
           unsigned char* cy = src.data;
           unsigned char* u = cy + w*h;
@@ -577,45 +579,45 @@ namespace urbi
           for (int x=0; x<w;++x)
             for (int y=0; y<h; ++y)
             {
-              uncompressedData[(x+y*w)*3+0] = cy[x+y*w];
-              uncompressedData[(x+y*w)*3+2] = u[x/2 + (y>>1)*w/2];
-              uncompressedData[(x+y*w)*3+1] = v[x/2 + (y>>1)*w/2];
+              data[(x+y*w)*3+0] = cy[x+y*w];
+              data[(x+y*w)*3+2] = u[x/2 + (y>>1)*w/2];
+              data[(x+y*w)*3+1] = v[x/2 + (y>>1)*w/2];
             }
         }
         break;
       case IMAGE_NV12:
         {
           format = 1;
-          uncompressedData = (byte*)malloc(src.width * src.height * 3);
+          data = (byte*)malloc(src.width * src.height * 3);
           allocated = true;
           unsigned char* cy = src.data;
           unsigned char* uv = src.data + w*h;
           for (unsigned int x=0; x<w;++x)
             for (unsigned int y=0; y<h; ++y)
             {
-              uncompressedData[(x+y*w)*3+0] = cy[x+y*w];
-              uncompressedData[(x+y*w)*3+2] = uv[((x>>1) + (((y>>1)*w)>>1))*2];
-              uncompressedData[(x+y*w)*3+1] = uv[((x>>1) + (((y>>1)*w)>>1))*2 + 1];
+              data[(x+y*w)*3+0] = cy[x+y*w];
+              data[(x+y*w)*3+2] = uv[((x>>1) + (((y>>1)*w)>>1))*2];
+              data[(x+y*w)*3+1] = uv[((x>>1) + (((y>>1)*w)>>1))*2 + 1];
             }
         }
         break;
       case IMAGE_GREY8:
         format = 1;
-        uncompressedData = (byte*)malloc(src.width * src.height * 3);
+        data = (byte*)malloc(src.width * src.height * 3);
         allocated = true;
-        memset(uncompressedData, 127, src.width * src.height * 3);
+        memset(data, 127, src.width * src.height * 3);
         for (unsigned i=0; i< src.width*src.height; ++i)
-          uncompressedData[i*3] = src.data[i];
+          data[i*3] = src.data[i];
         break;
       case IMAGE_GREY4:
         format = 1;
-        uncompressedData = (byte*)malloc(src.width * src.height * 3);
+        data = (byte*)malloc(src.width * src.height * 3);
         allocated = true;
-        memset(uncompressedData, 127, src.width * src.height * 3);
+        memset(data, 127, src.width * src.height * 3);
         for (unsigned i=0; i< src.width*src.height; i+=2)
         {
-          uncompressedData[i*3] = src.data[i/2] & 0xF0;
-          uncompressedData[(i+1)*3] = (src.data[i/2] & 0x0F) << 4;
+          data[i*3] = src.data[i/2] & 0xF0;
+          data[(i+1)*3] = (src.data[i/2] & 0x0F) << 4;
         }
         break;
       case IMAGE_UNKNOWN:
@@ -631,13 +633,13 @@ namespace urbi
     if (w != dest.width || h != dest.height)
     {
       void* scaled = malloc(dest.width * dest.height * 3);
-      scaleColorImage(uncompressedData, w, h, w/2, h/2,
+      scaleColorImage(data, w, h, w/2, h/2,
 		      (byte*) scaled, dest.width, dest.height,
 		      (float) dest.width / (float) w,
 		      (float) dest.height / (float) h);
       if (allocated)
-        free(uncompressedData);
-      uncompressedData = (byte*)scaled;
+        free(data);
+      data = (byte*)scaled;
       allocated = true;
     }
 
@@ -651,42 +653,42 @@ namespace urbi
     {
       case IMAGE_RGB:
 	if (format == 1)
-	  convertYCrCbtoRGB((byte*) uncompressedData,
+	  convertYCrCbtoRGB((byte*) data,
 			    dest.width * dest.height * 3, (byte*) dest.data);
 	else
-	  memcpy(dest.data, uncompressedData, dest.width * dest.height * 3);
+	  memcpy(dest.data, data, dest.width * dest.height * 3);
 	break;
       case IMAGE_GREY8:
         assert(format == 0);
-        convertRGBtoGrey8_601((byte*) uncompressedData,
+        convertRGBtoGrey8_601((byte*) data,
                               dest.width * dest.height * 3, (byte*) dest.data);
 	break;
       case IMAGE_YCbCr:
 	if (format == 0)
-	  convertRGBtoYCrCb((byte*) uncompressedData,
+	  convertRGBtoYCrCb((byte*) data,
 			    dest.width * dest.height * 3, (byte*) dest.data);
 	else
-	  memcpy(dest.data, uncompressedData, dest.width * dest.height * 3);
+	  memcpy(dest.data, data, dest.width * dest.height * 3);
 	break;
       case IMAGE_PPM:
         strcpy((char*) dest.data,
                libport::format("P6\n%s %s\n255\n",
                                dest.width, dest.height).c_str());
 	if (format == 1)
-	  convertYCrCbtoRGB((byte*) uncompressedData,
+	  convertYCrCbtoRGB((byte*) data,
 			    dest.width * dest.height * 3,
 			    (byte*) dest.data + strlen((char*) dest.data));
 	else
 	  memcpy(dest.data + strlen((char*) dest.data),
-		 uncompressedData, dest.width * dest.height * 3);
+		 data, dest.width * dest.height * 3);
 	break;
       case IMAGE_JPEG:
 	if (format == 1)
-	  convertYCrCbtoJPEG((byte*) uncompressedData,
+	  convertYCrCbtoJPEG((byte*) data,
 			     dest.width ,dest.height,
 			     (byte*) dest.data, dsz, 80);
 	else
-	  convertRGBtoJPEG((byte*) uncompressedData,
+	  convertRGBtoJPEG((byte*) data,
 			   dest.width , dest.height,
 			   (byte*) dest.data, dsz, 80);
         dest.size = dsz;
@@ -695,14 +697,14 @@ namespace urbi
         {
           unsigned int plane = dest.width * dest.height;
           for (unsigned int i=0; i<dest.width * dest.height;++i)
-            dest.data[i] = uncompressedData[i*3];
+            dest.data[i] = data[i*3];
           for (unsigned int y=0; y<dest.height; y++)
             for (unsigned int x=0; x<dest.width; x+=4)
             {
               dest.data[plane + x/4 + y*dest.width/4]
-                = uncompressedData[(x+y*dest.width)*3+2];
+                = data[(x+y*dest.width)*3+2];
               dest.data[plane+plane/4 + x/4 + y*dest.width/4]
-                = uncompressedData[(x+y*dest.width)*3+1];
+                = data[(x+y*dest.width)*3+1];
             }
           break;
         }
@@ -710,14 +712,14 @@ namespace urbi
         {
           unsigned int plane = dest.width * dest.height;
           for (unsigned int i=0; i<dest.width * dest.height;++i)
-            dest.data[i] = uncompressedData[i*3];
+            dest.data[i] = data[i*3];
           for (unsigned int y=0; y<dest.height/2; y++)
             for (unsigned int x=0; x<dest.width/2; x++)
             {
               dest.data[plane + x +y*dest.width/2]
-              = uncompressedData[(x*2+y*2*dest.width)*3+2];
+              = data[(x*2+y*2*dest.width)*3+2];
               dest.data[plane + plane/4 + x +y*dest.width/2]
-              = uncompressedData[(x*2+y*2*dest.width)*3+1];
+              = data[(x*2+y*2*dest.width)*3+1];
             }
           break;
         }
@@ -726,15 +728,15 @@ namespace urbi
           unsigned int planeS = dest.width * dest.height;
           // y plane
           for (unsigned int p=0; p<planeS; ++p)
-            dest.data[p] = uncompressedData[p*3];
+            dest.data[p] = data[p*3];
           // crcb interleaved plane
           for (unsigned int y=0; y<dest.height; y+=2)
             for (unsigned int x=0; x<dest.width; x+=2)
             {
               dest.data[planeS + x + y*dest.width/2]
-                = uncompressedData[(x+y*dest.width)*3+2];
+                = data[(x+y*dest.width)*3+2];
               dest.data[planeS + x + y*dest.width/2 +1 ]
-                = uncompressedData[(x+y*dest.width)*3+1];
+                = data[(x+y*dest.width)*3+1];
             }
           dest.size = planeS * 3 / 2;
         }
@@ -744,7 +746,7 @@ namespace urbi
                   dest.format_string());
     }
     if (allocated)
-      free(uncompressedData);
+      free(data);
     return 1;
   }
 
