@@ -251,7 +251,7 @@ namespace urbi
   convertRGBtoGrey8_601(const byte* in, size_t bufferSize,
                         byte* out)
   {
-    for (size_t j = 0, size_t i = 0; i < bufferSize - 2; i += 3, j++)
+    for (size_t j = 0, i = 0; i < bufferSize - 2; i += 3, j++)
     {
       float r = in[i];
       float g = in[i + 1];
