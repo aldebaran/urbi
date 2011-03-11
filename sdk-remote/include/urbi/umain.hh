@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2009, 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -33,6 +33,8 @@
     std::vector<std::string> args(argv, argv + argc);           \
     return urbi_root.urbi_main(args, true, true);               \
   }                                                             \
+                                                                \
+  int main_args(const libport::cli_args_type& args);            \
                                                                 \
   int                                                           \
   main_args(const libport::cli_args_type& args)                 \
