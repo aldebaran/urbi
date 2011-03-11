@@ -32,7 +32,6 @@ memdup(const void *data, size_t size)
   return memcpy(malloc(size), data, size);
 }
 
-
 struct Point
 {
   Point()
@@ -41,6 +40,7 @@ struct Point
   {}
   ufloat x,y;
 };
+
 struct Rect
 {
   Point a;
@@ -86,7 +86,7 @@ public:
     mainthread = pthread_self();
     if (getenv("CTOR_EXCEPTION") &&
         !strcmp(getenv("CTOR_EXCEPTION"), "true"))
-    throw std::runtime_error("constructor failure");
+      throw std::runtime_error("constructor failure");
     setup();
   }
 
@@ -213,6 +213,7 @@ public:
     for (int i=0; i<count; ++i)
       (*vars[idx]) = val+idx;
   }
+
   void multiRead(int idx, int count)
   {
     ufloat sum = 0;
@@ -286,10 +287,10 @@ public:
 
   void unnotify(int id)
   {
-    if (id <5)
+    if (id < 5)
       vars[id]->unnotify();
     else
-      ports[id-5]->unnotify();
+      ports[id - 5]->unnotify();
   }
 
   int onBinaryBypass(urbi::UVar& var)
@@ -392,10 +393,10 @@ public:
   int setNotifyChange(int id)
   {
     threadCheck();
-    if (id<5)
+    if (id < 5)
       UNotifyChange(*vars[id], &all::onChange);
     else
-      UNotifyChange(*ports[id-5], &all::onChange);
+      UNotifyChange(*ports[id - 5], &all::onChange);
     return 0;
   }
 
