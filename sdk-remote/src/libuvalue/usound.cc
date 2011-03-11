@@ -93,14 +93,20 @@ namespace urbi
   | USound.  |
   `---------*/
 
+  void
+  USound::init()
+  {
+    data = 0;
+    size = sampleSize = channels = rate = 0;
+    soundFormat = SOUND_UNKNOWN;
+    sampleFormat = SAMPLE_UNSIGNED;
+  }
+
   USound
   USound::make()
   {
     USound res;
-    res.data = 0;
-    res.size = res.sampleSize = res.channels = res.rate = 0;
-    res.soundFormat = SOUND_UNKNOWN;
-    res.sampleFormat = SAMPLE_UNSIGNED;
+    res.init();
     return res;
   }
 

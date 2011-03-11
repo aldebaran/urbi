@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010, Gostai S.A.S.
+ * Copyright (C) 2007-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -65,6 +65,10 @@ namespace urbi
     /// Return an empty instance.
     /// Not a constructor so that we can still put it in a union.
     static USound make();
+
+    /// Initialize.
+    /// Not a constructor so that we can still put it in a union.
+    void init();
 
     /// Return a legible definition of imageFormat.
     const char* format_string() const;

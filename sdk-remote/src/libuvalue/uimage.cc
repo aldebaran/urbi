@@ -62,17 +62,24 @@ namespace urbi
     return IMAGE_UNKNOWN;
   }
 
+
   /*---------.
   | UImage.  |
   `---------*/
+
+  void
+  UImage::init()
+  {
+    data = 0;
+    size = width = height = 0;
+    imageFormat = IMAGE_UNKNOWN;
+  }
 
   UImage
   UImage::make()
   {
     UImage res;
-    res.data = 0;
-    res.size = res.width = res.height = 0;
-    res.imageFormat = IMAGE_UNKNOWN;
+    res.init();
     return res;
   }
 

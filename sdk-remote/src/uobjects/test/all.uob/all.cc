@@ -58,6 +58,7 @@ URBI_REGISTER_STRUCT(Point, x, y);
 URBI_REGISTER_STRUCT(Rect, a, b);
 URBI_REGISTER_STRUCT(PointOfInterest, sectorName, subSectors, byName);
 
+
 class all: public urbi::UObject
 {
 public:
@@ -335,9 +336,10 @@ public:
   {
     threadCheck();
     urbi::UImage i;
+    i.init();
     i.data = (unsigned char*)memdup(content.c_str(), content.size());
-    GD_FINFO_DEBUG("writeI cptr %s", (void*)i.data);
     i.size = content.length();
+    GD_FINFO_DEBUG("writeI cptr %s", (void*)i.data);
     *vars[idx] = i;
     std::string res((char*)i.data, i.size);
     free(i.data);
@@ -666,6 +668,7 @@ public:
   {
     urbi::UVar v(name);
     urbi::UImage i;
+    i.init();
     i.imageFormat = urbi::IMAGE_JPEG;
     i.width = i.height = 42;
     i.size = content.length();
@@ -680,6 +683,7 @@ public:
   {
     urbi::UVar v(name);
     urbi::USound s;
+    s.init();
     s.soundFormat = urbi::SOUND_RAW;
     s.rate = 42;
     s.size = content.length();
