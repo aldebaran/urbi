@@ -50,12 +50,6 @@ namespace urbi
     }
   } // namespace
 
-  /// Convert a buffer \a in containing a source image, (an RGB
-  /// image), to a buffer \a out for the destinationImage, which will
-  /// contain a YCrCb image.
-  ///
-  /// The \a sourceImage and \a destinationImage are expected to be
-  /// pointers to a valid memory area of size equal to \a bufferSize.
   int
   convertRGBtoYCrCb(const byte* in, size_t bufferSize,
 		    byte* out)
@@ -77,14 +71,6 @@ namespace urbi
     return 1;
   }
 
-  /** Convert a buffer \a in, which contains an YCrCb, image to
-      a buffer for the \a out, which will contain a YCbCr image.
-      This function is its own reverse operation and can be used to convert
-      YCbCr image into YCrCb.
-
-      The \a in and \a out are expected to be pointers
-      to a valid memory area of size equal to \a bufferSize.
-  */
   int
   convertYCrCbtoYCbCr(const byte* in, size_t bufferSize,
 		      byte* out)
@@ -101,12 +87,6 @@ namespace urbi
   }
 
 
-  /** Convert a buffer \a in, which contains an YCrCb, image to a
-      buffer for the \a out, which will contain a RGB image.
-
-      The \a in and \a out are expected to be pointers
-      to a valid memory area of size equal to \a bufferSize.
-   */
   int
   convertYCrCbtoRGB(const byte* in, size_t bufferSize,
 		    byte* out)
@@ -202,39 +182,19 @@ namespace urbi
   }
 
 
-  /** Convert a buffer \a source, which contains an RGB image, to a
-      buffer for the \a dest, which will contain a JPEG image.
-
-      The \a source and \a dest are expected to be pointers to a valid
-      memory area of size equal to \a size.  The \a size argument is
-      modified to represent the size of the JPEG data inside the \a dest
-      buffer.
-
-      Arguments \a w, \a h and \a quality are used to respectively define
-      the width, the height and the quality of the compressed image.
-   */
-  int convertRGBtoJPEG(const byte* source,
-		       size_t w, size_t h, byte* dest,
-                       size_t& size, int quality)
+  int
+  convertRGBtoJPEG(const byte* source,
+                   size_t w, size_t h, byte* dest,
+                   size_t& size, int quality)
   {
     return write_jpeg(source, w, h, false, dest, size, quality);
   }
 
 
-  /** Convert a buffer \a source, which contains an YCrCb image, to a
-      buffer for the \a dest, which will contain a JPEG image.
-
-      The \a source and \a dest are expected to be pointers to a valid
-      memory area of size equal to \a size.  The \a size argument is
-      modified to represent the size of the JPEG data inside the \a dest
-      buffer.
-
-      Arguments \a w, \a h and \a quality are used to respectively define
-      the width, the height and the quality of the compressed image.
-   */
-  int convertYCrCbtoJPEG(const byte* source,
-			 size_t w, size_t h, byte* dest,
-                         size_t& size, int quality)
+  int
+  convertYCrCbtoJPEG(const byte* source,
+                     size_t w, size_t h, byte* dest,
+                     size_t& size, int quality)
   {
     return write_jpeg(source, w, h, true, dest, size, quality);
   }
@@ -486,15 +446,6 @@ namespace urbi
 
   } // anonymous namespace
 
-  /** Convert the image \a src to the image \a dest.
-   *
-   * The image format of the destination has to be initialized.  If other
-   * fields are empty, they are supposed to be identical to the source
-   * image.
-   *
-   * The destination image can only have one of the following type rgb, ppm,
-   * YCbCr or jpeg.
-   */
   int convert(const UImage& src, UImage& dest)
   {
     //step 1: uncompress source, to have raw uncompressed rgb or ycbcr
@@ -905,16 +856,6 @@ namespace urbi
     }
   }
 
-  /** Conversion between various sound formats.
-
-      Supported sound formats are RAW format and WAV format.  The \a dest
-      sound must have its sound format defined and any other zero properties
-      (channel, sampleSize, rate, sampleFormat) are copied from the \a
-      source sound.
-
-      The function handles memory reallocation of the destination data if
-      the size is to small to contains the converted sound.
-  */
   int
   convert (const USound &source, USound &dest)
   {
