@@ -181,6 +181,7 @@ public:
     UBindFunctions(all, area, translate, makeRect, multiTranslate,
                    transmitPointOfInterest, writePointOfInterest,
                    readPointOfInterest);
+    UBindFunctionRename(all, area, "rectArea");
     UBindFunctions(all, pack, unpack);
     UBindVars(all, periodicWriteTarget, periodicWriteType, periodicWriteRate,
               periodicWriteCount, changeCount);
