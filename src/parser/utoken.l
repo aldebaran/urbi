@@ -655,7 +655,9 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
        {
          BEGIN sc_default;
          if (*yytext == '\'')
+         {
            RETURN_VALUE(IDENTIFIER, libport::Symbol(grown_string));
+         }
          else
            RETURN_VALUE(STRING, grown_string);
        }
