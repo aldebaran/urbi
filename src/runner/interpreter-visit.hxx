@@ -159,6 +159,9 @@ namespace runner
   {
     runner::Interpreter& r = ::kernel::interpreter();
     GD_CATEGORY(Urbi.At);
+    GD_FPUSH_TRACE("Evaluating watch expression: %s",
+                   data->exp->body_string());
+
     rObject v;
     // Do not leave dependencies_log to true while registering on dependencies
     // below.
@@ -167,6 +170,7 @@ namespace runner
       object::objects_type args;
       args.push_back(data->exp);
       bool profiled = false;
+      bool interruptible = r.non_interruptible_;
       try
       {
         const ast::Routine* ast = dynamic_cast<const ast::Routine*>
@@ -179,13 +183,16 @@ namespace runner
           r.profile_start(data->profile, name, data->exp.get());
         }
         r.dependencies_log_ = true;
+        r.non_interruptible_ = true;
         v = r.apply(data->exp, name, args);
+        r.non_interruptible_ = interruptible;
         r.dependencies_log_ = false;
         if (profiled)
           r.profile_stop();
       }
       catch (...)
       {
+        r.non_interruptible_ = interruptible;
         r.dependencies_log_ = false;
         if (profiled)
           r.profile_stop();
@@ -272,8 +279,6 @@ namespace runner
   Interpreter::at_run(WatchEventData* data, const object::objects_type&)
   {
     GD_CATEGORY(Urbi.At);
-    GD_FPUSH_TRACE("Evaluating at expression: %s",
-                   data->exp->body_string());
 
     runner::Interpreter& r = ::kernel::interpreter();
     rObject res = watch_eval(data);
