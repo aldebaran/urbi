@@ -36,12 +36,12 @@ namespace urbi
 
   /// Convert a buffer \a in containing a source image, (an RGB
   /// image), to a buffer \a out for the destinationImage, which will
-  /// contain a YCrCb image.
+  /// contain a YCbCr (YUV) image.
   ///
   /// The \a sourceImage and \a destinationImage are expected to be
   /// pointers to a valid memory area of size equal to \a bufferSize.
   URBI_SDK_API int
-  convertRGBtoYCrCb(const byte* source, size_t sourcelen,
+  convertRGBtoYCbCr(const byte* source, size_t sourcelen,
                     byte* dest);
 
   /// Convert a buffer \a in, which contains an YCrCb, image to a
@@ -50,7 +50,7 @@ namespace urbi
   /// The \a in and \a out are expected to be pointers
   /// to a valid memory area of size equal to \a bufferSize.
   URBI_SDK_API int
-  convertYCrCbtoRGB(const byte* source, size_t sourcelen,
+  convertYCbCrtoRGB(const byte* source, size_t sourcelen,
                     byte* dest);
   URBI_SDK_API int
   convertJPEGtoYCrCb(const byte* source, size_t sourcelen,

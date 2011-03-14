@@ -54,7 +54,7 @@ namespace urbi
   } // namespace
 
   int
-  convertRGBtoYCrCb(const byte* in, size_t bufferSize,
+  convertRGBtoYCbCr(const byte* in, size_t bufferSize,
 		    byte* out)
   {
     for (size_t i = 0; i < bufferSize - 2; i += 3)
@@ -68,8 +68,8 @@ namespace urbi
 	Cb = U = -(0.148 * R) - (0.291 * G) + (0.439 * B) + 128
       */
       out[i]     = clamp( 0.257f * r + 0.504f * g + 0.098f * b +  16.0f);
-      out[i + 1] = clamp( 0.439f * r - 0.368f * g - 0.071f * b + 128.0f);
-      out[i + 2] = clamp(-0.148f * r - 0.291f * g + 0.439f * b + 128.0f);
+      out[i + 1] = clamp(-0.148f * r - 0.291f * g + 0.439f * b + 128.0f);
+      out[i + 2] = clamp( 0.439f * r - 0.368f * g - 0.071f * b + 128.0f);
     }
     return 1;
   }
@@ -91,7 +91,7 @@ namespace urbi
 
 
   int
-  convertYCrCbtoRGB(const byte* in, size_t bufferSize,
+  convertYCbCrtoRGB(const byte* in, size_t bufferSize,
 		    byte* out)
   {
     // http://en.wikipedia.org/wiki/YUV#Converting_between_Y.27UV_and_RGB
@@ -101,9 +101,9 @@ namespace urbi
       int c298 = c * 298;
       int d = in[i+1] - 128;
       int e = in[i+2] - 128;
-      out[i+2] = clamp((c298 + 409*e + 128) >> 8);
+      out[i] = clamp((c298 + 409*e + 128) >> 8);
       out[i+1] = clamp((c298 + 100*d - 20*e + 128) >> 8);
-      out[i] = clamp((c298 + 516*d + 128) >> 8);
+      out[i+2] = clamp((c298 + 516*d + 128) >> 8);
       /* Float version, 5 times slower on p4.
       float y = in[i];
       float cb = in[i + 1];
@@ -451,6 +451,13 @@ namespace urbi
 
   int convert(const UImage& src, UImage& dest)
   {
+    enum FormatKind
+    {
+      RGB,
+      YUV,
+      COMPRESSED,
+      UNSET
+    };
     //step 1: uncompress source, to have raw uncompressed rgb or ycbcr
     bool allocated = false; // true if data must be freed
 
@@ -458,24 +465,26 @@ namespace urbi
     byte* data = 0;
     size_t w, h;
     size_t usz;
-    int format = 42; //0 rgb 1 ycbcr
-    int targetformat = 42; //0 rgb 1 ycbcr 2 compressed
+    // Effective format of the source in 'data'.
+    FormatKind format = UNSET;
+    // Format we need the source in
+    FormatKind targetformat = UNSET;
 
     switch (dest.imageFormat)
     {
       case IMAGE_RGB:
       case IMAGE_PPM:
       case IMAGE_GREY8:
-	targetformat = 1;
+	targetformat = RGB;
 	break;
       case IMAGE_YCbCr:
       case IMAGE_NV12:
       case IMAGE_YUV411_PLANAR:
       case IMAGE_YUV420_PLANAR:
-	targetformat = 0;
+	targetformat = YUV;
 	break;
       case IMAGE_JPEG:
-	targetformat = -1;
+	targetformat = COMPRESSED;
 	break;
       default:
          GD_FERROR("Image conversion to format %s is not implemented",
@@ -497,15 +506,15 @@ namespace urbi
     switch (src.imageFormat)
     {
       case IMAGE_YCbCr:
-	format = 1;
+	format = YUV;
         data = src.data;
 	break;
       case IMAGE_RGB:
-	format = 0;
+	format = RGB;
         data = src.data;
 	break;
       case IMAGE_PPM:
-	format = 0;
+	format = RGB;
 	//locate header end
 	p = 0;
 	c = 0;
@@ -518,38 +527,38 @@ namespace urbi
         // this image is allocated by the function convertJPEG* function.
         // w, h and usz are defined by these functions calls.
         allocated = true;
-	if (targetformat == 1)
+	if (targetformat == RGB)
 	{
 	  convertJPEGtoRGB((byte*) src.data, src.size,
 			   (byte**) &data, usz,
                            w, h);
-	  format = 0;
+	  format = RGB;
 	}
 	else
 	{
 	  convertJPEGtoYCrCb((byte*) src.data, src.size,
 			     (byte**) &data, usz,
                              w, h);
-	  format = 1;
+	  format = YUV;
 	}
 	break;
       case IMAGE_YUV422:
-        format = 1;
+        format = YUV;
         data = (byte*)malloc(src.width * src.height * 3);
         allocated = true;
         for (unsigned i=0; i< src.width*src.height; i+=2)
         {
           data[i*3] = src.data[i*2];
-          data[i*3 + 2] = src.data[i*2+1];
-          data[i*3 + 1] = src.data[i*2+3];
+          data[i*3 + 1] = src.data[i*2+1];
+          data[i*3 + 2] = src.data[i*2+3];
           data[(i+1)*3] = src.data[i*2+2];
-          data[(i+1)*3 + 2] = src.data[i*2+1];
-          data[(i+1)*3 + 1] = src.data[i*2+3];
+          data[(i+1)*3 + 1] = src.data[i*2+1];
+          data[(i+1)*3 + 2] = src.data[i*2+3];
         }
         break;
       case IMAGE_YUV411_PLANAR:
         {
-          format = 1;
+          format = YUV;
           data = (byte*)malloc(src.width * src.height * 3);
           allocated = true;
           unsigned char* cy = src.data;
@@ -561,14 +570,14 @@ namespace urbi
             for (int y=0; y<h; ++y)
             {
               data[(x+y*w)*3+0] = cy[x+y*w];
-              data[(x+y*w)*3+2] = u[x/4 + y*w/4];
-              data[(x+y*w)*3+1] = v[x/4 + y*w/4];
+              data[(x+y*w)*3+1] = u[x/4 + y*w/4];
+              data[(x+y*w)*3+2] = v[x/4 + y*w/4];
             }
         }
         break;
       case IMAGE_YUV420_PLANAR:
         {
-          format = 1;
+          format = YUV;
           data = (byte*)malloc(src.width * src.height * 3);
           allocated = true;
           unsigned char* cy = src.data;
@@ -580,14 +589,14 @@ namespace urbi
             for (int y=0; y<h; ++y)
             {
               data[(x+y*w)*3+0] = cy[x+y*w];
-              data[(x+y*w)*3+2] = u[x/2 + (y>>1)*w/2];
-              data[(x+y*w)*3+1] = v[x/2 + (y>>1)*w/2];
+              data[(x+y*w)*3+1] = u[x/2 + (y>>1)*w/2];
+              data[(x+y*w)*3+2] = v[x/2 + (y>>1)*w/2];
             }
         }
         break;
       case IMAGE_NV12:
         {
-          format = 1;
+          format = YUV;
           data = (byte*)malloc(src.width * src.height * 3);
           allocated = true;
           unsigned char* cy = src.data;
@@ -596,13 +605,13 @@ namespace urbi
             for (unsigned int y=0; y<h; ++y)
             {
               data[(x+y*w)*3+0] = cy[x+y*w];
-              data[(x+y*w)*3+2] = uv[((x>>1) + (((y>>1)*w)>>1))*2];
-              data[(x+y*w)*3+1] = uv[((x>>1) + (((y>>1)*w)>>1))*2 + 1];
+              data[(x+y*w)*3+1] = uv[((x>>1) + (((y>>1)*w)>>1))*2];
+              data[(x+y*w)*3+2] = uv[((x>>1) + (((y>>1)*w)>>1))*2 + 1];
             }
         }
         break;
       case IMAGE_GREY8:
-        format = 1;
+        format = YUV;
         data = (byte*)malloc(src.width * src.height * 3);
         allocated = true;
         memset(data, 127, src.width * src.height * 3);
@@ -610,7 +619,7 @@ namespace urbi
           data[i*3] = src.data[i];
         break;
       case IMAGE_GREY4:
-        format = 1;
+        format = YUV;
         data = (byte*)malloc(src.width * src.height * 3);
         allocated = true;
         memset(data, 127, src.width * src.height * 3);
@@ -642,7 +651,22 @@ namespace urbi
       data = (byte*)scaled;
       allocated = true;
     }
-
+    // Then factor YUV<->RGB conversion if necessary
+    if ((format == RGB && targetformat == YUV)
+        || (format == YUV && targetformat == RGB))
+    {
+      byte* src = data;
+      if (!allocated)
+      {
+        allocated = true;
+        data = (byte*)malloc(dest.width * dest.height * 3);
+      }
+      if (format == RGB)
+        convertRGBtoYCbCr(src, dest.width * dest.height * 3, data);
+      else
+        convertYCbCrtoRGB(src, dest.width * dest.height * 3, data);
+      format = targetformat;
+    }
     //then convert to destination format
     dest.size = dest.width * dest.height * 3 + 20;
     if (dest.imageFormat == IMAGE_GREY8)
@@ -652,10 +676,6 @@ namespace urbi
     switch (dest.imageFormat)
     {
       case IMAGE_RGB:
-	if (format == 1)
-	  convertYCrCbtoRGB((byte*) data,
-			    dest.width * dest.height * 3, (byte*) dest.data);
-	else
 	  memcpy(dest.data, data, dest.width * dest.height * 3);
 	break;
       case IMAGE_GREY8:
@@ -664,26 +684,17 @@ namespace urbi
                               dest.width * dest.height * 3, (byte*) dest.data);
 	break;
       case IMAGE_YCbCr:
-	if (format == 0)
-	  convertRGBtoYCrCb((byte*) data,
-			    dest.width * dest.height * 3, (byte*) dest.data);
-	else
 	  memcpy(dest.data, data, dest.width * dest.height * 3);
 	break;
       case IMAGE_PPM:
         strcpy((char*) dest.data,
                libport::format("P6\n%s %s\n255\n",
                                dest.width, dest.height).c_str());
-	if (format == 1)
-	  convertYCrCbtoRGB((byte*) data,
-			    dest.width * dest.height * 3,
-			    (byte*) dest.data + strlen((char*) dest.data));
-	else
-	  memcpy(dest.data + strlen((char*) dest.data),
-		 data, dest.width * dest.height * 3);
+        memcpy(dest.data + strlen((char*) dest.data),
+               data, dest.width * dest.height * 3);
 	break;
       case IMAGE_JPEG:
-	if (format == 1)
+	if (format == YUV)
 	  convertYCrCbtoJPEG((byte*) data,
 			     dest.width ,dest.height,
 			     (byte*) dest.data, dsz, 80);
@@ -696,30 +707,30 @@ namespace urbi
       case IMAGE_YUV411_PLANAR:
         {
           unsigned int plane = dest.width * dest.height;
-          for (unsigned int i=0; i<dest.width * dest.height;++i)
+          for (unsigned int i=0; i<plane;++i)
             dest.data[i] = data[i*3];
           for (unsigned int y=0; y<dest.height; y++)
             for (unsigned int x=0; x<dest.width; x+=4)
             {
               dest.data[plane + x/4 + y*dest.width/4]
-                = data[(x+y*dest.width)*3+2];
-              dest.data[plane+plane/4 + x/4 + y*dest.width/4]
                 = data[(x+y*dest.width)*3+1];
+              dest.data[plane+plane/4 + x/4 + y*dest.width/4]
+                = data[(x+y*dest.width)*3+2];
             }
           break;
         }
       case IMAGE_YUV420_PLANAR:
         {
           unsigned int plane = dest.width * dest.height;
-          for (unsigned int i=0; i<dest.width * dest.height;++i)
+          for (unsigned int i=0; i<plane;++i)
             dest.data[i] = data[i*3];
           for (unsigned int y=0; y<dest.height/2; y++)
             for (unsigned int x=0; x<dest.width/2; x++)
             {
               dest.data[plane + x +y*dest.width/2]
-              = data[(x*2+y*2*dest.width)*3+2];
-              dest.data[plane + plane/4 + x +y*dest.width/2]
               = data[(x*2+y*2*dest.width)*3+1];
+              dest.data[plane + plane/4 + x +y*dest.width/2]
+              = data[(x*2+y*2*dest.width)*3+2];
             }
           break;
         }
@@ -734,9 +745,9 @@ namespace urbi
             for (unsigned int x=0; x<dest.width; x+=2)
             {
               dest.data[planeS + x + y*dest.width/2]
-                = data[(x+y*dest.width)*3+2];
-              dest.data[planeS + x + y*dest.width/2 +1 ]
                 = data[(x+y*dest.width)*3+1];
+              dest.data[planeS + x + y*dest.width/2 +1 ]
+                = data[(x+y*dest.width)*3+2];
             }
           dest.size = planeS * 3 / 2;
         }

@@ -272,7 +272,7 @@ BallTracking::getImage(const urbi::UMessage &msg)
   }
 
 #ifndef LIBURBI_OPENR
-  urbi::convertYCrCbtoRGB(image, w*h*3, image);
+  urbi::convertYCbCrtoRGB(image, w*h*3, image);
   if (!mon)
     mon = new Monitor(w, h, "Image");
   mon->setImage((bits8*)image, img.width*img.height*3);

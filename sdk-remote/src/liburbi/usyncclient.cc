@@ -431,7 +431,7 @@ namespace urbi
       buffersize = std::min(m->value->binary->image.size,
 			    static_cast<size_t> (buffersize));
       if (m->value->binary->image.imageFormat == IMAGE_YCbCr)
-	convertYCrCbtoRGB((const byte*) m->value->binary->image.data,
+	convertYCbCrtoRGB((const byte*) m->value->binary->image.data,
 			  buffersize, (byte*) buffer);
       else
 	memcpy(buffer, m->value->binary->image.data, buffersize);
