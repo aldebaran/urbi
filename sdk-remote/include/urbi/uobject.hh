@@ -255,9 +255,9 @@ namespace urbi
   class URBI_SDK_API LockSpec
   {
   public:
-    LockSpec(LockMode l, unsigned int maxQueueSize=0)
-    : lockMode(l)
-    , maxQueueSize(maxQueueSize)
+    LockSpec(LockMode l, unsigned int maxQueueSize = 0)
+      : lockMode(l)
+      , maxQueueSize(maxQueueSize)
     {}
     LockMode lockMode;
     unsigned int maxQueueSize;
@@ -355,7 +355,7 @@ namespace urbi
     \brief Similar to UNotifyChange(), but run function in a thread.
     \param v the variable to monitor.
     \param fun the function to call.
-    \param m the locking mode to use.
+    \param s the locking specifications to use.
     */
     void
     UNotifyThreadedChange(UVar& v, void (UObject::*fun)(UVar&), LockSpec s);
@@ -508,7 +508,7 @@ namespace urbi
     /// Find the TaskLock associated with lock mode \b m.
     libport::ThreadPool::rTaskLock getTaskLock(LockMode m,
                                                const std::string& what);
-    /// Find the TaskLock associated with lock mode \b s.lockMode.
+    /// Find the TaskLock associated with lock specs \b s.
     libport::ThreadPool::rTaskLock getTaskLock(LockSpec s,
                                                const std::string& what);
     /// The load attribute is standard and can be used to control the
