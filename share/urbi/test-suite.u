@@ -113,6 +113,14 @@ do (Global)
       testSkip("cannot run in debug compilation-mode");
   }|;
 
+  function skipIfHostName (var host)
+  {
+    var hostname = { if (getenv("HOSTNAME").isNil) "" else getenv("HOSTNAME") }|
+    clog << "Hostname: %s" % hostname |
+    if (hostname == host)
+      testSkip("cannot run on this host (%s)" % host);
+  }|;
+
   function skipIfSpace ()
   {
     if (System.Platform.compilationModeSpace)
