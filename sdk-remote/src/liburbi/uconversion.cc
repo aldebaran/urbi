@@ -105,13 +105,13 @@ namespace urbi
       out[i+1] = clamp((c298 + 100*d - 20*e + 128) >> 8);
       out[i+2] = clamp((c298 + 516*d + 128) >> 8);
       /* Float version, 5 times slower on p4.
-      float y = in[i];
-      float cb = in[i + 1];
-      float cr = in[i + 2];
-      out[i] = clamp(1.164 * (y - 16) + 1.596 * (cr - 128));
-      out[i + 1] = clamp(1.164 * (y - 16) - 0.813 * (cr - 128) -
-			 0.392 * (cb - 128));
-      out[i + 2] = clamp(1.164 * (y - 16) + 2.017 * (cb - 128));
+         float y = in[i];
+         float cb = in[i + 1];
+         float cr = in[i + 2];
+         out[i] = clamp(1.164 * (y - 16) + 1.596 * (cr - 128));
+         out[i + 1] = clamp(1.164 * (y - 16) - 0.813 * (cr - 128) -
+         0.392 * (cb - 128));
+         out[i + 2] = clamp(1.164 * (y - 16) + 2.017 * (cb - 128));
       */
     }
     return 1;
@@ -135,7 +135,7 @@ namespace urbi
       of the data.
 
       \return 1 on success.
-   */
+  */
   static
   int
   convert_jpeg_to(const byte* source, size_t sourcelen,
@@ -472,24 +472,24 @@ namespace urbi
 
     switch (dest.imageFormat)
     {
-      case IMAGE_RGB:
-      case IMAGE_PPM:
-      case IMAGE_GREY8:
-	targetformat = RGB;
-	break;
-      case IMAGE_YCbCr:
-      case IMAGE_NV12:
-      case IMAGE_YUV411_PLANAR:
-      case IMAGE_YUV420_PLANAR:
-	targetformat = YUV;
-	break;
-      case IMAGE_JPEG:
-	targetformat = COMPRESSED;
-	break;
-      default:
-         GD_FERROR("Image conversion to format %s is not implemented",
-                   dest.format_string());
-        return 0;
+    case IMAGE_RGB:
+    case IMAGE_PPM:
+    case IMAGE_GREY8:
+      targetformat = RGB;
+      break;
+    case IMAGE_YCbCr:
+    case IMAGE_NV12:
+    case IMAGE_YUV411_PLANAR:
+    case IMAGE_YUV420_PLANAR:
+      targetformat = YUV;
+      break;
+    case IMAGE_JPEG:
+      targetformat = COMPRESSED;
+      break;
+    default:
+      GD_FERROR("Image conversion to format %s is not implemented",
+                dest.format_string());
+      return 0;
     }
     unsigned p = 0;
     int c = 0;
@@ -505,132 +505,132 @@ namespace urbi
 
     switch (src.imageFormat)
     {
-      case IMAGE_YCbCr:
-	format = YUV;
-        data = src.data;
-	break;
-      case IMAGE_RGB:
-	format = RGB;
-        data = src.data;
-	break;
-      case IMAGE_PPM:
-	format = RGB;
-	//locate header end
-	p = 0;
-	c = 0;
-	while (c < 3 && p < src.size)
-	  if (src.data[p++] == '\n')
-	    ++c;
-	data = src.data + p;
-	break;
-      case IMAGE_JPEG:
-        // this image is allocated by the function convertJPEG* function.
-        // w, h and usz are defined by these functions calls.
-        allocated = true;
-	if (targetformat == RGB)
-	{
-	  convertJPEGtoRGB((byte*) src.data, src.size,
-			   (byte**) &data, usz,
+    case IMAGE_YCbCr:
+      format = YUV;
+      data = src.data;
+      break;
+    case IMAGE_RGB:
+      format = RGB;
+      data = src.data;
+      break;
+    case IMAGE_PPM:
+      format = RGB;
+      //locate header end
+      p = 0;
+      c = 0;
+      while (c < 3 && p < src.size)
+        if (src.data[p++] == '\n')
+          ++c;
+      data = src.data + p;
+      break;
+    case IMAGE_JPEG:
+      // this image is allocated by the function convertJPEG* function.
+      // w, h and usz are defined by these functions calls.
+      allocated = true;
+      if (targetformat == RGB)
+      {
+        convertJPEGtoRGB((byte*) src.data, src.size,
+                         (byte**) &data, usz,
+                         w, h);
+        format = RGB;
+      }
+      else
+      {
+        convertJPEGtoYCrCb((byte*) src.data, src.size,
+                           (byte**) &data, usz,
                            w, h);
-	  format = RGB;
-	}
-	else
-	{
-	  convertJPEGtoYCrCb((byte*) src.data, src.size,
-			     (byte**) &data, usz,
-                             w, h);
-	  format = YUV;
-	}
-	break;
-      case IMAGE_YUV422:
         format = YUV;
-        data = (byte*)malloc(src.width * src.height * 3);
-        allocated = true;
-        for (unsigned i=0; i< src.width*src.height; i+=2)
+      }
+      break;
+    case IMAGE_YUV422:
+      format = YUV;
+      data = (byte*)malloc(src.width * src.height * 3);
+      allocated = true;
+      for (unsigned i=0; i< src.width*src.height; i+=2)
+      {
+        data[i*3] = src.data[i*2];
+        data[i*3 + 1] = src.data[i*2+1];
+        data[i*3 + 2] = src.data[i*2+3];
+        data[(i+1)*3] = src.data[i*2+2];
+        data[(i+1)*3 + 1] = src.data[i*2+1];
+        data[(i+1)*3 + 2] = src.data[i*2+3];
+      }
+      break;
+    case IMAGE_YUV411_PLANAR:
+    {
+      format = YUV;
+      data = (byte*)malloc(src.width * src.height * 3);
+      allocated = true;
+      unsigned char* cy = src.data;
+      unsigned char* u = cy + w*h;
+      unsigned char* v = u + w*h/4;
+      int w = src.width;
+      int h = src.height;
+      for (int x=0; x<w;++x)
+        for (int y=0; y<h; ++y)
         {
-          data[i*3] = src.data[i*2];
-          data[i*3 + 1] = src.data[i*2+1];
-          data[i*3 + 2] = src.data[i*2+3];
-          data[(i+1)*3] = src.data[i*2+2];
-          data[(i+1)*3 + 1] = src.data[i*2+1];
-          data[(i+1)*3 + 2] = src.data[i*2+3];
+          data[(x+y*w)*3+0] = cy[x+y*w];
+          data[(x+y*w)*3+1] = u[x/4 + y*w/4];
+          data[(x+y*w)*3+2] = v[x/4 + y*w/4];
         }
-        break;
-      case IMAGE_YUV411_PLANAR:
+    }
+    break;
+    case IMAGE_YUV420_PLANAR:
+    {
+      format = YUV;
+      data = (byte*)malloc(src.width * src.height * 3);
+      allocated = true;
+      unsigned char* cy = src.data;
+      unsigned char* u = cy + w*h;
+      unsigned char* v = u + w*h/4;
+      int w = src.width;
+      int h = src.height;
+      for (int x=0; x<w;++x)
+        for (int y=0; y<h; ++y)
         {
-          format = YUV;
-          data = (byte*)malloc(src.width * src.height * 3);
-          allocated = true;
-          unsigned char* cy = src.data;
-          unsigned char* u = cy + w*h;
-          unsigned char* v = u + w*h/4;
-          int w = src.width;
-          int h = src.height;
-          for (int x=0; x<w;++x)
-            for (int y=0; y<h; ++y)
-            {
-              data[(x+y*w)*3+0] = cy[x+y*w];
-              data[(x+y*w)*3+1] = u[x/4 + y*w/4];
-              data[(x+y*w)*3+2] = v[x/4 + y*w/4];
-            }
+          data[(x+y*w)*3+0] = cy[x+y*w];
+          data[(x+y*w)*3+1] = u[x/2 + (y>>1)*w/2];
+          data[(x+y*w)*3+2] = v[x/2 + (y>>1)*w/2];
         }
-        break;
-      case IMAGE_YUV420_PLANAR:
+    }
+    break;
+    case IMAGE_NV12:
+    {
+      format = YUV;
+      data = (byte*)malloc(src.width * src.height * 3);
+      allocated = true;
+      unsigned char* cy = src.data;
+      unsigned char* uv = src.data + w*h;
+      for (unsigned int x=0; x<w;++x)
+        for (unsigned int y=0; y<h; ++y)
         {
-          format = YUV;
-          data = (byte*)malloc(src.width * src.height * 3);
-          allocated = true;
-          unsigned char* cy = src.data;
-          unsigned char* u = cy + w*h;
-          unsigned char* v = u + w*h/4;
-          int w = src.width;
-          int h = src.height;
-          for (int x=0; x<w;++x)
-            for (int y=0; y<h; ++y)
-            {
-              data[(x+y*w)*3+0] = cy[x+y*w];
-              data[(x+y*w)*3+1] = u[x/2 + (y>>1)*w/2];
-              data[(x+y*w)*3+2] = v[x/2 + (y>>1)*w/2];
-            }
+          data[(x+y*w)*3+0] = cy[x+y*w];
+          data[(x+y*w)*3+1] = uv[((x>>1) + (((y>>1)*w)>>1))*2];
+          data[(x+y*w)*3+2] = uv[((x>>1) + (((y>>1)*w)>>1))*2 + 1];
         }
-        break;
-      case IMAGE_NV12:
-        {
-          format = YUV;
-          data = (byte*)malloc(src.width * src.height * 3);
-          allocated = true;
-          unsigned char* cy = src.data;
-          unsigned char* uv = src.data + w*h;
-          for (unsigned int x=0; x<w;++x)
-            for (unsigned int y=0; y<h; ++y)
-            {
-              data[(x+y*w)*3+0] = cy[x+y*w];
-              data[(x+y*w)*3+1] = uv[((x>>1) + (((y>>1)*w)>>1))*2];
-              data[(x+y*w)*3+2] = uv[((x>>1) + (((y>>1)*w)>>1))*2 + 1];
-            }
-        }
-        break;
-      case IMAGE_GREY8:
-        format = YUV;
-        data = (byte*)malloc(src.width * src.height * 3);
-        allocated = true;
-        memset(data, 127, src.width * src.height * 3);
-        for (unsigned i=0; i< src.width*src.height; ++i)
-          data[i*3] = src.data[i];
-        break;
-      case IMAGE_GREY4:
-        format = YUV;
-        data = (byte*)malloc(src.width * src.height * 3);
-        allocated = true;
-        memset(data, 127, src.width * src.height * 3);
-        for (unsigned i=0; i< src.width*src.height; i+=2)
-        {
-          data[i*3] = src.data[i/2] & 0xF0;
-          data[(i+1)*3] = (src.data[i/2] & 0x0F) << 4;
-        }
-        break;
-      case IMAGE_UNKNOWN:
-	break;
+    }
+    break;
+    case IMAGE_GREY8:
+      format = YUV;
+      data = (byte*)malloc(src.width * src.height * 3);
+      allocated = true;
+      memset(data, 127, src.width * src.height * 3);
+      for (unsigned i=0; i< src.width*src.height; ++i)
+        data[i*3] = src.data[i];
+      break;
+    case IMAGE_GREY4:
+      format = YUV;
+      data = (byte*)malloc(src.width * src.height * 3);
+      allocated = true;
+      memset(data, 127, src.width * src.height * 3);
+      for (unsigned i=0; i< src.width*src.height; i+=2)
+      {
+        data[i*3] = src.data[i/2] & 0xF0;
+        data[(i+1)*3] = (src.data[i/2] & 0x0F) << 4;
+      }
+      break;
+    case IMAGE_UNKNOWN:
+      break;
     }
 
     if (dest.width == 0)
@@ -675,86 +675,86 @@ namespace urbi
     size_t dsz = dest.size;
     switch (dest.imageFormat)
     {
-      case IMAGE_RGB:
-	  memcpy(dest.data, data, dest.width * dest.height * 3);
-	break;
-      case IMAGE_GREY8:
-        assert(format == 0);
-        convertRGBtoGrey8_601((byte*) data,
-                              dest.width * dest.height * 3, (byte*) dest.data);
-	break;
-      case IMAGE_YCbCr:
-	  memcpy(dest.data, data, dest.width * dest.height * 3);
-	break;
-      case IMAGE_PPM:
-        strcpy((char*) dest.data,
-               libport::format("P6\n%s %s\n255\n",
-                               dest.width, dest.height).c_str());
-        memcpy(dest.data + strlen((char*) dest.data),
-               data, dest.width * dest.height * 3);
-	break;
-      case IMAGE_JPEG:
-	if (format == YUV)
-	  convertYCrCbtoJPEG((byte*) data,
-			     dest.width ,dest.height,
-			     (byte*) dest.data, dsz, 80);
-	else
-	  convertRGBtoJPEG((byte*) data,
-			   dest.width , dest.height,
-			   (byte*) dest.data, dsz, 80);
-        dest.size = dsz;
-	break;
-      case IMAGE_YUV411_PLANAR:
+    case IMAGE_RGB:
+      memcpy(dest.data, data, dest.width * dest.height * 3);
+      break;
+    case IMAGE_GREY8:
+      assert(format == 0);
+      convertRGBtoGrey8_601((byte*) data,
+                            dest.width * dest.height * 3, (byte*) dest.data);
+      break;
+    case IMAGE_YCbCr:
+      memcpy(dest.data, data, dest.width * dest.height * 3);
+      break;
+    case IMAGE_PPM:
+      strcpy((char*) dest.data,
+             libport::format("P6\n%s %s\n255\n",
+                             dest.width, dest.height).c_str());
+      memcpy(dest.data + strlen((char*) dest.data),
+             data, dest.width * dest.height * 3);
+      break;
+    case IMAGE_JPEG:
+      if (format == YUV)
+        convertYCrCbtoJPEG((byte*) data,
+                           dest.width ,dest.height,
+                           (byte*) dest.data, dsz, 80);
+      else
+        convertRGBtoJPEG((byte*) data,
+                         dest.width , dest.height,
+                         (byte*) dest.data, dsz, 80);
+      dest.size = dsz;
+      break;
+    case IMAGE_YUV411_PLANAR:
+    {
+      unsigned int plane = dest.width * dest.height;
+      for (unsigned int i=0; i<plane;++i)
+        dest.data[i] = data[i*3];
+      for (unsigned int y=0; y<dest.height; y++)
+        for (unsigned int x=0; x<dest.width; x+=4)
         {
-          unsigned int plane = dest.width * dest.height;
-          for (unsigned int i=0; i<plane;++i)
-            dest.data[i] = data[i*3];
-          for (unsigned int y=0; y<dest.height; y++)
-            for (unsigned int x=0; x<dest.width; x+=4)
-            {
-              dest.data[plane + x/4 + y*dest.width/4]
-                = data[(x+y*dest.width)*3+1];
-              dest.data[plane+plane/4 + x/4 + y*dest.width/4]
-                = data[(x+y*dest.width)*3+2];
-            }
-          break;
+          dest.data[plane + x/4 + y*dest.width/4]
+            = data[(x+y*dest.width)*3+1];
+          dest.data[plane+plane/4 + x/4 + y*dest.width/4]
+            = data[(x+y*dest.width)*3+2];
         }
-      case IMAGE_YUV420_PLANAR:
+      break;
+    }
+    case IMAGE_YUV420_PLANAR:
+    {
+      unsigned int plane = dest.width * dest.height;
+      for (unsigned int i=0; i<plane;++i)
+        dest.data[i] = data[i*3];
+      for (unsigned int y=0; y<dest.height/2; y++)
+        for (unsigned int x=0; x<dest.width/2; x++)
         {
-          unsigned int plane = dest.width * dest.height;
-          for (unsigned int i=0; i<plane;++i)
-            dest.data[i] = data[i*3];
-          for (unsigned int y=0; y<dest.height/2; y++)
-            for (unsigned int x=0; x<dest.width/2; x++)
-            {
-              dest.data[plane + x +y*dest.width/2]
-              = data[(x*2+y*2*dest.width)*3+1];
-              dest.data[plane + plane/4 + x +y*dest.width/2]
-              = data[(x*2+y*2*dest.width)*3+2];
-            }
-          break;
+          dest.data[plane + x +y*dest.width/2]
+            = data[(x*2+y*2*dest.width)*3+1];
+          dest.data[plane + plane/4 + x +y*dest.width/2]
+            = data[(x*2+y*2*dest.width)*3+2];
         }
-      case IMAGE_NV12:
+      break;
+    }
+    case IMAGE_NV12:
+    {
+      unsigned int planeS = dest.width * dest.height;
+      // y plane
+      for (unsigned int p=0; p<planeS; ++p)
+        dest.data[p] = data[p*3];
+      // crcb interleaved plane
+      for (unsigned int y=0; y<dest.height; y+=2)
+        for (unsigned int x=0; x<dest.width; x+=2)
         {
-          unsigned int planeS = dest.width * dest.height;
-          // y plane
-          for (unsigned int p=0; p<planeS; ++p)
-            dest.data[p] = data[p*3];
-          // crcb interleaved plane
-          for (unsigned int y=0; y<dest.height; y+=2)
-            for (unsigned int x=0; x<dest.width; x+=2)
-            {
-              dest.data[planeS + x + y*dest.width/2]
-                = data[(x+y*dest.width)*3+1];
-              dest.data[planeS + x + y*dest.width/2 +1 ]
-                = data[(x+y*dest.width)*3+2];
-            }
-          dest.size = planeS * 3 / 2;
+          dest.data[planeS + x + y*dest.width/2]
+            = data[(x+y*dest.width)*3+1];
+          dest.data[planeS + x + y*dest.width/2 +1 ]
+            = data[(x+y*dest.width)*3+2];
         }
-        break;
-      default:
-        GD_FERROR("Image conversion to format %s is not implemented",
-                  dest.format_string());
+      dest.size = planeS * 3 / 2;
+    }
+    break;
+    default:
+      GD_FERROR("Image conversion to format %s is not implemented",
+                dest.format_string());
     }
     if (allocated)
       free(data);
