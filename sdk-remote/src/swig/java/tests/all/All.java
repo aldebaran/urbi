@@ -449,6 +449,7 @@ public class All extends UObject
 	res.push_back(v.getProp(UProperty.PROP_SPEEDMAX).doubleValue());
 	res.push_back(v.getProp(UProperty.PROP_DELTA).doubleValue());
 	res.push_back(v.getProp(UProperty.PROP_BLEND));
+	res.push_back(v.getProp(UProperty.PROP_CONSTANT));
 	Log.info("all.readProps: " + res.toString());
 	return res;
     }
@@ -462,6 +463,7 @@ public class All extends UObject
 	v.setProp(UProperty.PROP_SPEEDMAX, val);
 	v.setProp(UProperty.PROP_DELTA, val);
 	v.setProp(UProperty.PROP_BLEND, val);
+	v.setProp(UProperty.PROP_CONSTANT, val);
 	return 0;
     }
 
