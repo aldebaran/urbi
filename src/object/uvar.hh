@@ -81,6 +81,8 @@ namespace urbi
     /// Call some notifies on an UVar.
     void callNotify(runner::Runner& r, rUVar self,
                     UVar::Callbacks& notifyList, rObject sourceUVar);
+    /// Call uconnections.
+    void callConnections(runner::Runner&, rObject self, rList conns);
   }
 }
 #endif

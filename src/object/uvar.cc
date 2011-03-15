@@ -107,9 +107,10 @@ namespace urbi
       }
     }
 
-    static inline void
+    void
     callConnections(runner::Runner& r, rObject self, rList l)
     {
+
       // We must copy the list as callbacks might remove themselve
       List::value_type callbacks = l->value_get();
       for (List::value_type::iterator i = callbacks.begin();
@@ -405,8 +406,9 @@ namespace urbi
     UVar::update_timed(rObject val, libport::utime_t timestamp)
     {
       rObject r =  kernel::urbiserver->getCurrentRunner().as_job();
+      // Prevent loopback notification on the remote who called us.
       if (!r->slot_has(SYMBOL(DOLLAR_uobjectInUpdate)))
-        r->slot_set(SYMBOL(DOLLAR_uobjectInUpdate), true_class);
+        r->slot_set(SYMBOL(DOLLAR_uobjectInUpdate), slot_get(SYMBOL(fullName)));
       update_timed_(val, timestamp);
       r->slot_remove(SYMBOL(DOLLAR_uobjectInUpdate));
       return void_class;

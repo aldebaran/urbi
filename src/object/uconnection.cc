@@ -99,9 +99,14 @@ namespace urbi
       processing = true;
       libport::utime_t now = libport::utime();
       if (target->slot_has(SYMBOL(inputPort)))
+      {
         // If target is InputPut, bypass write and call notifies.
         callNotify(r ? *r : ::kernel::runner(),
                    target->as<UVar>(), target->as<UVar>()->change_, self);
+        rList l =  target->call(SYMBOL(changeConnections))->as<List>();
+        if (l)
+          callConnections(r ? *r : ::kernel::runner(), self, l);
+      }
       else
         // If target is not, write to uvar.
         target->as<UVar>()->update_(self->as<UVar>()->getter(true));

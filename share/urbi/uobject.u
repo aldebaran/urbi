@@ -905,7 +905,9 @@ class Global.'external'
     function f(args[])
     {
       // If source is the current lobby, loopback took care of notification
-      if (lobby == chan.lobby && currentRunner.hasLocalSlot("$uobjectInUpdate"))
+      if (lobby == chan.lobby
+          && currentRunner.hasLocalSlot("$uobjectInUpdate")
+          && currentRunner.'$uobjectInUpdate' == fullname)
         return|
       var uvar =
       {
