@@ -97,6 +97,8 @@ namespace runner
     , code_(0)
     , result_(0)
     , stacks_(lobby)
+    , innermost_node_(0)
+    , current_exception_(0)
   {
     init();
     apply_tag(lobby->tag_get());
@@ -119,6 +121,8 @@ namespace runner
     , args_(args)
     , result_(0)
     , stacks_(lobby)
+    , innermost_node_(0)
+    , current_exception_(0)
   {
     init();
     apply_tag(lobby->tag_get());
@@ -138,6 +142,8 @@ namespace runner
     , result_(0)
     , call_stack_(model.call_stack_)
     , stacks_(model.lobby_)
+    , innermost_node_(0)
+    , current_exception_(0)
   {
     tag_stack_set(model.tag_stack_get_all());
     init();
@@ -156,6 +162,8 @@ namespace runner
     , result_(0)
     , call_stack_(model.call_stack_)
     , stacks_(model.lobby_)
+    , innermost_node_(0)
+    , current_exception_(0)
   {
     tag_stack_set(model.tag_stack_get_all());
     init();
@@ -177,6 +185,8 @@ namespace runner
     , job_(job)
     , result_(0)
     , stacks_(self)
+    , innermost_node_(0)
+    , current_exception_(0)
   {
     GD_FINFO_TRACE("Spawn new interpreter \"%s\".", name);
     init();
