@@ -59,8 +59,8 @@ stderr ()
 {
   for i
   do
-    echo >&2 "$me: $i"
-  done
+    echo "$i"
+  done | sed -e "s/^/$me: /" >&2
 }
 
 # verbose WORD1 WORD2
