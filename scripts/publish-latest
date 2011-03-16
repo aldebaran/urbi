@@ -160,7 +160,7 @@ indirect_scp ()
 # The (scp-like) directory that contains the tarballs.
 from=share.gostai.com:/home/share/built/urbi-sdk/releases
 
-# The (scp-like) location into which the per-architecture directories are.
+# The (scp-like) location into which the per-version directories are.
 to=downloads@www.gostai.com:gostai.com-downloads/urbi
 
 exts="-linux -macos -windows .tar.bz2"
