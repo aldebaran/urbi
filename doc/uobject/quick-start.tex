@@ -202,16 +202,16 @@ and interact with it using your favorite client (\command{telnet},
 tool (\autoref{sec:tools:urbi-send}).
 
 \begin{shell}[alsolanguage={[interactive]urbiscript}]
+$ urbi-send --port 54000                       \
+            -e 'UMachine.assemble([12, 34]);'  \
+            --quit
+[00126148] "1234"
+[00000000:client_error] End of file
 $ urbi-send --port 54000                     \
             -e 'var f = UMachine.new(1s)|'   \
-            -e 'f.assemble(["12", "34"]);'   \
+            -e 'f.assemble(["ab", "cd"]);'   \
             --quit
-[00146148] "1234"
-[00000000:client_error] End of file
-$ urbi-send --port 54000                              \
-            -e UMachine.new(1s).assemble([34, 12]);'  \
-            --quit
-[00146148] "3412"
+[00146159] "abcd"
 [00000000:client_error] End of file
 \end{shell}
 

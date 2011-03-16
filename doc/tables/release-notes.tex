@@ -58,6 +58,16 @@ write:
    { if (sensorsLoad) sensorsOn else sensorsOff; });
 \end{urbiunchecked}
 Backward compatibility is ensured, but a warning will be issued.
+
+\item The functions \lstinline|urbi::convertRGBtoYCrCb| and
+  \lstinline|urbi::convertYCrCbtoRGB| have been renamed as
+  \lstinline|urbi::convertRGBtoYCbCr| and
+  \lstinline|urbi::convertYCbCrtoRGB| (i.e., a change from \samp{YCrCb} to
+  \samp{YCbCr}).  Because the previous behavior of these functions was
+  incompatible with their names, after careful evaluation, it was decided
+  not to maintain backward compatibility: it is better to make sure that
+  code that depends on these functions is properly adjusted to their
+  semantics.
 \end{itemize}
 
 \subsection{New Features}
