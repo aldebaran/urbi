@@ -390,6 +390,13 @@ namespace urbi
     {
       RemoteUContextImpl& ctx = dynamic_cast<RemoteUContextImpl&>
         (*(owner_->ctx_));
+
+      if (updateHandler)
+      {
+        updateHandler->cancel();
+        updateHandler.reset();
+      }
+
       ctx.monitormap().clean(owner_->__name);
       ctx.accessmap().clean(owner_->__name);
       ctx.functionmap().clean(owner_->__name);
