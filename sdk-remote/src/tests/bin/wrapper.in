@@ -28,13 +28,6 @@ abs_top_srcdir='@abs_top_srcdir@'
 sdk_remote_srcdir=$abs_top_srcdir/sdk-remote
 sdk_remote_builddir=$abs_top_builddir/sdk-remote
 
-
-# Find urbi headers.
-EXTRA_CPPFLAGS+=" -I$sdk_remote_srcdir/include -I$sdk_remote_builddir/include"
-
-# Find libport headers.
-EXTRA_CPPFLAGS+=" -I$sdk_remote_srcdir/libport/include -I$sdk_remote_builddir/libport/include"
-
 test -d "$sdk_remote_builddir" ||
   fatal "cannot find top build directory: $sdk_remote_builddir"
 
@@ -75,9 +68,9 @@ while true; do
   arg=$1
   shift
   case $arg in
-    (EXTRA_CPPFLAGS=*|EXTRA_LDFLAGS=*)
-      var=`echo "$arg" | sed -e 's/=.*//'`
-      val=`echo "$arg" | sed -e 's/[^=]*=//'`
+    (EXTRA_*FLAGS=*)
+      var=$(echo "$arg" | sed -e 's/=.*//')
+      val=$(echo "$arg" | sed -e 's/[^=]*=//')
       eval "$var+=' $val'"
       ;;
     (myseparator)
@@ -92,12 +85,20 @@ done
 # it to wrappee only, maybe via command line?
 export UMAKE=$sdk_remote_builddir/sdk/umake
 wrappee=$sdk_remote_builddir/sdk/$me
+
+# Find urbi, libport, and boost headers and libs.
+EXTRA_CPPFLAGS+=" -I$sdk_remote_srcdir/include -I$sdk_remote_builddir/include"
+EXTRA_CPPFLAGS+=" -I$sdk_remote_srcdir/libport/include -I$sdk_remote_builddir/libport/include"
+EXTRA_CPPFLAGS+=" @BOOST_CPPFLAGS@"
+
+EXTRA_LDFLAGS+=" @BOOST_THREAD_LDFLAGS@"
+
 # PREURBI can be valgrind for instance.  Admitedly useless here, since
 # these are scripts.
 set x                                           \
     $PREURBI "$wrappee"                         \
     LIBTOOL="$LIBTOOL"                          \
-    remotedir="$remotedir"                            \
+    remotedir="$remotedir"                      \
     "$@"                                        \
     --kernel="$kernel_dir"                      \
     --prefix="$prefix"                          \

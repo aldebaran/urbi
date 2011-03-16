@@ -43,6 +43,12 @@ gen_wrapper ()
   args="$args VPATH=$top_srcdir/sdk-remote/src/liburbi"
   wrapper=$builddir/$dir/umake-$target
 
+  # Use all the flags we need to find the non-installed headers.
+  args="$args EXTRA_CFLAGS=\"@CFLAGS@\""
+  args="$args EXTRA_CPPFLAGS=\"@CPPFLAGS@\""
+  args="$args EXTRA_CXXFLAGS=\"@CXXFLAGS@\""
+  args="$args EXTRA_LDFLAGS=\"@LDFLAGS@\""
+
   cat >$wrapper <<EOF
 #! @SHELL@
 # umake-$target.  Generated wrapper for umake.

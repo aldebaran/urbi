@@ -131,7 +131,7 @@ get_options ()
                        core= ; shared=true ; automain=false ;;
       (     --deep-clean)    deep_clean ;;
       (-c | --clean)         clean=true ;;
-      (-j | --jobs)  shift; append "-j $1" " ";;
+      (-j | --jobs)  shift; append makeargs "-j $1";;
       (-C | --core  ) shift; core=$1;;
       (-H | --host  ) shift; host=$1;;
       (-o | --output) shift; target=$1;;
@@ -142,7 +142,7 @@ get_options ()
       (-k | --kernel)   shift; kernel=$1;;
 
       (-D|-I) append EXTRA_CPPFLAGS "$1$2"; shift;;
-      (-L)    append EXTRA_LDFLAGS  "$1$2" shift;;
+      (-L)    append EXTRA_LDFLAGS  "$1$2"; shift;;
 
       (-D*|-I*) append EXTRA_CPPFLAGS "$1";;
       (-L*|-l*) append EXTRA_LDFLAGS  "$1";;
@@ -187,11 +187,12 @@ get_options ()
 
     # If this is a directory, append a slash.
     case $1$(test -d "$1" && echo '/') in
-      (VPATH=*) vpath=$vpath:$(echo "$1" | sed -e 's/^[^=]*=//');;
-      (EXTRA_CPPFLAGS=*)
-          append EXTRA_CPPFLAGS "$(echo "$1" | sed -e 's/^[^=]*=//')" ;;
-      (EXTRA_LDFLAGS=*)
-          append EXTRA_LDFLAGS "$(echo "$1" | sed -e 's/^[^=]*=//')" ;;
+      (VPATH=*)
+        vpath=$vpath:$(echo "$1" | sed -e 's/^[^=]*=//');;
+      (EXTRA_CFLAGS=*|EXTRA_CPPFLAGS=*|EXTRA_CXXFLAGS=*|EXTRA_LDFLAGS=*)
+        var=$(echo "$1" | sed -e 's/=.*//')
+        val=$(echo "$1" | sed -e 's/[^=]*=//')
+        append "$var" "$val";;
       (*=*)     append makeargs "'$1'";;
 
       (*.h |*.hh|*.hxx|*.hpp) append headers "'$1'";  havearg=true ;;
@@ -446,8 +447,10 @@ run eval make -f "$(param_mk)"                  \
     UMAKE_LIBNAME="$UMAKE_LIBNAME"              \
     UMAKE_EXTRALIB="\"$UMAKE_EXTRALIB\""        \
     UMAKE_LINK="$UMAKE_LINK"                    \
-    EXTRA_CPPFLAGS="'$EXTRA_CPPFLAGS'"            \
-    EXTRA_LDFLAGS="'$EXTRA_LDFLAGS'"              \
+    EXTRA_CFLAGS="'$EXTRA_CFLAGS'"              \
+    EXTRA_CPPFLAGS="'$EXTRA_CPPFLAGS'"          \
+    EXTRA_CXXFLAGS="'$EXTRA_CXXFLAGS'"          \
+    EXTRA_LDFLAGS="'$EXTRA_LDFLAGS'"            \
     ARGUMENT_LIBS="'$libs'"                     \
     LIBADD="'$LIBADD'"                          \
     HEADERS="'$headers'"                        \
