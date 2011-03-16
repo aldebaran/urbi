@@ -27,10 +27,16 @@ This chapter lists the user-visible changes in \usdk releases.
 \section{\usdk 2.7.1}
 \release{2.7}{2011-03-17}
 
+\subsection{Fixes}
+\begin{itemize}
+\item Crash when stopping a UObject threaded function via a tag.
+\end{itemize}
+
 \subsection{Documentation}
 \begin{itemize}
 \item \autoref{sec:uob:quick}, a quick introduction to some of the basic
   features of the UObject architecture.
+\item \refObject{uobjects}.
 \end{itemize}
 
 \section{\usdk 2.7}
@@ -1146,9 +1152,9 @@ at (headTouch.val->changed? if headTouch.val)
   will now work. This hook costs one \lstinline|at| per UVar; set
   \refSlot[UVar]{hookChanged} to false to disable it.
 
-\item Add a statistics-gathering tool. Enable it by calling
-  \samp{uobjects.enableStats(true)}. Reset counters by calling
-  \samp{uobjects.clearStats}. \samp{uobjects.getStats} will return a
+\item Add a statistics-gathering tool. Enable it using
+  \refSlot[uobjects]{enableStats}. Reset counters by calling
+  \refSlot[uobjects]{clearStats}. \refSlot[uobjects]{getStats} will return a
   dictionary of all bound \Cxx function called, including timer callbacks,
   along with the average, min, max call durations, and the number of calls.
 

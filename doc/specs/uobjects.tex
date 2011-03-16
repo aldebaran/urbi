@@ -1,0 +1,52 @@
+%% Copyright (C) 2011, Gostai S.A.S.
+%%
+%% This software is provided "as is" without warranty of any kind,
+%% either expressed or implied, including but not limited to the
+%% implied warranties of fitness for a particular purpose.
+%%
+%% See the LICENSE file for more information.
+
+\section{uobjects}
+
+This object serves only to store the UObjects that are bound into the system
+(plug or remote).
+
+\subsection{Prototypes}
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
+
+\subsection{Slots}
+
+\begin{urbiscriptapi}
+\item[asuobjects]%
+  Return \this.
+
+\item[clearStats]%
+  Reset counters.
+
+\item[connectionStats]%
+
+\item[enableStats](<bool>)%
+  Depending on \var{bool}, enable or disable the statistics gathering.
+
+\item[getStats]%
+  Return a dictionary of all bound \Cxx functions called, including timer
+  callbacks, along with the average, min, max call durations, and the number
+  of calls.
+
+\item[resetConnectionStats]%
+
+\item[searchPath]%
+
+\item[setTrace](<bool>)%
+
+\end{urbiscriptapi}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% ispell-dictionary: "american"
+%%% ispell-personal-dictionary: "../urbi.dict"
+%%% fill-column: 76
+%%% End:
