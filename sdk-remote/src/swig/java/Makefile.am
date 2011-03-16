@@ -86,7 +86,8 @@ liburbijava@LIBSFX@_la_CPPFLAGS =		\
   $(JAVA_CPPFLAGS)				\
   $(BOOST_CPPFLAGS)				\
   $(LIBPORT_CPPFLAGS)				\
-  -I$(sdk_remote_srcdir)/include
+  -I$(sdk_remote_srcdir)/include		\
+  -I$(sdk_remote_builddir)/include
 
 CLEANFILES +=					\
   java.cc.h					\
