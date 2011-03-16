@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1302 utf-8
+personal_ws-1.1 en 1352 utf-8
 aaa
 abc
 abcdef
@@ -361,6 +361,7 @@ finfo
 fingerLR
 fingerR
 fireRate
+firstline
 FIXME
 flatDump
 fmt
@@ -1107,6 +1108,7 @@ TextToSpeech
 tghi
 th
 theObject
+threadedAssemble
 TimeAdaptive
 timedOut
 timeOut
@@ -1157,6 +1159,7 @@ UBindEvent
 UBindFunction
 UBindFunctions
 UBindThreadedFunction
+UBindThreadedFunctionRename
 UBindVar
 ubuild
 UClient
@@ -1167,8 +1170,6 @@ UDictionary
 UDP
 UEdit
 UEvent
-UFactory
-ufactory
 ufloat
 ugrammar
 uid
@@ -1178,6 +1179,8 @@ UImageFormat
 UList
 UltraSonicSensor
 UltraSoundSensor
+UMachine
+umachine
 UMain
 umake
 UMIX

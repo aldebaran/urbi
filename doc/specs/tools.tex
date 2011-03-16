@@ -433,18 +433,18 @@ specified.
 \subsection{Examples}
 
 To launch a fresh server in an interactive session with the
-\lstinline|UFactory| UObject compiled as the file \file{test/factory.so} (or
-\file{test/factory.dll} plugged in, run:
+\lstinline|UMachine| UObject compiled as the file \file{test/machine.so} (or
+\file{test/machine.dll} plugged in, run:
 
 \begin{shell}
-urbi-launch --start test/factory -- --interactive
+urbi-launch --start test/machine -- --interactive
 \end{shell}
 
 To start an \urbi server accepting connections on the local port 54000
-from any remote host, with \lstinline|UFactory| plugged in, run:
+from any remote host, with \lstinline|UMachine| plugged in, run:
 
 \begin{shell}
-urbi-launch --start --host 0.0.0.0 --port 54000 test/factory
+urbi-launch --start --host 0.0.0.0 --port 54000 test/machine
 \end{shell}
 
 Since \command{urbi-launch} in server mode is basically the same as running

@@ -51,8 +51,8 @@ UObjects can be compiled easily directly with the \lstinline{javac}
 compiler, then you can create JAR archives using the \lstinline{jar} tool.
 
 In the following sections, we will try to create an uobject jar archive
-named \file{factory.jar} from a set of two files (\file{Factory.java},
-\file{UFactory.java}.
+named \file{machine.jar} from a set of two files (\file{Machine.java},
+\file{UMachine.java}.
 
 In what follows, \var{urbi-root} denotes the top-level directory of your
 \usdk package, see \autoref{sec:install:install}.
@@ -64,11 +64,11 @@ liburbijava.jar:
 
 \begin{shell}
 $ javac -cp \var{urbi-root}/share/sdk-remote/java/lib/liburbijava.jar:. \
-  Factory.java UFactory.java
-$ jar -cvf factory.jar UFactory.class Factory.class
+  Machine.java UMachine.java
+$ jar -cvf machine.jar UMachine.class Machine.class
 added manifest
-adding: UFactory.class
-adding: Factory.class
+adding: UMachine.class
+adding: Machine.class
 \end{shell}
 
 Then to run your uobject, you need to call \lstinline{java}. We provide a
@@ -80,7 +80,7 @@ the urbi SDK into \lstinline{java.library.path}:
 \begin{shell}
 $ java -Djava.library.path=\var{urbi-root}/lib                          \
     -cp \var{urbi-root}/share/sdk-remote/java/lib/liburbijava.jar       \
-     urbi.UMain ./factory.jar
+     urbi.UMain ./machine.jar
 urbi-launch: obeying to URBI_ROOT = /usr/local/gostai
 UObject: Urbi SDK version 2.3 rev. 3e93ec1
 Copyright (C) 2004-2010 Gostai S.A.S..
@@ -89,8 +89,8 @@ Libport version urbi-sdk-2.3 rev. 66cb0ec
 Copyright (C) 2004-2010 Gostai S.A.S..
 UObject: Remote Component Running on 127.0.0.1 54000
 Kernel Version: 0
-[LibUObject] Registering function UFactory.init 1 into UFactory.init from UFactory
-[LibUObject] Pushing UFactory.init in function
+[LibUObject] Registering function UMachine.init 1 into UMachine.init from UMachine
+[LibUObject] Pushing UMachine.init in function
 \end{shell}
 
 \subsection{The \command{umake-java} and \command{urbi-launch-java} tools}
@@ -100,14 +100,14 @@ JAR archive that you can use with \command{urbi-launch-java}.
 
 You can give it a list of files to compile:
 \begin{shell}
-$ umake-java -q factory.uob/*.java -o factory.jar
+$ umake-java -q machine.uob/*.java -o machine.jar
 \end{shell}
 
 \noindent
 or directories in which \Cxx sources are looked for:
 
 \begin{shell}
-$ umake-java -q factory.uob -o factory.jar
+$ umake-java -q machine.uob -o machine.jar
 \end{shell}
 
 \noindent
@@ -115,14 +115,14 @@ or finally, if you give no argument at all, the sources in the current
 directory:
 
 \begin{shell}
-$ cd factory.uob
-$ umake-java -q -o factory.jar
+$ cd machine.uob
+$ umake-java -q -o machine.jar
 \end{shell}
 
 To run your UObject then use \command{urbi-launch-java}:
 
 \begin{shell}
-$ urbi-launch-java factory.jar
+$ urbi-launch-java machine.jar
 urbi-launch: obeying to URBI_ROOT = /usr/local/gostai
 UObject: Urbi SDK version 2.3 rev. 3e93ec1
 Copyright (C) 2004-2010 Gostai S.A.S..
@@ -131,8 +131,8 @@ Libport version urbi-sdk-2.3 rev. 66cb0ec
 Copyright (C) 2004-2010 Gostai S.A.S..
 UObject: Remote Component Running on 127.0.0.1 54000
 Kernel Version: 0
-[LibUObject] Registering function UFactory.init 1 into UFactory.init from UFactory
-[LibUObject] Pushing UFactory.init in function
+[LibUObject] Registering function UMachine.init 1 into UMachine.init from UMachine
+[LibUObject] Pushing UMachine.init in function
 \end{shell}
 
 \section{Creating a class, binding variables and functions}
