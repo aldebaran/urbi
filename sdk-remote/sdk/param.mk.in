@@ -20,28 +20,27 @@ libexecdir = @libexecdir@
 # (hopefully) unique lib here.
 LIBNAME = $(UMAKE_LIBNAME)
 
-# SDK flags.
+# Urbi SDK flags.
 SDK_CFLAGS = @SDK_CFLAGS@
 SDK_CXXFLAGS = @SDK_CXXFLAGS@
 SDK_LDFLAGS = @SDK_LDFLAGS@
 SDK_LIBS = @SDK_LIBS@
 
-# CPP.
-CPP = @CPP@
-
 # Upper case.
 URBI_ENV_CPPFLAGS = -DURBI_ENV_$(shell echo "$(URBI_ENV)" | tr 'a-z' 'A-Z')
 
+# CPP.
+CPP = @CPP@
 CPPFLAGS = -I$(includedir) $(URBI_ENV_CPPFLAGS)
 ALL_CPPFLAGS = $(PRE_CPPFLAGS) $(CPPFLAGS) $(EXTRA_CPPFLAGS)
 
 # C.
-CC = @CC@
+CC = @CC@ @CFLAGS_ARCH@
 CFLAGS = $(SDK_CFLAGS) $(EXTRA_CFLAGS)
 
 # C++.
+CXX = @CXX@ @CXXFLAGS_ARCH@
 CXXFLAGS = $(SDK_CXXFLAGS) $(EXTRA_CXXFLAGS)
-CXX = @CXX@
 
 # Ld.
 LD = @CC@
