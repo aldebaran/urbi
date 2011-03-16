@@ -415,7 +415,7 @@ f.assemble([1, 2, 3, 4, 5, 6]),
 f.assemble([1]),
 [00000004] *** Used the fast machine ([1] => 1)
 [00000002] *** Used the slow machine ([1, 2, 3, 4, 5, 6] => 123456)
-sleep(100ms);
+sleep(200ms);
 \end{urbiscript}
 
 Victory!  The fast machine answered first.
@@ -432,7 +432,7 @@ var c1 = Channel.new("c1")|;
 var c2 = Channel.new("c2")|;
 c1 << f.assemble([10, 20, 30, 40, 50, 60]),
 c2 << f.assemble([100]),
-sleep(100ms);
+sleep(200ms);
 [00000535] *** Used the fast machine ([100] => 100)
 [00000535:c2] "100"
 [00000625] *** Used the slow machine ([10, 20, 30, 40, 50, 60] => 102030405060)
