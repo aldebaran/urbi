@@ -58,8 +58,7 @@ engine_LTLIBRARIES = libuobject@LIBSFX@.la
 libuobject@LIBSFX@_la_CPPFLAGS =		\
   $(AM_CPPFLAGS) 				\
   -DBUILDING_URBI_SDK 				\
-  -DLIBPORT_NO_SSL				\
-  -DURBI_INHIBIT_REVISION_CHECK
+  -DLIBPORT_NO_SSL
 
 # Unfortunately, we _have_ to disable -fstrict-aliasing.  Because of
 # Bison's variants.  I don't know how to avoid this.

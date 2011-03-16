@@ -32,7 +32,6 @@ UMAKE_VERBOSE_0 = --quiet
 
 %$(DLMODEXT): %.uob $(UMAKE_SHARED) libuobject/libuobject$(LIBSFX).la
 	+$(umake_verbose)$(UMAKE_SHARED) $(UMAKE_VERBOSE)	\
-	  -DURBI_INHIBIT_REVISION_CHECK				\
 	  $(EXTRA_$(notdir $*)_cppflags)			\
 	  $(EXTRA_$(notdir $*)_ldflags)				\
 	  --clean --output=$@ $< && 				\

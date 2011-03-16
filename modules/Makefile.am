@@ -1,4 +1,4 @@
-## Copyright (C) 2006-2010, Gostai S.A.S.
+## Copyright (C) 2006-2011, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -17,7 +17,6 @@ include $(top_srcdir)/build-aux/make/libport.mk
 URBI_SDK_CPPFLAGS =				\
   $(LIBPORT_CPPFLAGS)				\
   $(BOOST_CPPFLAGS)				\
-  -DURBI_INHIBIT_REVISION_CHECK                 \
   -I$(top_srcdir)/include			\
   -I$(top_srcdir)/sdk-remote/include
 

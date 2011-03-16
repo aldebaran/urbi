@@ -86,7 +86,6 @@ liburbijava@LIBSFX@_la_CPPFLAGS =		\
   $(JAVA_CPPFLAGS)				\
   $(BOOST_CPPFLAGS)				\
   $(LIBPORT_CPPFLAGS)				\
-  -DURBI_INHIBIT_REVISION_CHECK                 \
   -I$(sdk_remote_srcdir)/include
 
 CLEANFILES +=					\
