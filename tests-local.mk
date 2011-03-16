@@ -34,8 +34,7 @@ k2-check:
 # Uobject tests that we fail because features are not implemented
 XFAIL_TESTS +=					\
   2.x/derive.chk				\
-  2.x/uob/group.chk				\
-  uob/plug/issue-3699.chk
+  2.x/uob/group.chk
 
 # Removing laziness
 XFAIL_TESTS +=					\
