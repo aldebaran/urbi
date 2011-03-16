@@ -434,19 +434,51 @@ wrap_ucallback_notify(const object::objects_type& ol,
   return object::void_class;
 }
 
+static void write_and_unfreeze_mainthread(object::rTag* tag,
+                                          urbi::UValue& resSlot,
+                                          std::string& exceptionSlot,
+                                          bool* async_abort,
+                                          urbi::UValue* result,
+                                          std::string exceptionResult)
+{
+  // Magic, we are in the main thread, so no possible race with wrap_ucallback!
+  if (*async_abort)
+  { // The call was aborted on the other end. Do absolutely nothing.
+    GD_INFO_LOG("Aborted threaded call, ignoring return value");
+    delete async_abort;
+  }
+  else
+  {
+    exceptionSlot = exceptionResult;
+    resSlot = *result;
+    delete result;
+    (*tag)->unfreeze();
+    delete tag;
+  }
+}
+
 static void write_and_unfreeze(urbi::UValue& r, std::string& exception,
+                               bool* async_abort,
                                object::rTag* tag,
                                urbi::UValue& v, const std::exception* e)
 {
+  std::string exceptionMessage;
+
   if (e)
-    exception = e->what();
-  else
-    r = v;
+    exceptionMessage = e->what();
   if (server().isAnotherThread())
     server().schedule_fast(
-                      boost::bind(&object::Tag::unfreeze, tag->get()));
+                      boost::bind(&write_and_unfreeze_mainthread, tag,
+                                  boost::ref(r), boost::ref(exception),
+                                  async_abort, new urbi::UValue(v),
+                                  exceptionMessage));
   else
+  {
+    exception = exceptionMessage;
+    r = v;
     (*tag)->unfreeze();
+    delete tag;
+  }
 
 }
 
@@ -474,6 +506,9 @@ static rObject wrap_ucallback(const object::objects_type& ol,
     << std::make_pair(&ugc->owner ? ugc->owner.__name : "unknown",
                       ugc->name);
   FINALLY(((bool, tail)), bound_context.pop_back();GD_INFO_DUMP("Done"));
+  // write_and_unfreeze will delete us if true, we handle it if false
+  bool* async_abort = new bool;
+  *async_abort = false;
   try
   {
     // This if is there to optimize the synchronous case.
@@ -481,16 +516,33 @@ static rObject wrap_ucallback(const object::objects_type& ol,
       res = ugc->__evalcall(l);
     else
     {
+      /* We are going to make a threaded call that will return a result.
+       * But while it runs we ourselve can be interrupted by a tag.stop.
+       * Furthermore our shared ptr are not thread safe. So:
+       * - We give to the thread references to res and exception on our stack.
+       * - If we are stopped, those will be invalid because the stack will
+       * unwind, so we also give it a bool* async_abort not on stack that we set
+       * to true if we are interrupted (if it is false we delete it otherwise
+       * the thread does).
+       * - To ensure no race condition in the handling of the three above
+       * pointers, the thread is going to server().schedule_fast the operation
+       * handling passing back the return value, so that it is performed
+       * also on this thread.
+       */
       libport::Finally f;
-      object::rTag tag(new object::Tag);
-      ::kernel::runner().apply_tag(tag, &f);
+      /* write_and_unfreeze will delete tag. It is only passed along by the
+       * thread, not copied, not dereferenced, so its safe.
+       */
+      object::rTag* tag = new object::rTag(new object::Tag);
+      ::kernel::runner().apply_tag(*tag, &f);
       // Tricky: tag->freeze() yields, but we must freeze tag before calling
       // eval or there will be a race if asyncEval goes to fast and unfreeze
       // before we freeze. So go throug backend.
-      tag->value_get()->freeze();
+      (*tag)->value_get()->freeze();
       std::string exception;
       ugc->eval(l, boost::bind(write_and_unfreeze, boost::ref(res),
-                               boost::ref(exception), &tag, _1, _2));
+                               boost::ref(exception),
+                               async_abort, tag, _1, _2));
       ::kernel::runner().yield();
       if (!exception.empty())
         throw std::runtime_error("Exception in threaded call: " + exception);
@@ -498,6 +550,7 @@ static rObject wrap_ucallback(const object::objects_type& ol,
   }
   catch (const sched::exception&)
   {
+    *async_abort = true;
     throw;
   }
   catch (const std::exception& e)
@@ -510,6 +563,7 @@ static rObject wrap_ucallback(const object::objects_type& ol,
     FRAISE("Unknown exception caught while calling %s",
            ugc->getName());
   }
+  delete async_abort;
   start = libport::utime() - start;
   Stats::add(ol.front().get(), message, start);
   return object_cast(res);
@@ -1498,6 +1552,8 @@ namespace urbi
     time_t
     KernelUVarImpl::timestamp() const
     {
+      if (!ruvar_)
+        throw std::runtime_error("UVar without cache");
       return time_t(ruvar_->timestamp);
     }
 
