@@ -1,6 +1,7 @@
-personal_ws-1.1 en 1352 utf-8
+personal_ws-1.1 en 1353 utf-8
 aaa
 abc
+abcd
 abcdef
 accel
 AccelerationSensor
@@ -1334,6 +1335,8 @@ yaml
 yawCoeff
 yawSpeed
 yawSpeedCoeff
+YCbCr
+YCrCb
 ycrcb
 yfov
 yourservice
