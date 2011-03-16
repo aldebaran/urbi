@@ -237,11 +237,17 @@ docsrc="$DESTDIR$prefix/share/doc/urbi-sdk"
 if test -f "$docsrc/urbi-sdk.pdf"; then
   stderr "Documentation is compiled, shipping"
   tree_copy "$docsrc" "$updir/$urbi_doc"
+  # Do not leave the COMPONENTS.txt file, which is architecture
+  # specific.  It would override the existing one from the package
+  # into which the documentation will be copied.
+  rm "$updir/$urbi_doc/COMPONENTS.txt"
 else
   stderr "Documentation is NOT compiled, looking for it in $archivedir"
   if test -f "$archivedir/$urbi_doc.tar.bz2"; then
     stderr "Documentation found, installing"
-    rm -rf "$docsrc"
+    # Do not remove what's there, as we might remove architecture
+    # specific files, such as COMPONENTS.txt.
+    # rm -rf "$docsrc"
     tar -C "$(dirname $docsrc)" -xf "$archivedir/$urbi_doc.tar.bz2"
     mv "$(dirname $docsrc)/$urbi_doc" "$docsrc"
     # So remove the one without doc if there is one.
