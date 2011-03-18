@@ -1,5 +1,14 @@
-m4_pattern_allow([^URBI_(PATH|SERVER)$])         -*- shell-script -*-
+## Copyright (C) 2007-2011, Gostai S.A.S.
+##
+## This software is provided "as is" without warranty of any kind,
+## either expressed or implied, including but not limited to the
+## implied warranties of fitness for a particular purpose.
+##
+## See the LICENSE file for more information.
 URBI_INIT
+
+# Ignore the differences between Kernel revisions.
+export URBI_ACCEPT_BINARY_MISMATCH=1
 
 # Avoid zombies and preserve debugging information.
 cleanup ()
@@ -19,9 +28,9 @@ cleanup ()
   local server_sta=$(children_status server)
   case $exit_status:$server_sta in
     (0:142)
-	 verbose "Server killed after a timeout.";;
+         verbose "Server killed after a timeout.";;
     (176:*) # Maybe the server exited for SKIP etc.
-	 exit $server_sta;;
+         exit $server_sta;;
   esac
 
   # Don't check for before because the server may failed before any other
@@ -31,9 +40,9 @@ cleanup ()
   case $exit_status:$children_sta in
     (0:0) ;;
     (0:*) # Maybe a children exited for SKIP etc.
-	 exit $children_sta;;
+         exit $children_sta;;
     (*:*) # If the checker failed, there is a big problem.
-	 error SOFTWARE "$0 itself failed with $exit_status";;
+         error SOFTWARE "$0 itself failed with $exit_status";;
   esac
   # Don't clean before calling children_status...
   # test x$VERBOSE != x || children_clean
@@ -196,3 +205,7 @@ rst_pre "Valgrind" remote.val
 # trap 0) will check $exit to see if there is a failure in the tests
 # and adjust the exit status accordingly.
 exit 0
+
+## Local Variables:
+## mode: shell-script
+## End:

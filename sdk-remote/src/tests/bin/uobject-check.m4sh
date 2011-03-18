@@ -1,5 +1,14 @@
-                                                     -*- shell-script -*-
+## Copyright (C) 2008-2011, Gostai S.A.S.
+##
+## This software is provided "as is" without warranty of any kind,
+## either expressed or implied, including but not limited to the
+## implied warranties of fitness for a particular purpose.
+##
+## See the LICENSE file for more information.
 URBI_INIT
+
+# Ignore the differences between Kernel revisions.
+export URBI_ACCEPT_BINARY_MISMATCH=1
 
 # $1 is "../../src/test/all.la".
 # The full path to the *.la.
@@ -22,9 +31,6 @@ mkcd $builddir
 xfind_prog urbi-launch$EXEEXT
 urbi_launch=$xfind_prog_result
 
-# Ignore the differences between Kernel revisions.
-export URBI_ACCEPT_BINARY_MISMATCH=1
-
 # If urbi-launch cannot work because there is no kernel libuobject,
 # skip the test.  Do pass something that will fail to be loaded,
 # otherwise if it works, a server is launched, and will run endlessly.
@@ -36,3 +42,7 @@ run "urbi-launch --start" \
 
 xrun "urbi-launch $me$ext --version" \
   "$urbi_launch" --debug 3 --start $uob -- --version
+
+## Local Variables:
+## mode: shell-script
+## End:

@@ -1,5 +1,13 @@
-                                                        -*- shell-script -*-
+## Copyright (C) 2008-2009, 2011, Gostai S.A.S.
+##
+## This software is provided "as is" without warranty of any kind,
+## either expressed or implied, including but not limited to the
+## implied warranties of fitness for a particular purpose.
+##
+## See the LICENSE file for more information.
 URBI_INIT
+
+export URBI_ACCEPT_BINARY_MISMATCH=1
 
 # Avoid zombies and preserve debugging information.
 cleanup ()
@@ -22,9 +30,9 @@ cleanup ()
   do
     case $i in
       (*)
-	rst_subsection "$i"
-	children_report "$i"
-	;;
+        rst_subsection "$i"
+        children_report "$i"
+        ;;
     esac
   done
 
@@ -63,3 +71,7 @@ eval "$instrument_result" >client.out 2>client.err &
 children_register client
 
 children_wait 10
+
+## Local Variables:
+## mode: shell-script
+## End
