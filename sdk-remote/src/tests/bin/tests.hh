@@ -51,25 +51,17 @@ Test file layout
 /// Register the message category for each file including this header.
 GD_CATEGORY(Test);
 
-/// Display a debug message.
-#define VERBOSE(S)                              \
-  do {                                          \
-    GD_SINFO(program_name() << ": "             \
-             << getpid() << ": "                \
-             << S);                             \
-  } while (0)
-
 /// Send S to the Client.
 /// Letter: S for synchronous, A for asynchronous.
 #define SEND_(Letter, Client, S)                                \
   do {                                                          \
     if (Client.isConnected())                                   \
     {                                                           \
-      VERBOSE(Letter "Snd: " << S);                             \
+      GD_SINFO(Letter "Snd: " << S);                            \
       Client.send("%s\n", (S));                                 \
     }                                                           \
     else                                                        \
-      VERBOSE(#Client " not connected, cannot send: " << S);    \
+      GD_SINFO(#Client " not connected, cannot send: " << S);   \
   } while (0)
 
 /// Send S to client/syncclient.
@@ -94,7 +86,7 @@ inline
 std::string
 sget<std::string>(urbi::USyncClient& c, const std::string& msg)
 {
-  VERBOSE("syncGet: Asking " << msg);
+  GD_SINFO("syncGet: Asking " << msg);
   std::string res;
   urbi::getValue(c.syncGet(msg), res);
   return res;
@@ -105,7 +97,7 @@ inline
 int
 sget<int>(urbi::USyncClient& c, const std::string& msg)
 {
-  VERBOSE("syncGet: Asking " << msg);
+  GD_SINFO("syncGet: Asking " << msg);
   int res = 0;
   urbi::getValue(c.syncGet(msg), res);
   return res;

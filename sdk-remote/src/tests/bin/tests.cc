@@ -58,7 +58,7 @@ char_of(urbi::UMessageType t)
 urbi::UCallbackAction
 log(const urbi::UMessage& msg)
 {
-  VERBOSE("Recv: " << msg);
+  GD_SINFO("Recv: " << msg);
   return urbi::URBI_CONTINUE;
 }
 
@@ -88,7 +88,7 @@ dump(const urbi::UMessage& msg)
 urbi::UCallbackAction
 removeOnZero(const urbi::UMessage& msg)
 {
-  VERBOSE("removeOnZero");
+  GD_INFO("removeOnZero");
   dump(msg);
   if (msg.type == urbi::MESSAGE_DATA
       && msg.value->type == urbi::DATA_DOUBLE
@@ -100,7 +100,7 @@ removeOnZero(const urbi::UMessage& msg)
 std::string
 sget_error(urbi::USyncClient& c, const std::string& msg)
 {
-  VERBOSE("sget_error: Asking " << msg);
+  GD_SINFO("sget_error: Asking " << msg);
   urbi::UMessage* m = c.syncGet(msg);
   aver(m && m->type == urbi::MESSAGE_ERROR);
   std::string res(m->message);
@@ -112,7 +112,7 @@ sget_error(urbi::USyncClient& c, const std::string& msg)
 // Cannot make a template here, as we would like to return by copy.
 # define MAKE_CLIENT(Type, Name)                                        \
   urbi::Type Name(host, port);                                          \
-  VERBOSE(#Name "(" << host << ", " << port << ") @ " << &Name);        \
+  GD_FINFO(#Name "(%s, %s) @ %s", host, port, &Name);                   \
   Name.setErrorCallback(urbi::callback(&log));                          \
   Name.setCallback(urbi::callback(&log), "log");                        \
   if (Name.error())                                                     \
@@ -120,7 +120,7 @@ sget_error(urbi::USyncClient& c, const std::string& msg)
               << libport::exit(EX_SOFTWARE);                            \
   /* Wait to be set up. */                                              \
   Name.waitForKernelVersion();                                          \
-  VERBOSE(#Name " received Kernel Version")
+  GD_INFO(#Name " received Kernel Version")
 
 
 int
@@ -134,8 +134,8 @@ main(int argc, char* argv[])
   std::string host = urbi::UClient::default_host();
   int port = urbi::UAbstractClient::URBI_PORT;
 
-  VERBOSE("This is " << argv0);
-  VERBOSE("Processing option");
+  GD_SINFO("This is " << argv0);
+  GD_INFO("Processing option");
   for (int i = 1; i < argc; ++i)
   {
     std::string arg = argv[i];
@@ -156,13 +156,13 @@ main(int argc, char* argv[])
   MAKE_CLIENT(UClient, client);
   MAKE_CLIENT(USyncClient, syncClient);
 
-  VERBOSE("Starting");
+  GD_INFO("Starting");
   test(client, syncClient);
 
-  VERBOSE("Epilogue, Sleep 3s");
+  GD_INFO("Epilogue, Sleep 3s");
   sleep(3);
 
-  VERBOSE("Shutting down");
+  GD_INFO("Shutting down");
   // Handle the case when the other connection is down.
   SSEND("disown({ sleep(0.5); shutdown })|; quit;");
   SEND("shutdown;");
@@ -171,5 +171,5 @@ main(int argc, char* argv[])
   // "shutdown" messages to be dropped when the connection is cut.
   // FIXME: rather, wait for the deconnection from the server.
   sleep(1);
-  VERBOSE("End");
+  GD_INFO("End");
 }
