@@ -240,7 +240,8 @@ namespace urbi
     }
 
     UVar::UVar()
-      : Primitive(boost::function1<rObject, objects_type>(boost::bind(&UVar::accessor, this, _1)))
+      : Primitive(boost::function1<rObject, objects_type>
+                  (boost::bind(&UVar::accessor, this, _1)))
       , changeConnections(new List)
       , rangemin(-std::numeric_limits<libport::ufloat>::infinity())
       , rangemax(std::numeric_limits<libport::ufloat>::infinity())
@@ -257,7 +258,8 @@ namespace urbi
     }
 
     UVar::UVar(libport::intrusive_ptr<UVar>)
-      : Primitive(boost::function1<rObject, const objects_type&>(boost::bind(&UVar::accessor, this, _1)))
+      : Primitive(boost::function1<rObject, const objects_type&>
+                  (boost::bind(&UVar::accessor, this, _1)))
       , changeConnections(new List)
       , rangemin(-std::numeric_limits<libport::ufloat>::infinity())
       , rangemax(std::numeric_limits<libport::ufloat>::infinity())

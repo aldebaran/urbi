@@ -13,6 +13,7 @@
 
 # include <libport/fd-stream.hh>
 
+# include <runner/runner.hh>
 # include <urbi/object/cxx-object.hh>
 
 namespace urbi
@@ -22,9 +23,9 @@ namespace urbi
     class URBI_MODULE_API Process: public CxxObject
     {
 
-    /*---------------------------.
-    | Construction / Destruction |
-    `---------------------------*/
+      /*-----------------------------.
+      | Construction / Destruction.  |
+      `-----------------------------*/
 
     public:
       typedef std::vector<std::string> arguments_type;
@@ -33,9 +34,9 @@ namespace urbi
       Process(rProcess model);
       virtual ~Process();
 
-    /*-------------.
-    | Urbi methods |
-    `-------------*/
+      /*---------------.
+      | Urbi methods.  |
+      `---------------*/
 
     public:
       void init(const std::string& binary,
@@ -50,16 +51,16 @@ namespace urbi
       std::string name() const;
       virtual std::string as_string() const;
 
-    /*--------.
-    | Details |
-    `--------*/
+      /*----------.
+      | Details.  |
+      `----------*/
 
     private:
       static void monitor_child(Process*);
       rProcess ward_;
       ATTRIBUTE_R(std::vector<runner::rRunner>, joiners, , , , mutable);
       void run_(boost::optional<std::string> outFile
-                 = boost::optional<std::string>());
+                = boost::optional<std::string>());
       std::string name_;
       pid_t pid_;
       std::string binary_;

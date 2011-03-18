@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -97,7 +97,7 @@ class Global.Channel.Filter: Channel
   };
   function uclientFilter()
   {
-    // Some of those slot does not exist at function definition time
+    // Some of these slots do not exist at function definition time.
     ["Float", "String", "List", "Dictionary", "Binary", "UValue", "Tuple",
     "nil"]
     .map(function(x) { getSlot(x)})

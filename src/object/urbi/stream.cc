@@ -45,8 +45,7 @@ namespace urbi
     Stream::Stream(int fd, bool own)
       : fd_(fd)
       , own_(own)
-    {
-    }
+    {}
 
     Stream::Stream(rStream model)
       : fd_(model->fd_)
