@@ -76,7 +76,7 @@ GD_CATEGORY(Test);
 template <typename T>
 inline
 T
-sget(urbi::USyncClient& c, const std::string& msg)
+sget(urbi::USyncClient&, const std::string&)
 {
   pabort("Do not call me");
 }
