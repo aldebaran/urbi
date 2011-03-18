@@ -22,7 +22,7 @@ mkcd $builddir
 xfind_prog urbi-launch$EXEEXT
 urbi_launch=$xfind_prog_result
 
-# Ignore the difference between Kernel revisions.
+# Ignore the differences between Kernel revisions.
 export URBI_ACCEPT_BINARY_MISMATCH=1
 
 # If urbi-launch cannot work because there is no kernel libuobject,
