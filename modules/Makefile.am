@@ -17,8 +17,9 @@ include $(top_srcdir)/build-aux/make/libport.mk
 URBI_SDK_CPPFLAGS =				\
   $(LIBPORT_CPPFLAGS)				\
   $(BOOST_CPPFLAGS)				\
-  -I$(top_srcdir)/include			\
-  -I$(top_srcdir)/sdk-remote/include
+  -I$(kernel_srcdir)/include			\
+  -I$(sdk_remote_srcdir)/include		\
+  -I$(sdk_remote_builddir)/include
 
 # Needed to compile UObjects on Windows.
 sdk_remote_builddir = $(top_builddir)/sdk-remote
