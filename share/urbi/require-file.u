@@ -8,7 +8,7 @@
  * See the LICENSE file for more information.
  */
 
-do(System)
+do (System)
 {
   // Make requireFile wait if a file is currently being loaded.
   // Avoid lookup errors when call several requireFile in parallel.
@@ -17,6 +17,7 @@ do(System)
   {
     if (! '$loadedFiles'[file])
     {
+      var tag = Tag.new|
       tag:
       {
         at ('$loadedFiles'.elementChanged?)
