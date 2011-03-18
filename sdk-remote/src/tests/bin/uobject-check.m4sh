@@ -6,8 +6,9 @@ URBI_INIT
 la=$(absolute $1)
 require_file "$la"
 
-# For error messages: "test/all"
-me=$(echo "$la" | sed -e 's,^.*/\([^/]*/[^/]*\)\.la,\1,')
+# For error messages: "test/all" or "test\all".
+me=$(echo "$la" |
+     perl -pe 's{^.*[/\\]([^/\\]+[/\\]/[^/\\]+)\.la$}{$1}')
 
 # To load the object: "test/all".
 uob=$me
@@ -20,6 +21,9 @@ mkcd $builddir
 # Find urbi-launch.
 xfind_prog urbi-launch$EXEEXT
 urbi_launch=$xfind_prog_result
+
+# Ignore the difference between Kernel revisions.
+export URBI_ACCEPT_BINARY_MISMATCH=1
 
 # If urbi-launch cannot work because there is no kernel libuobject,
 # skip the test.  Do pass something that will fail to be loaded,
