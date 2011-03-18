@@ -164,12 +164,13 @@ do (System)
   function '$requireWait'(var file)
   {};
 
-  function requireFile(var file)
+  function requireFile(var file,
+                       var target = this, var isSystem = defaultIsSystem)
   {
     if (file in '$loadedFiles')
       '$requireWait'(file)
     else
-      load(file) |
+      load(file, target, isSystem) |
     void
   };
 

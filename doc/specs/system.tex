@@ -353,11 +353,12 @@ var Global.x = 0;
 \end{urbiscript}
 
 
-\item[requireFile](<file>)%
-  Load \var{file} if it was not loaded before (with \refSlot{load} or
-  \refSlot{requireFile}). Unlike \refSlot{load}, \lstinline{requireFile}
-  always returns \lstinline|void|. If \var{file} is being loaded concurrently
-  \lstinline{requireFile} waits until the loading is finished.
+\item[requireFile](<file>, <target>)%
+  Load \var{file} in the context of \var{target} if it was not loaded before
+  (with \refSlot{load} or \refSlot{requireFile}). Unlike \refSlot{load},
+  \lstinline{requireFile} always returns \lstinline|void|. If \var{file} is
+  being loaded concurrently \lstinline{requireFile} waits until the loading
+  is finished.
 
 \begin{urbiscript}
 // Create the file ``test.u'' that echoes a string.
@@ -375,6 +376,14 @@ requireFile("test2.u");
 load("test2.u");
 [00000006] *** test 2
 [00000006] 2
+\end{urbiscript}
+
+  The \var{target} is not taken into account to check whether the file has
+  already been loaded: if you require twice the same file with two different
+  targets, it will be loaded only for the first.
+
+\begin{urbiscript}
+requireFile("test2.u", Global);
 \end{urbiscript}
 
 \item[resetStats]%
