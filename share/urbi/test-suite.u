@@ -132,6 +132,12 @@ do (Global)
     if (System.Platform.isWindows)
       testSkip("cannot run on Windows");
   }|;
+
+  function skipIfWindowsDebug ()
+  {
+    if (System.Platform.isWindows && System.Platform.compilationModeDebug)
+      testSkip("cannot run on Windows Debug compilation-mode");
+  }|;
 }|;
 
 // Too verbose when we launch another urbi from urbi.
