@@ -863,13 +863,14 @@ namespace urbi
   }
 };
 
-%ignore convertYCrCbtoYCbCr;
-%ignore convertRGBtoYCrCb;
-%ignore convertYCrCbtoRGB;
-%ignore convertJPEGtoYCrCb;
-%ignore convertJPEGtoRGB;
-%ignore convertRGBtoJPEG;
-%ignore convertYCrCbtoJPEG;
+%ignore urbi::convertJPEGtoRGB;
+%ignore urbi::convertJPEGtoYCrCb;
+%ignore urbi::convertRGBtoGrey8_601;
+%ignore urbi::convertRGBtoJPEG;
+%ignore urbi::convertRGBtoYCbCr;
+%ignore urbi::convertYCbCrtoRGB;
+%ignore urbi::convertYCrCbtoJPEG;
+%ignore urbi::convertYCrCbtoYCbCr;
 
 %include "urbi/uconversion.hh"
 
