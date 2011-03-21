@@ -168,7 +168,6 @@ namespace urbi
       backend_->setClientErrorCallback(callback(*this,
                  &RemoteUContextImpl::clientError));
 
-      typedef long long int us_t;
       UMessage* m = backend_->syncGet(
         "[System.timeReference.year,"
          "System.timeReference.month,"
@@ -180,14 +179,13 @@ namespace urbi
          "PackageInfo.components[\"Urbi SDK\"].patch,"
          "]"
          );
-      int year  = (*m->value->list)[0];
-      int month = (*m->value->list)[1];
-      int day   = (*m->value->list)[2];
-      int us    = (*m->value->list)[3];
-      version = libport::PackageInfo::Version((*m->value->list)[4],
-                                              (*m->value->list)[5],
-                                              (*m->value->list)[6],
-                                              (*m->value->list)[7]);
+      UList& list = *m->value->list;
+      int year  = list[0];
+      int month = list[1];
+      int day   = list[2];
+      int us    = list[3];
+      version =
+        libport::PackageInfo::Version(list[4], list[5], list[6], list[7]);
       // Compatibility for wire protocol 2.3-2.4.
       URBI_SEND_COMMAND_C
         (*outputStream,
@@ -215,8 +213,9 @@ namespace urbi
       // Connect hookPoint
       setCurrentContext(this);
       new HookPoint(hookPointName_, const_cast<RemoteUContextImpl*>(this));
-      URBI_SEND_COMMAND_C(*outputStream, "var hookPoint = "
-                          + hookPointName_+"|");
+      URBI_SEND_COMMAND_C
+        (*outputStream,
+         "var hookPoint = " << hookPointName_ << "|");
     }
 
     RemoteUContextImpl::~RemoteUContextImpl()
