@@ -24,20 +24,6 @@ This chapter lists the user-visible changes in \usdk releases.
   \fi%
 }
 
-\section{\usdk 2.8}
-\release{2.8}{2011-XX-YY}
-
-\subsection{Changes}
-\begin{itemize}
-\item The default activation for \env{GD\_CATEGORY} is computed from the
-  first character: \samp{Libport.Path} is equivalent to
-  \samp{-*,+Libport.Path}, and \samp{-Urbi*} is equivalent to
-  \samp{+*,-Urbi*}.  See \autoref{sec:tools:env}.
-\item \refSlot[System]{requireFile} supports the same arguments as
-  \refSlot[System]{load}.
-\end{itemize}
-
-
 \section{\usdk 2.7.1}
 \release{2.7}{2011-03-17}
 
@@ -47,6 +33,16 @@ This chapter lists the user-visible changes in \usdk releases.
 \item On Mac OS X, \command{umake} and friends pass the \samp{-arch} option.
   It is now easier to use on a 64 bit computer an \usdk package built on a
   32 bit one.
+\end{itemize}
+
+\subsection{Changes}
+\begin{itemize}
+\item The default activation for \env{GD\_CATEGORY} is computed from the
+  first character: \samp{Libport.Path} is equivalent to
+  \samp{-*,+Libport.Path}, and \samp{-Urbi*} is equivalent to
+  \samp{+*,-Urbi*}.  See \autoref{sec:tools:env}.
+\item \refSlot[System]{requireFile} supports the same arguments as
+  \refSlot[System]{load}.
 \end{itemize}
 
 \subsection{Documentation}
