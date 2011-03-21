@@ -1001,3 +1001,4 @@ int all::destructionCount = 0;
 ::urbi::URBIStarter<all>
     starter1(urbi::isPluginMode() ? "all"  : "remall"),
     starter2(urbi::isPluginMode() ? "all2" : "remall2");
+URBI_CHECK_SDK_VERSION_BARE("all");
