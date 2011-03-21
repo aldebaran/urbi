@@ -257,7 +257,11 @@ prefix=$(cd $(dirname $0)/.. && pwd)
 : ${exec_prefix="@exec_prefix@"}
 : ${bindir="@bindir@"}
 : ${libdir="@libdir@"}
+: ${datarootdir="@datarootdir@"}
+: ${datadir="@datadir@"}
 : ${brandlibdir="@brandlibdir@"}
+: ${brandsharedir="@brandsharedir@"}
+: ${umaindir="@umaindir@"}
 
 # Target name.
 target=
@@ -278,7 +282,6 @@ initialize
 
 # Use default main.
 if $automain; then
-  : ${umaindir='@umaindir@'}
   append sources "$umaindir/umain.cc"
 fi
 

@@ -39,6 +39,8 @@ test -f "$param_mk" ||
 test -f "$LIBTOOL" ||
   fatal "cannot find $LIBTOOL"
 
+export umaindir="${sdk_remote_srcdir}/src/liburbi"
+
 # umake-link does not support -P.
 case $me in
   (umake-link)
@@ -86,14 +88,11 @@ done
 export UMAKE=$sdk_remote_builddir/sdk/umake
 wrappee=$sdk_remote_builddir/sdk/$me
 
-# Find urbi, libport, and boost headers and libs.
-EXTRA_CPPFLAGS+=" -I$sdk_remote_srcdir/include -I$sdk_remote_builddir/include"
-EXTRA_CPPFLAGS+=" -I$sdk_remote_srcdir/libport/include -I$sdk_remote_builddir/libport/include"
+# Find Boost headers and libs.
 EXTRA_CPPFLAGS+=" @BOOST_CPPFLAGS@"
-
 EXTRA_LDFLAGS+=" @BOOST_THREAD_LDFLAGS@"
 
-# PREURBI can be valgrind for instance.  Admitedly useless here, since
+# PREURBI can be valgrind for instance.  Admittedly useless here, since
 # these are scripts.
 set x                                           \
     $PREURBI "$wrappee"                         \
@@ -102,9 +101,12 @@ set x                                           \
     "$@"                                        \
     --kernel="$kernel_dir"                      \
     --prefix="$prefix"                          \
+    -I$sdk_remote_srcdir/include                \
+    -I$sdk_remote_builddir/include              \
+    -I$sdk_remote_srcdir/libport/include        \
+    -I$sdk_remote_builddir/libport/include      \
     EXTRA_CPPFLAGS="$EXTRA_CPPFLAGS"            \
-    EXTRA_LDFLAGS="$EXTRA_LDFLAGS"              \
-    VPATH="$sdk_remote_srcdir/src/liburbi"
+    EXTRA_LDFLAGS="$EXTRA_LDFLAGS"
 shift
 
 case $@ in
