@@ -1,4 +1,4 @@
-## Copyright (C) 2008-2010, Gostai S.A.S.
+## Copyright (C) 2008-2011, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -14,10 +14,11 @@ noinst_LTLIBRARIES += libuco/libuco.la
 libuco_libuco_la_CPPFLAGS =			\
   $(AM_CPPFLAGS)				\
   -DBUILDING_URBI_SDK
-# Find version.hh.
-libuco_libuco_la_CPPFLAGS += -I.
 libuco_libuco_la_LDFLAGS = $(BOOST_THREAD_LDFLAGS) $(BOOST_DATE_TIME_LDFLAGS)
-libuco_libuco_la_LIBADD = libuvalue/libuvalue.la $(BOOST_THREAD_LIBS) $(BOOST_DATE_TIME_LIBS)
+libuco_libuco_la_LIBADD =			\
+  libuvalue/libuvalue.la			\
+  $(BOOST_THREAD_LIBS)				\
+  $(BOOST_DATE_TIME_LIBS)
 
 dist_libuco_libuco_la_SOURCES =			\
   libuco/uevent.cc				\
@@ -35,4 +36,3 @@ dist_libuco_libuco_la_SOURCES =			\
 ## ---------- ##
 
 dist_umain_DATA = liburbi/umain.cc liburbi/urbi-root.cc
-
