@@ -54,7 +54,7 @@ nodist_noinst_SCRIPTS +=                        \
 # changes here.  Which basically amounts to duplicating what Automake
 # does in the top-level Makefile.
 $(nodist_noinst_SCRIPTS): bin/%: $(wildcard $(srcdir)/bin/*.in)
-	cd $(top_builddir) && $(SHELL) ./config.status sdk-remote/src/tests/$@
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 
 # By default, instrument the code.
 #INSTRUMENTATION = true

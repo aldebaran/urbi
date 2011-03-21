@@ -1,4 +1,4 @@
-## Copyright (C) 2008, 2010, Gostai S.A.S.
+## Copyright (C) 2008, 2010, 2011, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -29,9 +29,11 @@ nodist_bin_SCRIPTS += $(UMAKE_WRAPPERS)
 dist_bin_SCRIPTS   += $(UMAKE_CONFIGURED)
 
 $(UMAKE_WRAPPERS): sdk/wrapper.sh
-	$(AM_V_GEN)
-	$(AM_V_at)sdk/wrapper.sh $@
+	$(AM_V_GEN) sdk/wrapper.sh $@
 $(UMAKE_CONFIGURED): sdk/umake-common
+
+$(UMAKE_CONFIGURED): %: %.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 
 CLEANFILES += $(nodist_bin_SCRIPTS)
 
