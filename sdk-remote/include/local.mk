@@ -78,13 +78,10 @@ MAINTAINERCLEANFILES += $(ucallbacks_hh)
 # the only such file, it is easier to put it in srcdir (and ship it to
 # comply with the Automake model).
 $(srcdir)/$(ucallbacks_hh): $(ucallbacks_hh).template include/template_autogen.pl
-	$(AM_V_GEN)
-	$(AM_V_at)rm -f $@.tmp $@
+	$(AM_V_GEN)rm -f $@.tmp $@
 	$(AM_V_at)$(mkdir_p) $$(dirname "$@.tmp")
-	$(AM_V_at)$(srcdir)/include/template_autogen.pl \
-	  $(srcdir)/$(ucallbacks_hh).template >$@.tmp
+	$(AM_V_at)$(srcdir)/include/template_autogen.pl $< >$@.tmp
 # Avoid accidental edition.
 	$(AM_V_at)chmod a-w $@.tmp
 	$(AM_V_at)$(top_srcdir)/build-aux/bin/move-if-change --color $@.tmp $@
 	$(AM_V_at)touch $@
-
