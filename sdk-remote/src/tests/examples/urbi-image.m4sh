@@ -84,5 +84,4 @@ file camera.jpg | grep -q JPEG
 
 ## Local Variables:
 ## mode: shell-script
-## End
-
+## End:

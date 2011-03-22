@@ -17,8 +17,9 @@ EXTRA_DIST += $(UOBS)
 urbi_uobjects_SCRIPTS = $(filter uobjects/urbi/%, $(UOBS:.uob=$(DLMODEXT)))
 test_uobjects_SCRIPTS = $(filter uobjects/test/%, $(UOBS:.uob=$(DLMODEXT)))
 
+UOBS_LIBS = $(UOBS:.uob=$(DLMODEXT)) $(UOBS:.uob=.la)
 
-CLEANFILES += $(UOBS) $(UOBS:$(DLMODEXT)=.la)
+CLEANFILES += $(UOBS_LIBS)
 
 UMAKE_SHARED = tests/bin/umake-shared
 
