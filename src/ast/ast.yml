@@ -38,7 +38,7 @@ atomic_types:
 # license.
 file_prologue: |2
   /*
-   * Copyright (C) 2007-2010, Gostai S.A.S.
+   * Copyright (C) 2007-2011, Gostai S.A.S.
    *
    * This software is provided "as is" without warranty of any kind,
    * either expressed or implied, including but not limited to the
@@ -253,14 +253,20 @@ Ast:
     - 'libport::meta::Hierarchy<Ast, Nodes>'
   inline:
     header prologue: |2
-      /* At least OS X's GCC does not actually export functions that
-         are flagged as exported, but use types that are not exported.
-         So we need to export these, for sake of binder::bind.
-         The impact on the size is neglectible.  */
+      // At least OS X's GCC does not actually export functions that
+      // are flagged as exported, but use types that are not exported.
+      // So we need to export these, for sake of binder::bind.
+      // The impact on the size is neglectible.
       # include <urbi/export.hh>
 
       # include <ast/fwd.hh>
       namespace runner { class Interpreter; }
+
+      # include <urbi/object/fwd.hh>
+
+      # if ENABLE_SERIALIZATION
+      #  include <serialize/serialize.hh>
+      # endif
 
     header inside: |2
         public:
