@@ -56,8 +56,9 @@ AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 
 engine_LTLIBRARIES = libuobject@LIBSFX@.la
 libuobject@LIBSFX@_la_CPPFLAGS =		\
-  $(AM_CPPFLAGS) 				\
-  -DBUILDING_URBI_SDK 				\
+  $(AM_CPPFLAGS)				\
+  -DBUILDING_URBI_SDK				\
+  -DURBI_INHIBIT_REVISION_CHECK			\
   -DLIBPORT_NO_SSL
 
 # Unfortunately, we _have_ to disable -fstrict-aliasing.  Because of
