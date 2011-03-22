@@ -86,7 +86,7 @@ libuobject@LIBSFX@_la_LIBADD =				\
 
 # Resolve stubs in libuobject.
 all-local: libuobject.unstub.stamp
-VERSIONIFY_STUBS = libuobject$(LIBSFX).la
+VERSIONIFY_STUBS = libuobject$(LIBSFX).la $(urbi_uobjects_LTLIBRARIES)
 libuobject.unstub.stamp: $(VERSIONIFY_STUBS) $(VERSIONIFY_CACHE) $(VERSIONIFY)
 	$(AT_V_PATCH) $(VERSIONIFY_RUN)		\
 	  $(if $(V:0=),-v,-q)			\

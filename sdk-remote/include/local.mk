@@ -61,6 +61,7 @@ urbiinclude_HEADERS =				\
   include/urbi/version-check.hh
 
 nodist_urbiinclude_HEADERS =			\
+  include/urbi/revision-stub.hh			\
   include/urbi/revision.hh
 
 
@@ -85,3 +86,18 @@ $(srcdir)/$(ucallbacks_hh): $(ucallbacks_hh).template include/template_autogen.p
 	$(AM_V_at)chmod a-w $@.tmp
 	$(AM_V_at)$(top_srcdir)/build-aux/bin/move-if-change --color $@.tmp $@
 	$(AM_V_at)touch $@
+
+## ----------------------- ##
+## urbi/revision-stub.hh.  ##
+## ----------------------- ##
+
+include/urbi/revision-stub.hh: $(VERSIONIFY)
+	$(AM_V_GEN)$(VERSIONIFY_RUN)				\
+	  --prefix=URBI_SDK_					\
+	  -DBugReport='$(PACKAGE_BUGREPORT)'			\
+	  -DCopyrightHolder='$(PACKAGE_COPYRIGHT_HOLDER)'	\
+	  -DCopyrightYears='$(PACKAGE_COPYRIGHT_YEARS)'		\
+	  -DName='$(PACKAGE_NAME)'				\
+	  -DString='$(PACKAGE_STRING)'				\
+	  -DTarname='$(PACKAGE_TARNAME)'			\
+	  --stub=$@

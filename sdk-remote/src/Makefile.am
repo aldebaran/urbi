@@ -74,11 +74,18 @@ VERSIONIFY_STUBS = 					\
   libuobject/libuobject$(LIBSFX).la			\
   liburbi/liburbi$(LIBSFX).la				\
   libuvalue/libuvalue.la				\
-  libuvalue/libuvalue_libuvalue_la-package-info.lo
+  libuvalue/libuvalue_libuvalue_la-package-info.lo	\
+  $(UOBS_LIBS)
 
 stub.stamp: $(VERSIONIFY_STUBS)
-	$(AT_V_PATCH) $(VERSIONIFY_RUN)			\
-	  $(if $(V:0=),-v,-q)				\
+	$(AT_V_PATCH) $(VERSIONIFY_RUN)				\
+	  $(if $(V:0=),-v,-q)					\
+	  -DBugReport='$(PACKAGE_BUGREPORT)'			\
+	  -DCopyrightHolder='$(PACKAGE_COPYRIGHT_HOLDER)'	\
+	  -DCopyrightYears='$(PACKAGE_COPYRIGHT_YEARS)'		\
+	  -DName='$(PACKAGE_NAME)'				\
+	  -DString='$(PACKAGE_STRING)'				\
+	  -DTarname='$(PACKAGE_TARNAME)'			\
 	  $(addprefix --resolve=, $(VERSIONIFY_STUBS))
 all: stub.stamp
 

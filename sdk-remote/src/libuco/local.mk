@@ -28,8 +28,8 @@ dist_libuco_libuco_la_SOURCES =			\
   libuco/urbi-main.cc				\
   libuco/ustarter.cc				\
   libuco/utable.cc				\
-  libuco/uvar-common.cc
-
+  libuco/uvar-common.cc				\
+  libuco/version-check.cc
 
 ## ---------- ##
 ## umain.cc.  ##

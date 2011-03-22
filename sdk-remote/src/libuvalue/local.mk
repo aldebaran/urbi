@@ -29,13 +29,3 @@ dist_libuvalue_libuvalue_la_SOURCES =		\
   libuvalue/uimage.cc				\
   libuvalue/usound.cc				\
   libuvalue/uvalue-common.cc
-
-## ------------ ##
-## version.hh.  ##
-## ------------ ##
-
-BUILT_SOURCES += $(nodist_libuvalue_libuvalue_la_SOURCES)
-libuvalue/revision-stub.hh: $(VERSIONIFY)
-	$(VERSIONIFY_RUN) --stub=$@
-nodist_libuvalue_libuvalue_la_SOURCES =		\
-  libuvalue/revision-stub.hh
