@@ -64,9 +64,9 @@ nodist_urbiinclude_HEADERS =			\
   include/urbi/revision.hh
 
 
-## --------------- ##
-## ucallbacks.hh.  ##
-## --------------- ##
+## -------------------- ##
+## urbi/ucallbacks.hh.  ##
+## -------------------- ##
 
 EXTRA_DIST +=				\
   include/template_autogen.pl		\
