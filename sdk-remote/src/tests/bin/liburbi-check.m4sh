@@ -7,9 +7,6 @@
 ## See the LICENSE file for more information.
 URBI_INIT
 
-# Ignore the differences between Kernel revisions.
-export URBI_ACCEPT_BINARY_MISMATCH=1
-
 # Avoid zombies and preserve debugging information.
 cleanup ()
 {
