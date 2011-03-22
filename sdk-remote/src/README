@@ -1,6 +1,6 @@
 -*- outline -*-
 
-* depencies
+* dependencies
 libuvalue.a:
 libuco.a: libuvalue.a
 liburbi.so: libuvalue.a

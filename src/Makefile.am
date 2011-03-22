@@ -33,11 +33,11 @@ AM_CPPFLAGS +=					\
   $(LIBPORT_CPPFLAGS)				\
   $(LTDL_CPPFLAGS)
 
-## Headers exported by SDK-Remote.
+## Headers exported by SDK Remote.
 AM_CPPFLAGS +=					\
-  -I$(top_srcdir)/sdk-remote/include		\
-  -I$(top_builddir)/sdk-remote/include		\
-  -I$(top_builddir)/sdk-remote
+  -I$(sdk_remote_srcdir)/include		\
+  -I$(sdk_remote_builddir)/include		\
+  -I$(sdk_remote_builddir)
 
 ## src/include/sched etc.
 AM_CPPFLAGS += -I$(srcdir)/include
@@ -77,7 +77,7 @@ libuobject@LIBSFX@_la_LIBADD =				\
   $(LIBPORT_LIBS)					\
   $(SCHED_LIBS)						\
   $(SERIALIZE_LIBS)					\
-  $(top_builddir)/sdk-remote/src/libuco/libuco.la
+  $(sdk_remote_builddir)/src/libuco/libuco.la
 
 ## ---------------------- ##
 ## Revision information.  ##
@@ -123,5 +123,5 @@ dist_libuobject@LIBSFX@_la_SOURCES +=			\
 # We used to install a different version (with s/remote/engine/g), but
 # there is no occurrence of remote in param.mk.  Yet MN insists on
 # installing this guy.
-nodist_engine_DATA = $(top_builddir)/sdk-remote/sdk/param.mk
+nodist_engine_DATA = $(sdk_remote_builddir)/sdk/param.mk
 

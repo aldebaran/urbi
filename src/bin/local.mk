@@ -1,4 +1,4 @@
-## Copyright (C) 2009-2010, Gostai S.A.S.
+## Copyright (C) 2009-2011, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -17,7 +17,7 @@ if BUILD_PROGRAMS
 if  !WIN32
 noinst_PROGRAMS = bin/ast-dump
 if   ENABLE_SERIALIZATION
-bin_PROGRAMS += bin/urbi-parse bin/urbi-pp bin/urbi-compile bin/serialize
+bin_PROGRAMS += bin/urbi-compile bin/urbi-parse bin/urbi-pp bin/serialize
 endif   ENABLE_SERIALIZATION
 endif  !WIN32
 endif BUILD_PROGRAMS
@@ -38,7 +38,9 @@ bin_urbi_CPPFLAGS = -DURBI_ROOT_NOT_DLL $(AM_CPPFLAGS)
 bin_urbi_LDADD = $(LIBPORT_LIBS)
 
 if STATIC_BUILD
-bin_urbi_LDADD += $(top_builddir)/sdk-remote/src/libuvalue/libuvalue.la libuobject.la
+bin_urbi_LDADD +=					\
+  $(sdk_remote_builddir)/src/libuvalue/libuvalue.la 	\
+  libuobject$(LIBSFX).la
 endif
 
 # urbi-parse.
