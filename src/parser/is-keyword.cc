@@ -33,7 +33,7 @@ namespace parser
         keyword_set.insert(libport::Symbol(k));
     }
 
-    return libport::mhas(keyword_set, s);
+    return libport::has(keyword_set, s);
   }
 #endif
 }

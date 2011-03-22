@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -47,7 +47,7 @@ namespace object
   inline bool
   HashSlots::has(const key_type& key) const
   {
-    return libport::mhas(content_, key);
+    return libport::has(content_, key);
   }
 
   inline HashSlots::iterator

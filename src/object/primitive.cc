@@ -98,10 +98,10 @@ namespace urbi
     rObject Primitive::call_raw(const object::objects_type& args)
     {
       size_t arity = args.size();
-      if (!libport::mhas(content_, arity))
+      if (!libport::has(content_, arity))
       {
         // Self is always present, accept it even for 0-arity.
-        if (arity == 1 && libport::mhas(content_, 0))
+        if (arity == 1 && libport::has(content_, 0))
           return content_[0](args);
         if (default_)
           return default_(args);

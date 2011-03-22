@@ -181,7 +181,7 @@ namespace urbi
       // * function pointers
       // * method pointers
       typedef AnyToBoostFunction<M> C;
-      aver(!libport::mhas(content_, C::arity));
+      aver(!libport::has(content_, C::arity));
       content_[C::arity] =
         boost::bind(MakePrimitive<typename C::type>::primitive,
                     _1, /*_2,*/ C::convert(f));

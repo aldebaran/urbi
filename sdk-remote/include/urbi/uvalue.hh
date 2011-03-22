@@ -375,7 +375,7 @@ namespace urbi
 } // namespace urbi
 
 #define URBI_STRUCT_CAST_FIELD(_, Cname, Field)                         \
-  if (libport::mhas(dict, BOOST_PP_STRINGIZE(Field)))                   \
+  if (libport::has(dict, BOOST_PP_STRINGIZE(Field)))                   \
     uvalue_cast_bounce(res.Field, dict[BOOST_PP_STRINGIZE(Field)]);     \
   else                                                                  \
     GD_WARN("Serialized data for " #Cname "is missing field"            \

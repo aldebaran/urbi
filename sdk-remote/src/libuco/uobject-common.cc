@@ -315,7 +315,7 @@ namespace urbi
       setCurrentContext(this);
       foreach (baseURBIStarterHub* s, baseURBIStarterHub::list())
       {
-        if (!libport::mhas(initialized, s))
+        if (!libport::has(initialized, s))
         {
           GD_FINFO_TRACE("initializing UObject hub: %s", s->name);
           GENERIC_TRY("Instanciating hub" << s,
@@ -326,7 +326,7 @@ namespace urbi
       }
       foreach (baseURBIStarter* s, baseURBIStarter::list())
       {
-        if (!libport::mhas(initialized, s))
+        if (!libport::has(initialized, s))
         {
           GD_FINFO_TRACE("initializing UObject: %s", s->name);
           GENERIC_TRY("Instanciating object" << s,

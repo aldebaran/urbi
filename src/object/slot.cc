@@ -53,7 +53,7 @@ namespace urbi
       BOOST_PP_SEQ_FOR_EACH(URBI_OBJECT_SLOT_CACHED_PROPERTY_HAS,
                             _, URBI_OBJECT_SLOT_CACHED_PROPERTIES);
 #undef URBI_OBJECT_SLOT_CACHED_PROPERTY_HAS
-      return properties_ && libport::mhas(*properties_, k);
+      return properties_ && libport::has(*properties_, k);
     }
 
     bool

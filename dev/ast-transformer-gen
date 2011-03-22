@@ -112,7 +112,7 @@ namespace ast
     void
     operator() (ast::Ast* node)
     {
-      if (mhas(seen_, node))
+      if (has(seen_, node))
       {
         result_ = node;
         return;

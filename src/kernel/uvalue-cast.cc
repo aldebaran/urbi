@@ -167,7 +167,7 @@ object_cast(const urbi::UValue& v)
       foreach (const urbi::UDictionary::value_type& d, *v.dictionary)
         r->set(new object::String(d.first), object_cast(d.second));
       res = r;
-      if (libport::mhas(*v.dictionary, "$sn")) // Serialized class
+      if (libport::has(*v.dictionary, "$sn")) // Serialized class
         res = r->call(SYMBOL(uvalueDeserialize));
       break;
     }

@@ -906,7 +906,7 @@ public:
     vu["coin"] = this;
     a = vu;
     a.fill(vu);
-    if (!libport::mhas(vu, "coin") || vu["coin"] != this)
+    if (!libport::has(vu, "coin") || vu["coin"] != this)
       throw std::runtime_error("hash is not what we expect");
   }
 

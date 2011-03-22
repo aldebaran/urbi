@@ -519,7 +519,7 @@ namespace urbi
     is_system_location(const ast::loc& l)
     {
       return (l.begin.filename
-              && libport::mhas(system_files_, *l.begin.filename));
+              && libport::has(system_files_, *l.begin.filename));
     }
 
     void

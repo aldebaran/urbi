@@ -103,7 +103,7 @@
                   ast::modifiers_type& mods,
                   const ::ast::Factory::modifier_type& mod)
     {
-      if (libport::mhas(mods, mod.first))
+      if (libport::has(mods, mod.first))
         up.warn(loc,
                 libport::format("modifier redefined: %s", mod.first));
       mods[mod.first] = mod.second;
@@ -115,7 +115,7 @@
                const ast::dictionary_elt_type& mod)
     {
       // FIXME: check for duplicate literal keys?
-      // if (libport::mhas(mods, mod.first))
+      // if (libport::has(mods, mod.first))
       //   up.warn(loc,
       //           libport::format("key redefined: %s", mod.first));
       mods.push_back(mod);

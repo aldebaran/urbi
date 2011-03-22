@@ -236,7 +236,7 @@ namespace %(clonerlib)s
     if (!e)
       return;
 
-    if (use_map_ && libport::mhas(map_, (long)e))
+    if (use_map_ && libport::has(map_, (long)e))
     {
       result_ = map_[(long)e];
       return;

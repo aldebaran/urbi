@@ -477,7 +477,7 @@ namespace runner
     virtual void
     visit(ast::LocalDeclaration* decl)
     {
-      if (mhas(decls_, decl))
+      if (has(decls_, decl))
       {
         result_ = decl;
         return;
@@ -496,7 +496,7 @@ namespace runner
       ast::rLocalDeclaration d = assignment->declaration_get();
 
       // If the variable is captured, or declared locally, we're good.
-      if (mhas(decls_, d.get()))
+      if (has(decls_, d.get()))
       {
         super_type::visit(assignment);
         return;
@@ -523,7 +523,7 @@ namespace runner
       ast::rLocalDeclaration d = local->declaration_get();
 
       // If the variable is captured, or declared locally, we're good.
-      if (mhas(decls_, d.get()))
+      if (has(decls_, d.get()))
       {
         super_type::visit(local);
         return;

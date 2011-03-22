@@ -108,7 +108,7 @@ namespace urbi
     void
     Dictionary::key_check(rObject key) const
     {
-      if (!libport::mhas(content_, key))
+      if (!libport::has(content_, key))
       {
         static rObject exn = slot_get(SYMBOL(KeyError));
         ::kernel::runner().raise(exn->call("new", key));
@@ -201,7 +201,7 @@ namespace urbi
     bool
     Dictionary::has(rObject key) const
     {
-      bool res = libport::mhas(content_, key);
+      bool res = libport::has(content_, key);
       if (res)
         URBI_AT_HOOK(elementRemoved);
       else

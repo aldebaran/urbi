@@ -357,12 +357,12 @@ void uobjects_reload()
 {
   urbi::impl::KernelUContextImpl::instance()->init();
   foreach (urbi::baseURBIStarterHub* i, urbi::baseURBIStarterHub::list())
-    if (!libport::mhas(initialized, i))
+    if (!libport::has(initialized, i))
     {
       initialized.insert(i);
     }
   foreach (urbi::baseURBIStarter* i, urbi::baseURBIStarter::list())
-    if (!libport::mhas(initialized, i))
+    if (!libport::has(initialized, i))
     {
       initialized.insert(i);
     }

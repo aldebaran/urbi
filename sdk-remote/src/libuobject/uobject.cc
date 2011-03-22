@@ -811,7 +811,7 @@ namespace urbi
       std::string cbname = "timer" + string_cast(cb);
       {
         libport::BlockLock bl(mapLock);
-        if (!libport::mhas(timerMap, cbname))
+        if (!libport::has(timerMap, cbname))
           return;
       }
       backend_->notifyCallbacks
@@ -833,7 +833,7 @@ namespace urbi
       RemoteUContextImpl* ctx = dynamic_cast<RemoteUContextImpl*>(owner_->ctx_);
       libport::BlockLock bl(ctx->mapLock);
       // Should not happen, but you never know...
-      if (!libport::mhas(ctx->timerMap, *h))
+      if (!libport::has(ctx->timerMap, *h))
         return false;
       ctx->timerMap[*h].first->cancel();
       ctx->timerMap.erase(*h);
