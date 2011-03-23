@@ -281,11 +281,14 @@ namespace urbi
         foreach (char& c, res)
           if (c == '\0' || c == '\n' || c == ';')
           {
-            if (!warned++)
+            if (!warned)
+            {
               GD_FERROR("invalid UBinary header: "
                         "prohibited `\\n', `\\0' and `;' will be "
                         "smashed to space: %s",
                         libport::escape(message));
+              warned = true;
+            }
             c = ' ';
           }
         // Remove leading/trailing spaces.

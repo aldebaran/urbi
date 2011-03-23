@@ -32,7 +32,7 @@ namespace kernel
   class UConnection;
   class UGhostConnection;
   class UServer;
-  struct ConnectionSet;
+  class ConnectionSet;
 }
 
 namespace urbi
