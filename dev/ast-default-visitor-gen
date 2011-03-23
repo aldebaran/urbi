@@ -137,10 +137,10 @@ for node in arr:
         if action != '':
           action += "\n"
         if attr.mandatory:
-          action += "operator()(n->%s_get().get());" % (attr.name)
+          action += "this->operator()(n->%s_get().get());" % (attr.name)
         else:
           action += "if (n->%s_get())\n" % attr.name
-          action += "  operator()(n->%s_get().get());" % (attr.name)
+          action += "  this->operator()(n->%s_get().get());" % (attr.name)
   if action != '':
     action = "\n" + tools.indent(4, action) + "\n  "
     var = ' n'

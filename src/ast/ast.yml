@@ -390,7 +390,7 @@ Do:
   attributes:
     - target: { type: 'rExp', desc: The default target }
   default: |2
-    operator()(n->target_get().get());
+    this->operator()(n->target_get().get());
     visit((typename Const<Scope>::type*) n);
   printer:
     - '"do ("'
@@ -444,8 +444,9 @@ Nary:
         access: rwW
         init: "new exps_type()"
   default: |2
-    foreach (libport::intrusive_ptr<typename Const<ast::Ast>::type> c, n->children_get())
-      operator()(c.get());
+    foreach (libport::intrusive_ptr<typename Const<ast::Ast>::type> c,
+             n->children_get())
+      this->operator()(c.get());
 
   printer:
     - $children
@@ -853,7 +854,7 @@ Dictionary:
   default: |2
     /* Kind of dump to iterate on vals without the keys */
     foreach (dictionary_elts_type::value_type exp, n->value_get())
-      ; //operator()(exp.second.get());
+      ; //this->operator()(exp.second.get());
 
 List:
   super: Exp
@@ -867,8 +868,9 @@ List:
     - 'libport::separate(n->value_get(), ", ")'
     - '"]"'
   default: |2
-    foreach (libport::intrusive_ptr<typename Const<ast::Exp>::type> exp, n->value_get())
-      operator()(exp.get());
+    foreach (libport::intrusive_ptr<typename Const<ast::Exp>::type> exp,
+             n->value_get())
+      this->operator()(exp.get());
 
 LValue:
   super: Exp
@@ -930,11 +932,12 @@ Call:
           }
   default: |2
     visit((typename Const<Exp>::type*) n);
-    operator()(n->target_get().get());
+    this->operator()(n->target_get().get());
     if (n->arguments_get())
     {
-      foreach (libport::intrusive_ptr<typename Const<ast::Exp>::type> e, *n->arguments_get())
-        operator()(e.get());
+      foreach (libport::intrusive_ptr<typename Const<ast::Exp>::type> e,
+               *n->arguments_get())
+        this->operator()(e.get());
     }
   printer:
     - '{
@@ -1172,8 +1175,9 @@ Local:
     visit((typename Const<Exp>::type*) n);
     if (n->arguments_get())
     {
-      foreach (libport::intrusive_ptr<typename Const<ast::Exp>::type> e, *n->arguments_get())
-        operator()(e.get());
+      foreach (libport::intrusive_ptr<typename Const<ast::Exp>::type> e,
+               *n->arguments_get())
+        this->operator()(e.get());
     }
   printer:
     - $name
