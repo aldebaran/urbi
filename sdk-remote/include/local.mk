@@ -92,12 +92,4 @@ $(srcdir)/$(ucallbacks_hh): $(ucallbacks_hh).template include/template_autogen.p
 ## ----------------------- ##
 
 include/urbi/revision-stub.hh: $(VERSIONIFY)
-	$(AM_V_GEN)$(VERSIONIFY_RUN)				\
-	  --prefix=URBI_SDK_					\
-	  -DBugReport='$(PACKAGE_BUGREPORT)'			\
-	  -DCopyrightHolder='$(PACKAGE_COPYRIGHT_HOLDER)'	\
-	  -DCopyrightYears='$(PACKAGE_COPYRIGHT_YEARS)'		\
-	  -DName='$(PACKAGE_NAME)'				\
-	  -DString='$(PACKAGE_STRING)'				\
-	  -DTarname='$(PACKAGE_TARNAME)'			\
-	  --stub=$@
+	$(AM_V_GEN)$(VERSIONIFY_RUN) --prefix=URBI_SDK_INFO_ --stub=$@

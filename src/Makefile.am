@@ -88,8 +88,8 @@ libuobject@LIBSFX@_la_LIBADD =				\
 all-local: libuobject.unstub.stamp
 VERSIONIFY_STUBS = libuobject$(LIBSFX).la $(urbi_uobjects_LTLIBRARIES)
 libuobject.unstub.stamp: $(VERSIONIFY_STUBS) $(VERSIONIFY_CACHE) $(VERSIONIFY)
-	$(AT_V_PATCH) $(VERSIONIFY_RUN)		\
-	  $(if $(V:0=),-v,-q)			\
+	$(AT_V_PATCH) $(VERSIONIFY_RUN)			\
+	  $(if $(V:0=),-v,-q)				\
 	  $(addprefix --resolve=, $(VERSIONIFY_STUBS))
 
 dist_libuobject@LIBSFX@_la_SOURCES =

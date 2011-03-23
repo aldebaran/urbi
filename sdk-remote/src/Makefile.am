@@ -77,15 +77,9 @@ VERSIONIFY_STUBS = 					\
   libuvalue/libuvalue_libuvalue_la-package-info.lo	\
   $(UOBS_LIBS)
 
-stub.stamp: $(VERSIONIFY_STUBS)
+stub.stamp: $(VERSIONIFY_STUBS) $(VERSIONIFY_CACHE) $(VERSIONIFY)
 	$(AT_V_PATCH) $(VERSIONIFY_RUN)				\
 	  $(if $(V:0=),-v,-q)					\
-	  -DBugReport='$(PACKAGE_BUGREPORT)'			\
-	  -DCopyrightHolder='$(PACKAGE_COPYRIGHT_HOLDER)'	\
-	  -DCopyrightYears='$(PACKAGE_COPYRIGHT_YEARS)'		\
-	  -DName='$(PACKAGE_NAME)'				\
-	  -DString='$(PACKAGE_STRING)'				\
-	  -DTarname='$(PACKAGE_TARNAME)'			\
 	  $(addprefix --resolve=, $(VERSIONIFY_STUBS))
 all: stub.stamp
 

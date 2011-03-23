@@ -47,9 +47,9 @@ namespace urbi
 namespace urbi
 {
 
-  /// Check sdk version, only once per module.
   namespace
   {
+    /// Check SDK version, only once per module.
     void
     check_sdk_version_once(const std::string& where,
                            const libport::PackageInfo& compiler)
@@ -58,10 +58,11 @@ namespace urbi
       LIBPORT_USE(i);
     }
 
+    /// Information about the Urbi SDK that compiled this module.
     const libport::PackageInfo&
     compiler_info()
     {
-      LIBPORT_PACKAGE_INFO_STATIC_VAR_(URBI_SDK_, pi);
+      LIBPORT_PACKAGE_INFO_STATIC_VAR_(URBI_SDK_INFO_, pi);
       GD_CATEGORY(Urbi.Version);
       GD_FINFO_TRACE("compiler info: %s", pi);
       return pi;
