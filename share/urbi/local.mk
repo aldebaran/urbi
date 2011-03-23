@@ -27,8 +27,15 @@ nodist_urbi_package_info_DATA =			\
 share/urbi/package-info/urbi-sdk.u: $(top_srcdir)/.version $(VERSIONIFY)
 	$(AM_V_GEN)$(VERSIONIFY_RUN) --urbiscript=$@ --prefix='Urbi SDK'
 	$(AM_V_at)touch $@
+# This is wrong, but good enough: we are using identity features of
+# Urbi SDK for Libport (say copyright holder).  We have to redefine
+# some though: name and bug report.
 share/urbi/package-info/libport.u: $(top_srcdir)/sdk-remote/libport/.version $(VERSIONIFY)
-	$(AM_V_GEN)$(VERSIONIFY_RUN) --urbiscript=$@ --prefix='Libport'
+	$(AM_V_GEN)$(VERSIONIFY_RUN)			\
+	  --cache=$<					\
+	  -DBugReport='libport-bugs@lists.gostai.com'	\
+	  -DName='Libport'				\
+          --urbiscript=$@ --prefix='Libport'		\
 	$(AM_V_at)touch $@
 
 urbi.stamp: $(dist_urbi_DATA) $(nodist_urbi_DATA)
