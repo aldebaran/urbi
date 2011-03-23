@@ -33,10 +33,6 @@ def print_guards_close (node, header, inline, impl):
   print_inline_code (node, "header", "epilogue")
 
   # Close protection
-  print >>header, """
-#if ENABLE_SERIALIZATION
-# include <serialize/serialize.hh>
-#endif"""
   print >>header, "# include <ast/" + node.hxx () + ">"
   print >>header, ""
   print_guard_close (header, node, "hh")
