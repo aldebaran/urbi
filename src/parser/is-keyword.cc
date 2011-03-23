@@ -22,9 +22,10 @@ namespace parser
   is_keyword(libport::Symbol s)
   {
     boost::unordered_set<libport::Symbol> keyword_set;
-    static bool tail = false;
-    if (!++tail)
+    static bool first = true;
+    if (first)
     {
+      first = false;
       const char* keywords[] =
       {
 #include <parser/keywords.hh>

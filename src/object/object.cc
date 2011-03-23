@@ -465,15 +465,16 @@ namespace urbi
       if (proto_ || !protos_->empty())
       {
         o << "protos = ";
-        bool tail = false;
+        bool first = true;
         if (proto_)
           proto_->id_dump(o);
         else
         {
           foreach (const rObject& p, *protos_)
           {
-            if (tail++)
+            if (!first)
               o << ", ";
+            first = false;
             p->id_dump (o);
           }
         }

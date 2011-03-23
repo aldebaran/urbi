@@ -491,11 +491,14 @@ static rObject wrap_ucallback(const object::objects_type& ol,
   l.array.reserve(ol.size() - (withThis?1:0));
   urbi::setCurrentContext(urbi::impl::KernelUContextImpl::instance());
   object::check_arg_count(ol.size() - (withThis?1:0), ugc->nbparam);
-  bool tail = false;
+  bool first = true;
   foreach (const rObject& co, ol)
   {
-    if (withThis && !tail++)
+    if (withThis && first)
+    {
+      first = false;
       continue;
+    }
     urbi::UValue v = uvalue_cast(co);
     l.array << new urbi::UValue(v);
   }
@@ -505,7 +508,7 @@ static rObject wrap_ucallback(const object::objects_type& ol,
   bound_context
     << std::make_pair(&ugc->owner ? ugc->owner.__name : "unknown",
                       ugc->name);
-  FINALLY(((bool, tail)), bound_context.pop_back();GD_INFO_DUMP("Done"));
+  FINALLY(((bool, first)), bound_context.pop_back();GD_INFO_DUMP("Done"));
   // write_and_unfreeze will delete us if true, we handle it if false
   bool* async_abort = new bool;
   *async_abort = false;
