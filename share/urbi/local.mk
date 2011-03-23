@@ -10,14 +10,19 @@ urbidir = $(brandsharedir)/urbi
 dist_urbi_DATA := $(call ls_files,share/urbi/*.u)
 
 nodist_urbi_DATA =				\
-  share/urbi/package-info.u			\
   share/urbi/platform.u
 BUILT_SOURCES += $(nodist_urbi_DATA)
-
 
 ## -------------- ##
 ## PackageInfos.  ##
 ## -------------- ##
+
+# We used to generate package-info.u, now it's in srcdir.  FIXME:
+# Remove this eventually.
+.PHONY: backward
+backward:
+	-rm share/urbi/package-info.u
+all: backward
 
 urbi_package_infodir = $(urbidir)/package-info
 nodist_urbi_package_info_DATA =			\
