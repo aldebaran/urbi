@@ -258,6 +258,7 @@ namespace urbi
     {
       if (!slots_.set(this, k, o, redefinition_mode()))
       {
+        GD_CATEGORY(Urbi.Error);
         GD_FINFO_DEBUG("Slot redefinition: %s", k);
         runner::raise_urbi_skip(SYMBOL(Redefinition), to_urbi(k));
       }

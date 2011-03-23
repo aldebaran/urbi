@@ -31,7 +31,7 @@
             << Msg                                              \
             << dbg::runner_or_sneaker_get().backtrace_get())
 
-GD_CATEGORY(Urbi);
+GD_CATEGORY(Urbi.Error);
 
 namespace runner
 {
