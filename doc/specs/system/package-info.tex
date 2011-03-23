@@ -49,24 +49,23 @@ System.PackageInfo.components["Urbi SDK"].date.isA(String);
 System.PackageInfo.components["Urbi SDK"].day.isA(String);
 \end{urbiassert}
 
-\item[description] The SCM complete description string, with slashes.
+\item[description] The complete description string, with slashes.
 \begin{urbiassert}
 System.PackageInfo.components["Urbi SDK"].description.isA(String);
 \end{urbiassert}
 
-\item[id] The SCM identification string.
+\item[id] The identification string.
 \begin{urbiassert}
 System.PackageInfo.components["Urbi SDK"].id.isA(String);
 \end{urbiassert}
 
-\item[major] The SCM major version component
-  (\refSlot{major}.\refSlot{minor}.\refSlot{subminor}).
+\item[major] The major version component (see \refSlot{version}).
 \begin{urbiassert}
 System.PackageInfo.components["Urbi SDK"].major
   == 2;
 \end{urbiassert}
 
-\item[minor] The SCM minor version component (Major.Minor.SubMinor).
+\item[minor] The minor version component (see \refSlot{version}).
 \begin{urbiassert}
 System.PackageInfo.components["Urbi SDK"].minor
   == 7;
@@ -100,13 +99,13 @@ do (System.PackageInfo.components["Urbi SDK"])
 }|;
 \end{urbiscript}
 
-\item[subMinor] The SCM SubMinor version component (Major.Minor.SubMinor).
+\item[subMinor] The sub-minor version component (see \refSlot{version}).
 \begin{urbiassert}
 System.PackageInfo.components["Urbi SDK"].subMinor
   == 1;
 \end{urbiassert}
 
-\item[tarballVersion] The SCM complete version string, with dashes.
+\item[tarballVersion] The complete version string, with dashes.
 \begin{urbiassert}
 System.PackageInfo.components["Urbi SDK"].tarballVersion.isA(String);
 \end{urbiassert}
@@ -117,7 +116,7 @@ System.PackageInfo.components["Urbi SDK"].tarname
   == "urbi-sdk";
 \end{urbiassert}
 
-\item[version] The SCM version string, such as \lstinline|"2.7"| or
+\item[version] The version string, such as \lstinline|"2.7"| or
   \lstinline|"2.7.1"|.
 \begin{urbiscript}
 do (System.PackageInfo.components["Urbi SDK"])

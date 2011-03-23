@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1355 utf-8
+personal_ws-1.1 en 1361 utf-8
 aaa
 abc
 abcd
@@ -148,6 +148,7 @@ boolean
 brandNewTag
 bsd
 bufferIn
+bugReport
 bumperL
 bumperR
 buzzerIndex
@@ -1068,6 +1069,7 @@ sublicense
 sublicensees
 sublicenses
 Sublicensing
+subMinor
 submodule
 submodules
 subscope
@@ -1089,11 +1091,13 @@ syncValue
 syncWrite
 SYSV
 taglist
+tarballVersion
 Tardieu
 tarfile
 targetMine
 targetName
 targetObject
+tarname
 TCP
 te
 Technic
@@ -1275,6 +1279,8 @@ vcredist
 vcxx
 verboseId
 versa
+versionRev
+versionValue
 verylightgray
 VEXplorer
 VideoIn
