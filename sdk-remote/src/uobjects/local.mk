@@ -31,7 +31,7 @@ UMAKE_VERBOSE = $(UMAKE_VERBOSE_$(V))
 UMAKE_VERBOSE_ = $(UMAKE_VERBOSE_$(AM_DEFAULT_VERBOSITY))
 UMAKE_VERBOSE_0 = --quiet
 
-%$(DLMODEXT): %.uob $(UMAKE_SHARED) libuobject/libuobject$(LIBSFX).la
+%$(DLMODEXT) %.la: %.uob $(UMAKE_SHARED) libuobject/libuobject$(LIBSFX).la
 	+$(umake_verbose)$(UMAKE_SHARED) $(UMAKE_VERBOSE)	\
 	  EXTRA_CXXFLAGS="$(WARNING_CXXFLAGS)"			\
 	  $(EXTRA_$(notdir $*)_cppflags)			\
