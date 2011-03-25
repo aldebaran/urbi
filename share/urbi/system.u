@@ -113,7 +113,11 @@ do (System)
     "parser/ugrammar.y",
     "rewrite/desugarer.cc",
     "rewrite/pattern-binder.cc",
-    "rewrite/rescoper.cc"
+    "rewrite/rescoper.cc",
+    // Added by hand: not loaded by default, hence not automatically
+    // added.
+    searchFile("urbi/component.u").asString,
+    searchFile("urbi/naming-standard.u").asString,
   ].each(&addSystemFile);
 
   /// Look for file and load it.
