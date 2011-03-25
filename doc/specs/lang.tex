@@ -409,18 +409,18 @@ seen above, they keep their accurate value.
 [00000014] 1e-05
 \end{urbiscript}
 
-In order to make numbers with units (\samp{1min}) and calling a method on a
-number (\samp{1.min}), numbers that include a period must have a fractional
-part.  In other words, \samp{1.}, if not followed by digits, is always read
-as \samp{1 .}:
+In order to tell apart numbers with units (\samp{1min}) and calling a method
+on a number (\samp{1.min}), numbers that include a period must have a
+fractional part.  In other words, \samp{1.}, if not followed by digits, is
+always read as \samp{1 .}:
 
 \begin{urbiscript}
 1.;
 [00004701:error] !!! syntax error: unexpected ;
 \end{urbiscript}
 
-Hexadecimal notation is supported for integers: \lstinline|0x|
-followed by one or more hexadecimal digits, whose case is irrelevant.
+Hexadecimal notation is supported for integers: \lstinline|0x| followed by
+one or more hexadecimal digits, whose case is irrelevant.
 
 \begin{urbiassert}
       0x2a == 42;
@@ -441,6 +441,43 @@ Numbers with unknown suffixes are invalid tokens:
 [00060432] 11259375
 0xabcdefg;
 [00061848:error] !!! syntax error: invalid token: `0xabcdefg'
+\end{urbiscript}
+
+In order to augment readability, you may separate digits with underscores.
+\begin{urbiassert}
+   123_456_789 == 123456789;
+12_34_56_78_90 == 1234567890;
+   1_2__3___45 == 12345;
+      1_2.3__4 == 12.34;
+   0xFFFF_FFFF == 0xFFFFFFFF;
+         1e1_0 == 1e10;
+\end{urbiassert}
+
+The underscores must always be \emph{between} digits.
+\begin{urbiscript}
+// This is actually an identifier.
+_0__2;
+[00000112:error] !!! lookup failed: _0__2
+
+20_;
+[00029616:error] !!! syntax error: invalid token: `20_'
+
+// This is actually a call to the method `_2' in 1.
+1._2;
+[00029653:error] !!! lookup failed: _2
+
+1.2_;
+[00029654:error] !!! syntax error: invalid token: `1.2_'
+
+0x_12;
+[00116580:error] !!! syntax error: invalid token: `0x_12'
+0_x12;
+[00116582:error] !!! syntax error: invalid token: `0_x12'
+
+1e_10;
+[00253832:error] !!! syntax error: invalid token: `1e_10'
+1e10_;
+[00257727:error] !!! syntax error: invalid token: `1e10_'
 \end{urbiscript}
 
 \subsubsection{Lists}

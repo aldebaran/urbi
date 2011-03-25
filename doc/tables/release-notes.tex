@@ -24,6 +24,23 @@ This chapter lists the user-visible changes in \usdk releases.
   \fi%
 }
 
+\section{\usdk 2.8}
+\release{2.8}{2011-XX-YY}
+
+\subsection{Changes}
+\begin{itemize}
+\item Too augment legibility, underscores can be used to separate groups of
+  digits in numbers (\autoref{sec:us-syn-lit-float}).
+\begin{urbiassert}
+   123_456_789 == 123456789;
+12_34_56_78_90 == 1234567890;
+   1_2__3___45 == 12345;
+      1_2.3__4 == 12.34;
+   0xFFFF_FFFF == 0xFFFFFFFF;
+         1e1_0 == 1e10;
+\end{urbiassert}
+\end{itemize}
+
 \section{\usdk 2.7.1}
 \release{2.7}{2011-03-17}
 

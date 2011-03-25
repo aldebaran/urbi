@@ -1,5 +1,5 @@
 ;;;
-;;; Copyright (C) 2008-2010, Gostai S.A.S.
+;;; Copyright (C) 2008-2011, Gostai S.A.S.
 ;;;
 ;;; This software is provided "as is" without warranty of any kind,
 ;;; either expressed or implied, including but not limited to the
@@ -59,9 +59,22 @@
   "List of urbiscript keywords")
 
 ;; literals
+(defconst urbiscript-natural
+  "\\([0-9]\\|[0-9][0-9_]*[0-9]\\)"
+  "Natural integers in urbiscript")
 
 (defconst urbiscript-literals
-  '("\\<[0-9]+\\>")
+  (cons
+   (concat
+    "\\<"
+    urbiscript-natural
+    ;; Optional fractional part.
+    "\\(\\." urbiscript-natural "\\)?"
+    ;; Optional exponent.
+    "\\([eE][-+]?" urbiscript-natural "\\)?"
+    "\\>")
+   ()
+   )
   "List of urbiscript literals")
 
 ;; objects

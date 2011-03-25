@@ -18,7 +18,7 @@
 #include <libport/cstring>
 #include <sstream>
 
-#include <boost/format.hpp>
+#include <boost/algorithm/string/erase.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 
@@ -43,9 +43,13 @@ using libport::ufloat;
 /// size.
 static size_t bin_split(char* yytext, size_t yyleng, char*& keywords);
 
+// Convert an hexadecimal number without the leading 0x.
+static long long hexadecimal(std::string t);
+
 // Safe conversion to a numeric value.
-template <typename Out, typename In>
-static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
+template <typename Out>
+static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc,
+                        std::string t);
 
 // Skip the spaces in yytext.
 # define SKIP_SPACES()                          \
@@ -61,8 +65,7 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
       break;                                            \
     }                                                   \
                                                         \
-    GD_FPUSH_TRACE("LexerInput (max size = %s)",        \
-                   MaxSize);                            \
+    GD_FPUSH_TRACE("Input (max size = %s)", MaxSize);   \
     yyin->readsome(Buf, MaxSize);                       \
                                                         \
     if (!yyin->gcount() && !yyin->eof())                \
@@ -272,9 +275,10 @@ ID       [a-zA-Z_][_A-Za-z0-9]*
   // Identifier suffix for magic derivation (K1 syntax).
 SUFFIX   "'"(""|"'"|d|dd|e|n|in|out)
 
-
-NATURAL  [0-9]+
-HEXA     0x[0-9a-fA-F]+
+DGIT     [0-9]
+NATURAL  {DGIT}(({DGIT}|_)*{DGIT})?
+XGIT     [0-9a-fA-F]
+HEXA     0x{XGIT}(({XGIT}|_)*{XGIT})?
 EXPONENT [eE][-+]?{NATURAL}
 FLOAT    {NATURAL}\.{NATURAL}{EXPONENT}?|{NATURAL}{EXPONENT}
 
@@ -402,7 +406,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 {NUMBER}"deg"   RETURN_ANGLE(3, 180, M_PI);
 {NUMBER}"grad"  RETURN_ANGLE(4, 200, M_PI);
 
-{HEXA}        RETURN_VALUE(FLOAT, strtoll(yytext + 2, 0, 16));
+{HEXA}        RETURN_VALUE(FLOAT, hexadecimal(yytext + 2));
 {NATURAL}     |
 {FLOAT}       RETURN_VALUE(FLOAT, lexical_cast<ufloat>(parser_impl_, loc, yytext));
 
@@ -798,13 +802,22 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 
 %%
 
+long long
+hexadecimal(std::string t)
+{
+  boost::algorithm::erase_all(t, "_");
+  return strtoll(t.c_str(), 0, 16);
+}
+
 // Safe conversion to a numeric value.
 // The name parser_impl_ is chosen so that SCAN_ERROR can be used
 // from out of the scanner.
-template <typename Out, typename In>
+template <typename Out>
 Out
-lexical_cast (parser::ParserImpl* parser_impl_, const yy::location& loc, In t)
+lexical_cast(parser::ParserImpl* parser_impl_, const yy::location& loc,
+             std::string t)
 {
+  boost::algorithm::erase_all(t, "_");
   try
   {
     return boost::lexical_cast<Out>(t);
