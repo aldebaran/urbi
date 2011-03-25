@@ -81,7 +81,7 @@ stub.stamp: $(VERSIONIFY_STUBS) $(VERSIONIFY_CACHE) $(VERSIONIFY)
 	$(AT_V_PATCH) $(VERSIONIFY_RUN)				\
 	  $(if $(V:0=),-v,-q)					\
 	  $(addprefix --resolve=, $(VERSIONIFY_STUBS))
-all: stub.stamp
+ALLS += stub.stamp
 
 
 

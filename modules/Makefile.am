@@ -30,6 +30,15 @@ module_LTLIBRARIES =
 moduledir = $(urbi_uobjectsdir)
 include modules.mk
 
+# Replace the version stubs in these libraries.
+.PHONY: stub.stamp
+VERSIONIFY_STUBS = $(module_LTLIBRARIES)
+stub.stamp: $(VERSIONIFY_STUBS) $(VERSIONIFY_CACHE) $(VERSIONIFY)
+	$(AT_V_PATCH) $(VERSIONIFY_RUN)				\
+	  $(if $(V:0=),-v,-q)					\
+	  $(addprefix --resolve=, $(VERSIONIFY_STUBS))
+ALLS += stub.stamp
+
 installcheck-buildfarm:
 check-buildfarm:
 distcheck-buildfarm:

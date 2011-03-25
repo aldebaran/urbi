@@ -22,7 +22,7 @@ BUILT_SOURCES += $(nodist_urbi_DATA)
 .PHONY: backward
 backward:
 	-rm share/urbi/package-info.u
-all: backward
+ALLS += backward
 
 urbi_package_infodir = $(urbidir)/package-info
 nodist_urbi_package_info_DATA =			\
