@@ -14,6 +14,8 @@
 #include <runner/exception.hh>
 #include <urbi/runner/raise.hh>
 
+#include <eval/send-message.hh>
+
 namespace runner
 {
   Exception::Exception()
@@ -50,7 +52,7 @@ namespace runner
   }
 
   void
-  Exception::print(runner::Runner& r) const
+  Exception::print(runner::Job& r) const
   {
     foreach (const Message& m, messages_)
       m.print(r);
@@ -79,11 +81,11 @@ namespace runner
     , prefix(prefix)
   {}
 
-  void Exception::Message::print(runner::Runner& r) const
+  void Exception::Message::print(runner::Job& r) const
   {
     std::string m = prefix.empty() ? msg
       : libport::format("%s: %s", prefix, msg);
-    r.send_message(kind, libport::format("!!! %s: %s", loc, m));
-    r.show_backtrace(kind);
+    eval::send_message(r, kind, libport::format("!!! %s: %s", loc, m));
+    eval::show_backtrace(r, kind);
   }
 }

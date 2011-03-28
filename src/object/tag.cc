@@ -21,8 +21,8 @@
 #include <urbi/object/string.hh>
 #include <object/symbols.hh>
 
-#include <runner/interpreter.hh>
-#include <runner/runner.hh>
+#include <runner/job.hh>
+#include <eval/call.hh>
 
 #include <sched/tag.hh>
 
@@ -114,7 +114,7 @@ namespace urbi
     void
     Tag::freeze()
     {
-      runner::Runner& r = ::kernel::runner();
+      runner::Job& r = ::kernel::runner();
 
       value_->freeze();
       // changed();
@@ -207,7 +207,8 @@ namespace urbi
       {
         objects_type args;
         args << this;
-        ::kernel::runner().apply(f->value(), SYMBOL(onEnter), args);
+        eval::call_apply(::kernel::runner(),
+                         f->value(), SYMBOL(onEnter), args);
       }
       if (local_slot_get(SYMBOL(enterEvent)))
         slot_get(SYMBOL(enterEvent))->call(SYMBOL(syncEmit));
@@ -220,7 +221,8 @@ namespace urbi
       {
         objects_type args;
         args << this;
-        ::kernel::runner().apply(f->value(), SYMBOL(onLeave), args);
+        eval::call_apply(::kernel::runner(),
+                         f->value(), SYMBOL(onLeave), args);
       }
       if (local_slot_get(SYMBOL(leaveEvent)))
         slot_get(SYMBOL(leaveEvent))->call(SYMBOL(syncEmit));
@@ -232,24 +234,11 @@ namespace urbi
       return parent_;
     }
 
-    static inline
-    runner::Runner&
-    runner()
-    {
-      return ::kernel::runner();
-    }
-
-    static inline
-    runner::Interpreter&
-    interpreter()
-    {
-      return dynamic_cast<runner::Interpreter&>(runner());
-    }
-
     rTag
     Tag::scope()
     {
-      return new Tag(interpreter().scope_tag());
+      runner::Job& r = ::kernel::runner();
+      return new Tag(r.state.scope_tag(r.scheduler_get()));
     }
 
     bool

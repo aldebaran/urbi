@@ -113,6 +113,7 @@ include parser/local.mk
 include object/local.mk
 include rewrite/local.mk
 include runner/local.mk
+include eval/local.mk
 include kernel/local.mk
 include urbi/local.mk
 

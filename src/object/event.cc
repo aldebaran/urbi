@@ -12,11 +12,13 @@
 
 #include <kernel/userver.hh>
 #include <object/symbols.hh>
-#include <runner/interpreter.hh>
+#include <runner/job.hh>
 #include <urbi/object/event.hh>
 #include <urbi/object/event-handler.hh>
 #include <urbi/object/lobby.hh>
 #include <urbi/sdk.hh>
+
+#include <eval/exec.hh>
 
 namespace urbi
 {
@@ -134,10 +136,10 @@ namespace urbi
     Event::onEvent(rExecutable guard, rExecutable enter, rExecutable leave, bool sync)
     {
       rActions actions(new Actions(guard, enter, leave, sync));
-      runner::Interpreter& r = ::kernel::interpreter();
+      runner::Job& r = ::kernel::runner();
       actions->profile = r.profile_get();
-      actions->tag_stack = r.tag_stack_get();
-      actions->lobby = r.lobby_get();
+      actions->tag_stack = r.state.tag_stack_get();
+      actions->lobby = r.state.lobby_get();
       foreach (object::rTag& tag, actions->tag_stack)
       {
         sched::rTag t = tag->value_get();
@@ -170,11 +172,11 @@ namespace urbi
             || pattern->call(SYMBOL(match), active->payload())->as_bool())
           return;
 
-      runner::Runner& r = ::kernel::runner();
+      runner::Job& r = ::kernel::runner();
       rTag t(new Tag);
       waiters_ << Waiter(t, &r, pattern);
       libport::Finally f;
-      r.apply_tag(t, &f);
+      r.state.apply_tag(t, &f);
       f << boost::bind(&Event::waituntil_remove, this, t);
       t->freeze(); // Will yield.
     }
@@ -207,10 +209,11 @@ namespace urbi
                              rProfile profile, const objects_type& args)
     {
       typedef rObject(Executable::*fun_type)(objects_type);
-      runner::Interpreter& r = ::kernel::interpreter();
-      runner::Interpreter* res =
-        e->make_job(lobby ? lobby : r.lobby_get(),
-                    r.scheduler_get(), args, SYMBOL(event));
+      runner::Job& r = ::kernel::runner();
+      if (!lobby)
+        lobby = r.state.lobby_get();
+      runner::Job* res =
+        e->make_job(lobby, r.scheduler_get(), args, SYMBOL(event));
       if (profile)
         res->profile_start(profile, SYMBOL(event), e.get());
       return res;
@@ -330,7 +333,7 @@ namespace urbi
 	{
           // Check if any tag is frozen beside the first one.
           bool frozen = false;
-          foreach (const rTag& t, waiter.runner->tag_stack_get_all())
+          foreach (const rTag& t, waiter.runner->state.tag_stack_get_all())
           {
             if (t != waiter.controlTag && t->frozen())
             {

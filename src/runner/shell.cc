@@ -37,6 +37,9 @@
 #include <sched/job.hh>
 #include <sched/scheduler.hh>
 
+#include <eval/ast.hh>
+#include <eval/send-message.hh>
+
 namespace runner
 {
   GD_CATEGORY(Urbi.Shell);
@@ -45,7 +48,7 @@ namespace runner
 	       sched::Scheduler& scheduler,
 	       const std::string& name,
                std::istream& input)
-    : Interpreter(lobby, scheduler, ast::rConstAst(), name)
+    : Job(lobby, scheduler, name)
     , executing_(false)
     , input_(input)
     , stop_(false)
@@ -77,7 +80,7 @@ namespace runner
 
     try
     {
-      object::rObject res = operator()(exp);
+      object::rObject res = eval::ast(*this, exp);
 
       // We need to keep checking for void here because it
       // cannot be passed to the << function.
@@ -88,8 +91,8 @@ namespace runner
         // is set.
         static bool toplevel_debug = getenv("URBI_TOPLEVEL");
 
-        rSlot topLevel =
-          lobby_get()->slot_locate(SYMBOL(topLevel), false).second;
+        object::rSlot topLevel =
+          state.lobby_get()->slot_locate(SYMBOL(topLevel), false).second;
        if (topLevel)
          topLevel->value()->call(SYMBOL(LT_LT), res);
         else if (toplevel_debug)
@@ -99,8 +102,8 @@ namespace runner
             rObject result = res->call(SYMBOL(asToplevelPrintable));
             std::ostringstream os;
             result->print(os);
-            lobby_->connection_get().send(os.str());
-            lobby_->connection_get().endline();
+            state.lobby_get()->connection_get().send(os.str());
+            state.lobby_get()->connection_get().endline();
           }
           catch (object::UrbiException&)
           {
@@ -139,7 +142,7 @@ namespace runner
     }
 
     if (exception_to_show.get())
-      show_exception(*exception_to_show);
+      eval::show_exception(*this, *exception_to_show);
   }
 
   void
@@ -153,8 +156,8 @@ namespace runner
       GD_FPUSH_TRACE("%s: executing command in background.", name_get());
       GD_FINFO_DUMP("%s: command: %s", name_get(), *exp);
       sched::rJob subrunner =
-        new Interpreter(*this, stmt->expression_get().get(),
-                        libport::Symbol::fresh_string(name_get()));
+        spawn_child(eval::ast(stmt->expression_get().get()),
+                    libport::Symbol::fresh_string(name_get()));
       jobs_ <<  subrunner;
       subrunner->start_job();
       if (canYield && !input_.eof())
@@ -171,7 +174,8 @@ namespace runner
 
     if (non_interruptible_get())
     {
-      send_message("error", "the toplevel cannot be non-interruptible");
+      eval::send_message(*this, "error",
+                         "the toplevel cannot be non-interruptible");
       non_interruptible_set(false);
     }
   }
@@ -293,8 +297,9 @@ namespace runner
       // Catch and print unhandled exceptions
       catch (object::UrbiException& e)
       {
-        show_exception(object::UrbiException(e.value_get(),
-                                             e.backtrace_get()));
+        eval::show_exception(
+          *this,
+          object::UrbiException(e.value_get(), e.backtrace_get()));
       }
       catch (const Exception& e)
       {
@@ -344,7 +349,7 @@ namespace runner
   {
     GD_CATEGORY(Urbi.Shell.Serialize);
     GD_FINFO_TRACE("setSerializationMode %s", m);
-    lobby_get()->send(m ? "true" : "false", tag);
+    state.lobby_get()->send(m ? "true" : "false", tag);
     if (m == binary_mode_)
       return;
     if (!m && binary_mode_)
@@ -375,7 +380,7 @@ namespace runner
       return;
     GD_FPUSH_TRACE("%s: end reached.", name_get());
     if (&kernel::urbiserver->ghost_connection_get() !=
-        &lobby_get()->connection_get())
+        &state.lobby_get()->connection_get())
     {
       // Asynchronous destruction of the connection is necessary
       // otherwise the connection destructor (which is stopping the
@@ -386,16 +391,17 @@ namespace runner
       // The UConnection should be fetch before disconnecting the lobby,
       // because the lobby will lose it's reference on the connection.
       GD_FPUSH_DUMP("%s: schedule connection destruction.", name_get());
-      aver(&lobby_get()->connection_get());
-      kernel::server()
-        .schedule(SYMBOL(collect_connection),
-                  boost::bind(collect_connection,
-                              &lobby_get()->connection_get()));
+      aver(&state.lobby_get()->connection_get());
+      kernel::server().schedule(
+        SYMBOL(collect_connection),
+        boost::bind(collect_connection,
+                    &state.lobby_get()->connection_get())
+        );
       GD_FPUSH_DUMP("%s: disconnecting.", name_get());
-      lobby_get()->disconnect();
+      state.lobby_get()->disconnect();
       stop_ = true;
     }
     // Force interruption of work_
-    lobby_get()->tag_get()->stop();
+    state.lobby_get()->tag_get()->stop();
   }
 } // namespace runner

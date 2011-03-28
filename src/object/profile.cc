@@ -39,6 +39,13 @@ namespace urbi
     Profile::~Profile()
     {}
 
+    Profile::Info::Info()
+      : checkpoint(0)
+      , function_current(0)
+      , function_call_depth(0)
+    {
+    }
+
     static bool function_profiles_sort(Object* lhs, Object* rhs)
     {
       return static_cast<FunctionProfile*>(lhs)->self_time_get()
@@ -170,6 +177,84 @@ namespace urbi
       wall_clock_time_ += res;
       functions_profile_[function_current]->self_time_ += res;
       checkpoint = now;
+    }
+
+    void
+    Profile::start(libport::Symbol name, Object* current,
+                   bool count, Info& i)
+    {
+      i.checkpoint = libport::utime();
+      i.function_current = current;
+      if (!functions_profile_[current])
+      {
+        functions_profile_[current] = new FunctionProfile;
+        functions_profile_[current]->name_ = name;
+      }
+      if (count)
+        ++functions_profile_[current]->calls_;
+    }
+
+    void
+    Profile::stop(Info& i)
+    {
+      step(i.checkpoint, i.function_current);
+    }
+
+    void
+    Profile::preempted(Info& i)
+    {
+      step(i.checkpoint, i.function_current);
+      ++yields_;
+    }
+
+    void
+    Profile::resumed(Info& i)
+    {
+      libport::utime_t now = libport::utime();
+      wall_clock_time_ += now - i.checkpoint;
+      i.checkpoint = now;
+    }
+
+    Profile*
+    Profile::fork()
+    {
+      Profile* child = new Profile;
+      child->function_call_depth_max_ = function_call_depth_max_;
+      return child;
+    }
+
+    void
+    Profile::join(Profile* other)
+    {
+      *this += *other;
+      delete other;
+    }
+
+    Profile::idx
+    Profile::enter(Object* function, libport::Symbol msg, Info& i)
+    {
+      idx prev = 0;
+      step(i.checkpoint, i.function_current);
+      prev = i.function_current;
+      i.function_current = function;
+      ++function_calls_;
+      ++i.function_call_depth;
+      if (i.function_call_depth > function_call_depth_max_)
+        function_call_depth_max_ = i.function_call_depth;
+      if (!functions_profile_[function])
+        functions_profile_[function] = new FunctionProfile;
+      ++functions_profile_[function]->calls_;
+      if (functions_profile_[function]->name_.empty())
+        functions_profile_[function]->name_ = msg;
+      return prev;
+    }
+
+    void
+    Profile::leave(idx prev, Info& i)
+    {
+      --i.function_call_depth;
+      step(i.checkpoint, i.function_current);
+      i.function_current = prev;
     }
   }
 }

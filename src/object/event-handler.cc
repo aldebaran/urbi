@@ -12,6 +12,9 @@
 #include <urbi/object/event.hh>
 #include <urbi/object/event-handler.hh>
 
+#include <runner/job.hh>
+#include <eval/exec.hh>
+
 namespace urbi
 {
   namespace object
@@ -54,8 +57,8 @@ namespace urbi
                       rProfile profile, const objects_type& args)
     {
       typedef rObject(Executable::*fun_type)(objects_type);
-      runner::Interpreter& r = ::kernel::interpreter();
-      runner::Interpreter* res =
+      runner::Job& r = ::kernel::interpreter();
+      runner::Job* res =
         e->make_job(lobby, r.scheduler_get(), args, SYMBOL(event));
       if (profile)
         res->profile_start(profile, SYMBOL(event), e.get());
@@ -68,15 +71,17 @@ namespace urbi
       slot_update(SYMBOL(active), to_urbi(false));
       if (detach_)
       {
-        runner::Runner& r = ::kernel::runner();
+        runner::Job& r = ::kernel::runner();
         sched::jobs_type children;
         // Copy container to avoid in-place modification problems.
         foreach (const stop_job_type& stop_job, stop_jobs_type(stop_jobs_))
         {
           rActions actions = stop_job.get<0>();
+          rLobby l = actions->lobby;
+          if (!l)
+            l = r.state.lobby_get();
           sched::rJob job = spawn_actions_job
-            (actions->lobby ? actions->lobby : r.lobby_get(),
-             actions->leave, actions->profile, stop_job.get<1>());
+            (l, actions->leave, actions->profile, stop_job.get<1>());
           job->start_job();
         }
         r.yield_until_terminated(children);
@@ -123,7 +128,7 @@ namespace urbi
     EventHandler::trigger_job(const rActions& actions, bool detach)
     {
       detach = detach && !actions->sync;
-      runner::Runner& r = ::kernel::runner();
+      runner::Job& r = ::kernel::runner();
       if (actions->frozen)
         return;
       objects_type args;
@@ -140,9 +145,11 @@ namespace urbi
         {
           if (detach)
           {
+            rLobby l = actions->lobby;
+            if (!l)
+              l = r.state.lobby_get();
             sched::rJob job = spawn_actions_job
-              (actions->lobby ? actions->lobby : r.lobby_get(),
-               actions->enter, actions->profile, args);
+              (l, actions->enter, actions->profile, args);
             job->start_job();
           }
           else
