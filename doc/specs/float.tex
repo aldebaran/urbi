@@ -52,8 +52,8 @@ Actually, underscores can be inserted between digits to improve legibility.
 123_456.78_90 == 1234567890 / 10_000;
 \end{urbiassert}
 
-There are also some special numbers, \lstinline|nan|, \lstinline|inf|
-(see below).
+There are also some special numbers, \refSlot[Float]{nan},
+\refSlot[Float]{inf}.
 
 \begin{urbiassert}
 Math.log(0) == -inf;
@@ -61,8 +61,7 @@ Math.exp(-inf) == 0;
 (inf/inf).isNan;
 \end{urbiassert}
 
-A null float can also be obtained with \lstinline|Float|'s
-\lstinline|new| method.
+A null float can also be obtained with \refSlot[Float]{new} method.
 
 \begin{urbiassert}
 Float.new == 0;
