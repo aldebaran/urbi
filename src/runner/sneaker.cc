@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -43,7 +43,7 @@ namespace dbg
   // The sole sneaker instance.
   static Sneaker* sneaker;
 
-  runner::Runner&
+  runner::Interpreter&
   runner_or_sneaker_get()
   {
     if (kernel::scheduler().is_current_job(0))
@@ -51,7 +51,7 @@ namespace dbg
       passert(sneaker, sneaker);
       return *sneaker;
     }
-    return ::kernel::runner();
+    return ::kernel::interpreter();
   }
 
   Sneaker::Sneaker(object::rLobby lobby, sched::Scheduler& scheduler)
