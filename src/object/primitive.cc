@@ -19,7 +19,8 @@
 #include <urbi/object/primitive.hh>
 #include <object/symbols.hh>
 #include <urbi/runner/raise.hh>
-#include <runner/runner.hh>
+#include <runner/job.hh>
+#include <eval/call.hh>
 
 GD_CATEGORY(Urbi);
 
@@ -84,8 +85,8 @@ namespace urbi
       if (args->value_get().empty())
         RAISE("list of arguments must begin with `this'");
       objects_type a = args->value_get();
-      return (::kernel::runner()
-              .apply(this, SYMBOL(apply), a));
+      return
+        eval::call_apply(::kernel::runner(), this, SYMBOL(apply), a);
     }
 
     rObject Primitive::operator() (object::objects_type args)

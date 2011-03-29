@@ -29,21 +29,19 @@ namespace dbg
 {
   using namespace runner;
 
-  class Sneaker : public Interpreter
+  class Sneaker : public Job
   {
   public:
     Sneaker(rLobby lobby,
-	      sched::Scheduler& scheduler);
-    ATTRIBUTE_NORETURN virtual void work();
+            sched::Scheduler& scheduler);
 
-    virtual
-    void send_message(const std::string& tag, const std::string& msg) const;
+    virtual object::rObject action(Job& r);
   };
 
   // The sole sneaker instance.
   static Sneaker* sneaker;
 
-  runner::Runner&
+  runner::Job&
   runner_or_sneaker_get()
   {
     if (kernel::scheduler().is_current_job(0))
@@ -54,25 +52,24 @@ namespace dbg
     return ::kernel::runner();
   }
 
-  Sneaker::Sneaker(object::rLobby lobby, sched::Scheduler& scheduler)
-    : Interpreter(lobby, scheduler, ast::rConstAst(), SYMBOL(LT_sneaker_GT))
+  bool
+  is_sneaker(runner::Job& job)
   {
-    non_interruptible_set(true);
+    return &job == sneaker;
   }
 
-  void
-  Sneaker::work()
+  Sneaker::Sneaker(object::rLobby lobby, sched::Scheduler& scheduler)
+    : Job(lobby, scheduler, "<sneaker>")
+  {
+    non_interruptible_set(true);
+    set_action(boost::bind(&Sneaker::action, this, _1));
+  }
+
+  object::rObject
+  Sneaker::action(Job&)
   {
     // This will never be called as...
     pabort("the sneaker is not supposed to be registered with the scheduler");
-  }
-
-  void
-  Sneaker::send_message(const std::string& tag, const std::string& msg) const
-  {
-    if (!tag.empty())
-      std::cerr << tag << ": ";
-    std::cerr << msg << std::endl;
   }
 
   void

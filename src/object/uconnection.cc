@@ -15,7 +15,7 @@
 # include <object/uvalue.hh>
 # include <object/uvar.hh>
 
-# include <runner/interpreter.hh>
+# include <runner/job.hh>
 
 # include <urbi/object/lobby.hh>
 
@@ -66,7 +66,7 @@ namespace urbi
       processing = false;
     }
 
-    bool UConnection::call(runner::Runner& r, rObject self)
+    bool UConnection::call(runner::Job& r, rObject self)
     {
       rObject t = UVar::fromName(target);
       if (!t)
@@ -79,33 +79,33 @@ namespace urbi
         if (asynchronous)
         {
           processing = true;
-          sched::rJob job = new runner::Interpreter
-            (r.lobby_get(),
-             r.scheduler_get(),
-             boost::bind(&UConnection::doCall,
-                         this, (runner::Runner*)0, self, t),
-             rUConnection(this),
-             SYMBOL(doCall));
+          sched::rJob job =
+            r.spawn_child(
+              // build an Action out of a member function :)
+              boost::bind(&UConnection::doCall, this, _1, self, t),
+              "doCall");
           job->start_job();
         }
         else
-          doCall(&r, self, t);
+          doCall(r, self, t);
       }
       return true;
     }
 
-    void UConnection::doCall(runner::Runner* r, rObject self, rObject target)
+    rObject UConnection::doCall(runner::Job& r,
+                                rObject self,
+                                rObject target)
     {
       processing = true;
       libport::utime_t now = libport::utime();
       if (target->slot_has(SYMBOL(inputPort)))
       {
         // If target is InputPut, bypass write and call notifies.
-        callNotify(r ? *r : ::kernel::runner(),
+        callNotify(r,
                    target->as<UVar>(), target->as<UVar>()->change_, self);
         rList l =  target->call(SYMBOL(changeConnections))->as<List>();
         if (l)
-          callConnections(r ? *r : ::kernel::runner(), self, l);
+          callConnections(r, self, l);
       }
       else
         // If target is not, write to uvar.
@@ -118,6 +118,7 @@ namespace urbi
       callCount++;
       totalCallTime += ct;
       processing = false;
+      return object::void_class;
     }
   }
 }

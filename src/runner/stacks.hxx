@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -29,12 +29,12 @@ namespace runner
   using object::rSlot;
 
   LIBPORT_SPEED_ALWAYS_INLINE
-  Stacks::Stacks(rObject lobby)
+  Stacks::Stacks(rObject self)
     : toplevel_stack_()
     , current_frame_(0, 0)
     , depth_(0)
   {
-    toplevel_stack_ << new Slot(lobby) << new Slot;
+    toplevel_stack_ << new Slot(self) << new Slot;
     current_frame_.first = &toplevel_stack_[0];
     current_frame_.second = 0;
   }

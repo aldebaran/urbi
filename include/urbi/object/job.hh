@@ -18,8 +18,10 @@
 
 # include <urbi/object/cxx-object.hh>
 # include <urbi/object/fwd.hh>
-# include <runner/runner.hh>
 # include <sched/job.hh>
+
+// FIXME: This link to headers which are not installed.
+# include <runner/state.hh>
 
 namespace urbi
 {
@@ -38,7 +40,7 @@ namespace urbi
       const std::string& name();
       void setSideEffectFree(rObject);
       std::string status();
-      const runner::tag_stack_type tags();
+      const runner::State::tag_stack_type tags();
       void terminate();
       rFloat timeShift();
       void waitForChanges();

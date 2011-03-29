@@ -40,7 +40,7 @@ namespace urbi
       int totalCalls() const;
       FunctionProfile& operator +=(const FunctionProfile& other);
     private:
-      friend class ::runner::Interpreter;
+      friend class ::runner::Job;
       friend class Profile;
 
       URBI_CXX_OBJECT(FunctionProfile, CxxObject);
@@ -56,16 +56,38 @@ namespace urbi
       Profile& operator+=(const Profile& other);
       ufloat totalTime() const;
       ufloat wallClockTime() const;
+
+      struct Info
+      {
+        Info();
+
+        libport::utime_t checkpoint;
+        Object* function_current;
+        unsigned function_call_depth;
+      };
+
+      typedef Object* idx;
+      void start(libport::Symbol name, Object* current,
+                 bool count, Info& i);
+      void stop(Info& i);
+      void preempted(Info& i);
+      void resumed(Info& i);
+
+      Profile* fork();
+      void join(Profile* other);
+
+      idx enter(Object* function, libport::Symbol msg, Info& i);
+      void leave(idx idx, Info& i);
+
       ATTRIBUTE_R(unsigned, yields);
       ATTRIBUTE_R(unsigned, wall_clock_time);
       ATTRIBUTE_R(unsigned, total_time);
       ATTRIBUTE_R(unsigned, function_calls);
       ATTRIBUTE_R(unsigned, function_call_depth_max);
       ATTRIBUTE_R(FunctionProfiles, functions_profile);
-
     private:
       void step(libport::utime_t& checkpoint, void* function_current);
-      friend class ::runner::Interpreter;
+      friend class ::runner::Job;
 
       URBI_CXX_OBJECT(Profile, CxxObject);
     };

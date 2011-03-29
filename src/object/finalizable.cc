@@ -17,7 +17,7 @@
 #include <object/symbols.hh>
 #include <object/urbi-exception.hh>
 
-#include <runner/runner.hh>
+#include <eval/call.hh>
 
 namespace urbi
 {
@@ -55,15 +55,19 @@ namespace urbi
         {
           objects_type args;
           args << this;
-          ::kernel::runner().apply(finalize->value(), SYMBOL(finalize), args);
+          eval::call_apply(::kernel::runner(),
+                           finalize->value(),
+                           SYMBOL(finalize),
+                           args);
         }
       }
       catch (const UrbiException& e)
       {
         // We cannot allow an exception, which might contain a ref to
         // this, to escape. Throw the string representation instead.
-        throw UrbiException(e.value_get()->call(SYMBOL(asString))->as<object::String>(),
-                            e.backtrace_get());
+        throw UrbiException(
+          e.value_get()->call(SYMBOL(asString))->as<object::String>(),
+          e.backtrace_get());
       }
     }
 

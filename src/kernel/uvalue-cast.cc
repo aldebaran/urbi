@@ -210,7 +210,8 @@ object::rObject uvalue_deserialize(object::rObject s)
   CAPTURE_GLOBAL(Serializables);
   CAPTURE_GLOBAL(Global);
   CAPTURE_GLOBAL(Object);
-  rObject lobby = ::kernel::urbiserver->getCurrentRunner().lobby_get();
+  rObject lobby =
+    ::kernel::urbiserver->getCurrentRunner().state.lobby_get();
   if (rList l = s->as<List>())
   { // Recurse
     rList res = new List;
