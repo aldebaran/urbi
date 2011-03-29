@@ -232,24 +232,10 @@ namespace urbi
       return parent_;
     }
 
-    static inline
-    runner::Runner&
-    runner()
-    {
-      return ::kernel::runner();
-    }
-
-    static inline
-    runner::Interpreter&
-    interpreter()
-    {
-      return dynamic_cast<runner::Interpreter&>(runner());
-    }
-
     rTag
     Tag::scope()
     {
-      return new Tag(interpreter().scope_tag());
+      return new Tag(::kernel::interpreter().scope_tag());
     }
 
     bool

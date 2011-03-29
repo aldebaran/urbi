@@ -177,8 +177,7 @@ namespace urbi
     void
     Lobby::binaryMode(bool m, const std::string& tag)
     {
-      runner::Shell& s = dynamic_cast<runner::Shell&>(::kernel::runner());
-      s.setSerializationMode(m, tag);
+      ::kernel::shell().setSerializationMode(m, tag);
     }
   } // namespace object
 }

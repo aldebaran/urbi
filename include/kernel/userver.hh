@@ -59,6 +59,9 @@ namespace kernel
   /// Convenience wrapper to get urbiserver's current interpreter.
   runner::Interpreter& interpreter();
 
+  /// Convenience wrapper to get urbiserver's current shell.
+  runner::Shell& shell();
+
   /// Convenience wrapper for Logger objects, to avoid having to
   /// export the symbols of Interpreter.
   URBI_SDK_API std::string current_function_name();

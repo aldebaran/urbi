@@ -331,7 +331,7 @@ namespace urbi
     List::each_and(const rObject& f)
     {
       URBI_AT_HOOK(contentChanged);
-      runner::Runner& r = ::kernel::runner();
+      runner::Interpreter& r = ::kernel::interpreter();
 
       // Beware of iterations that modify the list in place: make a
       // copy.
@@ -344,8 +344,7 @@ namespace urbi
         object::objects_type args;
         args.push_back(o);
         sched::rJob job =
-          new runner::Interpreter(dynamic_cast<runner::Interpreter&>(r),
-                                  f, SYMBOL(each_AMPERSAND), args);
+          new runner::Interpreter(r, f, SYMBOL(each_AMPERSAND), args);
         r.register_child(job, collector);
         job->start_job();
       }

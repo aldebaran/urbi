@@ -81,20 +81,18 @@ namespace urbi
           r.apply(i->second, SYMBOL(NOTIFY), args);
           failed = false;
         }
-        catch(UrbiException& e)
+        catch (const UrbiException& e)
         {
           show_exception_message
             (r, self,
              "Exception caught while processing notify on", ":");
-          runner::Interpreter& in = dynamic_cast<runner::Interpreter&>(r);
-          in.show_exception(e);
-
+          static_cast<runner::Interpreter&>(r).show_exception(e);
         }
-        catch(sched::exception& e)
+        catch (const sched::exception& e)
         {
           throw;
         }
-        catch(...)
+        catch (...)
         {
           show_exception_message
             (r, self,
@@ -283,7 +281,7 @@ namespace urbi
       libport::intrusive_ptr<UVar> rvar =
         args.front()
         ->slot_get(libport::Symbol(args[1]->as<String>()->value_get())).value()
-        .unsafe_cast<UVar>();
+        ->as<UVar>();
       if (!rvar)
         RAISE("UVar updatehook called on non-uvar slot");
       rvar->update_(args[2]);

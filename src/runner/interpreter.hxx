@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -21,6 +21,16 @@
 #include <ast/ast.hh>
 #include <urbi/object/tag.hh>
 #include <object/symbols.hh>
+
+namespace kernel
+{
+  inline
+  runner::Interpreter&
+  interpreter()
+  {
+    return static_cast<runner::Interpreter&>(runner());
+  }
+}
 
 namespace runner
 {

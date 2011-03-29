@@ -129,13 +129,6 @@ namespace kernel
   {
     return server().getCurrentRunner();
   }
-
-  inline
-  runner::Interpreter&
-  interpreter()
-  {
-    return reinterpret_cast<runner::Interpreter&>(runner());
-  }
 }
 
 #endif // !KERNEL_USERVER_HXX

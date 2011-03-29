@@ -338,7 +338,7 @@ namespace runner
         {
           GD_FINFO_DUMP("Component %s exists.", elt);
 	  where = owner->local_slot_get(elt)->value();
-	  if (object::Tag* parent_ = dynamic_cast<object::Tag*>(where.get()))
+	  if (object::Tag* parent_ = where->as<object::Tag>())
 	  {
             GD_INFO_DUMP("It is a tag, so use it as the new parent.");
 	    parent = parent_;

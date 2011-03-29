@@ -1,4 +1,4 @@
-## Copyright (C) 2007-2010, Gostai S.A.S.
+## Copyright (C) 2007-2011, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -21,6 +21,7 @@ dist_libuobject@LIBSFX@_la_SOURCES +=           \
   runner/runner.hxx                             \
   runner/shell.cc                               \
   runner/shell.hh                               \
+  runner/shell.hxx                              \
   runner/sneaker.cc                             \
   runner/sneaker.hh                             \
   runner/stacks.cc                              \

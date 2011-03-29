@@ -318,7 +318,7 @@ namespace urbi
       List::value_type res;
       foreach (sched::rJob job, ::kernel::scheduler().jobs_get())
       {
-        rObject o = dynamic_cast<runner::Runner*>(job.get())->as_job();
+        rObject o = static_cast<runner::Runner*>(job.get())->as_job();
         if (o != nil_class)
           res << o;
       }
