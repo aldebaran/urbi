@@ -220,6 +220,33 @@ do (Float)
 }|;
 
 
+/*-----------.
+| Location.  |
+`-----------*/
+
+do (Location)
+{
+  function here(var backtrack = 0)
+  {
+    var list = {
+      try { throw Exception.new}
+      catch (var e) { e.'$backtrace' }
+    }|
+    var drop = true|
+    var loc = nil|
+    var i = 0|
+    for| (i = 0; i < list.size && loc.isNil; i += 1)
+    {
+      if (drop)
+        drop = drop && list[i].name != "here"|
+      if (!drop && backtrack++ == 0)
+        loc = list[i].location|
+    }|
+    loc
+  }
+}|;
+
+
 /*--------.
 | Range.  |
 `--------*/
@@ -260,6 +287,107 @@ do (String)
   {
     this + "_" + String.counter_++;
   }
+}|;
+
+
+/*---------.
+| System.  |
+`---------*/
+
+do (System)
+{
+  const var Status = do (Object.new)
+  {
+    function stat(var name)
+    {
+      clog.enabled = false |
+      var v = get(name) |
+      assert { v[1] == "kB"; } |
+      clog.enabled = true |
+      v[0]
+    };
+  };
+
+  function status()
+  {
+    skipIfWindows;
+    var procStatus = Path.new("/") / "proc" / "self" / "status";
+    if (!procStatus.exists)
+      testSkip("No /proc/self/status");
+
+    var is = InputStream.new(File.new(procStatus));
+    var d = [ => ];
+    var line;
+    while (!(line = is.getLine.acceptVoid).isVoid)
+    {
+      var l = line.split(":\t");
+      try {
+        d[l[0]] =
+          l[1]
+          .split(" ", 1024, false, false)
+          .map(closure (v) { try { v.asFloat } catch (var e) { v } })
+      }
+      catch (var e)
+      {
+        d[l[0]] = l[1]
+      }
+    };
+    d.addProto(Status)
+  };
+
+  function memCheck(var f, var loc = nil)
+  {
+    var checker = Tag.new;
+    var judge_mode = false;
+    var location = nil;
+
+    var begMem = nil;
+    var endBenchMem = nil;
+    var endJudgeMem = nil;
+
+    function mode() { if (judge_mode) "judge" else "bench" };
+
+    var checker.onEnter = function ()
+    {
+      begMem = Global.System.status.stat("VmData");
+      clog << "%s: %s: start with %d kB" % [location, mode(), begMem];
+    };
+
+    var checker.onLeave = function ()
+    {
+      // FIXME: trigger the garbage collection
+      // sleep(100ms);
+
+      var endMem = Global.System.status.stat("VmData");
+      clog << "%s: %s: leak %d kB" % [location, mode(), endMem - begMem];
+      if (judge_mode)
+      {
+        endJudgeMem = endMem;
+        assert { endJudgeMem <= endBenchMem; };
+      }
+      else
+        endBenchMem = endMem;
+    };
+
+    System.memCheck = function (var f, var loc = nil)
+    {
+      if (loc.isNil)
+        loc = Location.here(-1);
+      location = loc;
+
+      judge_mode = false;
+      checker: f();
+      sleep(0);
+      judge_mode = true;
+      checker: f();
+      sleep(0);
+    };
+
+    if (loc.isNil)
+      loc = Location.here(-1);
+    memCheck(f, loc);
+  };
+
 }|;
 
 
