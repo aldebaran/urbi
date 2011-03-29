@@ -29,7 +29,7 @@
              == kernel::UServer::mode_user),                    \
             Exn << " exception thrown in kernel mode: "         \
             << Msg                                              \
-            << dbg::interpreter_or_sneaker_get().backtrace_get())
+            << dbg::runner_or_sneaker_get().backtrace_get())
 
 GD_CATEGORY(Urbi.Error);
 
@@ -46,7 +46,7 @@ namespace runner
              bool skip,
              const boost::optional<ast::loc>& loc)
   {
-    Runner& r = dbg::interpreter_or_sneaker_get();
+    Runner& r = dbg::runner_or_sneaker_get();
     raise_urbi(exn_name, to_urbi(r.innermost_call_get()), arg1, arg2, arg3,
                skip, loc);
   }
@@ -69,7 +69,7 @@ namespace runner
     const rObject& exn = Exception->slot_get(exn_name);
     if (arg1 == void_class)
       raise_unexpected_void_error();
-    dbg::interpreter_or_sneaker_get()
+    dbg::runner_or_sneaker_get()
       .raise(exn->call(SYMBOL(new), arg1, arg2, arg3, arg4), skip, loc);
     pabort("Unreachable");
   }

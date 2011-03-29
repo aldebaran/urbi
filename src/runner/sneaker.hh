@@ -31,7 +31,7 @@ namespace dbg
   /// to execute code.
   ///
   /// \return A runner.
-  runner::Interpreter& interpreter_or_sneaker_get();
+  runner::Interpreter& runner_or_sneaker_get();
 
   /// The following functions will be called from the debugger. Here
   /// are some example uses:
