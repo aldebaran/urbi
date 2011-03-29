@@ -44,7 +44,7 @@ namespace dbg
   static Sneaker* sneaker;
 
   runner::Interpreter&
-  runner_or_sneaker_get()
+  interpreter_or_sneaker_get()
   {
     if (kernel::scheduler().is_current_job(0))
     {

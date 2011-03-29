@@ -246,7 +246,7 @@ namespace kernel
       // If we have a job currently running, use it to signal the error,
       // otherwise try to use the sneaker which must have been created
       // (or we have an error very early on and we are in deep trouble).
-      runner::Runner& r = dbg::runner_or_sneaker_get();
+      runner::Interpreter& r = dbg::interpreter_or_sneaker_get();
 
       // Display information from the least demanding, to the most
       // demanding.  For instance "ps" requires that the kernel is not
