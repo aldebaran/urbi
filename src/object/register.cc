@@ -36,6 +36,7 @@
 #include <urbi/object/list.hh>
 #include <urbi/object/lobby.hh>
 #include <urbi/object/location.hh>
+#include <urbi/object/matrix.hh>
 #include <urbi/object/object.hh>
 #include <urbi/object/path.hh>
 #include <urbi/object/position.hh>
@@ -43,6 +44,7 @@
 #include <urbi/object/slot.hh>
 #include <urbi/object/string.hh>
 #include <urbi/object/tag.hh>
+#include <urbi/object/vector.hh>
 #include <urbi/sdk.hh>
 
 #include <object/uconnection.hh>
@@ -92,6 +94,8 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER(UConnection);
     URBI_CXX_OBJECT_REGISTER(Profile);
     URBI_CXX_OBJECT_REGISTER(FunctionProfile);
+    URBI_CXX_OBJECT_REGISTER(Matrix);
+    URBI_CXX_OBJECT_REGISTER(Vector);
   } // namespace object
 } // namespace urbi
 

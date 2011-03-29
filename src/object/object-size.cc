@@ -32,6 +32,8 @@
 #include <urbi/object/file.hh>
 #include <urbi/object/job.hh>
 #include <urbi/object/location.hh>
+#include <urbi/object/matrix.hh>
+#include <urbi/object/vector.hh>
 
 namespace urbi
 {

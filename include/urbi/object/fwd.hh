@@ -67,6 +67,7 @@ namespace urbi
     Macro(Lobby);                               \
     Macro(Location);                            \
     Macro(Logger);                              \
+    Macro(Matrix);                              \
     Macro(OutputStream);                        \
     Macro(Path);                                \
     Macro(Position);                            \
@@ -82,7 +83,8 @@ namespace urbi
     Macro(Tag);                                 \
     Macro(UConnection);                         \
     Macro(UValue);                              \
-    Macro(UVar);
+    Macro(UVar);                                \
+    Macro(Vector);
 
     /*
       Help the generation of precompiled symbols.

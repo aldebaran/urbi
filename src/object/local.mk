@@ -91,6 +91,7 @@ dist_libuobject@LIBSFX@_la_SOURCES +=		\
   object/list.cc				\
   object/lobby.cc				\
   object/location.cc				\
+  object/matrix.cc				\
   object/object-class.cc			\
   object/object-class.hh			\
   object/object.cc				\
@@ -127,6 +128,7 @@ dist_libuobject@LIBSFX@_la_SOURCES +=		\
   object/uvalue.hh				\
   object/uvar.cc				\
   object/uvar.hh				\
+  object/vector.cc				\
   object/vector-slots.hh			\
   object/vector-slots.hxx
 

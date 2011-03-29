@@ -60,6 +60,8 @@ dist_kernelinclude_urbi_object_HEADERS =	\
   include/urbi/object/lobby.hxx			\
   include/urbi/object/location.hh		\
   include/urbi/object/location.hxx		\
+  include/urbi/object/matrix.hh			\
+  include/urbi/object/matrix.hxx		\
   include/urbi/object/object.hh			\
   include/urbi/object/object.hxx		\
   include/urbi/object/path.hh			\
@@ -70,7 +72,9 @@ dist_kernelinclude_urbi_object_HEADERS =	\
   include/urbi/object/slot.hxx			\
   include/urbi/object/string.hh			\
   include/urbi/object/tag.hh			\
-  include/urbi/object/tag.hxx
+  include/urbi/object/tag.hxx			\
+  include/urbi/object/vector.hh			\
+  include/urbi/object/vector.hxx
 
 kernelinclude_urbi_runnerdir = $(brandincludedir)/urbi/runner
 dist_kernelinclude_urbi_runner_HEADERS =	\
