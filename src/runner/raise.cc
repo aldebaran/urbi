@@ -65,12 +65,13 @@ namespace runner
     // involves running urbiscript code.
     // assert_user_mode(exn_name, "");
     assert_ne(exn_name, SYMBOL(Exception));
+    Interpreter& r = dynamic_cast<runner::Interpreter&>
+      (dbg::runner_or_sneaker_get());
     CAPTURE_GLOBAL(Exception);
     const rObject& exn = Exception->slot_get(exn_name);
     if (arg1 == void_class)
       raise_unexpected_void_error();
-    dbg::runner_or_sneaker_get()
-      .raise(exn->call(SYMBOL(new), arg1, arg2, arg3, arg4), skip, loc);
+    r.raise(exn->call(SYMBOL(new), arg1, arg2, arg3, arg4), skip, loc);
     pabort("Unreachable");
   }
 

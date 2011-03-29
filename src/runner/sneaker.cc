@@ -43,7 +43,7 @@ namespace dbg
   // The sole sneaker instance.
   static Sneaker* sneaker;
 
-  runner::Interpreter&
+  runner::Runner&
   runner_or_sneaker_get()
   {
     if (kernel::scheduler().is_current_job(0))
@@ -51,7 +51,7 @@ namespace dbg
       passert(sneaker, sneaker);
       return *sneaker;
     }
-    return ::kernel::interpreter();
+    return ::kernel::runner();
   }
 
   Sneaker::Sneaker(object::rLobby lobby, sched::Scheduler& scheduler)
