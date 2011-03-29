@@ -22,7 +22,7 @@
 # include <ast/exps-type.hh>
 # include <runner/interpreter.hh>
 
-# include <parser/fwd.hh>
+# include <parser/uparser.hh>
 
 namespace runner
 {
@@ -49,8 +49,8 @@ namespace runner
     void setSerializationMode(bool, const std::string& tagReply);
     /// Notify the shell that it must stop.
     void stop();
-
   private:
+
     /// Evaluate \a exp and print its value.
     /// \precondition \a exp should be a foreground job.
     void eval_print_(const ast::Exp* exp);
@@ -74,7 +74,5 @@ namespace runner
   };
 
 } // namespace runner
-
-# include <runner/shell.hxx>
 
 #endif // RUNNER_SHELL_HH

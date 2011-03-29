@@ -22,16 +22,6 @@
 #include <urbi/object/tag.hh>
 #include <object/symbols.hh>
 
-namespace kernel
-{
-  inline
-  runner::Interpreter&
-  interpreter()
-  {
-    return static_cast<runner::Interpreter&>(runner());
-  }
-}
-
 namespace runner
 {
 
