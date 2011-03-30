@@ -1103,12 +1103,12 @@ namespace eval
 
   // Invalid nodes
 #define INVALID(Node)                                                   \
-    LIBPORT_SPEED_ALWAYS_INLINE rObject                                        \
+    LIBPORT_SPEED_ALWAYS_INLINE rObject                                 \
     Visitor::visit(const ast::Node* n)                                  \
     {                                                                   \
-      static_cast<void>(n);                                             \
-      pabort("invalid " #Node " node in the Interpreter: " << *n);      \
-    }                                                                   \
+      LIBPORT_USE(n);                                                   \
+      pabort("Interpreter: invalid " << #Node << " node: " << *n);      \
+    }
 
     INVALID(Assign);
     INVALID(Assignment);
@@ -1139,9 +1139,9 @@ namespace eval
     LIBPORT_SPEED_ALWAYS_INLINE rObject                                 \
     Visitor::visit(const ast::Node* n)                                  \
     {                                                                   \
-      static_cast<void>(n);                                             \
-      pabort("unreachable " #Node " node in the Interpreter: " << *n);  \
-    }                                                                   \
+      LIBPORT_USE(n);                                                   \
+      pabort("Interpreter: unreachable " << #Node << " node: " << *n);  \
+    }
 
     IMPOSSIBLE(Ast);
     IMPOSSIBLE(Composite);
@@ -1208,7 +1208,7 @@ namespace eval
   }
 
   LIBPORT_SPEED_ALWAYS_INLINE
-  Action  ast(ast::rConstAst n)
+  Action ast(ast::rConstAst n)
   {
     return boost::bind(&ast, _1, n);
   }

@@ -13,7 +13,6 @@
  ** \brief Forward declarations for the namespace runner.
  */
 
-
 #ifndef RUNNER_FWD_HH
 # define RUNNER_FWD_HH
 
