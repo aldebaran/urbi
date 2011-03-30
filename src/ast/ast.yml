@@ -260,9 +260,8 @@ Ast:
       # include <urbi/export.hh>
 
       # include <ast/fwd.hh>
-
       # include <urbi/object/fwd.hh>
-      namespace runner { struct Job; }
+      # include <runner/fwd.hh>
 
       # if ENABLE_SERIALIZATION
       #  include <serialize/serialize.hh>
