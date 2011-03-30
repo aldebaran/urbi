@@ -341,28 +341,29 @@ namespace urbi
       // characters.
       if (libport::has(sep, ""))
       {
-        for (std::string::size_type pos = 0; pos != content_.size(); ++pos)
-          res.push_back(content_.substr(pos, 1));
+        foreach (char c, content_)
+          res << std::string(1, c);
         return res;
       }
-
-      size_t start = 0;
-      std::string delim;
-      for (size_t end = find_first(sep, content_, start, delim);
-           end != std::string::npos && limit;
-           end = find_first(sep, content_, start, delim), --limit)
+      else
       {
-        std::string sub = content_.substr(start, end - start);
-        if (keep_empty || !sub.empty())
-          res << sub;
-        if (keep_delim)
-          res << delim;
-        start = end + delim.length();
+        size_t start = 0;
+        std::string delim;
+        for (size_t end = find_first(sep, content_, start, delim);
+             end != std::string::npos && limit;
+             end = find_first(sep, content_, start, delim), --limit)
+        {
+          std::string sub = content_.substr(start, end - start);
+          if (keep_empty || !sub.empty())
+            res << sub;
+          if (keep_delim)
+            res << delim;
+          start = end + delim.length();
+        }
+
+        if (start < size() || keep_empty)
+          res << content_.substr(start);
       }
-
-      if (start < content_.size() || keep_empty)
-        res << content_.substr(start);
-
       return res;
     }
 
@@ -387,11 +388,11 @@ namespace urbi
 
     void String::check_bounds(size_type from, size_type to) const
     {
-      if (from >= content_.length())
+      if (size() <= from)
         FRAISE("invalid index: %s", from);
-      if (to >  content_.length())
+      if (size() < to)
         FRAISE("invalid index: %s", to);
-      if (from > to)
+      if (to < from)
         FRAISE("range starting after its end does not make sense: %s, %s",
                from, to);
     }
