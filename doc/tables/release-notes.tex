@@ -41,6 +41,14 @@ This chapter lists the user-visible changes in \usdk releases.
 \end{urbiassert}
 \end{itemize}
 
+\subsection{Fixes}
+\begin{itemize}
+\item Avoid executing the body of a \lstinline|finally| a second time when
+  an exception is raised inside the \lstinline|finally| clause.
+\item Do not emit \refSlot[Tag]{leave} events when a frozen tag waiting to
+  execute statements is stopped.
+\end{itemize}
+
 \section{\usdk 2.7.1}
 \release{2.7}{2011-03-17}
 
