@@ -35,8 +35,10 @@ class System.PackageInfo
   function copyright(var deep = true)
   {
     [
-      "%s version %s rev. %s" % [name, version, revision],
-      "Copyright (C) %s %s" % [copyrightYears, copyrightHolder]
+      "%s %s" % [name, versionRev],
+      "Copyright (C) %s %s%s"
+        % [copyrightYears, copyrightHolder,
+           { if (copyrightHolder[-1] == ".") "" else "." } ]
     ]
     +
     {
