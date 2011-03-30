@@ -66,15 +66,10 @@ namespace urbi
     }
 
     // FIXME: kill this when overloading is fully supported
-    typedef std::vector<std::string> strings_type;
     OVERLOAD_TYPE(
       split_overload, 4, 1,
-      String,
-      (strings_type (String::*)(const std::string&, int, bool, bool) const)
-      &String::split,
-      List,
-      (strings_type (String::*)(const strings_type&, int, bool, bool) const)
-      &String::split)
+      String, (String::split_string_type) &String::split,
+      List,   (String::split_list_type)   &String::split)
 
     // FIXME: kill this when overloading is fully supported
     static rObject string_split_bouncer(const objects_type& _args)
@@ -86,7 +81,7 @@ namespace urbi
       {
         case 1:
         {
-          static strings_type seps =
+          static String::strings_type seps =
             boost::assign::list_of(" ")("\t")("\r")("\n");
           args << to_urbi(seps)
                << new Float(-1)
@@ -110,15 +105,15 @@ namespace urbi
 
     OVERLOAD_2
     (string_sub_bouncer, 2,
-     (std::string (String::*) (unsigned) const) (&String::sub),
-     (std::string (String::*) (unsigned, unsigned) const) (&String::sub)
+     (String::value_type (String::*) (unsigned) const) (&String::sub),
+     (String::value_type (String::*) (unsigned, unsigned) const) (&String::sub)
       );
 
     OVERLOAD_2
     (string_sub_eq_bouncer, 3,
-     (std::string (String::*) (unsigned, const std::string&))
+     (String::value_type (String::*) (unsigned, const String::value_type&))
      (&String::sub_eq),
-     (std::string (String::*) (unsigned, unsigned, const std::string&))
+     (String::value_type (String::*) (unsigned, unsigned, const String::value_type&))
      (&String::sub_eq)
       );
 
@@ -192,12 +187,12 @@ namespace urbi
 
 
     String::size_type
-    String::distance(const std::string& other) const
+    String::distance(const value_type& other) const
     {
       return libport::damerau_levenshtein_distance(value_get(), other);
     }
 
-    std::string
+    String::value_type
     String::plus(rObject rhs) const
     {
       return content_ + rhs->as_string();
@@ -234,17 +229,17 @@ namespace urbi
       }
     }
 
-    std::string
+    String::value_type
     String::as_printable() const
     {
       return '"' + string_cast(libport::escape(content_, '"')) + '"';
     }
 
 #if !defined COMPILATION_MODE_SPACE
-    std::string
+    String::value_type
     String::format(rFormatInfo finfo) const
     {
-      std::string res(!finfo->uppercase_get() ? content_
+      value_type res(!finfo->uppercase_get() ? content_
                       : finfo->uppercase_get() > 0 ? to_upper()
                       : to_lower());
 
@@ -259,42 +254,42 @@ namespace urbi
            : finfo->alignment_get() == FormatInfo::Align::RIGHT ? 0
            : (size + 1) / 2);
         res.insert(pos,
-                   std::string(padsize, finfo->pad_get()[0]));
+                   value_type(padsize, finfo->pad_get()[0]));
       }
       return res;
     }
 #endif
 
-    std::string
+    String::value_type
     String::as_string() const
     {
       return content_;
     }
 
-    const std::string&
-    String::set(const std::string& rhs)
+    const String::value_type&
+    String::set(const value_type& rhs)
     {
       return content_ = rhs;
     }
 
-    std::string
+    String::value_type
     String::fresh() const
     {
       return libport::Symbol::fresh_string(value_get());
     }
 
-    std::string
-    String::replace(const std::string& from, const std::string& to) const
+    String::value_type
+    String::replace(const value_type& from, const value_type& to) const
     {
       return boost::replace_all_copy(value_get(), from, to);
     }
 
 
-    std::string
+    String::value_type
     String::join(const objects_type& os,
-                 const std::string& prefix, const std::string& suffix) const
+                 const value_type& prefix, const value_type& suffix) const
     {
-      std::string res = prefix;
+      value_type res = prefix;
       bool tail = false;
       foreach (const rObject& o, os)
       {
@@ -306,23 +301,21 @@ namespace urbi
       return res;
     }
 
-
-    typedef std::vector<std::string> strings_type;
-
     static
     size_t
-    find_first(const strings_type& seps,
-               const std::string& str,
+    find_first(const String::strings_type& seps,
+               const String::value_type& str,
                size_t start,
-               std::string& delim)
+               String::value_type& delim)
     {
-      size_t res = std::string::npos;
+      typedef String::value_type value_type;
+      size_t res = value_type::npos;
       delim = "";
 
-      foreach (const std::string& sep, seps)
+      foreach (const value_type& sep, seps)
       {
         size_t pos = str.find(sep, start);
-        if (pos != std::string::npos && (pos < res || res == std::string::npos))
+        if (pos != value_type::npos && (pos < res || res == value_type::npos))
         {
           res = pos;
           delim = sep;
@@ -331,7 +324,7 @@ namespace urbi
       return res;
     }
 
-    strings_type
+    String::strings_type
     String::split(const strings_type& sep, int limit,
                   bool keep_delim, bool keep_empty) const
     {
@@ -342,18 +335,18 @@ namespace urbi
       if (libport::has(sep, ""))
       {
         foreach (char c, content_)
-          res << std::string(1, c);
+          res << value_type(1, c);
         return res;
       }
       else
       {
         size_t start = 0;
-        std::string delim;
+        value_type delim;
         for (size_t end = find_first(sep, content_, start, delim);
-             end != std::string::npos && limit;
+             end != value_type::npos && limit;
              end = find_first(sep, content_, start, delim), --limit)
         {
-          std::string sub = content_.substr(start, end - start);
+          value_type sub = content_.substr(start, end - start);
           if (keep_empty || !sub.empty())
             res << sub;
           if (keep_delim)
@@ -367,8 +360,8 @@ namespace urbi
       return res;
     }
 
-    strings_type
-    String::split(const std::string& sep, int limit,
+    String::strings_type
+    String::split(const value_type& sep, int limit,
                   bool keep_delim, bool keep_empty) const
     {
       strings_type seps;
@@ -376,10 +369,10 @@ namespace urbi
       return split(seps, limit, keep_delim, keep_empty);
     }
 
-    std::string
+    String::value_type
     String::star(size_type times) const
     {
-      std::string res;
+      value_type res;
       res.reserve(times * size());
       for (size_type i = 0; i < times; i++)
         res += value_get();
@@ -397,45 +390,45 @@ namespace urbi
                from, to);
     }
 
-    std::string String::sub(size_type idx) const
+    String::value_type String::sub(size_type idx) const
     {
       return sub(idx, idx + 1);
     }
 
-    std::string String::sub_eq(size_type idx, const std::string& v)
+    String::value_type String::sub_eq(size_type idx, const value_type& v)
     {
       return sub_eq(idx, idx + 1, v);
     }
 
-    std::string String::sub(size_type from, size_type to) const
+    String::value_type String::sub(size_type from, size_type to) const
     {
       check_bounds(from, to);
       return content_.substr(from, to - from);
     }
 
-    std::string
-    String::sub_eq(size_type from, size_type to, const std::string& v)
+    String::value_type
+    String::sub_eq(size_type from, size_type to, const value_type& v)
     {
       check_bounds(from, to);
       content_ = (content_.substr(0, from)
                   + v
-                  + content_.substr(to, std::string::npos));
+                  + content_.substr(to, value_type::npos));
       return v;
     }
 
-    std::string String::to_lower() const
+    String::value_type String::to_lower() const
     {
       return boost::to_lower_copy(value_get());
     }
 
-    std::string String::to_upper() const
+    String::value_type String::to_upper() const
     {
       return boost::to_upper_copy(value_get());
     }
 
-    std::string String::fromAscii(rObject, unsigned char code)
+    String::value_type String::fromAscii(rObject, unsigned char code)
     {
-      std::string res;
+      value_type res;
       res += code;
       return res;
     }

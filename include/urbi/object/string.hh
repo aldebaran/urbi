@@ -34,6 +34,7 @@ namespace urbi
     public:
       typedef String self_type;
       typedef std::string value_type;
+      typedef std::vector<value_type> strings_type;
 
       // size_t would make more sense, but the only conversion coded is
       // "unsigned int", and on some machines (OSX) size_t is "unsigned
@@ -59,55 +60,69 @@ namespace urbi
       /// Can be inefficient depending on the implementation of
       /// std::string.  If the concrete type is known, consider using
       /// value_get instead of as_string.
-      virtual std::string as_string() const;
-      std::string as_printable() const;
+      virtual value_type as_string() const;
+      value_type as_printable() const;
 #if !defined COMPILATION_MODE_SPACE
-      std::string format(rFormatInfo finfo) const;
+      value_type format(rFormatInfo finfo) const;
 #endif
-      size_type distance(const std::string& other) const;
+      size_type distance(const value_type& other) const;
       bool empty() const;
-      std::string plus(rObject rhs) const;
-      std::string fresh() const;
+      value_type plus(rObject rhs) const;
+      value_type fresh() const;
       /// Convert every occurrence of \a from to \a to.
-      std::string replace(const std::string& from, const std::string& to) const;
-      const std::string& set(const std::string& rhs);
+      value_type replace(const value_type& from, const value_type& to) const;
+      const value_type& set(const value_type& rhs);
       size_type size() const;
 
-      std::string
-        join(const objects_type& os,
-             const std::string& prefix = "",
-             const std::string& suffix = "") const;
+      value_type
+      join(const objects_type& os,
+           const value_type& prefix = "",
+           const value_type& suffix = "") const;
 
-      std::vector<std::string>
-        split(const std::string& sep,
-              int limit = -1,
-              bool keep_delim = false, bool keep_empty = true) const;
-      std::vector<std::string>
-        split(const std::vector<std::string>& sep,
-              int limit = -1,
-              bool keep_delim = false, bool keep_empty = true) const;
+      /// Split on a single string-type separator.
+      strings_type
+      split(const value_type& sep,
+            int limit = -1,
+            bool keep_delim = false, bool keep_empty = true) const;
+      /// The type of the previous function.
+      typedef strings_type
+        (String::*split_string_type)(const value_type& sep,
+                                     int limit,
+                                     bool keep_delim, bool keep_empty) const;
 
-      std::string star(size_type times) const;
+      /// Split on a list of string separators.
+      strings_type
+      split(const strings_type& sep,
+            int limit = -1,
+            bool keep_delim = false, bool keep_empty = true) const;
+      /// The type of the previous function.
+      typedef strings_type
+      (String::*split_list_type)(const strings_type& sep,
+                                 int limit,
+                                 bool keep_delim, bool keep_empty) const;
+
+
+      value_type star(size_type times) const;
 
       /// [from, to].
-      std::string sub(size_type from, size_type to) const;
+      value_type sub(size_type from, size_type to) const;
       /// [idx].
-      std::string sub(size_type idx) const;
+      value_type sub(size_type idx) const;
 
       /// [from, to] = v.
-      std::string sub_eq(size_type from, size_type to,
-                         const std::string& v);
+      value_type sub_eq(size_type from, size_type to,
+                         const value_type& v);
       /// [idx] = v.
-      std::string sub_eq(size_type idx,
-                         const std::string& v);
+      value_type sub_eq(size_type idx,
+                         const value_type& v);
 
       /// Return a new string with all upper case made lower case.
-      std::string to_lower() const;
+      value_type to_lower() const;
       /// Return a new string with all lower case made upper case.
-      std::string to_upper() const;
+      value_type to_upper() const;
 
       /// Functions is_XXX:
-      /// Return whether C isXXX is true for all characters.
+      /// Whether C isXXX is true for all characters.
       bool is_upper() const;
       bool is_lower() const;
       bool is_alpha() const;
@@ -120,11 +135,12 @@ namespace urbi
       bool is_graph() const;
       bool is_print() const;
 
-      static std::string fromAscii(rObject, unsigned char code);
+      static value_type fromAscii(rObject, unsigned char code);
 
       rHash hash() const;
 
       unsigned char toAscii() const;
+
     private:
       value_type content_;
 
