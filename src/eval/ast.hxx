@@ -486,13 +486,13 @@ namespace eval
       try
       {
         res = ast(this_, f->body_get().get());
-        ast(this_, f->finally_get().get());
       }
       catch (...)
       {
         ast(this_, f->finally_get().get());
         throw;
       }
+      ast(this_, f->finally_get().get());
       return res;
     }
 
