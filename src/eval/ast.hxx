@@ -950,10 +950,20 @@ namespace eval
         // handle this properly to avoid duplicating the logic.
         if (some_frozen)
           this_.yield();
+
         // Start with the uppermost tag in the derivation chain.
-        rforeach (const object::rTag& tag, applied)
-          tag->triggerEnter();
-        rObject res = ast(this_, t->exp_get().get());
+        rObject res;
+        try
+        {
+          rforeach (const object::rTag& tag, applied)
+            tag->triggerEnter();
+          res = ast(this_, t->exp_get().get());
+        }
+        catch (...)
+        {
+          trigger_leave(applied);
+          throw;
+        }
         trigger_leave(applied);
         return res;
       }
@@ -962,7 +972,7 @@ namespace eval
         // trigger_leave will yield, which might throw and crush our
         // exception so copy it.
         sched::StopException e(e_);
-        trigger_leave(applied);
+
         // Rewind up to the appropriate depth.
         if (e.depth_get() < result_depth)
           throw;
@@ -972,11 +982,6 @@ namespace eval
           this_.yield();
         // Extract the value from the exception.
         return boost::any_cast<rObject>(e.payload_get());
-      }
-      catch (sched::exception&)
-      {
-        trigger_leave(applied);
-        throw;
       }
     }
 
