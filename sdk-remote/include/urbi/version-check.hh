@@ -50,6 +50,7 @@ namespace urbi
   namespace
   {
     /// Check SDK version, only once per module.
+    ATTRIBUTE_USED
     void
     check_sdk_version_once(const std::string& where,
                            const libport::PackageInfo& compiler)
@@ -59,6 +60,7 @@ namespace urbi
     }
 
     /// Information about the Urbi SDK that compiled this module.
+    ATTRIBUTE_USED
     const libport::PackageInfo&
     compiler_info()
     {
