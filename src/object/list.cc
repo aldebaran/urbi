@@ -118,7 +118,7 @@ namespace urbi
       return content_;
     }
 
-#define CHECK_NON_EMPTY(Name)                           \
+#define CHECK_NON_EMPTY()                               \
     do {                                                \
       if (content_.empty())                             \
         RAISE("cannot be applied onto empty list");	\
@@ -128,7 +128,7 @@ namespace urbi
     List::tail() const
     {
       URBI_AT_HOOK(contentChanged);
-      CHECK_NON_EMPTY(tail);
+      CHECK_NON_EMPTY();
       value_type res = content_;
       res.pop_front();
       return new List(res);
@@ -380,15 +380,15 @@ namespace urbi
       return this;
     }
 
-#define BOUNCE(Name, Bounce, Ret, Check, Mutate)                \
-    IF(Ret, rObject, rList)                                     \
-    List::Name()                                                \
-    {                                                           \
-      URBI_AT_HOOK(contentChanged);                                            \
-      WHEN(Check, CHECK_NON_EMPTY(Name));                       \
-      WHEN(Ret, return) content_.Bounce();                      \
-      WHEN(Mutate, contentChanged(); sizeChanged());            \
-      return this;                                              \
+#define BOUNCE(Name, Bounce, Ret, Check, Mutate)        \
+    IF(Ret, rObject, rList)                             \
+    List::Name()                                        \
+    {                                                   \
+      URBI_AT_HOOK(contentChanged);                     \
+      WHEN(Check, CHECK_NON_EMPTY());                   \
+      WHEN(Ret, return) content_.Bounce();              \
+      WHEN(Mutate, contentChanged(); sizeChanged());    \
+      return this;                                      \
     }
 
     BOUNCE(back,          back,           true,  true , false);
@@ -441,7 +441,7 @@ namespace urbi
     List::removeBack()
     {
       URBI_AT_HOOK(contentChanged);
-      CHECK_NON_EMPTY(pop_back);
+      CHECK_NON_EMPTY();
       rObject res = content_.back();
       content_.pop_back();
       sizeChanged();
@@ -453,7 +453,7 @@ namespace urbi
     List::removeFront()
     {
       URBI_AT_HOOK(contentChanged);
-      CHECK_NON_EMPTY(pop_front);
+      CHECK_NON_EMPTY();
       rObject res = content_.front();
       content_.pop_front();
       sizeChanged();

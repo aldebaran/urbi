@@ -82,7 +82,6 @@ namespace urbi
 
     public:
       static bool list_added;
-
     };
 
   }; // namespace object
