@@ -13,8 +13,6 @@
 # include <sys/inotify.h>
 #endif
 
-#include <boost/filesystem.hpp>
-
 #include <libport/cassert>
 #include <libport/compiler.hh>
 #include <libport/dirent.h>
