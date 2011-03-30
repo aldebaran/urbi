@@ -37,44 +37,48 @@ namespace urbi
       value_type& value_get();
 
       // Urbi method
-      /// False iff empty.
+      /// Whether not empty.
       virtual bool as_bool() const;
-      rObject back        ();
-      rList   clear       ();
-      void    each        (const rObject&);
-      void    each_pipe   (const rObject&);
-      void    each_common (const rObject&, bool, bool);
-      void    each_and    (const rObject&);
-      void    eachi       (const rObject&);
+
+      /// The last object.
+      rObject back();
+      /// Empty this.
+      rList clear();
+      void each(const rObject&);
+      void each_pipe(const rObject&);
+      void each_common(const rObject&, bool, bool);
+      void each_and(const rObject&);
+      void eachi(const rObject&);
       bool empty() const;
-      rObject front       ();
-      rHash   hash() const;
+      rObject front();
+      rHash hash() const;
+
       /// Also known as pop.
-      rObject removeFront ();
-      rObject removeBack  ();
-      rList   insert      (const rFloat& idx, const rObject& elt);
-      rList   insertBack  (const rObject& elt);
-      rList   insertFront (const rObject& elt);
+      rObject removeFront();
+      rObject removeBack();
+      rList insert(ufloat idx, const rObject& elt);
+      rList insertBack(const rObject& elt);
+      rList insertFront(const rObject& elt);
 
       virtual std::string as_string() const;
 
-      rList   remove_by_id(const rObject& elt);
-      rList   reverse     () const;
-      rObject set         (const rFloat& nth, const rObject& value);
+      rList remove_by_id(const rObject& elt);
+      rList reverse() const;
+      rObject set(ufloat nth, const rObject& value);
       size_type  size() const;
       value_type sort();
       value_type sort(rObject f);
       rList tail() const;
-      rList   operator+   (const rList& rhs);
-      rList   operator+=  (const rList& rhs);
-      rList   operator*   (unsigned int times) const;
-      bool    operator==  (List* rhs) const;
-      rObject operator[]  (const rFloat& idx);
+      rList operator+(const rList& rhs);
+      rList operator+=(const rList& rhs);
+      rList operator*(unsigned int times) const;
+      bool operator==(List* rhs) const;
+      rObject operator[](ufloat idx);
 
     private:
       value_type content_;
-      /// Check that the function fun is using a valid index, and return it.
-      size_type index(const rFloat& idx) const;
+      /// Check that is a valid index, and return its value in bounds.
+      size_type index(ufloat idx) const;
 
       URBI_ATTRIBUTE_ON_DEMAND_DECLARE(Event, sizeChanged);
       URBI_ATTRIBUTE_ON_DEMAND_DECLARE(Event, contentChanged);

@@ -148,23 +148,23 @@ namespace urbi
     }
 
     List::size_type
-    List::index(const rFloat& idx) const
+    List::index(ufloat idx) const
     {
-      int i = idx->to_int_type("invalid index: %s");
+      int i = Float::to_int_type(idx, "invalid index: %s");
       if (i < 0)
         i += content_.size();
       if (i < 0 || content_.size() <= static_cast<size_type>(i))
-        FRAISE("invalid index: %s", idx->value_get());
+        FRAISE("invalid index: %s", idx);
       return static_cast<size_type>(i);
     }
 
-    rObject List::operator[](const rFloat& idx)
+    rObject List::operator[](ufloat idx)
     {
       URBI_AT_HOOK(contentChanged);
       return content_[index(idx)];
     }
 
-    rObject List::set(const rFloat& idx, const rObject& val)
+    rObject List::set(ufloat idx, const rObject& val)
     {
       content_[index(idx)] = val;
       contentChanged();
@@ -398,7 +398,7 @@ namespace urbi
 #undef BOUNCE
 
     rList
-    List::insert(const rFloat& idx, const rObject& elt)
+    List::insert(ufloat idx, const rObject& elt)
     {
       content_.insert(boost::next(content_.begin(), index(idx)), elt);
       contentChanged();

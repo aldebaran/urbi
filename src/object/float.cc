@@ -189,14 +189,21 @@ namespace urbi
 
     // FIXME: For some reason MSVC fails to link when we pass const
     // ref strings here...
-#define CONVERSION(Type)				\
-    Float::Type                                         \
-    Float::to_##Type(const std::string fmt) const       \
-    {							\
-      if (libport::numeric_castable<Type>(value_))      \
-        return libport::numeric_cast<Type>(value_);     \
-      runner::raise_bad_integer_error(value_, fmt);	\
-    }							\
+#define CONVERSION(Type)                        \
+    Float::Type                                 \
+    Float::to_##Type(value_type v,              \
+                     std::string fmt)           \
+    {                                           \
+      if (libport::numeric_castable<Type>(v))   \
+        return libport::numeric_cast<Type>(v);  \
+      runner::raise_bad_integer_error(v, fmt);  \
+    }                                           \
+                                                \
+    Float::Type                                 \
+    Float::to_##Type(std::string fmt) const     \
+    {                                           \
+      return to_##Type(value_get(), fmt);       \
+    }
 
     CONVERSION(int_type);
     CONVERSION(unsigned_type);
@@ -204,7 +211,8 @@ namespace urbi
 #undef CONVERSION
 
     static inline bool
-    format_manual(float value, std::string& res, const std::string& prefix = "")
+    format_manual(Float::value_type value,
+                  std::string& res, const std::string& prefix = "")
     {
       // We format nan and inf by ourselves because behavior differs
       // between toolchains, for instance:

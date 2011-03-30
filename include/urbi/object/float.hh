@@ -76,16 +76,17 @@ namespace urbi
       /// \{
       // FIXME: For some reason I don't understand, MSVC fails to
       // link when we pass const ref strings here...
-      int_type
-        to_int_type(const std::string fmt =
-                    "expected integer, got %s") const;
-      long_type
-        to_long_type(const std::string fmt =
-                     "expected integer, got %s") const;
-      /// The prefered conversion.
-      unsigned_type
-        to_unsigned_type(const std::string fmt =
-                         "expected non-negative integer, got %s") const;
+#define CONVERSION(Type, Expected)                                      \
+      static Type                                                       \
+      to_ ## Type(value_type v,                                         \
+                  std::string fmt = "expected " Expected ", got %s");   \
+      Type                                                              \
+      to_ ## Type(std::string fmt = "expected " Expected ", got %s") const
+
+      CONVERSION(int_type, "integer");
+      CONVERSION(unsigned_type, "non-negative integer");
+      CONVERSION(long_type, "integer");
+#undef CONVERSION
       /// \}
 
       virtual
