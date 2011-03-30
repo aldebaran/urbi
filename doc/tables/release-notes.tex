@@ -39,6 +39,13 @@ This chapter lists the user-visible changes in \usdk releases.
    0xFFFF_FFFF == 0xFFFFFFFF;
          1e1_0 == 1e10;
 \end{urbiassert}
+
+\item \refSlot[String]|'[]'| accepts negative indexes, as
+  \refSlot[List]|'[]'| did.
+\begin{urbiassert}
+"foobar"[-1] == "r";    "foobar"[-6, -3] == "foo";
+\end{urbiassert}
+
 \end{itemize}
 
 \subsection{Fixes}

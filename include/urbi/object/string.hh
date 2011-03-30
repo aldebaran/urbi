@@ -105,15 +105,15 @@ namespace urbi
       value_type star(size_type times) const;
 
       /// [from, to].
-      value_type sub(size_type from, size_type to) const;
+      value_type sub(ufloat from, ufloat to) const;
       /// [idx].
-      value_type sub(size_type idx) const;
+      value_type sub(ufloat idx) const;
 
       /// [from, to] = v.
-      value_type sub_eq(size_type from, size_type to,
+      value_type sub_eq(ufloat from, ufloat to,
                          const value_type& v);
       /// [idx] = v.
-      value_type sub_eq(size_type idx,
+      value_type sub_eq(ufloat idx,
                          const value_type& v);
 
       /// Return a new string with all upper case made lower case.
@@ -144,7 +144,11 @@ namespace urbi
     private:
       value_type content_;
 
-      void check_bounds(size_type from, size_type to) const;
+      /// Check that is a valid index, and return its value in bounds.
+      /// \param large  Whether we accept idx == size().
+      size_type index(ufloat idx, bool large = false) const;
+
+      void check_bounds(ufloat from, ufloat to) const;
 
       URBI_CXX_OBJECT(String, CxxObject);
     };

@@ -105,15 +105,15 @@ namespace urbi
 
     OVERLOAD_2
     (string_sub_bouncer, 2,
-     (String::value_type (String::*) (unsigned) const) (&String::sub),
-     (String::value_type (String::*) (unsigned, unsigned) const) (&String::sub)
+     (String::value_type (String::*) (ufloat) const) (&String::sub),
+     (String::value_type (String::*) (ufloat, ufloat) const) (&String::sub)
       );
 
     OVERLOAD_2
     (string_sub_eq_bouncer, 3,
-     (String::value_type (String::*) (unsigned, const String::value_type&))
+     (String::value_type (String::*) (ufloat, const String::value_type&))
      (&String::sub_eq),
-     (String::value_type (String::*) (unsigned, unsigned, const String::value_type&))
+     (String::value_type (String::*) (ufloat, ufloat, const String::value_type&))
      (&String::sub_eq)
       );
 
@@ -166,6 +166,19 @@ namespace urbi
 
       setSlot(SYMBOL(SBL_SBR), new Primitive(string_sub_bouncer));
       setSlot(SYMBOL(SBL_SBR_EQ), new Primitive(string_sub_eq_bouncer));
+    }
+
+    String::size_type
+    String::index(ufloat idx, bool large) const
+    {
+      int i = Float::to_int_type(idx, "invalid index: %s");
+      // When working on end, prefer size() to 0.
+      if (i < 0 || large && i == 0)
+        i += content_.size();
+      if (i < 0
+          || ((large ? 1 : 0) + content_.size()) < static_cast<size_type>(i))
+        FRAISE("invalid index: %s", idx);
+      return static_cast<size_type>(i);
     }
 
     const String::value_type& String::value_get() const
@@ -379,40 +392,41 @@ namespace urbi
       return res;
     }
 
-    void String::check_bounds(size_type from, size_type to) const
+    void String::check_bounds(ufloat f, ufloat t) const
     {
+      size_t from = index(f);
+      size_t to = index(t, true);
       if (size() <= from)
         FRAISE("invalid index: %s", from);
       if (size() < to)
         FRAISE("invalid index: %s", to);
       if (to < from)
-        FRAISE("range starting after its end does not make sense: %s, %s",
-               from, to);
+        FRAISE("range starting after its end: %s, %s", from, to);
     }
 
-    String::value_type String::sub(size_type idx) const
+    String::value_type String::sub(ufloat idx) const
     {
       return sub(idx, idx + 1);
     }
 
-    String::value_type String::sub_eq(size_type idx, const value_type& v)
+    String::value_type String::sub_eq(ufloat idx, const value_type& v)
     {
       return sub_eq(idx, idx + 1, v);
     }
 
-    String::value_type String::sub(size_type from, size_type to) const
+    String::value_type String::sub(ufloat from, ufloat to) const
     {
       check_bounds(from, to);
-      return content_.substr(from, to - from);
+      return content_.substr(index(from), index(to, true) - index(from));
     }
 
     String::value_type
-    String::sub_eq(size_type from, size_type to, const value_type& v)
+    String::sub_eq(ufloat from, ufloat to, const value_type& v)
     {
       check_bounds(from, to);
-      content_ = (content_.substr(0, from)
+      content_ = (content_.substr(0, index(from))
                   + v
-                  + content_.substr(to, value_type::npos));
+                  + content_.substr(index(to, true), value_type::npos));
       return v;
     }
 

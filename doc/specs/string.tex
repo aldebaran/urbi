@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2009-2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -174,16 +174,16 @@ String.fromAscii(0xFF) == "\xff";
 \end{tabular}
 
 \begin{urbiassert}
-"".isDigit;
+          "".isDigit;
 "0123456789".isDigit;
-!"a".isDigit;
+        !"a".isDigit;
 
-"".isLower;
-"lower".isLower;
+           "".isLower;
+      "lower".isLower;
 ! "Not Lower".isLower;
 
-"".isUpper;
-"UPPER".isUpper;
+           "".isUpper;
+      "UPPER".isUpper;
 ! "Not Upper".isUpper;
 \end{urbiassert}
 
@@ -363,30 +363,65 @@ negative number corresponds to no limit:
 !("a" < "a");
 \end{urbiassert}
 
-\item|'[]'|(<from>)%
-  \lstinline|'[]'(\var{from}, \var{to})|\\
+\item|'[]'|(<from>, <to> = <from> + 1)%
   Return the sub-string starting at \var{from}, up to and not including
-  \var{to} (which defaults to \var{to} + 1).
+  \var{to}.
 \begin{urbiassert}
 "foobar"[0, 3] == "foo";
 "foobar"[0] == "f";
 \end{urbiassert}
 
+The indexes must be integers from -\refSlot{size} up to \refSlot{size} + 1
+(inclusive).  Independently of their order as integers, \var{from} must be
+\emph{before} or equal to \var{to}.
+
+\begin{urbiscript}
+"foobar"[1.1];
+[00051825:error] !!! []: invalid index: 1.1
+"foobar"[-7];
+[00051841:error] !!! []: invalid index: -7
+"foobar"[6];
+[00051853:error] !!! []: invalid index: 6
+
+"foobar"[3, 1];
+[00051953:error] !!! []: range starting after its end: 3, 1
+\end{urbiscript}
+
+Negative indexes means ``from the end''.
+
+\begin{urbiassert}
+"foobar"[-1] == "r";
+"foobar"[-6] == "f";
+"foobar"[-1, 0] == "r";
+"foobar"[-6, -3] == "foo";
+// Valid since position 2 is before position -1.
+"foobar"[2, -1] == "oba"
+\end{urbiassert}
+
 \item|'[]='|(<from>, <other>)%
   \lstinline|'[]='(\var{from}, \var{to}, \var{other})|\\
   Replace the sub-string starting at \var{from}, up to and not including
-  \var{to} (which defaults to \var{to} + 1), by \var{other}.  Return
+  \var{to} (which defaults to \var{to} + 1), by \var{other}.  The condition
+  on \var{from} and \var{to} are the same of for \refSlot|'[]'|.  Return
   \var{other}.
 
   Beware that this routine is imperative: it changes the value of
   \this.
 \begin{urbiscript}
 var s1 = "foobar" | var s2 = s1 |
-assert((s1[0, 3] = "quux") == "quux");
-assert(s1 == "quuxbar");
-assert(s2 == "quuxbar");
-assert((s1[4, 7] = "") == "");
-assert(s2 == "quux");
+assert
+{
+  (s1[0, 3] = "quux") == "quux";
+  s1 == "quuxbar";
+  s2 == "quuxbar";
+  (s1[4, 7] = "") == "";
+  s2 == "quux";
+
+  (s1[-3, -1] = "UU") == "UU";
+  s1 == "qUUx";
+  (s1[-1] = "X") == "X";
+  s1 == "qUUX";
+};
 \end{urbiscript}
 \end{urbiscriptapi}
 
