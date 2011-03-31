@@ -70,9 +70,12 @@ for (var v : "123")
 
 \item[asString]
   Return \this.
-\begin{urbiassert}
-"\"foo\"".asString == "\"foo\"";
-\end{urbiassert}
+\begin{urbiscript}
+{
+  var s = "\"foo\"";
+  assert { s.asString === s; };
+};
+\end{urbiscript}
 
 \item[closest](<set>)%
   Return the string in \var{set} that is the closest (in the sense of

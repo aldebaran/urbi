@@ -61,6 +61,8 @@ namespace urbi
       /// std::string.  If the concrete type is known, consider using
       /// value_get instead of as_string.
       virtual value_type as_string() const;
+      /// Return \this.
+      rString asString();
       value_type as_printable() const;
 #if !defined COMPILATION_MODE_SPACE
       value_type format(rFormatInfo finfo) const;

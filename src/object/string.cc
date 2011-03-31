@@ -134,7 +134,7 @@ namespace urbi
       DECLARE(asBool      , as_bool);
       DECLARE(asFloat     , as_float);
       DECLARE(asPrintable , as_printable);
-      DECLARE(asString    , as_string);
+      DECLARE(asString    , asString);
       DECLARE(distance    , distance);
       DECLARE(empty       , empty);
 #if !defined COMPILATION_MODE_SPACE
@@ -245,7 +245,7 @@ namespace urbi
     String::value_type
     String::as_printable() const
     {
-      return '"' + string_cast(libport::escape(content_, '"')) + '"';
+      return libport::format("\"%s\"", libport::escape(content_, '"'));
     }
 
 #if !defined COMPILATION_MODE_SPACE
@@ -277,6 +277,12 @@ namespace urbi
     String::as_string() const
     {
       return content_;
+    }
+
+    rString
+    String::asString()
+    {
+      return this;
     }
 
     const String::value_type&
