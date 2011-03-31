@@ -14,8 +14,10 @@
 # include <urbi/object/cxx-object.hh>
 # include <urbi/object/fwd.hh>
 
-# include <boost/numeric/ublas/blas.hpp>
-# include <boost/numeric/ublas/vector.hpp>
+# include <libport/system-warning-push.hh>
+#  include <boost/numeric/ublas/blas.hpp>
+#  include <boost/numeric/ublas/vector.hpp>
+# include <libport/system-warning-pop.hh>
 
 namespace urbi
 {
