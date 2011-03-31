@@ -725,7 +725,7 @@ namespace urbi
     }
 
     rObject
-    Object::asToplevelPrintable() const
+    Object::asTopLevelPrintable() const
     {
       return const_cast<Object*>(this)->call(SYMBOL(asPrintable));
     }

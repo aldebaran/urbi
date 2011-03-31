@@ -349,7 +349,7 @@ namespace urbi
       rObject urbi_setConstSlot(key_type k, const rObject& o);
       rObject urbi_updateSlot(key_type k, const rObject& o);
       rObject asPrintable() const;
-      rObject asToplevelPrintable() const;
+      rObject asTopLevelPrintable() const;
       rHash   hash() const;
       rObject addProto(rObject proto);
       rObject removeProto(rObject proto);

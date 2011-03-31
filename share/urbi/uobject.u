@@ -582,14 +582,14 @@ do (UValue)
     else
       '$id'
   };
-  function asToplevelPrintable()
+  function asTopLevelPrintable()
   {
     if (transparent)
       extractAsToplevelPrintable
     else
-      '$id'.asToplevelPrintable
+      '$id'.asTopLevelPrintable
   };
-  var asPrintable = &asToplevelPrintable;
+  var asPrintable = &asTopLevelPrintable;
 };
 
 class Global.uobjects {};

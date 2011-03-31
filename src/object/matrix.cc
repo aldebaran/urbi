@@ -380,7 +380,7 @@ namespace urbi
       DECLARE(set, set);
       DECLARE(asString, asString);
       DECLARE(asPrintable, asPrintable);
-      DECLARE(asToplevelPrintable, asToplevelPrintable);
+      DECLARE(asTopLevelPrintable, asTopLevelPrintable);
       //DECLARE(solve, solve);
       DECLARE(invert, invert);
       DECLARE(transpose, transpose);
@@ -436,7 +436,7 @@ namespace urbi
 
 
     std::string
-    Matrix::asToplevelPrintable() const
+    Matrix::asTopLevelPrintable() const
     {
       const unsigned int height = value_.size1();
       const unsigned int width = value_.size2();

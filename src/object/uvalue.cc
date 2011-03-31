@@ -79,7 +79,7 @@ namespace urbi
     {
       if (value_.type == urbi::DATA_VOID && cache_)
       { // Someone used put, cache_ is more recent
-        return cache_->call("asToplevelPrintable")->as<String>()->value_get();
+        return cache_->call("asTopLevelPrintable")->as<String>()->value_get();
       }
       std::stringstream s;
       value_.print(s);

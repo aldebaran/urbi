@@ -110,7 +110,7 @@ namespace urbi
       const value_type& value_get() const;
       std::string asString() const;
       std::string asPrintable() const;
-      std::string asToplevelPrintable() const;
+      std::string asTopLevelPrintable() const;
 
       rMatrix dot_times(const rMatrix& m) const;
       rVector row(int i) const;

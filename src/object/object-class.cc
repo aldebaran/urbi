@@ -317,7 +317,7 @@ namespace urbi
       DECLARE(apply              , object_class_apply);
       DECLARE(asBool             , &Object::as_bool);
       DECLARE(asPrintable        , &Object::asPrintable);
-      DECLARE(asToplevelPrintable, &Object::asToplevelPrintable);
+      DECLARE(asTopLevelPrintable, &Object::asTopLevelPrintable);
       DECLARE(callMessage        , object_class_callMessage);
       // DECLARE(changed            , &Object::changed_get);
       DECLARE(createSlot         , &Object::urbi_createSlot);

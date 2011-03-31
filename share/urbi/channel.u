@@ -57,7 +57,7 @@ class Global.Channel
   {
     if (enabled)
     {
-      var toPrint = { if (quote) x.asToplevelPrintable else x.asString }|
+      var toPrint = { if (quote) x.asTopLevelPrintable else x.asString }|
       if (!toPrint.isNil)
 	lobby.send(toPrint, name);
     }
@@ -68,7 +68,7 @@ class Global.Channel
  *  Stores a list of 'handled' types in 'filter'.
  *  Items of one of those types are displayed the standard way.
  *  others are displayed by calling notHandled() which by default use
- *  echo on each line of the value asToplevelPrintable.
+ *  echo on each line of the value asTopLevelPrintable.
  */
 class Global.Channel.Filter: Channel
 {
@@ -92,7 +92,7 @@ class Global.Channel.Filter: Channel
   };
   function notHandled(v)
   {
-    for|(var l: v.asToplevelPrintable.split("\n"))
+    for|(var l: v.asTopLevelPrintable.split("\n"))
       echo(l)
   };
   function uclientFilter()

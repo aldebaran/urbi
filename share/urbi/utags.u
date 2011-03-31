@@ -1,6 +1,6 @@
 #! urbi -i
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -19,7 +19,7 @@ output.'<<' = function(x)
 {
    if (enabled)
     {
-      var toPrint = { if (quote) x.asToplevelPrintable else x.asString }|
+      var toPrint = { if (quote) x.asTopLevelPrintable else x.asString }|
       if (!toPrint.isNil)
 	lobby.write(toPrint);
     };

@@ -99,7 +99,7 @@ namespace runner
         {
           try
           {
-            rObject result = res->call(SYMBOL(asToplevelPrintable));
+            rObject result = res->call(SYMBOL(asTopLevelPrintable));
             std::ostringstream os;
             result->print(os);
             state.lobby_get()->connection_get().send(os.str());
