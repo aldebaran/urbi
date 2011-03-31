@@ -54,7 +54,6 @@ namespace urbi
     Matrix::init(const objects_type& args)
     {
       rMatrix self = args[0]->as<Matrix>();
-
       if (!self)
         runner::raise_type_error(args[1], Matrix::proto);
 
@@ -75,31 +74,11 @@ namespace urbi
       }
       else if (args.size() == 3)
       {
-        if (rFloat size1 = args[1]->as<Float>())
-        {
-          if (rFloat size2 = args[2]->as<Float>())
-          {
-            if (size1->is_integer())
-            {
-              if (size2->is_integer())
-              {
-                self->value_ =
-                  boost::numeric::ublas::zero_matrix<ufloat>(
-                    size1->value_get(),
-                    size2->value_get());
-                return self;
-              }
-              else
-                runner::raise_bad_integer_error(size2->value_get());
-            }
-            else
-              runner::raise_bad_integer_error(size1->value_get());
-          }
-          else
-            runner::raise_type_error(args[2], Float::proto);
-        }
+        self->value_ =
+          boost::numeric::ublas::zero_matrix<ufloat>
+          (from_urbi<unsigned>(args[1]), from_urbi<unsigned>(args[2]));
+        return self;
       }
-
       objects_type effective_args(args.begin() + 1, args.end());
       return self->fromArgsList(effective_args);
     }
