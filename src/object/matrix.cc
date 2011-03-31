@@ -187,8 +187,8 @@ namespace urbi
       return fromArgsList(model->value_get());
     }
 
-#define DECLARE(Op, Name, Sym)                                  \
-    rObject                                                     \
+#define OP(Op, Name, Sym)                                       \
+    rMatrix                                                     \
     Matrix::Name(const objects_type& args)                      \
     {                                                           \
       rMatrix self = args[0]->as<Matrix>();                     \
@@ -202,16 +202,16 @@ namespace urbi
         (1, args[1], Matrix::proto, to_urbi(SYMBOL(Sym)));      \
     }
 
-    DECLARE(+,  plus,         PLUS)
-    DECLARE(-,  minus,        MINUS)
-    DECLARE(/,  div,          SLASH)
-    DECLARE(*,  times,        STAR)
-    DECLARE(+=, plus_assign,  PLUS_EQ)
-    DECLARE(-=, minus_assign, MINUS_EQ)
-    DECLARE(/=, div_assign,   SLASH_EQ)
-    DECLARE(*=, times_assign, STAR_EQ)
+    OP(+,  plus,         PLUS)
+    OP(-,  minus,        MINUS)
+    OP(/,  div,          SLASH)
+    OP(*,  times,        STAR)
+    OP(+=, plus_assign,  PLUS_EQ)
+    OP(-=, minus_assign, MINUS_EQ)
+    OP(/=, div_assign,   SLASH_EQ)
+    OP(*=, times_assign, STAR_EQ)
 
-#undef DECLARE
+#undef OP
 
 #define OP(Op)                                                \
     rObject                                                   \
@@ -234,7 +234,7 @@ namespace urbi
 
 #undef OP
 
-#define DECLARE(Name, Op)                                       \
+#define OP(Name, Op)                                            \
     rMatrix                                                     \
     Matrix::Name(const rVector& rhs) const                      \
     {                                                           \
@@ -250,11 +250,11 @@ namespace urbi
       return res;                                               \
     }
 
-    DECLARE(rowAdd, +)
-    DECLARE(rowSub, -)
-    DECLARE(rowMul, *)
-    DECLARE(rowDiv, /)
-#undef DECLARE
+    OP(rowAdd, +)
+    OP(rowSub, -)
+    OP(rowMul, *)
+    OP(rowDiv, /)
+#undef OP
 
     rObject
     Matrix::operator /(const rMatrix& rhs) const
