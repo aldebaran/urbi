@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1370 utf-8
+personal_ws-1.1 en 1400 utf-8
 aaa
 abc
 abcd
@@ -51,6 +51,7 @@ Aperios
 api
 apijava
 APIS
+appendRow
 ar
 arccosine
 arcsine
@@ -81,6 +82,7 @@ asin
 asJob
 asList
 asm
+asMatrix
 asMutex
 asPath
 aspell
@@ -91,8 +93,10 @@ assertCall
 associativity
 asString
 AST
+asTopLevelPrintable
 ASTs
 asuobjects
+asVector
 async
 Asynchronicity
 atan
@@ -199,6 +203,9 @@ Clément
 cmd
 CODESET
 colordiff
+combAdd
+combDiv
+combMul
 compl
 computeSalary
 cond
@@ -228,7 +235,11 @@ cpp
 CPPFLAGS
 cpu
 createAll
+createIdentity
+createOnes
+createScalars
 createSlot
+createZeros
 criticalSection
 Ctrl
 CustomUVar
@@ -286,9 +297,11 @@ DifferentialWheels
 dir
 dirlist
 dirname
+distanceMatrix
 distanceMax
 distanceMin
 DistanceSensor
+distanceToMatrix
 distcc
 distMax
 distMin
@@ -918,6 +931,7 @@ rescale
 resendBanner
 resetConnectionStats
 resetStats
+resize
 resStruct
 rf
 rgb
@@ -947,6 +961,11 @@ ROSTopic
 ROSTopics
 RotationalMotor
 RotationalSpeedMotor
+rowAdd
+rowDiv
+rowMul
+rowNorm
+rowSub
 rshift
 rst
 rtp
@@ -964,6 +983,11 @@ sampleFormat
 sampleSize
 SAS
 sayHello
+scalarEQ
+scalarGE
+scalarGT
+scalarLE
+scalarLT
 SchedulingError
 scopeTag
 sdbxoefEDX
@@ -972,6 +996,10 @@ searchFile
 searchPath
 SEGVs
 segway
+selfCombAdd
+selfCombDiv
+selfCombIndexes
+selfCombMul
 selfTime
 selfTimePer
 sendbin
@@ -1000,6 +1028,7 @@ setPosition
 setPositions
 setProperty
 setProtos
+setRow
 setSideEffectFree
 setSlot
 setThreadLimit
@@ -1150,6 +1179,7 @@ transfig
 translational
 Tri
 TriBot
+trueIndexes
 trunc
 tts
 tuple
