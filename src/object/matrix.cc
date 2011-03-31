@@ -130,7 +130,7 @@ namespace urbi
       permutation_matrix<size_type> pm(A.size1());
       // Perform LU-factorization.
       if (lu_factorize(A, pm) != 0)
-        return nil_class;
+        FRAISE("non-invertible matrix: %s", *this);
       // Create identity matrix of "inverse".
       inverse.assign(identity_matrix<ufloat>(A.size1()));
       // Backsubstitute to get the inverse.
@@ -259,26 +259,18 @@ namespace urbi
     rObject
     Matrix::operator /(const rMatrix& rhs) const
     {
-      rObject o = rhs->invert();
-      if (rMatrix inverse = o->as<Matrix>())
-      {
-        value_type copy = prod(value_, inverse->value_);
-        return new Matrix(copy);
-      }
-      return o;
+      rMatrix inverse = rhs->invert();
+      value_type copy = prod(value_, inverse->value_);
+      return new Matrix(copy);
     }
 
     rObject
     Matrix::operator /=(const rMatrix& rhs)
     {
-      rObject o = rhs->invert();
-      if (rMatrix inverse = o->as<Matrix>())
-      {
-        value_type res = prod(value_, inverse->value_);
-        value_ = res;
-        return this;
-      }
-      return o;
+      rMatrix inverse = rhs->invert();
+      value_type res = prod(value_, inverse->value_);
+      value_ = res;
+      return this;
     }
 
 #define OP(Op, Type, Fun)                                       \
