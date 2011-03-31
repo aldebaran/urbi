@@ -29,7 +29,6 @@ namespace urbi
 
     Matrix::Matrix(const Matrix& model)
       : CxxObject()
-      , super_comparable_type()
       , value_(model.value_)
     {
       proto_add(proto);
