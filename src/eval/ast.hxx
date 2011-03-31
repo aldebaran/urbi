@@ -1172,6 +1172,27 @@ namespace eval
 #undef VISIT
   }
 
+
+#define FINALLY_Context(DefineOrUse)                    \
+    FINALLY_ ## DefineOrUse                             \
+    (Context,                                           \
+      ((Job&, job))                                     \
+      ((const runner::State::var_context_type&, ctx)),  \
+     job.state.pop_context(ctx);                        \
+    )
+
+  FINALLY_Context(DEFINE);
+
+  LIBPORT_SPEED_INLINE
+  rObject ast_context(Job& job, const ast::Ast* e, rObject self)
+  {
+    typedef runner::State::var_context_type var_context_type;
+    var_context_type ctx = job.state.push_context(self);
+    FINALLY_Context(USE);
+    return ast(job, e);
+  }
+
+
 #define FINALLY_Ast(DefineOrUse)                                        \
   FINALLY_ ## DefineOrUse(Ast,                                          \
                           ((Job&, job))                                 \
@@ -1179,19 +1200,6 @@ namespace eval
                           job.state.innermost_node_set(previous));
 
   FINALLY_Ast(DEFINE);
-
-
-  LIBPORT_SPEED_INLINE
-  rObject ast_context(Job& job, const ast::Ast* e, rObject self)
-  {
-    typedef runner::State::var_context_type var_context_type;
-    var_context_type ctx = job.state.push_context(self);
-    FINALLY(
-      ((Job&, job))
-      ((const var_context_type&, ctx)),
-      job.state.pop_context(ctx));
-    return ast(job, e);
-  }
 
   // !!! GD_* macros are commented because this consume stack space in speed
   // mode, even if messages are not printed.

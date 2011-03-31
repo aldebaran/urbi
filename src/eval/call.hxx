@@ -183,6 +183,19 @@ namespace eval
                       boost::optional< ::ast::loc>());
   }
 
+#define FINALLY_Stack(DefineOrUse)              \
+    FINALLY_ ## DefineOrUse                     \
+    (Stack,                                     \
+      ((Job&, job))((bool, reg))                \
+      ((runner::Profile::idx, profile_prev)),   \
+     if (reg)                                   \
+       job.state.call_stack_get().pop_back();   \
+     if (job.is_profiling())                    \
+       job.profile_leave(profile_prev);         \
+    )
+
+  FINALLY_Stack(DEFINE);
+
   LIBPORT_SPEED_INLINE
   rObject call_apply(Job& job,
                      object::Object* function,
@@ -208,13 +221,7 @@ namespace eval
     if (job.is_profiling())
       profile_prev = job.profile_enter(function, msg);
 
-    FINALLY(((Job&, job))((bool, reg))
-            ((runner::Profile::idx, profile_prev)),
-            if (reg)
-              job.state.call_stack_get().pop_back();
-            if (job.is_profiling())
-              job.profile_leave(profile_prev);
-      );
+    FINALLY_Stack(USE);
 
     // GD_INFO_DEBUG("Check for void arguments");
     // Check if any argument is void.
@@ -302,6 +309,29 @@ namespace eval
   | Apply an urbi function (i.e., not a primitive) |
   `-----------------------------------------------*/
 
+
+#define FINALLY_Frame(DefineOrUse)                      \
+    FINALLY_ ## DefineOrUse                             \
+    (Frame,                                             \
+      ((Job&, job))                                     \
+      ((libport::Symbol, msg))                          \
+      ((runner::State::var_frame_type, previous_frame)) \
+      ((rLobby, caller_lobby))                          \
+      ((rSlot*, local_stack))                           \
+      ((rSlot*, captured_stack))                        \
+    ,                                                   \
+     job.state.pop_frame(msg, previous_frame);          \
+     job.state.lobby_set(caller_lobby);                 \
+     BOOST_PP_IF(URBI_DYNAMIC_STACK_NONE,               \
+                 {                                      \
+                   delete [] local_stack;               \
+                   delete [] captured_stack;            \
+                 },                                     \
+       );                                               \
+    )
+
+  FINALLY_Frame(DEFINE);
+
   // !!! GD_* macros are commented because this consume stack space in speed
   // mode, even if messages are not printed.
 
@@ -377,22 +407,7 @@ namespace eval
         msg, var_frame_type(local_stack, captured_stack),
         self, call);
     // GD_INFO_DEBUG("Push frame");
-    FINALLY(((Job&, job))
-            ((libport::Symbol, msg))
-            ((var_frame_type, previous_frame))
-            ((rLobby, caller_lobby))
-            ((rSlot*, local_stack))
-            ((rSlot*, captured_stack))
-            ,
-            job.state.pop_frame(msg, previous_frame);
-            job.state.lobby_set(caller_lobby);
-            BOOST_PP_IF(URBI_DYNAMIC_STACK_NONE,
-                        {
-                          delete [] local_stack;
-                          delete [] captured_stack;
-                        },
-              );
-      );
+    FINALLY_Frame(USE);
 
     // Push captured variables
     // GD_INFO_DEBUG("Push captured variables");
