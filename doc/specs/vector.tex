@@ -1,0 +1,98 @@
+%% Copyright (C) 2011, Gostai S.A.S.
+%%
+%% This software is provided "as is" without warranty of any kind,
+%% either expressed or implied, including but not limited to the
+%% implied warranties of fitness for a particular purpose.
+%%
+%% See the LICENSE file for more information.
+
+\section{Vector}
+
+\subsection{Prototypes}
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
+
+\subsection{Construction}
+
+\subsection{Slots}
+
+\begin{urbiscriptapi}
+\item[asString]%
+\begin{urbiassert}
+Vector.new         ().asString == "<>";
+Vector.new        (1).asString == "<1>";
+Vector.new     (1, 2).asString == "<1, 2>";
+Vector.new(1, 2, 3.4).asString == "<1, 2, 3.4>";
+\end{urbiassert}
+
+\item[asVector]%
+  Return \this.
+\begin{urbiscript}
+{
+  var v = Vector.new;
+  assert { v.asVector === v; };
+};
+\end{urbiscript}
+
+\item[combAdd]()%
+
+\item[combDiv]()%
+
+\item[combMul]()%
+
+\item[norm]()%
+
+\item[resize]()%
+
+\item[scalarEQ]()%
+
+\item[scalarGE]()%
+
+\item[scalarGT]()%
+
+\item[scalarLE]()%
+
+\item[scalarLT]()%
+
+\item[selfCombAdd]()%
+
+\item[selfCombDiv]()%
+
+\item[selfCombIndexes]()%
+
+\item[selfCombMul]()%
+
+\item[set]()%
+
+\item[size]()%
+
+\item[sum]()%
+
+\item[trueIndexes]()%
+
+\item[type]()%
+
+\item['*']()%
+
+\item['+']()%
+
+\item['-']()%
+
+\item['/']()%
+
+\item['<']()%
+
+\item|'[]'|()%
+
+\item|[]=|()%
+
+\end{urbiscriptapi}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% ispell-dictionary: "american"
+%%% ispell-personal-dictionary: "../urbi.dict"
+%%% fill-column: 76
+%%% End:
