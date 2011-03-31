@@ -42,11 +42,11 @@ namespace urbi
       Matrix(const rMatrix& model);
       Matrix(const rList& model);
 
-      static rObject init(const objects_type& args);
-      rObject fromList(const rList& model);
+      static rMatrix init(const objects_type& args);
+      rMatrix fromList(const rList& model);
 
 #define OP(Name)                                        \
-      static rObject Name(const objects_type& args)
+      static rMatrix Name(const objects_type& args)
 
       OP(plus);
       OP(minus);
@@ -60,8 +60,8 @@ namespace urbi
 #undef OP
 
 #define OP(Op, Type)                                      \
-      rObject operator Op(const r##Type& m) const;        \
-      rObject operator Op##=(const r##Type& m)
+      rMatrix operator Op(const r##Type& m) const;        \
+      rMatrix operator Op##=(const r##Type& m)
 
       OP(+, Matrix);
       OP(-, Matrix);
@@ -72,8 +72,8 @@ namespace urbi
 #undef OP
 
 #define OP(Op)                                          \
-      rObject operator Op(const rFloat& m) const;       \
-      rObject operator Op##=(const rFloat& m);
+      rMatrix operator Op(const rFloat& m) const;       \
+      rMatrix operator Op##=(const rFloat& m);
 
       OP(*);
       OP(/);
@@ -89,29 +89,29 @@ namespace urbi
       rMatrix rowDiv(const rVector& rhs) const;
       rVector rowNorm() const;
 
-      static rObject create_zeros(rObject self, int size1, int size2);
-      static rObject create_identity(rObject self, int size);
-      static rObject create_scalars(rObject self, int size1, int size2, ufloat v);
-      static rObject create_ones(rObject self, int size1, int size2);
+      static rMatrix create_zeros(rObject, int size1, int size2);
+      static rMatrix create_identity(rObject, int size);
+      static rMatrix create_scalars(rObject, int size1, int size2, ufloat v);
+      static rMatrix create_ones(rObject, int size1, int size2);
 
       rMatrix transpose() const;
-      rObject invert() const;
+      rMatrix invert() const;
       rMatrix solve(const rVector& vector) const;
 
-      ufloat  operator()(int, int) const;
+      ufloat operator()(int, int) const;
 
       rObject size() const;
       rMatrix resize(unsigned int i, unsigned int j);
-      rObject set(int i, int j, ufloat v);
+      rMatrix set(int i, int j, ufloat v);
       ufloat get(int i, int j);
       unsigned int index1(int) const;
       unsigned int index2(int) const;
 
       value_type&       value_get();
       const value_type& value_get() const;
-      rObject asString() const;
-      rObject asPrintable() const;
-      rObject asToplevelPrintable() const;
+      std::string asString() const;
+      std::string asPrintable() const;
+      std::string asToplevelPrintable() const;
 
       rMatrix dot_times(const rMatrix& m) const;
       rVector row(int i) const;

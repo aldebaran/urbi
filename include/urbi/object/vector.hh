@@ -40,8 +40,8 @@ namespace urbi
       Vector(const rVector& model);
       Vector(const rList& model);
 
-      static rObject init(const objects_type& args);
-      rObject fromList(const rList& model);
+      static rVector init(const objects_type& args);
+      rVector fromList(const rList& model);
 
       // Disambiguation operators.
       rVector operator+(const rObject& b) const;
@@ -68,7 +68,7 @@ namespace urbi
       void resize(unsigned int s);
       ufloat norm() const;
       ufloat sum() const; //a.k.a. L1 norm.
-      rObject set(int i, ufloat v);
+      rVector set(int i, ufloat v);
       unsigned int index(int) const;
 
       virtual std::string as_string() const;

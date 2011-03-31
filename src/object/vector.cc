@@ -52,7 +52,7 @@ namespace urbi
       proto_add(proto);
     }
 
-    rObject
+    rVector
     Vector::init(const objects_type& args)
     {
       rVector self = args[0]->as<Vector>();
@@ -80,7 +80,7 @@ namespace urbi
       return self;
     }
 
-    rObject
+    rVector
     Vector::fromList(const rList& model)
     {
       value_.resize(model->size());
@@ -170,7 +170,7 @@ namespace urbi
       return value_(index(i));
     }
 
-    rObject
+    rVector
     Vector::set(int i, ufloat v)
     {
       value_(index(i)) = v;

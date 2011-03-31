@@ -50,7 +50,7 @@ namespace urbi
       fromList(model);
     }
 
-    rObject
+    rMatrix
     Matrix::init(const objects_type& args)
     {
       rMatrix self = args[0]->as<Matrix>();
@@ -83,31 +83,31 @@ namespace urbi
       return self->fromArgsList(effective_args);
     }
 
-    rObject
+    rMatrix
     Matrix::create_zeros(rObject, int size1, int size2)
     {
       boost::numeric::ublas::zero_matrix<ufloat> res(size1, size2);
       return new Matrix(res);
     }
 
-    rObject
+    rMatrix
     Matrix::create_identity(rObject, int size)
     {
       boost::numeric::ublas::identity_matrix<ufloat> res(size);
       return new Matrix(res);
     }
 
-    rObject
+    rMatrix
     Matrix::create_scalars(rObject, int size1, int size2, ufloat v)
     {
       boost::numeric::ublas::scalar_matrix<ufloat> res(size1, size2, v);
       return new Matrix(res);
     }
 
-    rObject
+    rMatrix
     Matrix::create_ones(rObject self, int size1, int size2)
     {
-      return create_scalars(self, size1, size2, 1.0f);
+      return create_scalars(self, size1, size2, 1.0);
     }
 
     rMatrix
@@ -116,7 +116,7 @@ namespace urbi
       return new Matrix(trans(value_));
     }
 
-    rObject
+    rMatrix
     Matrix::invert() const
     {
       using namespace boost::numeric::ublas;
@@ -181,7 +181,7 @@ namespace urbi
       return this;
     }
 
-    rObject
+    rMatrix
     Matrix::fromList(const rList& model)
     {
       return fromArgsList(model->value_get());
@@ -214,7 +214,7 @@ namespace urbi
 #undef OP
 
 #define OP(Op)                                                \
-    rObject                                                   \
+    rMatrix                                                   \
     Matrix::operator Op(const rMatrix& m) const               \
     {                                                         \
       value_type copy(value_);                                \
@@ -222,7 +222,7 @@ namespace urbi
       return new Matrix(copy);                                \
     }                                                         \
                                                               \
-    rObject                                                   \
+    rMatrix                                                   \
     Matrix::operator Op##=(const rMatrix& m)                  \
     {                                                         \
       value_ Op##= m->value_;                                 \
@@ -256,7 +256,7 @@ namespace urbi
     OP(rowDiv, /)
 #undef OP
 
-    rObject
+    rMatrix
     Matrix::operator /(const rMatrix& rhs) const
     {
       rMatrix inverse = rhs->invert();
@@ -264,7 +264,7 @@ namespace urbi
       return new Matrix(copy);
     }
 
-    rObject
+    rMatrix
     Matrix::operator /=(const rMatrix& rhs)
     {
       rMatrix inverse = rhs->invert();
@@ -274,14 +274,14 @@ namespace urbi
     }
 
 #define OP(Op, Type, Fun)                                       \
-    rObject                                                     \
+    rMatrix                                                     \
     Matrix::operator Op(const r##Type& rhs) const               \
     {                                                           \
       value_type copy = Fun(value_, rhs->value_);               \
       return new Matrix(copy);                                  \
     }                                                           \
                                                                 \
-    rObject                                                     \
+    rMatrix                                                     \
     Matrix::operator Op##=(const r##Type& rhs)                  \
     {                                                           \
       value_type res = Fun(value_, rhs->value_);                \
@@ -295,7 +295,7 @@ namespace urbi
 #undef OP
 
 #define OP(Op)                                                 \
-    rObject                                                    \
+    rMatrix                                                    \
     Matrix::operator Op(const rFloat& s) const                 \
     {                                                          \
       value_type copy(value_);                                 \
@@ -303,7 +303,7 @@ namespace urbi
       return new Matrix(copy);                                 \
     }                                                          \
                                                                \
-    rObject                                                    \
+    rMatrix                                                    \
     Matrix::operator Op##=(const rFloat& s)                    \
     {                                                          \
       value_ Op##= s->value_get();                             \
@@ -316,7 +316,7 @@ namespace urbi
 #undef OP
 
 #define OP(Op)                                                  \
-    rObject                                                     \
+    rMatrix                                                     \
     Matrix::operator Op(const rFloat& s) const                  \
     {                                                           \
       value_type copy(value_);                                  \
@@ -327,7 +327,7 @@ namespace urbi
       return new Matrix(res);                                   \
     }                                                           \
                                                                 \
-    rObject                                                     \
+    rMatrix                                                     \
     Matrix::operator Op##=(const rFloat& s)                     \
     {                                                           \
       rMatrix res = static_cast<Matrix*>(operator Op(s).get()); \
@@ -392,20 +392,20 @@ namespace urbi
 #undef DECLARE
 
       bind(SYMBOL(size), static_cast<rObject (Matrix::*)() const>(&Matrix::size));
-      bind(SYMBOL(set), static_cast<rObject (Matrix::*)(const rList&)>(&Matrix::fromList));
+      bind(SYMBOL(set), static_cast<rMatrix (Matrix::*)(const rList&)>(&Matrix::fromList));
       slot_set(SYMBOL(init), new Primitive(&init));
     }
 
-    rObject
+    std::string
     Matrix::asString() const
     {
-      return new String(make_string('<', '>', "<", ">"));
+      return make_string('<', '>', "<", ">");
     }
 
-    rObject
+    std::string
     Matrix::asPrintable() const
     {
-      return new String(make_string('[', ']', "Matrix([", "])"));
+      return make_string('[', ']', "Matrix([", "])");
     }
 
     std::string
@@ -436,7 +436,7 @@ namespace urbi
     }
 
 
-    rObject
+    std::string
     Matrix::asToplevelPrintable() const
     {
       const unsigned int height = value_.size1();
@@ -462,7 +462,7 @@ namespace urbi
 
       s << "])";
 
-      return new String(s.str());
+      return s.str();
     }
 
     ufloat
@@ -471,7 +471,7 @@ namespace urbi
       return value_(index1(i), index2(j));
     }
 
-    rObject
+    rMatrix
     Matrix::set(int i, int j, ufloat v)
     {
       value_(index1(i), index2(j)) = v;
