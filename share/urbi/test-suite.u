@@ -102,6 +102,37 @@ do (Global)
     testExit(176, "Skipping this test: " + why)
   }|;
 
+  /// Generate a stub for the LaTeX documentation of this.
+  function docStub()
+  {
+    var res = [""];
+    res << "\\section{%s}" % type;
+    res << "";
+    res << "\\subsection{Prototypes}";
+    res << "\\begin{refObjects}";
+    for (var p : protos)
+      res << "\\item[%s]" % p.type;
+    res << "\\end{refObjects}";
+    res << "";
+    res << "\\subsection{Construction}";
+    res << "";
+    res << "\\subsection{Slots}";
+    res << "";
+    res << "\\begin{urbiscriptapi}";
+    for (var i : localSlotNames.sort)
+    {
+      res << "\\item[%s]%s%%"
+             % [{ if (i.isAlnum) i else "'%s'" % i },
+                { if (getSlot(i).isA(&Primitive)) "(<arg>)" else "" }];
+      res << "\\begin{urbiassert}";
+      res << "";
+      res << "\\end{urbiassert}";
+      res << "";
+    };
+    res << "\\end{urbiscriptapi}";
+    echo(res.join("\n"));
+  };
+
   /*---------.
   | skipIf.  |
   `---------*/
