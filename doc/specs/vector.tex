@@ -45,15 +45,76 @@ Vector.new(1, 2, 3.4).asString == "<1, 2, 3.4>";
 
 \item[resize]()%
 
-\item[scalarEQ]()%
+\item[scalarEQ](<that>)%
+  A Vector whose members are 0 or 1 depending on the equality of the
+  corresponding members of \this and \that.  \this and \that must have equal
+  dimensions.
+\begin{urbiscript}
+testSkip("we do not have comparison on vector");
+do (Vector)
+{
+  assert
+  {
+    new(1, 2, 3).scalarEQ(new(3, 2, 1)) == new(0, 1, 0);
+  };
+};
+\end{urbiscript}
 
-\item[scalarGE]()%
+\item[scalarGE](<that>)%
+  A Vector whose members are 0 or 1 if the corresponding member of \this is
+  greater than or equal to the one of \that.  \this and \that must have equal
+  dimensions.
+\begin{urbiscript}
+do (Vector)
+{
+  assert
+  {
+    new(1, 2, 3).scalarGE(new(3, 2, 1)) == new(0, 1, 1);
+  };
+};
+\end{urbiscript}
 
-\item[scalarGT]()%
+\item[scalarGT](<that>)%
+  A Vector whose members are 0 or 1 if the corresponding member of \this is
+  greater than to the one of \that.  \this and \that must have equal
+  dimensions.
+\begin{urbiscript}
+do (Vector)
+{
+  assert
+  {
+    new(1, 2, 3).scalarGT(new(3, 2, 1)) == new(0, 0, 1);
+  };
+};
+\end{urbiscript}
 
-\item[scalarLE]()%
+\item[scalarLE](<that>)%
+  A Vector whose members are 0 or 1 if the corresponding member of \this is
+  less than or equal to the one of \that.  \this and \that must have equal
+  dimensions.
+\begin{urbiscript}
+do (Vector)
+{
+  assert
+  {
+    new(1, 2, 3).scalarLE(new(3, 2, 1)) == new(1, 1, 0);
+  };
+};
+\end{urbiscript}
 
-\item[scalarLT]()%
+\item[scalarLT](<that>)%
+  A Vector whose members are 0 or 1 if the corresponding member of \this is
+  less than to the one of \that.  \this and \that must have equal
+  dimensions.
+\begin{urbiscript}
+do (Vector)
+{
+  assert
+  {
+    new(1, 2, 3).scalarLT(new(3, 2, 1)) == new(1, 0, 0);
+  };
+};
+\end{urbiscript}
 
 \item[selfCombAdd]()%
 
