@@ -64,7 +64,21 @@ namespace urbi
   void
   UVar::init(const std::string& varname, impl::UContextImpl* ctx)
   {
-     ctx_ = ctx;
+    GD_FINFO_DUMP("UVar.init %s", varname);
+    if (varname == name && ctx == ctx_)
+    {
+      GD_FINFO_TRACE("Multiple UVar.init on %s @with same parameters, ignoring",
+                     varname);
+      return;
+    }
+    if (impl_)
+    {
+      GD_FINFO_TRACE("UVar.init rebinds from %s to %s", name, varname);
+      unnotify();
+      impl_->clean();
+    }
+    delete impl_;
+    ctx_ = ctx;
     if (!ctx_)
       ctx_ = getCurrentContext();
     impl_ = 0;
@@ -107,6 +121,7 @@ namespace urbi
 
   UVar::~UVar()
   {
+    GD_FINFO_DUMP("~UVar %s", name);
     if (impl_)
     {
       unnotify();

@@ -124,6 +124,7 @@ public:
     UBindFunction(all, uobjectName);
     UBindFunction(all, allUObjectName);
     UBindVar(all,a);
+    UBindVar(all,a);
     UBindVars(all, b, c, d);
     UBindVar(all, initCalled);
     initCalled = 0;
