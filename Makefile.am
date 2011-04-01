@@ -31,6 +31,9 @@ VERSIONIFYFLAGS +=					\
   --prefix=URBI_SDK_					\
   --header=sdk-remote/include/urbi/revision.hh
 
+BUILT_SOURCES += sdk-remote/include/urbi/revision.hh
+sdk-remote/include/urbi/revision.hh: $(VERSIONIFY_CACHE)
+
 # To keep the time stamps up to date, we need to compile our
 # dependencies first, so process sdk-remote and src before "." (where
 # timestamps are).  It it tests and doc that depend on these time
