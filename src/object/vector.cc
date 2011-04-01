@@ -82,22 +82,16 @@ namespace urbi
       if (args.size() == 2)
       {
         if (rList l = args[1]->as<List>())
-        {
-          self->fromList(l);
-          return self;
-        }
+          return self->fromList(l);
         else if (rVector v = args[1]->as<Vector>())
         {
           self->value_ = v->value_;
           return self;
         }
       }
-      self->value_.resize(args.size()-1);
-      for (unsigned i = 1; i<args.size(); ++i)
-        if (rFloat f = args[i]->as<Float>())
-          self->value_(i-1) = f->value_get();
-        else
-          runner::raise_type_error(args[i], Float::proto);
+      self->value_.resize(args.size() - 1);
+      for (unsigned i = 1; i < args.size(); ++i)
+        self->value_(i-1) = from_urbi<ufloat>(args[i]);
       return self;
     }
 
@@ -106,7 +100,7 @@ namespace urbi
     {
       value_.resize(model->size());
       for(unsigned i=0; i<model->size(); ++i)
-        value_(i) = model->value_get()[i]->as<Float>()->value_get();
+        value_(i) = from_urbi<ufloat>(model->value_get()[i]);
       return this;
     }
 
@@ -146,8 +140,12 @@ namespace urbi
            static_cast<rVector (Vector::*)(const rObject&) const>
            (&Vector::operator/));
 
+      bind(SYMBOL(EQ_EQ),
+           static_cast<bool (self_type::*)(const rObject&) const>
+           (&self_type::operator==));
+
 #define DECLARE(Name, Fun)                      \
-      bind(SYMBOL_(Name), &Vector::Fun)
+      bind(SYMBOL_(Name), &self_type::Fun)
 
       DECLARE(LT, operator<);
       DECLARE(SBL_SBR, operator[]);

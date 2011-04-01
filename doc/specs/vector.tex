@@ -15,16 +15,51 @@
 
 \subsection{Construction}
 
+The Vector constructor can be either be given a single List (of Floats), or
+any number of Floats.
+
+\begin{urbiscript}
+Vector;
+[00000140] <>
+
+Vector.new;
+[00000146] <>
+
+Vector.new(1.1);
+[00000147] <1.1>
+
+Vector.new(1.1, 2.2, 3.3);
+[00000155] <1.1, 2.2, 3.3>
+
+Vector.new("123");
+[00000174:error] !!! new: unexpected "123", expected a Float
+
+Vector.new([]);
+[00000187] <>
+
+Vector.new([1, 2, 3, 4, 5]);
+[00000189] <1, 2, 3, 4, 5>
+
+Vector.new(["123"]);
+[00000193:error] !!! new: unexpected "123", expected a Float
+\end{urbiscript}
+
 \subsection{Slots}
 
 \begin{urbiscriptapi}
 \item[asString]%
-\begin{urbiassert}
-Vector.new         ().asString == "<>";
-Vector.new        (1).asString == "<1>";
-Vector.new     (1, 2).asString == "<1, 2>";
-Vector.new(1, 2, 3.4).asString == "<1, 2, 3.4>";
-\end{urbiassert}
+\begin{urbiscript}
+do (Vector)
+{
+  assert
+  {
+    new         ().asString == "<>";
+    new        (1).asString == "<1>";
+    new     (1, 2).asString == "<1, 2>";
+    new(1, 2, 3.4).asString == "<1, 2, 3.4>";
+  };
+}|;
+\end{urbiscript}
 
 \item[asVector]%
   Return \this.
@@ -50,14 +85,13 @@ Vector.new(1, 2, 3.4).asString == "<1, 2, 3.4>";
   corresponding members of \this and \that.  \this and \that must have equal
   dimensions.
 \begin{urbiscript}
-testSkip("we do not have comparison on vector");
 do (Vector)
 {
   assert
   {
     new(1, 2, 3).scalarEQ(new(3, 2, 1)) == new(0, 1, 0);
   };
-};
+}|;
 \end{urbiscript}
 
 \item[scalarGE](<that>)%
@@ -71,7 +105,7 @@ do (Vector)
   {
     new(1, 2, 3).scalarGE(new(3, 2, 1)) == new(0, 1, 1);
   };
-};
+}|;
 \end{urbiscript}
 
 \item[scalarGT](<that>)%
@@ -85,7 +119,7 @@ do (Vector)
   {
     new(1, 2, 3).scalarGT(new(3, 2, 1)) == new(0, 0, 1);
   };
-};
+}|;
 \end{urbiscript}
 
 \item[scalarLE](<that>)%
@@ -99,7 +133,7 @@ do (Vector)
   {
     new(1, 2, 3).scalarLE(new(3, 2, 1)) == new(1, 1, 0);
   };
-};
+}|;
 \end{urbiscript}
 
 \item[scalarLT](<that>)%
@@ -113,7 +147,7 @@ do (Vector)
   {
     new(1, 2, 3).scalarLT(new(3, 2, 1)) == new(1, 0, 0);
   };
-};
+}|;
 \end{urbiscript}
 
 \item[selfCombAdd]()%
@@ -133,6 +167,21 @@ do (Vector)
 \item[trueIndexes]()%
 
 \item[type]()%
+
+\item['=='](<that>)%
+  Whether \this and \that have the same size, and members.
+\begin{urbiscript}
+do (Vector)
+{
+  assert
+  {
+               new == new;
+      new(1, 2, 3) == new(1, 2, 3);
+    !(new(1, 2, 3) == new(1, 2));
+    !(new(1, 2, 3) == new(3, 2, 1));
+  };
+}|;
+\end{urbiscript}
 
 \item['*']()%
 

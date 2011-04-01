@@ -18,15 +18,13 @@ namespace boost
   {
     namespace ublas
     {
-      template<class E1, class E2>
-      bool operator==(const matrix_expression<E1>& e1,
-                      const matrix_expression<E2>& e2)
+      template<class T>
+      bool operator==(const matrix<T>& e1, const matrix<T>& e2)
       {
-        typedef typename promote_traits<typename E1::value_type,
-                                        typename E2::value_type>::promote_type
-                value_type;
-        typedef typename type_traits<value_type>::real_type real_type;
-        return norm_inf (e1 - e2) == real_type/*zero*/();
+        return
+          (e1.size1() == e2.size1()
+           && e1.size2() == e2.size2()
+           && norm_inf (e1 - e2) == 0);
       }
     }
   }
@@ -364,21 +362,21 @@ namespace urbi
     URBI_CXX_OBJECT_INIT(Matrix)
     {
 #define DECLARE(Name, Cxx)                      \
-      bind_variadic(SYMBOL(Name), &Matrix::Cxx)
+      bind_variadic(SYMBOL_(Name), &self_type::Cxx)
 
-      DECLARE(STAR, times);
-      DECLARE(PLUS, plus);
       DECLARE(MINUS, minus);
-      DECLARE(SLASH, div);
-      DECLARE(STAR_EQ, times_assign);
-      DECLARE(PLUS_EQ, plus_assign);
       DECLARE(MINUS_EQ, minus_assign);
+      DECLARE(PLUS, plus);
+      DECLARE(PLUS_EQ, plus_assign);
+      DECLARE(SLASH, div);
       DECLARE(SLASH_EQ, div_assign);
+      DECLARE(STAR, times);
+      DECLARE(STAR_EQ, times_assign);
 
 #undef DECLARE
 
-#define DECLARE(Name, Cxx)                                      \
-      bind(libport::Symbol("" #Name), &Matrix::Cxx)
+#define DECLARE(Name, Cxx)                      \
+      bind(SYMBOL_(Name), &self_type::Cxx)
 
       DECLARE(row, row);
       DECLARE(column, column);
@@ -412,8 +410,13 @@ namespace urbi
 
 #undef DECLARE
 
-      bind(SYMBOL(size), static_cast<rObject (Matrix::*)() const>(&Matrix::size));
-      bind(SYMBOL(set), static_cast<rMatrix (Matrix::*)(const rList&)>(&Matrix::fromList));
+      bind(SYMBOL(EQ_EQ),
+           static_cast<bool (self_type::*)(const rObject&) const>
+           (&self_type::operator==));
+      bind(SYMBOL(size),
+           static_cast<rObject (Matrix::*)() const>(&Matrix::size));
+      bind(SYMBOL(set),
+           static_cast<rMatrix (Matrix::*)(const rList&)>(&Matrix::fromList));
       slot_set(SYMBOL(init), new Primitive(&init));
     }
 
