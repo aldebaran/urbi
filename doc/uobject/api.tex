@@ -671,9 +671,9 @@ void OptimizedImageSource::init()
   // Bind val
   UBindVar(OptimizedImageSource, val);
   // Mark it as bypass mode
-  setBypass(val, true);
+  val.setBypass(true);
   // Start a timer.
-  USetTimer(10);
+  USetUpdate(10);
 }
 
 int OptimizedImageSource::update()
@@ -725,9 +725,7 @@ will then be created upon server start-up. \UObject instances can then
 register to this hub by calling %
 \lstinline|URegister (\var{hub-class-name})|. %
 Timers can be attached to \UObjectHub the same way as to \UObject (see
-\autoref{sec:uob:timers}). The kernel will call the \lstinline{update()}
-method of all \UObject before calling the \lstinline{update()} method of the
-hub. A hub instance can be retrieved by calling
+\autoref{sec:uob:timers}). A hub instance can be retrieved by calling
 \lstinline|getUObjectHub (string \var{class-name})|. The hub also holds the
 list of registered UObject in its members attribute.
 
