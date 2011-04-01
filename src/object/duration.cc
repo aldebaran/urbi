@@ -44,20 +44,14 @@ namespace urbi
     {
       proto_add(Float::proto);
 
-      bind(SYMBOL(init),
-           static_cast<void (Duration::*)()>(&Duration::init));
-      bind(SYMBOL(init),
-           static_cast<void (Duration::*)(const Duration::value_type&)>
-             (&Duration::init));
+      BIND(init, init,
+           void (Duration::*)());
+      BIND(init, init,
+           void (Duration::*)(const Duration::value_type&));
 
-#define DECLARE(Name, Cxx)               \
-      bind(SYMBOL_(Name), &Duration::Cxx)
-
-      DECLARE(asPrintable, asPrintable);
-      DECLARE(asString,    as_string);
-      DECLARE(seconds,     seconds);
-
-#undef DECLARE
+      BIND(asPrintable);
+      BIND(asString, as_string);
+      BIND(seconds);
     }
 
     void

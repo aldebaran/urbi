@@ -121,16 +121,13 @@ namespace urbi
     {
       bind_variadic(SYMBOL(split), string_split_bouncer);
 
-      bind(SYMBOL(EQ_EQ),
-           static_cast<bool (self_type::*)(const rObject&) const>
-           (&self_type::operator==));
-
-      BIND(LT_EQ       , operator<=);
-      BIND(PLUS        , plus);
-      BIND(STAR        , star);
-      BIND(asBool      , as_bool);
-      BIND(asFloat     , as_float);
-      BIND(asPrintable , as_printable);
+      BIND(EQ_EQ, operator==, bool, (const rObject&) const);
+      BIND(LT_EQ , operator<=);
+      BIND(PLUS , plus);
+      BIND(STAR , star);
+      BIND(asBool , as_bool);
+      BIND(asFloat , as_float);
+      BIND(asPrintable, as_printable);
       BIND(asString);
       BIND(distance);
       BIND(empty);
@@ -140,25 +137,24 @@ namespace urbi
       BIND(fresh);
       BIND(fromAscii);
       BIND(hash);
-      BIND(isAlnum     , is_alnum);
-      BIND(isAlpha     , is_alpha);
-      BIND(isCntrl     , is_cntrl);
-      BIND(isDigit     , is_digit);
-      BIND(isGraph     , is_graph);
-      BIND(isLower     , is_lower);
-      BIND(isPrint     , is_print);
-      BIND(isPunct     , is_punct);
-      BIND(isSpace     , is_space);
-      BIND(isUpper     , is_upper);
-      BIND(isXdigit    , is_xdigit);
+      BIND(isAlnum, is_alnum);
+      BIND(isAlpha, is_alpha);
+      BIND(isCntrl, is_cntrl);
+      BIND(isDigit, is_digit);
+      BIND(isGraph, is_graph);
+      BIND(isLower, is_lower);
+      BIND(isPrint, is_print);
+      BIND(isPunct, is_punct);
+      BIND(isSpace, is_space);
+      BIND(isUpper, is_upper);
+      BIND(isXdigit, is_xdigit);
       BIND(join);
       BIND(replace);
       BIND(set);
       BIND(size);
       BIND(toAscii);
-      BIND(toLower     , to_lower);
-      BIND(toUpper     , to_upper);
-
+      BIND(toLower, to_lower);
+      BIND(toUpper, to_upper);
 
       setSlot(SYMBOL(SBL_SBR), new Primitive(string_sub_bouncer));
       setSlot(SYMBOL(SBL_SBR_EQ), new Primitive(string_sub_eq_bouncer));

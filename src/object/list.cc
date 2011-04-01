@@ -69,11 +69,8 @@ namespace urbi
       : sizeChanged_(0)
       , contentChanged_(0)
     {
-      bind(SYMBOL(sort),
-           static_cast<List::value_type (List::*)()>(&List::sort));
-      bind(SYMBOL(sort),
-           static_cast<List::value_type (List::*)(rObject)>
-             (&List::sort));
+      BIND(sort, sort, List::value_type (List::*)());
+      BIND(sort, sort, List::value_type (List::*)(rObject));
 
       BIND(asBool, as_bool);
       BIND(asString, as_string);

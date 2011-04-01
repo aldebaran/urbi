@@ -427,11 +427,17 @@ namespace urbi
   LIBPORT_CAT(BIND,                                                     \
               LIBPORT_LIST_SIZE(LIBPORT_LIST(__VA_ARGS__)))(__VA_ARGS__)
 
-# define BIND0(Name)                       \
+# define BIND0(Name)                            \
   BIND1(Name, Name)
 
 # define BIND1(Name, Cxx)                       \
   bind(SYMBOL_(Name), &self_type::Cxx)
+
+# define BIND2(Name, Cxx, Cast)                 \
+  bind(SYMBOL_(Name), static_cast<Cast>(&self_type::Cxx))
+
+# define BIND3(Name, Cxx, Return, Args)                          \
+  BIND2(Name, Cxx, Return (self_type::*)Args)
 
 
 # define BIND_VARIADIC(...)                                             \

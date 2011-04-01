@@ -352,7 +352,6 @@ namespace urbi
 
     URBI_CXX_OBJECT_INIT(Matrix)
     {
-
       BIND_VARIADIC(MINUS, minus);
       BIND_VARIADIC(MINUS_EQ, minus_assign);
       BIND_VARIADIC(PLUS, plus);
@@ -392,13 +391,9 @@ namespace urbi
       bind(libport::Symbol( "[]" ), &Matrix::operator());
       bind(libport::Symbol( "[]=" ), &Matrix::set);
 
-      bind(SYMBOL(EQ_EQ),
-           static_cast<bool (self_type::*)(const rObject&) const>
-           (&self_type::operator==));
-      bind(SYMBOL(size),
-           static_cast<rObject (Matrix::*)() const>(&Matrix::size));
-      bind(SYMBOL(set),
-           static_cast<rMatrix (Matrix::*)(const rList&)>(&Matrix::fromList));
+      BIND(EQ_EQ, operator==, bool, (const rObject&) const);
+      BIND(size, size, rObject, () const);
+      BIND(set, fromList, rMatrix, (const rList&));
       slot_set(SYMBOL(init), new Primitive(&init));
     }
 

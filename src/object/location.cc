@@ -48,17 +48,15 @@ namespace urbi
     URBI_CXX_OBJECT_INIT(Location)
       : loc_()
     {
-      bind(SYMBOL(init),
-           static_cast<void (Location::*)()>(&Location::init));
-      bind(SYMBOL(init),
-           static_cast<void (Location::*)(const Position::value_type&)>
-             (&Location::init));
-      bind(SYMBOL(init),
-           static_cast<void (Location::*)(const Position::value_type&,
-                                          const Position::value_type&)>
-             (&Location::init));
-      bind(SYMBOL(EQ_EQ),
-           (bool (Location::*)(rLocation rhs) const) &Location::operator ==);
+      BIND(init, init,
+           void (Location::*)());
+      BIND(init, init,
+           void (Location::*)(const Position::value_type&));
+      BIND(init, init,
+           void (Location::*)(const Position::value_type&,
+                              const Position::value_type&));
+      BIND(EQ_EQ, operator==,
+           bool (Location::*)(rLocation rhs) const);
 
       // For some reason, cl.exe refuses "&Location::value_type::begin"
       // with error: function cannot access 'yy::location::begin'

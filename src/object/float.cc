@@ -60,19 +60,16 @@ namespace urbi
     URBI_CXX_OBJECT_INIT(Float)
       : value_(0)
     {
-      bind(SYMBOL(PLUS),
-           static_cast<Float::value_type (Float::*)() const>(&Float::plus));
-      bind(SYMBOL(PLUS),
-           static_cast<Float::value_type (Float::*)(Float::value_type) const>
-            (&Float::plus));
-      bind(SYMBOL(MINUS),
-           static_cast<Float::value_type (Float::*)() const>(&Float::minus));
-      bind(SYMBOL(MINUS),
-           static_cast<Float::value_type (Float::*)(Float::value_type) const>
-             (&Float::minus));
-      bind(SYMBOL(EQ_EQ),
-           static_cast<bool (self_type::*)(const rObject&) const>
-                      (&self_type::operator==));
+      BIND(PLUS, plus,
+           Float::value_type (Float::*)() const);
+      BIND(PLUS, plus,
+           Float::value_type (Float::*)(Float::value_type) const);
+      BIND(MINUS, minus,
+           Float::value_type (Float::*)() const);
+      BIND(MINUS, minus,
+           Float::value_type (Float::*)(Float::value_type) const);
+      BIND(EQ_EQ, operator==,
+           bool (self_type::*)(const rObject&) const);
 
       limits = urbi::object::Object::proto->clone();
 

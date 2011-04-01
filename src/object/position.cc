@@ -57,23 +57,16 @@ namespace urbi
     URBI_CXX_OBJECT_INIT(Position)
       : pos_()
     {
-      bind(SYMBOL(init), static_cast<void (Position::*)()>(&Position::init));
-      bind(SYMBOL(init),
-           static_cast<void (Position::*)(const value_type& pos)>
-             (&Position::init));
-      bind(SYMBOL(init),
-           static_cast<void (Position::*)(unsigned from, unsigned to)>
-             (&Position::init));
-      bind(SYMBOL(init),
-           static_cast
-             <void (Position::*)(rObject file, unsigned from, unsigned to)>
-               (&Position::init));
+      BIND(init, init, void, ());
+      BIND(init, init, void, (const value_type& pos));
+      BIND(init, init, void, (unsigned from, unsigned to));
+      BIND(init, init, void, (rObject file, unsigned from, unsigned to));
       typedef bool (Position::*comparison_type)(rPosition rhs) const;
-      bind(SYMBOL(EQ_EQ), (comparison_type) &Position::operator ==);
-      bind(SYMBOL(LT), (comparison_type) &Position::operator <);
+      BIND(EQ_EQ, operator==, comparison_type);
+      BIND(LT, operator<, comparison_type);
 
-      BIND(MINUS,    operator -);
-      BIND(PLUS,     operator +);
+      BIND(MINUS, operator -);
+      BIND(PLUS, operator +);
       BIND(lines);
       BIND(columns);
       BIND(asString, as_string);
@@ -92,10 +85,8 @@ namespace urbi
       // with error: function cannot access 'yy::position::line'
 #define DECLARE(Name)                           \
       bind(SYMBOL_(Name), &yy::position::Name)
-
       DECLARE(line);
       DECLARE(column);
-
 #undef DECLARE
     }
 

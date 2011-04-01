@@ -96,43 +96,29 @@ namespace urbi
 
     URBI_CXX_OBJECT_INIT(Vector)
     {
-      bind(SYMBOL(PLUS),
-          static_cast<rVector (Vector::*)()>(&Vector::operator+));
-      bind(SYMBOL(PLUS),
-           static_cast<rVector (Vector::*)(const rObject&) const>
-           (&Vector::operator+));
+      BIND(PLUS, operator+,
+           rVector (Vector::*)());
+      BIND(PLUS, operator+,
+           rVector (Vector::*)(const rObject&) const);
       /* Something is wrong with the handling of these two overloads.
        * so use a disambiguator.
-      bind(SYMBOL(PLUS),
-           static_cast<rVector (Vector::*)(const rVector&)>
-           (&Vector::operator+));
-      bind(SYMBOL(PLUS),
-           static_cast<rVector (Vector::*)(ufloat)>
-           (&Vector::operator+));
+      BIND(PLUS, operator+,
+           rVector (Vector::*)(const rVector&));
+      BIND(PLUS, operator+,
+           rVector (Vector::*)(ufloat));
            */
-      bind(SYMBOL(MINUS),
-           static_cast<rVector (Vector::*)()>(&Vector::operator-));
-      bind(SYMBOL(MINUS),
-           static_cast<rVector (Vector::*)(const rObject&) const>
-           (&Vector::operator-));
+      BIND(MINUS, operator-,
+           rVector (Vector::*)());
+      BIND(MINUS, operator-,
+           rVector (Vector::*)(const rObject&) const);
       /*
-      bind(SYMBOL(MINUS),
-           static_cast<rVector (Vector::*)(const rVector&)>
-           (&Vector::operator-));
-      bind(SYMBOL(MINUS),
-           static_cast<rVector (Vector::*)(ufloat)>
-           (&Vector::operator-));
+      BIND(MINUS, operator-, rVector (Vector::*)(const rVector&));
+      BIND(MINUS, operator-, rVector (Vector::*)(ufloat));
       */
-      bind(SYMBOL(STAR),
-           static_cast<rVector (Vector::*)(const rObject&) const>
-           (&Vector::operator*));
-      bind(SYMBOL(SLASH),
-           static_cast<rVector (Vector::*)(const rObject&) const>
-           (&Vector::operator/));
+      BIND(STAR, operator*, rVector (Vector::*)(const rObject&) const);
+      BIND(SLASH, operator/, rVector (Vector::*)(const rObject&) const);
 
-      bind(SYMBOL(EQ_EQ),
-           static_cast<bool (self_type::*)(const rObject&) const>
-           (&self_type::operator==));
+      BIND(EQ_EQ, operator==, bool (self_type::*)(const rObject&) const);
 
       BIND(LT, operator<);
       BIND(SBL_SBR, operator[]);

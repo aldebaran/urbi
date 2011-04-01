@@ -59,11 +59,8 @@ namespace urbi
     URBI_CXX_OBJECT_INIT(Lobby)
       : connection_(0)
     {
-      bind(SYMBOL(send),
-           static_cast<void (Lobby::*)(const std::string&)>(&Lobby::send));
-      bind(SYMBOL(send),
-           static_cast<void (Lobby::*)(const std::string&, const std::string&)>
-             (&Lobby::send));
+      BIND(send, send, void (Lobby::*)(const std::string&));
+      BIND(send, send, void (Lobby::*)(const std::string&, const std::string&));
 
       BIND(binaryMode);
       BIND(bytesReceived);

@@ -26,6 +26,8 @@ namespace urbi
     `---------------*/
 
     public:
+      typedef Duration self_type;
+
       Duration(value_type seconds = 0);
       Duration(const boost::posix_time::time_duration& val);
       Duration(rDuration model);
