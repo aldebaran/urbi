@@ -45,21 +45,13 @@ namespace urbi
       typedef void (Event::*emit_type)(const objects_type& args);
       bind_variadic<void, Event>(SYMBOL(emit),
                                  static_cast<emit_type>(&Event::emit));
-      bind(SYMBOL(hasSubscribers), &Event::hasSubscribers);
-      typedef
-        void (Event::*on_event_type)
-        (rExecutable guard, rExecutable enter, rExecutable leave, bool sync);
-      bind(SYMBOL(onEvent), static_cast<on_event_type>(&Event::onEvent));
+      BIND(hasSubscribers);
+      BIND(onEvent, onEvent, on_event_type);
       bind_variadic<void, Event>(SYMBOL(syncEmit), &Event::syncEmit);
       bind_variadic<rEventHandler, Event>(SYMBOL(syncTrigger), &Event::syncTrigger);
       bind_variadic<rEventHandler, Event>(SYMBOL(trigger), &Event::trigger);
 
-#define DECLARE(Name, Cxx)            \
-      bind(SYMBOL_(Name), &Event::Cxx)
-
-      DECLARE(waituntil, waituntil);
-
-#undef DECLARE
+      BIND(waituntil);
     }
 
     Event::~Event()

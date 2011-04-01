@@ -167,26 +167,14 @@ namespace urbi
     {
       proto_add(Tag::proto);
 
-      bind(SYMBOL(init),
-           static_cast<void (Logger::*)()>(&Logger::init));
-      bind(SYMBOL(init),
-           static_cast<void (Logger::*)(libport::debug::category_type)>
-           (&Logger::init));
-      bind(SYMBOL(init),
-           static_cast<void (Logger::*)(libport::debug::category_type, rObject)>
-           (&Logger::init));
+      BIND(init, init, void, ());
+      BIND(init, init, void, (libport::debug::category_type));
+      BIND(init, init, void, (libport::debug::category_type, rObject));
 
-#define DECLARE(Name)                                           \
-      bind(SYMBOL_(Name),                                       \
-           static_cast<Logger* (Logger::*)(const std::string&,  \
-                                           const std::string&)> \
-           (&Logger::Name));                                    \
-      bind(SYMBOL_(Name),                                       \
-           static_cast<Logger* (Logger::*)(const std::string&)> \
-           (&Logger::Name));                                    \
-      bind(SYMBOL_(Name),                                       \
-           static_cast<Logger* (Logger::*)()>                   \
-           (&Logger::Name))
+#define DECLARE(Name)                                                   \
+      BIND(Name, Name, Logger*, (const std::string&, const std::string&)); \
+      BIND(Name, Name, Logger*, (const std::string&));                  \
+      BIND(Name, Name, Logger*, ())
 
       DECLARE(debug);
       DECLARE(dump);
@@ -194,7 +182,6 @@ namespace urbi
       DECLARE(log);
       DECLARE(trace);
       DECLARE(warn);
-
 #undef DECLARE
 
       bind(libport::Symbol( "<<" ), &Logger::operator<<);

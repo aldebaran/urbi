@@ -68,10 +68,7 @@ namespace urbi
       proto_add(Executable::proto);
       proto_remove(Object::proto);
       bind_variadic<rObject, Code>(SYMBOL(apply), &Code::apply);
-      bind(SYMBOL(EQ_EQ),
-           static_cast<bool (self_type::*)(const rObject&) const>
-           (&self_type::operator==));
-
+      BIND(EQ_EQ, operator==, bool, (const rObject&) const);
       BIND(asString,   as_string);
       BIND(bodyString, body_string);
     }

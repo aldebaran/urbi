@@ -38,14 +38,7 @@ namespace urbi
     {
       BIND(init);
       BIND(data, data_get);
-
-# define OPERATOR_PCT(Type)                                       \
-      static_cast<std::string (Formatter::*)(const Type&) const>  \
-      (&Formatter::operator%)                                     \
-
-      bind(SYMBOL(PERCENT), OPERATOR_PCT(rObject));
-
-# undef OPERATOR_PCT
+      BIND(PERCENT, operator%, std::string, (const rObject&) const);
     }
 
     void

@@ -31,6 +31,8 @@ namespace urbi
       friend class EventHandler;
 
     public:
+      typedef Event self_type;
+
       Event();
       Event(rEvent model);
       Event(rEvent model, rList payload);
@@ -65,7 +67,11 @@ namespace urbi
       /// C++ callback registration.
       Subscription onEvent(const callback_type& cb);
       /// Urbi callback registration.
-      void onEvent(rExecutable guard, rExecutable enter, rExecutable leave = 0, bool sync = false);
+      void onEvent(rExecutable guard,
+                   rExecutable enter, rExecutable leave = 0, bool sync = false);
+      typedef
+        void (Event::*on_event_type)
+        (rExecutable guard, rExecutable enter, rExecutable leave, bool sync);
 
       /// Synchronous emission.
       void syncEmit(const objects_type& args);

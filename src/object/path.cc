@@ -79,11 +79,8 @@ namespace urbi
     {
       bind_variadic(SYMBOL(SLASH), concat_bouncer);
 
-      bind(SYMBOL(EQ_EQ),
-           static_cast<bool (Path::self_type::*)(const rObject&) const>
-             (&Path::self_type::operator==));
-
-      BIND(LT_EQ,       operator<=);
+      BIND(EQ_EQ, operator==, bool, (const rObject&) const);
+      BIND(LT_EQ, operator<=);
       BIND(absolute);
       BIND(asList, as_list);
       BIND(asPrintable, as_printable);

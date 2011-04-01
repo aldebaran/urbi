@@ -423,6 +423,36 @@ namespace urbi
   } // namespace object
 }
 
+/*-------.
+| BIND.  |
+`-------*/
+
+// n-arity macro to bind functions.
+//
+// For example:
+//
+// BIND(foo)
+//   Binds urbiscript name foo to C++ function foo.
+//
+//      BIND(init);
+//
+// BIND(foo, foo_impl)
+//   Same but C++ function foo_impl.
+//
+//      BIND(data, data_get);
+//
+// BIND(foo, foo_impl, foo_type)
+//   Same but static_cast C++ function foo_impl to foo_type (to
+//   resolve overloading).
+//
+//      BIND(PERCENT, operator%, std::string(self_type::*)(const Type&) const);
+//
+// BIND(foo, foo_impl, foo_return, foo_args)
+//   Same byt cast foo_impl as a function with foo_args (possibly
+//   ending with "const") and returning type foo_return.
+//
+//        BIND(PERCENT, operator%, std::string, (const Type&) const);
+//        BIND(dump, dump, Logger*, ())
 # define BIND(...)                                                      \
   LIBPORT_CAT(BIND,                                                     \
               LIBPORT_LIST_SIZE(LIBPORT_LIST(__VA_ARGS__)))(__VA_ARGS__)
@@ -439,6 +469,10 @@ namespace urbi
 # define BIND3(Name, Cxx, Return, Args)                          \
   BIND2(Name, Cxx, Return (self_type::*)Args)
 
+
+/*----------------.
+| BIND_VARIADIC.  |
+`----------------*/
 
 # define BIND_VARIADIC(...)                                             \
   LIBPORT_CAT(BIND_VARIADIC,                                            \

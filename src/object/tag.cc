@@ -53,15 +53,15 @@ namespace urbi
     URBI_CXX_OBJECT_INIT(Tag)
       : value_(new sched::Tag(""))
     {
-#define DECLARE(Name, Cast)                                             \
-      bind(SYMBOL_(Name), static_cast<void (Tag::*)(Cast)>(&Tag::Name))
+#define DECLARE(Name, Arg)                      \
+      BIND(Name, Name, void, (Arg))
 
-      DECLARE(init,                 );
+      DECLARE(init, );
       DECLARE(init,  const std::string&);
-      DECLARE(stop,                 );
-      DECLARE(stop,  rObject        );
-      DECLARE(block,                );
-      DECLARE(block, rObject        );
+      DECLARE(stop, );
+      DECLARE(stop,  rObject);
+      DECLARE(block, );
+      DECLARE(block, rObject);
 
 #undef DECLARE
 
