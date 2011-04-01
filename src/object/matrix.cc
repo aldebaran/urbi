@@ -11,29 +11,20 @@
 #include <urbi/object/matrix.hh>
 #include <boost/numeric/ublas/lu.hpp>
 
-
-namespace boost
-{
-  namespace numeric
-  {
-    namespace ublas
-    {
-      template<class T>
-      bool operator==(const matrix<T>& e1, const matrix<T>& e2)
-      {
-        return
-          (e1.size1() == e2.size1()
-           && e1.size2() == e2.size2()
-           && norm_inf (e1 - e2) == 0);
-      }
-    }
-  }
-}
-
 namespace urbi
 {
   namespace object
   {
+
+    bool
+    operator==(const Matrix::value_type& e1, const Matrix::value_type& e2)
+    {
+      return
+        (e1.size1() == e2.size1()
+         && e1.size2() == e2.size2()
+         && norm_inf (e1 - e2) == 0);
+    }
+
     Matrix::Matrix()
       : value_()
     {

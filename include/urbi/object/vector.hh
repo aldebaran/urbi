@@ -100,7 +100,11 @@ namespace urbi
       value_type value_;
       URBI_CXX_OBJECT(Vector, CxxObject);
     };
-  }
+
+    URBI_SDK_API
+    bool
+    operator==(const Vector::value_type& e1, const Vector::value_type& e2);
+  };
 }
 
 # include <urbi/object/vector.hxx>

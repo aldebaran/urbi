@@ -133,8 +133,13 @@ namespace urbi
       value_type value_;
       URBI_CXX_OBJECT(Matrix, CxxObject);
     };
-  }
-}
+
+    URBI_SDK_API
+    bool
+    operator==(const Matrix::value_type& e1, const Matrix::value_type& e2);
+
+  } // namespace object
+} // namespace urbi
 
 # include <urbi/object/matrix.hxx>
 
