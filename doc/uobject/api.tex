@@ -228,6 +228,8 @@ The following types for arguments and return value are supported:
 \item \lstinline{urbi::UValue} or any of its subtypes (\UBinary, \UList...).
 \item \lstinline{std::list}, \lstinline{std::vector} or
 \lstinline{boost::unordered_map} of the above types.
+\item \lstinline{UObject*}. Just pass the \UObject from \us.
+\item \lstinline{UVar&}. Pass \lstinline{myobject.&myuvar} from \us.
 \end{itemize}
 
 The procedure to register new types to this system is explained in
@@ -713,6 +715,22 @@ void BinaryProcessor::onData(UVar& v)
 
 Typing \lstinline{OptimizedImageSource.val} in \us will wait for the next
 update from OptimizedImageSource::update and copy the data at this point.
+
+\section{Direct communication between UObjects}
+
+For modularity reasons, all interactions between \lstinline{UObjects} should
+go through the various middleware communication mechanisms, mainly
+\lstinline{InputPort} and \lstinline{UNotifyChange}. But it is possible to
+access directly the C++ instance of an \UObject :
+
+\begin{itemize}
+\item by binding a function taking a \lstinline{UObject*} as argument, and
+calling it from \us, passing the \UObject itself.
+\item by calling the C++ function \lstinline{getUObject(name)}. \lstinline{name}
+must be the canonical \UObject name, passed to your constructor, and stored in
+the \lstinline{__name} member.
+\end{itemize}
+
 
 \section{Using hubs to group objects}
 
