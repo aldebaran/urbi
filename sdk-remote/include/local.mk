@@ -91,5 +91,6 @@ $(srcdir)/$(ucallbacks_hh): $(ucallbacks_hh).template include/template_autogen.p
 ## urbi/revision-stub.hh.  ##
 ## ----------------------- ##
 
+BUILT_SOURCES += include/urbi/revision-stub.hh
 include/urbi/revision-stub.hh: $(VERSIONIFY)
 	$(AM_V_GEN)$(VERSIONIFY_RUN) --prefix=URBI_SDK_INFO_ --stub=$@

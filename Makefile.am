@@ -25,7 +25,7 @@ include build-aux/make/build-farm.mk
 BOOTSTRAP_CFG = .bootstrap.cfg
 include build-aux/make/bootstrap.mk
 
-ACLOCAL_AMFLAGS = -I build-aux/m4 -I build-aux -I sdk-remote/sdk -I tests/m4
+ACLOCAL_AMFLAGS = -I build-aux/m4 -I sdk-remote/sdk -I tests/m4
 
 VERSIONIFYFLAGS +=					\
   --prefix=URBI_SDK_					\
