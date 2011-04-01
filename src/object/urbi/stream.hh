@@ -29,6 +29,7 @@ namespace urbi
       `-----------------------------*/
 
     public:
+      typedef Stream self_type;
       Stream(int fd, bool own);
       Stream(rStream stream);
       ~Stream();

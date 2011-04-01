@@ -19,10 +19,12 @@ namespace urbi
 {
   namespace object
   {
-    class URBI_SDK_API IoService: public CxxObject,
-      public boost::asio::io_service
+    class URBI_SDK_API IoService
+      : public CxxObject
+      , public boost::asio::io_service
     {
-      public:
+    public:
+      typedef IoService self_type;
       IoService();
       IoService(rIoService model);
       void pollFor(double duration);
@@ -30,7 +32,7 @@ namespace urbi
       void poll();
       rSocket makeSocket();
       rServer makeServer();
-      private:
+    private:
       URBI_CXX_OBJECT(IoService, CxxObject);
     };
   }

@@ -26,6 +26,7 @@ namespace urbi
     class URBI_MODULE_API Logger: public Tag
     {
     public:
+      typedef Logger self_type;
       typedef libport::debug::category_type category_type;
       typedef libport::Debug::types types;
       typedef libport::Debug::levels levels;

@@ -41,15 +41,11 @@ namespace urbi
     {
       bind(libport::Symbol( "[]" ), &Regexp::operator[]);
 
-# define DECLARE(Urbi, Cxx)            \
-      bind(SYMBOL_(Urbi), &Regexp::Cxx)
-
-      DECLARE(asPrintable, as_printable);
-      DECLARE(asString,    as_string);
-      DECLARE(init,        init);
-      DECLARE(match,       match);
-      DECLARE(matches,     matches);
-# undef DECLARE
+      BIND(asPrintable, as_printable);
+      BIND(asString,    as_string);
+      BIND(init);
+      BIND(match);
+      BIND(matches);
     }
 
     std::string

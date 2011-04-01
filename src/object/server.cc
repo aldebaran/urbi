@@ -46,16 +46,11 @@ namespace urbi
       : libport::Socket(*object::Socket::get_default_io_service().get())
       , io_service_(object::Socket::get_default_io_service())
     {
-#define DECLARE(Name, Cxx)             \
-      bind(SYMBOL_(Name), &Server::Cxx)
-
-      DECLARE(getIoService, getIoService);
-      DECLARE(host,         host);
-      DECLARE(listen,       listen);
-      DECLARE(port,         port);
-      DECLARE(sockets,      sockets);
-
-#undef DECLARE
+      BIND(getIoService);
+      BIND(host);
+      BIND(listen);
+      BIND(port);
+      BIND(sockets);
     }
 
     void

@@ -28,6 +28,7 @@ namespace urbi
       `-----------------------------*/
 
     public:
+      typedef InputStream self_type;
       InputStream(int fd, bool own);
       InputStream(rInputStream stream);
       ~InputStream();

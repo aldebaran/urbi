@@ -93,7 +93,7 @@ namespace urbi
 
     URBI_CXX_OBJECT_INIT(Stream)
     {
-      bind(SYMBOL(close), &Stream::close);
+      BIND(close);
     }
   }
 }

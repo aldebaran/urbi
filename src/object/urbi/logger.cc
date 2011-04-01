@@ -197,20 +197,10 @@ namespace urbi
 
 #undef DECLARE
 
-#define DECLARE(Name, Cxx)                      \
-      bind(SYMBOL_(Name), &Logger::Cxx)
-
-      DECLARE(asPrintable, as_printable);
-#undef DECLARE
-
       bind(libport::Symbol( "<<" ), &Logger::operator<<);
-
-#define DECLARE(Name)                           \
-      bind(SYMBOL_(Name), &Logger::Name)
-
-      DECLARE(onEnter);
-      DECLARE(onLeave);
-#undef DECLARE
+      BIND(asPrintable, as_printable);
+      BIND(onEnter);
+      BIND(onLeave);
     }
 
     URBI_ENUM_REGISTER(Logger::levels::Level, Global.Logger.Levels,

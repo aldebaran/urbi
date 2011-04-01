@@ -28,6 +28,7 @@ namespace urbi
     `---------------*/
 
     public:
+      typedef Position self_type;
       typedef ::yy::position value_type;
       Position();
       Position(const value_type& pos);

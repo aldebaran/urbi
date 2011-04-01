@@ -72,13 +72,8 @@ namespace urbi
            static_cast<bool (self_type::*)(const rObject&) const>
            (&self_type::operator==));
 
-#define DECLARE(Name, Cxx)           \
-      bind(SYMBOL_(Name), &Code::Cxx)
-
-      DECLARE(asString,   as_string);
-      DECLARE(bodyString, body_string);
-
-#undef DECLARE
+      BIND(asString,   as_string);
+      BIND(bodyString, body_string);
     }
 
 

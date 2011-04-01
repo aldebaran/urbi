@@ -40,15 +40,10 @@ namespace urbi
 
     URBI_CXX_OBJECT_INIT(Barrier)
     {
-#define DECLARE(Name, Cxx)              \
-      bind(SYMBOL_(Name), &Barrier::Cxx)
-
-      DECLARE(new,       _new);
-      DECLARE(signal,    signal);
-      DECLARE(signalAll, signalAll);
-      DECLARE(wait,      wait);
-
-#undef DECLARE
+      BIND(new, _new);
+      BIND(signal);
+      BIND(signalAll);
+      BIND(wait);
     }
 
     struct BarrierException : public sched::SchedulerException

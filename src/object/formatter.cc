@@ -36,13 +36,8 @@ namespace urbi
 
     URBI_CXX_OBJECT_INIT(Formatter)
     {
-# define DECLARE(Urbi, Cxx)               \
-      bind(SYMBOL_(Urbi), &Formatter::Cxx)
-
-      DECLARE(init, init);
-      DECLARE(data, data_get);
-
-# undef DECLARE
+      BIND(init);
+      BIND(data, data_get);
 
 # define OPERATOR_PCT(Type)                                       \
       static_cast<std::string (Formatter::*)(const Type&) const>  \

@@ -29,6 +29,7 @@ namespace urbi
     `---------------*/
 
     public:
+      typedef Location self_type;
       typedef ::ast::loc value_type;
       Location();
       Location(const value_type& loc);

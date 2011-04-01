@@ -31,6 +31,7 @@ namespace urbi
     class FormatInfo: public CxxObject
     {
     public:
+      typedef FormatInfo self_type;
       FormatInfo();
       FormatInfo(rFormatInfo model);
 

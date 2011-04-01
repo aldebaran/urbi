@@ -29,18 +29,22 @@ namespace urbi
     class UValue: public CxxObject
     {
     public:
+      typedef UValue self_type;
+
       UValue();
       UValue(libport::intrusive_ptr<UValue> model);
       // Keep a reference to v.
       UValue(const urbi::UValue& v, bool bypass=false);
       UValue(rObject v);
       ~UValue();
+
       void put(const urbi::UValue& v, bool bypass=false);
       void put(rObject v);
       rObject extract();
-      std::string extractAsToplevelPrintable();
+      std::string extractAsToplevelPrintable() const;
       void invalidate();
       const urbi::UValue& value_get();
+
     private:
       urbi::UValue value_;
       /// False if the value was constructed with copy=false.

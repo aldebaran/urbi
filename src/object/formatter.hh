@@ -30,6 +30,7 @@ namespace urbi
     class Formatter: public CxxObject
     {
     public:
+      typedef Formatter self_type;
       Formatter();
       Formatter(rFormatter model);
 

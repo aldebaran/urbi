@@ -47,14 +47,9 @@ namespace urbi
       // Spurious spaces to avoid static check on Symbol uses.
       bind(libport::Symbol( "<<" ), &OutputStream::put);
 
-# define DECLARE(Name, Cxx)                     \
-      bind(SYMBOL_(Name), &OutputStream::Cxx)
-
-      DECLARE(flush, flush);
-      DECLARE(init,  init);
-      DECLARE(put,   putByte);
-
-# undef DECLARE
+      BIND(flush);
+      BIND(init);
+      BIND(put, putByte);
     }
 
     OutputStream::~OutputStream()

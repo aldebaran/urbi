@@ -23,13 +23,18 @@ namespace urbi
   namespace object
   {
 
-    class URBI_SDK_API Socket: public CxxObject, public libport::Socket
+    class URBI_SDK_API Socket
+      : public CxxObject
+      , public libport::Socket
     {
-      public:
+    public:
+      typedef Socket self_type;
+
       Socket();
       Socket(rServer server);
       Socket(rSocket model);
       Socket(rIoService io_service);
+
       void connect(const std::string& host, const std::string& port);
       void connect(const std::string& host, unsigned port);
       // Default argument values is handled with overloads for bound functions.
@@ -52,7 +57,8 @@ namespace urbi
       unsigned short localPort() const;
       rIoService getIoService() const;
       static rIoService get_default_io_service();
-      private:
+
+    private:
       void slots_create();
       rServer server_;
       rObject disconnect_;

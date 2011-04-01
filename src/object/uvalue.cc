@@ -47,15 +47,9 @@ namespace urbi
 
     URBI_CXX_OBJECT_INIT(UValue)
     {
-#define DECLARE(Name)                   \
-      bind(SYMBOL_(Name), &UValue::Name)
-
-      DECLARE(extract);
-      DECLARE(extractAsToplevelPrintable);
-      DECLARE(invalidate);
-
-#undef DECLARE
-
+      BIND(extract);
+      BIND(extractAsToplevelPrintable);
+      BIND(invalidate);
       bind(SYMBOL(put), (void (UValue::*)(rObject))&UValue::put);
     }
 
@@ -75,10 +69,11 @@ namespace urbi
     }
 
     std::string
-    UValue::extractAsToplevelPrintable()
+    UValue::extractAsToplevelPrintable() const
     {
       if (value_.type == urbi::DATA_VOID && cache_)
-      { // Someone used put, cache_ is more recent
+      {
+        // Someone used put, cache_ is more recent
         return cache_->call("asTopLevelPrintable")->as<String>()->value_get();
       }
       std::stringstream s;

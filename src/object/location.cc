@@ -65,13 +65,8 @@ namespace urbi
       bind(SYMBOL(begin), &yy::location::begin);
       bind(SYMBOL(end),   &yy::location::end);
 
-#define DECLARE(Name, Cxx)                             \
-      bind(SYMBOL_(Name), &Location::Cxx)
-
-      DECLARE(asString,         as_string);
-      DECLARE(isSystemLocation, is_system_location);
-
-#undef DECLARE
+      BIND(asString,         as_string);
+      BIND(isSystemLocation, is_system_location);
     }
 
     void

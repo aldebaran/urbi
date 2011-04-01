@@ -25,6 +25,7 @@ namespace urbi
       `-----------------------------*/
 
     public:
+      typedef OutputStream self_type;
       OutputStream(int fd, bool own);
       OutputStream(rOutputStream stream);
       ~OutputStream();

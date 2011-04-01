@@ -35,17 +35,13 @@ namespace urbi
 
     URBI_CXX_OBJECT_INIT(IoService)
     {
-#define DECLARE(Name, Cxx)                \
-      bind(SYMBOL_(Name), &IoService::Cxx)
-
-      DECLARE(pollFor,    pollFor);
-      DECLARE(pollOneFor, pollOneFor);
-      DECLARE(poll,       poll);
-      DECLARE(makeServer, makeServer);
-      DECLARE(makeSocket, makeSocket);
-
-#undef DECLARE
+      BIND(pollFor);
+      BIND(pollOneFor);
+      BIND(poll);
+      BIND(makeServer);
+      BIND(makeSocket);
     }
+
     void IoService::pollFor(double d)
     {
       libport::pollFor(static_cast<useconds_t>(d*1000000.0), false, *this);

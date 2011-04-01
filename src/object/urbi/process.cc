@@ -101,19 +101,15 @@ namespace urbi
     {
       argv_ << binary_;
 
-#  define DECLARE(Name, Function)             \
-      bind(SYMBOL_(Name), &Process::Function)
-
-      DECLARE(asString, as_string);
-      DECLARE(done,     done);
-      DECLARE(init,     init);
-      DECLARE(join,     join);
-      DECLARE(run,      run);
-      DECLARE(runTo,    runTo);
-      DECLARE(kill,     kill);
-      DECLARE(status,   status);
-      DECLARE(name,     name_);
-#  undef DECLARE
+      BIND(asString, as_string);
+      BIND(done);
+      BIND(init);
+      BIND(join);
+      BIND(run);
+      BIND(runTo);
+      BIND(kill);
+      BIND(status);
+      BIND(name, name_);
     }
 
     void

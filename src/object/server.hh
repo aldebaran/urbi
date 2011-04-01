@@ -18,12 +18,17 @@ namespace urbi
 {
   namespace object
   {
-    class URBI_SDK_API Server: public CxxObject, public libport::Socket
+    class URBI_SDK_API Server
+      : public CxxObject
+      , public libport::Socket
     {
     public:
+      typedef Server self_type;
+
       Server();
       Server(rServer model);
       Server(rIoService service);
+
       void listen(const std::string& host, const std::string& port);
       void socket_ready(rSocket socket);
       unsigned short port() const;
@@ -31,6 +36,7 @@ namespace urbi
       typedef std::vector<rSocket> sockets_type;
       const sockets_type& sockets() const;
       rIoService getIoService() const;
+
     private:
       Socket* make_socket();
       rObject connection_;

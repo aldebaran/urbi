@@ -72,16 +72,11 @@ namespace urbi
       bind(SYMBOL(EQ_EQ), (comparison_type) &Position::operator ==);
       bind(SYMBOL(LT), (comparison_type) &Position::operator <);
 
-#define DECLARE(Name, Cxx)               \
-      bind(SYMBOL_(Name), &Position::Cxx)
-
-      DECLARE(MINUS,    operator -);
-      DECLARE(PLUS,     operator +);
-      DECLARE(lines,    lines);
-      DECLARE(columns,  columns);
-      DECLARE(asString, as_string);
-
-#undef DECLARE
+      BIND(MINUS,    operator -);
+      BIND(PLUS,     operator +);
+      BIND(lines);
+      BIND(columns);
+      BIND(asString, as_string);
 
 #define DECLARE(Name)                                     \
       bind(SYMBOL_(Name), &Position::Name ##_get);        \

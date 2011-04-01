@@ -76,9 +76,6 @@ namespace urbi
     {
       io_service_ = get_default_io_service();
 
-#define DECLARE(Name)                           \
-      bind(SYMBOL_(Name), &Socket::Name)
-
       // Uncomment the line below when overloading works.
       //bind(SYMBOL(connectSerial),
       //     (void (Socket::*)(const std::string&, unsigned int))
@@ -86,20 +83,18 @@ namespace urbi
       bind(SYMBOL(connectSerial),
            (void (Socket::*)(const std::string&, unsigned int, bool))
              &Socket::connectSerial);
-      DECLARE(disconnect);
-      DECLARE(host);
-      DECLARE(init);
-      DECLARE(isConnected);
-      DECLARE(localHost);
-      DECLARE(localPort);
-      DECLARE(poll);
-      DECLARE(port);
-      DECLARE(read);
-      DECLARE(write);
-      DECLARE(syncWrite);
-      DECLARE(getIoService);
-
-#undef DECLARE
+      BIND(disconnect);
+      BIND(host);
+      BIND(init);
+      BIND(isConnected);
+      BIND(localHost);
+      BIND(localPort);
+      BIND(poll);
+      BIND(port);
+      BIND(read);
+      BIND(write);
+      BIND(syncWrite);
+      BIND(getIoService);
 
       setSlot(SYMBOL(connect), new Primitive(socket_connect_overload));
     }

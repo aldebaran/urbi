@@ -28,6 +28,7 @@ namespace urbi
       `-----------------------------*/
 
     public:
+      typedef Process self_type;
       typedef std::vector<std::string> arguments_type;
       Process(const std::string& binary,
               const arguments_type& argv);
