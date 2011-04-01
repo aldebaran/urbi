@@ -1,2 +1,0 @@
-all:
-	umake -o test . 
