@@ -11,7 +11,7 @@
 m4_pattern_forbid([^(ACX|AX|TC|URBI)_])dnl
 
 AC_PREREQ([2.60])
-AC_INIT([Urbi SDK], [2.7.1],
+AC_INIT([Urbi SDK], [2.8],
         [kernel-bugs@lists.gostai.com], [urbi-sdk])
 URBI_PACKAGE_VERSION
 URBI_PACKAGE_COPYRIGHT([Gostai S.A.S.], [2004-2011])
