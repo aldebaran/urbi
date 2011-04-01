@@ -34,6 +34,8 @@ namespace urbi
     `---------------*/
 
     public:
+      typedef Date self_type;
+
       typedef boost::posix_time::ptime value_type;
       typedef boost::posix_time::time_duration duration_type;
       typedef boost::posix_time::time_duration::hour_type hour_type;

@@ -81,18 +81,12 @@ namespace urbi
 
       bind(SYMBOL(LT), (bool (Date::*)(rDate rhs) const)&Date::operator <);
 
-#define DECLARE(Name, Cxx)           \
-      bind(SYMBOL_(Name), &Date::Cxx)
-
-      DECLARE(EQ_EQ,    operator ==);
-      DECLARE(PLUS,     operator +);
-      DECLARE(asFloat,  as_float);
-      DECLARE(asString, as_string);
-      DECLARE(epoch,    epoch);
-      DECLARE(now,      now);
-
-#undef DECLARE
-
+      BIND(EQ_EQ, operator ==);
+      BIND(PLUS, operator +);
+      BIND(asFloat, as_float);
+      BIND(asString, as_string);
+      BIND(epoch);
+      BIND(now);
       bind_variadic(SYMBOL(init), &Date::init);
     }
 

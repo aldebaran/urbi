@@ -226,28 +226,23 @@ namespace urbi
     URBI_CXX_OBJECT_INIT(Directory)
       : path_(new Path())
     {
-#define DECLARE(Name, Cxx)                \
-      bind(SYMBOL_(Name), &Directory::Cxx)
-
-      DECLARE(asList,           list<&directory_mk_path>);
-      DECLARE(asPath,           as_path);
-      DECLARE(asPrintable,      as_printable);
-      DECLARE(asString,         as_string);
-      DECLARE(clear,            clear);
-      DECLARE(current,          current);
-      DECLARE(content,          list<&directory_mk_string>);
-      DECLARE(create,           create);
-      DECLARE(createAll,        create_all);
-      DECLARE(basename,         basename);
-      DECLARE(empty,            empty);
-      DECLARE(exists,           exists);
-      DECLARE(lastModifiedDate, last_modified_date);
-      DECLARE(parent,           parent);
-      DECLARE(remove,           remove);
-      DECLARE(removeAll_,       remove_all);
-      DECLARE(rename,           rename);
-
-#undef DECLARE
+      BIND(asList, list<&directory_mk_path>);
+      BIND(asPath, as_path);
+      BIND(asPrintable, as_printable);
+      BIND(asString, as_string);
+      BIND(clear);
+      BIND(current);
+      BIND(content, list<&directory_mk_string>);
+      BIND(create);
+      BIND(createAll, create_all);
+      BIND(basename);
+      BIND(empty);
+      BIND(exists);
+      BIND(lastModifiedDate, last_modified_date);
+      BIND(parent);
+      BIND(remove);
+      BIND(removeAll_, remove_all);
+      BIND(rename);
 
       setSlot(SYMBOL(init),   new Primitive(&directory_init_bouncer));
     }

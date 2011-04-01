@@ -28,6 +28,7 @@ namespace urbi
 
     public:
 
+      typedef Directory self_type;
       typedef rPath value_type;
       value_type value_get();
 

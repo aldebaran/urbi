@@ -65,21 +65,15 @@ namespace urbi
            static_cast<void (Lobby::*)(const std::string&, const std::string&)>
              (&Lobby::send));
 
-#define DECLARE(Name)                  \
-      bind(SYMBOL_(Name), &Lobby::Name)
-
-      DECLARE(binaryMode);
-      DECLARE(bytesSent);
-      DECLARE(bytesReceived);
-      DECLARE(create);
-      DECLARE(lobby);
-      DECLARE(quit);
-      DECLARE(receive);
-      DECLARE(write);
-
-#undef DECLARE
-
-      bind(SYMBOL(instances), &Lobby::instances_get);
+      BIND(binaryMode);
+      BIND(bytesReceived);
+      BIND(bytesSent);
+      BIND(create);
+      BIND(instances, instances_get);
+      BIND(lobby);
+      BIND(quit);
+      BIND(receive);
+      BIND(write);
     }
 
     size_t

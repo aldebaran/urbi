@@ -125,44 +125,40 @@ namespace urbi
            static_cast<bool (self_type::*)(const rObject&) const>
            (&self_type::operator==));
 
-#define DECLARE(Name, Function)                 \
-      bind(SYMBOL_(Name), &String::Function)
-
-      DECLARE(LT_EQ       , operator<=);
-      DECLARE(PLUS        , plus);
-      DECLARE(STAR        , star);
-      DECLARE(asBool      , as_bool);
-      DECLARE(asFloat     , as_float);
-      DECLARE(asPrintable , as_printable);
-      DECLARE(asString    , asString);
-      DECLARE(distance    , distance);
-      DECLARE(empty       , empty);
+      BIND(LT_EQ       , operator<=);
+      BIND(PLUS        , plus);
+      BIND(STAR        , star);
+      BIND(asBool      , as_bool);
+      BIND(asFloat     , as_float);
+      BIND(asPrintable , as_printable);
+      BIND(asString);
+      BIND(distance);
+      BIND(empty);
 #if !defined COMPILATION_MODE_SPACE
-      DECLARE(format      , format);
+      BIND(format);
 #endif
-      DECLARE(fresh       , fresh);
-      DECLARE(fromAscii   , fromAscii);
-      DECLARE(hash        , hash);
-      DECLARE(isAlnum     , is_alnum);
-      DECLARE(isAlpha     , is_alpha);
-      DECLARE(isCntrl     , is_cntrl);
-      DECLARE(isDigit     , is_digit);
-      DECLARE(isGraph     , is_graph);
-      DECLARE(isLower     , is_lower);
-      DECLARE(isPrint     , is_print);
-      DECLARE(isPunct     , is_punct);
-      DECLARE(isSpace     , is_space);
-      DECLARE(isUpper     , is_upper);
-      DECLARE(isXdigit    , is_xdigit);
-      DECLARE(join        , join);
-      DECLARE(replace     , replace);
-      DECLARE(set         , set);
-      DECLARE(size        , size);
-      DECLARE(toAscii     , toAscii);
-      DECLARE(toLower     , to_lower);
-      DECLARE(toUpper     , to_upper);
+      BIND(fresh);
+      BIND(fromAscii);
+      BIND(hash);
+      BIND(isAlnum     , is_alnum);
+      BIND(isAlpha     , is_alpha);
+      BIND(isCntrl     , is_cntrl);
+      BIND(isDigit     , is_digit);
+      BIND(isGraph     , is_graph);
+      BIND(isLower     , is_lower);
+      BIND(isPrint     , is_print);
+      BIND(isPunct     , is_punct);
+      BIND(isSpace     , is_space);
+      BIND(isUpper     , is_upper);
+      BIND(isXdigit    , is_xdigit);
+      BIND(join);
+      BIND(replace);
+      BIND(set);
+      BIND(size);
+      BIND(toAscii);
+      BIND(toLower     , to_lower);
+      BIND(toUpper     , to_upper);
 
-#undef DECLARE
 
       setSlot(SYMBOL(SBL_SBR), new Primitive(string_sub_bouncer));
       setSlot(SYMBOL(SBL_SBR_EQ), new Primitive(string_sub_eq_bouncer));

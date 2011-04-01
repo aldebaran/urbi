@@ -21,10 +21,12 @@ namespace urbi
   {
     class URBI_SDK_API File: public CxxObject
     {
+    public:
+      typedef File self_type;
 
-    /*------------.
-    | C++ methods |
-    `------------*/
+    /*--------------.
+    | C++ methods.  |
+    `--------------*/
 
     public:
 
@@ -32,9 +34,9 @@ namespace urbi
       value_type value_get();
 
 
-    /*-------------.
-    | Urbi methods |
-    `-------------*/
+    /*---------------.
+    | Urbi methods.  |
+    `---------------*/
 
     public:
 
@@ -64,9 +66,9 @@ namespace urbi
       rObject content() const;
 
 
-    /*--------.
-    | Details |
-    `--------*/
+    /*----------.
+    | Details.  |
+    `----------*/
 
     private:
       value_type path_;

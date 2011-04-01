@@ -20,34 +20,37 @@ namespace urbi
 {
   namespace object
   {
-    /** class representing a link between two slots.
+    /** A link between two slots.
      *
      *  See uobject.u for the urbi part.
      */
     class UConnection: public CxxObject
     {
     public:
+      typedef UConnection self_type;
+
       UConnection();
       UConnection(libport::intrusive_ptr<UConnection> model);
+
       /// Call the connection, returns false if it must be unregistered.
       bool call(runner::Job& r, rObject self);
-      /// Source UVar name (cannot take rObject)
+      /// Source UVar name (cannot take rObject).
       std::string source;
-      /// Target UVar name (cannot take rObject)
+      /// Target UVar name (cannot take rObject).
       std::string target;
-      /// Do not trigger if !enabled
+      /// Trigger only if enabled.
       bool enabled;
-      /// Do not call faster than this period in seconds
+      /// Do not call faster than this period in seconds.
       double minInterval;
-      /// Time of last call
+      /// Time of last call.
       double lastCall;
-      /// Number of calls made
+      /// Number of calls made.
       long callCount;
-      /// Total callback processing time
+      /// Total callback processing time.
       double totalCallTime;
-      /// Min and max call time
+      /// Min and max call time.
       double minCallTime, maxCallTime;
-      /// Call asynchronously
+      /// Call asynchronously.
       bool asynchronous;
     private:
       rObject doCall(runner::Job& r, rObject self, rObject target);

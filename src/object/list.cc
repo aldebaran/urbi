@@ -75,37 +75,32 @@ namespace urbi
            static_cast<List::value_type (List::*)(rObject)>
              (&List::sort));
 
-#define DECLARE(Name, Function)                 \
-      bind(SYMBOL_(Name), &List::Function)
-
-      DECLARE(asBool,         as_bool         );
-      DECLARE(asString,       as_string       );
-      DECLARE(back,           back            );
-      DECLARE(clear,          clear           );
-      DECLARE(each,           each            );
-      DECLARE(each_AMPERSAND, each_and        );
-      DECLARE(each_PIPE,      each_pipe       );
-      DECLARE(eachi,          eachi           );
-      DECLARE(empty,          empty           );
-      DECLARE(front,          front           );
-      DECLARE(hash,           hash            );
-      DECLARE(SBL_SBR,        operator[]      );
-      DECLARE(SBL_SBR_EQ,     set             );
-      DECLARE(PLUS,           operator+       );
-      DECLARE(PLUS_EQ,        operator+=      );
-      DECLARE(EQ_EQ,          operator==      );
-      DECLARE(insert,         insert          );
-      DECLARE(insertBack,     insertBack      );
-      DECLARE(insertFront,    insertFront     );
-      DECLARE(removeBack,     removeBack      );
-      DECLARE(removeFront,    removeFront     );
-      DECLARE(removeById,     remove_by_id    );
-      DECLARE(reverse,        reverse         );
-      DECLARE(size,           size            );
-      DECLARE(STAR,           operator*       );
-      DECLARE(tail,           tail            );
-
-#undef DECLARE
+      BIND(asBool, as_bool);
+      BIND(asString, as_string);
+      BIND(back);
+      BIND(clear);
+      BIND(each);
+      BIND(each_AMPERSAND, each_and);
+      BIND(each_PIPE, each_pipe);
+      BIND(eachi);
+      BIND(empty);
+      BIND(front);
+      BIND(hash);
+      BIND(SBL_SBR, operator[]);
+      BIND(SBL_SBR_EQ, set);
+      BIND(PLUS, operator+);
+      BIND(PLUS_EQ, operator+=);
+      BIND(EQ_EQ, operator==);
+      BIND(insert);
+      BIND(insertBack);
+      BIND(insertFront);
+      BIND(removeBack);
+      BIND(removeFront);
+      BIND(removeById, remove_by_id);
+      BIND(reverse);
+      BIND(size);
+      BIND(STAR, operator*);
+      BIND(tail);
     }
 
     const List::value_type& List::value_get() const

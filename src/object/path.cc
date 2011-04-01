@@ -83,27 +83,22 @@ namespace urbi
            static_cast<bool (Path::self_type::*)(const rObject&) const>
              (&Path::self_type::operator==));
 
-#define DECLARE(Urbi, Cxx)           \
-      bind(SYMBOL_(Urbi), &Path::Cxx)
-
-      DECLARE(LT_EQ,       operator<=);
-      DECLARE(absolute,    absolute);
-      DECLARE(asList,      as_list);
-      DECLARE(asPrintable, as_printable);
-      DECLARE(asString,    as_string);
-      DECLARE(basename,    basename);
-      DECLARE(cd,          cd);
-      DECLARE(cwd,         cwd);
-      DECLARE(dirname,     dirname);
-      DECLARE(exists,      exists);
-      DECLARE(init,        init);
-      DECLARE(isDir,       is_dir);
-      DECLARE(isReg,       is_reg);
-      DECLARE(open,        open);
-      DECLARE(readable,    readable);
-      DECLARE(writable,    writable);
-
-#undef DECLARE
+      BIND(LT_EQ,       operator<=);
+      BIND(absolute);
+      BIND(asList, as_list);
+      BIND(asPrintable, as_printable);
+      BIND(asString, as_string);
+      BIND(basename);
+      BIND(cd);
+      BIND(cwd);
+      BIND(dirname);
+      BIND(exists);
+      BIND(init);
+      BIND(isDir, is_dir);
+      BIND(isReg, is_reg);
+      BIND(open);
+      BIND(readable);
+      BIND(writable);
     }
 
     void

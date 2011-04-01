@@ -32,6 +32,7 @@ namespace urbi
       : public CxxObject, public libport::InstanceTracker<Lobby>
     {
     public:
+      typedef Lobby self_type;
       typedef kernel::UConnection connection_type;
 
       /// Convenience constructor.

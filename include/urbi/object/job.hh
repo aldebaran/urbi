@@ -30,6 +30,7 @@ namespace urbi
     class URBI_SDK_API Job : public object::CxxObject
     {
     public:
+      typedef Job self_type;
       typedef sched::rJob value_type;
 
       Job(const value_type& value);

@@ -48,20 +48,15 @@ namespace urbi
 
     URBI_CXX_OBJECT_INIT(Job)
     {
-#define DECLARE(Name, Cxx)          \
-      bind(SYMBOL_(Name), &Job::Cxx)
-
-      DECLARE(DOLLAR_backtrace,   backtrace);
-      DECLARE(name,               name);
-      DECLARE(setSideEffectFree,  setSideEffectFree);
-      DECLARE(status,             status);
-      DECLARE(tags,               tags);
-      DECLARE(terminate,          terminate);
-      DECLARE(timeShift,          timeShift);
-      DECLARE(waitForChanges,     waitForChanges);
-      DECLARE(waitForTermination, waitForTermination);
-
-#undef DECLARE
+      BIND(DOLLAR_backtrace, backtrace);
+      BIND(name);
+      BIND(setSideEffectFree);
+      BIND(status);
+      BIND(tags);
+      BIND(terminate);
+      BIND(timeShift);
+      BIND(waitForChanges);
+      BIND(waitForTermination);
     }
 
     const Job::value_type&

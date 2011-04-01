@@ -76,24 +76,18 @@ namespace urbi
       , elementChanged_(0)
       , elementRemoved_(0)
     {
-      bind(SYMBOL(asBool), &Dictionary::as_bool);
-      bind(SYMBOL(elementAdded), &Dictionary::elementAdded_get);
-      bind(SYMBOL(elementChanged), &Dictionary::elementChanged_get);
-      bind(SYMBOL(elementRemoved), &Dictionary::elementRemoved_get);
-
-#define DECLARE(Name)                       \
-      bind(SYMBOL_(Name), &Dictionary::Name)
-
-      DECLARE(clear);
-      DECLARE(empty);
-      DECLARE(erase);
-      DECLARE(get);
-      DECLARE(has);
-      DECLARE(keys);
-      DECLARE(set);
-      DECLARE(size);
-
-#undef DECLARE
+      BIND(asBool, as_bool);
+      BIND(clear);
+      BIND(elementAdded, elementAdded_get);
+      BIND(elementChanged, elementChanged_get);
+      BIND(elementRemoved, elementRemoved_get);
+      BIND(empty);
+      BIND(erase);
+      BIND(get);
+      BIND(has);
+      BIND(keys);
+      BIND(set);
+      BIND(size);
     }
 
     const Dictionary::value_type&

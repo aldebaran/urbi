@@ -29,6 +29,7 @@ namespace urbi
     public:
       typedef objects_type value_type;
       typedef value_type::size_type size_type;
+      typedef List self_type;
 
       List();
       List(const value_type& value);

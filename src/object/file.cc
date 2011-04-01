@@ -87,21 +87,16 @@ namespace urbi
     URBI_CXX_OBJECT_INIT(File)
       : path_(new Path("/"))
     {
-#define DECLARE(Name, Cxx)           \
-      bind(SYMBOL_(Name), &File::Cxx)
-
-      DECLARE(asList,           as_list);
-      DECLARE(asPrintable,      as_printable);
-      DECLARE(asString,         as_string);
-      DECLARE(content,          content);
-      DECLARE(create,           create);
-      DECLARE(basename,         basename);
-      DECLARE(lastModifiedDate, last_modified_date);
-      DECLARE(rename,           rename);
-      DECLARE(remove,           remove);
-      DECLARE(size,             size);
-
-#undef DECLARE
+      BIND(asList, as_list);
+      BIND(asPrintable, as_printable);
+      BIND(asString, as_string);
+      BIND(basename);
+      BIND(content);
+      BIND(create);
+      BIND(lastModifiedDate, last_modified_date);
+      BIND(remove);
+      BIND(rename);
+      BIND(size);
 
       setSlot(SYMBOL(init), new Primitive(&file_init_bouncer));
     }

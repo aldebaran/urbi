@@ -294,31 +294,28 @@ namespace urbi
       , looping_(false)
       , inAccess_(false)
     {
-#define DECLARE(Name)           \
-      bind(SYMBOL_(Name), &UVar::Name)
+      BIND(accessor);
+      BIND(changeConnections);
+      BIND(changed, changed_get);
+      BIND(initialName);
+      BIND(loopCheck);
+      BIND(notifyAccess_);
+      BIND(notifyChangeOwned_);
+      BIND(notifyChange_);
+      BIND(owned);
+      BIND(rangemax);
+      BIND(rangemin);
+      BIND(removeNotifyAccess);
+      BIND(removeNotifyChange);
+      BIND(removeNotifyChangeOwned);
+      BIND(timestamp);
+      BIND(update_);
+      BIND(update_timed);
+      BIND(update_timed_);
+      BIND(val);
+      BIND(valsensor);
+      BIND(writeOwned);
 
-      DECLARE(writeOwned);
-      DECLARE(update_timed);
-      DECLARE(loopCheck);
-      DECLARE(accessor);
-      DECLARE(update_);
-      DECLARE(update_timed_);
-      DECLARE(owned);
-      DECLARE(initialName);
-      DECLARE(changeConnections);
-      DECLARE(removeNotifyChange);
-      DECLARE(removeNotifyChangeOwned);
-      DECLARE(removeNotifyAccess);
-      DECLARE(notifyChange_);
-      DECLARE(notifyChangeOwned_);
-      DECLARE(notifyAccess_);
-      DECLARE(rangemax);
-      DECLARE(rangemin);
-      DECLARE(timestamp);
-      DECLARE(val);
-      DECLARE(valsensor);
-#undef DECLARE
-      bind(SYMBOL(changed), &UVar::changed_get);
       slot_set(SYMBOL(parentGetProperty), new Primitive(&parentGetProperty));
       slot_set(SYMBOL(parentSetProperty), new Primitive(&parentSetProperty));
       slot_set(SYMBOL(parentHasProperty), new Primitive(&parentHasProperty));

@@ -65,25 +65,20 @@ namespace urbi
 
 #undef DECLARE
 
-      bind_variadic(SYMBOL(newFlowControl), &Tag::new_flow_control);
+      BIND_VARIADIC(newFlowControl, new_flow_control);
 
-#define DECLARE(Name, Function)                 \
-      bind(SYMBOL_(Name), &Tag::Function)
-
-      DECLARE(blocked,     blocked);
-      DECLARE(enter,       enter);
-      DECLARE(freeze,      freeze);
-      DECLARE(frozen,      frozen);
-      DECLARE(getParent,   parent_get);
-      DECLARE(leave,       leave);
-      DECLARE(name,        name);
-      DECLARE(priority,    priority);
-      DECLARE(scope,       scope);
-      DECLARE(setPriority, priority_set);
-      DECLARE(unblock,     unblock);
-      DECLARE(unfreeze,    unfreeze);
-
-#undef DECLARE
+      BIND(blocked);
+      BIND(enter);
+      BIND(freeze);
+      BIND(frozen);
+      BIND(getParent,   parent_get);
+      BIND(leave);
+      BIND(name);
+      BIND(priority);
+      BIND(scope);
+      BIND(setPriority, priority_set);
+      BIND(unblock);
+      BIND(unfreeze);
     }
 
     Tag::value_type&

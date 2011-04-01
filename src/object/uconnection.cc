@@ -37,20 +37,17 @@ namespace urbi
 
     URBI_CXX_OBJECT_INIT(UConnection)
     {
-# define DECLARE(Name)                          \
-      bind(SYMBOL_(Name), &UConnection::Name)
-      DECLARE(source);
-      DECLARE(target);
-      DECLARE(enabled);
-      DECLARE(minInterval);
-      DECLARE(lastCall);
-      DECLARE(callCount);
-      DECLARE(totalCallTime);
-      DECLARE(minCallTime);
-      DECLARE(maxCallTime);
-      DECLARE(asynchronous);
+      BIND(asynchronous);
+      BIND(callCount);
+      BIND(enabled);
+      BIND(lastCall);
+      BIND(maxCallTime);
+      BIND(minCallTime);
+      BIND(minInterval);
+      BIND(source);
+      BIND(target);
+      BIND(totalCallTime);
       init_();
-# undef DECLARE
     }
 
     void UConnection::init_()

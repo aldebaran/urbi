@@ -28,10 +28,14 @@ namespace urbi
     class UVar: public Primitive
     {
     public:
+      typedef UVar self_type;
+
       typedef std::pair<unsigned int, rObject> Callback;
       typedef std::vector<Callback> Callbacks;
+
       UVar();
       UVar(libport::intrusive_ptr<UVar> model);
+
       rObject update_(rObject arg);
       rObject update_timed_(rObject arg, libport::utime_t timestamp);
       rObject update_timed(rObject arg, libport::utime_t timestamp);
@@ -58,6 +62,7 @@ namespace urbi
       ufloat rangemin, rangemax;
       rObject val;
       rObject valsensor;
+
     private:
       Callbacks change_;
       Callbacks access_;

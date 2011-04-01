@@ -92,56 +92,51 @@ namespace urbi
 
 #undef DECLARE
 
-#define DECLARE(Urbi, Cxx)            \
-      bind(SYMBOL_(Urbi), &Float::Cxx)
-
-      DECLARE(CARET,     operator^);
-      DECLARE(GT_GT,     operator>>);
-      DECLARE(LT_EQ,     operator<=);
-      DECLARE(LT,        less_than);
-      DECLARE(GT,        operator>);
-      DECLARE(GT_EQ,     operator>=);
-      DECLARE(BANG_EQ,   operator!=);
-      DECLARE(LT_LT,     operator<<);
-      DECLARE(PERCENT,   operator%);
-      DECLARE(SLASH,     operator/);
-      DECLARE(STAR,      operator*);
-      DECLARE(STAR_STAR, pow);
-      DECLARE(abs,       fabs);
-      DECLARE(acos,      acos);
-      DECLARE(asString,  as_string);
-      DECLARE(asin,      asin);
-      DECLARE(atan,      atan);
-      DECLARE(atan2,     atan2);
-      DECLARE(bitand,    operator&);
-      DECLARE(bitor,     operator|);
-      DECLARE(ceil,      ceil);
-      DECLARE(compl,     operator~);
-      DECLARE(cos,       cos);
-      DECLARE(each,      each);
-      DECLARE(each_PIPE, each_pipe);
-      DECLARE(exp,       exp);
+      BIND(CARET,     operator^);
+      BIND(GT_GT,     operator>>);
+      BIND(LT_EQ,     operator<=);
+      BIND(LT,        less_than);
+      BIND(GT,        operator>);
+      BIND(GT_EQ,     operator>=);
+      BIND(BANG_EQ,   operator!=);
+      BIND(LT_LT,     operator<<);
+      BIND(PERCENT,   operator%);
+      BIND(SLASH,     operator/);
+      BIND(STAR,      operator*);
+      BIND(STAR_STAR, pow);
+      BIND(abs,       fabs);
+      BIND(acos);
+      BIND(asString,  as_string);
+      BIND(asin);
+      BIND(atan);
+      BIND(atan2);
+      BIND(bitand,    operator&);
+      BIND(bitor,     operator|);
+      BIND(ceil);
+      BIND(compl,     operator~);
+      BIND(cos);
+      BIND(each);
+      BIND(each_PIPE, each_pipe);
+      BIND(exp);
 #if !defined COMPILATION_MODE_SPACE
-      DECLARE(format, format);
+      BIND(format);
 #endif
-      DECLARE(floor,   floor);
-      DECLARE(hash,    hash);
-      DECLARE(inf,     inf);
-      DECLARE(isInf,   is_inf);
-      DECLARE(isNan,   is_nan);
-      DECLARE(log,     log);
-      DECLARE(nan,     nan);
-      DECLARE(random,  random);
-      DECLARE(srandom, srandom);
-      DECLARE(round,   round);
-      DECLARE(seq,     seq);
-      DECLARE(sign,    sign);
-      DECLARE(sin,     sin);
-      DECLARE(sqrt,    sqrt);
-      DECLARE(tan,     tan);
-      DECLARE(trunc,   trunc);
-
-#undef DECLARE
+      BIND(floor);
+      BIND(hash);
+      BIND(inf);
+      BIND(isInf,   is_inf);
+      BIND(isNan,   is_nan);
+      BIND(log);
+      BIND(nan);
+      BIND(random);
+      BIND(srandom);
+      BIND(round);
+      BIND(seq);
+      BIND(sign);
+      BIND(sin);
+      BIND(sqrt);
+      BIND(tan);
+      BIND(trunc);
 
       // Hack to avoid proto = 0,
       // proto will redefined after.

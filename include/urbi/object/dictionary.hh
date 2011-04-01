@@ -43,6 +43,7 @@ namespace urbi
     {
     public:
       typedef unordered_map value_type;
+      typedef Dictionary self_type;
 
       Dictionary();
       Dictionary(rDictionary model);
