@@ -76,7 +76,27 @@ do (Vector)
 
 \item[combMul]()%
 
-\item[norm]()%
+\item[norm]%
+  The (Euclidean) norm of the Vector: square root of the sum of the square
+  of the members.
+\begin{urbiscript}
+do (Vector)
+{
+  assert
+  {
+    new.norm == 0;
+
+    new(0).norm == 0;
+    new(1).norm == 1;
+
+    new(1, 1).norm == 2.sqrt;
+
+    new(0, 0, 0, 0).norm == 0;
+    new(1, 1, 1, 1).norm == 2;
+  };
+}|;
+\end{urbiscript}
+
 
 \item[resize]()%
 
@@ -158,7 +178,19 @@ do (Vector)
 
 \item[selfCombMul]()%
 
-\item[set]()%
+\item[set](<list>)%
+  Change the members of \this, and return \this.
+\begin{urbiscript}
+do (Vector)
+{
+  var v = new(1, 2, 3);
+  assert
+  {
+    v.set([10, 20]) === v;
+    v == new(10, 20);
+  };
+}|;
+\end{urbiscript}
 
 \item[size]()%
 
