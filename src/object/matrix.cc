@@ -11,6 +11,27 @@
 #include <urbi/object/matrix.hh>
 #include <boost/numeric/ublas/lu.hpp>
 
+
+namespace boost
+{
+  namespace numeric
+  {
+    namespace ublas
+    {
+      template<class E1, class E2>
+      bool operator==(const matrix_expression<E1>& e1,
+                      const matrix_expression<E2>& e2)
+      {
+        typedef typename promote_traits<typename E1::value_type,
+                                        typename E2::value_type>::promote_type
+                value_type;
+        typedef typename type_traits<value_type>::real_type real_type;
+        return norm_inf (e1 - e2) == real_type/*zero*/();
+      }
+    }
+  }
+}
+
 namespace urbi
 {
   namespace object
@@ -356,7 +377,7 @@ namespace urbi
 #undef DECLARE
 
 #define DECLARE(Name, Cxx)                                      \
-    bind(libport::Symbol("" #Name), &Matrix::Cxx)
+      bind(libport::Symbol("" #Name), &Matrix::Cxx)
 
       DECLARE(row, row);
       DECLARE(column, column);

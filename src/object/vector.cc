@@ -10,6 +10,27 @@
 
 #include <urbi/object/vector.hh>
 
+namespace boost
+{
+  namespace numeric
+  {
+    namespace ublas
+    {
+      inline
+      bool operator==(const vector< ::libport::ufloat >& v1,
+                      const vector< ::libport::ufloat >& v2)
+      {
+        if (v1.size() != v2.size())
+          return false;
+	for (unsigned i = 0; i < v1.size(); ++i)
+	  if (v1(i) != v2(i))
+            return false;
+	return true;
+      }
+    }
+  }
+}
+
 namespace urbi
 {
   namespace object
