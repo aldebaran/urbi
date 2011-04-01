@@ -364,9 +364,9 @@ namespace urbi
       template <typename F1, typename F2>
       void bind(const std::string& getter_name, F1 getter,
                 const std::string& setter_name, F2 setter);
+      typedef boost::function1<rObject, const objects_type&> function1_type;
       void bind_variadic(const std::string& name,
-                         const boost::function1<rObject,
-                         const objects_type&>& val);
+                         const function1_type& val);
       template <typename Return, typename Self>
       void bind_variadic(const std::string& name,
                          const boost::function2<Return, Self*,
@@ -422,6 +422,27 @@ namespace urbi
 
   } // namespace object
 }
+
+# define BIND(...)                                                      \
+  LIBPORT_CAT(BIND,                                                     \
+              LIBPORT_LIST_SIZE(LIBPORT_LIST(__VA_ARGS__)))(__VA_ARGS__)
+
+# define BIND0(Name)                       \
+  BIND1(Name, Name)
+
+# define BIND1(Name, Cxx)                       \
+  bind(SYMBOL_(Name), &self_type::Cxx)
+
+
+# define BIND_VARIADIC(...)                                             \
+  LIBPORT_CAT(BIND_VARIADIC,                                            \
+              LIBPORT_LIST_SIZE(LIBPORT_LIST(__VA_ARGS__)))(__VA_ARGS__)
+
+# define BIND_VARIADIC0(Name)                   \
+  BIND_VARIADIC1(Name, Name)
+
+# define BIND_VARIADIC1(Name, Cxx)                       \
+  bind_variadic(SYMBOL_(Name), &self_type::Cxx)
 
 # include <urbi/object/object.hxx>
 

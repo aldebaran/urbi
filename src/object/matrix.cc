@@ -361,54 +361,45 @@ namespace urbi
 
     URBI_CXX_OBJECT_INIT(Matrix)
     {
-#define DECLARE(Name, Cxx)                      \
-      bind_variadic(SYMBOL_(Name), &self_type::Cxx)
 
-      DECLARE(MINUS, minus);
-      DECLARE(MINUS_EQ, minus_assign);
-      DECLARE(PLUS, plus);
-      DECLARE(PLUS_EQ, plus_assign);
-      DECLARE(SLASH, div);
-      DECLARE(SLASH_EQ, div_assign);
-      DECLARE(STAR, times);
-      DECLARE(STAR_EQ, times_assign);
+      BIND_VARIADIC(MINUS, minus);
+      BIND_VARIADIC(MINUS_EQ, minus_assign);
+      BIND_VARIADIC(PLUS, plus);
+      BIND_VARIADIC(PLUS_EQ, plus_assign);
+      BIND_VARIADIC(SLASH, div);
+      BIND_VARIADIC(SLASH_EQ, div_assign);
+      BIND_VARIADIC(STAR, times);
+      BIND_VARIADIC(STAR_EQ, times_assign);
 
-#undef DECLARE
-
-#define DECLARE(Name, Cxx)                      \
-      bind(SYMBOL_(Name), &self_type::Cxx)
-
-      DECLARE(row, row);
-      DECLARE(column, column);
-      DECLARE(distanceMatrix, distanceMatrix);
-      DECLARE(rowNorm, rowNorm);
-      DECLARE(setRow, setRow);
-      DECLARE(appendRow, appendRow);
-      DECLARE(rowAdd, rowAdd);
-      DECLARE(rowSub, rowSub);
-      DECLARE(rowMul, rowMul);
-      DECLARE(rowDiv, rowDiv);
-      DECLARE(resize, resize);
-      DECLARE(createIdentity, create_identity);
-      DECLARE(createZeros, create_zeros);
-      DECLARE(createScalars, create_scalars);
-      DECLARE(createOnes, create_ones);
+      //BIND(SBL_SBR, operator());
+      //BIND(SBL_SBR_EQ, set);
+      //BIND(dot_times, dotWiseMult);
+      //BIND(solve);
+      BIND(appendRow);
+      BIND(asPrintable);
+      BIND(asString);
+      BIND(asTopLevelPrintable);
+      BIND(column);
+      BIND(createIdentity, create_identity);
+      BIND(createOnes, create_ones);
+      BIND(createScalars, create_scalars);
+      BIND(createZeros, create_zeros);
+      BIND(distanceMatrix);
+      BIND(distanceToMatrix);
+      BIND(get);
+      BIND(invert);
+      BIND(resize);
+      BIND(row);
+      BIND(rowAdd);
+      BIND(rowDiv);
+      BIND(rowMul);
+      BIND(rowNorm);
+      BIND(rowSub);
+      BIND(set);
+      BIND(setRow);
+      BIND(transpose);
       bind(libport::Symbol( "[]" ), &Matrix::operator());
-      //DECLARE(SBL_SBR, operator());
       bind(libport::Symbol( "[]=" ), &Matrix::set);
-      //DECLARE(SBL_SBR_EQ, set);
-      DECLARE(set, set);
-      DECLARE(asString, asString);
-      DECLARE(asPrintable, asPrintable);
-      DECLARE(asTopLevelPrintable, asTopLevelPrintable);
-      //DECLARE(solve, solve);
-      DECLARE(invert, invert);
-      DECLARE(transpose, transpose);
-      DECLARE(distanceToMatrix, distanceToMatrix);
-      DECLARE(get, get);
-      //DECLARE(dot_times, dotWiseMult);
-
-#undef DECLARE
 
       bind(SYMBOL(EQ_EQ),
            static_cast<bool (self_type::*)(const rObject&) const>

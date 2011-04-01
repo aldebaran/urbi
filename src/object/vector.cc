@@ -144,29 +144,25 @@ namespace urbi
            static_cast<bool (self_type::*)(const rObject&) const>
            (&self_type::operator==));
 
-#define DECLARE(Name, Fun)                      \
-      bind(SYMBOL_(Name), &self_type::Fun)
-
-      DECLARE(LT, operator<);
-      DECLARE(SBL_SBR, operator[]);
-      DECLARE(SBL_SBR_EQ, set);
-      DECLARE(asString, as_string);
-      DECLARE(combAdd, combAdd);
-      DECLARE(combDiv, combDiv);
-      DECLARE(combMul, combMul);
-      DECLARE(norm, norm);
-      DECLARE(resize, resize);
-      DECLARE(scalarGE, scalarGE);
-      DECLARE(scalarLE, scalarLE);
-      DECLARE(selfCombAdd, selfCombAdd);
-      DECLARE(selfCombDiv, selfCombDiv);
-      DECLARE(selfCombIndexes, selfCombIndexes);
-      DECLARE(selfCombMul, selfCombMul);
-      DECLARE(set, fromList);
-      DECLARE(size, size);
-      DECLARE(sum, sum);
-      DECLARE(trueIndexes, trueIndexes);
-#undef DECLARE
+      BIND(LT, operator<);
+      BIND(SBL_SBR, operator[]);
+      BIND(SBL_SBR_EQ, set);
+      BIND(asString, as_string);
+      BIND(combAdd);
+      BIND(combDiv);
+      BIND(combMul);
+      BIND(norm);
+      BIND(resize);
+      BIND(scalarGE);
+      BIND(scalarLE);
+      BIND(selfCombAdd);
+      BIND(selfCombDiv);
+      BIND(selfCombIndexes);
+      BIND(selfCombMul);
+      BIND(set, fromList);
+      BIND(size);
+      BIND(sum);
+      BIND(trueIndexes);
       bind(libport::Symbol("scalar" "EQ"), &Vector::scalarEQ);
       bind(libport::Symbol("scalar" "GT"), &Vector::scalarGT);
       bind(libport::Symbol("scalar" "LT"), &Vector::scalarLT);
