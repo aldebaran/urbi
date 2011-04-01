@@ -144,29 +144,34 @@ namespace urbi
       bind(SYMBOL(SLASH),
            static_cast<rVector (Vector::*)(const rObject&) const>
            (&Vector::operator/));
-      bind(SYMBOL(SBL_SBR), &Vector::operator[]);
-      bind(SYMBOL(SBL_SBR_EQ), &Vector::set);
-      bind(SYMBOL(LT), &Vector::operator<);
-      bind(SYMBOL(set), &Vector::fromList);
-      bind(SYMBOL(size), &Vector::size);
-      bind(SYMBOL(resize), &Vector::resize);
-      bind(SYMBOL(norm), &Vector::norm);
+
+#define DECLARE(Name, Fun)                      \
+      bind(SYMBOL_(Name), &Vector::Fun)
+
+      DECLARE(LT, operator<);
+      DECLARE(SBL_SBR, operator[]);
+      DECLARE(SBL_SBR_EQ, set);
+      DECLARE(asString, as_string);
+      DECLARE(combAdd, combAdd);
+      DECLARE(combDiv, combDiv);
+      DECLARE(combMul, combMul);
+      DECLARE(norm, norm);
+      DECLARE(resize, resize);
+      DECLARE(scalarGE, scalarGE);
+      DECLARE(scalarLE, scalarLE);
+      DECLARE(selfCombAdd, selfCombAdd);
+      DECLARE(selfCombDiv, selfCombDiv);
+      DECLARE(selfCombIndexes, selfCombIndexes);
+      DECLARE(selfCombMul, selfCombMul);
+      DECLARE(set, fromList);
+      DECLARE(size, size);
+      DECLARE(sum, sum);
+      DECLARE(trueIndexes, trueIndexes);
+#undef DECLARE
+      bind(libport::Symbol("scalar" "EQ"), &Vector::scalarEQ);
       bind(libport::Symbol("scalar" "GT"), &Vector::scalarGT);
       bind(libport::Symbol("scalar" "LT"), &Vector::scalarLT);
-      bind(SYMBOL(scalarGE), &Vector::scalarGE);
-      bind(SYMBOL(scalarLE), &Vector::scalarLE);
-      bind(libport::Symbol("scalar" "EQ"), &Vector::scalarEQ);
-      bind(SYMBOL(trueIndexes), &Vector::trueIndexes);
-      bind(SYMBOL(combAdd), &Vector::combAdd);
-      bind(SYMBOL(combMul), &Vector::combMul);
-      bind(SYMBOL(combDiv), &Vector::combDiv);
-      bind(SYMBOL(selfCombAdd), &Vector::selfCombAdd);
-      bind(SYMBOL(selfCombMul), &Vector::selfCombMul);
-      bind(SYMBOL(selfCombDiv), &Vector::selfCombDiv);
-      bind(SYMBOL(selfCombIndexes), &Vector::selfCombIndexes);
-      bind(SYMBOL(sum), &Vector::sum);
       slot_set(SYMBOL(init), new Primitive(&init));
-      bind(SYMBOL(asString), &Vector::as_string);
     }
 
     std::string
