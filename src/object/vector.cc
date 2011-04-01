@@ -48,6 +48,7 @@ namespace urbi
 
     Vector::Vector(const Vector& model)
       : CxxObject()
+      , super_comparable_type()
       , value_(model.value_)
     {
       proto_add(proto);

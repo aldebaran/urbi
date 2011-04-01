@@ -28,10 +28,13 @@ namespace urbi
   {
     class URBI_SDK_API Matrix
       : public CxxObject
+      , public EqualityComparable<Matrix,
+                                  boost::numeric::ublas::matrix<ufloat> >
     {
     public:
       typedef Matrix self_type;
       typedef boost::numeric::ublas::matrix<ufloat> value_type;
+      typedef EqualityComparable<self_type, value_type> super_comparable_type;
       typedef value_type::size_type size_type;
 
       Matrix();

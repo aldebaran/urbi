@@ -25,12 +25,15 @@ namespace urbi
   {
     class URBI_SDK_API Vector
       : public CxxObject
+      , public EqualityComparable<Vector,
+                                  boost::numeric::ublas::vector<ufloat> >
     {
       friend class Matrix;
 
     public:
       typedef Vector self_type;
       typedef boost::numeric::ublas::vector<ufloat> value_type;
+      typedef EqualityComparable<self_type, value_type> super_comparable_type;
 
       Vector();
       Vector(unsigned int s);
