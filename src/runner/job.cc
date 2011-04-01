@@ -12,6 +12,9 @@
 #include <libport/finally.hh>
 
 #include <object/profile.hh>
+#include <urbi/object/slot.hh>
+#include <urbi/object/string.hh>
+#include <urbi/object/fwd.hh>
 
 #include <runner/job.hh>
 
@@ -87,8 +90,8 @@ namespace runner
     sched::rJob child =
       spawn_child(
         eval::call(Scheduling->slot_get(SYMBOL(throwNew)), args),
-        collector,
-        "Scheduling");
+        collector)
+      ->name_set("Scheduling");
     child->start_job();
 
     try
@@ -129,6 +132,26 @@ namespace runner
   }
 
   /// \}
+
+  Job* Job::name_set(const std::string& name)
+  {
+    rObject j = as_job();
+    if (!j->local_slot_get(SYMBOL(name)))
+      j->slot_set(SYMBOL(name), object::to_urbi(name));
+    else
+      j->slot_update(SYMBOL(name), object::to_urbi(name));
+    return this;
+  }
+
+  const std::string
+  Job::name_get() const
+  {
+    if (!terminated() && job_cache_)
+      if (urbi::object::rSlot s =
+          job_cache_->local_slot_get(SYMBOL(name)))
+        return s->value()->as<object::String>()->value_get();
+    return "Job";
+  }
 
   /// \name Profiling
   /// \{

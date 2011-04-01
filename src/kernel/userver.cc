@@ -397,12 +397,16 @@ namespace kernel
     // the ghostconnection too.
     ghost_->initialize();
 
-    fast_async_jobs_tag_ = new object::Tag(new sched::Tag("fastAsyncJob"));
+    {
+      object::rTag t = new object::Tag(new sched::Tag());
+      t->init("fastAsyncJob");
+      fast_async_jobs_tag_ = t;
+    }
+
     {
       runner::Job* j =
-        new runner::Job(ghost_->lobby_get(),
-                            scheduler_get(),
-                            "FastAsyncJobs");
+        new runner::Job(ghost_->lobby_get(), scheduler_get());
+      j->name_set("FastAsyncJobs");
       j->state.this_set(rObject(ghost_->lobby_get()));
       j->set_action(
         boost::bind(&UServer::fast_async_jobs_run_, this, _1));
@@ -412,8 +416,8 @@ namespace kernel
     scheduler_->add_job(fast_async_jobs_job_);
     sched::rJob poll =
       ghost_->shell_get()->spawn_child(
-        eval::call(object::system_class->slot_get(SYMBOL(pollLoop))),
-        "pollLoop");
+        eval::call(object::system_class->slot_get(SYMBOL(pollLoop))))
+      ->name_set("pollLoop");
     scheduler_->idle_job_set(poll);
   }
 
@@ -466,8 +470,8 @@ namespace kernel
         interpreter =
           new runner::Job(
             ghost_connection_get().lobby_get(),
-            *scheduler_,
-            job.method);
+            *scheduler_);
+        interpreter->name_set(job.method);
         interpreter->set_action(
           eval::exec(
             job.callback,

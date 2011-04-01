@@ -31,7 +31,7 @@ namespace urbi
   namespace object
   {
     Tag::Tag()
-      : value_(new sched::Tag(""))
+      : value_(new sched::Tag)
     {
       proto_add(proto ? rObject(proto) : Object::proto);
     }
@@ -43,7 +43,7 @@ namespace urbi
     }
 
     Tag::Tag(rTag model)
-      : value_(new sched::Tag(model->value_->name_get()))
+      : value_(new sched::Tag)
     {
       proto_add(model);
       if (model.get() != proto.get())
@@ -51,7 +51,7 @@ namespace urbi
     }
 
     URBI_CXX_OBJECT_INIT(Tag)
-      : value_(new sched::Tag(""))
+      : value_(new sched::Tag)
     {
 #define DECLARE(Name, Arg)                      \
       BIND(Name, Name, void, (Arg))
@@ -71,9 +71,8 @@ namespace urbi
       BIND(enter);
       BIND(freeze);
       BIND(frozen);
-      BIND(getParent,   parent_get);
+      BIND(getParent, parent_get);
       BIND(leave);
-      BIND(name);
       BIND(priority);
       BIND(scope);
       BIND(setPriority, priority_set);
@@ -115,6 +114,23 @@ namespace urbi
       // changed();
       if (r.frozen())
         r.yield();
+    }
+
+
+    void Tag::name_set(const std::string& name)
+    {
+      if (!local_slot_get(SYMBOL(name)))
+        slot_set(SYMBOL(name), object::to_urbi(name));
+      else
+        slot_update(SYMBOL(name), object::to_urbi(name));
+    }
+
+    const std::string
+    Tag::name() const
+    {
+      if (rSlot s = local_slot_get(SYMBOL(name)))
+        return s->value()->as<object::String>()->value_get();
+      return "Tag";
     }
 
     void

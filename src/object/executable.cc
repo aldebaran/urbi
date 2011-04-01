@@ -40,7 +40,8 @@ namespace urbi
                          const objects_type& args,
                          libport::Symbol name)
     {
-      runner::Job* j = new runner::Job(lobby, sched, name);
+      runner::Job* j = new runner::Job(lobby, sched);
+      j->name_set(name);
       j->set_action(eval::exec(this, args));
       return j;
     }

@@ -49,7 +49,6 @@ namespace urbi
     URBI_CXX_OBJECT_INIT(Job)
     {
       BIND(DOLLAR_backtrace, backtrace);
-      BIND(name);
       BIND(setSideEffectFree);
       BIND(status);
       BIND(tags);
@@ -63,13 +62,6 @@ namespace urbi
     Job::value_get() const
     {
       return value_;
-    }
-
-    const std::string&
-    Job::name()
-    {
-      static std::string otherwise("Job");
-      return value_ ? value_->name_get() : otherwise;
     }
 
     const runner::State::tag_stack_type

@@ -76,11 +76,11 @@ namespace urbi
         if (asynchronous)
         {
           processing = true;
+          // build an Action out of a member function
           sched::rJob job =
             r.spawn_child(
-              // build an Action out of a member function :)
-              boost::bind(&UConnection::doCall, this, _1, self, t),
-              "doCall");
+              boost::bind(&UConnection::doCall, this, _1, self, t))
+            ->name_set("doCall");
           job->start_job();
         }
         else

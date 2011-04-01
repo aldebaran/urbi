@@ -48,13 +48,14 @@ namespace runner
 	       sched::Scheduler& scheduler,
 	       const std::string& name,
                std::istream& input)
-    : Job(lobby, scheduler, name)
+    : Job(lobby, scheduler)
     , executing_(false)
     , input_(input)
     , stop_(false)
     , binary_mode_(false)
     , parser_(new parser::UParser(input_))
   {
+    name_set(name);
     GD_FINFO_TRACE("new shell: %s %p", name_get(), this);
   }
 
@@ -156,8 +157,8 @@ namespace runner
       GD_FPUSH_TRACE("%s: executing command in background.", name_get());
       GD_FINFO_DUMP("%s: command: %s", name_get(), *exp);
       sched::rJob subrunner =
-        spawn_child(eval::ast(stmt->expression_get().get()),
-                    libport::Symbol::fresh_string(name_get()));
+        spawn_child(eval::ast(stmt->expression_get().get()))
+        ->name_set(libport::Symbol::fresh_string(name_get()));
       jobs_ <<  subrunner;
       subrunner->start_job();
       if (canYield && !input_.eof())

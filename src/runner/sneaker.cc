@@ -59,8 +59,9 @@ namespace dbg
   }
 
   Sneaker::Sneaker(object::rLobby lobby, sched::Scheduler& scheduler)
-    : Job(lobby, scheduler, "<sneaker>")
+    : Job(lobby, scheduler)
   {
+    name_set("<sneaker>");
     non_interruptible_set(true);
     set_action(boost::bind(&Sneaker::action, this, _1));
   }

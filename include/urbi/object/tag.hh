@@ -41,7 +41,7 @@ namespace urbi
       void init();
       void init(const std::string& name);
       void freeze();
-      const std::string& name() const;
+      const std::string name() const;
       void name_set(const std::string& s);
       static rTag new_flow_control(const objects_type&);
 

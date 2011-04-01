@@ -366,8 +366,8 @@ namespace urbi
 	runner::Job* nr =
           new runner::Job(
             ::kernel::urbiserver->ghost_connection_get().lobby_get(),
-            r.scheduler_get(),
-            "changeAccessLoop");
+            r.scheduler_get());
+        nr->name_set("changeAccessLoop");
         nr->set_action(boost::bind(&UVar::changeAccessLoop, this, _1));
         // Remove the lobby's tag.
 	nr->state.tag_stack_clear();

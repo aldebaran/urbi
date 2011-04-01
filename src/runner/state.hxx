@@ -116,7 +116,7 @@ namespace runner
     {
       // Create the tag on demand. It must have the lowest possible priority
       // to avoid influencing the scheduling algorithm.
-      tag = new sched::Tag(SYMBOL(scopeTag));
+      tag = new sched::Tag(); // ScopeTag
       tag->prio_set(sched, sched::UPRIO_NONE);
     }
     return tag;

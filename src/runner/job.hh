@@ -85,7 +85,7 @@ namespace runner
     ///
     /// \param name The name of the new job, or a name derived from \a model
     ///        if none is provided.
-    Job(const Job& model, const std::string& name);
+    Job(const Job& model);
 
     /// Create a new job.
     ///
@@ -96,8 +96,7 @@ namespace runner
     /// \param name The name of the new job, or an automatically created
     ///        one if none is provided.
     Job(rLobby lobby,
-        sched::Scheduler& scheduler,
-        const std::string& name);
+        sched::Scheduler& scheduler);
 
     /// Destroy a job and the action bound to it.
     virtual ~Job();
@@ -153,6 +152,9 @@ namespace runner
 
     /// \}
 
+    Job* name_set(const std::string& name);
+    const std::string name_get() const;
+
     /// Job processing
     /// \{
 
@@ -164,10 +166,8 @@ namespace runner
     /// This command return a child job which has to be started with
     /// 'start_job()' to execute the action asynchronously.
     Job* spawn_child(eval::Action action,
-                     Job::Collector& collector,
-                     const std::string& name = "child");
-    Job* spawn_child(eval::Action action,
-                     const std::string& name = "child");
+                     Job::Collector& collector);
+    Job* spawn_child(eval::Action action);
 
     void set_action(eval::Action action);
 

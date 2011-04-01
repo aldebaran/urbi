@@ -23,13 +23,13 @@ called with a string which will be the label.
 
 \begin{urbiscript}[firstnumber=1]
 var ch1 = Channel.new("my_label");
-[00000201] Channel_0x7985810
+[00000201] Channel<my_label>
 
 ch1 << 1;
 [00000201:my_label] 1
 
 var ch2 = ch1;
-[00000201] Channel_0x7985810
+[00000201] Channel<my_label>
 
 ch2 << 1/2;
 [00000201:my_label] 0.5
