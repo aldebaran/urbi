@@ -457,7 +457,7 @@ namespace urbi
         }
         s << "]";
         if (i != height - 1)
-          s << ", ";
+          s << ',';
         s << std::endl;
       }
 
