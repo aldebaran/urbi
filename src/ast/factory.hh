@@ -97,6 +97,10 @@ namespace ast
                  bool constant,
                  const location& exp_loc, rExp exp) /* const */;
 
+    /// <true> or <false>.
+    static
+    rExp make_bool(const location& loc, bool b);
+
     /// "<method>"
     static
     rCall
@@ -220,6 +224,9 @@ namespace ast
                       libport::Symbol obj,
                       libport::Symbol slot,
                       libport::Symbol id) /* const */;
+
+    static
+    rExp make_false(const location& loc);
 
     static
     rFinally
@@ -409,6 +416,9 @@ namespace ast
     static
     rExp
     make_timeout(const rExp& duration, const rExp& body) /* const */;
+
+    static
+    rExp make_true(const location& loc);
 
     // try <stmt> <catch>+ <else>?
     static

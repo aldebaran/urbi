@@ -111,7 +111,7 @@ namespace std
   BOOST_PP_SEQ_FOR_EACH(DISPATCH_IDS_DECLARE, ~, Args);                 \
   foreach (libport::Symbol arg, args)                                   \
   if (false)                                                            \
-  {}                                                                    \
+    {}                                                                  \
   BOOST_PP_SEQ_FOR_EACH(DISPATCH_IDS_CHECK, ~, Args)                    \
   else                                                                  \
     SYNTAX_ERROR(                                                       \
@@ -153,6 +153,17 @@ namespace ast
   implicit(const rExp e)
   {
     return e.is_a<const Noop>();
+  }
+
+  template <typename T>
+  inline
+  T
+  ensure(const yy::location& l, T e)
+  {
+    if (e)
+      return e;
+    else
+      return Factory::make_noop(l);
   }
 
   rExp
@@ -220,19 +231,6 @@ namespace ast
                               rExp enter, rExp leave,
                               bool sync) // const
   {
-    rExp sync_ast;
-    {
-      PARAMETRIC_AST(ast_true, "true");
-      PARAMETRIC_AST(ast_false, "false");
-      sync_ast = sync ? exp(ast_true) : exp(ast_false);
-    }
-
-    if (!leave)
-    {
-      PARAMETRIC_AST(noop, "{}");
-      leave = exp(noop);
-    }
-
     if (event.duration)
     {
       PARAMETRIC_AST(desugar_event, "%exp:1.persists(%exp:2)");
@@ -300,8 +298,8 @@ namespace ast
                  % bind.bindings_get()
                  % enter
                  % bind.bindings_get()
-                 % leave
-                 % sync_ast);
+                 % ensure(loc, leave)
+                 % make_bool(loc, sync));
     }
     else
     {
@@ -314,7 +312,12 @@ namespace ast
          "  closure ('$evt', '$payload', '$pattern') { %exp:4 },\n"
          "  %exp:5)\n"
          "}\n");
-      return exp(desugar_no_pattern % event.event % guard % enter % leave % sync_ast);
+      return exp(desugar_no_pattern
+                 % event.event
+                 % guard
+                 % enter
+                 % ensure(loc, leave)
+                 % make_bool(loc, sync));
     }
   }
 
@@ -416,6 +419,12 @@ namespace ast
     return res;
   }
 
+  rExp
+  Factory::make_bool(const location& loc, bool b)
+  {
+    return b ? make_true(loc) : make_false(loc);
+  }
+
   rCall
   Factory::make_call(const location& l,
                      libport::Symbol method) // const
@@ -473,6 +482,13 @@ namespace ast
     return exp((is_detach ? detach : disown) % make_closure(body));
   }
 
+
+  rExp
+  Factory::make_false(const location&)
+  {
+    PARAMETRIC_AST(a, "false");
+    return exp(a);
+  }
 
   rExp
   Factory::make_get_slot(const location& l,
@@ -777,7 +793,9 @@ namespace ast
       (desugar,
        "try { %exp:1.hasSlot(%exp:2) } catch { false }"
         );
-    return exp(desugar % call->target_get() % make_string(loc, call->name_get()));
+    return exp(desugar
+               % call->target_get()
+               % make_string(loc, call->name_get()));
   }
 
   rList
@@ -938,7 +956,8 @@ namespace ast
       local_declarations_type* res = new local_declarations_type();
       foreach (const Formal& var, *formals)
       {
-        LocalDeclaration* dec = new LocalDeclaration(loc, var.name_get(), var.def_get());
+        LocalDeclaration* dec =
+          new LocalDeclaration(loc, var.name_get(), var.def_get());
         dec->list_set(var.list_get());
         res->push_back(dec);
       }
@@ -1075,12 +1094,9 @@ namespace ast
          "  %exp:6\n"
           );
 
-      PARAMETRIC_AST(cond,
-                     "true");
-
       rExp condition = c.first->guard_get();
       if (!condition)
-        condition = exp(cond);
+        condition = make_true(loc);
 
       rewrite::PatternBinder bind(make_call(loc, SYMBOL(DOLLAR_pattern)), loc);
       bind(c.first->pattern_get().get());
@@ -1122,6 +1138,13 @@ namespace ast
        "   }\n"
        "}");
     return exp(desugar % duration % body);
+  }
+
+  rExp
+  Factory::make_true(const location&)
+  {
+    PARAMETRIC_AST(a, "true");
+    return exp(a);
   }
 
   rTry
@@ -1287,14 +1310,14 @@ namespace ast
   }
 
   rExp
-  Factory::make_whenever(const location&,
+  Factory::make_whenever(const location& loc,
                          rExp cond,
                          rExp body, rExp else_stmt,
                          rExp duration) // const
   {
     // FIXME: Be smarter on empty else_stmt.
     if (!else_stmt)
-      else_stmt = make_nil();
+      else_stmt = make_noop(loc);
     if (duration)
     {
       PARAMETRIC_AST
@@ -1335,7 +1358,7 @@ namespace ast
          "  }"
          "})|;"
           );
-      return exp(desugar % cond % body %else_stmt);
+      return exp(desugar % cond % body % else_stmt);
     }
   }
 
