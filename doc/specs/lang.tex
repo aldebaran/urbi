@@ -2412,22 +2412,63 @@ statements.
 
 \subsection{break}
 
-When encountered within a \lstinline|for| or a \lstinline|while| loop,
+When encountered within a loop (\lstinline|for| or a \lstinline|while|),
 \lstinline|break| makes the execution jump after the loop.
 
 \begin{urbiscript}
-var i = 5|
-for (; true; echo(i))
 {
-  if (i > 8)
-    break;
-  i++;
+  var i = 5;
+  for (; true; echo(i))
+  {
+    if (i > 8)
+      break;
+    i += 1;
+  };
 };
 [00000000] *** 6
 [00000000] *** 7
 [00000000] *** 8
 [00000000] *** 9
 \end{urbiscript}
+
+\begin{urbiscript}
+function breakInWhile ()
+{
+  var i = 0;
+  while (i < 10)
+  {
+    echo(i);
+    if (i == 2)
+      break;
+    i += 1;
+  };
+  echo(i);
+}|;
+breakInWhile;
+[00000004] *** 0
+[00000005] *** 1
+[00000006] *** 2
+[00000007] *** 2
+\end{urbiscript}
+
+Occurrences of \lstinline|break| outside any loop is a syntax error.
+
+\begin{urbiscript}
+break;
+[00000011:error] !!! syntax error: `break' not within a loop
+\end{urbiscript}
+
+It is also invalid within function bodies inside loops.
+
+\begin{urbiscript}
+for (var i : 10)
+{
+  function f() { break };
+  f;
+};
+[00000011:error] !!! syntax error: `break' not within a loop
+\end{urbiscript}
+
 
 \subsection{continue}
 
@@ -2443,9 +2484,47 @@ for (var i = 0; i < 8; i++)
   echo(i);
 };
 [00000000] *** 0
-[00000000] *** 2
-[00000000] *** 4
-[00000000] *** 6
+[00000002] *** 2
+[00000004] *** 4
+[00000006] *** 6
+\end{urbiscript}
+
+\begin{urbiscript}
+function continueInWhile ()
+{
+  var i = 0|;
+  while (i < 6)
+  {
+    i += 1;
+    if (i % 2 != 0)
+      continue;
+    echo(i);
+  };
+  echo(i);
+}|;
+continueInWhile;
+[00000002] *** 2
+[00000004] *** 4
+[00000006] *** 6
+[00000008] *** 6
+\end{urbiscript}
+
+Occurrences of \lstinline|continue| outside any loop is a syntax error.
+
+\begin{urbiscript}
+continue;
+[00000011:error] !!! syntax error: `continue' not within a loop
+\end{urbiscript}
+
+It is also invalid within function bodies inside loops.
+
+\begin{urbiscript}
+for (var i : 10)
+{
+  function f() { continue };
+  f;
+};
+[00000011:error] !!! syntax error: `continue' not within a loop
 \end{urbiscript}
 
 \subsection{do}

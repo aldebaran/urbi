@@ -164,16 +164,18 @@ namespace flower
       super_type::visit(code);
       return;
     }
+
     Finally finally;
     finally << scoped_set(in_function_, true)
-            << scoped_set(has_return_, false);
+            << scoped_set(has_return_, false)
+            << scoped_set(in_loop_, false);
     super_type::visit(code);
     if (has_return_)
     {
-      PARAMETRIC_AST_DESUGAR(a,
-                             "var '$returnTag' ="
-                             "  Tag.newFlowControl(\"returnTag\") | "
-                             "'$returnTag': %exp:1");
+      PARAMETRIC_AST_DESUGAR
+        (a,
+         "var '$returnTag' = Tag.newFlowControl(\"returnTag\") |\n"
+         "'$returnTag': %exp:1");
       ast::rScope copy = result_.unsafe_cast<ast::Routine>()->body_get();
       copy->body_set(exp(a % copy->body_get()));
     }
