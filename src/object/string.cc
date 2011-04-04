@@ -165,7 +165,7 @@ namespace urbi
     {
       int i = Float::to_int_type(idx, "invalid index: %s");
       // When working on end, prefer size() to 0.
-      if (i < 0 || large && i == 0)
+      if (i < 0 || (large && i == 0))
         i += content_.size();
       if (i < 0
           || ((large ? 1 : 0) + content_.size()) < static_cast<size_type>(i))
