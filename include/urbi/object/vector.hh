@@ -96,6 +96,7 @@ namespace urbi
       rVector scalarEQ(const rVector &b) const;
       // Return the vector of true indices.
       rVector trueIndexes() const;
+      rObject uvalueSerialize() const;
     private:
       value_type value_;
       URBI_CXX_OBJECT(Vector, CxxObject);

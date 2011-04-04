@@ -19,7 +19,9 @@
 #include <urbi/object/list.hh>
 #include <urbi/object/lobby.hh>
 #include <urbi/object/dictionary.hh>
+#include <urbi/object/matrix.hh>
 #include <urbi/object/string.hh>
+#include <urbi/object/vector.hh>
 #include <object/symbols.hh>
 #include <object/uvalue.hh>
 #include <object/uvar.hh>
@@ -119,6 +121,14 @@ urbi::UValue uvalue_cast(const object::rObject& o, int recursionLevel)
       + "."
       + o->as<object::UVar>()->initialName.name_get();
   }
+  else if (object::rVector ov = o->as<object::Vector>())
+  {
+    res, ov->value_get();
+  }
+  else if (object::rMatrix om = o->as<object::Matrix>())
+  {
+    res, om->value_get();
+  }
   else if (o->slot_has(SYMBOL(uvalueSerialize)))
   {
     res = uvalue_cast(o->call(SYMBOL(uvalueSerialize)), recursionLevel+1);
@@ -178,6 +188,23 @@ object_cast(const urbi::UValue& v)
       res = new object::Object();
       res->proto_add(Binary);
       std::string msg = v.binary->getMessage();
+      // Try to interpret vector and matrix
+      std::string kw; int elemSize; std::string elemType; int count1=-1;
+      int count2 = -1;
+      std::stringstream s(msg);
+      s >> kw >> elemSize >> elemType >> count1 >> count2;
+      if (kw == "packed" && elemSize == sizeof(ufloat))
+      {
+        if (count2 == -1)
+          return new object::Vector(
+            urbi::uvalue_caster<boost::numeric::ublas::vector<ufloat> >()
+                                    (const_cast<urbi::UValue&>(v)));
+        else
+          return new object::Matrix(
+            urbi::uvalue_caster<boost::numeric::ublas::matrix<ufloat> >()
+                                    (const_cast<urbi::UValue&>(v)));
+      }
+      // The rest goes into a generic Binary.
       res->slot_set(SYMBOL(keywords), new object::String(msg));
       res->slot_set(SYMBOL(data),
                     new object::String

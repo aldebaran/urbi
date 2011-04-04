@@ -124,6 +124,7 @@ namespace urbi
       rVector distanceToMatrix(rMatrix v) const;
       rMatrix setRow(int r, rVector val);
       rMatrix appendRow(rVector vals);
+      rObject uvalueSerialize() const;
     private:
       std::string make_string(char col_lsep, char col_rsep,
                               const std::string row_lsep,

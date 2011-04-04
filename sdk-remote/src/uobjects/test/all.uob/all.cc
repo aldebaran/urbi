@@ -9,6 +9,9 @@
  */
 
 #include <iostream>
+#include <boost/numeric/ublas/blas.hpp>
+#include <boost/numeric/ublas/matrix.hpp>
+#include <boost/numeric/ublas/vector.hpp>
 #include <libport/cmath>
 #include <libport/compiler.hh>
 #include <libport/containers.hh>
@@ -159,6 +162,8 @@ public:
     UBindFunction(all, transmitI);
     UBindFunction(all, transmitSnd);
     UBindFunction(all, transmitO);
+    UBindFunction(all, transmitVector);
+    UBindFunction(all, transmitMatrix);
 
     UBindFunction(all, loop_yield);
     UBindFunction(urbi::UContext, side_effect_free_get);
@@ -770,6 +775,23 @@ public:
   urbi::UObject* transmitO(UObject* o) const
   {
     return o;
+  }
+
+  boost::numeric::ublas::vector<ufloat>
+  transmitVector(boost::numeric::ublas::vector<ufloat> v)
+  {
+    for (unsigned i=0; i<v.size(); ++i)
+      v(i) += 1;
+    return v;
+  }
+
+  boost::numeric::ublas::matrix<ufloat>
+  transmitMatrix(boost::numeric::ublas::matrix<ufloat> m)
+  {
+    for (unsigned i=0; i<m.size1(); ++i)
+      for (unsigned j=0; j<m.size2(); ++j)
+        m(i, j) += i;
+    return m;
   }
 
   int sendString(const std::string& s)

@@ -9,6 +9,8 @@
  */
 
 #include <urbi/object/vector.hh>
+#include <kernel/uvalue-cast.hh>
+#include <urbi/uvalue.hh>
 
 namespace urbi
 {
@@ -139,6 +141,7 @@ namespace urbi
       BIND(size);
       BIND(sum);
       BIND(trueIndexes);
+      BIND(uvalueSerialize);
       bind(libport::Symbol("scalar" "EQ"), &Vector::scalarEQ);
       bind(libport::Symbol("scalar" "GT"), &Vector::scalarGT);
       bind(libport::Symbol("scalar" "LT"), &Vector::scalarLT);
@@ -312,6 +315,25 @@ namespace urbi
       ufloat res = 0;
       for (unsigned i=0; i<size(); ++i)
         res += value_(i);
+      return res;
+    }
+
+    rObject
+    Vector::uvalueSerialize() const
+    {
+      CAPTURE_GLOBAL(Binary);
+      // This is ugly: we cannot go through object-cast as it would give us
+      // back the vector. So make the Binary ourselve.
+      rObject o(const_cast<Vector*>(this));
+      urbi::UValue v = ::uvalue_cast(o);
+      rObject res = new object::Object();
+      res->proto_add(Binary);
+      res->slot_set(SYMBOL(keywords),
+                    new object::String(v.binary->getMessage()));
+      res->slot_set(SYMBOL(data),
+                    new object::String
+                    (std::string(static_cast<char*>(v.binary->common.data),
+				 v.binary->common.size)));
       return res;
     }
   }

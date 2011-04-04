@@ -11,6 +11,8 @@
 #include <urbi/object/matrix.hh>
 #include <boost/numeric/ublas/lu.hpp>
 
+#include <kernel/uvalue-cast.hh>
+
 namespace urbi
 {
   namespace object
@@ -388,6 +390,7 @@ namespace urbi
       BIND(set);
       BIND(setRow);
       BIND(transpose);
+      BIND(uvalueSerialize);
       bind(libport::Symbol( "[]" ), &Matrix::operator());
       bind(libport::Symbol( "[]=" ), &Matrix::set);
 
@@ -595,6 +598,26 @@ namespace urbi
     {
       value_.resize(i, j);
       return this;
+    }
+
+    rObject
+    Matrix::uvalueSerialize() const
+    {
+      CAPTURE_GLOBAL(Binary);
+      // This is ugly: we cannot go through object-cast as it would give us
+      // back the vector. So make the Binary ourselve.
+      // This is also a duplicate of Vector::uvalueSerialize.
+      rObject o(const_cast<Matrix*>(this));
+      urbi::UValue v = ::uvalue_cast(o);
+      rObject res = new object::Object();
+      res->proto_add(Binary);
+      res->slot_set(SYMBOL(keywords),
+                    new object::String(v.binary->getMessage()));
+      res->slot_set(SYMBOL(data),
+                    new object::String
+                    (std::string(static_cast<char*>(v.binary->common.data),
+				 v.binary->common.size)));
+      return res;
     }
   }
 }

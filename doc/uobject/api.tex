@@ -212,7 +212,7 @@ named \lstinline|init| with the appropriate number of arguments.
 \section{Binding functions}
 
 \subsection{Simple binding}
-
+\label{sec:uobject:simple-binding}
 You can register any member function of your \UObject using the macro
 
 % Fix line wrap.
@@ -226,10 +226,12 @@ The following types for arguments and return value are supported:
 \item Basic integer and floating types (int, double, float...).
 \item \lstinline{const std::string&} or \lstinline{const char*}.
 \item \lstinline{urbi::UValue} or any of its subtypes (\UBinary, \UList...).
-\item \lstinline{std::list}, \lstinline{std::vector} or
-\lstinline{boost::unordered_map} of the above types.
+\item \lstinline{boost::numeric::ublas::vector<ufloat>} and
+\lstinline{boost::numeric::ublas::matrix<ufloat>}
 \item \lstinline{UObject*}. Just pass the \UObject from \us.
 \item \lstinline{UVar&}. Pass \lstinline{myobject.&myuvar} from \us.
+\item \lstinline{std::list}, \lstinline{std::vector} or
+\lstinline{boost::unordered_map} of the above types.
 \end{itemize}
 
 The procedure to register new types to this system is explained in
@@ -519,8 +521,7 @@ compatible type to it, and the new value will be visible in \us.  Similarly,
 you can cast the \UVar (or use the \lstinline{as()} method) to convert the
 current \us value held to any compatible type.
 
-Compatible types are the same as for bound functions (see
-\autoref{sec:extend-cast-system}).
+Compatible types are the same as for bound functions (see \autoref{sec:uobject:simple-binding} and \autoref{sec:extend-cast-system}).
 
 \begin{cxx}
 // Set the camera format to 0 if it is 1.
