@@ -95,42 +95,41 @@ namespace urbi
     }
 
 
-
     rObject Primitive::call_raw(const object::objects_type& args)
     {
       size_t arity = args.size();
-      if (!libport::has(content_, arity))
+      if (libport::has(content_, arity))
+        return content_[arity](args);
+      // Self is always present, accept it even for 0-arity.
+      else if (arity == 1 && libport::has(content_, 0))
+        return content_[0](args);
+      else if (default_)
+        return default_(args);
+
+      // error handing
+      size_t min = INT_MAX;
+      size_t max = 0;
+
+      // FIXME: the valid arity range is not necessarilly continue
+      foreach (const Primitive::values_type::value_type& elt, content_)
       {
-        // Self is always present, accept it even for 0-arity.
-        if (arity == 1 && libport::has(content_, 0))
-          return content_[0](args);
-        if (default_)
-          return default_(args);
-
-        size_t min = INT_MAX;
-        size_t max = 0;
-
-        // FIXME: the valid arity range is not necessarilly continue
-        foreach (const Primitive::values_type::value_type& elt, content_)
-        {
-          min = std::min(min, elt.first);
-          max = std::max(max, elt.first);
-        }
-        if (min == max)
-        {
-          GD_FINFO_TRACE("arity error for primitive: expected %s, got %s.",
-                         min, arity);
-          runner::raise_arity_error(arity - 1, min - 1);
-        }
-        else
-        {
-          GD_FINFO_TRACE("arity error for primitive: "
-                         "expected between %s and %s, got %s.",
-                         min, max, arity);
-          runner::raise_arity_error(arity - 1, min - 1, max - 1);
-        }
+        min = std::min(min, elt.first);
+        max = std::max(max, elt.first);
       }
-      return content_[arity](args);
+      if (min == max)
+      {
+        GD_FINFO_TRACE("arity error for primitive: expected %s, got %s.",
+                       min, arity);
+        runner::raise_arity_error(arity - 1, min - 1);
+      }
+      else
+      {
+        GD_FINFO_TRACE("arity error for primitive: "
+                       "expected between %s and %s, got %s.",
+                       min, max, arity);
+        runner::raise_arity_error(arity - 1, min - 1, max - 1);
+      }
+      unreachable();
     }
   }; // namespace object
 }
