@@ -418,10 +418,13 @@ namespace ast
     rThrow
     make_throw(const location& l, const rExp& e) /* const */;
 
-    /// timeout(duration) body
+    /// timeout(<duration>) <body> <catch>? <else>? <finally>?
     static
     rExp
-    make_timeout(const rExp& duration, const rExp& body) /* const */;
+    make_timeout(const location& l,
+                 const rExp& duration, const rExp& body,
+                 rExp catchclause, rExp elseclause,
+                 rExp finally) /* const */;
 
     static
     rExp make_true(const location& loc);

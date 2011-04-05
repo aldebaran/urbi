@@ -279,6 +279,13 @@ class Exception.Syntax: Exception
   };
 };
 
+makeMsgException(
+  "TimeOut", Exception, [],
+  "timeout expired"
+);
+
+
+
 /*---------------------------------.
 | Type, arguments and subobjects.  |
 `---------------------------------*/
@@ -336,7 +343,7 @@ class Exception.Argument: Exception
   };
 };
 
-do(Global.Exception)
+do (Global.Exception)
 {
   function argumentTypeException(routine, index, effective,
                                  expected, alternatives = [])

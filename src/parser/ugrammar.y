@@ -310,7 +310,7 @@
 %left "|"
 %left "&"
 %precedence CMDBLOCK
-%precedence "else" "onleave" "finally"
+%precedence "catch" "else" "onleave" "finally"
 
 %right "=" "+=" "-=" "*=" "/=" "^=" "%="
 
@@ -762,9 +762,10 @@ stmt:
     {
       $$ = MAKE(switch, @3, $3, $6, $7);
     }
-| "timeout" "(" exp ")" nstmt
+| "timeout" "(" exp ")" nstmt[body] catch.opt else.opt finally.opt
     {
-      $$ = MAKE(timeout, $3, $5);
+      $$ = MAKE(timeout, @$,
+                $exp, $body, $[catch.opt], $[else.opt], $[finally.opt]);
     }
 | "return" exp.opt
     {
@@ -864,6 +865,15 @@ match.opt:
 catch:
   "catch" match.opt block { $$ = MAKE(catch, @$, $[match.opt], $[block]); }
 ;
+
+// No catching condition accepted, this is for timeout only.
+// BEWARE: return the body of the clause, not a Catch AST node.
+%type <ast::rExp> catch.opt;
+catch.opt:
+  /* empty */ %prec CMDBLOCK  { $$ = 0; }
+| "catch" block               { $$ = $block; }
+;
+
 
 %type <ast::rExp> finally.opt;
 finally.opt:

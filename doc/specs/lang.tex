@@ -832,35 +832,33 @@ efficient, and, in a way, provides some atomicity for concurrent tasks.
 \end{urbiscript}
 
 In an interactive session, both statements must be ``known'' before
-launching the sequence.  The value of the composed statement is the
-value of the second statement.
+launching the sequence.  The value of the composed statement is the value of
+the second statement.
 
 \subsubsection{\samp{\&}}
 
 The \samp{\&} is very similar to the \samp{,} connector, but for its
-precedence.  \urbi expects to process the whole statement before
-launching the connected statements.   This is especially handy in
-interactive sessions, as a means to fire a set of tasks concurrently.
+precedence.  \urbi expects to process the whole statement before launching
+the connected statements.  This is especially handy in interactive sessions,
+as a means to fire a set of tasks concurrently.
 
 
 \subsection{Operators}
 
 \us supports many \dfn{operators}, most of which are inspired from
-\Cxx. Their syntax is presented here, and they are sorted and
-described with their original semantics --- that is, \lstinline|+| is
-an arithmetic operator that sums two numeric values. However, as in
-\Cxx, these operators might be use for any other purpose --- that is,
-\lstinline|+| can also be used as the concatenation operator on lists
-and strings. Their semantics is thus not limited to what is presented
-here.
+\Cxx. Their syntax is presented here, and they are sorted and described with
+their original semantics --- that is, \lstinline|+| is an arithmetic
+operator that sums two numeric values. However, as in \Cxx, these operators
+might be use for any other purpose --- that is, \lstinline|+| can also be
+used as the concatenation operator on lists and strings. Their semantics is
+thus not limited to what is presented here.
 
-Tables in this section sort operators top-down, by precedence order.
-Group of rows (not separated by horizontal lines) describe operators
-that have the same precedence. Many operators are syntactic sugar that
-bounce on a method. In this case, the equivalent desugared expression
-is shown in the ``Equivalence'' column. This can help you determine
-what method to override to define an operator for an object (see
-\autoref{sec:tut:operators}).
+Tables in this section sort operators top-down, by precedence order.  Group
+of rows (not separated by horizontal lines) describe operators that have the
+same precedence. Many operators are syntactic sugar that bounce on a
+method. In this case, the equivalent desugared expression is shown in the
+``Equivalence'' column. This can help you determine what method to override
+to define an operator for an object (see \autoref{sec:tut:operators}).
 
 This section defines the syntax, precedence and associativity of the
 operators. Their semantics is described in \autoref{sec:stdlib} in the
@@ -3142,11 +3140,14 @@ finally
 [00000002] *** finally
 \end{urbiscript}
 
-The value of the whole construct is that of the finally-clause.
+Because it is meant to be used to reclaim resources (``clean up'', the
+finally-clause never contributes to the value of the whole statement.
 
 \begin{urbiscript}
-try { 51 } finally { 42 };
-[00000001] 51
+try { "try" } catch { "catch" } else { "else" } finally { "finally" };
+[00000001] "else"
+try { throw "throw" } catch { "catch" } else { "else" } finally { "finally" };
+[00000001] "catch"
 \end{urbiscript}
 
 
@@ -3892,6 +3893,127 @@ modify \lstinline|n| simultaneously.  This would happen had
 ==
 [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 \end{urbiassert}
+
+\subsection{timeout}
+\label{sec:lang:timeout}
+
+The \lstinline|timeout| construct allows to interrupt a piece of code that
+took too long to run.  Its syntax is based on the
+\lstinline|try|/\lstinline|catch| construct (\autoref{sec:lang:catch}).
+
+\begin{lstlisting}[language=bnf]
+<timeout-statement>
+  ::= "timeout" "(" <duration> ")" <statement> <catch-all-clause>? <else-clause>? <finally-clause>?
+
+<duration>
+  ::= <float>
+
+<catch-all-clause>
+  ::= "catch" "{" <statement>* "}"
+
+<else-clause>
+  ::= "else" "{" <statement>* "}"
+
+<finally-clause>
+  ::= "finally" "{" <statement>* "}"
+\end{lstlisting}
+
+If the statement finishes its expiration before \var{duration} expires, then
+the optional \lstinline|else|-clause is run.  Otherwise, if \var{duration}
+expires, the optional \lstinline|catch|-clause is run.  In both cases, then
+the optional \lstinline|finally|-clause is executed.
+
+The value of the \lstinline|timeout|-statement is that of the last
+completed non-\lstinline|finally| block that was run; \lstinline|void| if
+no block was completed.  The value of the \lstinline|finally| is always
+ignored, because this clause is meant to release resources, and in typical
+uses it does not contribute to the computation.
+
+Because there are too many cases to demonstrate, only some of them are
+exemplified below.
+\begin{urbiscript}
+// timeout alone.
+timeout (1s)  { echo("body"); sleep(0.5s); "body-value" };
+[00000002] *** body
+[00000004] "body-value"
+
+timeout (1s)  { echo("body"); sleep(2s); "body-value" };
+[00000002] *** body
+
+// timeout and catch.
+timeout (1s)  { echo("body"); sleep(0.5s); "body-value" }
+catch         { echo("catch"); "catch-value" };
+[00000002] *** body
+[00000002] "body-value"
+
+timeout (1s)  { echo("body"); sleep(2s); "body-value" }
+catch         { echo("catch"); "catch-value" };
+[00000002] *** body
+[00000002] *** catch
+[00000002] "catch-value"
+
+// timeout and else.
+timeout (1s)  { echo("body"); sleep(0.5s); "body-value" }
+else          { echo("else"); "else-value" };
+[00000002] *** body
+[00000002] *** else
+[00000002] "else-value"
+
+timeout (1s)  { echo("body"); sleep(2s); "body-value" }
+else          { echo("else"); "else-value" };
+[00000002] *** body
+
+// timeout, catch, and else.
+timeout (1s)  { echo("body"); sleep(0.5s); "body-value" }
+catch         { echo("catch"); "catch-value" }
+else          { echo("else"); "else-value" };
+[00000002] *** body
+[00000002] *** else
+[00000002] "else-value"
+
+timeout (1s)  { echo("body"); sleep(2s); "body-value" }
+catch         { echo("catch"); "catch-value" }
+else          { echo("else"); "else-value" };
+[00000002] *** body
+[00000002] *** catch
+[00000002] "catch-value"
+
+// timeout, catch, else and finally.
+timeout (1s)  { echo("body"); sleep(0.5s); "body-value" }
+catch         { echo("catch"); "catch-value" }
+else          { echo("else"); "else-value" }
+finally       { echo("finally"); "finally-value" };
+[00000002] *** body
+[00000002] *** else
+[00000002] *** finally
+[00000002] "else-value"
+
+timeout (1s)  { echo("body"); sleep(2s); "body-value" }
+catch         { echo("catch"); "catch-value" }
+else          { echo("else"); "else-value" }
+finally       { echo("finally"); "finally-value" };
+[00000002] *** body
+[00000002] *** catch
+[00000002] *** finally
+[00000002] "catch-value"
+\end{urbiscript}
+
+If an exception is thrown from the \lstinline|timeout|-clause, it is
+\emph{not} caught by the \lstinline|catch|-clause (nor the
+\lstinline|else|-clause), rather it continues its propagation to the outer
+statements.
+
+\begin{urbiscript}
+timeout (1s)  { echo("body"); throw Exception.new("Ouch") }
+catch         { echo("catch"); "catch-value" }
+else          { echo("else"); "else-value" }
+finally       { echo("finally"); "finally-value" };
+[00000566] *** body
+[00000569] *** finally
+[00000585:error] !!! Ouch
+\end{urbiscript}
+
+Alternatively, you may use the \refObject{Timeout} object.
 
 \subsection{\lstinline|waituntil|}
 \label{sec:lang:waituntil}

@@ -54,6 +54,33 @@ This chapter lists the user-visible changes in \usdk releases.
 "foobar"[-1] == "r";    "foobar"[-6, -3] == "foo";
 \end{urbiassert}
 
+\item The \lstinline|timeout| construct now features optional
+  \lstinline|catch|, \lstinline|else|, and \lstinline|finally| clauses,
+  modeled after the syntax of \lstinline|try|-blocks.
+\begin{urbiscript}
+function testTimeOut(var duration)
+{
+  timeout (1s)  { echo("computation"); sleep(duration); "body-value" }
+  catch         { echo("interrupted!");                "catch-value" }
+  else          { echo("completed");                    "else-value" }
+  finally       { echo("finally");                   "finally-value" }
+}|;
+
+// Run till completion.
+testTimeOut(0s);
+[00000264] *** computation
+[00000265] *** completed
+[00000265] *** finally
+[00000265] "else-value"
+
+// Interrupted before completion.
+testTimeOut(2s);
+[00000266] *** computation
+[00001267] *** interrupted!
+[00001270] *** finally
+[00001271] "catch-value"
+\end{urbiscript}
+
 \item \refObject{Vector} and \refObject{Matrix} provide support for
   efficient linear algebra operations.
 \end{itemize}

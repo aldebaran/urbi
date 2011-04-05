@@ -1129,22 +1129,49 @@ namespace ast
   }
 
   rExp
-  Factory::make_timeout(const rExp& duration,
-                        const rExp& body) // const
+  Factory::make_timeout(const location& loc,
+                        const rExp& duration,
+                        const rExp& body,
+                        rExp catchclause, rExp elseclause,
+                        rExp finally) // const
   {
     PARAMETRIC_AST
-      (desugar,
+      (try_clause,
+       "try\n"
        "{\n"
-       " var '$tag' = Tag.new |\n"
-       " '$tag':\n"
-       "   {\n"
-       "      {\n"
-       "        sleep(%exp:1) | '$tag'.stop\n"
-       "      },\n"
-       "     %exp:2 | '$tag'.stop\n"
-       "   }\n"
-       "}");
-    return exp(desugar % duration % body);
+       "  var '$tag' = Tag.new|\n"
+       "  '$tag':\n"
+       "  {\n"
+       "    sleep(%exp:1) | throw Exception.TimeOut\n"
+       "  },\n"
+       "  var '$res' = %exp:2.acceptVoid |\n"
+       "  '$tag'.stop |\n"
+       "  '$res'.unacceptVoid\n"
+       "}\n"
+       "catch (var e if e.isA(Exception.TimeOut))\n"
+       "{\n"
+       "  %exp:3\n"
+       "}\n"
+       "else\n"
+       "{\n"
+       "  %exp:4\n"
+       "}\n");
+
+    rTry res = exp(try_clause
+                   % duration
+                   % body
+                   % ensure(loc, catchclause)
+                   % ensure(loc, elseclause)).unchecked_cast<Try>();
+
+    // Remove if not defined, as it changes the value of the whole
+    // block.
+    if (!elseclause)
+      res->elseclause_get() = 0;
+
+    if (finally)
+      return make_finally(loc, res, finally);
+    else
+      return res;
   }
 
   rExp

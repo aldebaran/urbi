@@ -276,6 +276,14 @@ catch (var e)
 };
 \end{urbiscript}
 
+\item[TimeOut]%
+  Used internally to implement the \lstinline|timeout| construct
+  (\autoref{sec:lang:timeout}).
+\begin{urbiassert}
+Exception.TimeOut.new.asString
+  == "timeout expired";
+\end{urbiassert}
+
 \item[Type](<effective>, <expected>)
   A value of type \var{effective} was received, while a value of type
   \var{expected} was expected.
