@@ -197,6 +197,7 @@ int Threaded::queueOp(unsigned tid, int op, UList args)
   libport::BlockLock bl (ops[tid]->opLock);
   ops[tid]->ops.push_back(Operation(op, args));
   ops[tid]->hasOp = true;
+  GD_FINFO_TRACE("Queued operation %s for thread %s",  op, tid);
   return 1;
 }
 
@@ -208,6 +209,7 @@ int Threaded::startThread()
   ops.push_back(new Context(ops.size()));
   ops.back()->threadId =
     libport::startThread(boost::bind(&Threaded::threadLoop, this, id));
+  GD_FINFO_DUMP("Started thread id %s", id);
   return id;
 }
 
@@ -407,19 +409,25 @@ void Threaded::throwException(int what)
 
 void Threaded::threadLoop(int id)
 {
+  GD_FINFO_DUMP("Entering threadLoop for id %s", id);
   while (true)
   {
     try
       {
         if (!threadLoopBody(id))
+        {
+          GD_FINFO_DUMP("Exiting threadLoop for id %s", id);
           return;
+        }
       }
     catch(std::exception& e)
       {
+        GD_FINFO_TRACE("Exiting threadLoop with exception %s", e.what());
         std::cerr <<"exception " << e.what() << std::endl;
       }
     catch(...)
       {
+        GD_INFO_TRACE("Exiting threadLoop with unknown exception");
         std::cerr <<"unknown exception" << std::endl;
       }
   }
