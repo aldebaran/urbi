@@ -54,16 +54,10 @@ namespace urbi
       , size_(0)
     {
       proto_add(Stream::proto);
-
-# define DECLARE(Name, Cxx)                     \
-      bind(SYMBOL_(Name), &InputStream::Cxx)
-
-      DECLARE(get,     get);
-      DECLARE(getChar, getChar);
-      DECLARE(getLine, getLine);
-      DECLARE(init,    init);
-
-# undef DECLARE
+      BIND(get);
+      BIND(getChar);
+      BIND(getLine);
+      BIND(init);
     }
 
     InputStream::~InputStream()
