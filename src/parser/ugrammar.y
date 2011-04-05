@@ -862,10 +862,7 @@ match.opt:
 
 %type <ast::rCatch> catch;
 catch:
-  "catch" match.opt block
-  {
-    $$ = new ast::Catch(@$, $[match.opt], $[block]);
-  }
+  "catch" match.opt block { $$ = MAKE(catch, @$, $[match.opt], $[block]); }
 ;
 
 %type <ast::rExp> finally.opt;

@@ -473,6 +473,13 @@ namespace ast
     return res;
   }
 
+  rCatch
+  Factory::make_catch(const location& l,
+                      rMatch match, const rExp& body)
+  {
+    return new Catch(l, match, body);
+  }
+
   rExp
   Factory::make_detach(const location&,
                        bool is_detach, rExp body) /* const */

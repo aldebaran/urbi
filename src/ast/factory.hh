@@ -136,6 +136,12 @@ namespace ast
               rExp target, libport::Symbol method,
               rExp arg1, rExp arg2, rExp arg3 = 0) /* const */;
 
+    /// "catch (<match>) { <body> }."
+    static
+    rCatch
+    make_catch(const location& l,
+               rMatch match, const rExp& body);
+
     /// "<detach-or-disown> (<body>)".
     static
     rExp
