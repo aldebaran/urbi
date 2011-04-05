@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1400 utf-8
+personal_ws-1.1 en 1403 utf-8
 aaa
 abc
 abcd
@@ -150,6 +150,7 @@ Bonjour
 bool
 boolean
 brandNewTag
+breakInWhile
 bsd
 bufferIn
 bugReport
@@ -215,6 +216,7 @@ connectionTag
 connectSerial
 const
 Constness
+continueInWhile
 controllerArgs
 convertedData
 copyInto
@@ -1142,6 +1144,7 @@ teleport
 TemperatureSensor
 TerminateException
 testPi
+testTimeOut
 tex
 texinfo
 texlive
