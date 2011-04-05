@@ -168,6 +168,7 @@ namespace urbi
       virtual void unnotify();
       virtual void useRTP(bool enable);
       virtual void setInputPort(bool enable);
+      object::rUVar ruvar() { return ruvar_;}
     private:
       libport::Lockable asyncLock_; // lock for pending_
       /* Schedule an operation to be executed by the main thread, preventing
@@ -417,7 +418,8 @@ wrap_ucallback_notify(const object::objects_type& ol,
                       urbi::UGenericCallback* ugc,
                       const std::string& traceName)
 {
-  GD_FPUSH_TRACE("Calling bound notify %s", traceName);
+  GD_FPUSH_TRACE("Calling bound notify %s sync=%s", traceName,
+                 ugc->isSynchronous());
   urbi::setCurrentContext(urbi::impl::KernelUContextImpl::instance());
   bound_context
     << std::make_pair(&ugc->owner ? ugc->owner.__name : "unknown",
@@ -436,6 +438,23 @@ wrap_ucallback_notify(const object::objects_type& ol,
   else
     l[0].storage = ugc->target;
   libport::utime_t t = libport::utime();
+  if (!ugc->isSynchronous())
+  {
+    // If the value is in bypass mode we must force cache generation so that
+    // this asynchronous callback will get a value.
+    object::rUVar v
+    = static_cast<urbi::impl::KernelUVarImpl*>(
+        ((urbi::UVar*)l[0].storage)->impl_)
+        ->ruvar();
+    object::rObject val = v->getter(true);
+    if (object::rUValue bv = val->as<object::UValue>())
+    {
+      GD_INFO_DUMP("Asynchronous call: forcing cache extraction");
+      bv->extract();
+    }
+    else
+      GD_INFO_DUMP("Not an UValue, no cache");
+  }
   if (useArgVar)
     ugc->eval(l, boost::bind(delete_uvar, (urbi::UVar*)l[0].storage));
   else
