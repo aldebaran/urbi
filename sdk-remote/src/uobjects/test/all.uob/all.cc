@@ -207,7 +207,8 @@ public:
     }
     // 4 is unbound
     ports[4] = new urbi::InputPort();
-    UBindFunctions(all, notifyWriteA, writeAD, writeAS, writeAB, manyWriteTest);
+    UBindFunctions(all, notifyWriteA, writeAD, writeAS, writeAB, writeAV,
+                   manyWriteTest);
     UAt(all, boundev);
   }
 
@@ -499,23 +500,29 @@ public:
 
   int onChange(urbi::UVar& v)
   {
+    GD_INFO_DUMP("entering onChange");
     lastChange = v.get_name();
     changeCount = ++count;
     if (v.type() == urbi::DATA_DOUBLE)
     {
+      GD_FINFO_DUMP("onChange double %s", v.get_name());
       int val = v;
       lastChangeVal = val;
     }
     else if (v.type() == urbi::DATA_BINARY)
     {
+      GD_FINFO_DUMP("onChange binary %s", v.get_name());
       urbi::UBinary b = v;
       lastChangeVal = b;
     }
+    else
+      GD_FINFO_DUMP("onChange unknown %s", v.get_name());
     if (removeNotify == v.get_name())
     {
       v.unnotify();
       removeNotify = "";
     }
+    GD_INFO_DUMP("exiting onChange");
     return 0;
   }
 
