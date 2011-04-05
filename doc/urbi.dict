@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1403 utf-8
+personal_ws-1.1 en 1404 utf-8
 aaa
 abc
 abcd
@@ -703,6 +703,7 @@ mkdir
 mn
 mne
 MobileSim
+modularity
 MOGS
 Monde
 monomethods
@@ -759,6 +760,7 @@ nan
 nao
 Nao's
 NaoQi
+Naur
 nb
 ndebug
 ne
@@ -1304,6 +1306,7 @@ uvalue
 UValues
 UValueSerializable
 UVar
+uvar
 UVars
 valgrind
 vals
