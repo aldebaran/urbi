@@ -59,19 +59,19 @@ System.PackageInfo.components["Urbi SDK"].description.isA(String);
 System.PackageInfo.components["Urbi SDK"].id.isA(String);
 \end{urbiassert}
 
-\item[major] The major version component (see \refSlot{version}).
+\item[major] The major version component (see \refSlot{version}), for
+  instance \lstinline|2|.
 \begin{urbiassert}
-System.PackageInfo.components["Urbi SDK"].major
-  == 2;
+System.PackageInfo.components["Urbi SDK"].major.isA(Float);
 \end{urbiassert}
 
-\item[minor] The minor version component (see \refSlot{version}).
+\item[minor] The minor version component (see \refSlot{version}), for
+  instance \lstinline|7|.
 \begin{urbiassert}
-System.PackageInfo.components["Urbi SDK"].minor
-  == 7;
+System.PackageInfo.components["Urbi SDK"].minor.isA(Float);
 \end{urbiassert}
 
-\item[name] The name of the package.
+\item[name] The name of the package as a String.
 \begin{urbiassert}
 System.PackageInfo.components["Urbi SDK"].name
   == "Urbi SDK";
@@ -89,15 +89,9 @@ System.PackageInfo.components["Urbi SDK"].revision.isA(String);
 
 \item[string] Name and version concatenated, for instance
   \lstinline|Urbi SDK 2.7.1|.
-\begin{urbiscript}
-do (System.PackageInfo.components["Urbi SDK"])
-{
-  assert
-  {
-    string == name + " " + version;
-  };
-}|;
-\end{urbiscript}
+\begin{urbiassert}
+System.PackageInfo.components["Urbi SDK"].string.isA(String);
+\end{urbiassert}
 
 \item[subMinor] The sub-minor version component (see \refSlot{version}).
 \begin{urbiassert}
