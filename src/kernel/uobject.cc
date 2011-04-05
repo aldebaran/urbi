@@ -172,12 +172,13 @@ namespace urbi
       libport::Lockable asyncLock_; // lock for pending_
       /* Schedule an operation to be executed by the main thread, preventing
        * the destruction of this object and the owner UVar until the operation
-       * is completed.
+       * is completed. If sync, blocks until completion.
        */
-      void schedule(libport::Symbol s, boost::function0<void> op) const;
+      void schedule(libport::Symbol s, boost::function0<void> op,
+                    bool sync=false) const;
       void async(boost::function0<void> op);
-      void async_get(UValue**, libport::Semaphore&) const;
-      void async_get_prop(UValue&, libport::Semaphore&, UProperty);
+      void async_get(UValue**) const;
+      void async_get_prop(UValue&, UProperty);
       unsigned pending_; // number of pending asynchronous operations
       UVar* owner_;
       bool bypassMode_;
@@ -353,6 +354,13 @@ static void periodic_call(rObject, ufloat interval, rObject method,
     libport::utime_t target = libport::utime() + delay;
     r.yield_until(target);
   }
+}
+
+// Call function and unlock semaphore.
+static void call_and_unlock(boost::function0<void> f, libport::Semaphore& s)
+{
+  f();
+  s++;
 }
 
 void uobjects_reload()
@@ -1213,7 +1221,8 @@ namespace urbi
     }
 
     void
-    KernelUVarImpl::schedule(libport::Symbol, boost::function0<void> f) const
+    KernelUVarImpl::schedule(libport::Symbol, boost::function0<void> f,
+                             bool sync) const
     {
       GD_INFO_DUMP("Fast async schedule from UVar");
       KernelUVarImpl* self = const_cast<KernelUVarImpl*>(this);
@@ -1221,6 +1230,17 @@ namespace urbi
         libport::BlockLock bl(self->asyncLock_);
         ++self->pending_;
       }
+      if (sync)
+      {
+        libport::Semaphore sem;
+        server().schedule_fast(
+          boost::bind(&call_and_unlock,
+            boost::function0<void>(boost::bind(&KernelUVarImpl::async, self,
+                                               f)),
+                      boost::ref(sem)));
+        sem--;
+      }
+      else
       server().schedule_fast(boost::bind(&KernelUVarImpl::async, self, f));
     }
 
@@ -1400,22 +1420,19 @@ namespace urbi
       ov->invalidate();
     }
 
-    void KernelUVarImpl::async_get(UValue** v, libport::Semaphore& sem) const
+    void KernelUVarImpl::async_get(UValue** v) const
     {
       *v = &const_cast<UValue&>(get());
-      sem++;
     }
 
     const UValue& KernelUVarImpl::get() const
     {
       if (server().isAnotherThread())
       {
-        libport::Semaphore sem;
         urbi::UValue* v;
         schedule(SYMBOL(UObject),
-                          boost::bind(&KernelUVarImpl::async_get, this,
-                                      &v, boost::ref(sem)));
-        sem--;
+                 boost::bind(&KernelUVarImpl::async_get, this, &v),
+                 true);
         return *v;
       }
       aver(ruvar_);
@@ -1457,11 +1474,9 @@ namespace urbi
       if (server().isAnotherThread())
       {
         urbi::UValue* v;
-        libport::Semaphore sem;
         schedule(SYMBOL(UObject),
                           boost::bind(&KernelUVarImpl::async_get, this,
-                                      &v, boost::ref(sem)));
-        sem--;
+                                      &v), true);
         return v->type;
       }
       rObject o = (owner_->owned
@@ -1472,11 +1487,9 @@ namespace urbi
 
     void
     KernelUVarImpl::async_get_prop(urbi::UValue&v,
-                                   libport::Semaphore& sem,
                                    UProperty prop)
     {
       v = getProp(prop);
-      sem++;
     }
 
     UValue KernelUVarImpl::getProp(UProperty prop)
@@ -1484,11 +1497,9 @@ namespace urbi
       if (server().isAnotherThread())
       {
         urbi::UValue v;
-        libport::Semaphore sem;
         schedule(SYMBOL(UObject),
-                          boost::bind(&KernelUVarImpl::async_get_prop, this,
-                                      boost::ref(v), boost::ref(sem), prop));
-        sem--;
+                 boost::bind(&KernelUVarImpl::async_get_prop, this,
+                                      boost::ref(v), prop), true);
         return v;
       }
       aver(ruvar_);
