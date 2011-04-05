@@ -31,7 +31,7 @@ namespace urbi
       return value_;
     }
 
-    inline unsigned int
+    inline size_t
     Matrix::index1(int i) const
     {
       if (i < 0)
@@ -41,7 +41,7 @@ namespace urbi
       return i;
     }
 
-    inline unsigned int
+    inline size_t
     Matrix::index2(int j) const
     {
       if (j < 0)

@@ -33,6 +33,12 @@ namespace urbi
       proto_add(proto);
     }
 
+    Matrix::Matrix(size_t i, size_t j)
+      : value_(i, j)
+    {
+      proto_add(proto);
+    }
+
     Matrix::Matrix(value_type v)
       : value_(v)
     {
@@ -154,8 +160,8 @@ namespace urbi
     Matrix::dot_times(const rMatrix& m) const
     {
       value_type res(value_.size1(), value_.size2());
-      for (unsigned int i = 0; i < value_.size1(); ++i)
-        for (unsigned int j = 0; j < value_.size2(); ++j)
+      for (size_t i = 0; i < value_.size1(); ++i)
+        for (size_t j = 0; j < value_.size2(); ++j)
           res(i, j) = value_(i, j) * (*m)(i, j);
       return new Matrix(res);
     }
@@ -417,8 +423,8 @@ namespace urbi
                         const std::string row_lsep,
                         const std::string row_rsep) const
     {
-      const unsigned int height = value_.size1();
-      const unsigned int width = value_.size2();
+      const size_t height = value_.size1();
+      const size_t width = value_.size2();
 
       std::ostringstream s;
       s << row_lsep;
@@ -443,8 +449,8 @@ namespace urbi
     std::string
     Matrix::asTopLevelPrintable() const
     {
-      const unsigned int height = value_.size1();
-      const unsigned int width = value_.size2();
+      const size_t height = value_.size1();
+      const size_t width = value_.size2();
 
       std::ostringstream s;
       s << "Matrix([" << std::endl;
@@ -512,8 +518,8 @@ namespace urbi
     rVector
     Matrix::distanceMatrix() const
     {
-      const unsigned int height = value_.size1();
-      const unsigned int width = value_.size2();
+      const size_t height = value_.size1();
+      const size_t width = value_.size2();
       rVector res(new Vector(height * (height-1) / 2));
       unsigned idx = 0;
       for (unsigned p1 = 0; p1<height; ++p1)
@@ -534,9 +540,9 @@ namespace urbi
     Matrix::distanceToMatrix(rMatrix b) const
     {
       Matrix::value_type& vb = b->value_get();
-      const unsigned int height = value_.size1();
-      const unsigned int width = value_.size2();
-      const unsigned int height2 = vb.size1();
+      const size_t height = value_.size1();
+      const size_t width = value_.size2();
+      const size_t height2 = vb.size1();
       if (width != vb.size2())
         throw std::runtime_error("Incompatible matrix sizes.");
       rVector res(new Vector(height * height2));
@@ -558,8 +564,8 @@ namespace urbi
     rVector
     Matrix::rowNorm() const
     {
-      const unsigned int height = value_.size1();
-      const unsigned int width = value_.size2();
+      const size_t height = value_.size1();
+      const size_t width = value_.size2();
       rVector res(new Vector(height));
       for (unsigned p1 = 0; p1<height; ++p1)
       {
@@ -594,7 +600,7 @@ namespace urbi
     }
 
     rMatrix
-    Matrix::resize(unsigned int i, unsigned int j)
+    Matrix::resize(size_t i, size_t j)
     {
       value_.resize(i, j);
       return this;

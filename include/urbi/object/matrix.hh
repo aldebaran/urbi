@@ -38,7 +38,7 @@ namespace urbi
       typedef value_type::size_type size_type;
 
       Matrix();
-      Matrix(unsigned int s);
+      Matrix(size_t i, size_t j);
       Matrix(value_type v);
       Matrix(const Matrix& v);
       Matrix(const rMatrix& model);
@@ -58,7 +58,6 @@ namespace urbi
       OP(minus_assign);
       OP(times_assign);
       OP(div_assign);
-
 #undef OP
 
 #define OP(Op, Type)                                      \
@@ -81,7 +80,6 @@ namespace urbi
       OP(/);
       OP(+);
       OP(-);
-
 #undef OP
 
       // Row by row operation.
@@ -103,11 +101,11 @@ namespace urbi
       ufloat operator()(int, int) const;
 
       rObject size() const;
-      rMatrix resize(unsigned int i, unsigned int j);
+      rMatrix resize(size_t i, size_t j);
       rMatrix set(int i, int j, ufloat v);
       ufloat get(int i, int j);
-      unsigned int index1(int) const;
-      unsigned int index2(int) const;
+      size_t index1(int) const;
+      size_t index2(int) const;
 
       value_type&       value_get();
       const value_type& value_get() const;
