@@ -463,7 +463,7 @@ namespace kernel
           (boost::bind(method_wrap, job.target, job.method, job.args, _1));
         interpreter =
           ghost_connection_get().shell_get()->spawn_child(
-            eval::call_apply(p, job.method, job.args));
+            eval::call_apply(job.target, p, job.method, job.args));
       }
       else if (job.callback)
       {
