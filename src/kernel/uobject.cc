@@ -1302,6 +1302,7 @@ namespace urbi
     void
     KernelUVarImpl::initialize(UVar* owner)
     {
+      owner_ = owner; // set at least that even from an other thread.
       GD_FINFO_TRACE("KernelUVarImpl::init %s", owner->get_name());
       if (server().isAnotherThread())
       {
@@ -1404,12 +1405,14 @@ namespace urbi
     {
       if (server().isAnotherThread())
       {
+        GD_FINFO_DUMP("async set %s to %s", owner_->get_name(), v);
         UValue vv(v);
         if (vv.type == DATA_BINARY)
           vv.binary->temporary_ = true;
         schedule(SYMBOL(UObject), boost::bind(&KernelUVarImpl::set, this, vv));
         return;
       }
+      GD_FINFO_DUMP("set %s to %s", owner_->get_name(), v);
       traceOperation(owner_, SYMBOL(traceSet));
       object::rUValue ov(new object::UValue());
       ov->put(v, bypassMode_);
