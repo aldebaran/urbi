@@ -88,12 +88,13 @@ Matrix.new([[1, 2], [3, 4]]).asString == "<<1, 2>, <3, 4>>";
 
 \end{urbiassert}
 
-\item[get](<i>, <j>)%
-  The element at \lstinline|\var{i}, \var{j}|. The index \var{i} must verify
-  $0 \le \textrm{\var{i}} < \texttt{\this.size}$, or $-\texttt{\this.size}
-  \le \textrm{\var{i}} < 0$, in which case it is equivalent to using index
-  $\var{i} + \texttt{\this.size}$: it counts ``backward''.  Similarly for
-  \var{j}.
+\item[get](<row>, <col>)%
+  The element at \lstinline|\var{row}, \var{col}|.  The index \var{row} must
+  verify $0 \le \textrm{\var{row}} < \texttt{\this.size.first}$, or
+  $-\texttt{\this.size.first} \le \texttt{\var{row}} < 0$, in which case it
+  is equivalent to using index $\textrm{\var{row}} +
+  \texttt{\this.size.first}$: it counts ``backward''.  Similarly for
+  \var{col}.
 \begin{urbiscript}
 var m = Matrix.new([[1, 2, 3], [10, 20, 30]])|;
 assert
