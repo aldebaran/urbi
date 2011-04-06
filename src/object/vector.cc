@@ -9,6 +9,7 @@
  */
 
 #include <urbi/object/vector.hh>
+#include <urbi/object/matrix.hh>
 #include <kernel/uvalue-cast.hh>
 #include <urbi/uvalue.hh>
 
@@ -59,7 +60,7 @@ namespace urbi
       fromList(model);
     }
 
-    Vector::Vector(unsigned int s)
+    Vector::Vector(size_t s)
       : value_(s)
     {
       proto_add(proto);
@@ -134,11 +135,7 @@ namespace urbi
       BIND(resize);
       BIND(scalarGE);
       BIND(scalarLE);
-      BIND(selfCombAdd);
-      BIND(selfCombDiv);
       BIND(selfCombIndexes);
-      BIND(selfCombMul);
-      BIND(selfCombSub);
       BIND(set, fromList);
       BIND(size);
       BIND(sum);
@@ -178,7 +175,7 @@ namespace urbi
       return this;
     }
 
-    unsigned int
+    size_t
     Vector::size() const
     {
       return value_.size();
@@ -193,12 +190,12 @@ namespace urbi
       return sqrt(res);
     }
 
-    unsigned int
+    size_t
     Vector::index(int i) const
     {
       if (i < 0)
         i += value_.size();
-      if (i < 0 || value_.size() <= (unsigned int)i)
+      if (i < 0 || value_.size() <= (size_t)i)
         FRAISE("invalid index: %s", i);
       return i;
     }
@@ -239,27 +236,15 @@ namespace urbi
     }
 
 #define OP(Name, Op)                                    \
-    rVector                                             \
-    Vector::comb ## Name(rVector vb) const              \
+    Vector::matrix_type                                 \
+    Vector::comb ## Name(const value_type& b) const     \
     {                                                   \
-      Vector::value_type& b = vb->value_get();          \
-      rVector res(new Vector(size() * b.size()));       \
-      Vector::value_type& v = res->value_get();         \
-      for (unsigned i = 0; i < size(); ++i)             \
-        for (unsigned j = 0; j < b.size(); ++j)         \
-          v(i * b.size() + j) = value_(i) Op b(j);      \
-      return res;                                       \
-    }                                                   \
-                                                        \
-    rVector                                             \
-    Vector::selfComb ## Name() const                    \
-    {                                                   \
-      rVector res(new Vector(size() * (size()-1) / 2)); \
-      Vector::value_type& v = res->value_get();         \
-      unsigned p = 0;                                   \
-      for (unsigned i = 0; i < size(); ++i)             \
-        for (unsigned j = i+1; j < size(); ++j)         \
-          v(p++) = value_(i) Op value_(j);              \
+      size_t s1 = size();                               \
+      size_t s2 = b.size();                             \
+      matrix_type res(s1, s2);                          \
+      for (unsigned i = 0; i < s1; ++i)                 \
+        for (unsigned j = 0; j < s2; ++j)               \
+          res(i, j) = value_(i) Op b(j);                \
       return res;                                       \
     }
 
@@ -269,12 +254,12 @@ namespace urbi
     OP(Sub, -)
 #undef OP
 
-    std::pair<unsigned int, unsigned int>
-    Vector::selfCombIndexes(unsigned int v)
+    std::pair<size_t, size_t>
+    Vector::selfCombIndexes(size_t v)
     {
-      unsigned int i=0;
-      unsigned int j=0;
-      unsigned int p=0;
+      size_t i=0;
+      size_t j=0;
+      size_t p=0;
       while (p+ size()-i -1 < v)
       {
         p += size() -i - 1;
@@ -285,7 +270,7 @@ namespace urbi
     }
 
     void
-    Vector::resize(unsigned int s)
+    Vector::resize(size_t s)
     {
       value_.resize(s);
     }

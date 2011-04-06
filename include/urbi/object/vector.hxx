@@ -93,7 +93,7 @@ namespace urbi
         return this->Object::operator<(bb);
       if (value_.size() != b->value_.size())
         return value_.size() < b->value_.size();
-      for (unsigned int i=0; i<value_.size(); ++i)
+      for (size_t i = 0; i < value_.size(); ++i)
         if (value_(i) != b->value_(i))
           return value_(i) < b->value_(i);
       return false;

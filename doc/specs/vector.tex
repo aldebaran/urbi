@@ -70,11 +70,53 @@ do (Vector)
 };
 \end{urbiscript}
 
-\item[combAdd]()%
+\item[combAdd](<that>)%
+  A \refObject{Matrix} \var{res} such that
+  \lstinline|\var{res}[\var{i}, \var{j}] = this[i] + \var{that}[j]|, for all
+  \lstinline|i| in the range of \this, and \lstinline|j| in the range of
+  \that.
+\begin{urbiassert}
+Vector.new(0, 1, 2).combAdd(Vector.new(0, 10, 20))
+  == Matrix.new([[ 0, 10, 20],
+                 [ 1, 11, 21],
+                 [ 2, 12, 22]]);
+\end{urbiassert}
 
-\item[combDiv]()%
+\item[combDiv](<that>)%
+  A \refObject{Matrix} \var{res} such that
+  \lstinline|\var{res}[\var{i}, \var{j}] = this[i] / \var{that}[j]|, for all
+  \lstinline|i| in the range of \this, and \lstinline|j| in the range of
+  \that.
+\begin{urbiassert}
+Vector.new(10, 20).combDiv(Vector.new(2, 5, 10))
+  == Matrix.new([[  5, 2, 1],
+                 [ 10, 4, 2]]);
+\end{urbiassert}
 
-\item[combMul]()%
+\item[combMul](<that>)%
+  A \refObject{Matrix} \var{res} such that
+  \lstinline|\var{res}[\var{i}, \var{j}] = this[i] * \var{that}[j]|, for all
+  \lstinline|i| in the range of \this, and \lstinline|j| in the range of
+  \that.
+\begin{urbiassert}
+Vector.new(1, 2, 3, 4).combMul(Vector.new(5, 6, 7))
+  == Matrix.new([[ 5,  6,  7],
+                 [10, 12, 14],
+                 [15, 18, 21],
+                 [20, 24, 28]]);
+\end{urbiassert}
+
+\item[combSub](<that>)%
+  A \refObject{Matrix} \var{res} such that
+  \lstinline|\var{res}[\var{i}, \var{j}] = this[i] - \var{that}[j]|, for all
+  \lstinline|i| in the range of \this, and \lstinline|j| in the range of
+  \that.
+\begin{urbiassert}
+Vector.new(-1, 0, +1).combSub(Vector.new(-2, 0, +2))
+  == Matrix.new([[1, -1, -3],
+                 [2,  0, -2],
+                 [3,  1, -1]]);
+\end{urbiassert}
 
 \item[norm]%
   The (Euclidean) norm of the Vector: square root of the sum of the square
@@ -170,13 +212,7 @@ do (Vector)
 }|;
 \end{urbiscript}
 
-\item[selfCombAdd]()%
-
-\item[selfCombDiv]()%
-
 \item[selfCombIndexes]()%
-
-\item[selfCombMul]()%
 
 \item[set](<list>)%
   Change the members of \this, and return \this.
@@ -192,7 +228,14 @@ do (Vector)
 }|;
 \end{urbiscript}
 
-\item[size]()%
+\item[size]%
+  The size of the vector.
+\begin{urbiassert}
+Vector                  .size == 0;
+Vector.new(0)           .size == 1;
+Vector.new(0, 1, 2, 3)  .size == 4;
+Vector.new([0, 1, 2, 3]).size == 4;
+\end{urbiassert}
 
 \item[sum]()%
 

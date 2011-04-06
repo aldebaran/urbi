@@ -33,10 +33,12 @@ namespace urbi
     public:
       typedef Vector self_type;
       typedef boost::numeric::ublas::vector<ufloat> value_type;
+      typedef value_type vector_type;
+      typedef boost::numeric::ublas::matrix<ufloat> matrix_type;
       typedef EqualityComparable<self_type, value_type> super_comparable_type;
 
       Vector();
-      Vector(unsigned int s);
+      Vector(size_t s);
       Vector(value_type v);
       Vector(const Vector& v);
       Vector(const rVector& model);
@@ -66,30 +68,26 @@ namespace urbi
       bool    operator<(const Object& b) const;
       ufloat  operator[](int) const;
 
-      unsigned int size() const;
-      void resize(unsigned int s);
+      size_t size() const;
+      void resize(size_t s);
       ufloat norm() const;
       ufloat sum() const; //a.k.a. L1 norm.
       rVector set(int i, ufloat v);
-      unsigned int index(int) const;
+      size_t index(int) const;
 
       virtual std::string as_string() const;
 
       value_type&       value_get();
       const value_type& value_get() const;
 
-      // Combinatorial operations generating a vector of size size*b.size()
-      rVector combAdd(rVector b) const;
-      rVector combDiv(rVector b) const;
-      rVector combMul(rVector b) const;
-      rVector combSub(rVector b) const;
-      // Combinatorial on oneself, generating a vector of size s(s-1)/2
-      rVector selfCombAdd() const;
-      rVector selfCombDiv() const;
-      rVector selfCombMul() const;
-      rVector selfCombSub() const;
+      // Combinatorial operations generating a Matrix of size size*b.size().
+      matrix_type combAdd(const value_type& b) const;
+      matrix_type combDiv(const value_type& b) const;
+      matrix_type combMul(const value_type& b) const;
+      matrix_type combSub(const value_type& b) const;
+
       // Return the indices from the original vector after a selfComb op.
-      std::pair<unsigned int, unsigned int> selfCombIndexes(unsigned int v);
+      std::pair<size_t, size_t> selfCombIndexes(size_t v);
       // Scalar field by field comparison operations
       rVector scalarGT(const rVector &b) const;
       rVector scalarGE(const rVector &b) const;
