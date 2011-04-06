@@ -29,7 +29,7 @@ class Threaded: public UObject
 public:
   CREATE_CLASS_LOCK
   Threaded(const std::string& n)
-  :UObject(n)
+    : UObject(n)
   {
     UBindFunction(Threaded, init);
     UBindFunction(Threaded, queueOp);
@@ -57,13 +57,15 @@ public:
       init();
   }
   ~Threaded();
-  void lockNoneDelayOp(int id, int delay) { delayOp(id, delay);}
-  void lockInstanceDelayOp(int id, int delay) { delayOp(id, delay);}
-  void lockFunctionDelayOp(int id, int delay) { delayOp(id, delay);}
-  void lockFunctionDropDelayOp(int id, int delay) { delayOp(id, delay);}
+
+  void lockNoneDelayOp(int id, int delay)            { delayOp(id, delay);}
+  void lockInstanceDelayOp(int id, int delay)        { delayOp(id, delay);}
+  void lockFunctionDelayOp(int id, int delay)        { delayOp(id, delay);}
+  void lockFunctionDropDelayOp(int id, int delay)    { delayOp(id, delay);}
   void lockFunctionKeepOneDelayOp(int id, int delay) { delayOp(id, delay);}
-  void lockClassDelayOp(int id, int delay) { delayOp(id, delay);}
-  void lockModuleDelayOp(int id, int delay) { delayOp(id, delay);}
+  void lockClassDelayOp(int id, int delay)           { delayOp(id, delay);}
+  void lockModuleDelayOp(int id, int delay)          { delayOp(id, delay);}
+
   void delayOp(int id, int delay);
   void terminate();
   UVar updated;
@@ -183,9 +185,9 @@ void Threaded::terminate()
     {
       queueOp(c->id, DIE, UList());
       void* retval;
-      std::cerr <<"joining " << c->id << std::endl;
+      GD_FINFO_TRACE("joining %s...",  c->id);
       pthread_join(c->threadId, &retval);
-      std::cerr <<"done" << std::endl;
+      GD_FINFO_TRACE("joining %s done",  c->id);
     }
   }
 }
@@ -259,9 +261,11 @@ bool Threaded::threadLoopBody(int id)
     case SET_BYPASS:
       ctx.vars[int0]->setBypass(true);
       break;
+
     case SET_UOWNED:
       ctx.vars[int0]->setOwned();
       break;
+
     case WRITE_BINARY:
       {
         UBinary b;
@@ -275,6 +279,7 @@ bool Threaded::threadLoopBody(int id)
         b.image.data = 0;
       }
       break;
+
     case WRITE_VAR:
       if (type0 == DATA_STRING)
       {
@@ -287,16 +292,15 @@ bool Threaded::threadLoopBody(int id)
       }
       else
       {
-        std::cerr
-          << libport::utime()
-          << " writevar " << id
-          << " " << ctx.vars[int0]->get_name()
-          << " " << op.args[1]
-          << std::endl;
+        GD_FINFO_TRACE("%s: writevar %s %s %s",
+                       libport::utime(),
+                       id, ctx.vars[int0]->get_name(), op.args[1]);
         *ctx.vars[int0] = op.args[1];
-        std::cerr << libport::utime() << "done write " << id << std::endl;
+        GD_FINFO_TRACE("%s: done writevar %s",
+                       libport::utime(), id);
       }
       break;
+
     case READ_VAR:
       {
         UValue val;
@@ -311,9 +315,11 @@ bool Threaded::threadLoopBody(int id)
         ctx.lastRead = val;
       }
       break;
+
     case CREATE_VAR:
       ctx.vars.push_back(new UVar(string0));
       break;
+
     case DELETE_VAR:
       {
         size_t idx = int0;
@@ -323,6 +329,7 @@ bool Threaded::threadLoopBody(int id)
         ctx.vars.pop_back();
       }
       break;
+
     case NOTIFY_CHANGE:
       // Bind in async mode if an extra arg is given.
       if (op.args.size() > 1)
@@ -338,22 +345,27 @@ bool Threaded::threadLoopBody(int id)
         else
           UNotifyChange(*ctx.vars[int0], &Threaded::onChange);
       break;
+
     case NOTIFY_ACCESS:
        if (type0 == DATA_STRING)
         UNotifyAccess(string0, &Threaded::onAccess);
       else
         UNotifyAccess(*ctx.vars[int0], &Threaded::onAccess);
       break;
+
     case BIND_FUNCTION:
       ::urbi::createUCallback(*this, 0, "function", this,
                         (&Threaded::dummy), __name + "." + string0);
       break;
+
     case SET_UPDATE:
       USetUpdate(float0);
       break;
+
     case SET_TIMER:
       ctx.timers.push_back(USetTimer(float0, &Threaded::onTimer));
       break;
+
     case UNSET_TIMER:
       removeTimer(ctx.timers[int0]);
       if (ctx.timers.size() == 1)
@@ -364,9 +376,11 @@ bool Threaded::threadLoopBody(int id)
         ctx.timers.pop_back();
       }
       break;
+
     case UNNOTIFY:
       ctx.vars[int0]->unnotify();
       break;
+
     case GETUOBJECT:
       {
         UObject* uob = getUObject(string0);
@@ -377,19 +391,21 @@ bool Threaded::threadLoopBody(int id)
           ctx.lastRead = uob->__name;
       }
       break;
+
     case EMIT:
       {
         UEvent e(string0);
         e.emit(12, 15, "canard");
       }
       break;
+
     case DELAY:
       usleep(int0);
       break;
+
     case DIE:
       ctx.dead = true;
       return false;
-      break;
     }
     GD_FINFO_TRACE("[%s] Done executing operation %s", id, op.op);
   }
@@ -413,23 +429,21 @@ void Threaded::threadLoop(int id)
   while (true)
   {
     try
+    {
+      if (!threadLoopBody(id))
       {
-        if (!threadLoopBody(id))
-        {
-          GD_FINFO_DUMP("Exiting threadLoop for id %s", id);
-          return;
-        }
+        GD_FINFO_DUMP("Exiting threadLoop for id %s", id);
+        return;
       }
+    }
     catch(std::exception& e)
-      {
-        GD_FINFO_TRACE("Exiting threadLoop with exception %s", e.what());
-        std::cerr <<"exception " << e.what() << std::endl;
-      }
+    {
+      GD_FINFO_TRACE("Exiting threadLoop with exception %s", e.what());
+    }
     catch(...)
-      {
-        GD_INFO_TRACE("Exiting threadLoop with unknown exception");
-        std::cerr <<"unknown exception" << std::endl;
-      }
+    {
+      GD_INFO_TRACE("Exiting threadLoop with unknown exception");
+    }
   }
 }
 
