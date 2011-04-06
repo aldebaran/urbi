@@ -92,7 +92,7 @@ namespace urbi
     Vector::fromList(const rList& model)
     {
       value_.resize(model->size());
-      for(unsigned i=0; i<model->size(); ++i)
+      for (unsigned i = 0; i< model->size(); ++i)
         value_(i) = from_urbi<ufloat>(model->value_get()[i]);
       return this;
     }
@@ -152,11 +152,11 @@ namespace urbi
     {
       std::ostringstream s;
       s << '<';
-      for (unsigned i=0; i<value_.size(); ++i)
+      for (unsigned i = 0; i < size(); ++i)
       {
-        s << value_(i);
-        if (i != value_.size()-1)
+        if (i)
           s << ", ";
+        s << value_(i);
       }
       s << '>';
       return s.str();
@@ -185,8 +185,8 @@ namespace urbi
     Vector::norm() const
     {
       ufloat res = 0;
-      for (unsigned i=0; i<value_.size(); ++i)
-        res += value_(i)*value_(i);
+      for (unsigned i = 0; i < size(); ++i)
+        res += value_(i) * value_(i);
       return sqrt(res);
     }
 
@@ -194,8 +194,8 @@ namespace urbi
     Vector::index(int i) const
     {
       if (i < 0)
-        i += value_.size();
-      if (i < 0 || value_.size() <= (size_t)i)
+        i += size();
+      if (i < 0 || size() <= (size_t)i)
         FRAISE("invalid index: %s", i);
       return i;
     }
@@ -207,7 +207,7 @@ namespace urbi
       Vector::value_type& b = bv->value_get();  \
       rVector res(new Vector(size()));          \
       Vector::value_type& v = res->value_get(); \
-      for (unsigned i=0; i<size(); ++i)         \
+      for (unsigned i = 0; i < size(); ++i)     \
         v(i) = value_(i) Op b(i);               \
       return res;                               \
     }
@@ -225,13 +225,14 @@ namespace urbi
     Vector::trueIndexes() const
     {
       unsigned count = 0;
-      for (unsigned i=0; i<size(); ++i)
+      for (unsigned i=0; i < size(); ++i)
         if (value_(i)) ++count;
       rVector res(new Vector(count));
       Vector::value_type& v = res->value_get();
       unsigned pos = 0;
-      for (unsigned i=0; i<size(); ++i)
-        if (value_(i)) v(pos++) = i;
+      for (unsigned i = 0; i < size(); ++i)
+        if (value_(i))
+          v(pos++) = i;
       return res;
     }
 
@@ -295,7 +296,7 @@ namespace urbi
     Vector::sum() const
     {
       ufloat res = 0;
-      for (unsigned i=0; i<size(); ++i)
+      for (unsigned i = 0; i < size(); ++i)
         res += value_(i);
       return res;
     }
