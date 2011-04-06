@@ -62,7 +62,7 @@ namespace urbi
         res += size2();
       if (res < 0 || size2() <= size_t(res))
         FRAISE("invalid column: %s", j);
-      return j;
+      return res;
     }
   }
 }
