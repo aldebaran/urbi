@@ -1,4 +1,4 @@
-%% Copyright (C) 2010, Gostai S.A.S.
+%% Copyright (C) 2010, 2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -10,6 +10,15 @@
   \usepackage{gostai-documentation}
   \usepackage{config}
   \usepackage{lipsum}  % to provide "filler" text
+
+\ifx\ifHtml\undefined
+  \renewcommand{\urbiassertPre}
+    {\marginpar{%
+        \vspace{3mm}%
+        \tiny \hyperref[sec:second]{Assertion\\Block}%
+      }%
+    }
+\fi
 
 \title{Urbi Documentation Sandbox}
 \subtitle{Version \VcsDescription}
@@ -149,7 +158,7 @@ This is the second chapter.
 \end{urbiscriptapi}
 
 \part{Second Part}
-
+\label{sec:second}
 This is the second part.
 
 \chapter{Chapter II.1}

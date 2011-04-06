@@ -26,6 +26,32 @@
 \usepackage{config}
 \newcommand{\uobjectsDir}{\absTopSrcdir/sdk-remote/src/uobjects}
 
+%% \marginNotation{Label}{Text}
+%% ----------------------------
+\newcommand{\marginNotation}[2]
+{%
+  \marginpar{%
+    \vspace{3mm}%
+    \tiny \hyperref[#1]{#2}%
+  }%
+}
+
+\ifx\ifHtml\undefined
+  \renewcommand{\bnfPre}
+    {\marginNotation{sec:notations:bnf}{Grammar}}
+  \renewcommand{\cxxPre}
+    {\marginNotation{sec:notations:cxx}{\Cxx}}
+  \renewcommand{\javaPre}
+    {\marginNotation{sec:notations:java}{\Java}}
+  \renewcommand{\shellPre}
+    {\marginNotation{sec:notations:shell}{Shell\\Session}}
+  \renewcommand{\urbiassertPre}
+    {\marginNotation{sec:notations:urbiassert}{Assertion\\Block}}
+  \renewcommand{\urbiscriptPre}
+    {\marginNotation{sec:notations:urbiassert}{\us\\Session}}
+\fi
+
+
 %% -------------- %%
 %% Experimental.  %%
 %% -------------- %%

@@ -36,93 +36,8 @@ document.
 
 \section{Frames}
 
-\subsection{Grammar Excerpts}
-\label{sec:notations:bnf}
-
-The grammars are written in Extend Backus-Naur Form.  The symbol
-\lstinline|::=| separates the left-hand symbol from the right-hand side part
-of the rule.  We use infix \lstinline{|} to denote alternation,
-postfix-\lstinline{*} for 0-or-more repetition, postfix-\lstinline{+} for
-1-or-more repetition, and postfix-\lstinline{?} for optional parts.
-Terminal symbols are written since double-quotes, and non-terminals inside
-angle-brackets.  We use parenthesis to group.
-
-\begin{bnf}
-<grammar> ::= <rule>+
-<rule> ::= <symbol> "::=" <rhs>
-<rhs> ::= <rhs> "|" <rhs>
-        | <rhs> ("?" | "*" | "+")
-        | "(" <rhs> ")"
-        | <symbol>
-\end{bnf}
-
-\subsection{Shell Sessions}
-\label{sec:notations:shell}
-
-Interactive sessions with a (Unix) shell are represented as follows.
-
-\begin{shell}
-$ echo toto
-toto
-\end{shell}
-
-The user entered \samp{echo toto}, and the system answered
-\samp{toto}.  \samp{\$} is the \dfn{prompt}: it starts the lines where
-the system invites the user to enter her commands.
-
-\subsection{\us Sessions}
-
-Interactive sessions with \urbi are represented as follows.
-
-\begin{urbiscript}[firstnumber=1]
-echo("toto");
-[00000001] *** toto
-\end{urbiscript}
-
-Contrary to shell interaction (see \autoref{sec:notations:shell}),
-there is no prompt that marks the user-entered lines (here
-\lstinline|echo("toto");|, but, on the contrary, answers from the \urbi
-server start with a label that includes a timestamp (here
-\samp{00000001}), and possibly a channel name, \samp{output} in the
-following example.
-
-\begin{urbiscript}
-cout << "toto";
-[00000002:output] "toto"
-\end{urbiscript}
-
-
-\subsection{\us Assertions}
-
-\us features assertions blocks, see \autoref{sec:assertions}.  The
-following assertion frame:
-
-\begin{urbiassert}
-1 == 2 / 2;
-1 < 2;
-true;
-"foobar"[0, 3] == "foo";
-[1, 2, 3].map (function (a) { a * a }) == [1, 4, 9];
-[ => ].empty;
-\end{urbiassert}
-
-\noindent
-actually denotes the following assertion-block in an \us-session
-frame:
-
-\begin{urbiscript}
-assert
-{
-  true;
-  1 < 2;
-  1 + 2 * 3 == 7;
-  "foobar"[0, 3] == "foo";
-  [1, 2, 3].map (function (a) { a * a }) == [1, 4, 9];
-  [ => ].empty;
-};
-\end{urbiscript}
-
 \subsection{\Cxx Code}
+\label{sec:notations:cxx}
 
 \Cxx source code is presented in frames as follows.
 
@@ -149,6 +64,116 @@ private:
   int val_;
 };
 \end{cxx}
+
+\subsection{Grammar Excerpts}
+\label{sec:notations:bnf}
+
+The grammars are written in Extend Backus-Naur Form.  The symbol
+\lstinline|::=| separates the left-hand symbol from the right-hand side part
+of the rule.  We use infix \lstinline{|} to denote alternation,
+postfix-\lstinline{*} for 0-or-more repetition, postfix-\lstinline{+} for
+1-or-more repetition, and postfix-\lstinline{?} for optional parts.
+Terminal symbols are written since double-quotes, and non-terminals inside
+angle-brackets.  We use parenthesis to group.
+
+\begin{bnf}
+<grammar> ::= <rule>+
+<rule> ::= <symbol> "::=" <rhs>
+<rhs> ::= <rhs> "|" <rhs>
+        | <rhs> ("?" | "*" | "+")
+        | "(" <rhs> ")"
+        | <symbol>
+\end{bnf}
+
+\subsection{\Java Code}
+\label{sec:notations:java}
+
+\Java source code is presented in frames as follows.
+
+\begin{java}
+import liburbi.main.*;
+public class Main
+{
+    /// Load urbijava library.
+    static
+    {
+        System.loadLibrary("urbijava");
+    }
+
+    public static void main(String argv[])
+    {
+      // Does nothing for now.
+    }
+}
+\end{java}
+
+\subsection{Shell Sessions}
+\label{sec:notations:shell}
+
+Interactive sessions with a (Unix) shell are represented as follows.
+
+\begin{shell}
+$ echo toto
+toto
+\end{shell}
+
+The user entered \samp{echo toto}, and the system answered
+\samp{toto}.  \samp{\$} is the \dfn{prompt}: it starts the lines where
+the system invites the user to enter her commands.
+
+\subsection{\us Sessions}
+\label{sec:notations:us}
+
+Interactive sessions with \urbi are represented as follows.
+
+\begin{urbiscript}[firstnumber=1]
+echo("toto");
+[00000001] *** toto
+\end{urbiscript}
+
+Contrary to shell interaction (see \autoref{sec:notations:shell}),
+there is no prompt that marks the user-entered lines (here
+\lstinline|echo("toto");|, but, on the contrary, answers from the \urbi
+server start with a label that includes a timestamp (here
+\samp{00000001}), and possibly a channel name, \samp{output} in the
+following example.
+
+\begin{urbiscript}
+cout << "toto";
+[00000002:output] "toto"
+\end{urbiscript}
+
+
+\subsection{\us Assertions}
+\label{sec:notations:urbiassert}
+
+\us features assertions blocks, see \autoref{sec:assertions}.  The
+following assertion frame:
+
+\begin{urbiassert}
+true;
+1 < 2;
+1 + 2 * 3 == 7;
+"foobar"[0, 3] == "foo";
+[1, 2, 3].map (function (a) { a * a }) == [1, 4, 9];
+[ => ].empty;
+\end{urbiassert}
+
+\noindent
+actually denotes the following assertion-block in an \us-session
+frame (\autoref{sec:assertions}):
+
+\begin{urbiscript}
+assert
+{
+  true;
+  1 < 2;
+  1 + 2 * 3 == 7;
+  "foobar"[0, 3] == "foo";
+  [1, 2, 3].map (function (a) { a * a }) == [1, 4, 9];
+  [ => ].empty;
+};
+\end{urbiscript}
 
 %%% Local Variables:
 %%% mode: latex
