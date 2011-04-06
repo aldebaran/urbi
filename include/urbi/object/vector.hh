@@ -80,12 +80,14 @@ namespace urbi
 
       // Combinatorial operations generating a vector of size size*b.size()
       rVector combAdd(rVector b) const;
-      rVector combMul(rVector b) const;
       rVector combDiv(rVector b) const;
+      rVector combMul(rVector b) const;
+      rVector combSub(rVector b) const;
       // Combinatorial on oneself, generating a vector of size s(s-1)/2
       rVector selfCombAdd() const;
-      rVector selfCombMul() const;
       rVector selfCombDiv() const;
+      rVector selfCombMul() const;
+      rVector selfCombSub() const;
       // Return the indices from the original vector after a selfComb op.
       std::pair<unsigned int, unsigned int> selfCombIndexes(unsigned int v);
       // Scalar field by field comparison operations

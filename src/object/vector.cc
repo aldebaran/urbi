@@ -129,6 +129,7 @@ namespace urbi
       BIND(combAdd);
       BIND(combDiv);
       BIND(combMul);
+      BIND(combSub);
       BIND(norm);
       BIND(resize);
       BIND(scalarGE);
@@ -137,6 +138,7 @@ namespace urbi
       BIND(selfCombDiv);
       BIND(selfCombIndexes);
       BIND(selfCombMul);
+      BIND(selfCombSub);
       BIND(set, fromList);
       BIND(size);
       BIND(sum);
@@ -247,14 +249,8 @@ namespace urbi
         for (unsigned j = 0; j < b.size(); ++j)         \
           v(i * b.size() + j) = value_(i) Op b(j);      \
       return res;                                       \
-    }
-
-    OP(Add, +)
-    OP(Mul, *)
-    OP(Div, /)
-#undef OP
-
-#define OP(Name, Op)                                    \
+    }                                                   \
+                                                        \
     rVector                                             \
     Vector::selfComb ## Name() const                    \
     {                                                   \
@@ -270,6 +266,7 @@ namespace urbi
     OP(Add, +)
     OP(Div, /)
     OP(Mul, *)
+    OP(Sub, -)
 #undef OP
 
     std::pair<unsigned int, unsigned int>
