@@ -137,6 +137,30 @@ namespace urbi
     bool
     operator==(const Matrix::value_type& e1, const Matrix::value_type& e2);
 
+
+    /*-------------.
+    | Conversion.  |
+    `-------------*/
+
+    template <>
+    struct CxxConvert<Matrix::value_type>
+    {
+      typedef       Matrix::value_type& target_type;
+      typedef const Matrix::value_type& source_type;
+      static target_type
+      to(const rObject& o)
+      {
+        type_check<Matrix>(o);
+        return o->as<Matrix>()->value_get();
+      }
+
+      static rObject
+      from(source_type v)
+      {
+        return new Matrix(v);
+      }
+    };
+
   } // namespace object
 } // namespace urbi
 
