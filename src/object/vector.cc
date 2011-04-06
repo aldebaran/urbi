@@ -193,23 +193,28 @@ namespace urbi
     size_t
     Vector::index(int i) const
     {
-      if (i < 0)
-        i += size();
-      if (i < 0 || size() <= (size_t)i)
+      int res = i;
+      if (res < 0)
+        res += size();
+      if (res < 0 || size() <= size_t(res))
         FRAISE("invalid index: %s", i);
-      return i;
+      return res;
     }
 
-#define OP(Name, Op)                            \
-    rVector                                     \
-    Vector::Name(const rVector &bv) const       \
-    {                                           \
-      Vector::value_type& b = bv->value_get();  \
-      rVector res(new Vector(size()));          \
-      Vector::value_type& v = res->value_get(); \
-      for (unsigned i = 0; i < size(); ++i)     \
-        v(i) = value_(i) Op b(i);               \
-      return res;                               \
+#define OP(Name, Op)                                            \
+    rVector                                                     \
+    Vector::Name(const rVector &bv) const                       \
+    {                                                           \
+      Vector::value_type& b = bv->value_get();                  \
+      size_t s1 = size();                                       \
+      size_t s2 = b.size();                                     \
+      if (s1 != s2)                                             \
+        FRAISE("incompatible vector sizes: %s, %s", s1, s2);    \
+      rVector res(new Vector(s1));                              \
+      Vector::value_type& v = res->value_get();                 \
+      for (unsigned i = 0; i < s1; ++i)                         \
+        v(i) = value_(i) Op b(i);                               \
+      return res;                                               \
     }
 
     OP(scalarGT, >)

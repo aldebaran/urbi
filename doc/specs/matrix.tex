@@ -23,22 +23,27 @@
 
 \end{urbiassert}
 
-\item[asMatrix](<arg>)%
+\item[asMatrix]%
+  \this.
 \begin{urbiassert}
-
+Matrix.asMatrix === Matrix;
 \end{urbiassert}
 
-\item[asPrintable](<arg>)%
+\item[asPrintable]%
+  A String that denotes \this.
 \begin{urbiassert}
-
+Matrix                      .asPrintable == "Matrix([])";
+Matrix.new([[1, 2], [3, 4]]).asPrintable == "Matrix([[1, 2], [3, 4]])";
 \end{urbiassert}
 
-\item[asString](<arg>)%
+\item[asString]%
+  A String that denotes \this.
 \begin{urbiassert}
-
+Matrix                      .asString == "<>";
+Matrix.new([[1, 2], [3, 4]]).asString == "<<1, 2>, <3, 4>>";
 \end{urbiassert}
 
-\item[asTopLevelPrintable](<arg>)%
+\item[asTopLevelPrintable]%
 \begin{urbiassert}
 
 \end{urbiassert}
@@ -83,10 +88,35 @@
 
 \end{urbiassert}
 
-\item[get](<arg>)%
-\begin{urbiassert}
+\item[get](<i>, <j>)%
+  The element at \lstinline|\var{i}, \var{j}|. The index \var{i} must verify
+  $0 \le \textrm{\var{i}} < \texttt{\this.size}$, or $-\texttt{\this.size}
+  \le \textrm{\var{i}} < 0$, in which case it is equivalent to using index
+  $\var{i} + \texttt{\this.size}$: it counts ``backward''.  Similarly for
+  \var{j}.
+\begin{urbiscript}
+var m = Matrix.new([[1, 2, 3], [10, 20, 30]])|;
+assert
+{
+  m.get(0, 0) == 1;   m.get(0, -3) == 1;
+  m.get(0, 1) == 2;   m.get(0, -2) == 2;
+  m.get(0, 2) == 3;   m.get(0, -1) == 3;
 
-\end{urbiassert}
+  m.get(1, 2) == 30;  m.get(-1, -1) == 30;
+};
+
+m.get(2, 0);
+[00127812:error] !!! get: invalid row: 2
+
+m.get(-3, 0);
+[00127824:error] !!! get: invalid row: -3
+
+m.get(0, 3);
+[00127836:error] !!! get: invalid column: 3
+
+m.get(0, -4);
+[00127850:error] !!! get: invalid column: -4
+\end{urbiscript}
 
 \item[init](<arg>)%
 \begin{urbiassert}

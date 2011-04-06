@@ -542,7 +542,7 @@ namespace urbi
       const size_t width = size2();
       const size_t height2 = vb.size1();
       if (width != vb.size2())
-        throw std::runtime_error("Incompatible matrix sizes.");
+        FRAISE("incompatible matrix sizes: %s, %s", width, vb.size2());
       rVector res(new Vector(height * height2));
       unsigned idx = 0;
       for (unsigned p1 = 0; p1<height; ++p1)

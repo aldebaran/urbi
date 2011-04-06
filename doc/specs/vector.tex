@@ -144,8 +144,7 @@ do (Vector)
 
 \item[scalarEQ](<that>)%
   A Vector whose members are 0 or 1 depending on the equality of the
-  corresponding members of \this and \that.  \this and \that must have equal
-  dimensions.
+  corresponding members of \this and \that.
 \begin{urbiscript}
 do (Vector)
 {
@@ -155,11 +154,15 @@ do (Vector)
   };
 }|;
 \end{urbiscript}
+  \this and \that must have equal sizes.
+\begin{urbiscript}
+Vector.new(1, 2).scalarEQ(Vector.new(0));
+[00000601:error] !!! scalarEQ: incompatible vector sizes: 2, 1
+\end{urbiscript}
 
 \item[scalarGE](<that>)%
   A Vector whose members are 0 or 1 if the corresponding member of \this is
-  greater than or equal to the one of \that.  \this and \that must have equal
-  dimensions.
+  greater than or equal to the one of \that.
 \begin{urbiscript}
 do (Vector)
 {
@@ -169,11 +172,15 @@ do (Vector)
   };
 }|;
 \end{urbiscript}
+  \this and \that must have equal sizes.
+\begin{urbiscript}
+Vector.new(1, 2).scalarEQ(Vector.new(0));
+[00000601:error] !!! scalarEQ: incompatible vector sizes: 2, 1
+\end{urbiscript}
 
 \item[scalarGT](<that>)%
   A Vector whose members are 0 or 1 if the corresponding member of \this is
-  greater than to the one of \that.  \this and \that must have equal
-  dimensions.
+  greater than to the one of \that.
 \begin{urbiscript}
 do (Vector)
 {
@@ -183,11 +190,15 @@ do (Vector)
   };
 }|;
 \end{urbiscript}
+  \this and \that must have equal sizes.
+\begin{urbiscript}
+Vector.new(1, 2).scalarGT(Vector.new(0));
+[00000601:error] !!! scalarGT: incompatible vector sizes: 2, 1
+\end{urbiscript}
 
 \item[scalarLE](<that>)%
   A Vector whose members are 0 or 1 if the corresponding member of \this is
-  less than or equal to the one of \that.  \this and \that must have equal
-  dimensions.
+  less than or equal to the one of \that.
 \begin{urbiscript}
 do (Vector)
 {
@@ -197,11 +208,15 @@ do (Vector)
   };
 }|;
 \end{urbiscript}
+  \this and \that must have equal sizes.
+\begin{urbiscript}
+Vector.new(1, 2).scalarLE(Vector.new(0));
+[00000601:error] !!! scalarLE: incompatible vector sizes: 2, 1
+\end{urbiscript}
 
 \item[scalarLT](<that>)%
   A Vector whose members are 0 or 1 if the corresponding member of \this is
-  less than to the one of \that.  \this and \that must have equal
-  dimensions.
+  less than to the one of \that.
 \begin{urbiscript}
 do (Vector)
 {
@@ -210,6 +225,11 @@ do (Vector)
     new(1, 2, 3).scalarLT(new(3, 2, 1)) == new(1, 0, 0);
   };
 }|;
+\end{urbiscript}
+  \this and \that must have equal sizes.
+\begin{urbiscript}
+Vector.new(1, 2).scalarLT(Vector.new(0));
+[00000601:error] !!! scalarLT: incompatible vector sizes: 2, 1
 \end{urbiscript}
 
 \item[selfCombIndexes]()%
@@ -237,11 +257,21 @@ Vector.new(0, 1, 2, 3)  .size == 4;
 Vector.new([0, 1, 2, 3]).size == 4;
 \end{urbiassert}
 
-\item[sum]()%
+\item[sum]%
+  The sum of the values stored in \this.
+\begin{urbiassert}
+Vector                  .sum == 0;
+Vector.new(1)           .sum == 1;
+Vector.new(0, 1, 2, 3)  .sum == 6;
+\end{urbiassert}
 
 \item[trueIndexes]()%
 
-\item[type]()%
+\item[type]%
+  \lstinline|"Vector"|.
+\begin{urbiassert}
+Vector.type == "Vector";
+\end{urbiassert}
 
 \item['=='](<that>)%
   Whether \this and \that have the same size, and members.
@@ -258,13 +288,53 @@ do (Vector)
 }|;
 \end{urbiscript}
 
-\item['*']()%
+\item['*'](<that>)%
+  A Vector whose members are member-wise products of \this and \that.
+\begin{urbiassert}
+Vector              * Vector              == Vector;
+Vector.new(1, 2, 3) * Vector.new(5, 6, 7) == Vector.new(5, 12, 21);
+\end{urbiassert}
+  \this and \that must have equal sizes.
+\begin{urbiscript}
+Vector.new(1, 2) * Vector.new(0);
+[00000601:error] !!! *: incompatible vector sizes: 2, 1
+\end{urbiscript}
 
-\item['+']()%
+\item['+'](<that>)%
+  A Vector whose members are member-wise sums of \this and \that.
+\begin{urbiassert}
+Vector              + Vector              == Vector;
+Vector.new(1, 2, 3) + Vector.new(5, 6, 7) == Vector.new(6, 8, 10);
+\end{urbiassert}
+  \this and \that must have equal sizes.
+\begin{urbiscript}
+Vector.new(1, 2) + Vector.new(0);
+[00000601:error] !!! +: incompatible vector sizes: 2, 1
+\end{urbiscript}
 
-\item['-']()%
+\item['-'](<that>)%
+  A Vector whose members are member-wise subtractions of \this and \that.
+\begin{urbiassert}
+Vector              - Vector              == Vector;
+Vector.new(1, 2, 3) - Vector.new(5, 6, 7) == Vector.new(-4, -4, -4);
+\end{urbiassert}
+  \this and \that must have equal sizes.
+\begin{urbiscript}
+Vector.new(1, 2) - Vector.new(0);
+[00000601:error] !!! -: incompatible vector sizes: 2, 1
+\end{urbiscript}
 
-\item['/']()%
+\item['/'](<that>)%
+  A Vector whose members are member-wise divisions of \this and \that.
+\begin{urbiassert}
+Vector              / Vector              == Vector;
+Vector.new(6, 4, 1) / Vector.new(3, 2, 1) == Vector.new(2, 2, 1);
+\end{urbiassert}
+  \this and \that must have equal sizes.
+\begin{urbiscript}
+Vector.new(1, 2) / Vector.new(0);
+[00000601:error] !!! /: incompatible vector sizes: 2, 1
+\end{urbiscript}
 
 \item['<']()%
 
