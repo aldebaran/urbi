@@ -460,7 +460,7 @@ namespace urbi
         s << "  [";
         for (unsigned j = 0; j < width; ++j)
         {
-          s << libport::format("%e", value_(i, j));
+          s << value_(i, j);
           if (j != width - 1)
             s << ", ";
         }
