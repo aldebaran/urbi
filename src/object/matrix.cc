@@ -430,16 +430,16 @@ namespace urbi
       s << row_lsep;
       for (unsigned i = 0; i < height; ++i)
       {
+        if (i)
+          s << ", ";
         s << col_lsep;
         for (unsigned j = 0; j < width; ++j)
         {
-          s << value_(i, j);
-          if (j != width - 1)
+          if (j)
             s << ", ";
+          s << value_(i, j);
         }
         s << col_rsep;
-        if (i != height - 1)
-          s << ", ";
       }
       s << row_rsep;
       return s.str();
@@ -453,21 +453,21 @@ namespace urbi
       const size_t width = value_.size2();
 
       std::ostringstream s;
-      s << "Matrix([" << std::endl;
+      s << "Matrix([";
 
       for (unsigned i = 0; i < height; ++i)
       {
+        if (i)
+          s << ',';
+        s << std::endl;
         s << "  [";
         for (unsigned j = 0; j < width; ++j)
         {
-          s << value_(i, j);
-          if (j != width - 1)
+          if (j)
             s << ", ";
+          s << value_(i, j);
         }
         s << "]";
-        if (i != height - 1)
-          s << ',';
-        s << std::endl;
       }
 
       s << "])";
