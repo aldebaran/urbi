@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1404 utf-8
+personal_ws-1.1 en 1407 utf-8
 aaa
 abc
 abcd
@@ -145,6 +145,7 @@ bitor
 bitwise
 BlobDetector
 Blog
+bnf
 bodyString
 Bonjour
 bool
@@ -207,6 +208,7 @@ colordiff
 combAdd
 combDiv
 combMul
+combSub
 compl
 computeSalary
 cond
@@ -250,6 +252,7 @@ cvs
 cwd
 cwLimit
 CXX
+cxx
 CXXFLAGS
 Cyberbotics
 cyclesMax
@@ -1000,10 +1003,7 @@ searchFile
 searchPath
 SEGVs
 segway
-selfCombAdd
-selfCombDiv
 selfCombIndexes
-selfCombMul
 selfTime
 selfTimePer
 sendbin
@@ -1277,6 +1277,7 @@ updatable
 updateSlot
 UProp
 urbi
+urbiassert
 urbiConsole
 urbiHelloWorld
 urbijava
