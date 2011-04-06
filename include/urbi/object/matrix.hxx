@@ -32,21 +32,35 @@ namespace urbi
     }
 
     inline size_t
+    Matrix::size1() const
+    {
+      return value_.size1();
+    }
+
+    inline size_t
+    Matrix::size2() const
+    {
+      return value_.size2();
+    }
+
+    inline size_t
     Matrix::index1(int i) const
     {
-      if (i < 0)
-        i += value_.size1();
-      if (i < 0 || value_.size1() <= size_t(i))
+      int res = i;
+      if (res < 0)
+        res += size1();
+      if (res < 0 || size1() <= size_t(res))
         FRAISE("invalid row: %s", i);
-      return i;
+      return res;
     }
 
     inline size_t
     Matrix::index2(int j) const
     {
-      if (j < 0)
-        j += value_.size2();
-      if (j < 0 || value_.size2() <= size_t(j))
+      int res = j;
+      if (res < 0)
+        res += size2();
+      if (res < 0 || size2() <= size_t(res))
         FRAISE("invalid column: %s", j);
       return j;
     }

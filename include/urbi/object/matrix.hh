@@ -101,6 +101,8 @@ namespace urbi
       ufloat operator()(int, int) const;
 
       rObject size() const;
+      size_t size1() const;
+      size_t size2() const;
       rMatrix resize(size_t i, size_t j);
       rMatrix set(int i, int j, ufloat v);
       ufloat get(int i, int j);

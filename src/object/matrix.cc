@@ -138,12 +138,12 @@ namespace urbi
     Matrix::invert() const
     {
       using namespace boost::numeric::ublas;
-      if (value_.size1() != value_.size2())
+      if (size1() != size2())
         FRAISE("expected square matrix, got %dx%d",
-               value_.size1(), value_.size2());
+               size1(), size2());
       // Create a working copy of the input.
       value_type A(value_);
-      value_type inverse(value_.size1(), value_.size2());
+      value_type inverse(size1(), size2());
       // Create a permutation matrix for the LU-factorization.
       permutation_matrix<size_type> pm(A.size1());
       // Perform LU-factorization.
@@ -159,9 +159,9 @@ namespace urbi
     rMatrix
     Matrix::dot_times(const rMatrix& m) const
     {
-      value_type res(value_.size1(), value_.size2());
-      for (size_t i = 0; i < value_.size1(); ++i)
-        for (size_t j = 0; j < value_.size2(); ++j)
+      value_type res(size1(), size2());
+      for (size_t i = 0; i < size1(); ++i)
+        for (size_t j = 0; j < size2(); ++j)
           res(i, j) = value_(i, j) * (*m)(i, j);
       return new Matrix(res);
     }
@@ -256,8 +256,8 @@ namespace urbi
     rMatrix                                                     \
     Matrix::Name(const rVector& rhs) const                      \
     {                                                           \
-      const size_t height = value_.size1();                     \
-      const size_t width = value_.size2();                      \
+      const size_t height = size1();                            \
+      const size_t width = size2();                             \
       rMatrix res =                                             \
         Matrix::create_zeros(0, height, width)->as<Matrix>();   \
       Matrix::value_type& v = res->value_get();                 \
@@ -340,7 +340,7 @@ namespace urbi
       value_type copy(value_);                                  \
       value_type ones =                                         \
         boost::numeric::ublas::scalar_matrix<ufloat>            \
-        (value_.size1(), value_.size2(), s->value_get());       \
+        (size1(), size2(), s->value_get());                     \
       value_type res = copy Op ones;                            \
       return new Matrix(res);                                   \
     }                                                           \
@@ -423,8 +423,8 @@ namespace urbi
                         const std::string row_lsep,
                         const std::string row_rsep) const
     {
-      const size_t height = value_.size1();
-      const size_t width = value_.size2();
+      const size_t height = size1();
+      const size_t width = size2();
 
       std::ostringstream s;
       s << row_lsep;
@@ -449,8 +449,8 @@ namespace urbi
     std::string
     Matrix::asTopLevelPrintable() const
     {
-      const size_t height = value_.size1();
-      const size_t width = value_.size2();
+      const size_t height = size1();
+      const size_t width = size2();
 
       std::ostringstream s;
       s << "Matrix([";
@@ -498,9 +498,7 @@ namespace urbi
     Matrix::size() const
     {
       CAPTURE_GLOBAL(Pair);
-      return Pair->call(SYMBOL(new),
-                        new Float(value_.size1()),
-                        new Float(value_.size2()));
+      return Pair->call(SYMBOL(new), new Float(size1()), new Float(size2()));
     }
 
     rVector
@@ -518,8 +516,8 @@ namespace urbi
     rVector
     Matrix::distanceMatrix() const
     {
-      const size_t height = value_.size1();
-      const size_t width = value_.size2();
+      const size_t height = size1();
+      const size_t width = size2();
       rVector res(new Vector(height * (height-1) / 2));
       unsigned idx = 0;
       for (unsigned p1 = 0; p1<height; ++p1)
@@ -540,8 +538,8 @@ namespace urbi
     Matrix::distanceToMatrix(rMatrix b) const
     {
       Matrix::value_type& vb = b->value_get();
-      const size_t height = value_.size1();
-      const size_t width = value_.size2();
+      const size_t height = size1();
+      const size_t width = size2();
       const size_t height2 = vb.size1();
       if (width != vb.size2())
         throw std::runtime_error("Incompatible matrix sizes.");
@@ -564,8 +562,8 @@ namespace urbi
     rVector
     Matrix::rowNorm() const
     {
-      const size_t height = value_.size1();
-      const size_t width = value_.size2();
+      const size_t height = size1();
+      const size_t width = size2();
       rVector res(new Vector(height));
       for (unsigned p1 = 0; p1<height; ++p1)
       {
@@ -594,8 +592,8 @@ namespace urbi
     rMatrix
     Matrix::appendRow(rVector v)
     {
-      value_.resize(value_.size1()+1, value_.size2());
-      setRow(value_.size1()-1, v);
+      value_.resize(size1()+1, size2());
+      setRow(size1()-1, v);
       return this;
     }
 
