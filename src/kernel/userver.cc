@@ -19,6 +19,9 @@
 #include <fstream>
 #include <string>
 
+#include <stdlib.h>
+#include <fcntl.h>
+
 // Include our header first to avoid duplicating some of its tricks.
 #include <kernel/userver.hh>
 
@@ -324,6 +327,11 @@ namespace kernel
     if (catch_ices)
 # endif
       install_ice_catcher(ice);
+#endif
+#if defined WIN32
+    // Globally disable text mode transformations for open() and pipe().
+    // see http://msdn.microsoft.com/en-us/library/61dstksf%28v=VS.80%29.aspx
+    _set_fmode(_O_BINARY);
 #endif
     // Setup the handler for Ctrl+C.
     signal(SIGINT, sigint_handler);
