@@ -81,8 +81,9 @@ namespace urbi
     InputStream::getBuffer_()
     {
       assert_eq(pos_, size_);
-      buffer_ = urbi::yield_for_read(fd_);
-      size_ = buffer_.size();
+      buffer_.resize(BUFSIZ);
+      urbi::yield_for_fd(fd_);
+      size_ = read(fd_, const_cast<char*>(buffer_.c_str()), BUFSIZ);
       pos_ = 0;
       return size_;
     }
