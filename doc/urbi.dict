@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1407 utf-8
+personal_ws-1.1 en 1409 utf-8
 aaa
 abc
 abcd
@@ -241,6 +241,7 @@ cpu
 createAll
 createIdentity
 createOnes
+createScalar
 createScalars
 createSlot
 createZeros
@@ -536,6 +537,7 @@ installcheck
 instantiation
 instantiations
 interruptible
+invertible
 io
 IoService
 IP
@@ -927,6 +929,7 @@ removeNotifyChangeOwned
 removeProperty
 removeProto
 removeSlot
+removeSlots
 removeThrowingCallbacks
 removeTimer
 representable

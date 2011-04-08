@@ -183,6 +183,13 @@ do (Object)
   // Deterministic localSlotNames.
   overrideSlot("localSlotNames",
     function () { 'localSlotNames$old'.sort });
+
+  function removeSlots(var names[])
+  {
+    for| (var s : names)
+      removeSlot(s)|
+    {}
+  };
 }|;
 
 

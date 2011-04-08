@@ -58,24 +58,33 @@ Matrix.new([[1, 2], [3, 4]]).asString == "<<1, 2>, <3, 4>>";
 
 \end{urbiassert}
 
-\item[createIdentity](<arg>)%
+\item[createIdentity](<size>)%
+  The unit Matrix of dimensions \var{size}|.
 \begin{urbiassert}
-
+Matrix.createIdentity(0) == Matrix;
+Matrix.createIdentity(3) == Matrix.new([[1, 0, 0], [0, 1, 0], [0, 0, 1]]);
 \end{urbiassert}
 
-\item[createOnes](<arg>)%
+\item[createOnes](<row>, <col>)%
+  Same as \lstinline|createScalar(\var{row}, \var{col}, 1)|.
 \begin{urbiassert}
-
+Matrix.createOnes(0, 0) == Matrix;
+Matrix.createOnes(2, 3) == Matrix.new([[1, 1, 1], [1, 1, 1]]);
 \end{urbiassert}
 
-\item[createScalars](<arg>)%
+\item[createScalars](<row>, <col>, <scalar>)%
+  A Matrix of size \lstinline|\var{row} * \var{col}| filled with
+  \var{scalar}.
 \begin{urbiassert}
-
+Matrix.createScalars(0, 0, 99) == Matrix;
+Matrix.createScalars(2, 3, 99) == Matrix.new([[99, 99, 99], [99, 99, 99]]);
 \end{urbiassert}
 
 \item[createZeros](<arg>)%
+  Same as \lstinline|createScalar(\var{row}, \var{col}, 0)|.
 \begin{urbiassert}
-
+Matrix.createZeros(0, 0) == Matrix;
+Matrix.createZeros(2, 3) == Matrix.new([[0, 0, 0], [0, 0, 0]]);
 \end{urbiassert}
 
 \item[distanceMatrix](<arg>)%
@@ -175,8 +184,11 @@ m.get(0, -4);
 \end{urbiassert}
 
 \item[size](<arg>)%
+  The dimensions of the \this, as a Pair of Floats.
 \begin{urbiassert}
-
+Matrix.size == Pair.new(0, 0);
+Matrix.new([[1, 2], [3, 4], [5, 6]]).size == Pair.new(3, 2);
+Matrix.new([[1, 2, 3], [4, 5, 6]]).size == Pair.new(2, 3);
 \end{urbiassert}
 
 \item[transpose](<arg>)%
@@ -204,44 +216,134 @@ do (Matrix)
 \end{urbiscript}
 
 \item['*'](<that>)%
+  Matrix product between \this and \that.  The sizes must be compatibles
+  ($\texttt{\this.size.second} = \texttt{\that.size.first}$).
 \begin{urbiassert}
-
+Matrix.new([[1, 2]]) * Matrix.new([[10], [20]])
+  == Matrix.new([[50]]);
+Matrix.new([[3, 4]]) * Matrix.new([[10], [20]])
+  == Matrix.new([[110]]);
+Matrix.new([[1, 2], [3, 4]]) * Matrix.new([[10], [20]])
+  == Matrix.new([[50], [110]]);
 \end{urbiassert}
 
 \item['*='](<that>)%
-\begin{urbiassert}
+  In place product (\refSlot{'*'}).  The same constraints apply.
+\begin{urbiscript}
+var lhs = Matrix.new([[1, 2], [3, 4]])|;
+var rhs = Matrix.new([[10], [20]])|;
+var res = lhs * rhs|;
+assert
+{
+  (lhs *= rhs) === lhs;
+  lhs == res;
+};
 
-\end{urbiassert}
+// FIXME: rhs *= rhs;
+\end{urbiscript}
+\begin{urbicomment}
+  removeSlots("lhs", "rhs", "res");
+\end{urbicomment}
+
 
 \item['+'](<that>)%
+  The sum of \this and \that.  Their sizes must be equal.
 \begin{urbiassert}
+Matrix.new([[1, 2]]) + Matrix.new([[10, 20]])
+  == Matrix.new ([[11, 22]]);
 
+Matrix.new([[1, 2], [3, 4]]) + Matrix.new([[10, 20], [30, 40]])
+  == Matrix.new ([[11, 22], [33, 44]]);
+
+// FIXME: Matrix.new([[1, 2]]) + Matrix.new([[10, 20], [30, 40]]);
 \end{urbiassert}
 
 \item['+='](<that>)%
-\begin{urbiassert}
+  In place sum (\refSlot{'+'}).   The same constraints apply.
+\begin{urbiscript}
+var lhs = Matrix.new([[ 1 , 2], [ 3,  4]])|;
+var rhs = Matrix.new([[10, 20], [30, 40]])|;
+var res = lhs + rhs|;
+assert
+{
+  (lhs += rhs) === lhs;
+  lhs == res;
+};
 
-\end{urbiassert}
+// FIXME: rhs += rhs;
+\end{urbiscript}
+\begin{urbicomment}
+  removeSlots("lhs", "rhs", "res");
+\end{urbicomment}
 
 \item['-'](<that>)%
+  The difference of \this and \that.  Their sizes must be equal.
 \begin{urbiassert}
+Matrix.new([[1, 2]]) - Matrix.new([[10, 20]])
+  == Matrix.new ([[-9, -18]]);
 
+Matrix.new([[1, 2], [3, 4]]) - Matrix.new([[10, 20], [30, 40]])
+  == Matrix.new ([[-9, -18], [-27, -36]]);
+
+// FIXME: Matrix.new([[1, 2]]) - Matrix.new([[10, 20], [30, 40]]);
 \end{urbiassert}
+
 
 \item['-='](<that>)%
-\begin{urbiassert}
+  In place difference (\refSlot{'-'}).  The same constraints apply.
+\begin{urbiscript}
+var lhs = Matrix.new([[ 1 , 2], [ 3,  4]])|;
+var rhs = Matrix.new([[10, 20], [30, 40]])|;
+var res = lhs - rhs|;
+assert
+{
+  (lhs -= rhs) === lhs;
+  lhs == res;
+};
 
-\end{urbiassert}
+// FIXME: rhs -= rhs;
+\end{urbiscript}
+\begin{urbicomment}
+  removeSlots("lhs", "rhs", "res");
+\end{urbicomment}
 
 \item['/'](<that>)%
-\begin{urbiassert}
+  Same as \lstinline|this * that.invert|.  \that must be invertible.
+\begin{urbiscript}
+var lhs = Matrix.new([[20, 0], [0, 200]])|;
+var rhs = Matrix.new([[10, 0], [0, 100]])|;
+var res = Matrix.new([[ 2, 0], [0,   2]])|;
+assert
+{
+  lhs / rhs == res;
+  (lhs / rhs) * rhs == lhs;
+  rhs * (lhs / rhs) == lhs;
+};
 
-\end{urbiassert}
+// FIXME: Failures.
+\end{urbiscript}
+\begin{urbicomment}
+  removeSlots("lhs", "rhs", "res");
+\end{urbicomment}
 
 \item['/='](<that>)%
-\begin{urbiassert}
+  In place division (\refSlot{'/'}).  The same constraints apply.
+\begin{urbiscript}
+var lhs = Matrix.new([[20, 0], [0, 200]])|;
+var rhs = Matrix.new([[10, 0], [0, 100]])|;
+var res = Matrix.new([[ 2, 0], [0,   2]])|;
+assert
+{
+  (lhs /= rhs) === lhs;
+  lhs == res;
+};
 
-\end{urbiassert}
+// FIXME: rhs -= rhs;
+\end{urbiscript}
+\begin{urbicomment}
+  removeSlots("lhs", "rhs", "res");
+\end{urbicomment}
+
 
 \item|'[]'|(<that>)%
 \begin{urbiassert}
