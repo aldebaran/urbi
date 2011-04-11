@@ -102,7 +102,7 @@ namespace urbi
       BIND(PLUS, operator+,
            rVector (Vector::*)());
       BIND(PLUS, operator+,
-           rVector (Vector::*)(const rObject&) const);
+           value_type (Vector::*)(const rObject&) const);
       /* Something is wrong with the handling of these two overloads.
        * so use a disambiguator.
       BIND(PLUS, operator+,
@@ -113,13 +113,13 @@ namespace urbi
       BIND(MINUS, operator-,
            rVector (Vector::*)());
       BIND(MINUS, operator-,
-           rVector (Vector::*)(const rObject&) const);
+           value_type (Vector::*)(const rObject&) const);
       /*
       BIND(MINUS, operator-, rVector (Vector::*)(const rVector&));
       BIND(MINUS, operator-, rVector (Vector::*)(ufloat));
       */
-      BIND(STAR, operator*, rVector (Vector::*)(const rObject&) const);
-      BIND(SLASH, operator/, rVector (Vector::*)(const rObject&) const);
+      BIND(STAR, operator*, value_type (Vector::*)(const rObject&) const);
+      BIND(SLASH, operator/, value_type (Vector::*)(const rObject&) const);
 
       BIND(EQ_EQ, operator==, bool (self_type::*)(const rObject&) const);
 
@@ -206,18 +206,16 @@ namespace urbi
     }
 
 #define OP(Name, Op)                                            \
-    rVector                                                     \
-    Vector::Name(const rVector &bv) const                       \
+    Vector::value_type                                          \
+    Vector::Name(const value_type &b) const                     \
     {                                                           \
-      Vector::value_type& b = bv->value_get();                  \
       size_t s1 = size();                                       \
       size_t s2 = b.size();                                     \
       if (s1 != s2)                                             \
         FRAISE("incompatible vector sizes: %s, %s", s1, s2);    \
-      rVector res(new Vector(s1));                              \
-      Vector::value_type& v = res->value_get();                 \
+      value_type res(s1);                                       \
       for (unsigned i = 0; i < s1; ++i)                         \
-        v(i) = value_(i) Op b(i);                               \
+        res(i) = value_(i) Op b(i);                             \
       return res;                                               \
     }
 
@@ -285,14 +283,14 @@ namespace urbi
       value_.resize(s);
     }
 
-#define OP(Op)                                                  \
-    rVector                                                     \
-    Vector::operator Op (const rObject& b) const                \
-    {                                                           \
-      if (rVector v = b->as<Vector>())                          \
-        return (*this) Op v;                                    \
-      else                                                      \
-        return (*this) Op b->as_checked<Float>()->value_get();  \
+#define OP(Op)                                                          \
+    Vector::value_type                                                  \
+    Vector::operator Op (const rObject& b) const                        \
+    {                                                                   \
+      if (rVector v = b->as<Vector>())                                  \
+        return operator Op(v->value_get());                             \
+      else                                                              \
+        return operator Op(b->as_checked<Float>()->value_get());        \
     }
 
     OP(+)

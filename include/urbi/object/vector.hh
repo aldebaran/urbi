@@ -48,20 +48,20 @@ namespace urbi
       rVector fromList(const rList& model);
 
       // Disambiguation operators.
-      rVector operator+(const rObject& b) const;
-      rVector operator-(const rObject& b) const;
-      rVector operator*(const rObject& b) const;
-      rVector operator/(const rObject& b) const;
+      value_type operator+(const rObject& b) const;
+      value_type operator-(const rObject& b) const;
+      value_type operator*(const rObject& b) const;
+      value_type operator/(const rObject& b) const;
 
       value_type operator+(const value_type& b) const;
       value_type operator-(const value_type& b) const;
-      rVector operator*(const rVector& v) const;
-      rVector operator/(const rVector& v) const;
+      value_type operator*(const value_type& v) const;
+      value_type operator/(const value_type& v) const;
 
-      rVector operator+(ufloat v) const;
-      rVector operator-(ufloat v) const;
-      rVector operator*(ufloat v) const;
-      rVector operator/(ufloat v) const;
+      value_type operator+(ufloat v) const;
+      value_type operator-(ufloat v) const;
+      value_type operator*(ufloat v) const;
+      value_type operator/(ufloat v) const;
 
       rVector operator+();
       rVector operator-();
@@ -90,11 +90,11 @@ namespace urbi
       // Return the indices from the original vector after a selfComb op.
       std::pair<size_t, size_t> selfCombIndexes(size_t v);
       // Scalar field by field comparison operations
-      rVector scalarGT(const rVector &b) const;
-      rVector scalarGE(const rVector &b) const;
-      rVector scalarLT(const rVector &b) const;
-      rVector scalarLE(const rVector &b) const;
-      rVector scalarEQ(const rVector &b) const;
+      value_type scalarGT(const value_type &b) const;
+      value_type scalarGE(const value_type &b) const;
+      value_type scalarLT(const value_type &b) const;
+      value_type scalarLE(const value_type &b) const;
+      value_type scalarEQ(const value_type &b) const;
       // Return the vector of true indices.
       rVector trueIndexes() const;
       rObject uvalueSerialize() const;

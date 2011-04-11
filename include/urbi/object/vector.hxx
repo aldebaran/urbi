@@ -36,10 +36,11 @@ namespace urbi
 
 #define OP(Op)                                  \
     inline                                      \
-    rVector Vector::operator Op(ufloat v) const \
+    Vector::value_type                          \
+    Vector::operator Op(ufloat v) const         \
     {                                           \
-      rVector res(new Vector(value_));          \
-      res->value_ Op##=  v;                     \
+      value_type res(value_);                   \
+      res Op##=  v;                             \
       return res;                               \
     }
 
@@ -47,16 +48,16 @@ namespace urbi
     OP(/)
 #undef OP
 
-#define OP(Op)                                             \
-    inline                                                 \
-    rVector Vector::operator Op(ufloat f) const            \
-    {                                                      \
-      rVector res(new Vector(value_));                     \
-      Vector::value_type& v = res->value_get();            \
-      size_t size = v.size();                              \
-      for(unsigned i = 0; i < size; ++i)                   \
-        v(i) Op##= f;                                      \
-      return res;                                          \
+#define OP(Op)                                  \
+    inline                                      \
+    Vector::value_type                          \
+    Vector::operator Op(ufloat f) const         \
+    {                                           \
+      value_type res(value_);                   \
+      size_t size = res.size();                 \
+      for(unsigned i = 0; i < size; ++i)        \
+        res(i) Op##= f;                         \
+      return res;                               \
     }
 
     OP(+)
