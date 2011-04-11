@@ -119,9 +119,9 @@ namespace urbi
       rVector row(int i) const;
       rVector column(int i) const;
       // Row-by-row l2 interdistance matrix
-      rVector distanceMatrix() const;
+      value_type distanceMatrix() const;
       // Row-by-row cross-distance matrix, self-major v-minor
-      rVector distanceToMatrix(rMatrix v) const;
+      value_type distanceToMatrix(const value_type& v) const;
       rMatrix setRow(int r, rVector val);
       rMatrix appendRow(rVector vals);
       rObject uvalueSerialize() const;

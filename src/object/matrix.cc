@@ -530,48 +530,31 @@ namespace urbi
       return new Vector(boost::numeric::ublas::column(value_, index2(i)));
     }
 
-    rVector
+    Matrix::value_type
     Matrix::distanceMatrix() const
     {
-      const size_t height = size1();
-      const size_t width = size2();
-      rVector res(new Vector(height * (height-1) / 2));
-      unsigned idx = 0;
-      for (unsigned p1 = 0; p1<height; ++p1)
-        for (unsigned p2 = p1+1; p2 < height; ++p2)
-        {
-          ufloat v = 0;
-          for (unsigned i=0; i<width; ++i)
-          {
-            ufloat t = value_(p1, i) - value_(p2, i);
-            v += t*t;
-          }
-          res->value_get()[idx++] = sqrt(v);
-        }
-      return res;
+      return distanceToMatrix(this->value_);
     }
 
-    rVector
-    Matrix::distanceToMatrix(rMatrix b) const
+    Matrix::value_type
+    Matrix::distanceToMatrix(const value_type& b) const
     {
-      Matrix::value_type& vb = b->value_get();
       const size_t height = size1();
       const size_t width = size2();
-      const size_t height2 = vb.size1();
-      if (width != vb.size2())
-        FRAISE("incompatible matrix sizes: %s, %s", width, vb.size2());
-      rVector res(new Vector(height * height2));
-      unsigned idx = 0;
-      for (unsigned p1 = 0; p1<height; ++p1)
+      const size_t height2 = b.size1();
+      if (width != b.size2())
+        FRAISE("incompatible matrix sizes: %s, %s", width, b.size2());
+      value_type res(height, height2);
+      for (unsigned p1 = 0; p1 < height; ++p1)
         for (unsigned p2 = 0; p2 < height2; ++p2)
         {
           ufloat v = 0;
           for (unsigned i=0; i<width; ++i)
           {
-            ufloat t = value_(p1, i) - vb(p2, i);
+            ufloat t = value_(p1, i) - b(p2, i);
             v += t*t;
           }
-          res->value_get()[idx++] = sqrt(v);
+          res(p1, p2) = sqrt(v);
         }
       return res;
     }
