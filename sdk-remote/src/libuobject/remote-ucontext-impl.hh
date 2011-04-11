@@ -55,22 +55,30 @@ namespace urbi
                         UAutoValue& v6,
                         UAutoValue& v7
                         );
+      ATTRIBUTE_CONST
       virtual UObjectMode getRunningMode() const;
       virtual std::pair<int, int> kernelVersion() const;
       virtual void yield() const;
       virtual void yield_until(libport::utime_t deadline) const;
       virtual void yield_until_things_changed() const;
+      ATTRIBUTE_CONST
       virtual void side_effect_free_set(bool s);
+      ATTRIBUTE_CONST
       virtual bool side_effect_free_get() const;
       virtual UVarImpl* getVarImpl();
       virtual UObjectImpl* getObjectImpl();
       virtual UGenericCallbackImpl* getGenericCallbackImpl();
       virtual TimerHandle setTimer(UTimerCallback* cb);
+      ATTRIBUTE_CONST
       virtual void registerHub(UObjectHub*);
+      ATTRIBUTE_CONST
       virtual void removeHub(UObjectHub*) ;
+      ATTRIBUTE_CONST
       virtual void setHubUpdate(UObjectHub*, ufloat);
       virtual void instanciated(UObject* obj);
+      ATTRIBUTE_CONST
       virtual void lock();
+      ATTRIBUTE_CONST
       virtual void unlock();
       virtual boost::asio::io_service& getIoService();
 
@@ -209,6 +217,7 @@ namespace urbi
       virtual void request();
       virtual void keepSynchronized();
       virtual void set(const UValue& v);
+      ATTRIBUTE_PURE
       virtual const UValue& get() const;
       virtual ufloat& in();
       virtual ufloat& out();
@@ -242,6 +251,7 @@ namespace urbi
       virtual void initialize(UGenericCallback* owner, bool owned);
       virtual void initialize(UGenericCallback* owner);
       virtual void registerCallback();
+      ATTRIBUTE_CONST
       virtual void clear();
 
     private:

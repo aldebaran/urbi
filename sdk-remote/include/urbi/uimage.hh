@@ -60,6 +60,7 @@ namespace urbi
   public:
     /// Return an empty UImage.
     /// Not a constructor so that we can still put it in a union.
+    ATTRIBUTE_CONST
     static UImage make();
 
     /// Initialize.

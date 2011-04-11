@@ -113,7 +113,7 @@ namespace urbi
   bool
   USound::operator==(const USound &b) const
   {
-    return !memcmp(this, &b, sizeof(USound));
+    return !memcmp(this, &b, sizeof *this);
   }
 
   const char*

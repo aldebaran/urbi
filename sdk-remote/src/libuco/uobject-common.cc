@@ -276,6 +276,7 @@ namespace urbi
     send(groupregister);
   }
 
+  ATTRIBUTE_NORETURN
   libport::ThreadPool::rTaskLock
   UObject::getClassTaskLock()
   {

@@ -978,14 +978,14 @@ namespace urbi
     {
       // nothing happend in remote mode...
     }
+
     void
     RemoteUContextImpl::removeHub(UObjectHub*)
-    {
-    }
+    {}
+
     void
     RemoteUContextImpl::registerHub(UObjectHub*)
-    {
-    }
+    {}
 
     UCallbackAction
     RemoteUContextImpl::clientError(const UMessage&)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2007, 2008, 2009, 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -152,6 +152,7 @@ namespace urbi
     void useRTP(bool enable=true);
     impl::UVarImpl* impl_;
     const UValue& val() const;
+    ATTRIBUTE_PURE
     libport::utime_t timestamp() const;
 
 

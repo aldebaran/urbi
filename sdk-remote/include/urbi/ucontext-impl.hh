@@ -43,8 +43,10 @@ namespace urbi
       virtual void newUObjectClass(urbi::baseURBIStarter* s) = 0;
       virtual void newUObjectHubClass(urbi::baseURBIStarterHub* s) = 0;
       /// Retrieve a UObjectHub based on its name or return 0 if not found.
+      ATTRIBUTE_PURE
       virtual UObjectHub* getUObjectHub(const std::string& n);
       /// Retrieve a UObject based on its name or return 0 if not found.
+      ATTRIBUTE_PURE
       virtual UObject* getUObject(const std::string& n);
       /// Send Urbi code (ghost connection in plugin mode, default
       /// connection in remote mode).

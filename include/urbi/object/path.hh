@@ -35,6 +35,7 @@ namespace urbi
     public:
       typedef Path self_type;
       typedef libport::path value_type;
+      ATTRIBUTE_CONST
       const value_type& value_get() const;
       void value_set(const value_type&);
 

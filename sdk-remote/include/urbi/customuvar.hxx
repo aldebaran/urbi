@@ -56,5 +56,3 @@ namespace urbi
 }
 
 #endif
-
-

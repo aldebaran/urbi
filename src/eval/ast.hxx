@@ -700,7 +700,7 @@ namespace eval
     {
       object::rObject res = object::void_class;
 
-      // Run all child without yielding
+      // Run children without yielding.
       foreach (const ast::rConstExp& child, e->children_get())
         res = ast(this_, child.get());
 

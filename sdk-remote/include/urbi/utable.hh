@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2010, Gostai S.A.S.
+ * Copyright (C) 2006-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -55,6 +55,7 @@ namespace urbi
     UTable();
 
     /// Return the list of callbacks, otherwise 0.
+    ATTRIBUTE_CONST
     mapped_type* find0(const key_type& name);
 
     /// Clean a callback UTable from all callbacks linked to the
@@ -85,6 +86,7 @@ namespace urbi
 
 
     /// Return the list of callbacks, otherwise 0.
+    ATTRIBUTE_CONST
     mapped_type* find0(const key_type& name);
 
     void clean(const UVar& uvar);

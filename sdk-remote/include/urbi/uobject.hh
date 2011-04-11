@@ -521,6 +521,7 @@ namespace urbi
 
     // Override me to have your own LOCK_CLASS task lock.
     virtual libport::ThreadPool::rTaskLock getClassTaskLock();
+
   private:
     /// Pointer to a globalData structure specific to the
     /// remote/plugin architectures who defines it.

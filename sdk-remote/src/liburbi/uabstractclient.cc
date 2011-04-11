@@ -671,11 +671,9 @@ namespace urbi
   UAbstractClient::error_type
   UAbstractClient::putFile(const char* localName, const char* remoteName)
   {
-    size_t len;
     struct stat st;
     if (stat(localName, &st) == -1)
       return 1;
-    len = st.st_size;
     sendBufferLock.lock();
     if (!remoteName)
       remoteName = localName;

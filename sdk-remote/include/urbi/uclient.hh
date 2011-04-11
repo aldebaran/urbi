@@ -44,9 +44,10 @@ namespace urbi
 # define UCLIENT_OPTION(Type, Name)             \
     public:                                     \
       options& Name(Type b);                    \
+      ATTRIBUTE_CONST                           \
       Type Name() const;                        \
     private:                                    \
-      Type Name ## _;
+      Type Name ## _
 
       /// Whether in server mode.
       UCLIENT_OPTION(bool, server);
@@ -119,6 +120,7 @@ namespace urbi
   protected:
     virtual int effectiveSend(const void* buffer, size_t size);
 
+    ATTRIBUTE_CONST
     libport::Socket* mySocketFactory();
 
     virtual void onConnect();

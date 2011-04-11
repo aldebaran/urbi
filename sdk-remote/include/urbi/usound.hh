@@ -64,6 +64,7 @@ namespace urbi
   public:
     /// Return an empty instance.
     /// Not a constructor so that we can still put it in a union.
+    ATTRIBUTE_CONST
     static USound make();
 
     /// Initialize.
@@ -73,6 +74,7 @@ namespace urbi
     /// Return a legible definition of imageFormat.
     const char* format_string() const;
 
+    ATTRIBUTE_PURE
     bool operator==(const USound &b) const;
 
     // For debugging.

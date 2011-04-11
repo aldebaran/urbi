@@ -297,9 +297,11 @@ namespace urbi
     operator UDictionary() const;
 
     /// Shallow copy.
+    ATTRIBUTE_PURE
     operator UImage() const;
 
     /// Shallow copy.
+    ATTRIBUTE_PURE
     operator USound() const;
 
     /// This operator does nothing, but helps with the previous operator,.
