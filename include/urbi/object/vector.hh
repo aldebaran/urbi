@@ -53,8 +53,8 @@ namespace urbi
       rVector operator*(const rObject& b) const;
       rVector operator/(const rObject& b) const;
 
-      rVector operator+(const rVector& b) const;
-      rVector operator-(const rVector& b) const;
+      value_type operator+(const value_type& b) const;
+      value_type operator-(const value_type& b) const;
       rVector operator*(const rVector& v) const;
       rVector operator/(const rVector& v) const;
 
@@ -70,6 +70,7 @@ namespace urbi
 
       size_t size() const;
       void resize(size_t s);
+      ufloat distance(const value_type& that) const;
       ufloat norm() const;
       ufloat sum() const; //a.k.a. L1 norm.
       rVector set(int i, ufloat v);

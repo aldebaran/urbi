@@ -20,13 +20,14 @@ namespace urbi
 
 #define OP(Op)                                                  \
     inline                                                      \
-    rVector Vector::operator Op(const rVector& b) const         \
+    Vector::value_type                                          \
+    Vector::operator Op(const value_type& b) const              \
     {                                                           \
       size_t s1 = size();                                       \
-      size_t s2 = b->size();                                    \
+      size_t s2 = b.size();                                     \
       if (s1 != s2)                                             \
         FRAISE("incompatible vector sizes: %s, %s", s1, s2);    \
-      return new Vector(value_ Op b->value_);                   \
+      return value_ Op b;                                       \
     }
 
     OP(+)

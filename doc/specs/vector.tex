@@ -118,9 +118,30 @@ Vector.new(-1, 0, +1).combSub(Vector.new(-2, 0, +2))
                  [3,  1, -1]]);
 \end{urbiassert}
 
+\item[distance](<that>)%
+  The (Euclidean) distance between \this and \that: (Euclidean) norm of
+  \lstinline|this - \var{that}|.  They must have equal dimensions.
+\begin{urbiscript}
+do (Vector)
+{
+  assert
+  {
+    new.distance(new) == 0;
+
+    new(0, 0).distance(new(3, 4)) == 5;
+    new(3, 4).distance(new(0, 0)) == 5;
+  };
+}|;
+Vector.new(0).distance(Vector.new(1, 2));
+[00000319:error] !!! distance: incompatible vector sizes: 1, 2
+
+Vector.new(1, 2).distance(Vector.new(0));
+[00000334:error] !!! distance: incompatible vector sizes: 2, 1
+\end{urbiscript}
+
 \item[norm]%
-  The (Euclidean) norm of the Vector: square root of the sum of the square
-  of the members.
+  The (Euclidean) norm of \this: square root of the sum of the square of the
+  members.
 \begin{urbiscript}
 do (Vector)
 {

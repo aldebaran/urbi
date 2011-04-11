@@ -131,6 +131,7 @@ namespace urbi
       BIND(combDiv);
       BIND(combMul);
       BIND(combSub);
+      BIND(distance);
       BIND(norm);
       BIND(resize);
       BIND(scalarGE);
@@ -184,10 +185,13 @@ namespace urbi
     ufloat
     Vector::norm() const
     {
-      ufloat res = 0;
-      for (unsigned i = 0; i < size(); ++i)
-        res += value_(i) * value_(i);
-      return sqrt(res);
+      return norm_2(value_);
+    }
+
+    ufloat
+    Vector::distance(const value_type& that) const
+    {
+      return norm_2(*this - that);
     }
 
     size_t
