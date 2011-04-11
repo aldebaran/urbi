@@ -213,7 +213,7 @@ do (Dictionary)
 do (Directory)
 {
   var fileCreated = Event.new;
-  fileCreated.'waituntil' = function /* skipIfNoInotify */
+  fileCreated.'waituntil' = function(var args[]) /* skip_if_no_inotify */
   {
     testSkip("requires inotify support");
   }|;
@@ -438,7 +438,7 @@ if (System.Platform.isWindows)
 {
   class Global.Process
   {
-    function init
+    function init(var args[])
     {
       testSkip("Process is not supported under Windows")
     };
