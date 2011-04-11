@@ -24,7 +24,7 @@ namespace urbi
 {
   namespace object
   {
-    class Semaphore: public CxxObject
+    class URBI_SDK_API Semaphore: public CxxObject
     {
     public:
       typedef std::pair< int, std::list<sched::rJob> > value_type;
