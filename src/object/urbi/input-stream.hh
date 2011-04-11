@@ -13,6 +13,8 @@
 
 # include <libport/cstdio>
 
+# include <object/semaphore.hh>
+
 # include <object/urbi/export.hh>
 # include <object/urbi/stream.hh>
 
@@ -49,6 +51,11 @@ namespace urbi
       std::string buffer_;
       unsigned pos_;
       size_t size_;
+
+      rObject receive_(objects_type args);
+      rObject onError_(objects_type args);
+      rSemaphore sem_; // For async read
+      bool waiting_; // True if someone is waiting on sem_
 
       /*---------------.
       | Urbi methods.  |

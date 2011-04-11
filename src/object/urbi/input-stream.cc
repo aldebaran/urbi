@@ -16,6 +16,7 @@
 
 #include <libport/format.hh>
 
+#include <urbi/object/event.hh>
 #include <urbi/object/file.hh>
 #include <object/urbi/input-stream.hh>
 #include <object/urbi/output-stream.hh>
@@ -36,14 +37,20 @@ namespace urbi
       : Stream(fd, own)
       , pos_(0)
       , size_(0)
+      , sem_(new Semaphore())
     {
       proto_add(proto ? rObject(proto) : Object::proto);
+      socket_->slot_set(SYMBOL(receive),
+        new Primitive(boost::bind(&InputStream::receive_, this, _1)));
+      socket_->slot_get(SYMBOL(disconnected))->as<Event>()
+      ->onEvent(boost::bind(&InputStream::onError_, this, _1));
     }
 
     InputStream::InputStream(rInputStream model)
       : Stream(model)
       , pos_(0)
       , size_(0)
+      , sem_(new Semaphore())
     {
       proto_add(model);
     }
@@ -52,6 +59,7 @@ namespace urbi
       : Stream(STDIN_FILENO, false)
       , pos_(0)
       , size_(0)
+      , sem_(new Semaphore())
     {
       proto_add(Stream::proto);
       BIND(get);
@@ -80,10 +88,13 @@ namespace urbi
     bool
     InputStream::getBuffer_()
     {
+      check();
       assert_eq(pos_, size_);
-      buffer_.resize(BUFSIZ);
-      urbi::yield_for_fd(fd_);
-      size_ = read(fd_, const_cast<char*>(buffer_.c_str()), BUFSIZ);
+      buffer_.clear();
+      socket_->readOnce();
+      waiting_ = true;
+      sem_->acquire();
+      size_ = buffer_.size();
       pos_ = 0;
       return size_;
     }
@@ -122,7 +133,11 @@ namespace urbi
     void
     InputStream::init(rFile f)
     {
-      open(f, O_RDONLY, 0, "cannot open file for reading");
+      open(f, libport::Socket::READ);
+      socket_->slot_set(SYMBOL(receive),
+                 new Primitive(boost::bind(&InputStream::receive_, this, _1)));
+      socket_->slot_get(SYMBOL(disconnected))->as<Event>()
+        ->onEvent(boost::bind(&InputStream::onError_, this, _1));
     }
 
     rObject
@@ -151,6 +166,25 @@ namespace urbi
       if (ok)
         return to_urbi(res);
       return 0;
+    }
+
+    rObject
+    InputStream::receive_(objects_type args)
+    {
+      if (args.size() != 2)
+        runner::raise_arity_error(args.size(), 1);
+      buffer_ += args[1]->as<String>()->value_get();
+      if (waiting_)
+        sem_->release();
+      return void_class;
+    }
+
+    rObject
+    InputStream::onError_(objects_type)
+    {
+      if (waiting_)
+        sem_->release();
+      return void_class;
     }
   }
 }

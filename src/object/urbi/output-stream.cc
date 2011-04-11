@@ -62,17 +62,15 @@ namespace urbi
 
     void OutputStream::init(rFile f)
     {
-      open(f, O_WRONLY | O_APPEND | O_CREAT, S_IRWXU,
-           "cannot open file for writing");
+      open(f, libport::Socket::USE_FLAGS, O_WRONLY | O_APPEND | O_CREAT,
+           S_IRWXU);
     }
 
     rOutputStream OutputStream::putByte(unsigned char c)
     {
       check();
       // FIXME: bufferize
-      size_t size = write(fd_, &c, 1);
-      assert_eq(size, 1u);
-      LIBPORT_USE(size);
+      socket_->write(std::string((char*)&c, 1));
       return this;
     }
 
@@ -87,10 +85,7 @@ namespace urbi
     {
       check();
       std::string str = o->as_string();
-      size_t str_size = str.size();
-      size_t size = write(fd_, str.c_str(), str_size);
-      assert_eq(size, str_size);
-      LIBPORT_USE(size);
+      socket_->write(str);
       return this;
     }
   }

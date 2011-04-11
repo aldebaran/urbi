@@ -43,42 +43,47 @@ namespace urbi
     `-----------------------------*/
 
     Stream::Stream(int fd, bool own)
-      : fd_(fd)
-      , own_(own)
-    {}
+    {
+      int fd2 = fd;
+      if (!own)
+        fd2 = dup(fd);
+      newSocket();
+      socket_->setNativeFD(fd2);
+    }
 
     Stream::Stream(rStream model)
-      : fd_(model->fd_)
-      , own_(false)
+      : socket_(model->socket_)
     {
       aver(model);
     }
 
     Stream::~Stream()
     {
-      // Don't play with check here (so don't simplify into calling
-      // close()), since it might RAISE, which catches "this", which
-      // is being destroyed => Boom.
-      if (own_ && fd_ != -1)
-        if (::close(fd_))
-          // FIXME: RAISING is not a good thing here.
-          RAISE(libport::strerror(errno));
     }
 
     void
-    Stream::open(rFile f, int flags, mode_t mode, const char* error)
+    Stream::newSocket()
     {
+      if (socket_ && socket_->isConnected())
+        socket_->close();
+      socket_ = new Socket();
+      socket_->init();
+      socket_->setAutoRead(false);
+    }
+
+    void
+    Stream::open(rFile f, libport::Socket::OpenMode mode, int extraFlags,
+                 int createMode)
+    {
+      newSocket();
       libport::path path = f->value_get()->value_get();
-      fd_ = ::open(path.to_string().c_str(), flags, mode);
-      if (fd_ < 0)
-        FRAISE("%s: %s", error, path);
-      own_ = true;
+      socket_->open_file(path.to_string(), mode, extraFlags, createMode);
     }
 
     void
     Stream::check() const
     {
-      if (fd_ == -1)
+      if (!socket_ || !socket_->isConnected())
         RAISE("stream is closed");
     }
 
@@ -86,11 +91,9 @@ namespace urbi
     Stream::close()
     {
       check();
-      if (::close(fd_))
-        RAISE(libport::strerror(errno));
-      fd_ = -1;
+      socket_->close();
+      socket_ = 0;
     }
-
     URBI_CXX_OBJECT_INIT(Stream)
     {
       BIND(close);

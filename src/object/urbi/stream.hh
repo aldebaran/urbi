@@ -15,6 +15,7 @@
 # include <libport/sys/types.h> // mode_t
 
 # include <object/urbi/export.hh>
+# include <object/socket.hh>
 # include <urbi/object/cxx-object.hh>
 
 namespace urbi
@@ -34,18 +35,17 @@ namespace urbi
       Stream(rStream stream);
       ~Stream();
 
-      void open(rFile f, int flags, mode_t mode, const char* error);
+      void open(rFile f, libport::Socket::OpenMode mode, int extraFlags = 0,
+                int createMode = 0);
       /// Check that the stream is not closed.
       /// Raise an error if it is.
       void check() const;
       void close();
 
     protected:
-      /// File descriptor.
-      /// -1 if not opened.
-      int fd_;
-      /// Whether we own fd_, and therefore need to close it.
-      bool own_;
+      // (re)initialize socket to a new Socket.
+      void newSocket();
+      rSocket socket_;
 
       URBI_CXX_OBJECT(Stream, CxxObject);
     };
