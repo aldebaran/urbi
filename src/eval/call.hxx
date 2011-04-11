@@ -205,8 +205,8 @@ namespace eval
                      object::Object* call_message,
                      boost::optional< ::ast::loc> loc)
   {
-    // GD_CATEGORY(Eval.Call);
-    // GD_FPUSH_TRACE("Call %s (%s)", msg, loc ? string_cast(loc.get()) : "?");
+    GD_CATEGORY(Urbi.Call);
+    GD_FPUSH_TRACE("Call %s (%s)", msg, loc ? string_cast(loc.get()) : "?");
     aver(function);
     aver(!args.empty());
     aver(args.front());
