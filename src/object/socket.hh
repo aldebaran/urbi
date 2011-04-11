@@ -41,6 +41,9 @@ namespace urbi
       void connectSerial(const std::string& device, unsigned int baudrate);
       void connectSerial(const std::string& device, unsigned int baudrate,
                          bool asyncRead);
+      void openFile(const std::string& name, int);
+      void setAutoRead(bool enable);
+      bool getAutoRead();
       void disconnect();
       void init();
       virtual void onConnect();
@@ -49,6 +52,7 @@ namespace urbi
       void write(const std::string& data);
       void syncWrite(const std::string& data);
       std::string read(size_t len);
+      void readOnce();
       bool isConnected() const;
       void poll();
       std::string host() const;

@@ -95,7 +95,10 @@ namespace urbi
       BIND(write);
       BIND(syncWrite);
       BIND(getIoService);
-
+      BIND(setAutoRead);
+      BIND(getAutoRead);
+      BIND(openFile);
+      BIND(readOnce);
       setSlot(SYMBOL(connect), new Primitive(socket_connect_overload));
     }
 
@@ -233,7 +236,13 @@ namespace urbi
     std::string
     Socket::read(size_t len)
     {
-      return libport::Socket::read(len);
+      return libport::Socket::syncRead(len);
+    }
+
+    void
+    Socket::readOnce()
+    {
+      libport::Socket::readOnce();
     }
 
     void
@@ -254,5 +263,22 @@ namespace urbi
       return ios;
     }
 
+    void
+    Socket::setAutoRead(bool enable)
+    {
+      libport::Socket::setAutoRead(enable);
+    }
+
+    bool
+    Socket::getAutoRead()
+    {
+      return libport::Socket::getAutoRead();
+    }
+
+    void
+    Socket::openFile(const std::string&s, int m)
+    {
+      libport::Socket::open_file(s, (libport::Socket::OpenMode)m);
+    }
   }
 }
