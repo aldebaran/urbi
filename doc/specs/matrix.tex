@@ -15,6 +15,69 @@
 
 \subsection{Construction}
 
+The \lstinline|init| function is overloaded, and its behavior depends on its
+number of arguments and their types.
+
+When there is a single argument, it can either be a List, or another Matrix.
+
+If it's a List, then it must be a list of Vectors and/or Lists of Floats of
+the same size.
+
+\begin{urbiscript}
+var listList     = Matrix.new([           [0, 1],             [0, 1]]);
+[00071383] Matrix([
+[:]  [0, 1],
+[:]  [0, 1]])
+var listVector   = Matrix.new([           [0, 1],  Vector.new([0, 1])])|;
+var vectorList   = Matrix.new([Vector.new([0, 1]), Vector.new([0, 1])])|;
+var vectorVector = Matrix.new([Vector.new([0, 1]), Vector.new([0, 1])])|;
+
+assert
+{
+  listList == listVector;
+  listList == vectorList;
+  listList == vectorVector;
+};
+
+Matrix.new([           [0],            [1, 2]]);
+[00000030:error] !!! new: expecting rows of size 1, got size 2 for row 2
+Matrix.new([Vector.new([0]),           [1, 2]]);
+[00000056:error] !!! new: expecting rows of size 1, got size 2 for row 2
+Matrix.new([           [0], Vector.new([1, 2])]);
+[00000071:error] !!! new: expecting rows of size 1, got size 2 for row 2
+Matrix.new([Vector.new([0]), Vector.new([1, 2])]);
+[00052403:error] !!! new: expecting rows of size 1, got size 2 for row 2
+\end{urbiscript}
+
+If its a Matrix, then there is a deep-copy: they are not aliases.
+
+\begin{urbiscript}
+var m1 = Matrix.new([[1, 1], [1, 1]])|;
+var m2 = Matrix.new(m1)|;
+m2[0, 0] = 0|;
+assert
+{
+  m1 == Matrix.new([[1, 1], [1, 1]]);
+  m2 == Matrix.new([[0, 1], [1, 1]]);
+};
+\end{urbiscript}
+
+When given two Float arguments, they must be the two integers, defining the
+size of the null Matrix.
+\begin{urbiscript}
+Matrix.new(2, 3);
+[00051329] Matrix([
+[:]  [0, 0, 0],
+[:]  [0, 0, 0]])
+\end{urbiscript}
+
+In other cases, the arguments are expected to be Lists of Floats and/or
+Vectors.
+
+\begin{urbiassert}
+Matrix.new([1], Vector.new([2])) == Matrix.new([[1], [2]]);
+\end{urbiassert}
+
 \subsection{Slots}
 
 \begin{urbiscriptapi}

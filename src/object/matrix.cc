@@ -90,13 +90,16 @@ namespace urbi
           return self;
         }
       }
-      else if (args.size() == 3)
+      else if (args.size() == 3
+               && args[1]->as<Float>()
+               && args[2]->as<Float>())
       {
         self->value_ =
           boost::numeric::ublas::zero_matrix<ufloat>
           (from_urbi<unsigned>(args[1]), from_urbi<unsigned>(args[2]));
         return self;
       }
+
       objects_type effective_args(args.begin() + 1, args.end());
       return self->fromArgsList(effective_args);
     }
@@ -169,22 +172,22 @@ namespace urbi
     rMatrix
     Matrix::fromArgsList(const objects_type& args)
     {
-      rList first_row = args[0]->as<List>();
-      if (! first_row)
-        runner::raise_type_error(args[0], List::proto);
-
-      const size_type width = first_row->size();
+      size_type width;
       const size_type height = args.size();
-      value_.resize(height, width, false);
       for (unsigned i = 0; i < height; ++i)
       {
         if (rList l = args[i]->as<List>())
         {
-          if (width != l->size())
+          if (!i)
+          {
+            width = l->size();
+            value_.resize(height, width, false);
+          }
+          else if (width != l->size())
             FRAISE("expecting rows of size %d, got size %d for row %d",
                    width, l->size(), i + 1);
           unsigned j = 0;
-          foreach(const rObject& o, l->value_get())
+          foreach (const rObject& o, l->value_get())
           {
             if (rFloat f = o->as<Float>())
               value_(i, j) = f->value_get();
@@ -192,6 +195,20 @@ namespace urbi
               runner::raise_type_error(args[i], Float::proto);
             ++j;
           }
+        }
+        else if (rVector l = args[i]->as<Vector>())
+        {
+          if (!i)
+          {
+            width = l->size();
+            value_.resize(height, width, false);
+          }
+          else if (width != l->size())
+            FRAISE("expecting rows of size %d, got size %d for row %d",
+                   width, l->size(), i + 1);
+          unsigned j = 0;
+          foreach (ufloat v, l->value_get())
+            value_(i, j++) = v;
         }
         else
           runner::raise_type_error(args[i], List::proto);
