@@ -271,17 +271,16 @@ namespace urbi
 
 #define OP(Name, Op)                                            \
     rMatrix                                                     \
-    Matrix::Name(const rVector& rhs) const                      \
+    Matrix::Name(const vector_type& rhs) const                  \
     {                                                           \
       const size_t height = size1();                            \
       const size_t width = size2();                             \
       rMatrix res =                                             \
         Matrix::create_zeros(0, height, width)->as<Matrix>();   \
       Matrix::value_type& v = res->value_get();                 \
-      const Vector::value_type& v2 = rhs->value_get();          \
       for (unsigned p1 = 0; p1 < height; ++p1)                  \
         for (unsigned i = 0; i < width; ++i)                    \
-          v(p1, i) = value_(p1, i) Op v2(p1);                   \
+          v(p1, i) = value_(p1, i) Op rhs(p1);                  \
       return res;                                               \
     }
 
@@ -518,16 +517,16 @@ namespace urbi
       return Pair->call(SYMBOL(new), new Float(size1()), new Float(size2()));
     }
 
-    rVector
+    Matrix::vector_type
     Matrix::row(int i) const
     {
-      return new Vector(boost::numeric::ublas::row(value_, index1(i)));
+      return boost::numeric::ublas::row(value_, index1(i));
     }
 
-    rVector
+    Matrix::vector_type
     Matrix::column(int i) const
     {
-      return new Vector(boost::numeric::ublas::column(value_, index2(i)));
+      return boost::numeric::ublas::column(value_, index2(i));
     }
 
     Matrix::value_type
@@ -559,12 +558,12 @@ namespace urbi
       return res;
     }
 
-    rVector
+    Matrix::vector_type
     Matrix::rowNorm() const
     {
       const size_t height = size1();
       const size_t width = size2();
-      rVector res(new Vector(height));
+      vector_type res(height);
       for (unsigned p1 = 0; p1<height; ++p1)
       {
         ufloat v = 0;
@@ -573,24 +572,23 @@ namespace urbi
           ufloat t = value_(p1, i);
           v += t*t;
         }
-        res->value_get()[p1] = sqrt(v);
+        res[p1] = sqrt(v);
       }
       return res;
     }
 
     rMatrix
-    Matrix::setRow(int r, rVector v)
+    Matrix::setRow(int r, const vector_type& v)
     {
       int j = index1(r);
-      index2(v->size()-1); // Check size
-      Vector::value_type& val = v->value_get();
-      for (unsigned i = 0; i< v->size(); ++i)
-        value_(j, i) = val(i);
+      index2(v.size()-1); // Check size
+      for (unsigned i = 0; i< v.size(); ++i)
+        value_(j, i) = v(i);
       return this;
     }
 
     rMatrix
-    Matrix::appendRow(rVector v)
+    Matrix::appendRow(const vector_type& v)
     {
       value_.resize(size1()+1, size2());
       setRow(size1()-1, v);

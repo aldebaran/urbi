@@ -14,12 +14,6 @@
 # include <urbi/object/cxx-object.hh>
 # include <urbi/object/fwd.hh>
 
-# include <libport/system-warning-push.hh>
-#  include <boost/numeric/ublas/blas.hpp>
-#  include <boost/numeric/ublas/matrix.hpp>
-#  include <boost/numeric/ublas/vector.hpp>
-# include <libport/system-warning-pop.hh>
-
 # include <urbi/object/vector.hh>
 
 namespace urbi
@@ -33,7 +27,9 @@ namespace urbi
     {
     public:
       typedef Matrix self_type;
-      typedef boost::numeric::ublas::matrix<ufloat> value_type;
+      typedef Vector::matrix_type matrix_type;
+      typedef Vector::vector_type vector_type;
+      typedef matrix_type value_type;
       typedef EqualityComparable<self_type, value_type> super_comparable_type;
       typedef value_type::size_type size_type;
 
@@ -83,11 +79,11 @@ namespace urbi
 #undef OP
 
       // Row by row operation.
-      rMatrix rowAdd(const rVector& rhs) const;
-      rMatrix rowSub(const rVector& rhs) const;
-      rMatrix rowMul(const rVector& rhs) const;
-      rMatrix rowDiv(const rVector& rhs) const;
-      rVector rowNorm() const;
+      rMatrix rowAdd(const vector_type& rhs) const;
+      rMatrix rowSub(const vector_type& rhs) const;
+      rMatrix rowMul(const vector_type& rhs) const;
+      rMatrix rowDiv(const vector_type& rhs) const;
+      vector_type rowNorm() const;
 
       static rMatrix create_zeros(rObject, int size1, int size2);
       static rMatrix create_identity(rObject, int size);
@@ -96,7 +92,7 @@ namespace urbi
 
       rMatrix transpose() const;
       rMatrix invert() const;
-      rMatrix solve(const rVector& vector) const;
+      rMatrix solve(const vector_type& vector) const;
 
       ufloat operator()(int, int) const;
 
@@ -116,14 +112,14 @@ namespace urbi
       std::string asTopLevelPrintable() const;
 
       rMatrix dot_times(const rMatrix& m) const;
-      rVector row(int i) const;
-      rVector column(int i) const;
+      vector_type row(int i) const;
+      vector_type column(int i) const;
       // Row-by-row l2 interdistance matrix
       value_type distanceMatrix() const;
       // Row-by-row cross-distance matrix, self-major v-minor
       value_type distanceToMatrix(const value_type& v) const;
-      rMatrix setRow(int r, rVector val);
-      rMatrix appendRow(rVector vals);
+      rMatrix setRow(int r, const vector_type& val);
+      rMatrix appendRow(const vector_type& vals);
       rObject uvalueSerialize() const;
     private:
       std::string make_string(char col_lsep, char col_rsep,

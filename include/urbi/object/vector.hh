@@ -16,6 +16,7 @@
 
 # include <libport/system-warning-push.hh>
 #  include <boost/numeric/ublas/blas.hpp>
+#  include <boost/numeric/ublas/matrix.hpp>
 #  include <boost/numeric/ublas/vector.hpp>
 # include <libport/system-warning-pop.hh>
 
@@ -32,20 +33,19 @@ namespace urbi
 
     public:
       typedef Vector self_type;
-      typedef boost::numeric::ublas::vector<ufloat> value_type;
-      typedef value_type vector_type;
       typedef boost::numeric::ublas::matrix<ufloat> matrix_type;
+      typedef boost::numeric::ublas::vector<ufloat> vector_type;
+      typedef vector_type value_type;
       typedef EqualityComparable<self_type, value_type> super_comparable_type;
 
       Vector();
       Vector(size_t s);
-      Vector(value_type v);
-      Vector(const Vector& v);
-      Vector(const rVector& model);
-      Vector(const rList& model);
+      Vector(const rVector& v);
+      Vector(const value_type& model);
+      Vector(const objects_type& model);
 
       static rVector init(const objects_type& args);
-      rVector fromList(const rList& model);
+      rVector fromList(const objects_type& model);
 
       // Disambiguation operators.
       value_type operator+(const rObject& b) const;
@@ -64,7 +64,7 @@ namespace urbi
       value_type operator/(ufloat v) const;
 
       rVector operator+();
-      rVector operator-();
+      value_type operator-();
       bool    operator<(const Object& b) const;
       ufloat  operator[](int) const;
 
@@ -96,7 +96,7 @@ namespace urbi
       value_type scalarLE(const value_type &b) const;
       value_type scalarEQ(const value_type &b) const;
       // Return the vector of true indices.
-      rVector trueIndexes() const;
+      value_type trueIndexes() const;
       rObject uvalueSerialize() const;
     private:
       value_type value_;

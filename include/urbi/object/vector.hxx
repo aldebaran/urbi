@@ -78,16 +78,17 @@ namespace urbi
       return value_;
     }
 
-    inline rVector
+    inline
+    rVector
     Vector::operator +()
     {
       return this;
     }
 
-    inline rVector
+    inline Vector::value_type
     Vector::operator -()
     {
-      return new Vector(-value_);
+      return -value_;
     }
 
     inline bool

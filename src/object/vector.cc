@@ -33,28 +33,20 @@ namespace urbi
       proto_add(proto);
     }
 
-    Vector::Vector(value_type v)
-      : value_(v)
-    {
-      proto_add(proto);
-    }
-
-    Vector::Vector(const Vector& model)
-      : CxxObject()
-      , super_comparable_type()
-      , value_(model.value_)
-    {
-      proto_add(proto);
-    }
-
     Vector::Vector(const rVector& model)
       : value_(model->value_)
     {
       proto_add(proto);
     }
 
-    Vector::Vector(const rList& model)
-      : value_(model->size())
+    Vector::Vector(const value_type& model)
+      : value_(model)
+    {
+      proto_add(proto);
+    }
+
+    Vector::Vector(const objects_type& model)
+      : value_(model.size())
     {
       proto_add(proto);
       fromList(model);
@@ -75,7 +67,7 @@ namespace urbi
       if (args.size() == 2)
       {
         if (rList l = args[1]->as<List>())
-          return self->fromList(l);
+          return self->fromList(l->value_get());
         else if (rVector v = args[1]->as<Vector>())
         {
           self->value_ = v->value_;
@@ -89,11 +81,12 @@ namespace urbi
     }
 
     rVector
-    Vector::fromList(const rList& model)
+    Vector::fromList(const objects_type& model)
     {
-      value_.resize(model->size());
-      for (unsigned i = 0; i< model->size(); ++i)
-        value_(i) = from_urbi<ufloat>(model->value_get()[i]);
+      size_t size = model.size();
+      value_.resize(size);
+      for (unsigned i = 0; i < size; ++i)
+        value_(i) = from_urbi<ufloat>(model[i]);
       return this;
     }
 
@@ -106,17 +99,17 @@ namespace urbi
       /* Something is wrong with the handling of these two overloads.
        * so use a disambiguator.
       BIND(PLUS, operator+,
-           rVector (Vector::*)(const rVector&));
+           value_type (Vector::*)(const rVector&));
       BIND(PLUS, operator+,
-           rVector (Vector::*)(ufloat));
+           value_type (Vector::*)(ufloat));
            */
       BIND(MINUS, operator-,
-           rVector (Vector::*)());
+           value_type (Vector::*)());
       BIND(MINUS, operator-,
            value_type (Vector::*)(const rObject&) const);
       /*
-      BIND(MINUS, operator-, rVector (Vector::*)(const rVector&));
-      BIND(MINUS, operator-, rVector (Vector::*)(ufloat));
+      BIND(MINUS, operator-, value_type (Vector::*)(const rVector&));
+      BIND(MINUS, operator-, value_type (Vector::*)(ufloat));
       */
       BIND(STAR, operator*, value_type (Vector::*)(const rObject&) const);
       BIND(SLASH, operator/, value_type (Vector::*)(const rObject&) const);
@@ -228,18 +221,17 @@ namespace urbi
     OP(operator /, /)
 #undef OP
 
-    rVector
+    Vector::value_type
     Vector::trueIndexes() const
     {
       unsigned count = 0;
       for (unsigned i=0; i < size(); ++i)
         if (value_(i)) ++count;
-      rVector res(new Vector(count));
-      Vector::value_type& v = res->value_get();
+      value_type res(count);
       unsigned pos = 0;
       for (unsigned i = 0; i < size(); ++i)
         if (value_(i))
-          v(pos++) = i;
+          res(pos++) = i;
       return res;
     }
 
