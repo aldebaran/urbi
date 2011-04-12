@@ -16,45 +16,11 @@
 #ifndef EVAL_AST_HXX
 # define EVAL_AST_HXX
 
-# include <boost/scoped_ptr.hpp>
-
 # include <libport/bind.hh>
-# include <libport/compilation.hh>
 # include <libport/finally.hh>
-# include <libport/foreach.hh>
-# include <libport/format.hh>
-
-# include <sched/exception.hh>
-
-# include <kernel/uconnection.hh>
-# include <kernel/userver.hh>
-
-# include <ast/all.hh>
-
-# include <object/symbols.hh>
-# include <object/system.hh>
-
-# include <urbi/object/code.hh>
-# include <urbi/object/event.hh>
-# include <urbi/object/event-handler.hh>
-# include <urbi/object/global.hh>
-# include <urbi/object/list.hh>
-# include <urbi/object/dictionary.hh>
-# include <urbi/object/object.hh>
-# include <urbi/object/tag.hh>
-# include <urbi/object/slot.hh>
-# include <urbi/object/string.hh>
-
-# include <urbi/runner/raise.hh>
 
 # include <runner/state.hh>
 # include <runner/job.hh>
-
-# include <eval/ast.hh>
-# include <eval/call.hh>
-# include <eval/raise.hh>
-# include <eval/send-message.hh>
-
 
 namespace eval
 {

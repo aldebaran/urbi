@@ -14,9 +14,20 @@
  */
 
 #include <libport/config.h>
+#include <libport/compilation.hh>
 
 #include <ast/all.hh>
+
+#include <urbi/object/dictionary.hh>
+#include <urbi/object/event.hh>
+#include <urbi/object/event-handler.hh>
+#include <urbi/object/float.hh>
+#include <urbi/object/list.hh>
+#include <urbi/object/tag.hh>
+
 #include <eval/ast.hh>
+#include <eval/call.hh>
+#include <eval/raise.hh>
 
 namespace eval
 {
@@ -378,15 +389,14 @@ namespace eval
   Visitor::visit(const ast::Type* e)                                    \
   {                                                                     \
     /* Code of the condition associated to this event AST node. */      \
-    object::rCode code = dynamic_cast<object::Code*>                    \
-      (ast(this_, e->exp_get().get()).get());                           \
+    object::rCode code =                                                \
+      dynamic_cast<object::Code*>(ast(this_, e->exp_get().get()).get()); \
                                                                         \
     GD_CATEGORY(Urbi.At);                                               \
     GD_FPUSH_TRACE("Create watch event: %s", code->body_string());      \
                                                                         \
     object::rEvent res = new object::Event;                             \
-    WatchEventData* data =                                              \
-      new WatchEventData(res, code);                                    \
+    WatchEventData* data = new WatchEventData(res, code);               \
     data->profile = this_.profile_get();                                \
     res->destructed_get().connect(boost::bind(&watch_stop, data));      \
     /* Maintain that event alive as long as it is subscribed to. */     \
@@ -396,12 +406,11 @@ namespace eval
     Fun(data);                                                          \
                                                                         \
     return res;                                                         \
-  }                                                                     \
-                                                                        \
+  }
+
   URBI_EVENT_VISIT(Watch, watch_run);
   URBI_EVENT_VISIT(Event, at_run);
 #undef URBI_EVENT_VISIT
-
 
   LIBPORT_SPEED_ALWAYS_INLINE rObject
   Visitor::visit(const ast::Call* e)
