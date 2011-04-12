@@ -44,7 +44,6 @@ namespace eval
   rObject ast(Job& job, ast::rConstAst ast);
   Action  ast(ast::rConstAst ast);
 
-
 } // namespace eval
 
 # if defined LIBPORT_COMPILATION_MODE_SPEED

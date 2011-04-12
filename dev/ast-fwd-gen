@@ -33,11 +33,29 @@ namespace ast
 
 arr = nodes.values ()
 arr.sort (lambda x, y: cmp (x.name, y.name))
-for node in arr:
-  print >>fwd_hh, "  class " + node.name + ";"
-  print >>fwd_hh, "  typedef libport::intrusive_ptr<%s> r%s;" %(node.name, node.name)
-  print >>fwd_hh, "  typedef libport::intrusive_ptr<const %s> rConst%s;" %(node.name, node.name)
 
+# AST_NODES_SEQ.
+print >>fwd_hh, "# define AST_NODES_SEQ          \\\n",
+
+for node in arr:
+  print >>fwd_hh, "  %-30s\\" % ("(%s)" % node.name)
+
+print >>fwd_hh, """
+#  define AST_FOR_EACH_NODE(Macro)                 \\
+    BOOST_PP_SEQ_FOR_EACH(Macro, , AST_NODES_SEQ)
+"""
+
+# Fwd decls.
+print >>fwd_hh, """
+#  define VISIT(Macro, Data, Node)                                  \\
+  class Node;                                                       \\
+  typedef libport::intrusive_ptr<Node> BOOST_PP_CAT(r, Node);       \\
+  typedef libport::intrusive_ptr<const Node> BOOST_PP_CAT(rConst, Node);
+
+  AST_FOR_EACH_NODE(VISIT);
+#  undef VISIT"""
+
+# Typelist.
 nodes = []
 size = 0
 
@@ -47,7 +65,7 @@ for node in [node for node in arr if node.concrete]:
 
 print >>fwd_hh, "  typedef TYPELIST_%s(%s) Nodes;" % (size, ', '.join(nodes))
 
-
+# GenVisitor.
 print >>fwd_hh, """
 
   // From visitor.hh
@@ -60,18 +78,6 @@ print >>fwd_hh, """
 print >>fwd_hh, ast_params['fwd_hh_epilogue']
 
 print >>fwd_hh, """
-
-#define AST_NODES_SEQ\\
-""",
-
-for node in arr:
-  print >>fwd_hh, "  (%s)\\" % node.name
-
-
-print >>fwd_hh, """
-#define AST_FOR_EACH_NODE(Macro)\\
-    BOOST_PP_SEQ_FOR_EACH(Macro, , AST_NODES_SEQ)
-
 } // namespace ast
 
 #endif // !AST_FWD_HH"""
