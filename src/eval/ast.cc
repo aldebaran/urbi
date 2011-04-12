@@ -15,6 +15,7 @@
 
 #include <libport/config.h>
 
+#include <ast/all.hh>
 #include <eval/ast.hh>
 
 
@@ -1124,16 +1125,6 @@ namespace eval
     IMPOSSIBLE(Write);
 #undef IMPOSSIBLE
 
-# define VISIT(Macro, Data, Node)               \
-    LIBPORT_SPEED_ALWAYS_INLINE rObject         \
-    eval(Job& this_, const ast::Node* n)        \
-    {                                           \
-      Visitor v(this_);                         \
-      return v.visit(n);                        \
-    }
-
-    AST_FOR_EACH_NODE(VISIT);
-#undef VISIT
   } // namespace ast_impl
 
 } // namespace eval
@@ -1141,12 +1132,13 @@ namespace eval
 namespace ast
 {
 
-#define DEFINE(Class)                                           \
-  urbi::object::rObject                                         \
-  Class::eval(runner::Job& r) const                             \
-  {                                                             \
-    urbi::object::rObject res = eval::ast_impl::eval(r, this);  \
-    return assert_exp(res);                                     \
+#define DEFINE(Class)                           \
+  urbi::object::rObject                         \
+  Class::eval(runner::Job& r) const             \
+  {                                             \
+    ::eval::ast_impl::Visitor v(r);             \
+    urbi::object::rObject res = v.visit(this);  \
+    return assert_exp(res);                     \
   }
 
   // FIXME: Move to AST_FOR_EACH_NODE.

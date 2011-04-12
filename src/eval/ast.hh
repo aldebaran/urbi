@@ -16,29 +16,12 @@
 #ifndef EVAL_AST_HH
 # define EVAL_AST_HH
 
-# include <libport/compilation.hh>
-# include <libport/finally.hh>
-
-# include <ast/all.hh>
-# include <ast/print.hh>
-
-# include <runner/state.hh>
-# include <runner/job.hh>
-
+# include <ast/fwd.hh>
 # include <eval/action.hh>
+# include <runner/fwd.hh>
 
 namespace eval
 {
-
-  namespace ast_impl
-  {
-# define VISIT(Macro, Data, Node)                       \
-    rObject eval(Job& this_, const ast::Node* n);
-
-    AST_FOR_EACH_NODE(VISIT);
-#undef VISIT
-  }
-
   rObject ast_context(Job& job, const ast::Ast* e, rObject self);
 
   rObject ast(Job& job, ast::rConstAst ast);
