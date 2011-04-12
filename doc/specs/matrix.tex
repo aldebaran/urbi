@@ -228,7 +228,9 @@ function resized(var rows[])
 {
   var m = Matrix.new([1, 2], [3, 4]);
   var res = Matrix.new(rows);
-  m.resize(res.size.first, res.size.second);
+  // Resize returns this...
+  m.resize(res.size.first, res.size.second) === m;
+  // ...and does resize.
   m == res;
 }|;
 assert

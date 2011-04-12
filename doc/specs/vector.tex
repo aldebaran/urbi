@@ -170,7 +170,9 @@ function resized(var values[])
 {
   var m = Vector.new(1, 2);
   var res = Vector.new(values);
-  m.resize(res.size);
+  // Resize returns this...
+  m.resize(res.size) === m;
+  // ...and does resize.
   m == res;
 }|;
 
