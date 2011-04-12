@@ -46,8 +46,6 @@ namespace eval
 
 } // namespace eval
 
-# if defined LIBPORT_COMPILATION_MODE_SPEED
-#  include <eval/ast.hxx>
-# endif
+# include <eval/ast.hxx>
 
 #endif // ! EVAL_AST_HH
