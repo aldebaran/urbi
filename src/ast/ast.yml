@@ -132,15 +132,15 @@ fwd_hh_prologue: |2
 # The end of the fwd.hh file, in the namespace.
 fwd_hh_epilogue: |2
 
-  // factory.hh.
-  class Factory;
+    // factory.hh.
+    class Factory;
 
-  // event-match.hh.
-  struct EventMatch;
+    // event-match.hh.
+    struct EventMatch;
 
-  typedef boost::unordered_map<libport::Symbol, ast::rExp> modifiers_type;
-  typedef std::pair<ast::rExp, ast::rExp> dictionary_elt_type;
-  typedef std::vector<dictionary_elt_type> dictionary_elts_type;
+    typedef boost::unordered_map<libport::Symbol, ast::rExp> modifiers_type;
+    typedef std::pair<ast::rExp, ast::rExp> dictionary_elt_type;
+    typedef std::vector<dictionary_elt_type> dictionary_elts_type;
 
 printer_cc_prologue: |2
 

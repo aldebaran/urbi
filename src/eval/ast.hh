@@ -51,4 +51,3 @@ namespace eval
 # endif
 
 #endif // ! EVAL_AST_HH
-
