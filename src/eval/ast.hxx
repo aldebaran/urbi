@@ -17,7 +17,6 @@
 # define EVAL_AST_HXX
 
 # include <libport/bind.hh>
-# include <libport/compilation.hh>
 # include <libport/finally.hh>
 
 # include <runner/state.hh>
@@ -36,7 +35,6 @@ namespace eval
 
   FINALLY_Context(DEFINE);
 
-  LIBPORT_SPEED_INLINE
   rObject ast_context(Job& job, const ast::Ast* e, rObject self)
   {
     typedef runner::State::var_context_type var_context_type;
@@ -57,7 +55,6 @@ namespace eval
   // !!! GD_* macros are commented because this consume stack space in speed
   // mode, even if messages are not printed.
 
-  LIBPORT_SPEED_INLINE
   rObject ast(Job& job, ast::rConstAst n)
   {
     // GD_CATEGORY(Eval.Ast);
@@ -73,7 +70,6 @@ namespace eval
     return n->eval(job);
   }
 
-  LIBPORT_SPEED_ALWAYS_INLINE
   Action ast(ast::rConstAst n)
   {
     return boost::bind(&ast, _1, n);

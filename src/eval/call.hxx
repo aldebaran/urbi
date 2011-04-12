@@ -18,6 +18,7 @@
 # define EVAL_CALL_HXX
 
 #include <libport/compiler.hh>
+#include <libport/compilation.hh>
 #include <libport/range.hh>
 
 #include <ast/exps-type.hh>

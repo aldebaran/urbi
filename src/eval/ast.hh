@@ -22,9 +22,13 @@
 
 namespace eval
 {
+  ATTRIBUTE_ALWAYS_INLINE
   rObject ast_context(Job& job, const ast::Ast* e, rObject self);
 
+  ATTRIBUTE_ALWAYS_INLINE
   rObject ast(Job& job, ast::rConstAst ast);
+
+  ATTRIBUTE_ALWAYS_INLINE
   Action  ast(ast::rConstAst ast);
 
 } // namespace eval
