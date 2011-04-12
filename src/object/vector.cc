@@ -269,10 +269,11 @@ namespace urbi
       return std::make_pair(i, j);
     }
 
-    void
+    rVector
     Vector::resize(size_t s)
     {
       value_.resize(s);
+      return this;
     }
 
 #define OP(Op)                                                          \

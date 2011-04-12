@@ -69,7 +69,7 @@ namespace urbi
       ufloat  operator[](int) const;
 
       size_t size() const;
-      void resize(size_t s);
+      rVector resize(size_t s);
       ufloat distance(const value_type& that) const;
       ufloat norm() const;
       ufloat sum() const; //a.k.a. L1 norm.

@@ -160,8 +160,28 @@ do (Vector)
 }|;
 \end{urbiscript}
 
+\item[resize](<dim>)%
+  Change the dimensions of \this, using 0 for possibly new members.  Return
+  \this.
+\begin{urbiscript}
+// Check that <1, 2> is equal to the Vector composed of values,
+// when resized the number of values.
+function resized(var values[])
+{
+  var m = Vector.new(1, 2);
+  var res = Vector.new(values);
+  m.resize(res.size);
+  m == res;
+}|;
 
-\item[resize]()%
+assert
+{
+  resized;
+  resized(1);
+  resized(1, 2);
+  resized(1, 2, 0);
+};
+\end{urbiscript}
 
 \item[scalarEQ](<that>)%
   A Vector whose members are 0 or 1 depending on the equality of the

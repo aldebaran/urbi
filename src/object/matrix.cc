@@ -596,9 +596,15 @@ namespace urbi
     }
 
     rMatrix
-    Matrix::resize(size_t i, size_t j)
+    Matrix::resize(size_t ns1, size_t ns2)
     {
-      value_.resize(i, j);
+      size_t s1 = value_.size1();
+      size_t s2 = value_.size2();
+      value_.resize(ns1, ns2);
+      // Boost does not ensure that we have 0 for new members.
+      for (size_t i = 0; i < ns1; ++i)
+        for (size_t j = i < s1 ? s2 : 0; j < ns2; ++j)
+          value_(i, j) = 0;
       return this;
     }
 
