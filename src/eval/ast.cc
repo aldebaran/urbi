@@ -77,39 +77,6 @@ namespace eval
     object::rObject eval_tag(ast::rConstExp e);
 
 
-
-#define FINALLY_Scope(DefineOrUse)                              \
-    FINALLY_ ## DefineOrUse                                     \
-    (Scope,                                                     \
-     ((Job&, this_))                                            \
-     ((bool, non_interruptible))                                \
-     ((bool, redefinition_mode))                                \
-     ((bool, void_error)),                                      \
-     this_.state.cleanup_scope_tag(this_.scheduler_get());      \
-     this_.non_interruptible_set(non_interruptible);            \
-     this_.state.redefinition_mode_set(redefinition_mode);      \
-     this_.state.void_error_set(void_error);                    \
-      )
-
-#define FINALLY_Do(DefineOrUse)                 \
-    FINALLY_ ## DefineOrUse                     \
-    (Do,                                        \
-     ((Job&, this_))                            \
-     ((rObject&, old_tgt)),                     \
-     this_.state.this_switch(old_tgt))
-
-#define FINALLY_Try(DefineOrUse)                        \
-    FINALLY_ ## DefineOrUse                             \
-    (Try,                                               \
-     ((Job&, this_))                                    \
-     ((rObject&, old_exception)),                       \
-     this_.state.current_exception_set(old_exception))
-
-    FINALLY_Do(DEFINE);
-    FINALLY_Scope(DEFINE);
-    FINALLY_Try(DEFINE);
-
-
 # define VISIT(Macro, Data, Node)               \
     LIBPORT_SPEED_ALWAYS_INLINE rObject         \
     visit(const ast::Node* n);
@@ -728,7 +695,15 @@ namespace eval
     bool non_interruptible = this_.non_interruptible_get();
     bool redefinition_mode = this_.state.redefinition_mode_get();
     bool void_error = this_.state.void_error_get();
-    FINALLY_Scope(USE);
+    FINALLY(((Job&, this_))
+            ((bool, non_interruptible))
+            ((bool, redefinition_mode))
+            ((bool, void_error)),
+            this_.state.cleanup_scope_tag(this_.scheduler_get());
+            this_.non_interruptible_set(non_interruptible);
+            this_.state.redefinition_mode_set(redefinition_mode);
+            this_.state.void_error_set(void_error);
+      );
 
     this_.state.create_scope_tag();
     return ast(this_, e->body_get().get());
@@ -741,7 +716,9 @@ namespace eval
     rObject tgt = ast(this_, e->target_get().get());
     rObject old_tgt = this_.state.this_get();
     this_.state.this_switch(tgt);
-    FINALLY_Do(USE);
+    FINALLY(((Job&, this_))
+            ((rObject&, old_tgt)),
+            this_.state.this_switch(old_tgt));
     visit(static_cast<const ast::Scope*>(e));
     // This is arguable. Do, just like Scope, should maybe return
     // their last inner value.
@@ -1021,7 +998,9 @@ namespace eval
         }
       }
       rObject old_exception = this_.state.current_exception_get();
-      FINALLY_Try(USE);
+      FINALLY(((Job&, this_))
+              ((rObject&, old_exception)),
+              this_.state.current_exception_set(old_exception));
       this_.state.current_exception_set(value);
       return ast(this_, handler->body_get().get());
     }
