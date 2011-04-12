@@ -29,7 +29,7 @@
 # include <kernel/uconnection.hh>
 # include <kernel/userver.hh>
 
-# include <ast/visitor.hh>
+# include <ast/all.hh>
 
 # include <object/symbols.hh>
 # include <object/system.hh>
