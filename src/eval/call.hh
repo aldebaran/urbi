@@ -81,24 +81,20 @@ namespace eval
                      boost::optional< ::ast::loc> loc);
 
 
-  /*--------------------------.
-  | Apply with a call message |
-  `--------------------------*/
-
-  rObject call_msg(Job& job,
-                   object::Object* function,
-                   libport::Symbol msg,
-                   object::Object* call_message);
+  /*----------------------------.
+  | Apply with a call message.  |
+  `----------------------------*/
 
   rObject call_msg(Job& job,
                    object::Object* function,
                    libport::Symbol msg,
                    object::Object* call_message,
-                   boost::optional< ::ast::loc> loc);
+                   boost::optional< ::ast::loc> loc
+                     = boost::optional< ::ast::loc>());
 
-  /*-----------------------------------------------.
-  | Apply an urbi function (i.e., not a primitive) |
-  `-----------------------------------------------*/
+  /*-------------------------------------------------.
+  | Apply an urbi function (i.e., not a primitive).  |
+  `-------------------------------------------------*/
 
   rObject call_apply_urbi(Job& job,
                           object::Code* function,

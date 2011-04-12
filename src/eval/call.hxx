@@ -264,20 +264,10 @@ namespace eval
     return res;
   }
 
-  /*--------------------------.
-  | Apply with a call message |
-  `--------------------------*/
+  /*----------------------------.
+  | Apply with a call message.  |
+  `----------------------------*/
 
-  LIBPORT_SPEED_INLINE
-  rObject call_msg(Job& job,
-                   object::Object* function,
-                   libport::Symbol msg,
-                   object::Object* call_message)
-  {
-    return call_msg(job,
-                    function, msg, call_message,
-                    boost::optional< ::ast::loc>());
-  }
 
   LIBPORT_SPEED_INLINE
   rObject call_msg(Job& job,
@@ -305,9 +295,9 @@ namespace eval
   }
 
 
-  /*-----------------------------------------------.
-  | Apply an urbi function (i.e., not a primitive) |
-  `-----------------------------------------------*/
+  /*-------------------------------------------------.
+  | Apply an urbi function (i.e., not a primitive).  |
+  `-------------------------------------------------*/
 
 
 #define FINALLY_Frame(DefineOrUse)                      \
