@@ -17,6 +17,7 @@
 # define EVAL_AST_HXX
 
 # include <libport/bind.hh>
+# include <libport/compilation.hh>
 # include <libport/finally.hh>
 
 # include <runner/state.hh>

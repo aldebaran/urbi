@@ -17,6 +17,7 @@
 #include <libport/compilation.hh>
 
 #include <ast/all.hh>
+#include <ast/print.hh> // For pabort.
 
 #include <urbi/object/dictionary.hh>
 #include <urbi/object/event.hh>
@@ -1090,12 +1091,12 @@ namespace eval
   INVALID(Unscope);
 #undef INVALID
 
-#define IMPOSSIBLE(Node)                                                \
-  LIBPORT_SPEED_ALWAYS_INLINE rObject                                   \
-  Visitor::visit(const ast::Node* n)                                    \
-  {                                                                     \
-    LIBPORT_USE(n);                                                     \
-    pabort("Interpreter: unreachable " << #Node << " node: " << *n);    \
+#define IMPOSSIBLE(Node)                                        \
+  LIBPORT_SPEED_ALWAYS_INLINE rObject                           \
+  Visitor::visit(const ast::Node* n)                            \
+  {                                                             \
+    LIBPORT_USE(n);                                             \
+    pabort("Interpreter: unreachable " #Node " node: " << *n);  \
   }
 
   IMPOSSIBLE(Ast);
