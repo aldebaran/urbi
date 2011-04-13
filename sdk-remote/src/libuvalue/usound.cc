@@ -94,7 +94,7 @@ namespace urbi
   `---------*/
 
   void
-  USound::init()
+  USoundImpl::init()
   {
     data = 0;
     size = sampleSize = channels = rate = 0;
@@ -102,8 +102,8 @@ namespace urbi
     sampleFormat = SAMPLE_UNSIGNED;
   }
 
-  USound
-  USound::make()
+  USoundImpl
+  USoundImpl::make()
   {
     USound res;
     res.init();
@@ -111,19 +111,19 @@ namespace urbi
   }
 
   bool
-  USound::operator==(const USound &b) const
+  USoundImpl::operator==(const USoundImpl &b) const
   {
     return !memcmp(this, &b, sizeof *this);
   }
 
   const char*
-  USound::format_string() const
+  USoundImpl::format_string() const
   {
     return ::urbi::format_string(soundFormat);
   }
 
   std::string
-  USound::headers_() const
+  USoundImpl::headers_() const
   {
     return libport::format("%s %s %s %s %d",
                            format_string(),
@@ -132,7 +132,7 @@ namespace urbi
   }
 
   std::ostream&
-  USound::dump(std::ostream& o) const
+  USoundImpl::dump(std::ostream& o) const
   {
     return o <<  "sound(format: " << format_string() << ", "
              <<          "size: " << size << ", "
@@ -144,7 +144,7 @@ namespace urbi
   }
 
   std::ostream&
-  operator<< (std::ostream& o, const USound& s)
+  operator<< (std::ostream& o, const USoundImpl& s)
   {
     return s.dump(o);
   }

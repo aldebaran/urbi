@@ -101,8 +101,8 @@ namespace urbi
 	void* data;             ///< binary data
 	size_t size;
       } common;
-      UImage image;
-      USound sound;
+      UImageImpl image;
+      USoundImpl sound;
     };
     /// Headers (everything after "BIN theSize" and before ';' or \n).
     std::string message;

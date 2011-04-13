@@ -55,13 +55,14 @@ namespace urbi
 
    This class does not handle its memory: the data field msut be
    freed manualy.  */
-  class URBI_SDK_API UImage
+  class URBI_SDK_API UImageImpl
   {
   public:
+    //UImage();
     /// Return an empty UImage.
     /// Not a constructor so that we can still put it in a union.
     ATTRIBUTE_CONST
-    static UImage make();
+    static UImageImpl make();
 
     /// Initialize.
     /// Not a constructor so that we can still put it in a union.
@@ -84,6 +85,24 @@ namespace urbi
     // The UBinary headers.
     std::string headers_() const;
   };
+
+  /// Wrapper providing a constructor to initialize all fields.
+  class URBI_SDK_API UImage: public UImageImpl
+  {
+  public:
+    UImage();
+    UImage(const UImageImpl& us) { *this = us;}
+    UImage& operator = (const UImageImpl& us)
+    {
+      this->UImageImpl::operator=(us);
+      return *this;
+    }
+  };
+
+  inline UImage::UImage()
+  {
+    init();
+  }
 
 } // end namespace urbi
 

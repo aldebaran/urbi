@@ -68,15 +68,15 @@ namespace urbi
   `---------*/
 
   void
-  UImage::init()
+  UImageImpl::init()
   {
     data = 0;
     size = width = height = 0;
     imageFormat = IMAGE_UNKNOWN;
   }
 
-  UImage
-  UImage::make()
+  UImageImpl
+  UImageImpl::make()
   {
     UImage res;
     res.init();
@@ -84,13 +84,13 @@ namespace urbi
   }
 
   const char*
-  UImage::format_string() const
+  UImageImpl::format_string() const
   {
     return ::urbi::format_string(imageFormat);
   }
 
   std::string
-  UImage::headers_() const
+  UImageImpl::headers_() const
   {
     return libport::format("%s %s %s",
                            format_string(), width, height);

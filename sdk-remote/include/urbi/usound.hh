@@ -59,13 +59,13 @@ namespace urbi
 
    This class does not handle its memory: the data field must be
    freed manualy.  */
-  class URBI_SDK_API USound
+  class URBI_SDK_API USoundImpl
   {
   public:
     /// Return an empty instance.
     /// Not a constructor so that we can still put it in a union.
     ATTRIBUTE_CONST
-    static USound make();
+    static USoundImpl make();
 
     /// Initialize.
     /// Not a constructor so that we can still put it in a union.
@@ -75,7 +75,7 @@ namespace urbi
     const char* format_string() const;
 
     ATTRIBUTE_PURE
-    bool operator==(const USound &b) const;
+    bool operator==(const USoundImpl &b) const;
 
     // For debugging.
     std::ostream& dump(std::ostream& o) const;
@@ -103,10 +103,26 @@ namespace urbi
     std::string headers_() const;
   };
 
+  /// Wrapper providing a constructor to initialize all fields.
+  class URBI_SDK_API USound: public USoundImpl
+  {
+  public:
+    USound();
+    USound(const USoundImpl& us) { *this = us;}
+    USound& operator = (const USoundImpl& us)
+    {
+      this->USoundImpl::operator=(us);
+      return *this;
+    }
+  };
+
   // Bounce to USound::dump.
-  std::ostream& operator<< (std::ostream& o, const USound& s);
+  std::ostream& operator<< (std::ostream& o, const USoundImpl& s);
 
-
+  inline USound::USound()
+  {
+    init();
+  }
 } // end namespace urbi
 
 #endif // ! URBI_USOUND_HH
