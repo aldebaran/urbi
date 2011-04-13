@@ -1117,7 +1117,7 @@ Declaration:
   super: Write
   attributes:
     - constant:
-        desc: /// Whether this slot should be constant
+        desc: Whether this slot should be constant
         type: bool
         access: rW
         init: "false"
@@ -1207,7 +1207,7 @@ Binding:
         type: rLValue
         access: rw
     - constant:
-        desc: /// Whether this slot should be constant
+        desc: Whether this slot should be constant
         type: bool
         access: rW
         init: "false"
