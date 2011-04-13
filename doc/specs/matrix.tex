@@ -40,13 +40,13 @@ assert
 };
 
 Matrix.new([           [0],            [1, 2]]);
-[00000030:error] !!! new: expecting rows of size 1, got size 2 for row 2
+[00000030:error] !!! init: expecting rows of size 1, got size 2 for row 2
 Matrix.new([Vector.new([0]),           [1, 2]]);
-[00000056:error] !!! new: expecting rows of size 1, got size 2 for row 2
+[00000056:error] !!! init: expecting rows of size 1, got size 2 for row 2
 Matrix.new([           [0], Vector.new([1, 2])]);
-[00000071:error] !!! new: expecting rows of size 1, got size 2 for row 2
+[00000071:error] !!! init: expecting rows of size 1, got size 2 for row 2
 Matrix.new([Vector.new([0]), Vector.new([1, 2])]);
-[00052403:error] !!! new: expecting rows of size 1, got size 2 for row 2
+[00052403:error] !!! init: expecting rows of size 1, got size 2 for row 2
 \end{urbiscript}
 
 If its a Matrix, then there is a deep-copy: they are not aliases.

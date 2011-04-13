@@ -109,6 +109,7 @@ do (System)
     "binder/binder.cc",
     "flower/flower.cc",
     "object/code.cc",
+    "object/object.cc",
     "object/object-class.cc",
     "parser/ugrammar.y",
     "rewrite/desugarer.cc",

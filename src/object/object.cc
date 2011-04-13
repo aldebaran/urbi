@@ -47,6 +47,8 @@
 
 GD_CATEGORY(Urbi);
 
+DECLARE_LOCATION_FILE;
+
 namespace urbi
 {
   namespace object
@@ -841,6 +843,15 @@ namespace urbi
       return str(uid % reinterpret_cast<long long>(this));
     }
 
+    rObject
+    Object::new_(const objects_type& args)
+    {
+      rObject res = call(SYMBOL(clone));
+      if (Slot* init = slot_locate(SYMBOL(init)).second)
+        eval::call_apply(::kernel::interpreter(), res, init->value(),
+                         SYMBOL(init), args);
+      return res;
+    }
 
     rObject Object::proto;
   } // namespace object

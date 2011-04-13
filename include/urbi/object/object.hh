@@ -332,6 +332,7 @@ namespace urbi
       rObject getProperty(const std::string& slot, const std::string& prop);
       bool hasSlot(const std::string& k);
       bool hasLocalSlot(const std::string& k);
+      rObject new_(const objects_type& args);
       rObject urbi_locateSlot(key_type k);
       rDictionary urbi_properties(key_type slotName);
 

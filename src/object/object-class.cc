@@ -349,6 +349,7 @@ namespace urbi
       Object::proto->bind(SYMBOL(addProto),     &Object::addProto);
       Object::proto->bind(SYMBOL(hash),         &Object::hash);
       Object::proto->bind(SYMBOL(removeProto),  &Object::removeProto);
+      Object::proto->bind_variadic(SYMBOL(new), &Object::new_);
     }
   }; // namespace object
 }

@@ -140,5 +140,4 @@ check-TESTS: clean-semaphores
 ## XFAILS.  ##
 ## -------- ##
 
-TFAIL_TESTS +=					\
-  tests/specs/input-stream-00.chk
+TFAIL_TESTS +=

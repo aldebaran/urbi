@@ -67,17 +67,6 @@ do (Object)
     !(this === rhs)
   };
 
-  // Invoke "clone", then "init".
-  function 'new'(var args[])
-  {
-    // The fresh child.
-    var res = call.&target.clone |
-    // Call the "init" from the parent, retargetted to the child.
-    call.message = "init" |
-    res.callMessage(call) |
-    res
-  };
-
   /*--------------.
   | Conversions.  |
   `--------------*/
