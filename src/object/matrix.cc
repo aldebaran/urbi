@@ -51,7 +51,7 @@ namespace urbi
       proto_add(proto);
     }
 
-    Matrix::Matrix(const rList& model)
+    Matrix::Matrix(const objects_type& model)
       : CxxObject()
       , value_()
     {
@@ -72,7 +72,7 @@ namespace urbi
       {
         if (rList l = args[1]->as<List>())
         {
-          self->fromList(l);
+          self->fromList(l->value_get());
           return self;
         }
         else if (rMatrix v = args[1]->as<Matrix>())
@@ -126,38 +126,45 @@ namespace urbi
     }
 
     Matrix::value_type
-    Matrix::invert() const
+    Matrix::invert(const value_type& m)
     {
       using namespace boost::numeric::ublas;
-      if (size1() != size2())
-        FRAISE("expected square matrix, gotn %dx%d",
-               size1(), size2());
+      size_t size1 = m.size1();
+      size_t size2 = m.size2();
+      if (size1 != size2)
+        FRAISE("expected square matrix, got %dx%d", size1, size2);
       // Create a working copy of the input.
-      value_type A(value_);
-      value_type res(size1(), size2());
+      value_type A(m);
+      value_type res(size1, size2);
       // Create a permutation matrix for the LU-factorization.
-      permutation_matrix<size_type> pm(A.size1());
+      permutation_matrix<size_type> pm(size1);
       // Perform LU-factorization.
       if (lu_factorize(A, pm) != 0)
-        FRAISE("non-invertible matrix: %s", *this);
+        FRAISE("non-invertible matrix: %s", m);
       // Create identity matrix of "inverse".
-      res.assign(identity_matrix<ufloat>(A.size1()));
+      res.assign(identity_matrix<ufloat>(size1));
       // Backsubstitute to get the inverse.
       lu_substitute(A, pm, res);
       return res;
     }
 
-    rMatrix
-    Matrix::dot_times(const rMatrix& m) const
+    Matrix::value_type
+    Matrix::invert() const
+    {
+      return invert(value_);
+    }
+
+    Matrix::value_type
+    Matrix::dot_times(const value_type& m) const
     {
       value_type res(size1(), size2());
       for (size_t i = 0; i < size1(); ++i)
         for (size_t j = 0; j < size2(); ++j)
-          res(i, j) = value_(i, j) * (*m)(i, j);
-      return new Matrix(res);
+          res(i, j) = value_(i, j) * m(i, j);
+      return res;
     }
 
-    rMatrix
+    Matrix*
     Matrix::fromArgsList(const objects_type& args)
     {
       size_type width;
@@ -204,52 +211,57 @@ namespace urbi
       return this;
     }
 
-    rMatrix
-    Matrix::fromList(const rList& model)
+    Matrix*
+    Matrix::fromList(const objects_type& model)
     {
-      return fromArgsList(model->value_get());
+      return fromArgsList(model);
     }
 
-#define OP(Op, Name, Sym)                                       \
-    rMatrix                                                     \
+
+// FIXME: We should be able to return value_type, but then, it is
+// bind_variadic that does not manage to bind minus and so forth.
+// In that case, get rid of Conversion.
+#define OP(Op, Res, Conversion, Name, Sym)                      \
+    Res                                                         \
     Matrix::Name(const objects_type& args)                      \
     {                                                           \
       rMatrix self = args[0]->as<Matrix>();                     \
       if (args.size() != 2)                                     \
         runner::raise_arity_error(1, args.size() - 1);          \
       if (rFloat f = args[1]->as<Float>())                      \
-        return self->operator Op(f);                            \
+        return Conversion(self->operator Op(f->value_get()));   \
       else if (rMatrix m = args[1]->as<Matrix>())               \
-        return self->operator Op(m);                            \
+        return Conversion(self->operator Op(m->value_get()));   \
       runner::raise_argument_type_error                         \
         (1, args[1], Matrix::proto, to_urbi(SYMBOL(Sym)));      \
     }
 
-    OP(+,  plus,         PLUS)
-    OP(-,  minus,        MINUS)
-    OP(/,  div,          SLASH)
-    OP(*,  times,        STAR)
-    OP(+=, plus_assign,  PLUS_EQ)
-    OP(-=, minus_assign, MINUS_EQ)
-    OP(/=, div_assign,   SLASH_EQ)
-    OP(*=, times_assign, STAR_EQ)
+    OP(+,  Matrix*, new Matrix, plus,         PLUS)
+    OP(-,  Matrix*, new Matrix, minus,        MINUS)
+    OP(/,  Matrix*, new Matrix, div,          SLASH)
+    OP(*,  Matrix*, new Matrix, times,        STAR)
+
+    OP(+=, Matrix*,           , plus_assign,  PLUS_EQ)
+    OP(-=, Matrix*,           , minus_assign, MINUS_EQ)
+    OP(/=, Matrix*,           , div_assign,   SLASH_EQ)
+    OP(*=, Matrix*,           , times_assign, STAR_EQ)
 
 #undef OP
 
-#define OP(Op)                                                \
-    rMatrix                                                   \
-    Matrix::operator Op(const rMatrix& m) const               \
-    {                                                         \
-      value_type copy(value_);                                \
-      copy Op##= m->value_;                                   \
-      return new Matrix(copy);                                \
-    }                                                         \
-                                                              \
-    rMatrix                                                   \
-    Matrix::operator Op##=(const rMatrix& m)                  \
-    {                                                         \
-      value_ Op##= m->value_;                                 \
-      return this;                                            \
+#define OP(Op)                                          \
+    Matrix::value_type                                  \
+    Matrix::operator Op(const value_type& m) const      \
+    {                                                   \
+      value_type res(value_);                           \
+      res Op##= m;                                      \
+      return res;                                       \
+    }                                                   \
+                                                        \
+    Matrix*                                             \
+    Matrix::operator Op##=(const value_type& m)         \
+    {                                                   \
+      value_ Op##= m;                                   \
+      return this;                                      \
     }
 
     OP(+)
@@ -276,58 +288,52 @@ namespace urbi
     OP(rowDiv, /)
 #undef OP
 
-    rMatrix
-    Matrix::operator /(const rMatrix& rhs) const
+    Matrix::value_type
+    Matrix::operator /(const value_type& rhs) const
     {
-      value_type inverse = rhs->invert();
-      value_type copy = prod(value_, inverse);
-      return new Matrix(copy);
+      return prod(value_, invert(rhs));
     }
 
-    rMatrix
-    Matrix::operator /=(const rMatrix& rhs)
+    Matrix*
+    Matrix::operator /=(const value_type& rhs)
     {
-      value_type inverse = rhs->invert();
-      value_type res = prod(value_, inverse);
-      value_ = res;
+      value_ = prod(value_, invert(rhs));
       return this;
     }
 
-#define OP(Op, Type, Fun)                                       \
-    rMatrix                                                     \
-    Matrix::operator Op(const r##Type& rhs) const               \
-    {                                                           \
-      value_type copy = Fun(value_, rhs->value_);               \
-      return new Matrix(copy);                                  \
-    }                                                           \
-                                                                \
-    rMatrix                                                     \
-    Matrix::operator Op##=(const r##Type& rhs)                  \
-    {                                                           \
-      value_type res = Fun(value_, rhs->value_);                \
-      value_ = res;                                             \
-      return this;                                              \
+#define OP(Op, Fun)                                     \
+    Matrix::value_type                                  \
+    Matrix::operator Op(const value_type& rhs) const    \
+    {                                                   \
+      return Fun(value_, rhs);                          \
+    }                                                   \
+                                                        \
+    Matrix*                                             \
+    Matrix::operator Op##=(const value_type& rhs)       \
+    {                                                   \
+      value_ = Fun(value_, rhs);                        \
+      return this;                                      \
     }
 
-    OP(*, Matrix, prod)
+    OP(*, prod)
     //OP(*, Vector, prod)
 
 #undef OP
 
-#define OP(Op)                                                 \
-    rMatrix                                                    \
-    Matrix::operator Op(const rFloat& s) const                 \
-    {                                                          \
-      value_type copy(value_);                                 \
-      copy Op##= s->value_get();                               \
-      return new Matrix(copy);                                 \
-    }                                                          \
-                                                               \
-    rMatrix                                                    \
-    Matrix::operator Op##=(const rFloat& s)                    \
-    {                                                          \
-      value_ Op##= s->value_get();                             \
-      return this;                                             \
+#define OP(Op)                                  \
+    Matrix::value_type                          \
+    Matrix::operator Op(ufloat s) const         \
+    {                                           \
+      value_type res(value_);                   \
+      res Op##= s;                              \
+      return res;                               \
+    }                                           \
+                                                \
+    Matrix*                                     \
+    Matrix::operator Op##=(ufloat s)            \
+    {                                           \
+      value_ Op##= s;                           \
+      return this;                              \
     }
 
     OP(*)
@@ -335,29 +341,27 @@ namespace urbi
 
 #undef OP
 
-#define OP(Op)                                                  \
-    rMatrix                                                     \
-    Matrix::operator Op(const rFloat& s) const                  \
-    {                                                           \
-      value_type copy(value_);                                  \
-      value_type ones =                                         \
-        boost::numeric::ublas::scalar_matrix<ufloat>            \
-        (size1(), size2(), s->value_get());                     \
-      value_type res = copy Op ones;                            \
-      return new Matrix(res);                                   \
-    }                                                           \
-                                                                \
-    rMatrix                                                     \
-    Matrix::operator Op##=(const rFloat& s)                     \
-    {                                                           \
-      rMatrix res = static_cast<Matrix*>(operator Op(s).get()); \
-      value_ = res->value_;                                     \
-      return this;                                              \
+#define OP(Op)                                          \
+    Matrix::value_type                                  \
+    Matrix::operator Op(ufloat s) const                 \
+    {                                                   \
+      value_type copy(value_);                          \
+      value_type ones =                                 \
+        boost::numeric::ublas::scalar_matrix<ufloat>    \
+        (size1(), size2(), s);                          \
+      value_type res = copy Op ones;                    \
+      return res;                                       \
+    }                                                   \
+                                                        \
+    Matrix*                                             \
+    Matrix::operator Op##=(ufloat s)                    \
+    {                                                   \
+      value_ = operator Op(s);                          \
+      return this;                                      \
     }
 
     OP(+)
     OP(-)
-
 #undef OP
 
     URBI_CXX_OBJECT_INIT(Matrix)
@@ -387,7 +391,7 @@ namespace urbi
       BIND(distanceMatrix);
       BIND(distanceToMatrix);
       BIND(get);
-      BIND(invert);
+      BIND(invert, invert, value_type, () const);
       BIND(resize);
       BIND(row);
       BIND(rowAdd);
@@ -404,7 +408,7 @@ namespace urbi
 
       BIND(EQ_EQ, operator==, bool, (const rObject&) const);
       BIND(size, size, rObject, () const);
-      BIND(set, fromList, rMatrix, (const rList&));
+      BIND(set, fromList, Matrix*, (const objects_type&));
       slot_set(SYMBOL(init), new Primitive(&init));
     }
 
@@ -483,7 +487,7 @@ namespace urbi
       return value_(index1(i), index2(j));
     }
 
-    rMatrix
+    Matrix*
     Matrix::set(int i, int j, ufloat v)
     {
       value_(index1(i), index2(j)) = v;
@@ -563,7 +567,7 @@ namespace urbi
       return res;
     }
 
-    rMatrix
+    Matrix*
     Matrix::setRow(int r, const vector_type& v)
     {
       int j = index1(r);
@@ -573,7 +577,7 @@ namespace urbi
       return this;
     }
 
-    rMatrix
+    Matrix*
     Matrix::appendRow(const vector_type& v)
     {
       value_.resize(size1()+1, size2());
@@ -581,7 +585,7 @@ namespace urbi
       return this;
     }
 
-    rMatrix
+    Matrix*
     Matrix::resize(size_t ns1, size_t ns2)
     {
       size_t s1 = value_.size1();

@@ -37,39 +37,36 @@ namespace urbi
       Matrix(value_type v);
       Matrix(const Matrix& v);
       Matrix(const rMatrix& model);
-      Matrix(const rList& model);
+      // Initialize from a List.
+      Matrix(const objects_type& model);
 
       static rMatrix init(const objects_type& args);
-      rMatrix fromList(const rList& model);
+      Matrix* fromList(const objects_type& model);
 
-#define OP(Name)                                        \
-      static rMatrix Name(const objects_type& args)
+#define OP(Name)                                                \
+      static Matrix* Name(const objects_type& args);         \
+      static Matrix* Name ## _assign(const objects_type& args)
 
       OP(plus);
       OP(minus);
       OP(times);
       OP(div);
-      OP(plus_assign);
-      OP(minus_assign);
-      OP(times_assign);
-      OP(div_assign);
 #undef OP
 
-#define OP(Op, Type)                                      \
-      rMatrix operator Op(const r##Type& m) const;        \
-      rMatrix operator Op##=(const r##Type& m)
+#define OP(Op)                                                  \
+      value_type operator Op(const value_type& m) const;        \
+      Matrix* operator Op##=(const value_type& m)
 
-      OP(+, Matrix);
-      OP(-, Matrix);
-      OP(*, Matrix);
-      OP(/, Matrix);
+      OP(+);
+      OP(-);
+      OP(*);
+      OP(/);
       //OP(*, Vector);
-
 #undef OP
 
-#define OP(Op)                                          \
-      rMatrix operator Op(const rFloat& m) const;       \
-      rMatrix operator Op##=(const rFloat& m);
+#define OP(Op)                                  \
+      value_type operator Op(ufloat m) const;   \
+      Matrix* operator Op##=(ufloat m);
 
       OP(*);
       OP(/);
@@ -90,6 +87,7 @@ namespace urbi
       static value_type create_ones(rObject, int size1, int size2);
 
       value_type transpose() const;
+      static value_type invert(const value_type& m);
       value_type invert() const;
       value_type solve(const vector_type& vector) const;
 
@@ -98,8 +96,8 @@ namespace urbi
       rObject size() const;
       size_t size1() const;
       size_t size2() const;
-      rMatrix resize(size_t i, size_t j);
-      rMatrix set(int i, int j, ufloat v);
+      Matrix* resize(size_t i, size_t j);
+      Matrix* set(int i, int j, ufloat v);
       ufloat get(int i, int j);
       size_t index1(int) const;
       size_t index2(int) const;
@@ -110,21 +108,21 @@ namespace urbi
       std::string asPrintable() const;
       std::string asTopLevelPrintable() const;
 
-      rMatrix dot_times(const rMatrix& m) const;
+      value_type dot_times(const value_type& m) const;
       vector_type row(int i) const;
       vector_type column(int i) const;
       // Row-by-row l2 interdistance matrix
       value_type distanceMatrix() const;
       // Row-by-row cross-distance matrix, self-major v-minor
       value_type distanceToMatrix(const value_type& v) const;
-      rMatrix setRow(int r, const vector_type& val);
-      rMatrix appendRow(const vector_type& vals);
+      Matrix* setRow(int r, const vector_type& val);
+      Matrix* appendRow(const vector_type& vals);
       rObject uvalueSerialize() const;
     private:
       std::string make_string(char col_lsep, char col_rsep,
                               const std::string row_lsep,
                               const std::string row_rsep) const;
-      rMatrix fromArgsList(const objects_type& rows);
+      Matrix* fromArgsList(const objects_type& rows);
 
       value_type value_;
       URBI_CXX_OBJECT(Matrix, CxxObject);
@@ -140,10 +138,10 @@ namespace urbi
     `-------------*/
 
     template <>
-    struct CxxConvert<Matrix::value_type>
+    struct CxxConvert<matrix_type>
     {
-      typedef       Matrix::value_type& target_type;
-      typedef const Matrix::value_type& source_type;
+      typedef       matrix_type& target_type;
+      typedef const matrix_type& source_type;
       static target_type
       to(const rObject& o)
       {
