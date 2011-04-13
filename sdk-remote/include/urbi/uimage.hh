@@ -51,6 +51,8 @@ namespace urbi
   | UImage.  |
   `---------*/
 
+  class UImage;
+
   /** Class encapsulating an image.
 
    This class does not handle its memory: the data field msut be
@@ -79,7 +81,7 @@ namespace urbi
     size_t width, height;
 
     UImageFormat imageFormat;
-
+    operator UImage&();
   private:
     friend class UBinary;
     // The UBinary headers.
@@ -104,6 +106,10 @@ namespace urbi
     init();
   }
 
+  inline UImageImpl::operator UImage&()
+  {
+    return *(UImage*)this;
+  }
 } // end namespace urbi
 
 #endif // ! URBI_UIMAGE_HH

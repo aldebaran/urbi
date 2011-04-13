@@ -55,6 +55,8 @@ namespace urbi
   | USound.  |
   `---------*/
 
+  class USound;
+
   /** Class encapsulating sound information.
 
    This class does not handle its memory: the data field must be
@@ -97,6 +99,7 @@ namespace urbi
     /// Sample format.
     USoundSampleFormat sampleFormat;
 
+     operator USound&();
   private:
     friend class UBinary;
     // The UBinary headers.
@@ -122,6 +125,11 @@ namespace urbi
   inline USound::USound()
   {
     init();
+  }
+
+  inline USoundImpl::operator USound&()
+  {
+    return *(USound*)this;
   }
 } // end namespace urbi
 
