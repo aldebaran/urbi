@@ -41,7 +41,11 @@ namespace urbi
     }
 
     URBI_CXX_OBJECT_INIT(OutputStream)
+#if defined WIN32
+      : Stream()
+#else
       : Stream(STDOUT_FILENO, false)
+#endif
     {
       proto_add(Stream::proto);
       // Spurious spaces to avoid static check on Symbol uses.

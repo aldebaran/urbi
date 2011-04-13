@@ -56,7 +56,11 @@ namespace urbi
     }
 
     URBI_CXX_OBJECT_INIT(InputStream)
+#if defined WIN32
+      : Stream()
+#else
       : Stream(STDIN_FILENO, false)
+#endif
       , pos_(0)
       , size_(0)
       , sem_(new Semaphore())

@@ -42,6 +42,10 @@ namespace urbi
     | Construction / Destruction.  |
     `-----------------------------*/
 
+    Stream::Stream()
+    {
+    }
+
     Stream::Stream(int fd, bool own)
     {
       int fd2 = fd;
