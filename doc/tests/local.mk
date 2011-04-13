@@ -135,3 +135,10 @@ CHECK_BUILDFARM_FLAGS = AM_COLOR_TESTS=no VERBOSE=1 # INSTRUMENTATION=1
 	$(MAKE) $(AM_MAKEFLAGS) $*heck-html $(CHECK_BUILDFARM_FLAGS)
 
 check-TESTS: clean-semaphores
+
+## -------- ##
+## XFAILS.  ##
+## -------- ##
+
+TFAIL_TESTS +=					\
+  tests/specs/input-stream-00.chk
