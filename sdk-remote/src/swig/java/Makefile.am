@@ -46,6 +46,7 @@ java_package = urbi
 SWIGFLAGS =					\
   -c++ -java -Wall				\
   -outdir $(java_src_outdir)			\
+  $(LIBPORT_CPPFLAGS)				\
   -I$(sdk_remote_srcdir)/src/liburbi/uobject	\
   -I$(sdk_remote_srcdir)/include		\
   -package $(java_package)

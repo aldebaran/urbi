@@ -9,6 +9,11 @@
  */
 
 %module(directors="1") urbi
+
+ // Define __attribute__, ATTRIBUTE_* etc., before that SWIG tries to
+ // read them.
+%include "libport/compiler.hh"
+
 %{
 
 ///
@@ -114,11 +119,6 @@ namespace urbi
 
 // Swig doesn't like these macro
 #define URBI_SDK_API
-#define __attribute__(foobar)
-#define ATTRIBUTE_DEPRECATED
-#define ATTRIBUTE_PRINTF(foo, barx)
-
-
 
 namespace urbi
 {
