@@ -18,15 +18,6 @@ namespace urbi
   namespace object
   {
 
-    bool
-    operator==(const Matrix::value_type& e1, const Matrix::value_type& e2)
-    {
-      return
-        (e1.size1() == e2.size1()
-         && e1.size2() == e2.size2()
-         && norm_inf (e1 - e2) == 0);
-    }
-
     Matrix::Matrix()
       : value_()
     {

@@ -24,17 +24,72 @@ namespace urbi
 {
   namespace object
   {
+
+    /*--------------.
+    | vector_type.  |
+    `--------------*/
+
+    typedef boost::numeric::ublas::vector<ufloat> vector_type;
+
+    URBI_SDK_API
+    bool
+    operator==(const vector_type& e1, const vector_type& e2);
+
+
+    /*--------------.
+    | matrix_type.  |
+    `--------------*/
+
+    typedef boost::numeric::ublas::matrix<ufloat> matrix_type;
+
+    URBI_SDK_API
+    bool
+    operator==(const matrix_type& e1, const matrix_type& e2);
+
+    URBI_SDK_API
+    std::ostream&
+    operator<<(std::ostream& o, const matrix_type& v);
+  }
+}
+
+namespace boost
+{
+  namespace numeric
+  {
+    namespace ublas
+    {
+
+      URBI_SDK_API
+      std::ostream&
+      operator<<(std::ostream& o, const ::urbi::object::vector_type& v);
+
+      URBI_SDK_API
+      std::ostream&
+      operator<<(std::ostream& o, const ::urbi::object::matrix_type& v);
+
+    }
+  }
+}
+
+namespace urbi
+{
+  namespace object
+  {
+
+    /*---------.
+    | Vector.  |
+    `---------*/
+
     class URBI_SDK_API Vector
       : public CxxObject
-      , public EqualityComparable<Vector,
-                                  boost::numeric::ublas::vector<ufloat> >
+      , public EqualityComparable<Vector, vector_type>
     {
       friend class Matrix;
 
     public:
       typedef Vector self_type;
-      typedef boost::numeric::ublas::matrix<ufloat> matrix_type;
-      typedef boost::numeric::ublas::vector<ufloat> vector_type;
+      typedef ::urbi::object::matrix_type matrix_type;
+      typedef ::urbi::object::vector_type vector_type;
       typedef vector_type value_type;
       typedef EqualityComparable<self_type, value_type> super_comparable_type;
 
@@ -103,9 +158,6 @@ namespace urbi
       URBI_CXX_OBJECT(Vector, CxxObject);
     };
 
-    URBI_SDK_API
-    bool
-    operator==(const Vector::value_type& e1, const Vector::value_type& e2);
 
     /*-------------.
     | Conversion.  |

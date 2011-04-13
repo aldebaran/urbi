@@ -12,13 +12,62 @@
 #include <urbi/object/matrix.hh>
 #include <kernel/uvalue-cast.hh>
 #include <urbi/uvalue.hh>
+#include <boost/numeric/ublas/lu.hpp> // boost::numeric::ublas::row
+
+namespace boost
+{
+  namespace numeric
+  {
+    namespace ublas
+    {
+
+      /*--------------.
+      | vector_type.  |
+      `--------------*/
+
+      std::ostream&
+      operator<<(std::ostream& o, const ::urbi::object::vector_type& v)
+      {
+        o << '<';
+        for (unsigned i = 0; i < v.size(); ++i)
+        {
+          if (i)
+            o << ", ";
+          o << v(i);
+        }
+        return o << '>';
+      }
+
+
+      std::ostream&
+      operator<<(std::ostream& o, const ::urbi::object::matrix_type& v)
+      {
+        const size_t height = v.size1();
+        o << '<';
+        for (unsigned i = 0; i < height; ++i)
+        {
+          if (i)
+            o << ", ";
+          o << boost::numeric::ublas::row(v, i);
+        }
+        return o << '>';
+      }
+
+    }
+  }
+}
 
 namespace urbi
 {
   namespace object
   {
+
+    /*--------------.
+    | vector_type.  |
+    `--------------*/
+
     bool
-    operator==(const Vector::value_type& e1, const Vector::value_type& e2)
+    operator==(const vector_type& e1, const vector_type& e2)
     {
       if (e1.size() != e2.size())
         return false;
@@ -27,6 +76,25 @@ namespace urbi
           return false;
       return true;
     }
+
+
+    /*--------------.
+    | matrix_type.  |
+    `--------------*/
+
+
+    bool
+    operator==(const matrix_type& e1, const matrix_type& e2)
+    {
+      return
+        (e1.size1() == e2.size1()
+         && e1.size2() == e2.size2()
+         && norm_inf(e1 - e2) == 0);
+    }
+
+    /*---------.
+    | Vector.  |
+    `---------*/
 
     Vector::Vector()
     {

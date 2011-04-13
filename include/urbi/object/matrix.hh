@@ -22,13 +22,12 @@ namespace urbi
   {
     class URBI_SDK_API Matrix
       : public CxxObject
-      , public EqualityComparable<Matrix,
-                                  boost::numeric::ublas::matrix<ufloat> >
+      , public EqualityComparable<Matrix, matrix_type >
     {
     public:
       typedef Matrix self_type;
-      typedef Vector::matrix_type matrix_type;
-      typedef Vector::vector_type vector_type;
+      typedef ::urbi::object::matrix_type matrix_type;
+      typedef ::urbi::object::vector_type vector_type;
       typedef matrix_type value_type;
       typedef EqualityComparable<self_type, value_type> super_comparable_type;
       typedef value_type::size_type size_type;
