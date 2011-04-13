@@ -269,17 +269,20 @@ namespace urbi
 
 #undef OP
 
-#define OP(Name, Op)                                            \
-    Matrix::value_type                                          \
-    Matrix::Name(const vector_type& rhs) const                  \
-    {                                                           \
-      const size_t height = size1();                            \
-      const size_t width = size2();                             \
-      value_type res = create_zeros(0, height, width);          \
-      for (unsigned p1 = 0; p1 < height; ++p1)                  \
-        for (unsigned i = 0; i < width; ++i)                    \
-          res(p1, i) = value_(p1, i) Op rhs(p1);                \
-      return res;                                               \
+#define OP(Name, Op)                            \
+    Matrix::value_type                          \
+    Matrix::Name(const vector_type& rhs) const  \
+    {                                           \
+      const size_t height = size1();            \
+      const size_t width = size2();             \
+      if (height != rhs.size())                 \
+        FRAISE("incompatible sizes: %sx%s, %s", \
+               height, width, rhs.size());      \
+      value_type res = value_;                  \
+      for (unsigned p1 = 0; p1 < height; ++p1)  \
+        for (unsigned i = 0; i < width; ++i)    \
+          res(p1, i) Op ## = rhs(p1);           \
+      return res;                               \
     }
 
     OP(rowAdd, +)

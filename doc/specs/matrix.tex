@@ -38,15 +38,14 @@ assert
   listList == vectorList;
   listList == vectorVector;
 };
-
 Matrix.new([           [0],            [1, 2]]);
-[00000030:error] !!! init: expecting rows of size 1, got size 2 for row 2
+[00000030:error] !!! new: expecting rows of size 1, got size 2 for row 2
 Matrix.new([Vector.new([0]),           [1, 2]]);
-[00000056:error] !!! init: expecting rows of size 1, got size 2 for row 2
+[00000056:error] !!! new: expecting rows of size 1, got size 2 for row 2
 Matrix.new([           [0], Vector.new([1, 2])]);
-[00000071:error] !!! init: expecting rows of size 1, got size 2 for row 2
+[00000071:error] !!! new: expecting rows of size 1, got size 2 for row 2
 Matrix.new([Vector.new([0]), Vector.new([1, 2])]);
-[00052403:error] !!! init: expecting rows of size 1, got size 2 for row 2
+[00052403:error] !!! new: expecting rows of size 1, got size 2 for row 2
 \end{urbiscript}
 
 If its a Matrix, then there is a deep-copy: they are not aliases.
@@ -260,30 +259,116 @@ assert
 
 \end{urbiassert}
 
-\item[rowAdd](<arg>)%
-\begin{urbiassert}
+\item[rowAdd](<vector>)%
+  A Matrix whose rows (vectors) are the sum of each row of \this with
+  \var{vector}.
+\begin{urbiscript}
+do (Matrix)
+{
+  assert
+  {
+    rowAdd(Vector) == Matrix;
+    new([[1, 2]]).rowAdd(Vector.new(10))     == new([[11, 12]]);
+    new([1], [2]).rowAdd(Vector.new(10, 20)) == new([11], [22]);
+    new([1, 2], [3, 4]).rowAdd(Vector.new(10, 20)) == new([11, 12], [23, 24]);
+  }
+}|;
+\end{urbiscript}
 
-\end{urbiassert}
+  The dimensions must be compatible:
+  \lstinline|size.first == \var{vector}.size|.
+\begin{urbiscript}
+Matrix.new([1], [2]).rowAdd(Vector.new(10));
+[00000415:error] !!! rowAdd: incompatible sizes: 2x1, 1
 
-\item[rowDiv](<arg>)%
-\begin{urbiassert}
+Matrix.new([[1, 2]]).rowAdd(Vector.new(10, 20));
+[00000425:error] !!! rowAdd: incompatible sizes: 1x2, 2
+\end{urbiscript}
 
-\end{urbiassert}
+\item[rowDiv](<vector>)%
+  A Matrix whose rows (vectors) are the member-wise division of each row of
+  \this with \var{vector}.
+\begin{urbiscript}
+do (Matrix)
+{
+  assert
+  {
+    rowDiv(Vector) == Matrix;
+    new([[10, 20]]).rowDiv(Vector.new(10))     == new([[1, 2]]);
+    new([10], [20]).rowDiv(Vector.new(10, 20)) == new([1], [1]);
+    new([10, 30], [20, 40]).rowDiv(Vector.new(10, 20)) == new([1, 3], [1, 2]);
+  }
+}|;
+\end{urbiscript}
 
-\item[rowMul](<arg>)%
-\begin{urbiassert}
+  The dimensions must be compatible:
+  \lstinline|size.first == \var{vector}.size|.
+\begin{urbiscript}
+Matrix.new([1], [2]).rowDiv(Vector.new(10));
+[00000415:error] !!! rowDiv: incompatible sizes: 2x1, 1
 
-\end{urbiassert}
+Matrix.new([[1, 2]]).rowDiv(Vector.new(10, 20));
+[00000425:error] !!! rowDiv: incompatible sizes: 1x2, 2
+\end{urbiscript}
+
+\item[rowMul](<vector>)%
+  A Matrix whose rows (vectors) are the member-wise product of each row of
+  \this with \var{vector}.
+\begin{urbiscript}
+do (Matrix)
+{
+  assert
+  {
+    rowMul(Vector) == Matrix;
+    new([[10, 20]]).rowMul(Vector.new(10))     == new([[100, 200]]);
+    new([10], [20]).rowMul(Vector.new(10, 20)) == new([100], [400]);
+    new([1, 2], [3, 4]).rowMul(Vector.new(10, 20)) == new([10, 20], [60, 80]);
+  }
+}|;
+\end{urbiscript}
+
+  The dimensions must be compatible:
+  \lstinline|size.first == \var{vector}.size|.
+\begin{urbiscript}
+Matrix.new([1], [2]).rowMul(Vector.new(10));
+[00000415:error] !!! rowMul: incompatible sizes: 2x1, 1
+
+Matrix.new([[1, 2]]).rowMul(Vector.new(10, 20));
+[00000425:error] !!! rowMul: incompatible sizes: 1x2, 2
+\end{urbiscript}
+
 
 \item[rowNorm](<arg>)%
 \begin{urbiassert}
 
 \end{urbiassert}
 
-\item[rowSub](<arg>)%
-\begin{urbiassert}
+\item[rowSub](<vector>)%
+  A Matrix whose rows (vectors) are the difference of each row of \this with
+  \var{vector}.
+\begin{urbiscript}
+do (Matrix)
+{
+  assert
+  {
+    rowSub(Vector) == Matrix;
+    new([[10, 20]]).rowSub(Vector.new(1))     == new([[9, 19]]);
+    new([11], [22]).rowSub(Vector.new(10, 20)) == new([1], [2]);
+    new([1, 2], [3, 4]).rowSub(Vector.new(1, 2)) == new([0, 1], [1, 2]);
+  }
+}|;
+\end{urbiscript}
 
-\end{urbiassert}
+  The dimensions must be compatible:
+  \lstinline|size.first == \var{vector}.size|.
+\begin{urbiscript}
+Matrix.new([1], [2]).rowSub(Vector.new(10));
+[00000415:error] !!! rowSub: incompatible sizes: 2x1, 1
+
+Matrix.new([[1, 2]]).rowSub(Vector.new(10, 20));
+[00000425:error] !!! rowSub: incompatible sizes: 1x2, 2
+\end{urbiscript}
+
 
 \item[set](<arg>)%
 \begin{urbiassert}
@@ -304,8 +389,12 @@ Matrix.new([[1, 2, 3], [4, 5, 6]]).size == Pair.new(2, 3);
 \end{urbiassert}
 
 \item[transpose](<arg>)%
+  The transposed of \this.
 \begin{urbiassert}
-
+Matrix                      .transpose == Matrix;
+Matrix.new([[1]])           .transpose == Matrix.new([[1]]);
+Matrix.new([1], [2])        .transpose == Matrix.new([[1, 2]]);
+Matrix.new([[1, 2], [3, 4]]).transpose == Matrix.new([[1, 3], [2, 4]]);
 \end{urbiassert}
 
 \item[type]%
