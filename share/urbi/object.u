@@ -73,7 +73,8 @@ do (Object)
     // The fresh child.
     var res = call.&target.clone |
     // Call the "init" from the parent, retargetted to the child.
-    &init.apply([res] + args) |
+    call.message = "init" |
+    res.callMessage(call) |
     res
   };
 
