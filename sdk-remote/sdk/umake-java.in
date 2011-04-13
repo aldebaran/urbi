@@ -195,8 +195,6 @@ get_options ()
 
 : ${javac="javac"}
 : ${jar="jar"}
-tool_test "javac" "$javac"
-tool_test "jar" "$jar"
 
 clean=false
 havearg=false   # we have at least one path or file arg
