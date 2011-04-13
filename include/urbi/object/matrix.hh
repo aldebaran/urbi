@@ -79,20 +79,20 @@ namespace urbi
 #undef OP
 
       // Row by row operation.
-      rMatrix rowAdd(const vector_type& rhs) const;
-      rMatrix rowSub(const vector_type& rhs) const;
-      rMatrix rowMul(const vector_type& rhs) const;
-      rMatrix rowDiv(const vector_type& rhs) const;
+      value_type rowAdd(const vector_type& rhs) const;
+      value_type rowSub(const vector_type& rhs) const;
+      value_type rowMul(const vector_type& rhs) const;
+      value_type rowDiv(const vector_type& rhs) const;
       vector_type rowNorm() const;
 
-      static rMatrix create_zeros(rObject, int size1, int size2);
-      static rMatrix create_identity(rObject, int size);
-      static rMatrix create_scalars(rObject, int size1, int size2, ufloat v);
-      static rMatrix create_ones(rObject, int size1, int size2);
+      static value_type create_zeros(rObject, int size1, int size2);
+      static value_type create_identity(rObject, int size);
+      static value_type create_scalars(rObject, int size1, int size2, ufloat v);
+      static value_type create_ones(rObject, int size1, int size2);
 
-      rMatrix transpose() const;
-      rMatrix invert() const;
-      rMatrix solve(const vector_type& vector) const;
+      value_type transpose() const;
+      value_type invert() const;
+      value_type solve(const vector_type& vector) const;
 
       ufloat operator()(int, int) const;
 

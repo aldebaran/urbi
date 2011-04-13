@@ -104,59 +104,56 @@ namespace urbi
       return self->fromArgsList(effective_args);
     }
 
-    rMatrix
+    Matrix::value_type
     Matrix::create_zeros(rObject, int size1, int size2)
     {
-      boost::numeric::ublas::zero_matrix<ufloat> res(size1, size2);
-      return new Matrix(res);
+      return boost::numeric::ublas::zero_matrix<ufloat>(size1, size2);
     }
 
-    rMatrix
+    Matrix::value_type
     Matrix::create_identity(rObject, int size)
     {
-      boost::numeric::ublas::identity_matrix<ufloat> res(size);
-      return new Matrix(res);
+      return boost::numeric::ublas::identity_matrix<ufloat>(size);
     }
 
-    rMatrix
+    Matrix::value_type
     Matrix::create_scalars(rObject, int size1, int size2, ufloat v)
     {
-      boost::numeric::ublas::scalar_matrix<ufloat> res(size1, size2, v);
-      return new Matrix(res);
+      return boost::numeric::ublas::scalar_matrix<ufloat>(size1, size2, v);
     }
 
-    rMatrix
+    Matrix::value_type
     Matrix::create_ones(rObject self, int size1, int size2)
     {
       return create_scalars(self, size1, size2, 1.0);
     }
 
-    rMatrix
+    Matrix::value_type
     Matrix::transpose() const
     {
-      return new Matrix(trans(value_));
+      return trans(value_);
     }
 
-    rMatrix
+    Matrix::value_type
     Matrix::invert() const
     {
       using namespace boost::numeric::ublas;
       if (size1() != size2())
-        FRAISE("expected square matrix, got %dx%d",
+        FRAISE("expected square matrix, gotn %dx%d",
                size1(), size2());
       // Create a working copy of the input.
       value_type A(value_);
-      value_type inverse(size1(), size2());
+      value_type res(size1(), size2());
       // Create a permutation matrix for the LU-factorization.
       permutation_matrix<size_type> pm(A.size1());
       // Perform LU-factorization.
       if (lu_factorize(A, pm) != 0)
         FRAISE("non-invertible matrix: %s", *this);
       // Create identity matrix of "inverse".
-      inverse.assign(identity_matrix<ufloat>(A.size1()));
+      res.assign(identity_matrix<ufloat>(A.size1()));
       // Backsubstitute to get the inverse.
-      lu_substitute(A, pm, inverse);
-      return new Matrix(inverse);
+      lu_substitute(A, pm, res);
+      return res;
     }
 
     rMatrix
@@ -270,17 +267,15 @@ namespace urbi
 #undef OP
 
 #define OP(Name, Op)                                            \
-    rMatrix                                                     \
+    Matrix::value_type                                          \
     Matrix::Name(const vector_type& rhs) const                  \
     {                                                           \
       const size_t height = size1();                            \
       const size_t width = size2();                             \
-      rMatrix res =                                             \
-        Matrix::create_zeros(0, height, width)->as<Matrix>();   \
-      Matrix::value_type& v = res->value_get();                 \
+      value_type res = create_zeros(0, height, width);          \
       for (unsigned p1 = 0; p1 < height; ++p1)                  \
         for (unsigned i = 0; i < width; ++i)                    \
-          v(p1, i) = value_(p1, i) Op rhs(p1);                  \
+          res(p1, i) = value_(p1, i) Op rhs(p1);                \
       return res;                                               \
     }
 
@@ -293,16 +288,16 @@ namespace urbi
     rMatrix
     Matrix::operator /(const rMatrix& rhs) const
     {
-      rMatrix inverse = rhs->invert();
-      value_type copy = prod(value_, inverse->value_);
+      value_type inverse = rhs->invert();
+      value_type copy = prod(value_, inverse);
       return new Matrix(copy);
     }
 
     rMatrix
     Matrix::operator /=(const rMatrix& rhs)
     {
-      rMatrix inverse = rhs->invert();
-      value_type res = prod(value_, inverse->value_);
+      value_type inverse = rhs->invert();
+      value_type res = prod(value_, inverse);
       value_ = res;
       return this;
     }
