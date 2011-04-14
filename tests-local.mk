@@ -43,6 +43,7 @@ XFAIL_TESTS +=					\
 XFAIL_TESTS +=						\
   uob/java/all/change-bypass-external-access.chk	\
   uob/java/all/change-bypass.chk			\
+  uob/java/all/transmit.chk				\
   uob/java/all/transmit-object.chk
 
 # Memory leaks which have to be fixed.
