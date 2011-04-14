@@ -627,12 +627,12 @@ Objects meant to serve as prototypes are best defined using the
 
 \begin{bnf}
 <class-statement>
-  ::= "class" <lvalue> (: <prototypes>)? <block>
+  ::= "class" <lvalue> (":" <prototypes>)? <block>
 
 <lvalue>
   ::= (<expression> ".")* "identifier"
 
-<prototypes>>
+<prototypes>
   ::= (<expression> ",")* expression
 
 <block>

@@ -60,6 +60,23 @@ This is the first chapter.
 [00048238] "foo"
 \end{urbiscript}
 
+\begin{bnf}
+<class-statement>
+  ::= "class" <lvalue> (: <prototypes>)? <block>
+
+<lvalue>
+  ::= (<expression> ".")* "identifier"
+
+<foo>
+  ::= "(" "*" ")"
+
+<prototypes>>
+  ::= (<expression> ",")* expression
+
+<block>
+  ::= "{" <statement>* "}"
+\end{bnf}
+
 Another example.
 
 \begin{shell}[style=varInString]
