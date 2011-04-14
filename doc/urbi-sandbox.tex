@@ -11,13 +11,29 @@
   \usepackage{config}
   \usepackage{lipsum}  % to provide "filler" text
 
+%% \marginNotation{Label}{Text}
+%% ----------------------------
+\newcommand{\marginNotation}[2]
+{%
+  \marginpar[{\vspace{3mm}\raggedleft\tiny\hyperref[#1]{#2}}]
+            {\vspace{3mm}\raggedright\tiny\hyperref[#1]{#2}}%
+}
+
 \ifx\ifHtml\undefined
+  \renewcommand{\bnfPre}
+    {\marginNotation{sec:notations:bnf}{Grammar}}
+  \renewcommand{\cxxPre}
+    {\marginNotation{sec:notations:cxx}{\Cxx}}
+  \renewcommand{\javaPre}
+    {\marginNotation{sec:notations:java}{\Java}}
+  \renewcommand{\shellPre}
+    {\marginNotation{sec:notations:shell}{Shell\\Session}}
   \renewcommand{\urbiassertPre}
-    {\marginpar{%
-        \vspace{3mm}%
-        \tiny \hyperref[sec:second]{Assertion\\Block}%
-      }%
-    }
+    {\marginNotation{sec:notations:urbiassert}{Assertion\\Block}}
+  \renewcommand{\urbiscriptPre}
+    {\marginNotation{sec:notations:urbiassert}{\us\\Session}}
+  \renewcommand{\urbiuncheckedPre}
+    {\urbiscriptPre}
 \fi
 
 \title{Urbi Documentation Sandbox}

@@ -30,8 +30,13 @@
 %% ----------------------------
 \newcommand{\marginNotation}[2]
 {%
-  \marginpar{%
+  \marginpar[{%
     \vspace{3mm}%
+    \raggedleft%
+    \tiny \hyperref[#1]{#2}%
+  }]{%
+    \vspace{3mm}%
+    \raggedright%
     \tiny \hyperref[#1]{#2}%
   }%
 }
