@@ -1,0 +1,71 @@
+%% Copyright (C) 2011, Gostai S.A.S.
+%%
+%% This software is provided "as is" without warranty of any kind,
+%% either expressed or implied, including but not limited to the
+%% implied warranties of fitness for a particular purpose.
+%%
+%% See the LICENSE file for more information.
+
+\section{UConnection}
+
+Connection between InputPorts.  See \autoref{sec:uob:input-port}.
+
+\subsection{Prototypes}
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
+
+\subsection{Construction}
+
+\subsection{Slots}
+
+\begin{urbiscriptapi}
+\item[asynchronous]%
+  If true, notifies on the target InputPort will trigger asynchronously. The
+  system will also prevent two instances from running in parallel by
+  dropping updates until the callback functions terminate.
+
+\item[callCount]
+  Number of times the link was reset.
+
+\item[disconnect]
+  Disconnect the link.
+
+\item[enabled]
+  Set to false to disable the link.
+
+\item[fireRate]
+  Rate in Hertz at which the link triggers.
+
+\item[minInterval]
+  Minimal interval in seconds at which the link can activate. Changes of the
+  source at a higher rate will be ignored.
+
+\item[getAll]
+  The list of all the connections in the system.
+
+\item[maxCallTime]
+  Maximum call time.
+
+\item[meanCallTime]
+  Average time taken by the callback function on the target InputPort.
+
+\item[minCallTime]
+  Minimum call time.
+
+\item[reconnect](<src>)
+  Reconnect the link by changing the source to \var{src}.
+
+\item[resetStats]
+  Reset all statistics.
+\end{urbiscriptapi}
+
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% ispell-dictionary: "american"
+%%% ispell-personal-dictionary: "../urbi.dict"
+%%% fill-column: 76
+%%% End:
