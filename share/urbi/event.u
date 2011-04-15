@@ -30,9 +30,9 @@ do (Event)
   function '<<' (rhs)
   {
     var handler |
-    rhs.onEvent(closure (var evt, var payload) { true },
-                closure (var evt, var payload, var pattern) { handler = this.trigger },
-                closure (var evt, var payload, var pattern) { handler.stop },
+    rhs.onEvent(closure (evt, payload) { true },
+                closure (evt, payload, pattern) { handler = this.trigger },
+                closure (evt, payload, pattern) { handler.stop },
                 true) |
 
     // To watch many at once.
