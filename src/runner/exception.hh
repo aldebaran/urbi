@@ -33,8 +33,12 @@ namespace runner
     bool empty() const;
     /// Clear all stored errors.
     void clear();
-    /// Print all fatal errors.
+    /// Print all fatal errors (via the runner).
     void print(runner::Job& c) const;
+
+    /// For debugging only, e.g., in ast-dump.
+    std::ostream& dump(std::ostream& o) const;
+
     /// Raise an adequate Urbi exception.
     /// precondition: !empty().
     ATTRIBUTE_NORETURN
@@ -45,13 +49,23 @@ namespace runner
     {
       Message(const ast::loc& loc, const std::string& kind,
               const std::string& msg, const std::string& prefix);
+      /// Format loc, msg, and prefix.
+      std::string message() const;
+      /// Send the message via the runner.
       void print(runner::Job& r) const;
+      /// For debugging only, e.g., in ast-dump.
+      std::ostream& dump(std::ostream& o) const;
+
       ast::loc loc;
       std::string kind, msg, prefix;
     };
     typedef std::vector<Message> messages_type;
     messages_type messages_;
   };
+
+  /// For debugging only, e.g., in ast-dump.
+  std::ostream&
+  operator<<(std::ostream& o, const Exception& e);
 }
 
 #endif

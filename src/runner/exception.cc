@@ -67,6 +67,14 @@ namespace runner
   }
 
 
+  std::ostream&
+  Exception::dump(std::ostream& o) const
+  {
+    foreach (const Message& m, messages_)
+      m.dump(o) << std::endl;
+    return o;
+  }
+
   /*---------------------.
   | Exception::Message.  |
   `---------------------*/
@@ -81,11 +89,30 @@ namespace runner
     , prefix(prefix)
   {}
 
+  std::string
+  Exception::Message::message() const
+  {
+    if (prefix.empty())
+      return libport::format("!!! %s: %s", loc, msg);
+    else
+      return libport::format("!!! %s: %s: %s", loc, prefix, msg);
+  }
+
+  std::ostream&
+  Exception::Message::dump(std::ostream& o) const
+  {
+    return o << "[" << kind << "] " << message();
+  }
+
   void Exception::Message::print(runner::Job& r) const
   {
-    std::string m = prefix.empty() ? msg
-      : libport::format("%s: %s", prefix, msg);
-    eval::send_message(r, kind, libport::format("!!! %s: %s", loc, m));
+    eval::send_message(r, kind, message());
     eval::show_backtrace(r, kind);
+  }
+
+  std::ostream&
+  operator<<(std::ostream& o, const Exception& e)
+  {
+    return e.dump(o);
   }
 }

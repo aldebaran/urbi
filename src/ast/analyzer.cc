@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -7,6 +7,8 @@
  *
  * See the LICENSE file for more information.
  */
+
+#include <libport/debug.hh>
 
 #include <ast/analyzer.hh>
 #include <ast/nary.hh>
@@ -29,7 +31,11 @@ namespace ast
   Analyzer::throw_if_err()
   {
     if (!errors_.empty())
+    {
+      GD_CATEGORY(Urbi.Error);
+      GD_FINFO_TRACE("analyzer failed: %s", errors_);
       throw errors_;
+    }
   }
 
 
