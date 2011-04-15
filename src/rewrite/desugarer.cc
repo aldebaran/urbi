@@ -62,10 +62,21 @@ namespace rewrite
     return recurse(s);
   }
 
-  void Desugarer::visit(const ast::And* s)
-  {
-    recurse_with_subdecl(s);
+  // Nodes that just forward to their children, in which declarations
+  // are allowed.
+#define ENABLE_SUBDECL(Node)                    \
+  void Desugarer::visit(const ast::Node* s)     \
+  {                                             \
+    recurse_with_subdecl(s);                    \
   }
+
+  ENABLE_SUBDECL(And);
+  ENABLE_SUBDECL(Nary);
+  ENABLE_SUBDECL(Pipe);
+  ENABLE_SUBDECL(Scope);
+  ENABLE_SUBDECL(Stmt);
+  ENABLE_SUBDECL(While);
+#undef ENABLE_SUBDECL
 
   void
   Desugarer::desugar_modifiers(const ast::Assign* assign)
@@ -243,10 +254,9 @@ namespace rewrite
   void
   Desugarer::visit(const ast::Binding* binding)
   {
-    if (!allow_decl_)
-      err(binding->location_get(), "declaration not allowed here");
     ast::loc loc = binding->location_get();
-
+    if (!allow_decl_)
+      err(loc, "declaration not allowed here");
     result_ = new ast::Declaration(loc, binding->what_get(), 0);
     result_ = recurse(result_);
   }
@@ -369,21 +379,6 @@ namespace rewrite
     result_->original_set(a);
   }
 
-  void Desugarer::visit(const ast::Pipe* s)
-  {
-    recurse_with_subdecl(s);
-  }
-
-  void Desugarer::visit(const ast::Scope* s)
-  {
-    recurse_with_subdecl(s);
-  }
-
-  void Desugarer::visit(const ast::Stmt* s)
-  {
-    recurse_with_subdecl(s);
-  }
-
   void Desugarer::visit(const ast::Subscript* s)
   {
     PARAMETRIC_AST(rewrite, "%exp:1 .'[]'(%exps:2)");
@@ -425,11 +420,6 @@ namespace rewrite
                                  recurse(t->body_get()),
                                  recurse_collection(t->handlers_get()),
                                  recurse(t->elseclause_get()));
-  }
-
-  void Desugarer::visit(const ast::While* s)
-  {
-    recurse_with_subdecl(s);
   }
 
 }

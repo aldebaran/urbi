@@ -47,17 +47,18 @@ namespace rewrite
     using super_type::visit;
     /// Nodes to desugar
     CONST_VISITOR_VISIT_NODES(
-      (At)
       (And)
       (Assign)
+      (At)
       (Binding)
       (Catch)
       (Class)
       (Decrementation)
       (Do)
       (Emit)
-      (Incrementation)
       (If)
+      (Incrementation)
+      (Nary)
       (OpAssignment)
       (Pipe)
       (Scope)

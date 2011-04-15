@@ -189,6 +189,19 @@ namespace ast
     return exp(a % cond);
   }
 
+  /// Whether \a exp is a simple assignment (var n = v).
+  ATTRIBUTE_PURE
+  static bool
+  is_var_declaration(rExp exp)
+  {
+    if (exp.unsafe_cast<Binding>())
+      return true;
+    if (rAssign assign = exp.unsafe_cast<Assign>())
+      if (assign->what_get().unsafe_cast<ast::Binding>())
+        return true;
+    return false;
+  }
+
   /// assert(%exps).
   rExp
   Factory::make_assert(const location&,
@@ -196,10 +209,13 @@ namespace ast
   {
     aver(cond);
     foreach (rExp& c, *cond)
-      c = make_assert(c->location_get(), c);
+      // Do not transform declarations "var n = v" into
+      // "assert(var n = v)".
+      if (!is_var_declaration(c))
+        c = make_assert(c->location_get(), c);
     rNary res = new Nary;
     res->children_set(cond);
-    return res;
+    return make_scope(res);
   }
 
 
@@ -344,6 +360,7 @@ namespace ast
   {
     FLAVOR_DEFAULT(semicolon);
     FLAVOR_CHECK1("at", semicolon);
+    aver(body);
     return make_event_catcher(loc, event, body, onleave, sync);
   }
 
@@ -1004,6 +1021,8 @@ namespace ast
     // scope to a Do node? But are we sure we won't loose any property
     // from the original Scope node? For now, put the scope in a Do.
     rScope res;
+    aver(e);
+    aver(!e.unsafe_cast<Noop>());
     if ((res = e.unsafe_cast<Scope>()) && !target)
       return res;
     else if (target)
