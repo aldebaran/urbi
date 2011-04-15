@@ -155,15 +155,14 @@ namespace ast
     return e.is_a<const Noop>();
   }
 
-  template <typename T>
-  inline
-  T
-  ensure(const yy::location& l, T e)
+  static inline
+  rExp
+  ensure(const yy::location& l, rExp e)
   {
     if (e)
       return e;
     else
-      return Factory::make_noop(l);
+      return Factory::make_scope(l);
   }
 
   rExp
@@ -221,7 +220,7 @@ namespace ast
                   sync,
                   make_strip(cond),
                   make_scope(loc, body),
-                  onleave ? make_scope(loc, onleave) : new Noop(loc, 0),
+                  onleave ? make_scope(loc, onleave) : make_scope(loc),
                   duration);
   }
 
@@ -787,7 +786,7 @@ namespace ast
   {
     return new If(l, make_strip(cond),
                   make_scope(iftrue),
-                  iffalse ? make_scope(iffalse) : new Noop(l, 0));
+                  iffalse ? make_scope(iffalse) : new ast::Noop(l, 0));
   }
 
   /// \param isdef(%call)
@@ -1026,6 +1025,14 @@ namespace ast
       return make_scope(e->location_get(), e);
     else
       return 0;
+  }
+
+  rScope
+  Factory::make_scope(const location& l) // const
+  {
+    // Do not use a PARAMETRIC_AST that would certainly want to make
+    // use of make_scope eventually.
+    return make_scope(new Nary(l));
   }
 
   rExp
@@ -1351,7 +1358,7 @@ namespace ast
   {
     // FIXME: Be smarter on empty else_stmt.
     if (!else_stmt)
-      else_stmt = make_noop(loc);
+      else_stmt = make_scope(loc);
     if (duration)
     {
       PARAMETRIC_AST

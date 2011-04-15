@@ -367,19 +367,27 @@ namespace ast
                  const location& floc, Formals* f,
                  const rExp b) /* const */;
 
-    /// Return \a e in a Scope unless it is already one.
+    /// Return \a e in a Scope (or a Do) unless it is already one.
+    /// \pre target != 0.
     static
     rScope
     make_scope(const location& l, rExp target, rExp e) /* const */;
 
+    /// Return e in a Scope unless it is already one.
     static
     rScope
     make_scope(const location& l, rExp e) /* const */;
 
+    /// Return e in a Scope unless it is already one.
     // Use the location of \a e.
     static
     rScope
     make_scope(rExp e) /* const */;
+
+    /// Make an empty scope.
+    static
+    rScope
+    make_scope(const location& l) /* const */;
 
     static
     rExp
