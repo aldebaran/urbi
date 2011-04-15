@@ -123,7 +123,7 @@ namespace std
 
 #define DISPATCH_IDS_DECLARE(R, Data, Arg) bool Arg = false;
 
-#define DISPATCH_IDS_CHECK(R, Data, Arg) \
+#define DISPATCH_IDS_CHECK(R, Data, Arg)                        \
   else if (arg == libport::Symbol(BOOST_PP_STRINGIZE(Arg)))     \
   {                                                             \
     if (Arg)                                                    \

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -16,6 +16,8 @@
 
 namespace rewrite
 {
+
+  /// Desugar, then rescope.
   ast::rAst  URBI_SDK_API rewrite(ast::rConstAst a);
   ast::rExp  URBI_SDK_API rewrite(ast::rConstExp a);
   ast::rNary URBI_SDK_API rewrite(ast::rConstNary a);
@@ -24,7 +26,9 @@ namespace rewrite
   ast::rExp  URBI_SDK_API rewrite(ast::rExp a);
   ast::rNary URBI_SDK_API rewrite(ast::rNary a);
 
+  /// Just desugar.  Only for debugging (ast-dump).
   ast::rAst  URBI_SDK_API desugar(ast::rConstAst Ast);
+  /// Just rescope.  Only for debugging (ast-dump).
   ast::rAst  URBI_SDK_API rescope(ast::rConstAst Ast);
 }
 

@@ -40,12 +40,10 @@ namespace rewrite
   Rescoper::make_assignment(const ast::loc& l, ast::rConstLValue what,
                             ast::rConstExp value)
   {
-    if (!value)
-    {
-      PARAMETRIC_AST(ast, "{}");
-      return exp(ast);
-    }
-    return new ast::Assignment(l, recurse(what), recurse(value));
+    if (value)
+      return new ast::Assignment(l, recurse(what), recurse(value));
+    else
+      return factory_->make_scope(l);
   }
 
   /**
@@ -63,8 +61,7 @@ namespace rewrite
     {
       ast::loc l = dec->location_get();
       ast::rConstLValue call = dec->what_get();
-      nary->push_back(make_declaration(l, call),
-                      ast::flavor_pipe);
+      nary->push_back(make_declaration(l, call), ast::flavor_pipe);
       return make_assignment(l, call, dec->value_get());
     }
     else if (ast::rConstPipe pipe =
@@ -72,7 +69,7 @@ namespace rewrite
     {
       ast::rPipe res = new ast::Pipe(pipe->location_get(), ast::exps_type());
       foreach (const ast::rExp& child, pipe->children_get())
-        res->children_get().push_back(unscope(child, nary));
+        res->children_get() << unscope(child, nary);
       return res;
     }
     else
@@ -94,7 +91,7 @@ namespace rewrite
     {
       child = unscope(child, nary);
       // Wrap every child in a closure
-      res->children_get().push_back(recurse(factory_->make_closure(child)));
+      res->children_get() << recurse(factory_->make_closure(child));
     }
 
     nary->push_back(res);
@@ -124,14 +121,14 @@ namespace rewrite
   void Rescoper::visit(const ast::While* a)
   {
     if (a->flavor_get() == ast::flavor_comma)
-      {
-        ast::loc l = a->location_get();
-        ast::rExp body = recurse(factory_->make_closure(a->body_get()));
-        result_ = factory_->make_while(l,
-                                       l, a->flavor_get(),
-                                       recurse(a->test_get()),
-                                       body);
-      }
+    {
+      ast::loc l = a->location_get();
+      ast::rExp body = recurse(factory_->make_closure(a->body_get()));
+      result_ = factory_->make_while(l,
+                                     l, a->flavor_get(),
+                                     recurse(a->test_get()),
+                                     body);
+    }
     else
       super_type::visit(a);
   }

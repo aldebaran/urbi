@@ -65,7 +65,7 @@ namespace binder
       return 0;
     else
     {
-      aver(env_[name].back().second.first > 0);
+      aver_lt(0u, env_[name].back().second.first);
       return env_[name].back().second.first;
     }
   }
@@ -77,7 +77,7 @@ namespace binder
       return 0;
     else
     {
-      aver(env_[name].back().second.second > 0);
+      aver_lt(0u, env_[name].back().second.second);
       return env_[name].back().second.second;
     }
   }
