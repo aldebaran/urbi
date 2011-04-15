@@ -100,7 +100,7 @@ namespace urbi
       Vector(const objects_type& model);
 
       static rVector init(const objects_type& args);
-      rVector fromList(const objects_type& model);
+      Vector* fromList(const objects_type& model);
 
       // Disambiguation operators.
       value_type operator+(const rObject& b) const;
@@ -118,17 +118,18 @@ namespace urbi
       value_type operator*(ufloat v) const;
       value_type operator/(ufloat v) const;
 
-      rVector operator+();
+      Vector* operator+();
       value_type operator-();
-      bool    operator<(const Object& b) const;
+      virtual bool operator<(const Object& rhs) const;
+      bool    operator<(const value_type& b) const;
       ufloat  operator[](int) const;
 
       size_t size() const;
-      rVector resize(size_t s);
+      Vector* resize(size_t s);
       ufloat distance(const value_type& that) const;
       ufloat norm() const;
-      ufloat sum() const; //a.k.a. L1 norm.
-      rVector set(int i, ufloat v);
+      ufloat sum() const;
+      ufloat set(int i, ufloat v);
       size_t index(int) const;
 
       virtual std::string as_string() const;

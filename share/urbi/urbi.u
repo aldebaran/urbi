@@ -80,6 +80,7 @@ requireFile("urbi/tag.u");
 requireFile("urbi/timeout.u");
 requireFile("urbi/trajectory-generator.u");
 requireFile("urbi/tuple.u");
+requireFile("urbi/vector.u");
 requireFile("urbi/weak-pointer.u");
 // Enhance requireFile thanks to previous loadings.
 requireFile("urbi/require-file.u");

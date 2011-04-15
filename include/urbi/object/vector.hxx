@@ -79,7 +79,7 @@ namespace urbi
     }
 
     inline
-    rVector
+    Vector*
     Vector::operator +()
     {
       return this;
@@ -92,19 +92,11 @@ namespace urbi
     }
 
     inline bool
-    Vector::operator<(const Object& bb) const
+    Vector::operator<(const Object& that) const
     {
-      // FIXME: BOGUS! asymetrical!
-      const rVector b = bb.as<Vector>();
-      if (!b)
-        return this->Object::operator<(bb);
-      if (value_.size() != b->value_.size())
-        return value_.size() < b->value_.size();
-      for (size_t i = 0; i < value_.size(); ++i)
-        if (value_(i) != b->value_(i))
-          return value_(i) < b->value_(i);
-      return false;
+      return *this < that.as<Vector>()->value_;
     }
+
   }
 }
 

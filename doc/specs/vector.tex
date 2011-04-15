@@ -308,7 +308,12 @@ Vector.new(1)           .sum == 1;
 Vector.new(0, 1, 2, 3)  .sum == 6;
 \end{urbiassert}
 
-\item[trueIndexes]()%
+\item[trueIndexes]%
+  A Vector whose values are the indexes of \this whose value is non-null.
+\begin{urbiassert}
+Vector.trueIndexes == Vector;
+Vector.new(1, 0, 1, 0, 0, 1).trueIndexes == Vector.new(0, 2, 5);
+\end{urbiassert}
 
 \item[type]%
   \lstinline|"Vector"|.
@@ -379,12 +384,88 @@ Vector.new(1, 2) / Vector.new(0);
 [00000601:error] !!! /: incompatible vector sizes: 2, 1
 \end{urbiscript}
 
-\item['<']()%
+\item['<'](<that>)%
+  Whether \this is less than the \that Vector.  This is the lexicographic
+  comparison: \this is ``less than'' \that if, from left to right, one of
+  its member is ``less than'' the corresponding member of \that:
 
-\item|'[]'|()%
+\begin{urbiassert}
+   Vector.new(0, 0, 0) < Vector.new(0, 0, 1);
+ !(Vector.new(0, 0, 1) < Vector.new(0, 0, 0));
 
-\item|[]=|()%
+   Vector.new(0, 1, 2) < Vector.new(0, 2, 1);
+ !(Vector.new(0, 2, 1) < Vector.new(0, 1, 2));
 
+   Vector.new(1, 1, 1) < Vector.new(2);
+ !(Vector.new(2)       < Vector.new(1, 1, 1));
+
+ !(Vector.new(0, 1, 2) < Vector.new(0, 1, 2));
+\end{urbiassert}
+
+  \noindent
+  or \that is a prefix (strict) of \this:
+
+\begin{urbiassert}
+           Vector.new() < Vector.new(0);
+  !(      Vector.new(0) < Vector.new());
+
+       Vector.new(0, 1) < Vector.new(0, 1, 2);
+  !(Vector.new(0, 1, 2) < Vector.new(0, 1));
+
+  !(Vector.new(0, 1, 2) < Vector.new(0, 1, 2));
+\end{urbiassert}
+
+Since Vector derives from \refObject{Orderable}, the other order-based
+operators are defined.
+
+\begin{urbiassert}
+        Vector.new() <= Vector.new();
+        Vector.new() <= Vector.new(0, 1, 2);
+ Vector.new(0, 1, 2) <= Vector.new(0, 1, 2);
+
+        Vector.new() >= Vector.new();
+ Vector.new(0, 1, 2) >= Vector.new();
+ Vector.new(0, 1, 2) >= Vector.new(0, 1, 2);
+ Vector.new(0, 1, 2) >= Vector.new(0, 0, 2);
+
+       !(Vector.new() > Vector.new());
+  Vector.new(0, 1, 2) > Vector.new();
+!(Vector.new(0, 1, 2) > Vector.new(0, 1, 2));
+  Vector.new(0, 1, 2) > Vector.new(0, 0, 2);
+\end{urbiassert}
+
+\item|'[]'|(<index>)%
+  The value stored at \var{index}.
+\begin{urbiscript}
+{
+  var v = Vector.new(1, 2, 3);
+  assert
+  {
+    v[ 0] == 1; v[ 1] == 2; v[ 2] == 3;
+    v[-3] == 1; v[-2] == 2; v[-1] == 3;
+  };
+  v[4];
+};
+[00000100:error] !!! []: invalid index: 4
+\end{urbiscript}
+
+\item|'[]='|(<index>, <value>)%
+  Set the value stored at \var{index} to \var{value} and return it.
+\begin{urbiscript}
+{
+  var v = Vector.new(0, 0, 0);
+  assert
+  {
+    (v[ 0] = 1) == 1; (v[ 1] = 2) == 2; (v[ 2] = 3) == 3;
+     v[ 0]      == 1;  v[ 1]      == 2;  v[ 2]      == 3;
+
+    (v[-3] = 4) == 4; (v[-2] = 5) == 5; (v[-1] = 6) == 6;
+     v[-3]      == 4;  v[-2]      == 5;  v[-1]      == 6;
+  };
+  v[4] = 7;
+};
+[00000100:error] !!! []=: invalid index: 4
+\end{urbiscript}
 \end{urbiscriptapi}
 
 %%% Local Variables:

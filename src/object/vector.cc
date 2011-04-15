@@ -148,7 +148,7 @@ namespace urbi
       return self;
     }
 
-    rVector
+    Vector*
     Vector::fromList(const objects_type& model)
     {
       size_t size = model.size();
@@ -160,31 +160,25 @@ namespace urbi
 
     URBI_CXX_OBJECT_INIT(Vector)
     {
-      BIND(PLUS, operator+,
-           rVector (Vector::*)());
-      BIND(PLUS, operator+,
-           value_type (Vector::*)(const rObject&) const);
+      BIND(PLUS, operator+, Vector*, ());
+      BIND(PLUS, operator+, value_type, (const rObject&) const);
       /* Something is wrong with the handling of these two overloads.
        * so use a disambiguator.
-      BIND(PLUS, operator+,
-           value_type (Vector::*)(const rVector&));
-      BIND(PLUS, operator+,
-           value_type (Vector::*)(ufloat));
+      BIND(PLUS, operator+, value_type, (const value_type&));
+      BIND(PLUS, operator+, value_type, (ufloat));
            */
-      BIND(MINUS, operator-,
-           value_type (Vector::*)());
-      BIND(MINUS, operator-,
-           value_type (Vector::*)(const rObject&) const);
+      BIND(MINUS, operator-, value_type, ());
+      BIND(MINUS, operator-, value_type, (const rObject&) const);
       /*
-      BIND(MINUS, operator-, value_type (Vector::*)(const rVector&));
-      BIND(MINUS, operator-, value_type (Vector::*)(ufloat));
+      BIND(MINUS, operator-, value_type, (const value_type&));
+      BIND(MINUS, operator-, value_type, (ufloat));
       */
-      BIND(STAR, operator*, value_type (Vector::*)(const rObject&) const);
-      BIND(SLASH, operator/, value_type (Vector::*)(const rObject&) const);
+      BIND(STAR, operator*, value_type, (const rObject&) const);
+      BIND(SLASH, operator/, value_type, (const rObject&) const);
 
-      BIND(EQ_EQ, operator==, bool (self_type::*)(const rObject&) const);
+      BIND(EQ_EQ, operator==, bool, (const rObject&) const);
+      BIND(LT, operator<, bool, (const Object&) const);
 
-      BIND(LT, operator<);
       BIND(SBL_SBR, operator[]);
       BIND(SBL_SBR_EQ, set);
       BIND(asString, as_string);
@@ -230,11 +224,10 @@ namespace urbi
       return value_(index(i));
     }
 
-    rVector
+    ufloat
     Vector::set(int i, ufloat v)
     {
-      value_(index(i)) = v;
-      return this;
+      return value_(index(i)) = v;
     }
 
     size_t
@@ -293,8 +286,9 @@ namespace urbi
     Vector::trueIndexes() const
     {
       unsigned count = 0;
-      for (unsigned i=0; i < size(); ++i)
-        if (value_(i)) ++count;
+      for (unsigned i = 0; i < size(); ++i)
+        if (value_(i))
+          ++count;
       value_type res(count);
       unsigned pos = 0;
       for (unsigned i = 0; i < size(); ++i)
@@ -337,7 +331,7 @@ namespace urbi
       return std::make_pair(i, j);
     }
 
-    rVector
+    Vector*
     Vector::resize(size_t s)
     {
       value_.resize(s);
@@ -367,6 +361,15 @@ namespace urbi
       for (unsigned i = 0; i < size(); ++i)
         res += value_(i);
       return res;
+    }
+
+    bool
+    Vector::operator<(const value_type& b) const
+    {
+      for (size_t i = 0; i < std::min(size(), b.size()); ++i)
+        if (value_(i) != b(i))
+          return value_(i) < b(i);
+      return size() < b.size();
     }
 
     rObject
