@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2009-2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -10,7 +10,7 @@
 
 Timeout objects can be used as \refObject[s]{Tag} to execute some code in
 limited time.  See also the \lstinline|timeout| construct
-(\autoref{sec:lang:timeout}.
+(\autoref{sec:lang:timeout}).
 
 \subsection{Prototypes}
 \begin{itemize}
@@ -83,6 +83,18 @@ if (t.timedOut)
 
 \subsection{Slots}
 \begin{urbiscriptapi}
+\item[asTimeout] Return \this.
+\begin{urbiscript}
+{
+  var t = Timeout.new(10);
+  assert
+  {
+    Timeout.asTimeout === Timeout;
+          t.asTimeout === t;
+  };
+};
+\end{urbiscript}
+
 \item[launch]
   Fire \this.
 
