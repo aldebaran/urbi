@@ -14,6 +14,7 @@
 \end{refObjects}
 
 \subsection{Construction}
+\label{sec:specs:matrix:ctor}
 
 The \lstinline|init| function is overloaded, and its behavior depends on its
 number of arguments and their types.
@@ -80,10 +81,27 @@ Matrix.new([1], Vector.new([2])) == Matrix.new([[1], [2]]);
 \subsection{Slots}
 
 \begin{urbiscriptapi}
-\item[appendRow](<arg>)%
+\item[appendRow](<vector>)%
+  Append \var{vector} to \this and return \this.
 \begin{urbiassert}
+var m2x1 = Matrix.new([0], [1]);
+m2x1.appendRow(Vector.new(2)) === m2x1;
+m2x1 == Matrix.new([0], [1], [2]);
 
+var m2x2 = Matrix.new([0, 1], [10, 11]);
+m2x2.appendRow(Vector.new(20, 21)) == m2x2;
+m2x2 == Matrix.new([0, 1], [10, 11], [20, 21]);
 \end{urbiassert}
+
+  Sizes must match.
+\begin{urbiscript}
+Matrix.new([0], [1]).appendRow(Vector.new(10, 11));
+[00017936:error] !!! appendRow: incompatible sizes: 2x1, 2
+
+Matrix.new([[0, 1]]).appendRow(Vector.new(10));
+[00050922:error] !!! appendRow: incompatible sizes: 1x2, 1
+\end{urbiscript}
+
 
 \item[asMatrix]%
   \this.
@@ -208,10 +226,8 @@ m.get(0, -4);
 [00127850:error] !!! get: invalid column: -4
 \end{urbiscript}
 
-\item[init](<arg>)%
-\begin{urbiassert}
-
-\end{urbiassert}
+\item[init]%
+  See \autoref{sec:specs:matrix:ctor}.
 
 \item[invert](<arg>)%
 \begin{urbiassert}
@@ -375,9 +391,29 @@ Matrix.new([[1, 2]]).rowSub(Vector.new(10, 20));
 
 \end{urbiassert}
 
-\item[setRow](<arg>)%
+\item[setRow](<index>, <vector>)%
+  Set the \var{index}th row of \this to \var{vector} and return \this.
 \begin{urbiassert}
+var m2x1 = Matrix.new([0], [1]);
+m2x1.setRow(0, Vector.new(2)) === m2x1;
+m2x1 == Matrix.new([2], [1]);
 
+var m2x2 = Matrix.new([0, 1], [10, 11]);
+m2x2.setRow(0, Vector.new(20, 21)) == m2x2;
+m2x2 == Matrix.new([20, 21], [10, 11]);
+\end{urbiassert}
+
+  Sizes and index must match.
+\begin{urbiscript}
+Matrix.new([0], [1]).setRow(0, Vector.new(10, 11));
+[00017936:error] !!! setRow: incompatible sizes: 2x1, 2
+
+Matrix.new([[0, 1]]).setRow(0, Vector.new(10));
+[00050922:error] !!! setRow: incompatible sizes: 1x2, 1
+
+Matrix.new([0], [1]).setRow(2, Vector.new(10));
+[00017936:error] !!! setRow: invalid row: 2
+\end{urbiscript}
 \end{urbiassert}
 
 \item[size](<arg>)%

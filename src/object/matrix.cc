@@ -573,6 +573,8 @@ namespace urbi
     Matrix*
     Matrix::setRow(int r, const vector_type& v)
     {
+      if (size2() != v.size())
+        FRAISE("incompatible sizes: %sx%s, %s", size1(), size2(), v.size());
       int j = index1(r);
       index2(v.size()-1); // Check size
       for (unsigned i = 0; i< v.size(); ++i)
@@ -583,6 +585,8 @@ namespace urbi
     Matrix*
     Matrix::appendRow(const vector_type& v)
     {
+      if (size2() != v.size())
+        FRAISE("incompatible sizes: %sx%s, %s", size1(), size2(), v.size());
       value_.resize(size1()+1, size2());
       setRow(size1()-1, v);
       return this;
