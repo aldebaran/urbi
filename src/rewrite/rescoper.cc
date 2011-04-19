@@ -82,7 +82,8 @@ namespace rewrite
   Rescoper::~Rescoper()
   {}
 
-  void Rescoper::visit(const ast::And* a)
+  void
+  Rescoper::visit(const ast::And* a)
   {
     ast::loc l = a->location_get();
     ast::rAnd res = new ast::And(l, ast::exps_type());

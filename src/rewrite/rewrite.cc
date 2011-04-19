@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -8,6 +8,7 @@
  * See the LICENSE file for more information.
  */
 
+#include <ast/print.hh>
 #include <rewrite/desugarer.hh>
 #include <rewrite/pattern-binder.hh>
 #include <rewrite/rewrite.hh>
@@ -16,27 +17,27 @@
 namespace rewrite
 {
   ast::rAst
-  desugar(ast::rConstAst Ast)
+  desugar(ast::rConstAst ast)
   {
     Desugarer desugar;
-    return ast::analyze(desugar, Ast);
+    return ast::analyze(desugar, ast);
   }
 
   ast::rAst
-  rescope(ast::rConstAst Ast)
+  rescope(ast::rConstAst ast)
   {
+    GD_CATEGORY(Urbi.Ast.Rescope);
+    // GD_FINFO_TRACE("Rescope in: %s", *ast);
     Rescoper rescope;
-    return ast::analyze(rescope, Ast);
+    ast::rAst res = ast::analyze(rescope, ast);
+    // GD_FINFO_TRACE("Rescope out: %s", *res);
+    return res;
   }
 
   ast::rAst
   rewrite(ast::rConstAst a)
   {
-    Desugarer desugar;
-    ast::rAst res = ast::analyze(desugar, a);
-    Rescoper rescope;
-    rescope(res.get());
-    return rescope.result_get();
+    return rescope(desugar(a));
   }
 
 #define REWRITE(In, Out)                                                \
