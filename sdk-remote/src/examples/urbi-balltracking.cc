@@ -169,9 +169,9 @@ BallTracking::getHead(bool pan, const urbi::UMessage &msg)
 urbi::UCallbackAction
 BallTracking::getImage(const urbi::UMessage &msg)
 {
-  static int framenum=0;
-  static float interframe=0;
-  static int frametime=0;
+  static int framenum = 0;
+  static float interframe = 0;
+  static int frametime = 0;
 
   if (msg.type != urbi::MESSAGE_DATA
       || msg.value->type != urbi::DATA_BINARY
@@ -198,16 +198,16 @@ BallTracking::getImage(const urbi::UMessage &msg)
   if ((framenum % 50)==0)
   {
     if (!frametime)
-      frametime=robotC.getCurrentTime();
+      frametime = robotC.getCurrentTime();
     else
     {
-      int dt=robotC.getCurrentTime()-frametime;
-      frametime=robotC.getCurrentTime();
+      int dt = robotC.getCurrentTime() - frametime;
+      frametime = robotC.getCurrentTime();
       if (interframe == 0)
-        interframe=((float)dt)/50.0;
+        interframe = ((float)dt)/50.0;
       else
-        interframe=interframe*0.5 +  0.5*((float)dt)/50.0;
-      robotC.printf("## %f fps\n",1000.0/interframe);
+        interframe = interframe*0.5 +  0.5*((float)dt)/50.0;
+      robotC.printf("## %f fps\n", 1000.0/interframe);
     }
   }
   ++framenum;
@@ -215,12 +215,16 @@ BallTracking::getImage(const urbi::UMessage &msg)
   if (img.imageFormat == urbi::IMAGE_JPEG)
   {
     size_t w, h;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wcast-align"
+#if defined __clang__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wcast-align"
+#endif
     urbi::convertJPEGtoYCrCb((const urbi::byte *) img.data, img.size,
                              (urbi::byte **) &image, imgsize
                              , w, h);
-#pragma clang diagnostic pop
+#if defined __clang__
+# pragma clang diagnostic pop
+#endif
   }
   else
     memcpy(image, img.data, img.width * img.height * 3);
@@ -286,8 +290,8 @@ BallTracking::getImage(const urbi::UMessage &msg)
 
 
 BallTracking::BallTracking(const char * robotname)
-  : robotI (robotname),
-    robotC (robotname)
+  : robotI (robotname)
+  , robotC (robotname)
     //, robotG (robotname)
 {
   robotI.start();

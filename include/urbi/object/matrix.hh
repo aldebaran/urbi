@@ -128,10 +128,6 @@ namespace urbi
       URBI_CXX_OBJECT(Matrix, CxxObject);
     };
 
-    URBI_SDK_API
-    bool
-    operator==(const Matrix::value_type& e1, const Matrix::value_type& e2);
-
 
     /*-------------.
     | Conversion.  |

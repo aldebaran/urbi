@@ -772,8 +772,10 @@ namespace urbi
 {
 
   // FIXME: this is really debatable...
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wcast-align"
+#if defined __clang__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wcast-align"
+#endif
   static
   void
   dup(unsigned short* dst, const unsigned short* src, size_t count)
@@ -800,7 +802,9 @@ namespace urbi
       src++;
     }
   }
-#pragma clang diagnostic pop
+#if defined __clang__
+# pragma GCC diagnostic pop
+#endif
 
   template<typename D> void
   pud(D* dst, const D* src, int count)
@@ -880,9 +884,11 @@ namespace urbi
     }
   }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wcast-align"
 
+#if defined __clang__
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wcast-align"
+#endif
   int
   convert (const USound &source, USound &dest)
   {
@@ -1004,6 +1010,7 @@ namespace urbi
     }
     return 0;
   }
-#pragma clang diagnostic pop
-
+#if defined __clang__
+# pragma clang diagnostic pop
+#endif
 } // namespace urbi
