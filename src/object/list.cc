@@ -423,11 +423,12 @@ namespace urbi
     {
       URBI_AT_HOOK(contentChanged);
       std::string res = "[";
-      bool tail = false;
+      bool first = true;
       foreach (const rObject& o, content_)
       {
-        if (tail++)
+        if (!first)
           res += ", ";
+        first = false;
         res += o->call(SYMBOL(asPrintable))->as<String>()->value_get();
       }
       res += "]";

@@ -293,16 +293,17 @@ namespace urbi
     }
 
 
-    std::string
+    String::value_type
     String::join(const objects_type& os,
                  const std::string& prefix, const std::string& suffix) const
     {
-      std::string res = prefix;
-      bool tail = false;
+      value_type res = prefix;
+      bool first = true;
       foreach (const rObject& o, os)
       {
-        if (tail++)
+        if (!first)
           res += content_;
+        first = false;
         res += o->as_string();
       }
       res += suffix;
