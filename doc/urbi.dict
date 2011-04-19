@@ -93,6 +93,7 @@ assertCall
 associativity
 asString
 AST
+asTimeout
 asTopLevelPrintable
 ASTs
 asuobjects
