@@ -116,6 +116,14 @@ namespace urbi
 
     template <typename T>
     rObject to_urbi(const T&);
+
+    // From cxx-primitive.
+    template<typename M>
+    rPrimitive primitive(M f);
+
+    template<typename M>
+    rPrimitive primitive(rPrimitive extend, M f);
+
   } // namespace object
 }
 

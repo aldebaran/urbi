@@ -50,7 +50,7 @@
 #include <eval/ast.hh>
 #include <eval/call.hh>
 
-# if defined _MSC_VER || defined __arm__
+# if defined _MSC_VER || defined __arm__ || defined __clang__
 // Use malloc with CL.
 #  define URBI_DYNAMIC_STACK_NONE   1
 #  define URBI_DYNAMIC_STACK_VECTOR 0

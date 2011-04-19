@@ -31,10 +31,6 @@ namespace urbi
 
     typedef boost::numeric::ublas::vector<ufloat> vector_type;
 
-    URBI_SDK_API
-    bool
-    operator==(const vector_type& e1, const vector_type& e2);
-
 
     /*--------------.
     | matrix_type.  |
@@ -42,13 +38,7 @@ namespace urbi
 
     typedef boost::numeric::ublas::matrix<ufloat> matrix_type;
 
-    URBI_SDK_API
-    bool
-    operator==(const matrix_type& e1, const matrix_type& e2);
 
-    URBI_SDK_API
-    std::ostream&
-    operator<<(std::ostream& o, const matrix_type& v);
   }
 }
 
@@ -59,9 +49,27 @@ namespace boost
     namespace ublas
     {
 
+      /*--------------.
+      | vector_type.  |
+      `--------------*/
+
+      URBI_SDK_API
+      bool
+      operator==(const ::urbi::object::vector_type& e1,
+                 const ::urbi::object::vector_type& e2);
+
       URBI_SDK_API
       std::ostream&
       operator<<(std::ostream& o, const ::urbi::object::vector_type& v);
+
+      /*--------------.
+      | matrix_type.  |
+      `--------------*/
+
+      URBI_SDK_API
+      bool
+      operator==(const ::urbi::object::matrix_type& e1,
+                 const ::urbi::object::matrix_type& e2);
 
       URBI_SDK_API
       std::ostream&

@@ -586,8 +586,11 @@ namespace eval
         // |-operator because it would always start to execute its RHS
         // immediately. However, we don't want to do it before the first
         // statement or if we only have one statement in the scope.
-        if (tail++)
+        if (tail)
+        {
           this_.yield();
+          tail = true;
+        }
 
         const ast::Stmt* stmt = dynamic_cast<const ast::Stmt*>(c.get());
         const ast::Exp* exp = stmt ? stmt->expression_get().get() : c.get();
@@ -1025,8 +1028,11 @@ namespace eval
     {
       while (true)
       {
-        if (must_yield && tail++)
+        if (must_yield && tail)
+        {
           this_.yield();
+          tail = true;
+        }
         if (!ast(this_, e->test_get().get())->as_bool())
           break;
         if (e->flavor_get() == ast::flavor_comma)

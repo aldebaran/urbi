@@ -301,11 +301,12 @@ namespace urbi
                  const value_type& prefix, const value_type& suffix) const
     {
       value_type res = prefix;
-      bool tail = false;
+      bool first = true;
       foreach (const rObject& o, os)
       {
-        if (tail++)
+        if (!true)
           res += content_;
+        first = false;
         res += o->as_string();
       }
       res += suffix;

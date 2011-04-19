@@ -25,6 +25,18 @@ namespace boost
       | vector_type.  |
       `--------------*/
 
+      bool
+      operator==(const ::urbi::object::vector_type& e1,
+                 const ::urbi::object::vector_type& e2)
+      {
+        if (e1.size() != e2.size())
+          return false;
+        for (unsigned i = 0; i < e1.size(); ++i)
+          if (e1(i) != e2(i))
+            return false;
+        return true;
+      }
+
       std::ostream&
       operator<<(std::ostream& o, const ::urbi::object::vector_type& v)
       {
@@ -38,6 +50,21 @@ namespace boost
         return o << '>';
       }
 
+
+
+      /*--------------.
+      | matrix_type.  |
+      `--------------*/
+
+      bool
+      operator==(const ::urbi::object::matrix_type& e1,
+                 const ::urbi::object::matrix_type& e2)
+      {
+        return
+          (e1.size1() == e2.size1()
+           && e1.size2() == e2.size2()
+           && norm_inf(e1 - e2) == 0);
+      }
 
       std::ostream&
       operator<<(std::ostream& o, const ::urbi::object::matrix_type& v)
@@ -61,36 +88,6 @@ namespace urbi
 {
   namespace object
   {
-
-    /*--------------.
-    | vector_type.  |
-    `--------------*/
-
-    bool
-    operator==(const vector_type& e1, const vector_type& e2)
-    {
-      if (e1.size() != e2.size())
-        return false;
-      for (unsigned i = 0; i < e1.size(); ++i)
-        if (e1(i) != e2(i))
-          return false;
-      return true;
-    }
-
-
-    /*--------------.
-    | matrix_type.  |
-    `--------------*/
-
-
-    bool
-    operator==(const matrix_type& e1, const matrix_type& e2)
-    {
-      return
-        (e1.size1() == e2.size1()
-         && e1.size2() == e2.size2()
-         && norm_inf(e1 - e2) == 0);
-    }
 
     /*---------.
     | Vector.  |
