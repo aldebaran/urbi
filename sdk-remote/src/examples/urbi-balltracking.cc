@@ -215,9 +215,12 @@ BallTracking::getImage(const urbi::UMessage &msg)
   if (img.imageFormat == urbi::IMAGE_JPEG)
   {
     size_t w, h;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wcast-align"
     urbi::convertJPEGtoYCrCb((const urbi::byte *) img.data, img.size,
                              (urbi::byte **) &image, imgsize
                              , w, h);
+#pragma clang diagnostic pop
   }
   else
     memcpy(image, img.data, img.width * img.height * 3);
