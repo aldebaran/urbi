@@ -3348,8 +3348,8 @@ either), them the message is unlikely to make sense.
 \subsection{Assertion Blocks}
 
 Groups of assertions are more readable when used with the
-\lstinline|assert{\var{exp1}; \var{exp2}; ...}| construct.  The
-(possibly empty) list of claims may be ended with a semicolon.
+\lstinline|assert{\var{exp1}; \var{exp2}; ...}| construct.  The (possibly
+empty) list of claims may be ended with a semicolon.
 
 \begin{urbiscript}
 assert
@@ -3361,8 +3361,30 @@ assert
 [00000002:error] !!! failed assertion: 1 == 1.'+'(1) (1 != 2)
 \end{urbiscript}
 
-For sake of readability and compactness, this documentation shows
-assertion blocks as follows.
+Variable declarations are valid in assertion blocks, in which case their
+scope is, of course, limited to the block.  If the variable is initialized,
+the initial value is \emph{not} asserted.  Contrast the following two
+similar examples.
+
+\begin{urbiscript}
+assert
+{
+  var x = 0;
+  ! x;
+};
+
+assert
+{
+  var x;
+  x = 0;
+  ! x;
+};
+[00000576:error] !!! failed assertion: x = 0
+\end{urbiscript}
+
+For sake of readability and compactness, this documentation shows assertion
+blocks as follows (see \autoref{sec:notations} for a description of the
+notations).
 
 \begin{urbiassert}
 true;

@@ -134,16 +134,11 @@ assert (["one" => 1]["one"] == 1);
   Syntactic sugar for \lstinline|set(\var{key}, \var{value})|, but returns
   \var{value}.
 
-\begin{urbiscript}
-{
-  var d = ["one" =>"2"];
-  assert
-  {
-    (d["one"] = 1) == 1;
-    d["one"] == 1;
-  };
-};
-\end{urbiscript}
+\begin{urbiassert}
+var d = ["one" =>"2"];
+(d["one"] = 1) == 1;
+d["one"] == 1;
+\end{urbiassert}
 
 
 \item[asBool]
@@ -304,31 +299,21 @@ catch (var e if e.isA(Dictionary.KeyError))
   The value associated to \var{key} if it exists, \var{defaultValue}
   otherwise.
 
-\begin{urbiscript}
-{
-  var d = ["one" => 1, "two" => 2];
-  assert
-  {
-    d.getWithDefault("one",  -1) == 1;
-    d.getWithDefault("three", 3) == 3;
-  };
-}|;
-\end{urbiscript}
+\begin{urbiassert}
+var d = ["one" => 1, "two" => 2];
+d.getWithDefault("one",  -1) == 1;
+d.getWithDefault("three", 3) == 3;
+\end{urbiassert}
 
 
 \item[has](<key>)%
   Whether the dictionary has a mapping for \var{key}.
 
-\begin{urbiscript}
-{
-  var d = ["one" => 1];
-  assert
-  {
-    d.has("one");
-    !d.has("zero");
-  };
-}|;
-\end{urbiscript}
+\begin{urbiassert}
+var d = ["one" => 1];
+d.has("one");
+!d.has("zero");
+\end{urbiassert}
 
   The infix operators \lstinline|in| and \lstinline|not in| use
   \lstinline|has| (see \autoref{sec:lang:operators:containers}).
@@ -352,19 +337,10 @@ Dictionary.clone.init("one", 1, "two", 2);
   The list of all the keys.  No particular order is ensured.  Since
   \refObject{List} features the same function, uniform iteration over
   a List or a Dictionary is possible.
-\begin{urbiscript}
-{
-  var d = ["one" => 1, "two" => 2];
-  assert(d.keys == ["one", "two"]);
-  assert({
-           var res = [];
-           for (var k: d.keys)
-             res << d[k];
-           res
-         }
-         == [1, 2]);
-};
-\end{urbiscript}
+\begin{urbiassert}
+var d = ["one" => 1, "two" => 2];
+d.keys == ["one", "two"];
+\end{urbiassert}
 
 
 \item[matchAgainst](<handler>, <pattern>)
@@ -396,18 +372,12 @@ Dictionary.clone.init("one", 1, "two", 2);
 \item[size]
   Number of element in the dictionary.
 
-\begin{urbiscript}
-{
-  var d = [=>];
-  assert(d.size == 0);
-  d["a"] = 0;
-  assert(d.size == 1);
-  d["b"] = 1;
-  assert(d.size == 2);
-  d["a"] = 2;
-  assert(d.size == 2);
-};
-\end{urbiscript}
+\begin{urbiassert}
+var d = [=>];  d.size == 0;
+d["a"] = 10;   d.size == 1;
+d["b"] = 20;   d.size == 2;
+d["a"] = 30;   d.size == 2;
+\end{urbiassert}
 
 
 
