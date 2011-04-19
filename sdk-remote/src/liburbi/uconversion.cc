@@ -17,6 +17,9 @@
 
 GD_CATEGORY(Urbi.Convert);
 
+// FIXME: we have alignment issues in this file.  That might be an
+// issue on some architectures.
+
 #ifndef NO_IMAGE_CONVERSION
 # include <csetjmp>
 
@@ -767,6 +770,10 @@ namespace urbi
 
 namespace urbi
 {
+
+  // FIXME: this is really debatable...
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wcast-align"
   static
   void
   dup(unsigned short* dst, const unsigned short* src, size_t count)
@@ -793,6 +800,7 @@ namespace urbi
       src++;
     }
   }
+#pragma clang diagnostic pop
 
   template<typename D> void
   pud(D* dst, const D* src, int count)
@@ -872,6 +880,9 @@ namespace urbi
     }
   }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wcast-align"
+
   int
   convert (const USound &source, USound &dest)
   {
@@ -885,20 +896,20 @@ namespace urbi
     size_t schannels, srate, ssampleSize;
     USoundSampleFormat ssampleFormat;
     if (source.soundFormat == SOUND_WAV)
-      {
-	wavheader * wh = (wavheader *)source.data;
-	schannels = wh->channels;
-	srate = wh->freqechant;
-	ssampleSize = wh->bitperchannel;
-	ssampleFormat = (ssampleSize>8)?SAMPLE_SIGNED:SAMPLE_UNSIGNED;
-      }
+    {
+      wavheader * wh = (wavheader *)source.data;
+      schannels = wh->channels;
+      srate = wh->freqechant;
+      ssampleSize = wh->bitperchannel;
+      ssampleFormat = (ssampleSize>8)?SAMPLE_SIGNED:SAMPLE_UNSIGNED;
+    }
     else
-      {
-	schannels = source.channels;
-	srate = source.rate;
-	ssampleSize = source.sampleSize;
-	ssampleFormat = source.sampleFormat;
-      }
+    {
+      schannels = source.channels;
+      srate = source.rate;
+      ssampleSize = source.sampleSize;
+      ssampleFormat = source.sampleFormat;
+    }
     if (!dest.channels)
       dest.channels = schannels;
     if (!dest.rate)
@@ -909,7 +920,7 @@ namespace urbi
       dest.sampleFormat = ssampleFormat;
     if (dest.soundFormat == SOUND_WAV)
       dest.sampleFormat = dest.sampleSize > 8 ? SAMPLE_SIGNED
-					      : SAMPLE_UNSIGNED;
+        : SAMPLE_UNSIGNED;
     // That's a big one!
     unsigned destSize =
       ((long long)(source.size
@@ -956,42 +967,43 @@ namespace urbi
     elementCount /= (dest.channels * (dest.sampleSize / 8));
     switch (ssampleSize * 1000 + dest.sampleSize)
     {
-      case 8008:
-        if (srate == dest.rate && schannels == 1 && dest.channels == 2)
-          dup((byte*)dbuffer, (byte*)sbuffer, elementCount);
-        else if (srate == dest.rate && schannels == 2 && dest.channels == 1)
-          pud(dbuffer, sbuffer, elementCount);
-        else
-	  copy(dbuffer, sbuffer, schannels, dest.channels, srate, dest.rate,
+    case 8008:
+      if (srate == dest.rate && schannels == 1 && dest.channels == 2)
+        dup((byte*)dbuffer, (byte*)sbuffer, elementCount);
+      else if (srate == dest.rate && schannels == 2 && dest.channels == 1)
+        pud(dbuffer, sbuffer, elementCount);
+      else
+        copy(dbuffer, sbuffer, schannels, dest.channels, srate, dest.rate,
 	     elementCount, ssampleFormat==SAMPLE_SIGNED, dest.sampleFormat ==
 	     SAMPLE_SIGNED);
-	break;
-      case 16008:
-	copy((short*)sbuffer, dbuffer, schannels, dest.channels, srate,
-	     dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED,
-	     dest.sampleFormat == SAMPLE_SIGNED);
-	break;
-      case 16016: // Data is short, but convertions needs an unsigned short.
-         if (srate == dest.rate && schannels == 1 && dest.channels == 2)
-          dup((unsigned short*)dbuffer,
-              (unsigned short*)sbuffer,
-              elementCount);
-        else if (srate == dest.rate && schannels == 2 && dest.channels == 1)
-          pud((unsigned short*)dbuffer,
-              (unsigned short*)sbuffer,
-              elementCount);
-        else
-	  copy((short*)sbuffer, (short*)dbuffer, schannels, dest.channels,
+      break;
+    case 16008:
+      copy((short*)sbuffer, dbuffer, schannels, dest.channels, srate,
+           dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED,
+           dest.sampleFormat == SAMPLE_SIGNED);
+      break;
+    case 16016: // Data is short, but convertions needs an unsigned short.
+      if (srate == dest.rate && schannels == 1 && dest.channels == 2)
+        dup((unsigned short*)dbuffer,
+            (unsigned short*)sbuffer,
+            elementCount);
+      else if (srate == dest.rate && schannels == 2 && dest.channels == 1)
+        pud((unsigned short*)dbuffer,
+            (unsigned short*)sbuffer,
+            elementCount);
+      else
+        copy((short*)sbuffer, (short*)dbuffer, schannels, dest.channels,
 	     srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED,
 	     dest.sampleFormat == SAMPLE_SIGNED);
-	break;
-      case 8016:
-	copy((char*)sbuffer, (short*)dbuffer, schannels, dest.channels,
-	     srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED,
-	     dest.sampleFormat == SAMPLE_SIGNED);
-	break;
+      break;
+    case 8016:
+      copy((char*)sbuffer, (short*)dbuffer, schannels, dest.channels,
+           srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED,
+           dest.sampleFormat == SAMPLE_SIGNED);
+      break;
     }
     return 0;
   }
+#pragma clang diagnostic pop
 
 } // namespace urbi

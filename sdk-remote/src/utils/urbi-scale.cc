@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2010, Gostai S.A.S.
+ * Copyright (C) 2005-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -48,7 +48,7 @@ main(int argc, char * argv[])
   std::vector<urbi::UCommand> lastuc (urbi::devCount);
   std::vector<urbi::UCommand> nextuc (urbi::devCount);
   for (size_t i = 0; i < urbi::devCount; ++i)
-    lastuc[i].timestamp = nextuc[i].timestamp =- 1;
+    lastuc[i].timestamp = nextuc[i].timestamp = -1;
 
 
   int inittime = 0;
