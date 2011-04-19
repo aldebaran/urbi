@@ -53,6 +53,7 @@ namespace urbi
         case 0:  return FormatInfo::Case::UNDEFINED;
         case 1:  return FormatInfo::Case::LOWER;
         }
+        unreachable();
       }
 
       static rObject
