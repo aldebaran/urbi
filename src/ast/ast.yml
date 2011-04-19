@@ -651,13 +651,15 @@ If:
     - '")"'
     - libport::iendl
     - ~thenclause
-    - libport::iendl
-    - '"else"'
     - '{
-         if (n->elseclause_get()->body_get().is_a<If>())
-           ostr_ << " " << *n->elseclause_get()->body_get();
-         else
-           ostr_ << libport::iendl << *n->elseclause_get();
+         if (!n->elseclause_get()->empty())
+         {
+           ostr_ << libport::iendl << "else";
+           if (n->elseclause_get()->body_get().is_a<If>())
+             ostr_ << " " << *n->elseclause_get()->body_get();
+           else
+             ostr_ << libport::iendl << *n->elseclause_get();
+          }
        }'
 
 While:
