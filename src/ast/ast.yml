@@ -1044,6 +1044,16 @@ LocalWrite:
         type: unsigned
         access: rwW
         init: '0'
+  printer:
+    - $what
+    - '" /* idx: "'
+    - $local_index
+    - '" */"'
+    - '{
+         if (n->value_get())
+           ostr_ << " = " << *n->value_get();
+       }'
+
 
 LocalDeclaration:
   super: LocalWrite
@@ -1064,11 +1074,7 @@ LocalDeclaration:
            ostr_ << "const ";
        }'
     - '"var "'
-    - $what
-    - '{
-         if (n->value_get())
-           ostr_ << " = " << *n->value_get();
-       }'
+    - '{ visit(static_cast<const LocalWrite*>(n)); }'
 
 LocalAssignment:
   super: LocalWrite
@@ -1092,9 +1098,7 @@ LocalAssignment:
         return declaration_->local_index_get();
       }
   printer:
-    - $what
-    - '" = "'
-    - ~value
+    - '{ visit(static_cast<const LocalWrite*>(n)); }'
 
 Write:
   super: Exp
