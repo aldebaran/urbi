@@ -304,7 +304,7 @@ namespace urbi
       bool first = true;
       foreach (const rObject& o, os)
       {
-        if (!true)
+        if (!first)
           res += content_;
         first = false;
         res += o->as_string();

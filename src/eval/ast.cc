@@ -576,7 +576,7 @@ namespace eval
     // contain only comma-terminated statements.
     rObject res = object::void_class;
 
-    bool tail = false;
+    bool first = true;
     try
     {
       foreach (const ast::rConstExp& c, e->children_get())
@@ -586,11 +586,9 @@ namespace eval
         // |-operator because it would always start to execute its RHS
         // immediately. However, we don't want to do it before the first
         // statement or if we only have one statement in the scope.
-        if (tail)
-        {
+        if (!first)
           this_.yield();
-          tail = true;
-        }
+        first = false;
 
         const ast::Stmt* stmt = dynamic_cast<const ast::Stmt*>(c.get());
         const ast::Exp* exp = stmt ? stmt->expression_get().get() : c.get();
@@ -1020,7 +1018,7 @@ namespace eval
   Visitor::visit(const ast::While* e)
   {
     const bool must_yield = e->flavor_get() != ast::flavor_pipe;
-    bool tail = false;
+    bool first = true;
 
     sched::Job::Collector collector(&this_);
 
@@ -1028,11 +1026,9 @@ namespace eval
     {
       while (true)
       {
-        if (must_yield && tail)
-        {
+        if (must_yield && !first)
           this_.yield();
-          tail = true;
-        }
+        first = false;
         if (!ast(this_, e->test_get().get())->as_bool())
           break;
         if (e->flavor_get() == ast::flavor_comma)
