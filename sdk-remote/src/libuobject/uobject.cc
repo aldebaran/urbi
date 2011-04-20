@@ -127,6 +127,14 @@ namespace urbi
       }
       virtual void write(char* buffer, size_t size)
       {
+        int p = size-1;
+        while (p && (buffer[p]==' ' || buffer[p] == '\n')) --p;
+        GD_FINFO_TRACE(
+          "Flushing %s bytes of serialized urbiscript ending with '%s'", size,
+                       buffer[p]);
+        if (!strchr(",;|&", buffer[p]))
+          GD_FWARN("Serialized message may be incomplete: %s",
+                 std::string(buffer, size));
         char code = UEM_EVAL;
         std::string msg(buffer, size);
         backend_->backend_->startPack();
@@ -686,6 +694,8 @@ namespace urbi
 
       // Send a terminating ';' since code send by the UObject API uses '|'.
       // But only in outermost dispatch call
+      GD_FINFO_DUMP("Flush check: depth %s, data sent %s", dispatchDepth,
+                    dataSent);
       if (dispatchDepth == 1 && dataSent)
       {
         URBI_SEND_COMMAND_C(*outputStream, "");
