@@ -224,7 +224,10 @@ namespace urbi
         if (!o)
           return o;
         else
-          return o->slot_get(libport::Symbol(p.second));
+        {
+          location_type l = o->slot_locate(libport::Symbol(p.second), true);
+          return l.first?l.second->value():0;
+        }
       }
       catch(UrbiException& e)
       {
