@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -61,7 +61,7 @@ namespace urbi
 /// Declare a CustomVar whose custom store is its value.
 #define UBindCacheVar(cls, v, t) \
   UBindVar(cls, v); \
-  ::urbi::createUCallback(*this, &v, "var", &CustomUVar<t>::updateCache, \
+  ::urbi::createUCallback(*this, &v, "var", &urbi::CustomUVar<t>::updateCache, \
                           v.get_name(), ctx_);
 
 # include <urbi/customuvar.hxx>
