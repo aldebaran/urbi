@@ -455,9 +455,10 @@ namespace urbi
     // Each UVar creation and each notifychange causes an 'external
     // var' message, so when the UVar dies, creation count is
     // callbacks.size +1.
-    ctx->send(libport::format("UObject.unnotify(\"%s\", \"%s\", %s)|",
-                              name.substr(0, p), name.substr(p+1, name.npos),
-                              callbacks_.size()+1));
+    URBI_SEND_PIPED_COMMAND_C((*ctx->outputStream),
+      "UObject.unnotify(\"" << name.substr(0, p) << "\", \""
+                            << name.substr(p+1, name.npos) << "\","
+                            << callbacks_.size()+1 << ")" );
     libport::BlockLock bl(ctx->tableLock);
     foreach(RemoteUGenericCallbackImpl* c, callbacks_)
     {
