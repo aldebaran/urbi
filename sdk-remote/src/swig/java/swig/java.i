@@ -325,11 +325,11 @@ namespace urbi
 %include "urbi/uimage.hh"
 
 %{
-  void setSize(urbi::UImage* b, size_t size)
+  void setSize(urbi::UImageImpl* b, size_t size)
   {
     b->size = size;
   }
-  size_t getSize(urbi::UImage* b)
+  size_t getSize(urbi::UImageImpl* b)
   {
     return b->size;
   }
@@ -337,7 +337,7 @@ namespace urbi
 
 namespace urbi
 {
-  %extend UImage {
+  %extend UImageImpl {
     // Delete data if allocated _JAVA_SIDE_
     void deleteData()
     {
@@ -357,7 +357,7 @@ namespace urbi
 
 namespace urbi
 {
-  %extend USound {
+  %extend USoundImpl {
     // Place this definition of data before the usound.hh header
     // so that swig consider data as unsigned char and generate correct
     // setter to -> byte[]
@@ -375,19 +375,19 @@ namespace urbi
 %include "urbi/usound.hh"
 
 %{
-  void urbi_USound_data_set(urbi::USound* b, unsigned char *data)
+  void urbi_USoundImpl_data_set(urbi::USoundImpl* b, unsigned char *data)
   {
     b->data = (char*) data;
   }
-  unsigned char * urbi_USound_data_get(urbi::USound* b)
+  unsigned char * urbi_USoundImpl_data_get(urbi::USoundImpl* b)
   {
     return (unsigned char *) b->data;
   }
-  void setSize(urbi::USound* b, size_t size)
+  void setSize(urbi::USoundImpl* b, size_t size)
   {
     b->size = size;
   }
-  size_t getSize(urbi::USound* b)
+  size_t getSize(urbi::USoundImpl* b)
   {
     return b->size;
   }
