@@ -24,6 +24,7 @@
 #include <urbi/uclient.hh>
 #undef URBI
 #include <urbi/uobject.hh>
+#include <urbi/customuvar.hh>
 #include <urbi/input-port.hh>
 
 GD_CATEGORY(Test.All);
@@ -192,6 +193,8 @@ public:
     UBindFunctions(all, pack, unpack);
     UBindVars(all, periodicWriteTarget, periodicWriteType, periodicWriteRate,
               periodicWriteCount, changeCount);
+    UBindCacheVar(all, writeLastChangeVal, bool);
+    writeLastChangeVal = true;
     periodicWriteCount = 1;
     UNotifyChange(periodicWriteRate, &all::onRateChange);
     vars[0] = &a;
@@ -503,20 +506,23 @@ public:
     GD_INFO_DUMP("entering onChange");
     lastChange = v.get_name();
     changeCount = ++count;
-    if (v.type() == urbi::DATA_DOUBLE)
+    if (writeLastChangeVal.data())
     {
-      GD_FINFO_DUMP("onChange double %s", v.get_name());
-      int val = v;
-      lastChangeVal = val;
+      if (v.type() == urbi::DATA_DOUBLE)
+      {
+        GD_FINFO_DUMP("onChange double %s", v.get_name());
+        int val = v;
+        lastChangeVal = val;
+      }
+      else if (v.type() == urbi::DATA_BINARY)
+      {
+        GD_FINFO_DUMP("onChange binary %s", v.get_name());
+        urbi::UBinary b = v;
+        lastChangeVal = b;
+      }
+      else
+        GD_FINFO_DUMP("onChange unknown %s", v.get_name());
     }
-    else if (v.type() == urbi::DATA_BINARY)
-    {
-      GD_FINFO_DUMP("onChange binary %s", v.get_name());
-      urbi::UBinary b = v;
-      lastChangeVal = b;
-    }
-    else
-      GD_FINFO_DUMP("onChange unknown %s", v.get_name());
     if (removeNotify == v.get_name())
     {
       v.unnotify();
@@ -1000,6 +1006,8 @@ public:
   urbi::UVar lastChange;
   //value read on said var
   urbi::UVar lastChangeVal;
+  // Only update lastChangeVal if true (default)
+  urbi::CustomUVar<bool> writeLastChangeVal;
   //name of var that triggered notifyAccess
   urbi::UVar lastAccess;
   //value written to said var
