@@ -1022,7 +1022,6 @@ namespace ast
     // from the original Scope node? For now, put the scope in a Do.
     rScope res;
     aver(e);
-    aver(!e.unsafe_cast<Noop>());
     if ((res = e.unsafe_cast<Scope>()) && !target)
       return res;
     else if (target)
