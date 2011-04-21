@@ -107,6 +107,8 @@ Matrix.new([[0, 1]]).appendRow(Vector.new(10));
   \this.
 \begin{urbiassert}
 Matrix.asMatrix === Matrix;
+var m = Matrix.new([1], [2]);
+m.asMatrix === m;
 \end{urbiassert}
 
 \item[asPrintable]%
@@ -128,14 +130,16 @@ Matrix.new([[1, 2], [3, 4]]).asString == "<<1, 2>, <3, 4>>";
 
 \end{urbiassert}
 
-\item[clone](<arg>)%
+\item[column](<i>)%
+  The \var{i}th column as a Vector.  See also \refSlot{row}.
 \begin{urbiassert}
+var m = Matrix.new([[1, 2, 3], [4, 5, 6]]);
+m.column(0) == Vector.new(1, 4);  m.column(-3) == m.column(0);
+m.column(1) == Vector.new(2, 5);  m.column(-2) == m.column(1);
+m.column(2) == Vector.new(3, 6);  m.column(-1) == m.column(2);
 
-\end{urbiassert}
-
-\item[column](<arg>)%
-\begin{urbiassert}
-
+m.column(3);
+[00000232:error] !!! column: invalid column: 3
 \end{urbiassert}
 
 \item[createIdentity](<size>)%
@@ -167,15 +171,9 @@ Matrix.createZeros(0, 0) == Matrix;
 Matrix.createZeros(2, 3) == Matrix.new([[0, 0, 0], [0, 0, 0]]);
 \end{urbiassert}
 
-\item[distanceMatrix](<arg>)%
-  Same as \lstinline|distanceToMatrix(\this)|.
-\begin{urbiassert}
-
-\end{urbiassert}
-
-\item[distanceToMatrix](<that>)%
-  Considering that \this and \that are collections of Vectors that denotes
-  positions in an Euclidean space, produce a matrix whose value at
+\item[distanceMatrix](<that>)%
+  Considering that \this and \that are collections of Vectors that denote
+  positions in an Euclidean space, produce a Matrix whose value at
   \lstinline|(\var{i}, \var{j})| is the distance between points
   \lstinline|this[\var{i}]| and \lstinline|\var{that}[\var{j}]|.
 \begin{urbiassert}
@@ -186,7 +184,7 @@ var lhs = Matrix.new([l0, l1]);
 var r0 = Vector.new([0, 1]);  var r1 = Vector.new([2, 0]);
 var rhs = Matrix.new([r0, r1]);
 
-lhs.distanceToMatrix(rhs)
+lhs.distanceMatrix(rhs)
   == Matrix.new([[l0.distance(r0), l0.distance(r1)],
                  [l1.distance(r0), l1.distance(r1)]]);
 \end{urbiassert}
@@ -250,9 +248,15 @@ assert
 };
 \end{urbiscript}
 
-\item[row](<arg>)%
+\item[row](<i>)%
+  The \var{i}th row as a Vector.  See also \refSlot{column}.
 \begin{urbiassert}
+var m = Matrix.new([[1, 2, 3], [4, 5, 6]]);
+m.row(0) == Vector.new(1, 2, 3);  m.row(-2) == m.row(0);
+m.row(1) == Vector.new(4, 5, 6);  m.row(-1) == m.row(1);
 
+m.row(2);
+[00195645:error] !!! row: invalid row: 2
 \end{urbiassert}
 
 \item[rowAdd](<vector>)%

@@ -111,10 +111,8 @@ namespace urbi
       value_type dot_times(const value_type& m) const;
       vector_type row(int i) const;
       vector_type column(int i) const;
-      // Row-by-row l2 interdistance matrix
-      value_type distanceMatrix() const;
-      // Row-by-row cross-distance matrix, self-major v-minor
-      value_type distanceToMatrix(const value_type& v) const;
+      // Row-by-row cross-distance matrix, self-major v-minor.
+      value_type distanceMatrix(const value_type& v) const;
       Matrix* setRow(int r, const vector_type& val);
       Matrix* appendRow(const vector_type& vals);
       rObject uvalueSerialize() const;

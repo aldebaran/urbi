@@ -384,7 +384,6 @@ namespace urbi
       BIND(createScalars, create_scalars);
       BIND(createZeros, create_zeros);
       BIND(distanceMatrix);
-      BIND(distanceToMatrix);
       BIND(inverse, inverse, value_type, () const);
       BIND(resize);
       BIND(row);
@@ -512,13 +511,7 @@ namespace urbi
     }
 
     Matrix::value_type
-    Matrix::distanceMatrix() const
-    {
-      return distanceToMatrix(this->value_);
-    }
-
-    Matrix::value_type
-    Matrix::distanceToMatrix(const value_type& b) const
+    Matrix::distanceMatrix(const value_type& b) const
     {
       const size_t height = size1();
       const size_t width = size2();
@@ -530,7 +523,7 @@ namespace urbi
         for (unsigned p2 = 0; p2 < height2; ++p2)
         {
           ufloat v = 0;
-          for (unsigned i=0; i<width; ++i)
+          for (unsigned i=0; i < width; ++i)
           {
             ufloat t = value_(p1, i) - b(p2, i);
             v += t*t;
