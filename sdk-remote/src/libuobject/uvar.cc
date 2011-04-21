@@ -388,7 +388,7 @@ namespace urbi
         }
       }
     }
-    if (!rtp)
+    if (!rtp && !ctx->serializationMode)
     {
       ctx->markDataSent();
     }
