@@ -38,6 +38,8 @@ namespace urbi
 
       void open(rFile f, libport::Socket::OpenMode mode, int extraFlags = 0,
                 int createMode = 0);
+      /// Whether the stream is disconnected.
+      bool closed() const;
       /// Check that the stream is not closed.
       /// Raise an error if it is.
       void check() const;

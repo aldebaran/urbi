@@ -35,18 +35,14 @@ removed at all.  Therefore, do not forget to close the streams you opened.
 \item[close] Flush the buffers, close the stream, return void.  Raise an
   error if the file is closed.
 \begin{urbiscript}
-{
-  var i = InputStream.new(File.create("file.txt"));
-  assert(i.close.isVoid);
-  i.close;
-};
+var i = InputStream.new(File.create("file.txt"))|;
+assert(i.close.isVoid);
+i.close;
 [00000001:error] !!! close: stream is closed
 
-{
-  var o = OutputStream.new(File.create("file.txt"));
-  assert(o.close.isVoid);
-  o.close;
-};
+var o = OutputStream.new(File.create("file.txt"))|;
+assert(o.close.isVoid);
+o.close;
 [00000002:error] !!! close: stream is closed
 \end{urbiscript}
 \end{urbiscriptapi}

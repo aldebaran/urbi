@@ -49,60 +49,70 @@ is.close;
   Get the next available byte as a \refObject{Float}, or \lstinline|void| if
   the end of file was reached.  Raise an error if the file is closed.
 \begin{urbiscript}
-{
-  File.save("file.txt", "1\n2\n");
-  var i = InputStream.new(File.new("file.txt"));
-  var x;
-  while (!(x = i.get.acceptVoid).isVoid)
-    cout << x;
-  i.close;
-  i.get;
-};
+File.save("file.txt", "1\n2\n")|;
+var i = InputStream.new(File.new("file.txt"))|;
+var x;
+while (!(x = i.get.acceptVoid).isVoid)
+  cout << x;
 [00000001:output] 49
 [00000002:output] 10
 [00000003:output] 50
 [00000004:output] 10
+
+i.close;
+
+i.get;
 [00000005:error] !!! get: stream is closed
 \end{urbiscript}
+\begin{urbicomment}
+removeSlots("i", "x");
+\end{urbicomment}
 
 \item[getChar]%
   Get the next available byte as a \refObject{String}, or \lstinline|void|
   if the end of file was reached.  Raise an error if the file is closed.
 \begin{urbiscript}
-{
-  File.save("file.txt", "1\n2\n");
-  var i = InputStream.new(File.new("file.txt"));
-  var x;
-  while (!(x = i.getChar.acceptVoid).isVoid)
-    cout << x;
-  i.close;
-  i.getChar;
-};
+File.save("file.txt", "1\n2\n")|;
+var i = InputStream.new(File.new("file.txt"))|;
+var x;
+while (!(x = i.getChar.acceptVoid).isVoid)
+  cout << x;
 [00000001:output] "1"
 [00000002:output] "\n"
 [00000003:output] "2"
 [00000004:output] "\n"
+
+i.close;
+
+i.getChar;
 [00000005:error] !!! getChar: stream is closed
 \end{urbiscript}
+\begin{urbicomment}
+removeSlots("i", "x");
+\end{urbicomment}
 
 \item[getLine]%
   Get the next available line as a \refObject{String}, or \lstinline|void|
   if the end of file was reached.  The end-of-line characters are trimmed.
   Raise an error if the file is closed.
 \begin{urbiscript}
-{
-  File.save("file.txt", "1\n2\n");
-  var i = InputStream.new(File.new("file.txt"));
-  var x;
-  while (!(x = i.getLine.acceptVoid).isVoid)
-    cout << x;
-  i.close;
-  i.getLine;
-};
+File.save("file.txt", "1\n2\n")|;
+var i = InputStream.new(File.new("file.txt"))|;
+var x;
+while (!(x = i.getLine.acceptVoid).isVoid)
+  cout << x;
 [00000001:output] "1"
 [00000002:output] "2"
+
+i.close;
+
+i.getLine;
 [00000005:error] !!! getLine: stream is closed
 \end{urbiscript}
+\begin{urbicomment}
+removeSlots("i", "x");
+\end{urbicomment}
+
 \end{urbiscriptapi}
 
 

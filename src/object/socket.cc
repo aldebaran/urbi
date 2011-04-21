@@ -77,12 +77,10 @@ namespace urbi
       io_service_ = get_default_io_service();
 
       // Uncomment the line below when overloading works.
-      //bind(SYMBOL(connectSerial),
-      //     (void (Socket::*)(const std::string&, unsigned int))
-      //       &Socket::connectSerial);
-      bind(SYMBOL(connectSerial),
-           (void (Socket::*)(const std::string&, unsigned int, bool))
-             &Socket::connectSerial);
+      //BIND(connectSerial,
+      //     connectSerial, void, (const std::string&, unsigned int))
+      BIND(connectSerial, connectSerial,
+           void, (const std::string&, unsigned int, bool));
       BIND(disconnect);
       BIND(host);
       BIND(init);

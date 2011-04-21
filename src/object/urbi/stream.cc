@@ -87,8 +87,14 @@ namespace urbi
     void
     Stream::check() const
     {
-      if (!socket_ || !socket_->isConnected())
+      if (closed())
         RAISE("stream is closed");
+    }
+
+    bool
+    Stream::closed() const
+    {
+      return !socket_ || !socket_->isConnected();
     }
 
     void
@@ -98,9 +104,11 @@ namespace urbi
       socket_->close();
       socket_ = 0;
     }
+
     URBI_CXX_OBJECT_INIT(Stream)
     {
       BIND(close);
+      BIND(closed);
     }
   }
 }
