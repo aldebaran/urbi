@@ -1081,10 +1081,7 @@ namespace urbi
     RemoteUContextImpl::markDataSent()
     {
       if (backend_->isCallbackThread() && dispatchDepth)
-      {
-        if (!serializationMode) // No it cannot go in the if above.
-          dataSent = true;
-      }
+        dataSent = true;
       else // we were not called by dispatch: send the terminating ';' ourselve.
         URBI_SEND_COMMAND_C((*outputStream), "");
     }
