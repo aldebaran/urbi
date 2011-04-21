@@ -151,8 +151,6 @@ namespace urbi
       matrix_type combMul(const value_type& b) const;
       matrix_type combSub(const value_type& b) const;
 
-      // Return the indices from the original vector after a selfComb op.
-      std::pair<size_t, size_t> selfCombIndexes(size_t v);
       // Scalar field by field comparison operations
       value_type scalarGT(const value_type &b) const;
       value_type scalarGE(const value_type &b) const;

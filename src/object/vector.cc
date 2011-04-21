@@ -188,7 +188,6 @@ namespace urbi
       BIND(resize);
       BIND(scalarGE);
       BIND(scalarLE);
-      BIND(selfCombIndexes);
       BIND(set, fromList);
       BIND(size);
       BIND(sum);
@@ -312,21 +311,6 @@ namespace urbi
     OP(Mul, *)
     OP(Sub, -)
 #undef OP
-
-    std::pair<size_t, size_t>
-    Vector::selfCombIndexes(size_t v)
-    {
-      size_t i=0;
-      size_t j=0;
-      size_t p=0;
-      while (p+ size()-i -1 < v)
-      {
-        p += size() -i - 1;
-        ++i;
-      }
-      j = v-p;
-      return std::make_pair(i, j);
-    }
 
     Vector*
     Vector::resize(size_t s)
