@@ -126,7 +126,7 @@ namespace urbi
     }
 
     Matrix::value_type
-    Matrix::invert(const value_type& m)
+    Matrix::inverse(const value_type& m)
     {
       using namespace boost::numeric::ublas;
       size_t size1 = m.size1();
@@ -149,9 +149,9 @@ namespace urbi
     }
 
     Matrix::value_type
-    Matrix::invert() const
+    Matrix::inverse() const
     {
-      return invert(value_);
+      return inverse(value_);
     }
 
     Matrix::value_type
@@ -288,13 +288,13 @@ namespace urbi
     Matrix::value_type
     Matrix::operator /(const value_type& rhs) const
     {
-      return prod(value_, invert(rhs));
+      return prod(value_, inverse(rhs));
     }
 
     Matrix*
     Matrix::operator /=(const value_type& rhs)
     {
-      value_ = prod(value_, invert(rhs));
+      value_ = prod(value_, inverse(rhs));
       return this;
     }
 
@@ -385,7 +385,7 @@ namespace urbi
       BIND(createZeros, create_zeros);
       BIND(distanceMatrix);
       BIND(distanceToMatrix);
-      BIND(invert, invert, value_type, () const);
+      BIND(inverse, inverse, value_type, () const);
       BIND(resize);
       BIND(row);
       BIND(rowAdd);

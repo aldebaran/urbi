@@ -87,8 +87,8 @@ namespace urbi
       static value_type create_ones(rObject, int size1, int size2);
 
       value_type transpose() const;
-      static value_type invert(const value_type& m);
-      value_type invert() const;
+      static value_type inverse(const value_type& m);
+      value_type inverse() const;
       value_type solve(const vector_type& vector) const;
 
       ufloat operator()(int, int) const;
