@@ -92,7 +92,7 @@ namespace urbi
       }
 
       objects_type effective_args(args.begin() + 1, args.end());
-      return self->fromArgsList(effective_args);
+      return self->fromList(effective_args);
     }
 
     Matrix::value_type
@@ -165,7 +165,7 @@ namespace urbi
     }
 
     Matrix*
-    Matrix::fromArgsList(const objects_type& args)
+    Matrix::fromList(const objects_type& args)
     {
       size_type width;
       const size_type height = args.size();
@@ -209,12 +209,6 @@ namespace urbi
           runner::raise_type_error(args[i], List::proto);
       }
       return this;
-    }
-
-    Matrix*
-    Matrix::fromList(const objects_type& model)
-    {
-      return fromArgsList(model);
     }
 
 
@@ -378,8 +372,6 @@ namespace urbi
       BIND_VARIADIC(STAR, times);
       BIND_VARIADIC(STAR_EQ, times_assign);
 
-      //BIND(SBL_SBR, operator());
-      //BIND(SBL_SBR_EQ, set);
       //BIND(dot_times, dotWiseMult);
       //BIND(solve);
       BIND(appendRow);
@@ -401,7 +393,6 @@ namespace urbi
       BIND(rowMul);
       BIND(rowNorm);
       BIND(rowSub);
-      BIND(set);
       BIND(setRow);
       BIND(transpose);
       BIND(uvalueSerialize);

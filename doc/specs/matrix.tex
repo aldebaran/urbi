@@ -337,9 +337,9 @@ do (Matrix)
   assert
   {
     rowSub(Vector) == Matrix;
-    new([[10, 20]]).rowSub(Vector.new(1))     == new([[9, 19]]);
-    new([11], [22]).rowSub(Vector.new(10, 20)) == new([1], [2]);
-    new([1, 2], [3, 4]).rowSub(Vector.new(1, 2)) == new([0, 1], [1, 2]);
+    new([[10, 20]])    .rowSub(Vector.new(1))      == new([[9, 19]]);
+    new([11], [22])    .rowSub(Vector.new(10, 20)) == new([1], [2]);
+    new([1, 2], [3, 4]).rowSub(Vector.new(1, 2))   == new([0, 1], [1, 2]);
   }
 }|;
 \end{urbiscript}
@@ -355,9 +355,19 @@ Matrix.new([[1, 2]]).rowSub(Vector.new(10, 20));
 \end{urbiscript}
 
 
-\item[set](<arg>)%
+\item[set](<vectors>)%
+  Change \this to be equal to the Matrix defined by the list of vectors
+  given as argument, and return \this.
 \begin{urbiassert}
+var m = Matrix.new([]);
 
+var m1 = Matrix.new([[0, 1], [0, 1]]);
+    m  ===    m.set([[0, 1], [0, 1]]);
+    m  == m1;
+
+var m2 = Matrix.new([[2, 3]]);
+    m  ===    m.set([[2, 3]]);
+    m  == m2;
 \end{urbiassert}
 
 \item[setRow](<index>, <vector>)%

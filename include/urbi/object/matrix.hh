@@ -122,8 +122,6 @@ namespace urbi
       std::string make_string(char col_lsep, char col_rsep,
                               const std::string row_lsep,
                               const std::string row_rsep) const;
-      Matrix* fromArgsList(const objects_type& rows);
-
       value_type value_;
       URBI_CXX_OBJECT(Matrix, CxxObject);
     };
