@@ -393,7 +393,6 @@ namespace urbi
       BIND(createZeros, create_zeros);
       BIND(distanceMatrix);
       BIND(distanceToMatrix);
-      BIND(get);
       BIND(invert, invert, value_type, () const);
       BIND(resize);
       BIND(row);
@@ -487,18 +486,17 @@ namespace urbi
     ufloat
     Matrix::operator()(int i, int j) const
     {
-      return value_(index1(i), index2(j));
-    }
-
-    Matrix*
-    Matrix::set(int i, int j, ufloat v)
-    {
-      value_(index1(i), index2(j)) = v;
-      return this;
+      return get(i, j);
     }
 
     ufloat
-    Matrix::get(int i, int j)
+    Matrix::set(int i, int j, ufloat v)
+    {
+      return value_(index1(i), index2(j)) = v;
+    }
+
+    ufloat
+    Matrix::get(int i, int j) const
     {
       return value_(index1(i), index2(j));
     }

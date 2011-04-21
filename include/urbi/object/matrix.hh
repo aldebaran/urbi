@@ -97,8 +97,8 @@ namespace urbi
       size_t size1() const;
       size_t size2() const;
       Matrix* resize(size_t i, size_t j);
-      Matrix* set(int i, int j, ufloat v);
-      ufloat get(int i, int j);
+      ufloat set(int i, int j, ufloat v);
+      ufloat get(int i, int j) const;
       size_t index1(int) const;
       size_t index2(int) const;
 
