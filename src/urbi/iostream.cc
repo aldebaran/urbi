@@ -31,6 +31,11 @@ namespace urbi
     aver(buffer);
   }
 
+  StreamBuffer::Buffer::~Buffer()
+  {
+    free(buffer);
+  }
+
   StreamBuffer::StreamBuffer()
     : buffer1_()
     , buffer2_()

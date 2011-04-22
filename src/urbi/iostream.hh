@@ -45,6 +45,7 @@ namespace urbi
     struct Buffer
     {
       Buffer();
+      ~Buffer();
       char* buffer;
       size_t used;
       size_t size;
