@@ -156,6 +156,9 @@ m.column(3);
 \begin{urbiassert}
 Matrix.createIdentity(0) == Matrix;
 Matrix.createIdentity(3) == Matrix.new([[1, 0, 0], [0, 1, 0], [0, 0, 1]]);
+
+Matrix.createIdentity(-2);
+[00000328:error] !!! createIdentity: argument 1: expected non-negative integer: -2
 \end{urbiassert}
 
 
@@ -164,6 +167,9 @@ Matrix.createIdentity(3) == Matrix.new([[1, 0, 0], [0, 1, 0], [0, 0, 1]]);
 \begin{urbiassert}
 Matrix.createOnes(0, 0) == Matrix;
 Matrix.createOnes(2, 3) == Matrix.new([[1, 1, 1], [1, 1, 1]]);
+
+Matrix.createOnes(-2, 2);
+[00000328:error] !!! createOnes: argument 1: expected non-negative integer: -2
 \end{urbiassert}
 
 
@@ -173,6 +179,9 @@ Matrix.createOnes(2, 3) == Matrix.new([[1, 1, 1], [1, 1, 1]]);
 \begin{urbiassert}
 Matrix.createScalars(0, 0, 99) == Matrix;
 Matrix.createScalars(2, 3, 99) == Matrix.new([[99, 99, 99], [99, 99, 99]]);
+
+Matrix.createScalars(-2, 2, 99);
+[00000328:error] !!! createScalars: argument 1: expected non-negative integer: -2
 \end{urbiassert}
 
 
@@ -181,6 +190,9 @@ Matrix.createScalars(2, 3, 99) == Matrix.new([[99, 99, 99], [99, 99, 99]]);
 \begin{urbiassert}
 Matrix.createZeros(0, 0) == Matrix;
 Matrix.createZeros(2, 3) == Matrix.new([[0, 0, 0], [0, 0, 0]]);
+
+Matrix.createZeros(-2, 2);
+[00000328:error] !!! createZeros: argument 1: expected non-negative integer: -2
 \end{urbiassert}
 
 
