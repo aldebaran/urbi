@@ -297,9 +297,9 @@ MacPorts: valgrind-devel
 
 \section{Check out}
 
-Get the open source version tarball from
-\url{http://www.urbiforge.com/index.php/Main/Downloads} and uncompress it.
-With this version, the bootstrap step can be skipped.
+Get the open source version tarball from \url{\downloadUrl/urbi/2.x/} and
+uncompress it.  This version is bootstrapped, you can directly proceed to
+the ``Configure'' step.
 
 \section{Bootstrap}
 Run
@@ -332,11 +332,34 @@ arguments to configure:
 $ ../configure CC='ccache gcc' CXX='ccache g++' ...
 \end{shell}
 
+For the records, here are some of the \option{--enable-}/\option{--disable-}
+specific options.
+
+\begin{options}
+\item{enable-bindings} Whether to generate the bindings to other languages,
+  such as UObject Java support.  Disabling is
+  fine:\option{--disable-bindings}.
+\item{enable-compilation-mode=\var{mode}} Specify the flavor of the build.
+  You should use \option{--enable-compilation-mode=speed}.
+\item{enable-doc=\var{formats}} Specify what formats of the documentation
+  must be built.  Disabling is fine: \option{--disable-doc}.
+\item{enable-doc-sections=\var{sections}} If the PDF or HTML documentation
+  is to be generated, specify what optional sections of the documentation
+  must be built.
+\item{enable-examples} Whether to build the sample programs
+  (\command{urbi-ball-tracking} and so forth).  Disabling is fine:
+  \option{--disable-examples}.
+\item{enable-sdk-remote} Whether to build the Urbi SDK Remote libraries.
+  Disabling is fine: \option{--disable-sdk-remote}.
+\item{enable-ufloat=\var{kind}} Do not use this option, it is experimental
+  and unreliable.
+\end{options}
+
+
 \subsection{Windows: Cygwin}
-The builds for windows use our wrappers.  These wrappers use a
-database to store the dependencies (actually, to speed up their
-computation).  We use Perl, and its DBI module.  So be sort to have
-sqlite, and DBI.
+The builds for Windows use our wrappers.  These wrappers use a database to
+store the dependencies (actually, to speed up their computation).  We use
+Perl, and its DBI module.  So be sort to have sqlite, and DBI.
 
 \begin{shell}
 $ perl -MCPAN -e 'install Bundle::DBI'
@@ -398,7 +421,7 @@ Boost and the \samp{vcxx8} part).
 $ ../configure                                                  \
   -C                                                            \
   --prefix=/usr/local/gostai                                    \
-  --enable-compilation-mode=debug                               \
+  --enable-compilation-mode=speed                               \
   --enable-shared                                               \
   --disable-static                                              \
   --enable-dependency-tracking                                  \
