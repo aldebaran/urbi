@@ -118,14 +118,14 @@ namespace urbi
       }
       if (min == max)
       {
-        GD_FINFO_TRACE("arity error for primitive: expected %s, got %s.",
+        GD_FINFO_TRACE("arity error for primitive: expected %s: %s",
                        min, arity);
         runner::raise_arity_error(arity - 1, min - 1);
       }
       else
       {
         GD_FINFO_TRACE("arity error for primitive: "
-                       "expected between %s and %s, got %s.",
+                       "expected between %s and %s: %s",
                        min, max, arity);
         runner::raise_arity_error(arity - 1, min - 1, max - 1);
       }

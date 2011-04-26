@@ -31,9 +31,9 @@ namespace urbi
 {
   namespace object
   {
-    /*--------.
-    | Helpers |
-    `--------*/
+    /*----------.
+    | Helpers.  |
+    `----------*/
 
     /// Convert an rFloat to an integral value.
     template <typename T>
@@ -45,12 +45,16 @@ namespace urbi
       {
         return libport::numeric_cast<T>(value);
       }
-      catch (libport::bad_numeric_cast& e)
-      {
-        std::string format = e.what();
-        format += ": %s";
-        runner::raise_bad_integer_error(value, format);
-      }
+#define RETHROW(Name, Message)                                          \
+    catch (const libport::Name&)                                        \
+    {                                                                   \
+      runner::raise_bad_integer_error(value,                            \
+                                      std::string(Message) + ": %s");   \
+    }
+    RETHROW(negative_overflow, "expected non-negative integer")
+    RETHROW(positive_overflow, "expected non-positive integer")
+    RETHROW(bad_numeric_cast, "expected integer")
+#undef RETHROW
     }
 
 
@@ -184,14 +188,14 @@ namespace urbi
     {                                           \
       typedef Type target_type;                 \
       static target_type                        \
-        to(const rObject& o)                    \
+      to(const rObject& o)                      \
       {                                         \
         type_check<Float>(o);                   \
         return to_integer<target_type>(o);      \
       }                                         \
                                                 \
       static rObject                            \
-        from(target_type v)                     \
+      from(target_type v)                       \
       {                                         \
         return new Float(v);                    \
       }                                         \

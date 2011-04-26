@@ -79,9 +79,9 @@ namespace urbi
 #define CONVERSION(Type, Expected)                                      \
       static Type                                                       \
       to_ ## Type(value_type v,                                         \
-                  std::string fmt = "expected " Expected ", got %s");   \
+                  std::string fmt = "expected " Expected ": %s");       \
       Type                                                              \
-      to_ ## Type(std::string fmt = "expected " Expected ", got %s") const
+      to_ ## Type(std::string fmt = "expected " Expected ": %s") const
 
       CONVERSION(int_type, "integer");
       CONVERSION(unsigned_type, "non-negative integer");

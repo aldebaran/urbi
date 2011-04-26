@@ -225,7 +225,7 @@ namespace urbi
           CASE( 1, RIGHT);
 #undef CASE
           default:
-            FRAISE("expected integer -1, 0 or 1, got %s", v);
+            FRAISE("expected integer -1, 0 or 1: %s", v);
         }
       else if (slot == "alt")
         alt_ = val->as_bool();
@@ -233,14 +233,14 @@ namespace urbi
       {
         std::string v = from_urbi<rString>(val)->value_get();
         if (!v.empty() && v != " ")
-          FRAISE("expected \" \" or \"\", got \"%s\"", v);
+          FRAISE("expected \" \" or \"\": \"%s\"", v);
         group_ = v;
       }
       else if (slot == "pad")
       {
         std::string v = from_urbi<rString>(val)->value_get();
         if (v != " " && v != "0")
-          FRAISE("expected \" \" or \"0\", got \"%s\"", v);
+          FRAISE("expected \" \" or \"0\": \"%s\"", v);
         pad_ = v;
       }
       else if (slot == "precision")
@@ -249,16 +249,16 @@ namespace urbi
       {
         std::string v = from_urbi<rString>(val)->value_get();
         if (v != " " && v != "+" && v != "")
-          FRAISE("expected \"\", \" \" or \"+\", got \"%s\"", v);
+          FRAISE("expected \"\", \" \" or \"+\": \"%s\"", v);
         prefix_ = v;
       }
       else if (slot == "spec")
       {
         std::string val_(from_urbi<rString>(val)->value_get());
         if (val_.size() != 1)
-          RAISE("expected one-character long string, got " + val_);
+          RAISE("expected one-character long string: " + val_);
         if (!strchr("sdbxoefEDX", val_[0]))
-          RAISE("expected one character in \"sdbxoefEDX\", got \"" + val_ + "\"");
+          RAISE("expected one character in \"sdbxoefEDX\": \"" + val_ + "\"");
         spec_ = from_urbi<rString>(val)->to_lower();
         uppercase_ = (spec_ == "s"       ? Case::UNDEFINED
                       : islower(val_[0]) ? Case::LOWER
@@ -274,7 +274,7 @@ namespace urbi
           CASE( 1, UPPER,     "D");
 #undef CASE
           default:
-            FRAISE("expected integer -1, 0 or 1, got %s", v);
+            FRAISE("expected integer -1, 0 or 1: %s", v);
         }
       else if (slot == "width")
         width_ = from_urbi<rFloat>(val)->to_unsigned_type();

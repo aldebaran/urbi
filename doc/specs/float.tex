@@ -277,7 +277,7 @@ Float.pi.cos == -1;
 "%x" % 0xFFFF == "ffff";
 
 "%x" % 0.5;
-[00000005:error] !!! %: expected integer, got 0.5
+[00000005:error] !!! %: expected integer: 0.5
 \end{urbiassert}
 
 \item[fresh]%
@@ -306,7 +306,7 @@ Float.pi.cos == -1;
 \end{urbiassert}
 
 %%% FIXME: This message is not right, it should be:
-%%% [00000005:error] !!! hex: expected integer, got 0.5
+%%% [00000005:error] !!! hex: expected integer: 0.5
 \item[hex]
   A String with the conversion of \this in hexadecimal.  Requires \this to
   be integral.
@@ -318,7 +318,7 @@ Float.pi.cos == -1;
 0xffff_ffff.hex == "ffffffff";
 
 0.5.hex;
-[00000005:error] !!! format: expected integer, got 0.5
+[00000005:error] !!! format: expected integer: 0.5
 \end{urbiassert}
 
 \item[inf]
@@ -419,9 +419,10 @@ Float.pi.cos ** 2 + Float.pi.sin ** 2 == 1;
 \begin{urbiassert}
 3.seq == [0, 1, 2];
 0.seq == [];
+
+(-1).seq;
+[00004586:error] !!! seq: expected non-negative integer: -1
 \end{urbiassert}
-%% FIXME: (-1).seq;
-%% FIXME: [00004586:error] !!! seq: expected non-negative integer, got -1
 
 \item[sign]
   Return 1 if \this is positive, 0 if it is null, -1

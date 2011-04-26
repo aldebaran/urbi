@@ -366,7 +366,7 @@ namespace urbi
 #undef BOUNCE
 
     static const std::string positive_error_fmt =
-      "expected positive integer, got %s";
+      "expected positive integer: %s";
 
     Float::unsigned_type
     Float::random() const
