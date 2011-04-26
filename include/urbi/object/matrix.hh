@@ -72,10 +72,11 @@ namespace urbi
       value_type rowDiv(const vector_type& rhs) const;
       vector_type rowNorm() const;
 
-      static value_type create_zeros(rObject, int size1, int size2);
-      static value_type create_identity(rObject, int size);
-      static value_type create_scalars(rObject, int size1, int size2, ufloat v);
-      static value_type create_ones(rObject, int size1, int size2);
+      static value_type create_zeros(rObject, size_t size1, size_t size2);
+      static value_type create_identity(rObject, size_t size);
+      static value_type create_scalars(rObject, size_t size1, size_t size2,
+                                       ufloat v);
+      static value_type create_ones(rObject, size_t size1, size_t size2);
 
       value_type transpose() const;
       value_type inverse() const;
@@ -89,6 +90,7 @@ namespace urbi
       Matrix* resize(size_t i, size_t j);
       ufloat set(int i, int j, ufloat v);
       ufloat get(int i, int j) const;
+      /// Validate and convert an index [-size .. size[ to [0 .. size[.
       size_t index1(int) const;
       size_t index2(int) const;
 

@@ -96,25 +96,25 @@ namespace urbi
     }
 
     Matrix::value_type
-    Matrix::create_zeros(rObject, int size1, int size2)
+    Matrix::create_zeros(rObject, size_t size1, size_t size2)
     {
       return boost::numeric::ublas::zero_matrix<ufloat>(size1, size2);
     }
 
     Matrix::value_type
-    Matrix::create_identity(rObject, int size)
+    Matrix::create_identity(rObject, size_t size)
     {
       return boost::numeric::ublas::identity_matrix<ufloat>(size);
     }
 
     Matrix::value_type
-    Matrix::create_scalars(rObject, int size1, int size2, ufloat v)
+    Matrix::create_scalars(rObject, size_t size1, size_t size2, ufloat v)
     {
       return boost::numeric::ublas::scalar_matrix<ufloat>(size1, size2, v);
     }
 
     Matrix::value_type
-    Matrix::create_ones(rObject self, int size1, int size2)
+    Matrix::create_ones(rObject self, size_t size1, size_t size2)
     {
       return create_scalars(self, size1, size2, 1.0);
     }
@@ -351,6 +351,9 @@ namespace urbi
 
       //BIND(dot_times, dotWiseMult);
       //BIND(solve);
+      BIND(EQ_EQ, operator==, bool, (const rObject&) const);
+      BIND(SBL_SBR, operator());
+      BIND(SBL_SBR_EQ, set);
       BIND(appendRow);
       BIND(asPrintable);
       BIND(asString);
@@ -369,15 +372,11 @@ namespace urbi
       BIND(rowMul);
       BIND(rowNorm);
       BIND(rowSub);
+      BIND(set, fromList);
       BIND(setRow);
+      BIND(size, size, rObject, () const);
       BIND(transpose);
       BIND(uvalueSerialize);
-      bind(libport::Symbol( "[]" ), &Matrix::operator());
-      bind(libport::Symbol( "[]=" ), &Matrix::set);
-
-      BIND(EQ_EQ, operator==, bool, (const rObject&) const);
-      BIND(size, size, rObject, () const);
-      BIND(set, fromList, Matrix*, (const objects_type&));
       slot_set(SYMBOL(init), new Primitive(&init));
     }
 
