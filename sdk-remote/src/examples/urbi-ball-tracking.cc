@@ -8,9 +8,9 @@
  * See the LICENSE file for more information.
  */
 
-/// \brief Sample demonstration of URBI capabilities.
+/// \brief Sample demonstration of Urbi.
 /*
- * This is a port to URBI of the Sony OPEN-R balltrackinghead example.
+ * This is a port to Urbi of the Sony OPEN-R ball-tracking-head example.
  * The algorithms used are as close as possible to the original version.
  */
 #include <libport/cmath>

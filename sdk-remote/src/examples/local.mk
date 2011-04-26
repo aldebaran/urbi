@@ -31,7 +31,7 @@ examples_urbi_sound_CPPFLAGS =			\
 ## -------------------------------------- ##
 
 monitor_programs =				\
- examples/urbi-balltracking			\
+ examples/urbi-ball-tracking			\
  examples/urbi-image
 
 if WIN32
@@ -52,11 +52,11 @@ endif
 # Pass the X11 flags after cppflags so that we have a chance to use
 # our boost rather than the system one if there is one that lives in
 # the same place as X11.
-examples_urbi_balltracking_SOURCES =	\
-  examples/urbi-balltracking.cc		\
+examples_urbi_ball_tracking_SOURCES =	\
+  examples/urbi-ball-tracking.cc	\
   $(monitor_sources)
-examples_urbi_balltracking_CPPFLAGS = $(AM_CPPFLAGS) $(X11_CPPFLAGS)
-examples_urbi_balltracking_LDADD = $(AM_LDADD) $(X11_LDADD)
+examples_urbi_ball_tracking_CPPFLAGS = $(AM_CPPFLAGS) $(X11_CPPFLAGS)
+examples_urbi_ball_tracking_LDADD = $(AM_LDADD) $(X11_LDADD)
 
 examples_urbi_image_SOURCES =			\
   examples/urbi-image.cc			\
