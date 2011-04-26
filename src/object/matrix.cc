@@ -126,32 +126,9 @@ namespace urbi
     }
 
     Matrix::value_type
-    Matrix::inverse(const value_type& m)
-    {
-      using namespace boost::numeric::ublas;
-      size_t size1 = m.size1();
-      size_t size2 = m.size2();
-      if (size1 != size2)
-        FRAISE("expected square matrix, got %dx%d", size1, size2);
-      // Create a working copy of the input.
-      value_type A(m);
-      value_type res(size1, size2);
-      // Create a permutation matrix for the LU-factorization.
-      permutation_matrix<size_type> pm(size1);
-      // Perform LU-factorization.
-      if (lu_factorize(A, pm) != 0)
-        FRAISE("non-invertible matrix: %s", m);
-      // Create identity matrix of "inverse".
-      res.assign(identity_matrix<ufloat>(size1));
-      // Backsubstitute to get the inverse.
-      lu_substitute(A, pm, res);
-      return res;
-    }
-
-    Matrix::value_type
     Matrix::inverse() const
     {
-      return inverse(value_);
+      return boost::numeric::ublas::inverse(value_);
     }
 
     Matrix::value_type
@@ -288,13 +265,13 @@ namespace urbi
     Matrix::value_type
     Matrix::operator /(const value_type& rhs) const
     {
-      return prod(value_, inverse(rhs));
+      return prod(value_, boost::numeric::ublas::inverse(rhs));
     }
 
     Matrix*
     Matrix::operator /=(const value_type& rhs)
     {
-      value_ = prod(value_, inverse(rhs));
+      value_ = prod(value_, boost::numeric::ublas::inverse(rhs));
       return this;
     }
 
@@ -384,7 +361,7 @@ namespace urbi
       BIND(createScalars, create_scalars);
       BIND(createZeros, create_zeros);
       BIND(distanceMatrix);
-      BIND(inverse, inverse, value_type, () const);
+      BIND(inverse);
       BIND(resize);
       BIND(row);
       BIND(rowAdd);

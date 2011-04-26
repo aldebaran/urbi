@@ -75,6 +75,10 @@ namespace boost
       std::ostream&
       operator<<(std::ostream& o, const ::urbi::object::matrix_type& v);
 
+      URBI_SDK_API
+      ::urbi::object::matrix_type
+      inverse(const ::urbi::object::matrix_type& m);
+
     }
   }
 }

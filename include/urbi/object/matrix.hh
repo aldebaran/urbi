@@ -55,23 +55,14 @@ namespace urbi
 
 #define OP(Op)                                                  \
       value_type operator Op(const value_type& m) const;        \
-      Matrix* operator Op##=(const value_type& m)
-
-      OP(+);
-      OP(-);
-      OP(*);
-      OP(/);
-      //OP(*, Vector);
-#undef OP
-
-#define OP(Op)                                  \
-      value_type operator Op(ufloat m) const;   \
+      Matrix* operator Op##=(const value_type& m);              \
+      value_type operator Op(ufloat m) const;                   \
       Matrix* operator Op##=(ufloat m);
 
-      OP(*);
-      OP(/);
       OP(+);
       OP(-);
+      OP(*);
+      OP(/);
 #undef OP
 
       // Row by row operation.
@@ -87,7 +78,6 @@ namespace urbi
       static value_type create_ones(rObject, int size1, int size2);
 
       value_type transpose() const;
-      static value_type inverse(const value_type& m);
       value_type inverse() const;
       value_type solve(const vector_type& vector) const;
 

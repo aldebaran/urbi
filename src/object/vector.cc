@@ -80,6 +80,33 @@ namespace boost
         return o << '>';
       }
 
+      URBI_SDK_API
+      ::urbi::object::matrix_type
+      inverse(const ::urbi::object::matrix_type& m)
+      {
+        size_t size1 = m.size1();
+        size_t size2 = m.size2();
+        if (size1 != size2)
+          FRAISE("expected square matrix, got %dx%d", size1, size2);
+
+        // Create a working copy of the input.
+        ::urbi::object::matrix_type A(m);
+
+        // Create a permutation matrix for the LU-factorization.
+        permutation_matrix<size_t> pm(size1);
+
+        // Perform LU-factorization.
+        if (lu_factorize(A, pm) != 0)
+          FRAISE("non-invertible matrix: %s", m);
+
+        // Create identity matrix of "inverse".
+        ::urbi::object::matrix_type res(size1, size2);
+        res.assign(identity_matrix<ufloat>(size1));
+        // Backsubstitute to get the inverse.
+        lu_substitute(A, pm, res);
+        return res;
+      }
+
     }
   }
 }
