@@ -44,7 +44,7 @@ namespace urbi
       Matrix* fromList(const objects_type& model);
 
 #define OP(Name)                                                \
-      static Matrix* Name(const objects_type& args);         \
+      static Matrix* Name(const objects_type& args);            \
       static Matrix* Name ## _assign(const objects_type& args)
 
       OP(plus);
