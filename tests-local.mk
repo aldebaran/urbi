@@ -48,4 +48,5 @@ XFAIL_TESTS +=						\
 
 # Memory leaks which have to be fixed.
 TFAIL_TESTS +=					\
-  2.x/tfail-mem-check.chk
+  2.x/tfail-mem-check.chk			\
+  2.x/mem-check.chk
