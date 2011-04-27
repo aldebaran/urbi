@@ -18,7 +18,7 @@
 
 # include <urbi/object/cxx-object.hh>
 # include <urbi/object/fwd.hh>
-# include <sched/fwd.hh>
+# include <runner/runner.hh>
 
 namespace urbi
 {
@@ -27,7 +27,7 @@ namespace urbi
     class Semaphore: public CxxObject
     {
     public:
-      typedef std::pair< int, std::list<sched::rJob> > value_type;
+      typedef std::pair< int, std::list<runner::rRunner> > value_type;
 
       Semaphore();
       Semaphore(rSemaphore model);
@@ -38,6 +38,7 @@ namespace urbi
       static rSemaphore _new(rObject sem, rFloat count);
       void acquire();
       void release();
+      void release_and_forward(bool forward);
       rObject criticalSection(rCode);
 
     private:

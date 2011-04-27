@@ -16,6 +16,12 @@ requireFile("urbi/object.u");
 requireFile("urbi/boolean.u");
 requireFile("urbi/control.u");
 
+do (Job)
+{
+  // the status of the acquired mutex is push in it to avoid calling release too much.
+  var '$mutexRelease' = [];
+};
+
 const var Global.Mutex = Tag.new;
 do (Mutex)
 {
@@ -25,19 +31,31 @@ do (Mutex)
 
   function init()
   {
-    var this.sem = Semaphore.new(1)|
-    at (enter?) lock |
-    at (leave?) unlock
+    var this.sem = Semaphore.new(1) |
+    var this.onEnter = function () { this.lock } |
+    var this.onLeave = function () { this.unlock } |
   };
 
   function lock()
   {
-    sem.acquire
+    if (currentRunner.'$mutexRelease' === nil)
+      currentRunner.'$mutexRelease' = [] |
+    var l = currentRunner.'$mutexRelease' |
+    l.insertBack(false) |
+    sem.acquire |
+    // This will not be executed if the semaphore is not acquired, but we
+    // have to save this state because the unlock would be executed in all
+    // cases.
+    l.removeBack() |
+    l.insertBack(true) |
   };
 
   function unlock()
   {
-    sem.release
+    var l = currentRunner.'$mutexRelease' |
+    if (l.back)
+      sem.release |
+    l.removeBack() |
   };
 
   function '!'()
