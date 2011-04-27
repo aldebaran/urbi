@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -16,12 +16,6 @@ requireFile("urbi/object.u");
 requireFile("urbi/boolean.u");
 requireFile("urbi/control.u");
 
-do (Job)
-{
-  // the status of the acquired mutex is push in it to avoid calling release too much.
-  var '$mutexRelease' = [];
-};
-
 const var Global.Mutex = Tag.new;
 do (Mutex)
 {
@@ -32,30 +26,34 @@ do (Mutex)
   function init()
   {
     var this.sem = Semaphore.new(1) |
-    var this.onEnter = function () { this.lock } |
-    var this.onLeave = function () { this.unlock } |
+    var this.onEnter = function () {
+      if (!currentRunner.hasSlot("$mutexRelease"))
+        var currentRunner.'$mutexRelease' = [] |
+      var l = currentRunner.'$mutexRelease' |
+      l.insertBack(false) |
+      this.lock |
+      // This will not be executed if the semaphore is not acquired, but we
+      // have to save this state because the unlock would be executed in all
+      // cases.
+      l.removeBack() |
+      l.insertBack(true) |
+    } |
+    var this.onLeave = function () {
+      var l = currentRunner.'$mutexRelease' |
+      if (l.back)
+        this.unlock |
+      l.removeBack() |
+    } |
   };
 
   function lock()
   {
-    if (currentRunner.'$mutexRelease' === nil)
-      currentRunner.'$mutexRelease' = [] |
-    var l = currentRunner.'$mutexRelease' |
-    l.insertBack(false) |
-    sem.acquire |
-    // This will not be executed if the semaphore is not acquired, but we
-    // have to save this state because the unlock would be executed in all
-    // cases.
-    l.removeBack() |
-    l.insertBack(true) |
+    sem.acquire
   };
 
   function unlock()
   {
-    var l = currentRunner.'$mutexRelease' |
-    if (l.back)
-      sem.release |
-    l.removeBack() |
+    sem.release
   };
 
   function '!'()
@@ -75,6 +73,24 @@ do (NotMutex)
   {
     var res = Mutex.new|
     res.protos = [NotMutex]|
+
+    res.onEnter = function () {
+      this.unlock |
+    } |
+
+    res.onLeave = function () {
+      // Ensure that the lock is acquired.
+      var acquired = false |
+      try {
+        this.lock |
+        acquired = true |
+      }
+      finally {
+        if (!acquired)
+          this.onLeave |
+      } |
+    } |
+
     res;
   };
 
