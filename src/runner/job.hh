@@ -246,9 +246,6 @@ namespace runner
     rObject job_cache_;
   };
 
-  /// Smart pointer shorthand
-  typedef libport::intrusive_ptr<Job> rJob;
-
 } // namespace runner
 
 # if defined LIBPORT_COMPILATION_MODE_SPEED

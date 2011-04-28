@@ -16,11 +16,16 @@
 #ifndef RUNNER_FWD_HH
 # define RUNNER_FWD_HH
 
+# include <libport/intrusive-ptr.hh>
+
 namespace runner
 {
 
   class State;
   class Job;
+
+  /// Smart pointer shorthand
+  typedef libport::intrusive_ptr<Job> rJob;
 
 } // namespace runner
 

@@ -10,7 +10,10 @@
 
 #include <boost/lambda/lambda.hpp>
 
+#include <libport/cassert>
 #include <libport/containers.hh>
+#include <libport/foreach.hh>
+#include <libport/range.hh>
 
 #include <kernel/userver.hh>
 
@@ -28,12 +31,14 @@ namespace urbi
 
     Barrier::Barrier(rBarrier model)
       : value_(model->value_)
+      , rest_(value_.end())
     {
       proto_add(model);
     }
 
     Barrier::Barrier(const value_type& value)
       : value_(value)
+      , rest_(value_.end())
     {
       proto_add(proto ? rObject(proto) : Object::proto);
     }
@@ -46,46 +51,79 @@ namespace urbi
       BIND(wait);
     }
 
-    struct BarrierException : public sched::SchedulerException
-    {
-      BarrierException(rObject payload) : payload_(payload) {};
-      ~BarrierException() throw() {}
-      ADD_FIELD(rObject, payload)
-      COMPLETE_EXCEPTION(BarrierException)
-    };
-
     rBarrier
     Barrier::_new(rObject)
     {
       return new Barrier(value_type());
     }
 
-    static bool
-    job_compare(sched::rJob lhs, sched::rJob rhs)
-    {
-      return lhs == rhs;
-    }
+    // The rest_ iterator is used to keep track of the elements which are
+    // still waiting to receive a signal.  The left side of the rest_
+    // iterator are jobs which are received a signal and which are waiting
+    // to get spawned.  The right side of rest_ iterator (included) are jobs
+    // which are waiting to get a signal.  Thus the rest_ iterator is
+    // pointing the to next job which would be signaled.
+    //
+    // The current implementation use the list to queue jobs which are
+    // waiting to receive a singal.  A waiter is responsible to insert
+    // it-self at the end and to remove it-self from the list.
+    //
+    //  value_ |- - - signaled - - - - - - waiters - - - -|
+    //                             ^
+    //                           rest_
+    //
+    // When the rest_ iterator is at the end, this means that no jobs are
+    // waiting on the barrier.
+
 
     rObject
     Barrier::wait()
     {
       runner::Job& r = runner();
-      value_.push_back(&r);
+      value_type::iterator i =
+        value_.insert(value_.end(), value_type::value_type(&r, 0));
+
+      // No waiters are in the list, so mark it-self as the next waiter.
+      if (rest_ == value_.end())
+        rest_ = i;
+
       try
       {
-        r.yield_until_terminated(r);
-        // We cannot return from here.
-        pabort("yield_until_terminated returned");
-      }
-      catch (const BarrierException& be)
-      {
+        r.frozen_set(true);
+        r.yield();
+
+        // In no circumstances a signaled process could be marked as being a
+        // waiter, this could only mean that the rest_ iterator has not been
+        // correctly updated.
+        aver_ne(rest_, i);
+
         // Regular wake up from a barrier wait.
-        return be.payload_get();
+        // Get the payload and remove us from the queue.
+        rObject payload = i->second;
+        value_.erase(i);
+        return payload;
       }
       catch (...)
       {
-        // Signal that we should no longer stay queued.
-        libport::erase_if(value_, boost::bind(job_compare, &r, _1));
+        // In some rare cases when we receive a signal and an exception, the
+        // payload is ignored and not forwarded to another waiter.  The
+        // reason is to avoid getting his own signal back.  This differs
+        // from the semaphore implementation.
+
+        // Unfreeze the job.
+        r.frozen_set(false);
+
+        // Signal that we should no longer stay queued.  If the current
+        // waiter is the next to be signaled, then skip it.  Remove it-self
+        // from the list of waiters.
+        if (rest_ == i)
+          rest_++;
+
+        // The erase operation should not go before the potential rest_
+        // update, because this would invalidate the rest_ pointer.
+        value_.erase(i);
+
+        // Rethrow the exception received.
         throw;
       }
     }
@@ -93,23 +131,37 @@ namespace urbi
     unsigned int
     Barrier::signal(rObject payload)
     {
-      if (value_.empty())
+      // No waiters are in the queue.
+      if (rest_ == value_.end())
         return 0;
 
-      value_.front()->async_throw(BarrierException(payload));
-      value_.pop_front();
+      // Signal the job by making it free to continue after the yield.
+      rest_->first->frozen_set(false);
+      rest_->second = payload;
+
+      // mark the next waiter as the next job to be signaled.
+      rest_++;
       return 1;
     }
 
     unsigned int
     Barrier::signalAll(rObject payload)
     {
-      const unsigned int res = value_.size();
+      unsigned int res = 0;
+      value_type::iterator end = value_.end();
 
-      foreach (sched::rJob job, value_)
-        job->async_throw(BarrierException(payload));
-      value_.clear();
+      // Signal all jobs in the queue by making them free to continue after
+      // their yields.
+      foreach (value_type::value_type& jp,
+               boost::make_iterator_range(rest_, end))
+      {
+        jp.first->frozen_set(false);
+        jp.second = payload;
+        res++;
+      }
 
+      // No jobs are waiting to be signaled.
+      rest_ = end;
       return res;
     }
   } // namespace object

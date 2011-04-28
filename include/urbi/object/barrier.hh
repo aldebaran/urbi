@@ -18,7 +18,7 @@
 
 # include <urbi/object/cxx-object.hh>
 # include <urbi/object/fwd.hh>
-# include <sched/job.hh>
+# include <runner/fwd.hh>
 
 namespace urbi
 {
@@ -28,7 +28,7 @@ namespace urbi
     {
     public:
       typedef Barrier self_type;
-      typedef std::list<sched::rJob> value_type;
+      typedef std::list<std::pair<runner::rJob, rObject> > value_type;
 
       Barrier(rBarrier model);
       Barrier(const value_type& value);
@@ -42,6 +42,7 @@ namespace urbi
 
     private:
       value_type value_;
+      value_type::iterator rest_;
 
       URBI_CXX_OBJECT(Barrier, CxxObject);
     };
