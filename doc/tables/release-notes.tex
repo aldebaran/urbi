@@ -33,6 +33,10 @@ This chapter lists the user-visible changes in \usdk releases.
   an exception is raised inside the \lstinline|finally| clause.
 \item Do not emit \refSlot[Tag]{leave} events when a frozen tag waiting to
   execute statements is stopped.
+\item Avoid unexpected execution of code caused by semaphore release and a
+  stop of the code acquiring the semaphore.  This change implies that
+  \refObject[Sempahore]{acquire} either returns when it holds the semaphore
+  or jump to the end of the stopped tag.
 \end{itemize}
 
 \subsection{Changes}

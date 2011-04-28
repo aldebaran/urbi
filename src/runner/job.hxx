@@ -98,6 +98,12 @@ namespace runner
   }
 
   LIBPORT_SPEED_ALWAYS_INLINE
+  bool Job::frozen_get()
+  {
+    return state.frozen_get();
+  }
+
+  LIBPORT_SPEED_ALWAYS_INLINE
   bool Job::has_tag(const object::rTag& tag) const
   {
     return has_tag(*tag->value_get());

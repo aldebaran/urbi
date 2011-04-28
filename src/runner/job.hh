@@ -139,6 +139,7 @@ namespace runner
 
     /// Freeze the current job, without using any tag.
     void frozen_set(bool);
+    bool frozen_get();
 
     /// Inherited from sched::job.
     /// Bounce on the state to know if the job has a specific tag.

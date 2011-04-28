@@ -15,6 +15,9 @@
 #include <object/symbols.hh>
 #include <runner/job.hh>
 #include <sched/fwd.hh>
+#include <libport/debug.hh>
+
+GD_CATEGORY(Semaphore);
 
 namespace urbi
 {
@@ -50,16 +53,11 @@ namespace urbi
 #undef DECLARE
     }
 
-    struct SemaphoreException : public sched::SchedulerException
-    {
-      COMPLETE_EXCEPTION(SemaphoreException);
-    };
-
     rSemaphore
     Semaphore::_new(rObject, rFloat c)
     {
       return new Semaphore(make_pair(c->to_unsigned_type(),
-                                     std::list<sched::rJob>()));
+                                     std::list<runner::rJob>()));
     }
 
     void
@@ -67,16 +65,33 @@ namespace urbi
     {
       runner::Job& r = ::kernel::runner();
 
+      GD_FINFO_TRACE("%p: Acquire", &r);
       if (--value_.first < 0)
       {
-        value_.second.push_back(&r);
+        std::list<runner::rJob>::iterator i =
+          value_.second.insert(value_.second.end(), &r);
         try
         {
-          r.yield_until_terminated(r);
+          // wait until the job is unfreeze by the release.
+          r.frozen_set(true);
+          GD_FINFO_TRACE("%p: Waiting", &r);
+          r.yield();
+          GD_FINFO_TRACE("%p: Waking-up", &r);
         }
-        catch (const SemaphoreException&)
+        catch (...)
         {
-          // Regular wake up from a semaphore wait.
+          GD_FINFO_TRACE("%p: Caught Exception", &r);
+          // If the current process had a release token and has caught an
+          // exception too, then forward the release token.
+          if (r.frozen_get() == false)
+            release_and_forward(true);
+          else
+          {
+            release_and_forward(false);
+            value_.second.erase(i);
+            r.frozen_set(false);
+          }
+          throw;
         }
       }
     }
@@ -84,9 +99,19 @@ namespace urbi
     void
     Semaphore::release()
     {
-      if (++value_.first <= 0)
+      release_and_forward(true);
+    }
+
+    void
+    Semaphore::release_and_forward(bool forward)
+    {
+      runner::Job& r = ::kernel::runner();
+      GD_FINFO_TRACE("%p: Release", &r);
+
+      if (++value_.first <= 0 && forward)
       {
-        value_.second.front()->async_throw(SemaphoreException());
+        GD_FINFO_TRACE("%p: Wake-up %p", &r, value_.second.front().get());
+        value_.second.front()->frozen_set(false);
         value_.second.pop_front();
       }
     }
