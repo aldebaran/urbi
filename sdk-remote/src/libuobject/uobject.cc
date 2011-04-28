@@ -622,9 +622,10 @@ namespace urbi
         {
           delete i->second;
           objects.erase(i);
-          if (objects.empty())
+          if (objects.size() == 1 )
           {
-            // All the instances have been deleted, we're done with this
+            // All the instances have been deleted, except the hookpoint we
+            // created automaticaly, we're done with this.
             // remote.
             GD_INFO_TRACE("Last instance deleted, quit");
             exit(0);
