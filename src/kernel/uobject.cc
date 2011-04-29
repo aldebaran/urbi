@@ -692,17 +692,6 @@ namespace urbi
     Stats::add(me, key, libport::utime()-t);
   }
 
-  typedef std::pair<std::string, std::string> StringPair;
-  /// Split a string of the form "a.b" in two
-  static StringPair
-  uname_split(const std::string& name)
-  {
-    size_t p = name.find_last_of(".");
-    std::string oname = name.substr(0, p);
-    std::string slot = name.substr(p + 1, name.npos);
-    return StringPair(oname, slot);
-  }
-
   UObjectMode running_mode()
   {
     return MODE_PLUGIN;
@@ -1676,10 +1665,8 @@ namespace urbi
           {
             GD_FINFO_TRACE("UGC %s using UConnection backend.", this);
             // Use the new mechanism: create an input port and use it
-            std::string ipname = owner_->name;
-            size_t p = ipname.find_first_of('.');
-            if (p != ipname.npos)
-              ipname[p] = '_';
+            std::string ipname =
+              boost::replace_all_copy(owner_->name, ".", "_");
             InputPort ip(owner_->objname, ipname);
             inportName_ = owner_->objname + "." + ipname;
             // Retarget callback

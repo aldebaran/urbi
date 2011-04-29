@@ -25,10 +25,17 @@ namespace urbi
     typedef std::pair<std::string, std::string> StringPair;
 
     /// Split an UVar full name into its two components.
+    /// Issue a simple warning if there is no ".".
     StringPair
     uname_split(const std::string& name);
+
+    /// Split an UVar full name into its two components.
+    /// Throw if there is no ".".
+    /// \param name  what's to split.
+    /// \param ctx   some optional name about where the error occurred.
+    StringPair
+    uname_xsplit(const std::string& name, const std::string& ctx = "");
   }
 }
-
 
 #endif // !URBI_DETAILS_HH

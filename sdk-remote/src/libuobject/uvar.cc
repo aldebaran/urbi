@@ -19,6 +19,7 @@
 #include <libport/escape.hh>
 #include <libport/lexical-cast.hh>
 
+#include <urbi/details.hh>
 #include <urbi/uabstractclient.hh>
 #include <urbi/ublend-type.hh>
 #include <urbi/uexternal.hh>
@@ -38,6 +39,9 @@ namespace urbi
 {
   namespace impl
   {
+
+  using urbi::uobjects::StringPair;
+  using urbi::uobjects::uname_xsplit;
 
   GD_CATEGORY(Urbi.LibUObject);
 
@@ -288,10 +292,9 @@ namespace urbi
   {
     RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
     std::string fullname = owner_->get_name();
-    size_t pos = fullname.rfind(".");
-    assert(pos != std::string::npos);
-    std::string owner = fullname.substr(0, pos);
-    std::string name = fullname.substr(pos + 1);
+    StringPair p = uname_xsplit(fullname, "transmit");
+    const std::string& owner = p.first;
+    const std::string& name = p.second;
     GD_FINFO_DUMP("transmit new value for %s", fullname);
     bool rtp = false;
     if (v.type == DATA_BINARY)
@@ -456,16 +459,14 @@ namespace urbi
                    this);
     RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
     std::string name = owner_->get_name();
-    size_t p = name.find_first_of(".");
-    if (p == name.npos)
-      FRAISE("unnotify: invalid argument: %s", name);
+    StringPair p = uname_xsplit(name, "unnotify");
     // Each UVar creation and each notifychange causes an 'external
     // var' message, so when the UVar dies, creation count is
     // callbacks.size +1.
-    URBI_SEND_PIPED_COMMAND_C((*ctx->outputStream),
-      "UObject.unnotify(\"" << name.substr(0, p) << "\", \""
-                            << name.substr(p+1, name.npos) << "\","
-                            << callbacks_.size()+1 << ")" );
+    URBI_SEND_PIPED_COMMAND_C
+      (*ctx->outputStream,
+       libport::format("UObject.unnotify(\"%s\", \"%s\", %s)",
+                       p.first, p.second, callbacks_.size()+1));
     libport::BlockLock bl(ctx->tableLock);
     foreach(RemoteUGenericCallbackImpl* c, callbacks_)
     {
@@ -488,11 +489,9 @@ namespace urbi
   {
     RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
     std::string name = owner_->get_name();
-    size_t p = name.find_first_of(".");
-    if (p == name.npos)
-      FRAISE("invalid argument to useRTP: %s", name);
+    StringPair p = uname_xsplit(name, "useRTP");
     ctx->send(libport::format("%s.getSlot(\"%s\").rtp = %s|",
-                         name.substr(0, p), name.substr(p+1, name.npos),
+                         p.first, p.second,
                          enable ? "true" : "false"));
     ctx->markDataSent();
   }
@@ -501,11 +500,9 @@ namespace urbi
   {
     RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
     std::string name = owner_->get_name();
-    size_t p = name.find_first_of(".");
-    if (p == name.npos)
-      FRAISE("invalid argument to setInputPort: %s", name);
+    StringPair p = uname_xsplit(name, "setInputPort");
     ctx->send(libport::format("%s.getSlot(\"%s\").%s|",
-                              name.substr(0, p), name.substr(p+1, name.npos),
+                              p.first, p.second,
                               enable
                               ? "setSlot(\"inputPort\", true)"
                               : "removeLocalSlot(\"inputPort\")"));
