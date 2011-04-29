@@ -59,22 +59,21 @@ namespace urbi
 
     // The rest_ iterator is used to keep track of the elements which are
     // still waiting to receive a signal.  The left side of the rest_
-    // iterator are jobs which are received a signal and which are waiting
+    // iterator are jobs that received a signal and that are waiting
     // to get spawned.  The right side of rest_ iterator (included) are jobs
-    // which are waiting to get a signal.  Thus the rest_ iterator is
-    // pointing the to next job which would be signaled.
+    // waiting to get a signal.  Thus the rest_ iterator is
+    // pointing to the next job that should be signaled.
     //
-    // The current implementation use the list to queue jobs which are
-    // waiting to receive a singal.  A waiter is responsible to insert
-    // it-self at the end and to remove it-self from the list.
+    // The current implementation uses a list to queue jobs
+    // waiting to receive a signal.  A waiter is responsible to insert
+    // itself at the end and to remove itself from the list.
     //
     //  value_ |- - - signaled - - - - - - waiters - - - -|
     //                             ^
     //                           rest_
     //
-    // When the rest_ iterator is at the end, this means that no jobs are
-    // waiting on the barrier.
-
+    // When the rest_ iterator is at the end, no jobs are waiting on
+    // the barrier.
 
     rObject
     Barrier::wait()
@@ -95,7 +94,7 @@ namespace urbi
         // In no circumstances a signaled process could be marked as being a
         // waiter, this could only mean that the rest_ iterator has not been
         // correctly updated.
-        aver_ne(rest_, i);
+        aver(rest_ != i);
 
         // Regular wake up from a barrier wait.
         // Get the payload and remove us from the queue.
