@@ -126,11 +126,10 @@ namespace urbi
 
     static inline bool matchCachedProps(Symbol s)
     {
-      return
-         s == SYMBOL(rangemin)
-      || s == SYMBOL(rangemax)
-      || s == SYMBOL(timestamp)
-      || s == SYMBOL(changed);
+      return (s == SYMBOL(rangemin)
+              || s == SYMBOL(rangemax)
+              || s == SYMBOL(timestamp)
+              || s == SYMBOL(changed));
     }
 
     static rObject parentGetProperty(const objects_type& o)
@@ -142,12 +141,11 @@ namespace urbi
       Symbol pname = Symbol(o[2]->as_checked<String>()->value_get());
       rUVar v = self->slot_get(vname)->as<UVar>();
       if (v && matchCachedProps(pname))
-      {
         return v->call(pname);
-      }
       else
         return self->property_get(vname, pname);
     };
+
     static rObject parentHasProperty(const objects_type& o)
     {
       if (o.size() != 3)
@@ -157,12 +155,11 @@ namespace urbi
       Symbol pname = Symbol(o[2]->as_checked<String>()->value_get());
       rUVar v = self->slot_get(vname)->as<UVar>();
       if (v && matchCachedProps(pname))
-      {
         return true_class;
-      }
       else
         return self->property_has(vname, pname)?true_class:false_class;
     };
+
     static rObject parentSetProperty(const objects_type& o)
     {
       if (o.size() != 4)
@@ -172,9 +169,7 @@ namespace urbi
       Symbol pname = Symbol(o[2]->as_checked<String>()->value_get());
       rUVar v = self->slot_get(vname)->as<UVar>();
       if (v && matchCachedProps(pname))
-      {
         return v->slot_update(pname, o[3]);
-      }
       else
         return self->property_set(vname, pname, o[3]);
     };
@@ -215,7 +210,8 @@ namespace urbi
       return id;
     }
 
-    rObject UVar::fromName(const std::string& name)
+    rObject
+    UVar::fromName(const std::string& name)
     {
       try
       {
@@ -226,14 +222,14 @@ namespace urbi
         else
         {
           location_type l = o->slot_locate(libport::Symbol(p.second), true);
-          return l.first?l.second->value():0;
+          return l.first ? l.second->value() : 0;
         }
       }
-      catch(UrbiException& e)
+      catch (const UrbiException& e)
       {
         return 0;
       }
-      catch(sched::exception& e)
+      catch (const sched::exception& e)
       {
         throw;
       }

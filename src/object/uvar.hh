@@ -43,7 +43,7 @@ namespace urbi
       /// Like accessor, but if fromCxx is true and the value is an UValue,
       /// return it instead of its content.
       rObject getter(bool fromCXX);
-      /** Check if we have both in/out callbaks, periodicaly trigger
+      /** Check if we have both in/out callbacks, periodically trigger
        * and return true if so.
        */
       bool loopCheck();
