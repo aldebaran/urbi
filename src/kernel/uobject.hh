@@ -19,37 +19,40 @@ namespace urbi
 {
   namespace uobjects
   {
-    //! create and return a new prototype for a bound UObject
-    urbi::object::rObject uobject_make_proto(const std::string& name);
+    /// create and return a new prototype for a bound UObject
+    urbi::object::rObject
+    uobject_make_proto(const std::string& name);
 
-    //! Instanciate a new prototype inheriting from a UObject.
-    urbi::object::rObject uobject_new(urbi::object::rObject proto, bool forceName=false, bool instanciate = true);
+    /// Instanciate a new prototype inheriting from a UObject.
+    urbi::object::rObject
+    uobject_new(urbi::object::rObject proto,
+                bool forceName=false, bool instanciate = true);
 
-    //! Initialize plugin UObjects.
-    ::urbi::object::rObject uobject_initialize(const urbi::object::objects_type& args);
+    /// Initialize plugin UObjects.
+    ::urbi::object::rObject
+    uobject_initialize(const urbi::object::objects_type& args);
 
-    //! Find and return rObject of an UObject based on its name.
-    ::urbi::object::rObject get_base(const std::string& objname);
+    /// Find and return rObject of an UObject based on its name.
+    ::urbi::object::rObject
+    get_base(const std::string& objname);
 
     typedef std::pair<std::string, std::string> StringPair;
 
-    //! Split an UVar full name into its two components.
-    StringPair split_name(const std::string& name);
+    /// Split an UVar full name into its two components.
+    StringPair
+    split_name(const std::string& name);
 
-    //! Process serialized request from a remote, return urbiscript to eval.
-    std::string processSerializedMessage(int msgType,
-                                      libport::serialize::BinaryISerializer& v);
+    /// Process serialized request from a remote, return urbiscript to eval.
+    std::string
+    processSerializedMessage(int msgType,
+                             libport::serialize::BinaryISerializer& v);
   }
 }
 
-//! Reload uobject list
+/// Reload uobject list
 void uobjects_reload();
 
-//! Read/Write UObjects PATH
+/// UObject load path.
 const libport::file_library uobject_uobjects_path();
-urbi::object::List::value_type
-  uobject_uobjectsPath(const urbi::object::rObject&);
-void uobject_uobjectsPathSet(const urbi::object::rObject&,
-                             urbi::object::List::value_type list);
 
 #endif // !KERNEL_UOBJECT_HH

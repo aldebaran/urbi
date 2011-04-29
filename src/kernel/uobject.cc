@@ -379,13 +379,14 @@ void uobjects_reload()
     }
 }
 
-//! Read/Write UObjects PATH
 const libport::file_library
 uobject_uobjects_path()
 {
   return uobjects_path;
 }
 
+/// The UObject load path as a List of Path.
+static
 List::value_type
 uobject_uobjectsPath(const rObject&)
 {
@@ -397,6 +398,8 @@ uobject_uobjectsPath(const rObject&)
   return list;
 }
 
+/// Change the UObject load path from a List of Path.
+static
 void
 uobject_uobjectsPathSet(const rObject&, List::value_type list)
 {
