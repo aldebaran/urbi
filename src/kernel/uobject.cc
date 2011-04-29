@@ -1287,12 +1287,8 @@ namespace urbi
         object::rUVar r;
         if (v->inportName_.empty())
           r = ruvar_;
-        else
-        {
-          rObject o = object::UVar::fromName(v->inportName_);
-          if (o)
-            r = o->as<object::UVar>();
-        }
+        else if (rObject o = object::UVar::fromName(v->inportName_))
+          r = o->as<object::UVar>();
         if (r)
         {
           bool ok = false;

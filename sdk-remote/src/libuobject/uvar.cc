@@ -34,7 +34,6 @@
 #define FRAISE(Format, ...)                                     \
   throw std::runtime_error(libport::format(Format, __VA_ARGS__))
 
-
 namespace urbi
 {
   namespace impl
@@ -72,10 +71,10 @@ namespace urbi
       }
     }
     URBI_SEND_PIPED_COMMAND_C
-      ((*outputStream),
+      (*outputStream,
        libport::format("if (!isdef(%s)) var %s", name, name));
     URBI_SEND_PIPED_COMMAND_C
-      ((*outputStream),
+      (*outputStream,
        libport::format("external var %s from %s",
                        owner_->get_name(), ctx->hookPointName()));
     ctx->markDataSent();
@@ -107,8 +106,10 @@ namespace urbi
   {
     RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
     LockableOstream* outputStream = ctx->outputStream;
-    URBI_SEND_PIPED_COMMAND_C((*outputStream), owner_->get_name() << "->"
-                              << urbi::name(p) << " = " << v);
+    URBI_SEND_PIPED_COMMAND_C
+      (*outputStream,
+       libport::format("%s->%s = %s",
+                       owner_->get_name(), urbi::name(p), v));
     ctx->markDataSent();
   }
 
@@ -122,8 +123,7 @@ namespace urbi
   RemoteUVarImpl::getProp(UProperty p)
   {
     RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
-    UMessage* m = ctx->syncGet(owner_->get_name() +"->"
-                               + urbi::name(p));
+    UMessage* m = ctx->syncGet(owner_->get_name() + "->" + urbi::name(p));
     if (!m->value)
       FRAISE("Error fetching property on %s", owner_->get_name());
     UValue res = *m->value;
@@ -241,11 +241,12 @@ namespace urbi
     localCall(linkName, "connect", backend_->getRemoteHost(), port);
     UObject* ob = getUObject(linkName);
     // Monitor this RTP link.
-    URBI_SEND_COMMA_COMMAND_C(*outputStream,
-      "detach('external'.monitorRTP(" << linkName << ","
-      << rLinkName << ", closure() {'external'.failRTP}))|"
-      << rLinkName << ".receiveVar(\"" << varname
-      << "\")");
+    URBI_SEND_COMMA_COMMAND_C
+      (*outputStream,
+       libport::format
+       ("detach('external'.monitorRTP(%s, %s, closure() {'external'.failRTP}))|"
+        "%s.receiveVar(\"%s\")",
+        linkName, rLinkName, rLinkName, varname));
     rtpLinks[key]  = ob;
     return URBI_REMOVE;
   }
@@ -425,9 +426,10 @@ namespace urbi
     RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
     std::string name = owner_->get_name();
     //build a getvalue message  that will be parsed and returned by the server
-    URBI_SEND_PIPED_COMMAND_C((*ctx->outputStream), externalModuleTag << "<<"
-                            <<'[' << UEM_ASSIGNVALUE << ","
-                            << '"' << name << '"' << ',' << name << ']');
+    URBI_SEND_PIPED_COMMAND_C
+      (*ctx->outputStream,
+       libport::format("%s << [%s, \"%s\", %s]",
+                       externalModuleTag, UEM_ASSIGNVALUE, name, name));
     ctx->markDataSent();
   }
 

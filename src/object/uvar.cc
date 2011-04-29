@@ -81,18 +81,18 @@ namespace urbi
           eval::call_apply(r, i->second, SYMBOL(NOTIFY), args);
           failed = false;
         }
-        catch(UrbiException& e)
+        catch (const UrbiException& e)
         {
           show_exception_message
             (r, self,
              "Exception caught while processing notify on", ":");
           eval::show_exception(r, e);
         }
-        catch(sched::exception& e)
+        catch (const sched::exception& e)
         {
           throw;
         }
-        catch(...)
+        catch (...)
         {
           show_exception_message
             (r, self,
@@ -523,27 +523,30 @@ namespace urbi
       changed();
       return newval;
     }
+
     bool
     UVar::removeNotifyChange(unsigned int id)
     {
       return removeCallback(change_, id);
     }
+
     bool
     UVar::removeNotifyChangeOwned(unsigned int id)
     {
       return removeCallback(changeOwned_, id);
     }
+
     bool
     UVar::removeNotifyAccess(unsigned int id)
     {
-      return removeCallback(access_, id) ||
-        removeCallback(accessInLoop_, id);
+      return (removeCallback(access_, id)
+              || removeCallback(accessInLoop_, id));
     }
+
     bool
     UVar::removeCallback(Callbacks& cb, unsigned int id)
     {
-      for (unsigned int i=0; i<cb.size(); ++i)
-      {
+      for (unsigned int i = 0; i < cb.size(); ++i)
         if (cb[i].first == id)
         {
           // Remove by swapping with last since order is not important.
@@ -552,7 +555,6 @@ namespace urbi
           cb.pop_back();
           return true;
         }
-      }
       return false;
     }
 
