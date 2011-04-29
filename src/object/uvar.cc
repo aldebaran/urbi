@@ -134,8 +134,7 @@ namespace urbi
 
     static rObject parentGetProperty(const objects_type& o)
     {
-      if (o.size() != 3)
-        runner::raise_arity_error(o.size()-1, 2);
+      check_arg_count(o, 2);
       Object* self = o[0];
       Symbol vname = Symbol(o[1]->as_checked<String>()->value_get());
       Symbol pname = Symbol(o[2]->as_checked<String>()->value_get());
@@ -148,8 +147,7 @@ namespace urbi
 
     static rObject parentHasProperty(const objects_type& o)
     {
-      if (o.size() != 3)
-        runner::raise_arity_error(o.size()-1, 2);
+      check_arg_count(o, 2);
       Object* self = o[0];
       Symbol vname = Symbol(o[1]->as_checked<String>()->value_get());
       Symbol pname = Symbol(o[2]->as_checked<String>()->value_get());
@@ -162,8 +160,7 @@ namespace urbi
 
     static rObject parentSetProperty(const objects_type& o)
     {
-      if (o.size() != 4)
-        runner::raise_arity_error(o.size()-1, 3);
+      check_arg_count(o, 3);
       Object* self = o[0];
       Symbol vname = Symbol(o[1]->as_checked<String>()->value_get());
       Symbol pname = Symbol(o[2]->as_checked<String>()->value_get());
@@ -216,10 +213,7 @@ namespace urbi
       try
       {
         ::urbi::uobjects::StringPair p = ::urbi::uobjects::split_name(name);
-        rObject o = uobjects::get_base(p.first);
-        if (!o)
-          return o;
-        else
+        if (rObject o = uobjects::get_base(p.first))
         {
           location_type l = o->slot_locate(libport::Symbol(p.second), true);
           return l.first ? l.second->value() : 0;

@@ -197,8 +197,7 @@ namespace urbi
     Matrix::Name(const objects_type& args)                      \
     {                                                           \
       rMatrix self = args[0]->as<Matrix>();                     \
-      if (args.size() != 2)                                     \
-        runner::raise_arity_error(1, args.size() - 1);          \
+      check_arg_count(args, 1);                                 \
       if (rFloat f = args[1]->as<Float>())                      \
         return Conversion(self->operator Op(f->value_get()));   \
       else if (rMatrix m = args[1]->as<Matrix>())               \

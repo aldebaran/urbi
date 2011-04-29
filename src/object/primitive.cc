@@ -110,7 +110,7 @@ namespace urbi
       size_t min = INT_MAX;
       size_t max = 0;
 
-      // FIXME: the valid arity range is not necessarilly continue
+      // FIXME: the valid arities is not necessarily a range.
       foreach (const Primitive::values_type::value_type& elt, content_)
       {
         min = std::min(min, elt.first);

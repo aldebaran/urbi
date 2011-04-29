@@ -175,8 +175,7 @@ namespace urbi
     rObject
     InputStream::receive_(objects_type args)
     {
-      if (args.size() != 2)
-        runner::raise_arity_error(args.size(), 1);
+      check_arg_count(args, 1);
       buffer_ += args[1]->as<String>()->value_get();
       if (waiting_)
         sem_->release();
