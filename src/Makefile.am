@@ -21,34 +21,24 @@ if !COMPILATION_MODE_SPACE
   PRUNE_FOR_SPACE += --stage=no-space
 endif
 
-
-## Find the kernel private headers.  location.hh etc. are generated.
-AM_CPPFLAGS += -I$(srcdir) -I.
-
-## Find the kernel, libport, etc. headers.
-AM_CPPFLAGS +=					\
-  -I$(top_srcdir)/include			\
-  -I$(top_builddir)/include			\
-  -D__SRCDIR__="\"$(top_srcdir)\""		\
+SDK_REMOTE_CPPFLAGS = 				\
   $(LIBPORT_CPPFLAGS)				\
-  $(LTDL_CPPFLAGS)
-
-## Headers exported by SDK Remote.
-AM_CPPFLAGS +=					\
+  $(LTDL_CPPFLAGS)				\
+  $(BOOST_CPPFLAGS)				\
   -I$(sdk_remote_srcdir)/include		\
   -I$(sdk_remote_builddir)/include		\
   -I$(sdk_remote_builddir)
 
-## src/include/sched etc.
-AM_CPPFLAGS += -I$(srcdir)/include
-
-## network has its includes in the same dir as its source files.
-AM_CPPFLAGS += -I$(srcdir)/lib
+## Find the kernel private headers.  location.hh etc. are generated.
+AM_CPPFLAGS += 					\
+  $(SDK_REMOTE_CPPFLAGS)			\
+  -I$(srcdir) -I.				\
+  -I$(top_srcdir)/include			\
+  -I$(top_builddir)/include			\
+  -D__SRCDIR__="\"$(top_srcdir)\""
 
 AM_CXXFLAGS += $(WARNING_CXXFLAGS) $(PTHREAD_CFLAGS)
 
-## Add boost libraries.
-AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 
 ## ------------ ##
 ## libuobject.  ##

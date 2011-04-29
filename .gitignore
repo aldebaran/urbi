@@ -15,8 +15,6 @@
 /src/ast/transformer.hh
 /src/ast/transformer.hh~
 /src/ast/transformer.stamp
-/src/include
 /src/kernel/config.h.in
 /src/kernel/config.h.in~
-/src/lib
 /src/object/symbols.hh.old
