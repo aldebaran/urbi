@@ -14,6 +14,7 @@
 # include <serialize/binary-i-serializer.hh>
 # include <urbi/object/fwd.hh>
 # include <urbi/object/list.hh>
+# include <urbi/details.hh>
 
 namespace urbi
 {
@@ -35,12 +36,6 @@ namespace urbi
     /// Find and return rObject of an UObject based on its name.
     ::urbi::object::rObject
     get_base(const std::string& objname);
-
-    typedef std::pair<std::string, std::string> StringPair;
-
-    /// Split an UVar full name into its two components.
-    StringPair
-    split_name(const std::string& name);
 
     /// Process serialized request from a remote, return urbiscript to eval.
     std::string

@@ -225,7 +225,7 @@ static std::set<void*> initialized;
 static bool trace_uvars = 0;
 static libport::file_library uobjects_path;
 using urbi::uobjects::get_base;
-using urbi::uobjects::split_name;
+using urbi::uobjects::uname_split;
 using urbi::uobjects::StringPair;
 
 // No rObject here as we do not want to prevent object destruction.
@@ -333,7 +333,7 @@ static inline void traceOperation(urbi::UVar*v, libport::Symbol op)
 {
   if (trace_uvars)
   {
-    StringPair p = split_name(v->get_name());
+    StringPair p = uname_split(v->get_name());
     rObject o = xget_base(p.first);
     object::global_class
       ->slot_get(SYMBOL(UVar))
@@ -369,14 +369,11 @@ void uobjects_reload()
   urbi::impl::KernelUContextImpl::instance()->init();
   foreach (urbi::baseURBIStarterHub* i, urbi::baseURBIStarterHub::list())
     if (!libport::has(initialized, i))
-    {
       initialized.insert(i);
-    }
+
   foreach (urbi::baseURBIStarter* i, urbi::baseURBIStarter::list())
     if (!libport::has(initialized, i))
-    {
       initialized.insert(i);
-    }
 }
 
 const libport::file_library
@@ -669,7 +666,7 @@ static void writeFromContext(const std::string& ctx,
   r.state.lobby_set(rl);
   object::rUValue ov(new object::UValue());
   ov->put(val, false);
-  StringPair p = split_name(varName);
+  StringPair p = uname_split(varName);
   rObject o = get_base(p.first);
   if (!o)
     runner::raise_lookup_error(libport::Symbol(varName), object::global_class);
@@ -698,13 +695,14 @@ namespace urbi
   typedef std::pair<std::string, std::string> StringPair;
   /// Split a string of the form "a.b" in two
   static StringPair
-  split_name(const std::string& name)
+  uname_split(const std::string& name)
   {
     size_t p = name.find_last_of(".");
     std::string oname = name.substr(0, p);
     std::string slot = name.substr(p + 1, name.npos);
     return StringPair(oname, slot);
   }
+
   UObjectMode running_mode()
   {
     return MODE_PLUGIN;
@@ -914,7 +912,7 @@ namespace urbi
     static void declare_event_name(std::string name)
     {
       rEvent e = new object::Event(object::Event::proto);
-      StringPair p = split_name(name);
+      StringPair p = uname_split(name);
       rObject o = xget_base(p.first,
                             "UEvent creation on non existing object: %s");
       if (!o->local_slot_get(Symbol(p.second)))
@@ -936,7 +934,7 @@ namespace urbi
     void
     doEmit(const std::string& object, const object::objects_type& args)
     {
-      StringPair p = split_name(object);
+      StringPair p = uname_split(object);
       rObject o = xget_base(p.first)->slot_get(libport::Symbol(p.second));
       o->call(SYMBOL(emit), args);
     }
@@ -1349,7 +1347,7 @@ namespace urbi
       owner_ = owner;
       owner_->owned = false;
       bypassMode_ = false;
-      StringPair p = split_name(owner_->get_name());
+      StringPair p = uname_split(owner_->get_name());
       rObject o = get_base(p.first);
       if (!o)
         FRAISE("UVar creation on non existing object: %s", owner->get_name());
@@ -1537,7 +1535,7 @@ namespace urbi
         return UValue(ruvar_->rangemin);
       else if (prop == urbi::PROP_RANGEMAX)
         return UValue(ruvar_->rangemax);
-      StringPair p = split_name(owner_->get_name());
+      StringPair p = uname_split(owner_->get_name());
       rObject o = xget_base(p.first);
       return ::uvalue_cast(o->call(SYMBOL(getProperty),
                                    new object::String(p.second),
@@ -1552,7 +1550,7 @@ namespace urbi
                                              this, prop, v));
         return;
       }
-      StringPair p = split_name(owner_->get_name());
+      StringPair p = uname_split(owner_->get_name());
       rObject o = xget_base(p.first);
       o->call(SYMBOL(setProperty),
               new object::String(p.second),
@@ -1635,7 +1633,7 @@ namespace urbi
       }
       useClosedVar_ = false;
       registered_ = true;
-      StringPair p = split_name(owner_->name);
+      StringPair p = uname_split(owner_->name);
       std::string method = p.second;
       GD_FPUSH_DUMP("UGC %s, %s, %s, %s", owner_->type,p.first, method, owned_);
       // UObject owning the variable/event to monitor
@@ -1762,18 +1760,6 @@ namespace urbi
 
   namespace uobjects
   {
-    StringPair split_name(const std::string& name)
-    {
-      size_t p = name.find_last_of(".");
-      if (p == name.npos)
-      {
-        GD_FWARN("invalid argument to split_name: %s", name);
-        return StringPair(name, "");
-      }
-      std::string oname = name.substr(0, p);
-      std::string slot = name.substr(p + 1, name.npos);
-      return StringPair(oname, slot);
-    }
 
     /** Find an UObject from its name.
 
@@ -1917,7 +1903,7 @@ namespace urbi
         unsigned int tlow, thi;
         ia >> name >> val >> tlow >> thi;
         time = tlow + ((libport::utime_t)thi << 32);
-        StringPair p = split_name(name);
+        StringPair p = uname_split(name);
         GD_FINFO_TRACE("UEM_ASSIGNVALUE %s %s", name, val);
         object::rUValue ov(new object::UValue(val));
         object::global_class

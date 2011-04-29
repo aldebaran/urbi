@@ -21,6 +21,7 @@ libuco_libuco_la_LIBADD =			\
   $(BOOST_DATE_TIME_LIBS)
 
 dist_libuco_libuco_la_SOURCES =			\
+  libuco/details.cc				\
   libuco/uevent.cc				\
   libuco/uobject-common.cc			\
   libuco/uobject-hub-common.cc			\

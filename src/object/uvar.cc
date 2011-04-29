@@ -212,7 +212,7 @@ namespace urbi
     {
       try
       {
-        ::urbi::uobjects::StringPair p = ::urbi::uobjects::split_name(name);
+        ::urbi::uobjects::StringPair p = ::urbi::uobjects::uname_split(name);
         if (rObject o = uobjects::get_base(p.first))
         {
           location_type l = o->slot_locate(libport::Symbol(p.second), true);

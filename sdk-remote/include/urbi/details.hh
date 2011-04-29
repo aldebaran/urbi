@@ -1,0 +1,34 @@
+/*
+ * Copyright (C) 2011, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+/// \file urbi/details.hh
+/// \brief Implementation details, do not rely on this file.
+
+#ifndef URBI_DETAILS_HH
+# define URBI_DETAILS_HH
+
+# include <string>
+
+namespace urbi
+{
+  namespace uobjects
+  {
+    // Auxiliary routines to extract components of an UObject/UVar
+    // name.
+    typedef std::pair<std::string, std::string> StringPair;
+
+    /// Split an UVar full name into its two components.
+    StringPair
+    uname_split(const std::string& name);
+  }
+}
+
+
+#endif // !URBI_DETAILS_HH
