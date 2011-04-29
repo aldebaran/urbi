@@ -23,11 +23,9 @@ endif
 
 SDK_REMOTE_CPPFLAGS = 				\
   $(LIBPORT_CPPFLAGS)				\
-  $(LTDL_CPPFLAGS)				\
   $(BOOST_CPPFLAGS)				\
   -I$(sdk_remote_srcdir)/include		\
-  -I$(sdk_remote_builddir)/include		\
-  -I$(sdk_remote_builddir)
+  -I$(sdk_remote_builddir)/include
 
 ## Find the kernel private headers.  location.hh etc. are generated.
 AM_CPPFLAGS += 					\

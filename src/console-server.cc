@@ -46,8 +46,6 @@
 #include <libport/utime.hh>
 #include <libport/windows.hh>
 
-#include <libltdl/ltdl.h>
-
 #include <sched/coroutine-local-storage.hh>
 
 // Inclusion order matters for windows. Leave userver.hh after network.hh.

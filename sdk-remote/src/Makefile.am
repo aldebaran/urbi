@@ -20,13 +20,15 @@ endif
 JPEG_CPPFLAGS = -I$(sdk_remote_srcdir)/jpeg -I$(sdk_remote_builddir)/jpeg
 JPEG_LIBS = $(sdk_remote_builddir)/jpeg/libjpeg4urbi$(LIBSFX).la
 
-AM_CPPFLAGS +=					\
+SDK_REMOTE_CPPFLAGS = 				\
   $(LIBPORT_CPPFLAGS)				\
-  $(JPEG_CPPFLAGS)				\
   $(BOOST_CPPFLAGS)				\
-  -D__SRCDIR__="\"$(top_srcdir)\""		\
   -I$(sdk_remote_srcdir)/include		\
-  -I$(sdk_remote_builddir)/include		\
+  -I$(sdk_remote_builddir)/include
+
+AM_CPPFLAGS +=					\
+  $(SDK_REMOTE_CPPFLAGS)			\
+  $(JPEG_CPPFLAGS)				\
   -I$(srcdir)
 
 AM_CXXFLAGS += $(PTHREAD_CFLAGS) $(SOCKETS_CFLAGS) $(WARNING_CXXFLAGS)
