@@ -29,6 +29,10 @@
 
 #include <libuobject/remote-ucontext-impl.hh>
 
+#define FRAISE(Format, ...)                                     \
+  throw std::runtime_error(libport::format(Format, __VA_ARGS__))
+
+
 namespace urbi
 {
   namespace impl
@@ -65,12 +69,13 @@ namespace urbi
         timestamp_ = impl->timestamp_;
       }
     }
-    URBI_SEND_PIPED_COMMAND_C((*outputStream), "if (!isdef(" << name << ")) var "
-                            << name);
     URBI_SEND_PIPED_COMMAND_C
-          ((*outputStream),
-           libport::format("external var %s from %s",
-                           owner_->get_name(), ctx->hookPointName()));
+      ((*outputStream),
+       libport::format("if (!isdef(%s)) var %s", name, name));
+    URBI_SEND_PIPED_COMMAND_C
+      ((*outputStream),
+       libport::format("external var %s from %s",
+                       owner_->get_name(), ctx->hookPointName()));
     ctx->markDataSent();
   }
 
@@ -118,8 +123,7 @@ namespace urbi
     UMessage* m = ctx->syncGet(owner_->get_name() +"->"
                                + urbi::name(p));
     if (!m->value)
-      throw std::runtime_error("Error fetching property on "
-                               + owner_->get_name());
+      FRAISE("Error fetching property on %s", owner_->get_name());
     UValue res = *m->value;
     delete m;
     return res;
@@ -451,7 +455,7 @@ namespace urbi
     std::string name = owner_->get_name();
     size_t p = name.find_first_of(".");
     if (p == name.npos)
-      throw std::runtime_error("unnotify: invalid argument: " + name);
+      FRAISE("unnotify: invalid argument: %s", name);
     // Each UVar creation and each notifychange causes an 'external
     // var' message, so when the UVar dies, creation count is
     // callbacks.size +1.
@@ -483,7 +487,7 @@ namespace urbi
     std::string name = owner_->get_name();
     size_t p = name.find_first_of(".");
     if (p == name.npos)
-      throw std::runtime_error("invalid argument to useRTP: "+name);
+      FRAISE("invalid argument to useRTP: %s", name);
     ctx->send(libport::format("%s.getSlot(\"%s\").rtp = %s|",
                          name.substr(0, p), name.substr(p+1, name.npos),
                          enable ? "true" : "false"));
@@ -496,7 +500,7 @@ namespace urbi
     std::string name = owner_->get_name();
     size_t p = name.find_first_of(".");
     if (p == name.npos)
-      throw std::runtime_error("invalid argument to setInputPort: "+name);
+      FRAISE("invalid argument to setInputPort: %s", name);
     ctx->send(libport::format("%s.getSlot(\"%s\").%s|",
                          name.substr(0, p), name.substr(p+1, name.npos),
                          enable

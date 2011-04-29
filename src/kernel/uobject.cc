@@ -682,7 +682,9 @@ namespace urbi
   | UObject.  |
   `----------*/
 
-  static void bounce_update(urbi::UObject* ob, void* me, const std::string& key)
+  static
+  void
+  bounce_update(urbi::UObject* ob, void* me, const std::string& key)
   {
     urbi::setCurrentContext(urbi::impl::KernelUContextImpl::instance());
     libport::utime_t t = libport::utime();
@@ -726,8 +728,8 @@ namespace urbi
       if (server().isAnotherThread())
       {
         server().schedule_fast(
-                          boost::bind(&KernelUContextImpl::newUObjectClass,
-                                      this, s));
+          boost::bind(&KernelUContextImpl::newUObjectClass,
+                      this, s));
         return;
       }
       GD_FINFO_TRACE("MakeProto for %s", s->name);
@@ -757,8 +759,8 @@ namespace urbi
       if (server().isAnotherThread())
       { // Copy the data
         server().schedule_fast(boost::bind(
-          (void (UContextImpl::*)(const std::string&))&UContextImpl::send,
-           this, std::string(str)));
+                                 (void (UContextImpl::*)(const std::string&))&UContextImpl::send,
+                                 this, std::string(str)));
         return;
       }
       kernel::urbiserver->ghost_connection_get().received(str);
@@ -770,8 +772,8 @@ namespace urbi
       if (server().isAnotherThread())
       { // Copy the data
         server().schedule_fast(boost::bind(
-          (void (UContextImpl::*)(const std::string&))&UContextImpl::send,
-           this, std::string((const char*)buf, size)));
+                                 (void (UContextImpl::*)(const std::string&))&UContextImpl::send,
+                                 this, std::string((const char*)buf, size)));
         return;
       }
       // Feed this to the ghostconnection.
@@ -780,10 +782,10 @@ namespace urbi
     }
 
 #define INTERRUPTIBLE                                                   \
-  runner::Job& r = ::kernel::runner();                              \
-  bool b = r.non_interruptible_get();                                   \
-  r.non_interruptible_set(false);                                       \
-  FINALLY(((runner::Job&, r))((bool, b)), r.non_interruptible_set(b))
+    runner::Job& r = ::kernel::runner();                                \
+    bool b = r.non_interruptible_get();                                 \
+    r.non_interruptible_set(false);                                     \
+    FINALLY(((runner::Job&, r))((bool, b)), r.non_interruptible_set(b))
 
 
     void KernelUContextImpl::yield() const
@@ -875,7 +877,7 @@ namespace urbi
         urbi::UValue val = v3;
         if (server().isAnotherThread())
           server().schedule_fast(boost::bind(&writeFromContext,
-                                                         ctx, varname, val));
+                                             ctx, varname, val));
         else
           writeFromContext(v1, v2, v3);
         return;
@@ -883,18 +885,18 @@ namespace urbi
       if (server().isAnotherThread())
       {
         server().schedule_fast(boost::bind(&KernelUContextImpl::call,
-                                                      this, object, method,
-                                                      v1, v2, v3, v4, v5, v6));
+                                           this, object, method,
+                                           v1, v2, v3, v4, v5, v6));
         return;
       }
       rObject b = xget_base(object);
       object::objects_type args;
       args << b;
 
-#define ARG(Nth)                               \
-      do {                                     \
-        if (v##Nth.type != DATA_VOID)          \
-          args << object_cast(v##Nth);         \
+#define ARG(Nth)                                \
+      do {                                      \
+        if (v##Nth.type != DATA_VOID)           \
+          args << object_cast(v##Nth);          \
       } while (false)
 
       ARG(1);
@@ -915,18 +917,21 @@ namespace urbi
       if (!o->local_slot_get(Symbol(p.second)))
         o->slot_set(Symbol(p.second), e);
     }
+
     void
     KernelUContextImpl::declare_event(const UEvent* owner)
     {
       if (server().isAnotherThread())
 
         server().schedule_fast(boost::bind(&declare_event_name,
-                                       owner->get_name()));
+                                           owner->get_name()));
       else
         declare_event_name(owner->get_name());
     }
 
-    static void doEmit(const std::string& object, const object::objects_type& args)
+    static
+    void
+    doEmit(const std::string& object, const object::objects_type& args)
     {
       StringPair p = split_name(object);
       rObject o = xget_base(p.first)->slot_get(libport::Symbol(p.second));
@@ -942,12 +947,12 @@ namespace urbi
                              UAutoValue& v5,
                              UAutoValue& v6,
                              UAutoValue& v7
-                             )
+      )
     {
       if (server().isAnotherThread())
       {
         server().schedule_fast(boost::bind(&KernelUContextImpl::emit,
-          this, object, v1, v2, v3, v4, v5, v6, v7));
+                                           this, object, v1, v2, v3, v4, v5, v6, v7));
         return;
       }
       object::objects_type args;
@@ -1085,8 +1090,8 @@ namespace urbi
       // the 'update' call.
       if (server().isAnotherThread())
       {
-        server().schedule_fast(boost::bind(
-          &KernelUContextImpl::setHubUpdate, this, hub, period));
+        server().schedule_fast(
+          boost::bind(&KernelUContextImpl::setHubUpdate, this, hub, period));
         return;
       }
       rObject uob = object::Object::proto->slot_get(SYMBOL(UObject));
@@ -1133,8 +1138,8 @@ namespace urbi
       if (server().isAnotherThread())
       {
         server().schedule_fast(
-                          boost::bind(&KernelUObjectImpl::initialize, this,
-                                      owner));
+          boost::bind(&KernelUObjectImpl::initialize, this,
+                      owner));
         return;
       }
       static int uid = 0;
@@ -1145,9 +1150,9 @@ namespace urbi
       if (fromcxx)
       {
         rObject r = ::urbi::uobjects::uobject_new(
-                      where->slot_get(SYMBOL(UObject)), false, false);
+          where->slot_get(SYMBOL(UObject)), false, false);
         owner->__name = r->slot_get(SYMBOL(__uobjectName))->as<object::String>()
-        ->value_get();
+          ->value_get();
       }
       uobject_to_robject[owner_->__name] = owner;
       owner_->ctx_->registerObject(owner);
@@ -1167,7 +1172,7 @@ namespace urbi
       if (server().isAnotherThread())
       {
         server().schedule_fast(
-                          boost::bind(&KernelUObjectImpl::clean, this));
+          boost::bind(&KernelUObjectImpl::clean, this));
         return;
       }
       uobject_to_robject.erase(owner_->__name);
@@ -1213,8 +1218,8 @@ namespace urbi
       if (server().isAnotherThread())
       {
         server().schedule_fast(
-                          boost::bind(&KernelUObjectImpl::setUpdate, this,
-                                      period));
+          boost::bind(&KernelUObjectImpl::setUpdate, this,
+                      period));
         return;
       }
       rObject me = xget_base(owner_->__name);
@@ -1254,13 +1259,13 @@ namespace urbi
         libport::Semaphore sem;
         server().schedule_fast(
           boost::bind(&call_and_unlock,
-            boost::function0<void>(boost::bind(&KernelUVarImpl::async, self,
-                                               f)),
+                      boost::function0<void>(boost::bind(&KernelUVarImpl::async, self,
+                                                         f)),
                       boost::ref(sem)));
         sem--;
       }
       else
-      server().schedule_fast(boost::bind(&KernelUVarImpl::async, self, f));
+        server().schedule_fast(boost::bind(&KernelUVarImpl::async, self, f));
     }
 
     void
@@ -1326,7 +1331,7 @@ namespace urbi
       if (server().isAnotherThread())
       {
         schedule(SYMBOL(UObject),boost::bind(&KernelUVarImpl::initialize, this,
-                                      owner));
+                                             owner));
         return;
       }
       // Protect against multiple parallel creation of the same UVar.
@@ -1497,8 +1502,8 @@ namespace urbi
       {
         urbi::UValue* v;
         schedule(SYMBOL(UObject),
-                          boost::bind(&KernelUVarImpl::async_get, this,
-                                      &v), true);
+                 boost::bind(&KernelUVarImpl::async_get, this,
+                             &v), true);
         return v->type;
       }
       rObject o = (owner_->owned
@@ -1521,7 +1526,7 @@ namespace urbi
         urbi::UValue v;
         schedule(SYMBOL(UObject),
                  boost::bind(&KernelUVarImpl::async_get_prop, this,
-                                      boost::ref(v), prop), true);
+                             boost::ref(v), prop), true);
         return v;
       }
       aver(ruvar_);
@@ -1541,7 +1546,7 @@ namespace urbi
       if (server().isAnotherThread())
       { // Copy the data
         schedule(SYMBOL(UObject),boost::bind(&KernelUVarImpl::setProp,
-           this, prop, v));
+                                             this, prop, v));
         return;
       }
       StringPair p = split_name(owner_->get_name());
@@ -1574,13 +1579,13 @@ namespace urbi
       if (server().isAnotherThread())
       { // Copy the data
         schedule(SYMBOL(UObject),boost::bind(&KernelUVarImpl::setInputPort,
-           this, enable));
+                                             this, enable));
         return;
       }
       runner::Job& r = ::kernel::urbiserver->getCurrentRunner();
       bool last_rdm = r.state.redefinition_mode_get();
       FINALLY( ((bool, last_rdm))((runner::Job&, r)),
-                      r.state.redefinition_mode_set(last_rdm));
+               r.state.redefinition_mode_set(last_rdm));
       r.state.redefinition_mode_set(true);
       if (enable)
         ruvar_->slot_set(SYMBOL(inputPort), object::to_urbi(true));
@@ -1616,7 +1621,7 @@ namespace urbi
       if (server().isAnotherThread())
       {
         server().schedule_fast(boost::bind(
-                     &KernelUGenericCallbackImpl::registerCallback, this));
+                                 &KernelUGenericCallbackImpl::registerCallback, this));
         return;
       }
       if (registered_)
@@ -1647,8 +1652,8 @@ namespace urbi
         rEvent event =
           me->slot_get(libport::Symbol(method))->as<object::Event>();
         event->onEvent(0, new object::Primitive(
-                       boost::function1<rObject, const objects_type&>
-                       (boost::bind(&wrap_event, _1, owner_, traceName))));
+                         boost::function1<rObject, const objects_type&>
+                         (boost::bind(&wrap_event, _1, owner_, traceName))));
       }
       if (owner_->type == "var" || owner_->type == "varaccess")
       {
@@ -1695,13 +1700,13 @@ namespace urbi
           }
           else
             GD_FWARN("invalid usage of foreign UVar: notifyaccess or USensor"
-                       "notifychange on %s from %s",
+                     "notifychange on %s from %s",
                      owner_->name, owner_->objname);
         }
         callback_ = new object::Primitive(
-            boost::function1<rObject, const objects_type&>
-            (boost::bind(&wrap_ucallback_notify, _1, owner_,
-                         traceName)));
+          boost::function1<rObject, const objects_type&>
+          (boost::bind(&wrap_ucallback_notify, _1, owner_,
+                       traceName)));
         callback_->slot_set
           (SYMBOL(target),
            new object::String(&owner_->owner ? owner_->owner.__name:"unknown"));
@@ -1713,7 +1718,7 @@ namespace urbi
         else
           id_ = var->notifyChange_(callback_);
         GD_FINFO_DUMP("Registered gave id %s on %s(%s)", id_, owner_->name,
-                       var.get());
+                      var.get());
         if (owner_->target)
         {
           KernelUVarImpl* vimpl
@@ -1769,16 +1774,15 @@ namespace urbi
 
     /** Find an UObject from its name.
 
-    The UObject class expects to know the variable name, i.e. a = new b;
-    should pass a to b's corresponding UObject ctor. Since we don't have this
-    information, we create a unique string, pass it to the ctor, and store it
-    in a.
+        The UObject class expects to know the variable name, i.e. a =
+        new b; should pass a to b's corresponding UObject ctor. Since
+        we don't have this information, we create a unique string, pass
+        it to the ctor, and store it in a.
 
-    But the user can create UVars based on the variable name it knows about,
-    i.e. a.val. So get_base must look in its uid map, and if it finds nothing,
-    look for an Urbi variable with given name. We expect all UObjects to be
-    created in Global.
-    */
+        But the user can create UVars based on the variable name it
+        knows about, i.e. a.val. So get_base must look in its uid map,
+        and if it finds nothing, look for an Urbi variable with given
+        name. We expect all UObjects to be created in Global.  */
     rObject
     get_base(const std::string& objname)
     {
@@ -1803,7 +1807,7 @@ namespace urbi
     }
 
     /*! Initialize plugin UObjects.
-    \param args object in which the instances will be stored.
+      \param args object in which the instances will be stored.
     */
     rObject uobject_initialize(const objects_type& args)
     {
@@ -1827,7 +1831,7 @@ namespace urbi
     }
 
     /*! Create the prototype for an UObject class.
-    */
+     */
     rObject
     uobject_make_proto(const std::string& name)
     {
@@ -1846,11 +1850,11 @@ namespace urbi
     }
 
     /*! Instanciate a new prototype inheriting from a UObject.
-    A new instance of UObject is created
-    \param proto proto object, created by uobject_make_proto() or uobject_new()
-    \param forceName force the reported C++ name to be the class name
-    \param instanciate true if the UObject should be instanciated, false if it
-    already is.
+      A new instance of UObject is created
+      \param proto proto object, created by uobject_make_proto() or uobject_new()
+      \param forceName force the reported C++ name to be the class name
+      \param instanciate true if the UObject should be instanciated, false if it
+      already is.
     */
     rObject
     uobject_new(rObject proto, bool forceName, bool instanciate)
@@ -1877,7 +1881,7 @@ namespace urbi
         ss << "uob_" << res.get();
         name = ss.str();
         /* We need to make this name accessible in urbi in case the UObject code
-        emits urbi code using this name.*/
+           emits urbi code using this name.*/
         where->slot_set(libport::Symbol(name), res);
       }
       uobject_map[name] = res.get();
@@ -1885,7 +1889,6 @@ namespace urbi
       res->call(SYMBOL(uobjectInit));
       // Instanciate UObject.
       if (instanciate)
-      {
         foreach (urbi::baseURBIStarter* i, urbi::baseURBIStarter::list())
           if (i->name == cname)
           {
@@ -1894,64 +1897,64 @@ namespace urbi
             i->instanciate(urbi::impl::KernelUContextImpl::instance(), name);
             return res;
           }
-      }
       return res;
     }
 
-    std::string processSerializedMessage(int msgType,
-                                 libport::serialize::BinaryISerializer& ia)
+    std::string
+    processSerializedMessage(int msgType,
+                             libport::serialize::BinaryISerializer& ia)
     {
       switch(msgType)
       {
       case urbi::UEM_ASSIGNVALUE:
-        {
-          std::string name;
-          urbi::UValue val;
-          libport::utime_t time;
-          unsigned int tlow, thi;
-          ia >> name >> val >> tlow >> thi;
-          time = tlow + ((libport::utime_t)thi << 32);
-          StringPair p = split_name(name);
-          GD_FINFO_TRACE("UEM_ASSIGNVALUE %s %s", name, val);
-          object::rUValue ov(new object::UValue(val));
-          object::global_class
-            ->slot_get(Symbol(p.first))
-            ->slot_get(Symbol(p.second))
-            ->call(SYMBOL(update_timed), ov, object::to_urbi(time));
-        }
-        break;
+      {
+        std::string name;
+        urbi::UValue val;
+        libport::utime_t time;
+        unsigned int tlow, thi;
+        ia >> name >> val >> tlow >> thi;
+        time = tlow + ((libport::utime_t)thi << 32);
+        StringPair p = split_name(name);
+        GD_FINFO_TRACE("UEM_ASSIGNVALUE %s %s", name, val);
+        object::rUValue ov(new object::UValue(val));
+        object::global_class
+          ->slot_get(Symbol(p.first))
+          ->slot_get(Symbol(p.second))
+          ->call(SYMBOL(update_timed), ov, object::to_urbi(time));
+      }
+      break;
       case urbi::UEM_EMITEVENT:
+      {
+        std::string name;
+        int count;
+        ia >> name >> count;
+        object::objects_type args;
+        for (int i=0; i<count; ++i)
         {
-          std::string name;
-          int count;
-          ia >> name >> count;
-          object::objects_type args;
-          for (int i=0; i<count; ++i)
-          {
-            UValue v;
-            ia >> v;
-            args.push_back(object_cast(v));
-          }
-          impl::doEmit(name, args);
+          UValue v;
+          ia >> v;
+          args.push_back(object_cast(v));
         }
-        break;
+        impl::doEmit(name, args);
+      }
+      break;
       case urbi::UEM_REPLY:
-        {
-          std::string id;
-          UValue val;
-          ia >> id >> val;
-          object::global_class->slot_get(SYMBOL(UObject))
+      {
+        std::string id;
+        UValue val;
+        ia >> id >> val;
+        object::global_class->slot_get(SYMBOL(UObject))
           ->call(SYMBOL(funCall), object::to_urbi(id),
                  object_cast(val));
-        }
-        break;
+      }
+      break;
       case urbi::UEM_EVAL:
-        {
-          std::string code;
-          ia >> code;
-          return code;
-        }
-        break;
+      {
+        std::string code;
+        ia >> code;
+        return code;
+      }
+      break;
       default:
         GD_FWARN("Invalid serialized message number %s", (int)msgType);
         break;

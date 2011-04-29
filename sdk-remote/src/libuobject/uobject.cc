@@ -145,6 +145,7 @@ namespace urbi
     private:
       RemoteUContextImpl* backend_;
     };
+
     /*---------------------.
     | RemoteUContextImpl.  |
     `---------------------*/
