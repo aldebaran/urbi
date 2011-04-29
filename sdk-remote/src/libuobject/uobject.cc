@@ -647,13 +647,13 @@ namespace urbi
         break;
 
       case UEM_TIMER:
-        {
+      {
         std::string cbname = array[1];
         TimerMap::iterator i = timerMap.find(cbname);
         if (i != timerMap.end())
           i->second.second->call();
-        }
-        break;
+      }
+      break;
 
       case UEM_NORTP:
         GD_WARN("Disabling RTP as requested by engine");

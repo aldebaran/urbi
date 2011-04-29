@@ -10,6 +10,8 @@
 
 /// \file libuobject/uvar.cc
 
+#include <boost/algorithm/string.hpp>
+
 #include <libport/format.hh>
 
 #include <libport/containers.hh>
@@ -152,22 +154,21 @@ namespace urbi
     static std::string res =
       libport::format("URTP_%s_%s", getFilteredHostname(),
 #ifdef __UCLIBC__
-   "default"
+                      "default"
 #else
-   getpid()
+                      getpid()
 #endif
-    );
+        );
     return res;
   }
 
-  static std::string makeLinkName(const std::string& key)
+  static inline
+  std::string makeLinkName(const std::string& key)
   {
-    // We cannot have '.' in here, but we want to be able to regenerate the
-    // original key unambiguously, so use something unlikely (as in reserved
-    // idealy)
-    std::string res =  rtp_id() + "___" + key;
-    res[res.find_first_of(".")] = '_';
-    return res;
+    // We cannot have '.' in here, but we want to be able to
+    // regenerate the original key unambiguously, so use something
+    // unlikely (as in reserved ideally).
+    return boost::replace_all_copy(rtp_id() + "___" + key, ".", "_");
   }
 
   void
@@ -502,10 +503,10 @@ namespace urbi
     if (p == name.npos)
       FRAISE("invalid argument to setInputPort: %s", name);
     ctx->send(libport::format("%s.getSlot(\"%s\").%s|",
-                         name.substr(0, p), name.substr(p+1, name.npos),
-                         enable
-                         ? "setSlot(\"inputPort\", true)"
-                         : "removeLocalSlot(\"inputPort\")"));
+                              name.substr(0, p), name.substr(p+1, name.npos),
+                              enable
+                              ? "setSlot(\"inputPort\", true)"
+                              : "removeLocalSlot(\"inputPort\")"));
     ctx->markDataSent();
   }
 
