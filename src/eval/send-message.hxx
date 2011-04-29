@@ -33,9 +33,10 @@
 namespace eval
 {
   inline
-  rObject send_message(Job& job,
-                       const std::string& tag,
-                       const std::string& msg)
+  rObject
+  send_message(Job& job,
+               const std::string& tag,
+               const std::string& msg)
   {
     if (dbg::is_sneaker(job)) // unlikely
     {
@@ -52,7 +53,7 @@ namespace eval
     rObject chan = chan_slot ? chan_slot->value() : rObject();
     if (chan && is_a(chan, lobby->slot_get(SYMBOL(Channel))))
       return
-        chan->call(SYMBOL(LT_LT_),
+        chan->call(SYMBOL(LT_LT),
                    new object::String(msg));
     else
       return
@@ -62,13 +63,15 @@ namespace eval
   }
 
   inline
-  Action  send_message(const std::string& tag,
-                       const std::string& msg)
+  Action
+  send_message(const std::string& tag,
+               const std::string& msg)
   {
     return boost::bind(&send_message, _1, tag, msg);
   }
 
-  inline void
+  inline
+  void
   show_backtrace(Job& job,
                  const runner::State::call_stack_type& bt,
                  const std::string& chan)
@@ -79,7 +82,8 @@ namespace eval
                    libport::format("!!!    called from: %s", c));
   }
 
-  inline void
+  inline
+  void
   show_backtrace(Job& job,
                  const std::string& chan)
   {
@@ -90,9 +94,10 @@ namespace eval
   }
 
   inline
-  void show_exception(Job& job,
-                      const object::UrbiException& ue,
-                      const std::string& tag)
+  void
+  show_exception(Job& job,
+                 const object::UrbiException& ue,
+                 const std::string& tag)
   {
     CAPTURE_GLOBAL(Exception);
 
@@ -108,13 +113,15 @@ namespace eval
   }
 
   inline
-  Action  verb_message(const std::string& tag, Action act)
+  Action
+  verb_message(const std::string& tag, Action act)
   {
     return boost::bind(&verb_message, _1, tag, act);
   }
 
   inline
-  rObject verb_message(Job& job, const std::string& tag, Action act)
+  rObject
+  verb_message(Job& job, const std::string& tag, Action act)
   {
     send_message(job, tag, "enter");
     rObject res = act(job);
