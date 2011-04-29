@@ -52,14 +52,14 @@ namespace urbi
     static rObject
     object_class_clone(const objects_type& args)
     {
-      check_arg_count(args.size() - 1, 0);
+      check_arg_count(args, 0);
       return args[0]->clone();
     }
 
     static rObject
     object_class_init(const objects_type& args)
     {
-      check_arg_count(args.size() - 1, 0);
+      check_arg_count(args, 0);
       return args[0];
     }
 
@@ -70,7 +70,7 @@ namespace urbi
     {
       runner::Job& r = ::kernel::runner();
 
-      check_arg_count(args.size() - 1, 1, 2);
+      check_arg_count(args, 1, 2);
 
       // Second argument is max depth.
       int depth_max = 0;
@@ -115,7 +115,7 @@ namespace urbi
     object_class_EQ_EQ(const objects_type& args)
     {
       // Unless overridden, structural equality is physical equality.
-      check_arg_count(args.size() - 1, 1);
+      check_arg_count(args, 1);
       return args[0]->call(SYMBOL(EQ_EQ_EQ), args[1]);
     }
 
@@ -123,7 +123,7 @@ namespace urbi
     static rObject
     object_class_EQ_EQ_EQ(const objects_type& args)
     {
-      check_arg_count(args.size() - 1, 1);
+      check_arg_count(args, 1);
       return to_boolean(args[0] == args[1]);
     }
 
@@ -160,7 +160,7 @@ namespace urbi
     static rObject
     object_class_protos (const objects_type& args)
     {
-      check_arg_count(args.size() - 1, 0);
+      check_arg_count(args, 0);
       return args[0]->urbi_protos_get ();
     }
 
@@ -176,7 +176,7 @@ namespace urbi
     static rObject
     object_class_allProtos(const objects_type& args)
     {
-      check_arg_count(args.size() - 1, 0);
+      check_arg_count(args, 0);
       List::value_type res;
       for_all_protos(args[0], boost::bind(&proto_add, boost::ref(res), _1));
       return new List(res);
@@ -206,7 +206,7 @@ namespace urbi
     static rObject
     object_class_localSlotNames(const objects_type& args)
     {
-      check_arg_count(args.size() - 1, 0);
+      check_arg_count(args, 0);
       const rObject& obj = args[0];
 
       List::value_type l;
@@ -229,7 +229,7 @@ namespace urbi
     static rObject
     object_class_slotNames(const objects_type& args)
     {
-      check_arg_count(args.size() - 1, 0);
+      check_arg_count(args, 0);
       std::vector<libport::Symbol> slot_names;
       List::value_type res;
       objects_type protos =

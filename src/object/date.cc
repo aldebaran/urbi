@@ -56,7 +56,7 @@ namespace urbi
     // FIXME: kill this when overloading is fully supported
     static rObject MINUS(const objects_type& args)
     {
-      check_arg_count(args.size() - 1, 0, 1);
+      check_arg_count(args, 0, 1);
       static rPrimitive actual = new Primitive(MINUS_overload);
       return (*actual)(args);
     }

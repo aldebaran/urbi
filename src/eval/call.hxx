@@ -258,7 +258,7 @@ namespace eval
                             SYMBOL(LPAREN_RPAREN), args, call_message, loc);
       }
       // GD_FINFO_DEBUG("Ensure that no arguments are provided (%d == 0)", args.size() - 1);
-      object::check_arg_count(args.size()-1, 0);
+      object::check_arg_count(args, 0);
       return function;
     }
 
@@ -427,7 +427,7 @@ namespace eval
       }
       // Check arity
       // GD_FINFO_DEBUG("Check args: %d in [ %d .. %d ]", args.size() - 1, min, max);
-      object::check_arg_count (args.size() - 1, min, max);
+      object::check_arg_count(args, min, max);
       object::objects_type::const_iterator effective = args.begin();
       // skip target
       ++effective;

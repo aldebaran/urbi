@@ -30,6 +30,7 @@ namespace urbi
 {
   namespace object
   {
+
     inline void
     check_arg_count(unsigned effective, unsigned formal)
     {
@@ -42,9 +43,20 @@ namespace urbi
     {
       if (min == max)
         check_arg_count(effective, min);
-      else
-        if (effective < min || effective > max)
-          runner::raise_arity_error(effective, min, max);
+      else if (effective < min || max < effective)
+        runner::raise_arity_error(effective, min, max);
+    }
+
+    inline void
+    check_arg_count(const objects_type& args, unsigned formal)
+    {
+      check_arg_count(args.size() - 1, formal);
+    }
+
+    inline void
+    check_arg_count(const objects_type& args, unsigned min, unsigned max)
+    {
+      check_arg_count(args.size() - 1 , min, max);
     }
 
     namespace
@@ -52,7 +64,7 @@ namespace urbi
       template <typename T>
       rObject cxx_object_clone(objects_type args)
       {
-        check_arg_count(args.size() - 1, 0);
+        check_arg_count(args, 0);
         rObject tgt = args[0];
         aver(tgt->as<T>());
         libport::intrusive_ptr<T> res = new T(tgt->as<T>());
@@ -65,7 +77,7 @@ namespace urbi
       template <typename T>
       rObject cxx_object_id(objects_type args)
       {
-        check_arg_count(args.size() - 1, 0);
+        check_arg_count(args, 0);
         return args[0];
       }
     }

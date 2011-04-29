@@ -107,7 +107,7 @@ def primitive(r, nargs):
         'args_name': iif(nargs != -1, 'args', ''),
         'boost': boost_type(r, nargs),
         'check': iif(nargs != -1,
-                     'check_arg_count(args.size() - 1, %s);' % nargs,
+                     'check_arg_count(args, %s);' % nargs,
                      ''),
         'nargs': nargs,
         'param': template_param(r, nargs),

@@ -38,33 +38,33 @@ namespace urbi
  *  @param T2   Second possible type for the argument
  *  @param V2   Primitive to bounce on when the argument is of type T2
  */
-# define OVERLOAD_TYPE(Name, N, Arg, T1, V1, T2, V2)                    \
-                                                                        \
-  static rObject Name(const object::objects_type& args)                 \
-  {                                                                     \
-    static rPrimitive v1 = primitive(V1);                               \
-    static rPrimitive v2 = primitive(V2);                               \
-                                                                        \
-    object::check_arg_count (args.size() - 1, N);                       \
-    if (args[Arg]->as<T2>())                                            \
-      return (*v2)(args);                                               \
-    else                                                                \
-      return (*v1)(args);                                               \
-  }                                                                     \
+# define OVERLOAD_TYPE(Name, N, Arg, T1, V1, T2, V2)    \
+                                                        \
+  static rObject Name(const object::objects_type& args) \
+  {                                                     \
+    static rPrimitive v1 = primitive(V1);               \
+    static rPrimitive v2 = primitive(V2);               \
+                                                        \
+    object::check_arg_count(args, N);                   \
+    if (args[Arg]->as<T2>())                            \
+      return (*v2)(args);                               \
+    else                                                \
+      return (*v1)(args);                               \
+  }
 
-# define OVERLOAD_TYPE_3(Name, N, Arg, T1, V1, T2, V2, T3, V3)          \
-                                                                        \
-  static rObject Name(const object::objects_type& args)                 \
-  {                                                                     \
-    static rPrimitive v1 = primitive(V1);                               \
-    static rPrimitive v2 = primitive(V2);                               \
-    static rPrimitive v3 = primitive(V3);                               \
-                                                                        \
-    object::check_arg_count (args.size() - 1, N);                       \
-    return (args[Arg]->as<T1>()   ? (*v1)(args)                         \
-            : args[Arg]->as<T2>() ? (*v2)(args)                         \
-            :                         (*v3)(args));                     \
-  }                                                                     \
+# define OVERLOAD_TYPE_3(Name, N, Arg, T1, V1, T2, V2, T3, V3)  \
+                                                                \
+  static rObject Name(const object::objects_type& args)         \
+  {                                                             \
+    static rPrimitive v1 = primitive(V1);                       \
+    static rPrimitive v2 = primitive(V2);                       \
+    static rPrimitive v3 = primitive(V3);                       \
+                                                                \
+    object::check_arg_count(args, N);                           \
+    return (args[Arg]->as<T1>()   ? (*v1)(args)                 \
+            : args[Arg]->as<T2>() ? (*v2)(args)                 \
+            :                         (*v3)(args));             \
+  }
 
 /// Make a function that bounces depending on its number of arguments
 /**
@@ -73,26 +73,26 @@ namespace urbi
  *  @param V1   Primitive to bounce on for N1     arguments
  *  @param V2   Primitive to bounce on for N1 + 1 arguments
  */
-# define OVERLOAD_2(Name, N, V1, V2)                                    \
-                                                                        \
-  static rObject Name(const object::objects_type& args)                 \
-  {                                                                     \
-    static rPrimitive v1 = primitive(V1);                               \
-    static rPrimitive v2 = primitive(V2);                               \
-                                                                        \
-    object::check_arg_count (args.size() - 1, N - 1, N);                \
-    switch (args.size())                                                \
-    {                                                                   \
-      case N:                                                           \
-        return (*v1)(args);                                             \
-        break;                                                          \
-      case N + 1:                                                       \
-        return (*v2)(args);                                             \
-        break;                                                          \
-      default:                                                          \
-        pabort("Unreachable");                                          \
-    }                                                                   \
-  }                                                                     \
+# define OVERLOAD_2(Name, N, V1, V2)                    \
+                                                        \
+  static rObject Name(const object::objects_type& args) \
+  {                                                     \
+    static rPrimitive v1 = primitive(V1);               \
+    static rPrimitive v2 = primitive(V2);               \
+                                                        \
+    object::check_arg_count(args, N - 1, N);            \
+    switch (args.size())                                \
+    {                                                   \
+      case N:                                           \
+        return (*v1)(args);                             \
+        break;                                          \
+      case N + 1:                                       \
+        return (*v2)(args);                             \
+        break;                                          \
+      default:                                          \
+        pabort("Unreachable");                          \
+    }                                                   \
+  }
 
 /// Make a function that bounces depending on its number of arguments
 /**

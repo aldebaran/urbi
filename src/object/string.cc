@@ -76,7 +76,7 @@ namespace urbi
     {
       objects_type args = _args;
       static rPrimitive actual = new Primitive(split_overload);
-      check_arg_count(args.size() - 1, 0, 4);
+      check_arg_count(args, 0, 4);
       switch (args.size())
       {
         case 1:

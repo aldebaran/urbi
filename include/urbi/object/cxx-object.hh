@@ -166,6 +166,17 @@ namespace urbi
     void check_arg_count(unsigned effective,
                          unsigned minformal, unsigned maxformal);
 
+    /// Throw an exception if args.size() - 1  != effective.
+    /// \note: \c self is *not* included in the count.
+    URBI_SDK_API
+    void check_arg_count(const objects_type& args, unsigned formal);
+
+    /// Same as above, with a minimum and maximum number of
+    /// formal parameters.
+    URBI_SDK_API
+    void check_arg_count(const objects_type& args,
+                         unsigned minformal, unsigned maxformal);
+
     /// Resolve the namespace part of an Urbi object name.
     /* The namespace component is stripped from named, created and
      * returned.  I.e., given "Foo.Bar.Baz", Foo.Bar will be created

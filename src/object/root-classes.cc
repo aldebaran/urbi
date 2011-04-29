@@ -103,7 +103,7 @@ namespace urbi
     static rObject
     id(objects_type args)
     {
-      check_arg_count(args.size() - 1, 0);
+      check_arg_count(args, 0);
       return args.front();
     }
 
@@ -268,8 +268,7 @@ namespace urbi
       static rObject
       void_class_acceptVoid(objects_type args)
       {
-        check_arg_count(args.size() - 1, 0);
-
+        check_arg_count(args, 0);
         return accepted_void_class;
       }
 

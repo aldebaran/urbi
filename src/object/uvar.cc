@@ -276,7 +276,7 @@ namespace urbi
     uvar_update_bounce(objects_type args)
     {
       //called with self slotname slotval
-      check_arg_count(args.size() - 1, 2);
+      check_arg_count(args, 2);
       libport::intrusive_ptr<UVar> rvar =
         args.front()
         ->slot_get(libport::Symbol(args[1]->as<String>()->value_get())).value()
