@@ -128,28 +128,33 @@ do (Lobby)
       var remoteIP = host|
       var socket = Socket.new|
       var socket.receive = closure(t) { receive(t)}|
-      write = function(t) { socket.write(t)}|
-      send = function (var args[])
+      function write (t)
+      {
+        socket.write(t)
+      }|
+      function send (var args[])
       {
         if (args.size == 2 && !args[1].empty)
-        write("[%08d:%s] %s\n"
-              % [(time*1000).round, args[1], args[0]])
+          write("[%08d:%s] %s\n"
+                % [(time*1000).round, args[1], args[0]])
         else
-        write("[%08d] %s\n"
-              % [(time*1000).round, args[0]])
-
+          write("[%08d] %s\n"
+                % [(time*1000).round, args[0]])
       }|
       // Prevent call to quit as it would close the ghost connection
-      var quitBackend = &quit;
-      quit = function() { socket.disconnect}|
+      var quitBackend = &quit|
+      function quit()
+      {
+        socket.disconnect
+      }|
       socket.connect(host, port)|
       var t = Tag.new|
-      t:at(socket.disconnected?)
+      t: at(socket.disconnected?)
       {
-        quitBackend;
-        t.stop;
+        quitBackend|
+        t.stop
       }|
-      initialize(true);
+      initialize(true)
     }
   };
 
