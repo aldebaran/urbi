@@ -36,6 +36,12 @@ memdup(const void *data, size_t size)
   return memcpy(malloc(size), data, size);
 }
 
+static void*
+memdup(const std::string& s)
+{
+  return memdup(s.c_str(), s.size());
+}
+
 struct Point
 {
   Point()
@@ -332,7 +338,7 @@ public:
     urbi::UBinary b;
     b.type = urbi::BINARY_UNKNOWN;
     // Dup since we want to test no-copy op: the other end will write.
-    b.common.data = memdup(content.c_str(), content.size());
+    b.common.data = memdup(content);
     b.common.size = content.size();
     GD_FINFO_DEBUG("writeB cptr %s", b.common.data);
     *vars[idx] = b;
@@ -347,7 +353,7 @@ public:
     threadCheck();
     urbi::UImage i;
     i.init();
-    i.data = (unsigned char*)memdup(content.c_str(), content.size());
+    i.data = (unsigned char*)memdup(content);
     i.size = content.length();
     GD_FINFO_DEBUG("writeI cptr %s", (void*)i.data);
     *vars[idx] = i;
@@ -665,8 +671,7 @@ public:
     urbi::UBinary val;
     val.type = urbi::BINARY_UNKNOWN;
     val.common.size = content.length();
-    val.common.data = malloc(content.length());
-    memcpy(val.common.data, content.c_str(), content.length());
+    val.common.data = memdup(content);
     v = val;
     return 0;
   }
@@ -676,8 +681,7 @@ public:
     urbi::UVar v(name);
     urbi::UBinary val;
     val.common.size = content.length();
-    val.common.data = malloc(content.length());
-    memcpy(val.common.data, content.c_str(), content.length());
+    val.common.data = memdup(content);
     v = val;
     return 0;
   }
@@ -690,8 +694,7 @@ public:
     i.imageFormat = urbi::IMAGE_JPEG;
     i.width = i.height = 42;
     i.size = content.length();
-    i.data = (unsigned char*)malloc(content.length());
-    memcpy(i.data, content.c_str(), content.length());
+    i.data = (unsigned char*)memdup(content);
     v = i;
     free(i.data);
     return 0;
@@ -708,8 +711,7 @@ public:
     s.channels = 1;
     s.sampleSize= 8;
     s.sampleFormat = urbi::SAMPLE_UNSIGNED;
-    s.data = (char*)malloc(content.length());
-    memcpy(s.data, content.c_str(), content.length());
+    s.data = (char*)memdup(content);
     v = s;
     free(s.data);
     return 0;
