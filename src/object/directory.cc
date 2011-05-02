@@ -147,6 +147,16 @@ namespace urbi
         {
           libport::Synchronizer::SynchroPoint
             lock(kernel::server().big_kernel_lock_get());
+#if !defined NDEBUG
+          // Make sure the assertion does not fail due to an allocation in
+          // another thread.  This is safe because we hold the kernel lock.
+          pthread_t previousAllocatorThread = Object::thread;
+          Object::thread = pthread_self();
+          FINALLY(((pthread_t, previousAllocatorThread)),
+            Object::thread = previousAllocatorThread;
+          );
+#endif
+
           while (i < len)
           {
             inotify_event& evt = reinterpret_cast<inotify_event&>(buffer[i]);
@@ -154,6 +164,8 @@ namespace urbi
 
             rObject event;
             {
+              // TODO: This lock doesn't seems to be needed because the
+              // kernel lock is already locked by the synchronization point.
               BlockLock lock(_watch_map_lock);
               aver(libport::has(_watch_map, evt.wd));
               if (evt.mask & IN_CREATE)
