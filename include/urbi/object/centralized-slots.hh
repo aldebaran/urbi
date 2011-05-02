@@ -79,7 +79,7 @@ namespace urbi
       /// Get a begin const iterator.
       static const_iterator begin(const Object* owner);
       /// Dispose of the slots of \a owner.
-      static void finalize(Object* owner);
+      void finalize(Object* owner);
       /// Get a past-the-end iterator.
       static iterator end(Object* owner);
       /// Get a past-the-end cosnt iterator.
@@ -87,7 +87,7 @@ namespace urbi
       /// Erase \a owner's \a key slot.
       /// @return Success status.
       ///         I.e., false if the slot was not defined (entailing failure).
-      static bool erase(Object* owner, const key_type& key);
+      bool erase(Object* owner, const key_type& key);
       /// Get \a owner's \a key slot's value.
       static value_type get(const Object* owner, const key_type& key);
       /// Return whether \a owner has a \a key slot.
@@ -96,8 +96,8 @@ namespace urbi
       /// Set \a owner's \a key slot's value to \a v.
       /// @return Success status.
       ///         I.e., false if the slot was already defined (entailing failure).
-      static bool set(Object* owner,
-		      const key_type& key, value_type v, bool overwrite = false);
+      bool set(Object* owner,
+               const key_type& key, value_type v, bool overwrite = false);
 
 
       /*----------.
@@ -120,6 +120,8 @@ namespace urbi
       static loc_index_type& loc_index_;
       /// The owner-wise index.
       static obj_index_type& obj_index_;
+      /// The number of slots.
+      int size_;
     };
   }
 }
