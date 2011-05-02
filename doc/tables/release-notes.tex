@@ -781,9 +781,9 @@ x = 1|;
 \item \refSlot[Lobby]{authors},  \refSlot[Lobby]{thanks}.
 \item \refObject{System.PackageInfo}.
 \item \refSlot[System]{spawn}.
-\item LEGO Mindstorms NXT support (\autoref{sec:nxt}).
-\item Pioneer 3-DX support (\autoref{sec:p3dx}).
-\item Support for Segway RMP (\autoref{sec:segway-rmp}).
+\item LEGO Mindstorms NXT support\ifthen{\boolean{nxt}}{ (\autoref{sec:nxt})}.
+\item Pioneer 3-DX support\ifthen{\boolean{p3dx}}{ (\autoref{sec:p3dx})}.
+\item Support for Segway RMP\ifthen{\boolean{rmp}}{ (\autoref{sec:segway-rmp})}.
 \end{itemize}
 
 
