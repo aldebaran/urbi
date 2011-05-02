@@ -36,11 +36,11 @@ $(srcdir)/%.dat: %.utraj
 # requests from the user.  Set the terminal too there for the same
 # reasons.
 	$(AM_V_at){					\
-	  echo 'set output "$*.eps"';			\
+	  echo 'set output "$*.tex"';			\
 	  echo 'set terminal epslatex color';		\
 	  echo 'set key off';				\
 	  echo 'plot "$<" using 1:2 with linespoints';	\
-	} > $*.plt.tmp
+	} >$*.plt.tmp
 	$(AM_V_at)LC_ALL=C $(GNUPLOT) $*.plt.tmp
 	$(AM_V_at)mv $*.tex $*.pdftex_t
 	$(AM_V_at)$(EPSTOPDF) $*.eps -o $*.pdf
