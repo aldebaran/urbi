@@ -111,5 +111,6 @@ namespace urbi
     }
 
     const size_t Slot::allocator_static_max_size = sizeof(Slot);
+    rObject Slot::proto = 0;
   }
 }

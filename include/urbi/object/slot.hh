@@ -34,13 +34,23 @@ namespace urbi
 #define URBI_OBJECT_SLOT_CACHED_PROPERTIES      \
     ((bool, constant))                          \
 
-    class Slot
-      : public libport::RefCounted
-      , public libport::StaticallyAllocated<Slot, 1024 * 4>
+    class Slot: public Object
     {
     public:
       /// Maximum object size for the allocator
       static const size_t allocator_static_max_size;
+      static rObject proto;
+      virtual void* as_dispatch_(const std::type_info* requested)
+      {
+        return this->as_check_(requested) ? this : 0;
+      }
+
+      ATTRIBUTE_ALWAYS_INLINE
+      bool
+      as_check_(const std::type_info* req)
+      {
+        return &typeid(Slot) == req || Object::as_check_(req);
+      }
 
     public:
       typedef boost::unordered_map<libport::Symbol, rObject> properties_type;

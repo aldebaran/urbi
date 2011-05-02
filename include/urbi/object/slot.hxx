@@ -23,16 +23,20 @@ namespace urbi
       : constant_(false)
       , value_(object::void_class)
       , properties_(0)
-    {}
+    {
+      proto_add(proto);
+    }
 
     inline
     Slot::Slot(const Slot& model)
-      : libport::RefCounted()
+      : Object()
       , constant_(false)
       , value_(model.value_)
       , properties_(model.properties_
                     ? new properties_type(*model.properties_) : 0)
-    {}
+    {
+      proto_add(proto);
+    }
 
     template <typename T>
     inline
@@ -41,6 +45,7 @@ namespace urbi
       , value_(0)
       , properties_(0)
     {
+      proto_add(proto);
       set(value);
     }
 

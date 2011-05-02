@@ -223,7 +223,7 @@ namespace urbi
         GD_FINFO_DEBUG("extend primitive %s with C++ routine (type: %s)",
                        name, typeid(T).name());
         rSlot v = local_slot_get(sym);
-        rPrimitive prim = (*v)->as<Primitive>();
+        rPrimitive prim = v->value()->as<Primitive>();
         assert(prim);
         primitive(prim, p);
 
