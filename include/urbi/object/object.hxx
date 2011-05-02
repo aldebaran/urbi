@@ -34,6 +34,7 @@
 # include <kernel/userver.hh>
 
 # include <urbi/runner/raise.hh>
+# include <urbi/object/slot.hh>
 
 namespace urbi
 {

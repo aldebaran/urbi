@@ -31,6 +31,9 @@
 
 # include <urbi/object/fwd.hh>
 # include <urbi/object/centralized-slots.hh>
+# ifndef OBJECT_SLOT_HH
+#  include <urbi/object/centralized-slots.hxx>
+# endif
 # include <urbi/export.hh>
 
 # define URBI_ATTRIBUTE_ON_DEMAND_DECLARE(Type, Name)   \
@@ -64,7 +67,7 @@ namespace urbi
     /// Run time values for Urbi.
     class URBI_SDK_API Object
       : public libport::RefCounted
-      , public libport::StaticallyAllocated<Object, URBI_OBJECT_MAX>
+      , public libport::StaticallyAllocated<Object, 1024 * 4>
     {
     public:
       /// Maximum object size for the allocator

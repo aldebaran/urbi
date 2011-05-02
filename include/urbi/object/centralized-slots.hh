@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -18,7 +18,7 @@
 # include <boost/multi_index/hashed_index.hpp>
 # include <boost/multi_index/member.hpp>
 
-# include <urbi/object/slot.hh>
+# include <urbi/object/fwd.hh>
 
 namespace urbi
 {
@@ -123,7 +123,5 @@ namespace urbi
     };
   }
 }
-
-# include <urbi/object/centralized-slots.hxx>
 
 #endif

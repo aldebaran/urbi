@@ -102,6 +102,9 @@ namespace urbi
 
     */
 
+    class Slot;
+    typedef libport::intrusive_ptr<Slot> rSlot;
+
 # define FWD_DECL(Class)                                \
     class Class;                                        \
     typedef libport::intrusive_ptr<Class> r ## Class    \

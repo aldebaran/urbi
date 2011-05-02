@@ -14,7 +14,6 @@
 #include <libport/thread.hh>
 #include <urbi/object/any-to-boost-function.hh>
 #include <urbi/object/barrier.hh>
-#include <urbi/object/centralized-slots.hh>
 #include <urbi/object/code.hh>
 #include <urbi/object/cxx-conversions.hh>
 #include <urbi/object/cxx-object.hh>

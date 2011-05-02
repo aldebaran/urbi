@@ -25,8 +25,7 @@
 
 # include <object/symbols.hh>
 # include <urbi/object/fwd.hh>
-
-# define URBI_OBJECT_MAX 1024 * 4
+# include <urbi/object/object.hh>
 
 namespace urbi
 {
@@ -37,7 +36,7 @@ namespace urbi
 
     class Slot
       : public libport::RefCounted
-      , public libport::StaticallyAllocated<Slot, URBI_OBJECT_MAX>
+      , public libport::StaticallyAllocated<Slot, 1024 * 4>
     {
     public:
       /// Maximum object size for the allocator
@@ -107,5 +106,7 @@ namespace urbi
     typedef libport::intrusive_ptr<Slot> rSlot;
   }
 }
+
+# include <urbi/object/centralized-slots.hxx>
 
 #endif
