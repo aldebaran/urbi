@@ -514,7 +514,7 @@ do (Matrix)
 
 
 \item['*'](<that>)%
-  Matrix product between \this and \that.
+  If \that is a Matrix, matrix product between \this and \that.
 \begin{urbiassert}
 Matrix.new([1, 2]) * Matrix.new([10], [20])
   == Matrix.new([50]);
@@ -530,6 +530,11 @@ The sizes must be compatible ($\texttt{\this.size.second} =
 Matrix.new([1, 2]) * Matrix.new([3, 4]);
 [00081168:error] !!! *: incompatible sizes: 1x2, 1x2
 \end{urbiscript}
+
+  If \that is a Float, the scalar product.
+\begin{urbiassert}
+Matrix.new([1, 2], [3, 4]) * 3 == Matrix.new([3, 6], [9, 12]);
+\end{urbiassert}
 
 \item['*='](<that>)%
   In place (\autoref{sec:lang:iass}) product (\refSlot{'*'}).  The same
@@ -547,18 +552,29 @@ rhs *= rhs;
 [00272182:error] !!! *=: incompatible sizes: 2x1, 2x1
 \end{urbiassert}
 
+\begin{urbiassert}
+var v = Matrix.new([1, 2], [3, 4]);
+var res = v * 3;
+(v *= 3) === v; v == res;
+\end{urbiassert}
+
 
 \item['+'](<that>)%
   The sum of \this and \that.  Their sizes must be equal.
 \begin{urbiassert}
 Matrix.new([1, 2]) + Matrix.new([10, 20])
-  == Matrix.new ([[11, 22]]);
+  == Matrix.new([11, 22]);
 
 Matrix.new([1, 2], [3, 4]) + Matrix.new([10, 20], [30, 40])
-  == Matrix.new ([[11, 22], [33, 44]]);
+  == Matrix.new([11, 22], [33, 44]);
 
 Matrix.new([1, 2]) + Matrix.new([10, 20], [30, 40]);
 [00002056:error] !!! +: incompatible sizes: 1x2, 2x2
+\end{urbiassert}
+
+  If \that is a Float, the scalar addition.
+\begin{urbiassert}
+Matrix.new([1, 2], [3, 4]) + 3 == Matrix.new([4, 5], [6, 7]);
 \end{urbiassert}
 
 
@@ -578,18 +594,29 @@ lhs1 += Matrix.new([1, 2]);
 [00338194:error] !!! +=: incompatible sizes: 2x2, 1x2
 \end{urbiassert}
 
+\begin{urbiassert}
+var v = Matrix.new([3, 6], [9, 12]);
+var res = v + 3;
+(v += 3) === v; v == res;
+\end{urbiassert}
+
 
 \item['-'](<that>)%
   The difference of \this and \that.  Their sizes must be equal.
 \begin{urbiassert}
 Matrix.new([1, 2]) - Matrix.new([10, 20])
-  == Matrix.new ([[-9, -18]]);
+  == Matrix.new([-9, -18]);
 
 Matrix.new([1, 2], [3, 4]) - Matrix.new([10, 20], [30, 40])
-  == Matrix.new ([[-9, -18], [-27, -36]]);
+  == Matrix.new([-9, -18], [-27, -36]);
 
 Matrix.new([1, 2]) - Matrix.new([10, 20], [30, 40]);
 [00002056:error] !!! -: incompatible sizes: 1x2, 2x2
+\end{urbiassert}
+
+  If \that is a Float, the scalar difference.
+\begin{urbiassert}
+Matrix.new([1, 2], [3, 4]) - 3 == Matrix.new([-2, -1], [0, 1]);
 \end{urbiassert}
 
 
@@ -610,6 +637,12 @@ lhs1 -= Matrix.new([1, 2]) ;
 [00362383:error] !!! -=: incompatible sizes: 2x2, 1x2
 \end{urbiassert}
 
+\begin{urbiassert}
+var v = Matrix.new([3, 6], [9, 12]);
+var res = v - 3;
+(v -= 3) === v; v == res;
+\end{urbiassert}
+
 
 \item['/'](<that>)%
   Same as \lstinline|this * that.inverse|.  \that must be invertible.
@@ -626,6 +659,12 @@ lhs / Matrix.createZeros(2, 2);
 [00160168:error] !!! /: non-invertible matrix: <<0, 0>, <0, 0>>
 \end{urbiassert}
 
+  If \that is a Float, the scalar division.
+\begin{urbiassert}
+Matrix.new([3, 6], [9, 12]) / 3 == Matrix.new([1, 2], [3, 4]);
+\end{urbiassert}
+
+
 
 \item['/='](<that>)%
   In place (\autoref{sec:lang:iass}) division (\refSlot{'/'}).  The same
@@ -641,6 +680,12 @@ var res = Matrix.new([ 2, 0], [0,   2]);
 
 lhs1 /= Matrix.createZeros(2, 2);
 [00207285:error] !!! /=: non-invertible matrix: <<0, 0>, <0, 0>>
+\end{urbiassert}
+
+\begin{urbiassert}
+var v = Matrix.new([3, 6], [9, 12]);
+var res = v / 3;
+(v /= 3) === v; v == res;
 \end{urbiassert}
 
 

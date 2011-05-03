@@ -327,52 +327,56 @@ do (Vector)
 \end{urbiscript}
 
 \item['*'](<that>)%
-  A Vector whose members are member-wise products of \this and \that.
+  A Vector whose members are member-wise products of \this and \that.  The
+  argument \that must either be a Vector of same dimension, or a Float.
 \begin{urbiassert}
 Vector              * Vector              == Vector;
 Vector.new(1, 2, 3) * Vector.new(5, 6, 7) == Vector.new(5, 12, 21);
-\end{urbiassert}
-  \this and \that must have equal sizes.
-\begin{urbiscript}
+Vector.new(1, 2, 3) * 3                   == Vector.new(3,  6,  9);
+
 Vector.new(1, 2) * Vector.new(0);
 [00000601:error] !!! *: incompatible vector sizes: 2, 1
-\end{urbiscript}
+\end{urbiassert}
+
 
 \item['+'](<that>)%
-  A Vector whose members are member-wise sums of \this and \that.
+  A Vector whose members are member-wise sums of \this and \that.  The
+  argument \that must either be a Vector of same dimension, or a Float.
 \begin{urbiassert}
 Vector              + Vector              == Vector;
 Vector.new(1, 2, 3) + Vector.new(5, 6, 7) == Vector.new(6, 8, 10);
-\end{urbiassert}
-  \this and \that must have equal sizes.
-\begin{urbiscript}
+Vector.new(1, 2, 3) + 3                   == Vector.new(4, 5,  6);
+
 Vector.new(1, 2) + Vector.new(0);
 [00000601:error] !!! +: incompatible vector sizes: 2, 1
-\end{urbiscript}
+\end{urbiassert}
+
 
 \item['-'](<that>)%
   A Vector whose members are member-wise subtractions of \this and \that.
+  The argument \that must either be a Vector of same dimension, or a Float.
 \begin{urbiassert}
 Vector              - Vector              == Vector;
 Vector.new(1, 2, 3) - Vector.new(5, 6, 7) == Vector.new(-4, -4, -4);
-\end{urbiassert}
-  \this and \that must have equal sizes.
-\begin{urbiscript}
+Vector.new(1, 2, 3) - 3                   == Vector.new(-2, -1,  0);
+
 Vector.new(1, 2) - Vector.new(0);
 [00000601:error] !!! -: incompatible vector sizes: 2, 1
-\end{urbiscript}
+\end{urbiassert}
+
 
 \item['/'](<that>)%
-  A Vector whose members are member-wise divisions of \this and \that.
+  A Vector whose members are member-wise divisions of \this and \that.  The
+  argument \that must either be a Vector of same dimension, or a Float.
 \begin{urbiassert}
 Vector              / Vector              == Vector;
 Vector.new(6, 4, 1) / Vector.new(3, 2, 1) == Vector.new(2, 2, 1);
-\end{urbiassert}
-  \this and \that must have equal sizes.
-\begin{urbiscript}
+Vector.new(9, 6, 3) / 3                   == Vector.new(3, 2, 1);
+
 Vector.new(1, 2) / Vector.new(0);
 [00000601:error] !!! /: incompatible vector sizes: 2, 1
-\end{urbiscript}
+\end{urbiassert}
+
 
 \item['<'](<that>)%
   Whether \this is less than the \that Vector.  This is the lexicographic
