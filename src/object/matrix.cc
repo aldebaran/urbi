@@ -283,6 +283,10 @@ namespace urbi
 
 #undef OP
 
+    /*------------------------------------------------------.
+    | Arithmetic and in-place arithmetic between matrices.  |
+    `------------------------------------------------------*/
+
 #define OP(Op)                                          \
     Matrix::value_type                                  \
     Matrix::operator Op(const value_type& m) const      \
@@ -301,27 +305,6 @@ namespace urbi
 
     OP(+)
     OP(-)
-
-#undef OP
-
-#define OP(Name, Op)                            \
-    Matrix::value_type                          \
-    Matrix::Name(const vector_type& rhs) const  \
-    {                                           \
-      const size_t height = size1();            \
-      const size_t width = size2();             \
-      check_equal_size1(value_, rhs);           \
-      value_type res = value_;                  \
-      for (unsigned p1 = 0; p1 < height; ++p1)  \
-        for (unsigned i = 0; i < width; ++i)    \
-          res(p1, i) Op ## = rhs(p1);           \
-      return res;                               \
-    }
-
-    OP(rowAdd, +)
-    OP(rowSub, -)
-    OP(rowMul, *)
-    OP(rowDiv, /)
 #undef OP
 
     Matrix::value_type
@@ -354,6 +337,31 @@ namespace urbi
     OP(*, prod)
     //OP(*, Vector, prod)
 
+#undef OP
+
+
+    /*--------------------------.
+    | Arithmetic between rows.  |
+    `--------------------------*/
+
+#define OP(Name, Op)                            \
+    Matrix::value_type                          \
+    Matrix::Name(const vector_type& rhs) const  \
+    {                                           \
+      check_equal_size1(value_, rhs);           \
+      const size_t height = size1();            \
+      const size_t width = size2();             \
+      value_type res = value_;                  \
+      for (unsigned i = 0; i < height; ++i)     \
+        for (unsigned j = 0; j < width; ++j)    \
+          res(i, j) Op ## = rhs(i);             \
+      return res;                               \
+    }
+
+    OP(rowAdd, +)
+    OP(rowSub, -)
+    OP(rowMul, *)
+    OP(rowDiv, /)
 #undef OP
 
 
