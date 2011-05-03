@@ -75,9 +75,9 @@ v.asVector === v;
   \that.
 \begin{urbiassert}
 Vector.new(0, 1, 2).combAdd(Vector.new(0, 10, 20))
-  == Matrix.new([[ 0, 10, 20],
-                 [ 1, 11, 21],
-                 [ 2, 12, 22]]);
+  == Matrix.new([ 0, 10, 20],
+                [ 1, 11, 21],
+                [ 2, 12, 22]);
 \end{urbiassert}
 
 \item[combDiv](<that>)%
@@ -87,8 +87,8 @@ Vector.new(0, 1, 2).combAdd(Vector.new(0, 10, 20))
   \that.
 \begin{urbiassert}
 Vector.new(10, 20).combDiv(Vector.new(2, 5, 10))
-  == Matrix.new([[  5, 2, 1],
-                 [ 10, 4, 2]]);
+  == Matrix.new([  5, 2, 1],
+                [ 10, 4, 2]);
 \end{urbiassert}
 
 \item[combMul](<that>)%
@@ -98,10 +98,10 @@ Vector.new(10, 20).combDiv(Vector.new(2, 5, 10))
   \that.
 \begin{urbiassert}
 Vector.new(1, 2, 3, 4).combMul(Vector.new(5, 6, 7))
-  == Matrix.new([[ 5,  6,  7],
-                 [10, 12, 14],
-                 [15, 18, 21],
-                 [20, 24, 28]]);
+  == Matrix.new([ 5,  6,  7],
+                [10, 12, 14],
+                [15, 18, 21],
+                [20, 24, 28]);
 \end{urbiassert}
 
 \item[combSub](<that>)%
@@ -111,9 +111,9 @@ Vector.new(1, 2, 3, 4).combMul(Vector.new(5, 6, 7))
   \that.
 \begin{urbiassert}
 Vector.new(-1, 0, +1).combSub(Vector.new(-2, 0, +2))
-  == Matrix.new([[1, -1, -3],
-                 [2,  0, -2],
-                 [3,  1, -1]]);
+  == Matrix.new([1, -1, -3],
+                [2,  0, -2],
+                [3,  1, -1]);
 \end{urbiassert}
 
 \item[distance](<that>)%

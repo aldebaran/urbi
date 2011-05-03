@@ -131,10 +131,18 @@ namespace urbi
         runner::raise_arity_error(0, 1);
       else if (args.size() == 2)
       {
+        // Lists of non-floats.
         if (rList l = args[1]->as<List>())
         {
-          self->fromList(l->value_get());
-          return self;
+          const objects_type& list = l->value_get();
+          if (list.empty() || !list[0]->as<Float>())
+          {
+            self->fromList(list);
+            return self;
+          }
+          // Process list of floats such as [1, 2] in the fallback,
+          // i.e., as [[1, 2]] so that we support "init([1], [2])" but
+          // also "init([1, 2])".
         }
         else if (rMatrix v = args[1]->as<Matrix>())
         {

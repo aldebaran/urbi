@@ -21,8 +21,8 @@ number of arguments and their types.
 
 When there is a single argument, it can either be a List, or another Matrix.
 
-If it's a List, then it must be a list of Vectors and/or Lists of Floats of
-the same size.
+If it's a List of ``Vectors and/or Lists of Floats'', then they must have
+the same sizes and constitute the rows.
 
 \begin{urbiscript}
 var listList     = Matrix.new([           [0, 1],             [0, 1] ]);
@@ -75,7 +75,9 @@ In other cases, the arguments are expected to be Lists of Floats and/or
 Vectors.
 
 \begin{urbiassert}
-Matrix.new([1], Vector.new([2])) == Matrix.new([[1], [2]]);
+Matrix.new([1, 2])                   == Matrix.new([[1, 2]]);
+Matrix.new([1, 2],           [3, 4]) == Matrix.new([[1, 2], [3, 4]]);
+Matrix.new([1, 2], Vector.new(3, 4)) == Matrix.new([[1, 2], [3, 4]]);
 \end{urbiassert}
 
 These rows must have equal sizes.
@@ -100,6 +102,7 @@ Matrix.new(Vector.new(0, 1), Vector.new(2));
 [00000204:error] !!! new: expecting rows of size 2, got size 1 for row 2
 \end{urbiscript}
 
+
 \subsection{Slots}
 
 \begin{urbiscriptapi}
@@ -120,7 +123,7 @@ m2x2 == Matrix.new([0, 1], [10, 11], [20, 21]);
 Matrix.new([0], [1]).appendRow(Vector.new(10, 11));
 [00017936:error] !!! appendRow: incompatible sizes: 2x1, 2
 
-Matrix.new([[0, 1]]).appendRow(Vector.new(10));
+Matrix.new([0, 1]).appendRow(Vector.new(10));
 [00050922:error] !!! appendRow: incompatible sizes: 1x2, 1
 \end{urbiscript}
 
@@ -137,25 +140,25 @@ m.asMatrix === m;
 \item[asPrintable]%
   A String that denotes \this.
 \begin{urbiassert}
-Matrix                      .asPrintable == "Matrix([])";
-Matrix.new([[1, 2], [3, 4]]).asPrintable == "Matrix([[1, 2], [3, 4]])";
+Matrix                    .asPrintable == "Matrix([])";
+Matrix.new([1, 2], [3, 4]).asPrintable == "Matrix([[1, 2], [3, 4]])";
 \end{urbiassert}
 
 
 \item[asString]%
   A String that denotes \this.
 \begin{urbiassert}
-Matrix                      .asString == "<>";
-Matrix.new([[1, 2], [3, 4]]).asString == "<<1, 2>, <3, 4>>";
+Matrix                    .asString == "<>";
+Matrix.new([1, 2], [3, 4]).asString == "<<1, 2>, <3, 4>>";
 \end{urbiassert}
 
 
 \item[asTopLevelPrintable]%
   A String that denotes \this.
 \begin{urbiassert}
-Matrix                      .asTopLevelPrintable
+Matrix                    .asTopLevelPrintable
   == "Matrix([])";
-Matrix.new([[1, 2], [3, 4]]).asTopLevelPrintable
+Matrix.new([1, 2], [3, 4]).asTopLevelPrintable
  == "Matrix([\n  [1, 2],\n  [3, 4]])";
 \end{urbiassert}
 
@@ -163,7 +166,7 @@ Matrix.new([[1, 2], [3, 4]]).asTopLevelPrintable
 \item[column](<i>)%
   The \var{i}th column as a Vector.  See also \refSlot{row}.
 \begin{urbiassert}
-var m = Matrix.new([[1, 2, 3], [4, 5, 6]]);
+var m = Matrix.new([1, 2, 3], [4, 5, 6]);
 m.column(0) == Vector.new(1, 4);  m.column(-3) == m.column(0);
 m.column(1) == Vector.new(2, 5);  m.column(-2) == m.column(1);
 m.column(2) == Vector.new(3, 6);  m.column(-1) == m.column(2);
@@ -177,7 +180,7 @@ m.column(3);
   The unit Matrix of dimensions \var{size}.
 \begin{urbiassert}
 Matrix.createIdentity(0) == Matrix;
-Matrix.createIdentity(3) == Matrix.new([[1, 0, 0], [0, 1, 0], [0, 0, 1]]);
+Matrix.createIdentity(3) == Matrix.new([1, 0, 0], [0, 1, 0], [0, 0, 1]);
 
 Matrix.createIdentity(-2);
 [00000328:error] !!! createIdentity: argument 1: expected non-negative integer: -2
@@ -188,7 +191,7 @@ Matrix.createIdentity(-2);
   Same as \lstinline|createScalar(\var{row}, \var{col}, 1)|.
 \begin{urbiassert}
 Matrix.createOnes(0, 0) == Matrix;
-Matrix.createOnes(2, 3) == Matrix.new([[1, 1, 1], [1, 1, 1]]);
+Matrix.createOnes(2, 3) == Matrix.new([1, 1, 1], [1, 1, 1]);
 
 Matrix.createOnes(-2, 2);
 [00000328:error] !!! createOnes: argument 1: expected non-negative integer: -2
@@ -200,7 +203,7 @@ Matrix.createOnes(-2, 2);
   \var{scalar}.
 \begin{urbiassert}
 Matrix.createScalars(0, 0, 99) == Matrix;
-Matrix.createScalars(2, 3, 99) == Matrix.new([[99, 99, 99], [99, 99, 99]]);
+Matrix.createScalars(2, 3, 99) == Matrix.new([99, 99, 99], [99, 99, 99]);
 
 Matrix.createScalars(-2, 2, 99);
 [00000328:error] !!! createScalars: argument 1: expected non-negative integer: -2
@@ -211,7 +214,7 @@ Matrix.createScalars(-2, 2, 99);
   Same as \lstinline|createScalar(\var{row}, \var{col}, 0)|.
 \begin{urbiassert}
 Matrix.createZeros(0, 0) == Matrix;
-Matrix.createZeros(2, 3) == Matrix.new([[0, 0, 0], [0, 0, 0]]);
+Matrix.createZeros(2, 3) == Matrix.new([0, 0, 0], [0, 0, 0]);
 
 Matrix.createZeros(-2, 2);
 [00000328:error] !!! createZeros: argument 1: expected non-negative integer: -2
@@ -232,8 +235,8 @@ var r0 = Vector.new([0, 1]);  var r1 = Vector.new([2, 0]);
 var rhs = Matrix.new([r0, r1]);
 
 lhs.distanceMatrix(rhs)
-  == Matrix.new([[l0.distance(r0), l0.distance(r1)],
-                 [l1.distance(r0), l1.distance(r1)]]);
+  == Matrix.new([l0.distance(r0), l0.distance(r1)],
+                [l1.distance(r0), l1.distance(r1)]);
 \end{urbiassert}
 
 
@@ -302,7 +305,7 @@ assert
 \item[row](<i>)%
   The \var{i}th row as a Vector.  See also \refSlot{column}.
 \begin{urbiassert}
-var m = Matrix.new([[1, 2, 3], [4, 5, 6]]);
+var m = Matrix.new([1, 2, 3], [4, 5, 6]);
 m.row(0) == Vector.new(1, 2, 3);  m.row(-2) == m.row(0);
 m.row(1) == Vector.new(4, 5, 6);  m.row(-1) == m.row(1);
 
@@ -333,7 +336,7 @@ do (Matrix)
 Matrix.new([1], [2]).rowAdd(Vector.new(10));
 [00000415:error] !!! rowAdd: incompatible sizes: 2x1, 1
 
-Matrix.new([[1, 2]]).rowAdd(Vector.new(10, 20));
+Matrix.new([1, 2]).rowAdd(Vector.new(10, 20));
 [00000425:error] !!! rowAdd: incompatible sizes: 1x2, 2
 \end{urbiscript}
 
@@ -360,7 +363,7 @@ do (Matrix)
 Matrix.new([1], [2]).rowDiv(Vector.new(10));
 [00000415:error] !!! rowDiv: incompatible sizes: 2x1, 1
 
-Matrix.new([[1, 2]]).rowDiv(Vector.new(10, 20));
+Matrix.new([1, 2]).rowDiv(Vector.new(10, 20));
 [00000425:error] !!! rowDiv: incompatible sizes: 1x2, 2
 \end{urbiscript}
 
@@ -387,7 +390,7 @@ do (Matrix)
 Matrix.new([1], [2]).rowMul(Vector.new(10));
 [00000415:error] !!! rowMul: incompatible sizes: 2x1, 1
 
-Matrix.new([[1, 2]]).rowMul(Vector.new(10, 20));
+Matrix.new([1, 2]).rowMul(Vector.new(10, 20));
 [00000425:error] !!! rowMul: incompatible sizes: 1x2, 2
 \end{urbiscript}
 
@@ -423,7 +426,7 @@ do (Matrix)
 Matrix.new([1], [2]).rowSub(Vector.new(10));
 [00000415:error] !!! rowSub: incompatible sizes: 2x1, 1
 
-Matrix.new([[1, 2]]).rowSub(Vector.new(10, 20));
+Matrix.new([1, 2]).rowSub(Vector.new(10, 20));
 [00000425:error] !!! rowSub: incompatible sizes: 1x2, 2
 \end{urbiscript}
 
@@ -434,11 +437,11 @@ Matrix.new([[1, 2]]).rowSub(Vector.new(10, 20));
 \begin{urbiassert}
 var m = Matrix.new([]);
 
-var m1 = Matrix.new([[0, 1], [0, 1]]);
+var m1 = Matrix.new([0, 1], [0, 1]);
     m  ===    m.set([[0, 1], [0, 1]]);
     m  == m1;
 
-var m2 = Matrix.new([[2, 3]]);
+var m2 = Matrix.new([2, 3]);
     m  ===    m.set([[2, 3]]);
     m  == m2;
 \end{urbiassert}
@@ -461,7 +464,7 @@ m2x2 == Matrix.new([20, 21], [10, 11]);
 Matrix.new([0], [1]).setRow(0, Vector.new(10, 11));
 [00017936:error] !!! setRow: incompatible sizes: 2x1, 2
 
-Matrix.new([[0, 1]]).setRow(0, Vector.new(10));
+Matrix.new([0, 1]).setRow(0, Vector.new(10));
 [00050922:error] !!! setRow: incompatible sizes: 1x2, 1
 
 Matrix.new([0], [1]).setRow(2, Vector.new(10));
@@ -473,17 +476,17 @@ Matrix.new([0], [1]).setRow(2, Vector.new(10));
   The dimensions of the \this, as a Pair of Floats.
 \begin{urbiassert}
 Matrix.size == Pair.new(0, 0);
-Matrix.new([[1, 2], [3, 4], [5, 6]]).size == Pair.new(3, 2);
-Matrix.new([[1, 2, 3], [4, 5, 6]]).size == Pair.new(2, 3);
+Matrix.new([1, 2], [3, 4], [5, 6]).size == Pair.new(3, 2);
+Matrix.new([1, 2, 3], [4, 5, 6])  .size == Pair.new(2, 3);
 \end{urbiassert}
 
 \item[transpose](<arg>)%
   The transposed of \this.
 \begin{urbiassert}
-Matrix                      .transpose == Matrix;
-Matrix.new([[1]])           .transpose == Matrix.new([[1]]);
-Matrix.new([1], [2])        .transpose == Matrix.new([[1, 2]]);
-Matrix.new([[1, 2], [3, 4]]).transpose == Matrix.new([[1, 3], [2, 4]]);
+Matrix                    .transpose == Matrix;
+Matrix.new([1])           .transpose == Matrix.new([1]);
+Matrix.new([1], [2])      .transpose == Matrix.new([1, 2]);
+Matrix.new([1, 2], [3, 4]).transpose == Matrix.new([1, 3], [2, 4]);
 \end{urbiassert}
 
 
@@ -513,28 +516,28 @@ do (Matrix)
 \item['*'](<that>)%
   Matrix product between \this and \that.
 \begin{urbiassert}
-Matrix.new([[1, 2]]) * Matrix.new([[10], [20]])
-  == Matrix.new([[50]]);
-Matrix.new([[3, 4]]) * Matrix.new([[10], [20]])
-  == Matrix.new([[110]]);
-Matrix.new([[1, 2], [3, 4]]) * Matrix.new([[10], [20]])
-  == Matrix.new([[50], [110]]);
+Matrix.new([1, 2]) * Matrix.new([10], [20])
+  == Matrix.new([50]);
+Matrix.new([3, 4]) * Matrix.new([10], [20])
+  == Matrix.new([110]);
+Matrix.new([1, 2], [3, 4]) * Matrix.new([10], [20])
+  == Matrix.new([50], [110]);
 \end{urbiassert}
 
 The sizes must be compatible ($\texttt{\this.size.second} =
 \texttt{\that.size.first}$).
 \begin{urbiscript}
 Matrix.new([1, 2]) * Matrix.new([3, 4]);
-[00081168:error] !!! *: incompatible sizes: 2x1, 2x1
+[00081168:error] !!! *: incompatible sizes: 1x2, 1x2
 \end{urbiscript}
 
 \item['*='](<that>)%
   In place (\autoref{sec:lang:iass}) product (\refSlot{'*'}).  The same
   constraints apply.
 \begin{urbiassert}
-var lhs1 = Matrix.new([[1, 2], [3, 4]]);
+var lhs1 = Matrix.new([1, 2], [3, 4]);
 var lhs2 = Matrix.new(lhs1);
-var rhs = Matrix.new([[10], [20]]);
+var rhs = Matrix.new([10], [20]);
 var res = lhs1 * rhs;
 
 (lhs1.'*='(rhs)) === lhs1;  lhs1 == res;
@@ -548,13 +551,13 @@ rhs *= rhs;
 \item['+'](<that>)%
   The sum of \this and \that.  Their sizes must be equal.
 \begin{urbiassert}
-Matrix.new([[1, 2]]) + Matrix.new([[10, 20]])
+Matrix.new([1, 2]) + Matrix.new([10, 20])
   == Matrix.new ([[11, 22]]);
 
-Matrix.new([[1, 2], [3, 4]]) + Matrix.new([[10, 20], [30, 40]])
+Matrix.new([1, 2], [3, 4]) + Matrix.new([10, 20], [30, 40])
   == Matrix.new ([[11, 22], [33, 44]]);
 
-Matrix.new([[1, 2]]) + Matrix.new([[10, 20], [30, 40]]);
+Matrix.new([1, 2]) + Matrix.new([10, 20], [30, 40]);
 [00002056:error] !!! +: incompatible sizes: 1x2, 2x2
 \end{urbiassert}
 
@@ -563,15 +566,15 @@ Matrix.new([[1, 2]]) + Matrix.new([[10, 20], [30, 40]]);
   In place (\autoref{sec:lang:iass}) sum (\refSlot{'+'}).  The same
   constraints apply.
 \begin{urbiassert}
-var lhs1 = Matrix.new([[ 1 , 2], [ 3,  4]]);
+var lhs1 = Matrix.new([ 1 , 2], [ 3,  4]);
 var lhs2 = Matrix.new(lhs1);
-var rhs = Matrix.new([[10, 20], [30, 40]]);
+var rhs = Matrix.new([10, 20], [30, 40]);
 var res = lhs1 + rhs;
 
 (lhs1.'+='(rhs)) === lhs1;  lhs1 == res;
 (lhs2  +=  rhs ) === lhs2;  lhs2 == res;
 
-lhs1 += Matrix.new([[1, 2]]);
+lhs1 += Matrix.new([1, 2]);
 [00338194:error] !!! +=: incompatible sizes: 2x2, 1x2
 \end{urbiassert}
 
@@ -579,13 +582,13 @@ lhs1 += Matrix.new([[1, 2]]);
 \item['-'](<that>)%
   The difference of \this and \that.  Their sizes must be equal.
 \begin{urbiassert}
-Matrix.new([[1, 2]]) - Matrix.new([[10, 20]])
+Matrix.new([1, 2]) - Matrix.new([10, 20])
   == Matrix.new ([[-9, -18]]);
 
-Matrix.new([[1, 2], [3, 4]]) - Matrix.new([[10, 20], [30, 40]])
+Matrix.new([1, 2], [3, 4]) - Matrix.new([10, 20], [30, 40])
   == Matrix.new ([[-9, -18], [-27, -36]]);
 
-Matrix.new([[1, 2]]) - Matrix.new([[10, 20], [30, 40]]);
+Matrix.new([1, 2]) - Matrix.new([10, 20], [30, 40]);
 [00002056:error] !!! -: incompatible sizes: 1x2, 2x2
 \end{urbiassert}
 
@@ -595,15 +598,15 @@ Matrix.new([[1, 2]]) - Matrix.new([[10, 20], [30, 40]]);
   In place (\autoref{sec:lang:iass}) difference (\refSlot{'-'}).  The same
   constraints apply.
 \begin{urbiassert}
-var lhs1 = Matrix.new([[ 1 , 2], [ 3,  4]]);
+var lhs1 = Matrix.new([ 1 , 2], [ 3,  4]);
 var lhs2 = Matrix.new(lhs1);
-var rhs = Matrix.new([[10, 20], [30, 40]]);
+var rhs = Matrix.new([10, 20], [30, 40]);
 var res = lhs1 - rhs;
 
 (lhs1.'-='(rhs)) === lhs1;  lhs1 == res;
 (lhs2  -=  rhs ) === lhs2;  lhs2 == res;
 
-lhs1 -= Matrix.new([[1, 2]]);
+lhs1 -= Matrix.new([1, 2]) ;
 [00362383:error] !!! -=: incompatible sizes: 2x2, 1x2
 \end{urbiassert}
 
@@ -611,9 +614,9 @@ lhs1 -= Matrix.new([[1, 2]]);
 \item['/'](<that>)%
   Same as \lstinline|this * that.inverse|.  \that must be invertible.
 \begin{urbiassert}
-var lhs = Matrix.new([[20, 0], [0, 200]]);
-var rhs = Matrix.new([[10, 0], [0, 100]]);
-var res = Matrix.new([[ 2, 0], [0,   2]]);
+var lhs = Matrix.new([20, 0], [0, 200]);
+var rhs = Matrix.new([10, 0], [0, 100]);
+var res = Matrix.new([ 2, 0], [0,   2]);
 
 lhs / rhs == res;
 (lhs / rhs) * rhs == lhs;
@@ -628,10 +631,10 @@ lhs / Matrix.createZeros(2, 2);
   In place (\autoref{sec:lang:iass}) division (\refSlot{'/'}).  The same
   constraints apply.
 \begin{urbiassert}
-var lhs1 = Matrix.new([[20, 0], [0, 200]]);
+var lhs1 = Matrix.new([20, 0], [0, 200]);
 var lhs2 = Matrix.new(lhs1);
-var rhs = Matrix.new([[10, 0], [0, 100]]);
-var res = Matrix.new([[ 2, 0], [0,   2]]);
+var rhs = Matrix.new([10, 0], [0, 100]);
+var res = Matrix.new([ 2, 0], [0,   2]);
 
 (lhs1.'/='(rhs)) === lhs1;  lhs1 == res;
 (lhs2  /=  rhs ) === lhs2;  lhs2 == res;
@@ -649,7 +652,7 @@ lhs1 /= Matrix.createZeros(2, 2);
   \texttt{\this.size.first}$: it counts ``backward''.  Similarly for
   \var{col}.
 \begin{urbiscript}
-var m = Matrix.new([[1, 2, 3], [10, 20, 30]])|;
+var m = Matrix.new([1, 2, 3], [10, 20, 30])|;
 assert
 {
   m[0, 0] == 1;   m[0, -3] == 1;
@@ -685,7 +688,7 @@ m[0, -4];
   \texttt{\this.size.first}$: it counts ``backward''.  Similarly for
   \var{col}.
 \begin{urbiscript}
-var m = Matrix.new([[1, 2], [10, 20]])|;
+var m = Matrix.new([1, 2], [10, 20])|;
 assert
 {
   (m[0, 0]  = -1) == -1;   m[0, 0] == -1;
