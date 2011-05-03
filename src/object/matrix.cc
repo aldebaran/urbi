@@ -40,40 +40,39 @@ namespace urbi
              hint);
     }
 
-    // Currently not used.
-#if 0
+#define CHECK_SIZE(Matrix1, Matrix2, Assertion)         \
+    do {                                                \
+      if (!(Assertion))                                 \
+        raise_incompatible_sizes((Matrix1), (Matrix2)); \
+    } while (0);
+
+
     static inline
     void
     check_equal_size(const matrix_type& m1, const matrix_type& m2)
     {
-      if (m1.size1() != m2.size1()
-          || m1.size2() != m2.size2())
-        raise_incompatible_sizes(m1, m2);
+      CHECK_SIZE(m1, m2, m1.size1() == m2.size1() && m1.size2() == m2.size2());
     }
-#endif
 
     static inline
     void
     check_equal_size2(const matrix_type& m1, const matrix_type& m2)
     {
-      if (m1.size2() != m2.size2())
-        raise_incompatible_sizes(m1, m2, "size2 must be equal");
+      CHECK_SIZE(m1, m2, m1.size2() == m2.size2());
     }
 
     static inline
     void
     check_equal_size1(const matrix_type& m, const vector_type& v)
     {
-      if (m.size1() != v.size())
-        raise_incompatible_sizes(m, v);
+      CHECK_SIZE(m, v, m.size1() == v.size());
     }
 
     static inline
     void
     check_equal_size2(const matrix_type& m, const vector_type& v)
     {
-      if (m.size2() != v.size())
-        raise_incompatible_sizes(m, v);
+      CHECK_SIZE(m, v, m.size2() == v.size());
     }
 
     /*---------.
@@ -291,6 +290,7 @@ namespace urbi
     Matrix::value_type                                  \
     Matrix::operator Op(const value_type& m) const      \
     {                                                   \
+      check_equal_size(value_, m);                      \
       value_type res(value_);                           \
       res Op##= m;                                      \
       return res;                                       \
@@ -299,6 +299,7 @@ namespace urbi
     Matrix*                                             \
     Matrix::operator Op##=(const value_type& m)         \
     {                                                   \
+      check_equal_size(value_, m);                      \
       value_ Op##= m;                                   \
       return this;                                      \
     }
@@ -320,24 +321,19 @@ namespace urbi
       return this;
     }
 
-#define OP(Op, Fun)                                     \
-    Matrix::value_type                                  \
-    Matrix::operator Op(const value_type& rhs) const    \
-    {                                                   \
-      return Fun(value_, rhs);                          \
-    }                                                   \
-                                                        \
-    Matrix*                                             \
-    Matrix::operator Op##=(const value_type& rhs)       \
-    {                                                   \
-      value_ = Fun(value_, rhs);                        \
-      return this;                                      \
+    Matrix::value_type
+    Matrix::operator *(const value_type& rhs) const
+    {
+      CHECK_SIZE(value_, rhs, value_.size2() == rhs.size1());
+      return prod(value_, rhs);
     }
 
-    OP(*, prod)
-    //OP(*, Vector, prod)
-
-#undef OP
+    Matrix*
+    Matrix::operator *=(const value_type& rhs)
+    {
+      value_ = *this * rhs;
+      return this;
+    }
 
 
     /*--------------------------.

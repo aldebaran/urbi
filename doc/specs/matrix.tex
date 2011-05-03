@@ -78,6 +78,28 @@ Vectors.
 Matrix.new([1], Vector.new([2])) == Matrix.new([[1], [2]]);
 \end{urbiassert}
 
+These rows must have equal sizes.
+
+\begin{urbiscript}
+// Lists and Lists.
+Matrix.new([0], [1, 2]);
+[00000160:error] !!! new: expecting rows of size 1, got size 2 for row 2
+Matrix.new([0, 1], [2]);
+[00000169:error] !!! new: expecting rows of size 2, got size 1 for row 2
+
+// Lists and Vectors.
+Matrix.new([0], Vector.new(1, 2));
+[00000178:error] !!! new: expecting rows of size 1, got size 2 for row 2
+Matrix.new(Vector.new(0, 1), [2]);
+[00000186:error] !!! new: expecting rows of size 2, got size 1 for row 2
+
+// Vectors and Vectors.
+Matrix.new(Vector.new(0), Vector.new(1, 2));
+[00000195:error] !!! new: expecting rows of size 1, got size 2 for row 2
+Matrix.new(Vector.new(0, 1), Vector.new(2));
+[00000204:error] !!! new: expecting rows of size 2, got size 1 for row 2
+\end{urbiscript}
+
 \subsection{Slots}
 
 \begin{urbiscriptapi}
@@ -489,8 +511,7 @@ do (Matrix)
 
 
 \item['*'](<that>)%
-  Matrix product between \this and \that.  The sizes must be compatible
-  ($\texttt{\this.size.second} = \texttt{\that.size.first}$).
+  Matrix product between \this and \that.
 \begin{urbiassert}
 Matrix.new([[1, 2]]) * Matrix.new([[10], [20]])
   == Matrix.new([[50]]);
@@ -500,6 +521,12 @@ Matrix.new([[1, 2], [3, 4]]) * Matrix.new([[10], [20]])
   == Matrix.new([[50], [110]]);
 \end{urbiassert}
 
+The sizes must be compatible ($\texttt{\this.size.second} =
+\texttt{\that.size.first}$).
+\begin{urbiscript}
+Matrix.new([1, 2]) * Matrix.new([3, 4]);
+[00081168:error] !!! *: incompatible sizes: 2x1, 2x1
+\end{urbiscript}
 
 \item['*='](<that>)%
   In place (\autoref{sec:lang:iass}) product (\refSlot{'*'}).  The same
@@ -512,6 +539,9 @@ var res = lhs1 * rhs;
 
 (lhs1.'*='(rhs)) === lhs1;  lhs1 == res;
 (lhs2  *=  rhs ) === lhs2;  lhs2 == res;
+
+rhs *= rhs;
+[00272182:error] !!! *=: incompatible sizes: 2x1, 2x1
 \end{urbiassert}
 
 
@@ -524,7 +554,8 @@ Matrix.new([[1, 2]]) + Matrix.new([[10, 20]])
 Matrix.new([[1, 2], [3, 4]]) + Matrix.new([[10, 20], [30, 40]])
   == Matrix.new ([[11, 22], [33, 44]]);
 
-// FIXME: Matrix.new([[1, 2]]) + Matrix.new([[10, 20], [30, 40]]);
+Matrix.new([[1, 2]]) + Matrix.new([[10, 20], [30, 40]]);
+[00002056:error] !!! +: incompatible sizes: 1x2, 2x2
 \end{urbiassert}
 
 
@@ -539,6 +570,9 @@ var res = lhs1 + rhs;
 
 (lhs1.'+='(rhs)) === lhs1;  lhs1 == res;
 (lhs2  +=  rhs ) === lhs2;  lhs2 == res;
+
+lhs1 += Matrix.new([[1, 2]]);
+[00338194:error] !!! +=: incompatible sizes: 2x2, 1x2
 \end{urbiassert}
 
 
@@ -551,8 +585,10 @@ Matrix.new([[1, 2]]) - Matrix.new([[10, 20]])
 Matrix.new([[1, 2], [3, 4]]) - Matrix.new([[10, 20], [30, 40]])
   == Matrix.new ([[-9, -18], [-27, -36]]);
 
-// FIXME: Matrix.new([[1, 2]]) - Matrix.new([[10, 20], [30, 40]]);
+Matrix.new([[1, 2]]) - Matrix.new([[10, 20], [30, 40]]);
+[00002056:error] !!! -: incompatible sizes: 1x2, 2x2
 \end{urbiassert}
+
 
 
 \item['-='](<that>)%
@@ -566,6 +602,9 @@ var res = lhs1 - rhs;
 
 (lhs1.'-='(rhs)) === lhs1;  lhs1 == res;
 (lhs2  -=  rhs ) === lhs2;  lhs2 == res;
+
+lhs1 -= Matrix.new([[1, 2]]);
+[00362383:error] !!! -=: incompatible sizes: 2x2, 1x2
 \end{urbiassert}
 
 
@@ -580,7 +619,8 @@ lhs / rhs == res;
 (lhs / rhs) * rhs == lhs;
 rhs * (lhs / rhs) == lhs;
 
-// FIXME: Failures.
+lhs / Matrix.createZeros(2, 2);
+[00160168:error] !!! /: non-invertible matrix: <<0, 0>, <0, 0>>
 \end{urbiassert}
 
 
@@ -595,6 +635,9 @@ var res = Matrix.new([[ 2, 0], [0,   2]]);
 
 (lhs1.'/='(rhs)) === lhs1;  lhs1 == res;
 (lhs2  /=  rhs ) === lhs2;  lhs2 == res;
+
+lhs1 /= Matrix.createZeros(2, 2);
+[00207285:error] !!! /=: non-invertible matrix: <<0, 0>, <0, 0>>
 \end{urbiassert}
 
 
