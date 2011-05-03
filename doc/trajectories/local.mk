@@ -21,14 +21,9 @@ $(srcdir)/%.dat: %.utraj
 	        -e 'shutdown;'
 	$(AM_V_at)mv $@.tmp $@
 
-## pdftex/pdftex_t combined GNU Plot pictures.
-##
-## The GNU Plot file needs not set the output file name, nor the terminal:
-## set are properly set by default.
-##
 ## A single Make rule with two commands because it simplifies the use:
 ## depend on one file, not two.
-%.pdftex_t %.eps %.pdf: %.dat
+%.pdftex_t %.pdf: %.dat
 	$(AM_V_GEN)$(ENSURE_TARGET_DIR)
 # gnuplot creates an output, even if it failed.  Remove it.
 	$(AM_V_at)rm -f $*.{tex,eps,pdf,pdftex_t}
@@ -44,7 +39,7 @@ $(srcdir)/%.dat: %.utraj
 	$(AM_V_at)LC_ALL=C $(GNUPLOT) $*.plt.tmp
 	$(AM_V_at)mv $*.tex $*.pdftex_t
 	$(AM_V_at)$(EPSTOPDF) $*.eps -o $*.pdf
-	$(AM_V_at)rm $*.plt.tmp
+	$(AM_V_at)rm $*.plt.tmp $*.eps
 
 
 TRAJECTORIES = $(call ls_files,trajectories/*.utraj)
