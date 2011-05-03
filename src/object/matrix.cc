@@ -207,19 +207,28 @@ namespace urbi
     Matrix::fromList(const objects_type& args)
     {
       size_type width;
+      // For the first iteration, register and the matrix width and
+      // resize, for following iterations make sure the sizes are
+      // correct.
+#define CHECK_WIDTH(Width)                                              \
+      do {                                                              \
+        size_t _width = Width;                                          \
+        if (!i)                                                         \
+        {                                                               \
+          width = _width;                                               \
+          value_.resize(height, width, false);                          \
+        }                                                               \
+        else if (width != _width)                                       \
+          FRAISE("expecting rows of size %d, got size %d for row %d",   \
+                 width, _width, i + 1);                                 \
+      } while (false)
+
       const size_type height = args.size();
       for (unsigned i = 0; i < height; ++i)
       {
         if (rList l = args[i]->as<List>())
         {
-          if (!i)
-          {
-            width = l->size();
-            value_.resize(height, width, false);
-          }
-          else if (width != l->size())
-            FRAISE("expecting rows of size %d, got size %d for row %d",
-                   width, l->size(), i + 1);
+          CHECK_WIDTH(l->size());
           unsigned j = 0;
           foreach (const rObject& o, l->value_get())
           {
@@ -232,14 +241,7 @@ namespace urbi
         }
         else if (rVector l = args[i]->as<Vector>())
         {
-          if (!i)
-          {
-            width = l->size();
-            value_.resize(height, width, false);
-          }
-          else if (width != l->size())
-            FRAISE("expecting rows of size %d, got size %d for row %d",
-                   width, l->size(), i + 1);
+          CHECK_WIDTH(l->size());
           unsigned j = 0;
           foreach (ufloat v, l->value_get())
             value_(i, j++) = v;
@@ -248,6 +250,7 @@ namespace urbi
           runner::raise_type_error(args[i], List::proto);
       }
       return this;
+#undef CHECK_WIDTH
     }
 
 
