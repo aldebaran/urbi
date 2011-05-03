@@ -16,7 +16,7 @@
 \subsection{Construction}
 \label{sec:specs:matrix:ctor}
 
-The \lstinline|init| function is overloaded, and its behavior depends on its
+The \lstinline|init| function is overloaded, and its behavior depends on the
 number of arguments and their types.
 
 When there is a single argument, it can either be a List, or another Matrix.
@@ -25,12 +25,12 @@ If it's a List, then it must be a list of Vectors and/or Lists of Floats of
 the same size.
 
 \begin{urbiscript}
-var listList     = Matrix.new([           [0, 1],             [0, 1]]);
+var listList     = Matrix.new([           [0, 1],             [0, 1] ]);
 [00071383] Matrix([
 [:]  [0, 1],
 [:]  [0, 1]])
 var listVector   = Matrix.new([           [0, 1],  Vector.new([0, 1])])|;
-var vectorList   = Matrix.new([Vector.new([0, 1]), Vector.new([0, 1])])|;
+var vectorList   = Matrix.new([Vector.new([0, 1]),            [0, 1] ])|;
 var vectorVector = Matrix.new([Vector.new([0, 1]), Vector.new([0, 1])])|;
 
 assert
@@ -49,7 +49,7 @@ Matrix.new([Vector.new([0]), Vector.new([1, 2])]);
 [00052403:error] !!! new: expecting rows of size 1, got size 2 for row 2
 \end{urbiscript}
 
-If its a Matrix, then there is a deep-copy: they are not aliases.
+If it's a Matrix, then there is a deep-copy: they are not aliases.
 
 \begin{urbiscript}
 var m1 = Matrix.new([[1, 1], [1, 1]])|;
@@ -489,7 +489,7 @@ do (Matrix)
 
 
 \item['*'](<that>)%
-  Matrix product between \this and \that.  The sizes must be compatibles
+  Matrix product between \this and \that.  The sizes must be compatible
   ($\texttt{\this.size.second} = \texttt{\that.size.first}$).
 \begin{urbiassert}
 Matrix.new([[1, 2]]) * Matrix.new([[10], [20]])
