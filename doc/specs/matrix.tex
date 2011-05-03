@@ -502,16 +502,16 @@ Matrix.new([[1, 2], [3, 4]]) * Matrix.new([[10], [20]])
 
 
 \item['*='](<that>)%
-  In place product (\refSlot{'*'}).  The same constraints apply.
+  In place (\autoref{sec:lang:iass}) product (\refSlot{'*'}).  The same
+  constraints apply.
 \begin{urbiassert}
-var lhs = Matrix.new([[1, 2], [3, 4]]);
+var lhs1 = Matrix.new([[1, 2], [3, 4]]);
+var lhs2 = Matrix.new(lhs1);
 var rhs = Matrix.new([[10], [20]]);
-var res = lhs * rhs;
+var res = lhs1 * rhs;
 
-(lhs *= rhs) === lhs;
-lhs == res;
-
-// FIXME: rhs *= rhs;
+(lhs1.'*='(rhs)) === lhs1;  lhs1 == res;
+(lhs2  *=  rhs ) === lhs2;  lhs2 == res;
 \end{urbiassert}
 
 
@@ -529,16 +529,16 @@ Matrix.new([[1, 2], [3, 4]]) + Matrix.new([[10, 20], [30, 40]])
 
 
 \item['+='](<that>)%
-  In place sum (\refSlot{'+'}).   The same constraints apply.
+  In place (\autoref{sec:lang:iass}) sum (\refSlot{'+'}).  The same
+  constraints apply.
 \begin{urbiassert}
-var lhs = Matrix.new([[ 1 , 2], [ 3,  4]]);
+var lhs1 = Matrix.new([[ 1 , 2], [ 3,  4]]);
+var lhs2 = Matrix.new(lhs1);
 var rhs = Matrix.new([[10, 20], [30, 40]]);
-var res = lhs + rhs;
+var res = lhs1 + rhs;
 
-(lhs += rhs) === lhs;
-lhs == res;
-
-// FIXME: rhs += rhs;
+(lhs1.'+='(rhs)) === lhs1;  lhs1 == res;
+(lhs2  +=  rhs ) === lhs2;  lhs2 == res;
 \end{urbiassert}
 
 
@@ -556,16 +556,16 @@ Matrix.new([[1, 2], [3, 4]]) - Matrix.new([[10, 20], [30, 40]])
 
 
 \item['-='](<that>)%
-  In place difference (\refSlot{'-'}).  The same constraints apply.
+  In place (\autoref{sec:lang:iass}) difference (\refSlot{'-'}).  The same
+  constraints apply.
 \begin{urbiassert}
-var lhs = Matrix.new([[ 1 , 2], [ 3,  4]]);
+var lhs1 = Matrix.new([[ 1 , 2], [ 3,  4]]);
+var lhs2 = Matrix.new(lhs1);
 var rhs = Matrix.new([[10, 20], [30, 40]]);
-var res = lhs - rhs;
+var res = lhs1 - rhs;
 
-(lhs -= rhs) === lhs;
-lhs == res;
-
-// FIXME: rhs -= rhs;
+(lhs1.'-='(rhs)) === lhs1;  lhs1 == res;
+(lhs2  -=  rhs ) === lhs2;  lhs2 == res;
 \end{urbiassert}
 
 
@@ -585,16 +585,16 @@ rhs * (lhs / rhs) == lhs;
 
 
 \item['/='](<that>)%
-  In place division (\refSlot{'/'}).  The same constraints apply.
+  In place (\autoref{sec:lang:iass}) division (\refSlot{'/'}).  The same
+  constraints apply.
 \begin{urbiassert}
-var lhs = Matrix.new([[20, 0], [0, 200]]);
+var lhs1 = Matrix.new([[20, 0], [0, 200]]);
+var lhs2 = Matrix.new(lhs1);
 var rhs = Matrix.new([[10, 0], [0, 100]]);
 var res = Matrix.new([[ 2, 0], [0,   2]]);
 
-(lhs /= rhs) === lhs;
-lhs == res;
-
-// FIXME: rhs -= rhs;
+(lhs1.'/='(rhs)) === lhs1;  lhs1 == res;
+(lhs2  /=  rhs ) === lhs2;  lhs2 == res;
 \end{urbiassert}
 
 

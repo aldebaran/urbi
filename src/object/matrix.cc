@@ -18,6 +18,68 @@ namespace urbi
   namespace object
   {
 
+    ATTRIBUTE_NORETURN
+    static inline void
+    raise_incompatible_sizes(const matrix_type& m1, const matrix_type& m2,
+                             const std::string& hint = "")
+    {
+      FRAISE("incompatible sizes: %sx%s, %sx%s%s%s",
+             m1.size1(), m1.size2(), m2.size1(), m2.size2(),
+             hint.empty() ? "" : ": ",
+             hint);
+    }
+
+    ATTRIBUTE_NORETURN
+    static inline void
+    raise_incompatible_sizes(const matrix_type& m, const vector_type& v,
+                             const std::string& hint = "")
+    {
+      FRAISE("incompatible sizes: %sx%s, %s%s%s",
+             m.size1(), m.size2(), v.size(),
+             hint.empty() ? "" : ": ",
+             hint);
+    }
+
+    // Currently not used.
+#if 0
+    static inline
+    void
+    check_equal_size(const matrix_type& m1, const matrix_type& m2)
+    {
+      if (m1.size1() != m2.size1()
+          || m1.size2() != m2.size2())
+        raise_incompatible_sizes(m1, m2);
+    }
+#endif
+
+    static inline
+    void
+    check_equal_size2(const matrix_type& m1, const matrix_type& m2)
+    {
+      if (m1.size2() != m2.size2())
+        raise_incompatible_sizes(m1, m2, "size2 must be equal");
+    }
+
+    static inline
+    void
+    check_equal_size1(const matrix_type& m, const vector_type& v)
+    {
+      if (m.size1() != v.size())
+        raise_incompatible_sizes(m, v);
+    }
+
+    static inline
+    void
+    check_equal_size2(const matrix_type& m, const vector_type& v)
+    {
+      if (m.size2() != v.size())
+        raise_incompatible_sizes(m, v);
+    }
+
+    /*---------.
+    | Matrix.  |
+    `---------*/
+
     Matrix::Matrix()
       : value_()
     {
@@ -245,9 +307,7 @@ namespace urbi
     {                                           \
       const size_t height = size1();            \
       const size_t width = size2();             \
-      if (height != rhs.size())                 \
-        FRAISE("incompatible sizes: %sx%s, %s", \
-               height, width, rhs.size());      \
+      check_equal_size1(value_, rhs);           \
       value_type res = value_;                  \
       for (unsigned p1 = 0; p1 < height; ++p1)  \
         for (unsigned i = 0; i < width; ++i)    \
@@ -292,6 +352,11 @@ namespace urbi
     //OP(*, Vector, prod)
 
 #undef OP
+
+
+    /*--------------------------.
+    | Arithmetic with scalars.  |
+    `--------------------------*/
 
 #define OP(Op)                                  \
     Matrix::value_type                          \
@@ -488,11 +553,10 @@ namespace urbi
     Matrix::value_type
     Matrix::distanceMatrix(const value_type& b) const
     {
+      check_equal_size2(value_, b);
       const size_t height = size1();
       const size_t width = size2();
       const size_t height2 = b.size1();
-      if (width != b.size2())
-        FRAISE("incompatible matrix sizes: %s, %s", width, b.size2());
       value_type res(height, height2);
       for (unsigned p1 = 0; p1 < height; ++p1)
         for (unsigned p2 = 0; p2 < height2; ++p2)
@@ -511,6 +575,7 @@ namespace urbi
     Matrix::vector_type
     Matrix::rowNorm() const
     {
+      // FIXME: there might be something in Boost to do that.
       const size_t height = size1();
       const size_t width = size2();
       vector_type res(height);
@@ -530,10 +595,8 @@ namespace urbi
     Matrix*
     Matrix::setRow(int r, const vector_type& v)
     {
-      if (size2() != v.size())
-        FRAISE("incompatible sizes: %sx%s, %s", size1(), size2(), v.size());
+      check_equal_size2(value_, v);
       int j = index1(r);
-      index2(v.size()-1); // Check size
       for (unsigned i = 0; i< v.size(); ++i)
         value_(j, i) = v(i);
       return this;
@@ -542,8 +605,7 @@ namespace urbi
     Matrix*
     Matrix::appendRow(const vector_type& v)
     {
-      if (size2() != v.size())
-        FRAISE("incompatible sizes: %sx%s, %s", size1(), size2(), v.size());
+      check_equal_size2(value_, v);
       value_.resize(size1()+1, size2());
       setRow(size1()-1, v);
       return this;
