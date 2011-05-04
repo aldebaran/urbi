@@ -40,6 +40,8 @@ namespace urbi
       rList backtrace();
       const std::string& name();
       std::string status();
+      rObject stats();
+      void resetStats();
       const runner::State::tag_stack_type tags();
       void terminate();
       rFloat timeShift();

@@ -22,6 +22,7 @@
 #include <urbi/object/list.hh>
 #include <urbi/object/object.hh>
 #include <urbi/object/string.hh>
+#include <urbi/object/dictionary.hh>
 #include <object/symbols.hh>
 #include <urbi/object/lobby.hh>
 #include <urbi/object/job.hh>
@@ -49,7 +50,9 @@ namespace urbi
     URBI_CXX_OBJECT_INIT(Job)
     {
       BIND(DOLLAR_backtrace, backtrace);
+      BIND(resetStats);
       BIND(status);
+      BIND(stats);
       BIND(tags);
       BIND(terminate);
       BIND(timeShift);
@@ -110,6 +113,53 @@ namespace urbi
       if (value_->non_interruptible_get())
         status << " (non interruptible)";
       return status.str();
+    }
+
+    rObject
+    Job::stats()
+    {
+      const sched::Job::stats_type& stats =
+        value_->stats_get();
+
+      // The space after "Symbol(" is mandatory to avoid triggering an error in
+      // symbol generation code
+      Dictionary::value_type res;
+#define ADDENTRY(Name, Value, Divisor)          \
+      res[new String(Name)] =                   \
+        new Float(Value / Divisor)
+
+#define ADDSTATS(Prefix, Stat)                                          \
+      ADDENTRY(Prefix         , Stat.size(), 1);                        \
+      if (Stat.size() != 0)                                             \
+      {                                                                 \
+        ADDENTRY(Prefix "Max" , Stat.max(), 1e6);                       \
+        ADDENTRY(Prefix "Mean", Stat.mean(), 1e6);                      \
+        ADDENTRY(Prefix "Min" , Stat.min(), 1e6);                       \
+        ADDENTRY(Prefix "Dev" , Stat.standard_deviation(), 1e6);        \
+        ADDENTRY(Prefix "Var" , Stat.variance(), 1e6);                  \
+      }
+
+#define ADDJOBSTATS(Prefix, Thread)                             \
+      ADDSTATS(Prefix "Cycles", Thread.running);                \
+      ADDSTATS(Prefix "Waiting", Thread.waiting);               \
+      ADDSTATS(Prefix "Sleeping", Thread.sleeping);             \
+      ADDENTRY(Prefix "Fork", Thread.nb_fork, 1);               \
+      ADDENTRY(Prefix "Join", Thread.nb_join, 1);               \
+      ADDENTRY(Prefix "WorkflowBreak", Thread.nb_exn, 1);
+
+      ADDJOBSTATS("", stats.job);
+      ADDJOBSTATS("TerminatedChildren", stats.terminated_children);
+
+#undef ADDJOBSTATS
+#undef ADDSTATS
+#undef ADDENTRY
+      return new Dictionary(res);
+    }
+
+    void
+    Job::resetStats()
+    {
+      value_->stats_reset();
     }
 
     rList
