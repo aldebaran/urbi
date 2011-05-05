@@ -239,9 +239,9 @@ install-data-hook:
 .PHONY: install-doc
 doc_files = $(pdf_DATA) urbi-sdk.htmldir images
 images: $(nodist_image_DATA)
-	rm -rf $@ $@.tmp
-	mkdir -p $@.tmp
-	cp $^ $@.tmp
-	mv $@.tmp $@
+	$(AM_V_GEN)rm -rf $@ $@.tmp
+	$(AM_V_at)mkdir -p $@.tmp
+	$(AM_V_at)cp $^ $@.tmp
+	$(AM_V_at)mv $@.tmp $@
 install-doc: $(doc_files)
-	scp -r $(doc_files) $(doc_host):$(doc_dir)/doc.new
+	$(AM_V_GEN)scp -r $(doc_files) $(doc_host):$(doc_dir)/doc.new
