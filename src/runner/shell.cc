@@ -380,8 +380,9 @@ namespace runner
     if (stop_)
       return;
     GD_FPUSH_TRACE("%s: end reached.", name_get());
-    if (&kernel::urbiserver->ghost_connection_get() !=
-        &state.lobby_get()->connection_get())
+    object::Lobby *l = state.lobby_get();
+    object::Lobby::connection_type* c = &l->connection_get();
+    if (c != &kernel::urbiserver->ghost_connection_get())
     {
       // Asynchronous destruction of the connection is necessary
       // otherwise the connection destructor (which is stopping the
@@ -392,17 +393,14 @@ namespace runner
       // The UConnection should be fetch before disconnecting the lobby,
       // because the lobby will lose it's reference on the connection.
       GD_FPUSH_DUMP("%s: schedule connection destruction.", name_get());
-      aver(&state.lobby_get()->connection_get());
-      kernel::server().schedule(
-        SYMBOL(collect_connection),
-        boost::bind(collect_connection,
-                    &state.lobby_get()->connection_get())
-        );
+      aver(c);
+      kernel::server().schedule(SYMBOL(collect_connection),
+                                boost::bind(collect_connection, c));
       GD_FPUSH_DUMP("%s: disconnecting.", name_get());
       state.lobby_get()->disconnect();
       stop_ = true;
     }
     // Force interruption of work_
-    state.lobby_get()->tag_get()->stop();
+    l->tag_get()->stop();
   }
 } // namespace runner

@@ -620,29 +620,31 @@ namespace kernel
     libport::Finally f;
     r.state.apply_tag(fast_async_jobs_tag_->as<object::Tag>(), &f);
     unsigned count = 0;
-    try{
-    while (true)
+    try
     {
-      fast_async_jobs_start_ = false;
-      count++;
-      GD_FINFO_TRACE("Fast async jobs running %s", count);
+      while (true)
       {
-        std::vector<boost::function0<void> > jobs;
+        fast_async_jobs_start_ = false;
+        count++;
+        GD_FINFO_TRACE("Fast async jobs running %s", count);
         {
-          libport::BlockLock bl(fast_async_jobs_lock_);
-          std::swap(jobs, fast_async_jobs_);
+          std::vector<boost::function0<void> > jobs;
+          {
+            libport::BlockLock bl(fast_async_jobs_lock_);
+            std::swap(jobs, fast_async_jobs_);
+          }
+          GD_FINFO_TRACE("Fast async jobs processing %s operations",
+                         jobs.size());
+          foreach(boost::function0<void>& j, jobs)
+            j();
         }
-        GD_FINFO_TRACE("Fast async jobs processing %s operations",
-                       jobs.size());
-        foreach(boost::function0<void>& j, jobs)
-          j();
-      }
-      GD_INFO_TRACE("Fast async job sleeping");
-      fast_async_jobs_tag_->as<object::Tag>()->freeze();
-      GD_INFO_TRACE("Fast async job waking up");
+        GD_INFO_TRACE("Fast async job sleeping");
+        fast_async_jobs_tag_->as<object::Tag>()->freeze();
+        GD_INFO_TRACE("Fast async job waking up");
         // Wake up.
-    }}
-    catch(...)
+      }
+    }
+    catch (...)
     {
       GD_INFO_TRACE("Fast async job exiting");
       throw;

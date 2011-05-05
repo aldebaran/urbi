@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2009, 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -93,11 +93,10 @@ namespace kernel
 
     /// \brief Set up urbiscript support.
     ///
-    /// This function must be called once the connection is
-    /// operational, able to send data and to process urbiscript
-    /// programs. It is a requirement for Urbi compliance to send the
-    /// header at start, so this function must be called.  It is
-    /// expected to load "local.u".
+    /// Must be called once the connection is operational, able to
+    /// send data and to process urbiscript programs. It is a
+    /// requirement for Urbi compliance to send the header at start,
+    /// so this function must be called.  Loads "local.u".
     void initialize();
 
     /*-------------------------.
@@ -115,7 +114,7 @@ namespace kernel
     /// Overload for C++.
     void send(const std::string& s, const char* tag = 0, bool flush = true);
 
-    //! Send at most packetSize bytes in the connection, calling effective_send()
+    //! Send at most packetSize bytes in the connection, calling effective_send.
 
     /*! Must be called when the system tells that the connection is ready to
       accept new data for sending, in order to carry on the processing of the
@@ -123,10 +122,6 @@ namespace kernel
 
       Each call to continue_send sends packetSize bytes (at most) through
       the real connection until the internal buffer is empty.
-
-      \return
-      - USUCCESS: successful
-      - UFAIL   : effective_send() failed or not enough memory
      */
     void continue_send();
 

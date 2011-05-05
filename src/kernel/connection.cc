@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -40,7 +40,7 @@ namespace kernel
     {
       lobby_->slot_set(SYMBOL(remoteIP), object::to_urbi(getRemoteHost()));
     }
-    catch(std::exception&)
+    catch (const std::exception&)
     {
       // We got disconnected, do nothing, onError will be called.
     }
