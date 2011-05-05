@@ -480,6 +480,10 @@ There are some special variables in addition to the environment
 variables documented in the manual.
 
 \begin{envs}
+\item[URBI\_ACCEPT\_BINARY\_MISMATCH] As a safety net, Urbi checks that
+  loaded modules were compiled with exactly the same version of Urbi SDK.
+  Define this variable to skip this check, at your own risks.
+
 \item[URBI\_CHECK\_MODE] Skip lines in input that look like \urbi output.  A
   way to accept test files (\file{*.chk}) as input.
 
@@ -499,7 +503,7 @@ variables documented in the manual.
 
 \item[URBI\_PARSER] Enable Bison parser traces.
 
-\item[URBI\_REPORT] Display stats about execution rounds performed by
+\item[URBI\_REPORT] Display statistics about execution rounds performed by
   the kernel.
 
 \item[URBI\_ROOT\_LIB\var{name}] The location of the libraries to load,
@@ -508,6 +512,8 @@ variables documented in the manual.
   LIBSCHED, LIBSERIALIZE, LIBURBI.
 
 \item[URBI\_SCANNER] Enable Flex scanner traces.
+
+\item[URBI\_TEXT\_MODE] Forbid binary communications with UObjects.
 
 \item[URBI\_TOPLEVEL] Force the display the result of the top-level
   evaluation into the lobby.
