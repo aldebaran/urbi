@@ -231,21 +231,31 @@ public class All extends UObject
 
     public int onBinaryBypass(UVar var)
     {
-	final UBinary cb = var.ubinaryValue();
-	UBinary b = cb;
+        Log.info("onBinaryBypass: in: "
+                 + new String(var.ubinaryValue().getData()));
+	UBinary b = var.ubinaryValue();
 	byte[] data = b.getData();
 	for (int i=0; i<b.getSize(); ++i)
 	    data[i]++;
+        b.setData(data);
+        Log.info("onBinaryBypass: out: "
+                 + new String(var.ubinaryValue().getData()));
 	return 0;
     }
-    void onImageBypass(UVar var)
+
+    public void onImageBypass(UVar var)
     {
-	final UImage cb = var.uimageValue();
-	UImage b = cb;
+        Log.info("onImageBypass: in: "
+                 + new String(var.uimageValue().getData()));
+	UImage b = var.uimageValue();
 	byte[] data = b.getData();
 	for (int i=0; i<b.getSize(); ++i)
 	    data[i]++;
+        b.setData(data);
+        Log.info("onImageBypass: out: "
+                 + new String(var.uimageValue().getData()));
     }
+
     public String selfWriteB(int idx, String content)
     {
 	UBinary b = new UBinary();
