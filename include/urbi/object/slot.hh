@@ -32,7 +32,7 @@ namespace urbi
   namespace object
   {
 #define URBI_OBJECT_SLOT_CACHED_PROPERTIES      \
-    ((bool, constant))                          \
+    ((bool, constant, 1))                       \
 
     class Slot: public Object
     {
@@ -92,22 +92,44 @@ namespace urbi
       /// Whether is const.
       bool constant() const;
 
+#define URBI_OBJECT_SLOT_CACHED_PROPERTY_STORE(Elem)                    \
+        (*properties_)                                                  \
+        [SYMBOL_EXPAND(BOOST_PP_TUPLE_ELEM(3, 1, Elem))]                \
+        = to_urbi(val)                                                  \
+
+
+#define URBI_OBJECT_SLOT_CACHED_PROPERTY_DEL(Elem)                      \
+        properties_->erase                                              \
+        (SYMBOL_EXPAND(BOOST_PP_TUPLE_ELEM(3, 1, Elem)))                \
+
 #define URBI_OBJECT_SLOT_CACHED_PROPERTY_DECLARE(R, Data, Elem)         \
-        ATTRIBUTE_Rw(BOOST_PP_TUPLE_ELEM(2, 0, Elem),                   \
-                     BOOST_PP_TUPLE_ELEM(2, 1, Elem))                   \
+        ATTRIBUTE_Rw(BOOST_PP_TUPLE_ELEM(3, 0, Elem),                   \
+                     BOOST_PP_TUPLE_ELEM(3, 1, Elem))                   \
         {                                                               \
-          if (BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(2, 1, Elem), _) != val)  \
+          if (BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(3, 1, Elem), _) != val)  \
           {                                                             \
-            BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(2, 1, Elem), _) = val;     \
+            BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(3, 1, Elem), _) = val;     \
             if (properties_)                                            \
-              (*properties_)[SYMBOL_EXPAND(BOOST_PP_TUPLE_ELEM(2, 1, Elem))]   \
-                = to_urbi(val);                                         \
+              BOOST_PP_IF(                                              \
+                BOOST_PP_TUPLE_ELEM(3, 2, Elem),                        \
+                {                                                       \
+                  URBI_OBJECT_SLOT_CACHED_PROPERTY_STORE(Elem);         \
+                },                                                      \
+                {                                                       \
+                  if (val)                                              \
+                    URBI_OBJECT_SLOT_CACHED_PROPERTY_STORE(Elem);       \
+                  else                                                  \
+                    URBI_OBJECT_SLOT_CACHED_PROPERTY_DEL(Elem);         \
+                                                                        \
+                });                                                     \
           }                                                             \
         }                                                               \
 
         BOOST_PP_SEQ_FOR_EACH(URBI_OBJECT_SLOT_CACHED_PROPERTY_DECLARE,
                               _, URBI_OBJECT_SLOT_CACHED_PROPERTIES);
 #undef URBI_OBJECT_SLOT_CACHED_PROPERTY_DECLARE
+#undef URBI_OBJECT_SLOT_CACHED_PROPERTY_DEL
+#undef URBI_OBJECT_SLOT_CACHED_PROPERTY_STORE
 
     private:
       rObject value_;

@@ -29,10 +29,20 @@ namespace urbi
         }
         return changed_;
       }
-#define URBI_OBJECT_SLOT_CACHED_PROPERTY_GET(R, Data, Elem)     \
-      if (k == SYMBOL_EXPAND(BOOST_PP_TUPLE_ELEM(2, 1, Elem)))  \
-        return to_urbi                                          \
-          (BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(2, 1, Elem), _));
+
+#define URBI_OBJECT_SLOT_CACHED_PROPERTY_HAS_(Elem)                     \
+      BOOST_PP_IF(                                                      \
+        BOOST_PP_TUPLE_ELEM(3, 2, Elem),                                \
+        true,                                                           \
+        BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(3, 1, Elem), _))               \
+
+#define URBI_OBJECT_SLOT_CACHED_PROPERTY_GET(R, Data, Elem)             \
+      if (k == SYMBOL_EXPAND(BOOST_PP_TUPLE_ELEM(3, 1, Elem)))          \
+        if (URBI_OBJECT_SLOT_CACHED_PROPERTY_HAS_(Elem))                \
+          return to_urbi                                                \
+            (BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(3, 1, Elem), _));         \
+        else                                                            \
+          return 0;                                                     \
 
       BOOST_PP_SEQ_FOR_EACH(URBI_OBJECT_SLOT_CACHED_PROPERTY_GET,
                             _, URBI_OBJECT_SLOT_CACHED_PROPERTIES);
@@ -47,8 +57,8 @@ namespace urbi
     Slot::property_has(libport::Symbol k) const
     {
 #define URBI_OBJECT_SLOT_CACHED_PROPERTY_HAS(R, Data, Elem)     \
-      if (k == SYMBOL_EXPAND(BOOST_PP_TUPLE_ELEM(2, 1, Elem)))  \
-        return true;
+      if (k == SYMBOL_EXPAND(BOOST_PP_TUPLE_ELEM(3, 1, Elem)))  \
+        return URBI_OBJECT_SLOT_CACHED_PROPERTY_HAS_(Elem);     \
 
       BOOST_PP_SEQ_FOR_EACH(URBI_OBJECT_SLOT_CACHED_PROPERTY_HAS,
                             _, URBI_OBJECT_SLOT_CACHED_PROPERTIES);
@@ -60,10 +70,10 @@ namespace urbi
     Slot::property_set(libport::Symbol k, rObject value)
     {
 #define URBI_OBJECT_SLOT_CACHED_PROPERTY_SET(R, Data, Elem)     \
-      if (k == SYMBOL_EXPAND(BOOST_PP_TUPLE_ELEM(2, 1, Elem)))  \
+      if (k == SYMBOL_EXPAND(BOOST_PP_TUPLE_ELEM(3, 1, Elem)))  \
       {                                                         \
-        BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(2, 1, Elem), _set)     \
-          (from_urbi<BOOST_PP_TUPLE_ELEM(2, 0, Elem)>(value));  \
+        BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(3, 1, Elem), _set)     \
+          (from_urbi<BOOST_PP_TUPLE_ELEM(3, 0, Elem)>(value));  \
         return false;                                           \
       }
 
@@ -100,8 +110,10 @@ namespace urbi
       {
         properties_ = new properties_type;
 #define URBI_OBJECT_SLOT_CACHED_PROPERTY_SET(R, Data, Elem)             \
-        (*properties_)[SYMBOL_EXPAND(BOOST_PP_TUPLE_ELEM(2, 1, Elem))] = \
-          to_urbi(BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(2, 1, Elem), _));
+        if (URBI_OBJECT_SLOT_CACHED_PROPERTY_HAS_(Elem))                \
+          (*properties_)                                                \
+            [SYMBOL_EXPAND(BOOST_PP_TUPLE_ELEM(3, 1, Elem))] =          \
+            to_urbi(BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(3, 1, Elem), _));  \
 
       BOOST_PP_SEQ_FOR_EACH(URBI_OBJECT_SLOT_CACHED_PROPERTY_SET,
                             _, URBI_OBJECT_SLOT_CACHED_PROPERTIES);
