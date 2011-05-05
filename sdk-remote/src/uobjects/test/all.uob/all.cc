@@ -208,12 +208,10 @@ public:
     vars[2] = &c;
     vars[3] = &d;
     vars[4] = &unbound;
-    std::string name = "ia";
     for(int i=0; i<4; ++i)
-    {
-      name[1] = 'a' + i;
-      ports[i] = new urbi::InputPort(this, name);
-    }
+      ports[i] = new urbi::InputPort(this,
+                                     libport::format("i%c", 'a' + i));
+
     // 4 is unbound
     ports[4] = new urbi::InputPort();
     UBindFunctions(all, notifyWriteA, writeAD, writeAS, writeAB, writeAV,
@@ -739,7 +737,7 @@ public:
   ufloat transmitD(ufloat v) const
   {
     threadCheck();
-    return -(ufloat)v;
+    return -v;
   }
 
   urbi::UList transmitL(urbi::UList l) const
