@@ -17,6 +17,7 @@
 # define EVAL_CALL_HH
 
 # include <eval/action.hh>
+# include <eval/fwd.hh>
 
 # include <ast/fwd.hh>
 # include <ast/loc.hh>
@@ -30,7 +31,7 @@ namespace eval
 
   rObject call(Job& job,
                object::rObject function,
-               const object::objects_type& args = object::objects_type());
+               const object::objects_type& args);
 
   /*
   Action  call(rObject this_,
@@ -60,7 +61,7 @@ namespace eval
                      object::rObject target,
                      object::rObject routine,
                      libport::Symbol message,
-                     const object::objects_type& args = object::objects_type());
+                     const object::objects_type& args);
 
   Action  call_apply(object::rObject function,
                      libport::Symbol msg,
