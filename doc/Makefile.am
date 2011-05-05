@@ -143,30 +143,57 @@ urbi_sdk_tex = $(call ls_files,*.tex)
 urbi_sdk_sources =				\
   $(urbi_sdk_tex)				\
   $(call ls_files,*.sty tables/*.txt)
+CLEANFILES += config.sty
+
+
+## -------------- ##
+## revision.sty.  ##
+## -------------- ##
+
+# The tricky part is that all our PDF and HTML outputs depend on
+# revision.sty, so it is tempting to put it as a regular
+# prerequisites.  This way we are sure it exists when we need it.  But
+# to ensure that it is always up to date (so that the PDF and HTML
+# output are always referring to the revision info at the time of
+# "make" run) we have to make "revision.sty" a PHONY target, i.e., a
+# target fired at each "make" invocation.
+#
+# But then we have a problem: "make" will notice that revision.sty is
+# to be remade, and therefore that the PDF and HTML have to be remade
+# at each run of "make".  No way!
+#
+# We could remove the dependency on revision.sty from our PDF and
+# HTML, and start the rules with "$(MAKE) update-revision.pdf".  But
+# this is not good for concurrent builds, as we would have several PDF
+# and/or HTML documents that try to update the same file,
+# concurrently.
+#
+# The simplest solution seems to be using "order-only prerequisites"
+# (specified with "|", not ":").  In that case Make knows that if the
+# PDF and revision.sty are to be updated, them update the latter
+# first.  Yet, it is not because revision.sty is updated that we need
+# to update the PDF files.  And of course, Make handles itself the
+# concurrency issues.
+
+# Don't depend on .version, it changes too often.
 REVISION_FILE = revision.sty
 BUILT_SOURCES += $(REVISION_FILE)
-CLEANFILES += config.sty
-REVISION_FILE_UPDATE =				\
-  $(VERSIONIFY) 				\
-  --directory --cache=$(top_srcdir)/.version 	\
-  --latex=$(REVISION_FILE)
-# Don't depend on .version, it changes too often.
-$(REVISION_FILE):; $(REVISION_FILE_UPDATE)
-
-# Override the default rule to ensure that the revision file is update
-# each time we update the documentation.
-$(PDFS): %.pdf: %.tex $(share_tex_dependencies)
-	$(AM_V_GEN) $(REVISION_FILE_UPDATE)
-	$(AM_V_at) $(TEXI2PDF) $(TEXI2PDFFLAGS) -o $@ $<
+.PHONY: $(REVISION_FILE)
+$(REVISION_FILE):
+	$(AM_V_GEN)$(VERSIONIFY)			\
+	  --directory --cache=$(top_srcdir)/.version	\
+	  --latex=$@
 
 EXTRA_DIST += $(urbi_sdk_sources)
 urbi_sdk_deps = 				\
   config.sty					\
-  $(REVISION_FILE)				\
   $(urbi_sdk_sources)
 
-$(MASTERS:.tex=.pdf): $(urbi_sdk_deps) $(PDF_IMAGES)
-$(MASTERS:.tex=.dvi) $(MASTERS:.tex=.htmldir): $(urbi_sdk_deps) $(EPS_IMAGES)
+$(MASTERS:.tex=.pdf): $(urbi_sdk_deps) $(PDF_IMAGES)	\
+                    | $(REVISION_FILE)
+
+$(MASTERS:.tex=.dvi) $(MASTERS:.tex=.htmldir): $(urbi_sdk_deps) $(EPS_IMAGES) \
+                                             | $(REVISION_FILE)
 
 view: $(pdf_DATA)
 	xpdf $<
