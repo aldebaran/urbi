@@ -780,6 +780,7 @@ class Global.'external'
   /// Notify the remote when <objname>.<varname> is modified.
   function 'var'(objname, varname, fr)
   {
+    noVoidError|
     var fullname = objname + "." + varname|
 
     if (!uobjects.hasSlot(objname))
@@ -823,7 +824,8 @@ class Global.'external'
         obj.updateSlot(varname, v)|
       // Restore properties.
       for|(var p: props)
-        obj.setProperty(varname, p.first, p.second)
+        if (p.first != "value")
+          obj.setProperty(varname, p.first, p.second)|
     }|
     // Try to use RTP mode for binaries, or if explicitly requested.
     var tv = obj.getSlot(varname).apply([obj]).acceptVoid|

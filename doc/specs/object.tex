@@ -199,6 +199,7 @@ do (2) { var this.attr = "foo"; this.attr->prop = "bar" }.dump(0);
 [00015137] ***   attr = String_0x23a750 <...>
 [00015137] ***     /* Properties */
 [00015137] ***     prop = String_0x23a7a0 <...>
+[00015137] ***     value = String_0xADDR <...>
 [00015137] ***   }
 do (2) { var this.attr = "foo"; this.attr->prop = "bar" }.dump(1);
 [00020505] *** Float_0x240550 {
@@ -213,6 +214,11 @@ do (2) { var this.attr = "foo"; this.attr->prop = "bar" }.dump(1);
 [00020505] ***     }
 [00020505] ***     /* Properties */
 [00020505] ***     prop = String_0x239330 {
+[01234567] ***       /* Special slots */
+[01234567] ***       protos = String
+[01234567] ***       /* Slots */
+[01234567] ***       }
+[01234567] ***     value = String_0xADDR {
 [00020505] ***       /* Special slots */
 [00020505] ***       protos = String
 [00020505] ***       /* Slots */
@@ -341,6 +347,7 @@ do (2) { var this.attr = "foo"; this.attr->prop = "bar"}.inspect;
 [00001228] ***   attr : String
 [00001228] ***     Properties:
 [00001228] ***      prop : String = "bar"
+[00001228] ***      value : String = "foo"
 \end{urbiscript}
 
 \item[isA](<obj>)%
@@ -415,9 +422,9 @@ locateSlot("doesNotExist").isNil;
 2.properties("foo");
 [00238495:error] !!! lookup failed: foo
 do (2) { var foo = "foo" }.properties("foo");
-[00238501] ["constant" => false]
+[00238501] ["constant" => false, "value" => "foo"]
 do (2) { var foo = "foo" ; foo->bar = "bar" }.properties("foo");
-[00238502] ["bar" => "bar", "constant" => false]
+[00238502] ["bar" => "bar", "constant" => false, "value" => "foo"]
 \end{urbiscript}
 
 \item[removeLocalSlot](<slot>)%

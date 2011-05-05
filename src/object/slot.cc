@@ -13,6 +13,9 @@
 #include <urbi/object/slot.hxx>
 #include <object/symbols.hh>
 
+// Help symbol generation script.
+/* SYMBOL(value) */
+
 namespace urbi
 {
   namespace object

@@ -56,14 +56,22 @@ convenient short-hand to discover an object (\refObject{Object}).
 
 \begin{urbiscript}
 Foo.inspect;
-[00000009] *** Inspecting Foo
-[00000009] *** ** Prototypes:
-[00000009] ***   Object
-[00000009] *** ** Local Slots:
-[00000009] ***   a : Float
-[00000009] ***   asFoo : Code
-[00000009] ***   b : String
-[00000009] ***   type : String
+[00000000] *** Inspecting Foo
+[00000000] *** ** Prototypes:
+[00000000] ***   Object
+[00000000] *** ** Local Slots:
+[00000000] ***   a : Float
+[00000000] ***     Properties:
+[00000000] ***      value : Float = 42
+[00000000] ***   asFoo : Code
+[00000000] ***     Properties:
+[00000000] ***      value : Code = function () { this }
+[00000000] ***   b : String
+[00000000] ***     Properties:
+[00000000] ***      value : String = "foo"
+[00000000] ***   type : String
+[00000000] ***     Properties:
+[00000000] ***      value : String = "Foo"
 \end{urbiscript} % fix color $
 
 Let's now try to build such an object. First, we want a fresh object
@@ -112,6 +120,8 @@ o.inspect;
 [00009837] ***   Object
 [00009838] *** ** Local Slots:
 [00009838] ***   a : Float
+[00009838] ***     Properties:
+[00009838] ***      value : Float = 42
 \end{urbiscript}
 
 Here we successfully created our first slot, \lstinline|a|. A good
@@ -127,7 +137,11 @@ o.inspect;
 [00072679] ***   Object
 [00072679] *** ** Local Slots:
 [00072679] ***   a : Float
+[00072679] ***     Properties:
+[00072679] ***      value : Float = 42
 [00072680] ***   b : String
+[00072680] ***     Properties:
+[00072680] ***      value : String = "foo"
 \end{urbiscript}
 
 The latter form with \lstinline{var} is preferred, but you need to know
