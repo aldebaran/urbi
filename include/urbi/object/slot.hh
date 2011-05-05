@@ -68,7 +68,6 @@ namespace urbi
       template <typename T>
       const T& operator=(const T& value);
       operator rObject ();
-      operator Object* ();
       operator bool ();
       Object* operator->();
       const Object* operator->() const;

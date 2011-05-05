@@ -499,7 +499,7 @@ namespace eval
     // Bounce on the same function with routine argument.
     return call_msg(job,
                     target,
-                    target->slot_get(message),
+                    target->slot_get(message).value(),
                     message,
                     arguments, location);
   }
