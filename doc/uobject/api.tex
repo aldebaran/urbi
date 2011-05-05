@@ -617,10 +617,11 @@ void SoundAlgorithm::onData(UVar& v)
 In plugin mode, you can setup any \UVar in 0-copy mode by calling
 \lstinline{setBypass(true)}. In this mode, binary data written to the \UVar
 is not copied, but a reference is kept.  As a consequence, the data is only
-available from within registered notifyChange callbacks. Those callbacks can
-use \lstinline|UVar::val()| or cast the \UVar to a \UBinary\& to retrieve
-the reference.  Attempts to read the \UVar from outside notifyChange will
-block until the \UVar is updated again, and copy the value at this time.
+available from within registered \lstinline|notifyChange| callbacks. Those
+callbacks can use \lstinline|UVar::val()| or cast the \UVar to a
+\lstinline|UBinary&| to retrieve the reference.  Attempts to read the \UVar
+from outside \lstinline|notifyChange| will block until the \UVar is updated
+again, and copy the value at this time.
 
 An example will certainly clarify: Let us first declare an UObject that will
 generate binary data using 0-copy mode.
@@ -630,9 +631,9 @@ generate binary data using 0-copy mode.
 class OptimizedImageSource: public UObject
 {
   <...>
-  public:
-    UVar val;
-    UBinary imageData;
+public:
+  UVar val;
+  UBinary imageData;
 };
 
 void OptimizedImageSource::init()
@@ -659,7 +660,7 @@ without any copy:
 \begin{cxx}
 class BinaryProcessor: public UObject
 {
-  public:
+public:
   void init();
   void onData(UVar& v);
   InputPort binaryIn;
@@ -681,34 +682,35 @@ void BinaryProcessor::onData(UVar& v)
 \end{cxx}
 
 Typing \lstinline{OptimizedImageSource.val} in \us will wait for the next
-update from OptimizedImageSource::update and copy the data at this point.
+update from \lstinline|OptimizedImageSource::update| and copy the data at
+this point.
 
 \section{Direct communication between UObjects}
 
-For modularity reasons, all interactions between \lstinline{UObjects} should
-go through the various middleware communication mechanisms, mainly
+For modularity reasons, all interactions between \UObjects should go through
+the various middleware communication mechanisms, mainly
 \lstinline{InputPort} and \lstinline{UNotifyChange}. But it is possible to
-access directly the C++ instance of an \UObject :
+access directly the \Cxx instance of an \UObject:
 
 \begin{itemize}
 \item by binding a function taking a \lstinline{UObject*} as argument, and
-calling it from \us, passing the \UObject itself.
-\item by calling the C++ function \lstinline{getUObject(name)}. \lstinline{name}
-must be the canonical \UObject name, passed to your constructor, and stored in
-the \lstinline{__name} member.
+  calling it from \us, passing the \UObject itself.
+\item by calling the \Cxx function \lstinline|getUObject(\var{name})|.
+  \var{name} must be the canonical \UObject name, passed to your
+  constructor, and stored in the \lstinline{__name} member.
 \end{itemize}
 
 
 \section{Using hubs to group objects}
 
-Sometimes, you need to perform actions for a group of \lstinline{UObjects},
-for instance devices that need to be updated together. The API provides the
+Sometimes, you need to perform actions for a group of \UObjects, for
+instance devices that need to be updated together. The API provides the
 \UObjectHub class for this purpose. To create a hub, simply declare a
 subclass of \UObjectHub, and register it by calling once the macro
-\lstinline|UStartHub (\var{class-name})|. A single instance of this class
+\lstinline|UStartHub(\var{class-name})|. A single instance of this class
 will then be created upon server start-up. \UObject instances can then
 register to this hub by calling %
-\lstinline|URegister (\var{hub-class-name})|. %
+\lstinline|URegister(\var{hub-class-name})|. %
 Timers can be attached to \UObjectHub the same way as to \UObject (see
 \autoref{sec:uob:timers}). A hub instance can be retrieved by calling
 \lstinline|getUObjectHub (string \var{class-name})|. The hub also holds the
@@ -716,10 +718,9 @@ list of registered UObject in its members attribute.
 
 \section{Sending \us code}
 
-If you need to send \us code to the server, the \lstinline{URBI()}
-macro is available, as well as the \lstinline{send()} function. You
-can either pass it a string, or directly \urbi code inside a double
-pair of parentheses:
+If you need to send \us code to the server, the \lstinline{URBI} macro is
+available, as well as the \lstinline{send} function. You can either pass it
+a string, or directly \us code inside a \emph{double} pair of parentheses:
 
 \begin{urbiunchecked}
 send ("myTag:1+1;");
@@ -727,8 +728,7 @@ send ("myTag:1+1;");
 URBI (( at (myEvent?(var x)) { myTag:echo x; }; ));
 \end{urbiunchecked}
 
-You can also use the \lstinline{call} method to make an urbiscript function
-call:
+You can also use the \lstinline{call} method to invoke an \us function:
 
 \begin{urbiunchecked}
 // C++ equivalent of urbiscript 'System.someFunc(12, "foo");'
