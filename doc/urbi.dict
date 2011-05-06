@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1416 utf-8
+personal_ws-1.1 en 1418 utf-8
 aaa
 abc
 abcd
@@ -449,6 +449,7 @@ getStats
 getTarget
 getter
 gettext
+getUObject
 getUObjectHub
 getVal
 getWidth
