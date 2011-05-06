@@ -499,25 +499,21 @@ namespace urbi
       // it is used as a callback function.  Thus we have to declare the
       // category for the debugger used by the current thread.
       if (e)
+        URBI_SEND_COMMA_COMMAND_C
+          (*ctx->outputStream,
+           "Global.UObject.funCall(\"" << var << "\", "
+           << "Exception.new(\""
+           << "Exception caught while calling remote method: "
+           << libport::escape(e->what())
+           << "\"))");
+      else if (ctx->serializationMode)
       {
-         URBI_SEND_COMMA_COMMAND_C
-           (*ctx->outputStream,
-            "Global.UObject.funCall(\"" << var << "\", "
-            << "Exception.new(\""
-            << "Exception while calling remote bound method: "
-            << libport::escape(e->what())
-            << "\"))");
+        char type = UEM_REPLY;
+        ctx->outputStream->flush();
+        *ctx->oarchive << type << var << retval;
+        ctx->backend_->flush();
       }
       else
-      {
-        if (ctx->serializationMode)
-        {
-          char type = UEM_REPLY;
-          ctx->outputStream->flush();
-          *ctx->oarchive << type << var << retval;
-          ctx->backend_->flush();
-        }
-        else
         switch (retval.type)
         {
         case DATA_BINARY:
@@ -543,7 +539,6 @@ namespace urbi
             (*ctx->outputStream,
              "Global.UObject.funCall(\"" << var << "\", " << retval << ")");
           break;
-        }
       }
     }
 
