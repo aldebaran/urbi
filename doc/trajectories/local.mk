@@ -25,7 +25,8 @@ $(srcdir)/%.dat: %.utraj
 ## depend on one file, not two.
 %.pdftex_t %.pdf: %.dat
 	$(AM_V_GEN)$(ENSURE_TARGET_DIR)
-# gnuplot creates an output, even if it failed.  Remove it.
+# gnuplot creates an output, even if it failed.  Remove files from a
+# previous run that might have us think it went ok.
 	$(AM_V_at)rm -f $*.{tex,eps,pdf,pdftex_t}
 # Put the output first, before the plotting command, and before
 # requests from the user.  Set the terminal too there for the same
