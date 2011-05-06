@@ -56,7 +56,7 @@ using urbi::baseURBIStarter;
 
 namespace urbi {
 
-  typedef signed char * bytetype;
+  typedef signed char* bytetype;
 
   class UCallbackInterface
   {
@@ -67,7 +67,7 @@ namespace urbi {
   };
 
   /// temporary buffer used to copy images
-  static unsigned char *img_data = 0;
+  static unsigned char* img_data = 0;
 };
 
 ///
@@ -280,7 +280,7 @@ typedef unsigned int size_t;
   }
   size_t size = JCALL1(GetArrayLength, jenv, $input);
   setSize((arg1), size);
-  $1 = (unsigned char *) JCALL2(GetByteArrayElements, jenv, $input, 0);
+  $1 = (unsigned char*) JCALL2(GetByteArrayElements, jenv, $input, 0);
 }
 
 %typemap(freearg) unsigned char* {
@@ -310,14 +310,14 @@ namespace urbi
   /// We want that swig generate a byte[] array for the image data.
   /// This is done easyly thanks to:
   /// %include "arrays_java.i"
-  /// But the array must be of 'char *' to be converted to byte[]
-  /// So we cast 'unsigned char *' to 'signed char *' and we say that
+  /// But the array must be of 'char*' to be converted to byte[]
+  /// So we cast 'unsigned char*' to 'signed char*' and we say that
   /// it is converted to 'signed char[]' so that then it get converted to
   /// byte[]
   /// NB: the typedef is done to convert char* to byte[] only this time,
   /// not all the time for all classes
 
-  typedef signed char * bytetype;
+  typedef signed char* bytetype;
   %apply signed char[] {bytetype};
 
 };
@@ -361,7 +361,7 @@ namespace urbi
     // Place this definition of data before the usound.hh header
     // so that swig consider data as unsigned char and generate correct
     // setter to -> byte[]
-    unsigned char *data;
+    unsigned char* data;
 
     // Delete data if allocated _JAVA_SIDE_
     void deleteData()
@@ -375,13 +375,13 @@ namespace urbi
 %include "urbi/usound.hh"
 
 %{
-  void urbi_USoundImpl_data_set(urbi::USoundImpl* b, unsigned char *data)
+  void urbi_USoundImpl_data_set(urbi::USoundImpl* b, unsigned char* data)
   {
     b->data = (char*) data;
   }
-  unsigned char * urbi_USoundImpl_data_get(urbi::USoundImpl* b)
+  unsigned char* urbi_USoundImpl_data_get(urbi::USoundImpl* b)
   {
-    return (unsigned char *) b->data;
+    return (unsigned char*) b->data;
   }
   void setSize(urbi::USoundImpl* b, size_t size)
   {
@@ -414,14 +414,14 @@ namespace urbi
 %include "urbi/ubinary.hh"
 
 %{
-  void urbi_UBinary_data_set(urbi::UBinary* b, unsigned char *data)
+  void urbi_UBinary_data_set(urbi::UBinary* b, unsigned char* data)
   {
     b->common.data = data;
   }
 
-  unsigned char * urbi_UBinary_data_get(urbi::UBinary* b)
+  unsigned char* urbi_UBinary_data_get(urbi::UBinary* b)
   {
-    return (unsigned char *) b->common.data;
+    return (unsigned char*) b->common.data;
   }
 
   void setSize(urbi::UBinary* b, size_t size)
@@ -754,7 +754,7 @@ namespace urbi
 %ignore urbi::UAbstractClient::stream_get;
 %ignore urbi::UAbstractClient::send(std::istream&);
 %ignore urbi::UAbstractClient::sendCommand(UCallback, const char*, ...);
-%ignore urbi::UAbstractClient::sendCommand(UCustomCallback, void *, const char*, ...);
+%ignore urbi::UAbstractClient::sendCommand(UCustomCallback, void*, const char*, ...);
 %ignore urbi::UAbstractClient::putFile(const void*, size_t, const char*);
 %ignore urbi::UAbstractClient::setCallback(UCallback, const char*);
 %ignore urbi::UAbstractClient::setCallback(UCustomCallback, void*, const char*);
@@ -769,13 +769,20 @@ namespace urbi
   %extend UAbstractClient
   {
 
-    UCallbackID setCallback (UCallbackInterface& ref, const char * tag)
+    UCallbackID setCallback(UCallbackInterface& ref, const char* tag)
     {
-      return self->setCallback (ref, &urbi::UCallbackInterface::onMessage, tag);
+      return self->setCallback(ref, &urbi::UCallbackInterface::onMessage, tag);
     }
 
-    void sendBin (bytetype bin, int len) { self->sendBin (bin, len); }
-    void sendBin (bytetype bin, int len, char *header) { self->sendBin (bin, len, header); }
+    void sendBin(bytetype bin, int len)
+    {
+      self->sendBin(bin, len);
+    }
+
+    void sendBin(bytetype bin, int len, char* header)
+    {
+      self->sendBin(bin, len, header);
+    }
 
   }
 
@@ -1061,7 +1068,7 @@ namespace urbi
       return self->load;
     }
 
-    void setCloner (urbi::baseURBIStarter *cloner)
+    void setCloner (urbi::baseURBIStarter* cloner)
     {
       self->cloner = cloner;
     }
