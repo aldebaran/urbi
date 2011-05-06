@@ -9,6 +9,7 @@
 \documentclass[openright,twoside,11pt]{book}
   \usepackage{gostai-documentation}
   \usepackage{config}
+  \usepackage[draft]{showlabels}
   \usepackage{lipsum}  % to provide "filler" text
 
 %% \marginNotation{Label}{Text}
@@ -197,6 +198,11 @@ This is the second part.
 \chapter{Chapter II.1}
 
 You want to use \refSlot[Foo]{foo}, and possibly \refSlot[Bar]{foo}.
+\settocbibname{\label{sec:bib}The Bibliography}
+\setindexname{\label{sec:index}The Index}
+\bibliographystyle{plain}
+\bibliography{comp.lang.urbi}
+\nocite{*}
 
 \chapterIndex
 \end{document}
