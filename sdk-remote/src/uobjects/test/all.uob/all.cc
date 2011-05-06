@@ -208,9 +208,9 @@ public:
     vars[2] = &c;
     vars[3] = &d;
     vars[4] = &unbound;
-    for(int i=0; i<4; ++i)
-      ports[i] = new urbi::InputPort(this,
-                                     libport::format("i%c", 'a' + i));
+    for(int i = 0; i < 4; ++i)
+      ports[i] =
+        new urbi::InputPort(this, libport::format("i%s", char('a' + i)));
 
     // 4 is unbound
     ports[4] = new urbi::InputPort();
@@ -226,14 +226,14 @@ public:
 
   void multiWrite(int idx, int count, ufloat val)
   {
-    for (int i=0; i<count; ++i)
-      (*vars[idx]) = val+idx;
+    for (int i = 0; i < count; ++i)
+      *vars[idx] = val + idx;
   }
 
   void multiRead(int idx, int count)
   {
     ufloat sum = 0;
-    for (int i=0; i<count; ++i)
+    for (int i = 0; i < count; ++i)
       sum += (ufloat)*vars[idx];
   }
 
@@ -258,7 +258,7 @@ public:
     int target = periodicWriteTarget;
     int type = periodicWriteType;
     GD_FINFO_DEBUG("update: type = %s, target = %s", type, target);
-    for (int i=0; i<(int)periodicWriteCount; ++i)
+    for (int i = 0; i < (int)periodicWriteCount; ++i)
     switch (type)
     {
     case urbi::DATA_STRING:
