@@ -9,14 +9,27 @@
  */
 
 #include <urbi/object/matrix.hh>
-#include <boost/numeric/ublas/lu.hpp>
-
+#include <boost/numeric/ublas/lu.hpp> // boost::numeric::ublas::row
 #include <kernel/uvalue-cast.hh>
+
+#define FORWARD_EXCEPTION(Command)              \
+  do {                                          \
+    try                                         \
+    {                                           \
+      Command;                                  \
+    }                                           \
+    catch (const std::runtime_error& e)         \
+    {                                           \
+      FRAISE(e.what());                         \
+    }                                           \
+  } while (false)
 
 namespace urbi
 {
   namespace object
   {
+
+    namespace ublas = boost::numeric::ublas;
 
     ATTRIBUTE_NORETURN
     static inline void
@@ -197,7 +210,7 @@ namespace urbi
     Matrix::value_type
     Matrix::inverse() const
     {
-      return boost::numeric::ublas::inverse(value_);
+      FORWARD_EXCEPTION(return ublas::inverse(value_));
     }
 
     Matrix::value_type
@@ -319,13 +332,13 @@ namespace urbi
     Matrix::value_type
     Matrix::operator /(const value_type& rhs) const
     {
-      return prod(value_, boost::numeric::ublas::inverse(rhs));
+      FORWARD_EXCEPTION(return prod(value_, ublas::inverse(rhs)));
     }
 
     Matrix*
     Matrix::operator /=(const value_type& rhs)
     {
-      value_ = prod(value_, boost::numeric::ublas::inverse(rhs));
+      FORWARD_EXCEPTION(value_ = prod(value_, ublas::inverse(rhs)));
       return this;
     }
 

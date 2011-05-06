@@ -11,14 +11,10 @@
 #ifndef OBJECT_VECTOR_HH
 # define OBJECT_VECTOR_HH
 
+# include <libport/uvector.hh>
+# include <libport/umatrix.hh>
 # include <urbi/object/cxx-object.hh>
 # include <urbi/object/fwd.hh>
-
-# include <libport/system-warning-push.hh>
-#  include <boost/numeric/ublas/blas.hpp>
-#  include <boost/numeric/ublas/matrix.hpp>
-#  include <boost/numeric/ublas/vector.hpp>
-# include <libport/system-warning-pop.hh>
 
 namespace urbi
 {
@@ -29,59 +25,19 @@ namespace urbi
     | vector_type.  |
     `--------------*/
 
-    typedef boost::numeric::ublas::vector<ufloat> vector_type;
+    using libport::vector_type;
 
 
     /*--------------.
     | matrix_type.  |
     `--------------*/
 
-    typedef boost::numeric::ublas::matrix<ufloat> matrix_type;
+    using libport::matrix_type;
 
 
   }
 }
 
-namespace boost
-{
-  namespace numeric
-  {
-    namespace ublas
-    {
-
-      /*--------------.
-      | vector_type.  |
-      `--------------*/
-
-      URBI_SDK_API
-      bool
-      operator==(const ::urbi::object::vector_type& e1,
-                 const ::urbi::object::vector_type& e2);
-
-      URBI_SDK_API
-      std::ostream&
-      operator<<(std::ostream& o, const ::urbi::object::vector_type& v);
-
-      /*--------------.
-      | matrix_type.  |
-      `--------------*/
-
-      URBI_SDK_API
-      bool
-      operator==(const ::urbi::object::matrix_type& e1,
-                 const ::urbi::object::matrix_type& e2);
-
-      URBI_SDK_API
-      std::ostream&
-      operator<<(std::ostream& o, const ::urbi::object::matrix_type& v);
-
-      URBI_SDK_API
-      ::urbi::object::matrix_type
-      inverse(const ::urbi::object::matrix_type& m);
-
-    }
-  }
-}
 
 namespace urbi
 {

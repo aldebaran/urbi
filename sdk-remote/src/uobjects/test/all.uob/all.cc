@@ -9,10 +9,7 @@
  */
 
 #include <iostream>
-#include <boost/numeric/ublas/blas.hpp>
-#include <boost/numeric/ublas/matrix.hpp>
-#include <boost/numeric/ublas/vector.hpp>
-#include <libport/cmath>
+#include <libport/umatrix.hh>
 #include <libport/compiler.hh>
 #include <libport/containers.hh>
 #include <libport/debug.hh>
@@ -790,19 +787,19 @@ public:
     return o;
   }
 
-  boost::numeric::ublas::vector<ufloat>
-  transmitVector(boost::numeric::ublas::vector<ufloat> v)
+  libport::vector_type
+  transmitVector(libport::vector_type v)
   {
-    for (unsigned i=0; i<v.size(); ++i)
+    for (unsigned i = 0; i < v.size(); ++i)
       v(i) += 1;
     return v;
   }
 
-  boost::numeric::ublas::matrix<ufloat>
-  transmitMatrix(boost::numeric::ublas::matrix<ufloat> m)
+  libport::matrix_type
+  transmitMatrix(libport::matrix_type m)
   {
-    for (unsigned i=0; i<m.size1(); ++i)
-      for (unsigned j=0; j<m.size2(); ++j)
+    for (unsigned i = 0; i < m.size1(); ++i)
+      for (unsigned j = 0; j < m.size2(); ++j)
         m(i, j) += i;
     return m;
   }

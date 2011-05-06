@@ -114,7 +114,7 @@ namespace runner
       }
     }
     // Catch and print unhandled exceptions
-    catch (object::UrbiException& e)
+    catch (const object::UrbiException& e)
     {
       exception_to_show.reset(new object::UrbiException(e.value_get(),
                                                         e.backtrace_get()));
