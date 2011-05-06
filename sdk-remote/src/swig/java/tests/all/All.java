@@ -94,7 +94,7 @@ public class All extends UObject
 	UBindFunction("urbiWriteOwnByName");
 	UBindFunction("sendString");
 	UBindFunction("sendBuf");
-	//UBindFunction(all, sendPar);
+	UBindFunction("sendPar");
 	UBindFunction("typeOf");
 	//UBindFunction(all, uobjectName);
 	//UBindFunction(all, allUObjectName);
@@ -652,11 +652,12 @@ public class All extends UObject
 	return 0;
     }
 
-    // public int sendPar()
-    // {
-    //	URBI((Object.a = 123,));
-    //	return 0;
-    // }
+    public int sendPar()
+    {
+        // URBI((Object.a = 123,));
+        send("Object.a = 123,");
+        return 0;
+    }
 
     //    void loop_yield(long duration)
     //    {
