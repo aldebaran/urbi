@@ -453,8 +453,13 @@ namespace urbi
       if (!props.empty())
       {
         o << "  /* Properties */" << libport::incendl;
+        bool first = true;
         foreach (const Slot::properties_type::value_type& p, props)
         {
+          if (first)
+            first = false;
+          else
+            o << libport::iendl;
           o << p.first << " = ";
           p.second->dump(o, depth_max);
         }
