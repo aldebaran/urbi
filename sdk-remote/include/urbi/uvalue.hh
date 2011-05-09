@@ -212,72 +212,74 @@ namespace urbi
     /// Return a legible definition of UDataType
     const char* format_string() const;
 
-#define CTOR_AND_ASSIGN_AND_COMMA(Type)           \
-    explicit UValue(Type, bool copy=true);	  \
-    UValue& operator=(Type);			  \
+    // Types convertibles to DATA_DOUBLE
+# define URBI_DERIVED_NUMERIC_TYPES                             \
+    LIBPORT_LIST(int, long, unsigned int, unsigned long,        \
+                 unsigned long long, long long,)
+
+# define URBI_NUMERIC_TYPES                                             \
+    LIBPORT_LIST(ufloat, int, long, unsigned int, unsigned long,        \
+                 unsigned long long, long long,)
+
+    // Types convertibles to DATA_STRING
+# define URBI_STRING_TYPES                                      \
+    LIBPORT_LIST(const char*, const void*, const std::string&,)
+
+# define URBI_MISC_TYPES                                                \
+    LIBPORT_LIST(const UBinary&, const UList&, const UDictionary&,      \
+                 const USound&, const UImage&,)
+
+
+# define DECLARE(Type)                          \
+    explicit UValue(Type, bool copy=true);      \
+    UValue& operator=(Type);                    \
     UValue& operator,(Type rhs);
 
-// Types convertibles to DATA_DOUBLE
-#define URBI_DERIVED_NUMERIC_TYPES                     \
-  LIBPORT_LIST(int, long, unsigned int, unsigned long, \
-               unsigned long long, long long,)
-
-#define URBI_NUMERIC_TYPES                                     \
-  LIBPORT_LIST(ufloat, int, long, unsigned int, unsigned long, \
-               unsigned long long, long long,)
-
-// Types convertibles to DATA_STRING
-#define URBI_STRING_TYPES \
-  LIBPORT_LIST(const char*, const void*, const std::string&,)
-
-#define URBI_MISC_TYPES                                          \
-  LIBPORT_LIST(const UBinary&, const UList&, const UDictionary&, \
-               const USound&, const UImage&,)
-
-# ifndef SWIG
-    LIBPORT_LIST_APPLY(CTOR_AND_ASSIGN_AND_COMMA, URBI_NUMERIC_TYPES)
-    LIBPORT_LIST_APPLY(CTOR_AND_ASSIGN_AND_COMMA, URBI_STRING_TYPES)
-    LIBPORT_LIST_APPLY(CTOR_AND_ASSIGN_AND_COMMA, URBI_MISC_TYPES)
-# else
+// Currently SWIG is not able to cope with Boost.Preprocessor.
+// http://sourceforge.net/tracker/?func=detail&aid=3299307&group_id=1645&atid=101645
+# if 1
     // UFloats.
-    CTOR_AND_ASSIGN_AND_COMMA(ufloat);
-    CTOR_AND_ASSIGN_AND_COMMA(int);
-    CTOR_AND_ASSIGN_AND_COMMA(long);
-    CTOR_AND_ASSIGN_AND_COMMA(unsigned int);
-    CTOR_AND_ASSIGN_AND_COMMA(unsigned long);
-    CTOR_AND_ASSIGN_AND_COMMA(unsigned long long);
-    CTOR_AND_ASSIGN_AND_COMMA(long long);
+    DECLARE(ufloat);
+    DECLARE(int);
+    DECLARE(long);
+    DECLARE(unsigned int);
+    DECLARE(unsigned long);
+    DECLARE(unsigned long long);
+    DECLARE(long long);
 
     // Strings.
-    CTOR_AND_ASSIGN_AND_COMMA(const char*);
-    CTOR_AND_ASSIGN_AND_COMMA(const void*);
-    CTOR_AND_ASSIGN_AND_COMMA(const std::string&);
+    DECLARE(const char*);
+    DECLARE(const void*);
+    DECLARE(const std::string&);
 
     // Others.
-    CTOR_AND_ASSIGN_AND_COMMA(const UBinary&);
-    CTOR_AND_ASSIGN_AND_COMMA(const UList&);
-    CTOR_AND_ASSIGN_AND_COMMA(const UDictionary&);
-    CTOR_AND_ASSIGN_AND_COMMA(const USound&);
-    CTOR_AND_ASSIGN_AND_COMMA(const UImage&);
+    DECLARE(const UBinary&);
+    DECLARE(const UList&);
+    DECLARE(const UDictionary&);
+    DECLARE(const USound&);
+    DECLARE(const UImage&);
+# else // !SWIG
+    LIBPORT_LIST_APPLY(DECLARE, URBI_NUMERIC_TYPES)
+    LIBPORT_LIST_APPLY(DECLARE, URBI_STRING_TYPES)
+    LIBPORT_LIST_APPLY(DECLARE, URBI_MISC_TYPES)
 # endif
+# undef DECLARE
 
-#undef CTOR_AND_ASSIGN_AND_COMMA
 
-#define CAST_OPERATOR(Type) \
-    operator Type() const;
+# define DECLARE(Type)                          \
+      operator Type() const;
 
-# ifndef SWIG
-    LIBPORT_LIST_APPLY(CAST_OPERATOR, URBI_NUMERIC_TYPES)
-# else
-    operator ufloat() const;
-    operator std::string() const;
-    operator int() const;
-    operator unsigned int() const;
+# if defined SWIG
+    // SWIG does not support int/long overloading.
+    // operator int() const;
+    // operator unsigned int() const;
     operator long() const;
     operator unsigned long() const;
-    operator bool() const;
+    operator ufloat() const;
+# else // !SWIG
+    LIBPORT_LIST_APPLY(DECLARE, URBI_NUMERIC_TYPES)
 # endif
-#undef CAST_OPERATOR
+# undef DECLARE
 
 #ifdef DOXYGEN
     // Doxygens needs a prototype for ufloat.
