@@ -43,9 +43,10 @@ EXTRA_DIST +=					\
 java_src_outdir = urbi
 java_package = urbi
 
-# Pass CPPFLAGS to get things like -I/opt/local/include.
+# Pass CPPFLAGS to get things like -I/opt/local/include.  Don't use
+# -Wall, which is -Wextra + "ignore warning disabling".
 SWIGFLAGS =					\
-  -c++ -java -Wall				\
+  -c++ -java -Wextra				\
   -outdir $(java_src_outdir)			\
   $(subst -isystem ,-I,$(CPPFLAGS))		\
   $(LIBPORT_CPPFLAGS)				\
