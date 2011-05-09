@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -119,7 +119,7 @@ import java.util.Set;
     public boolean removeAll(Collection<?> collection) {
       boolean modified = false;
       for (Object item : collection) {
- 	modified |= this.remove(item);
+	modified |= this.remove(item);
       }
       return modified;
     }

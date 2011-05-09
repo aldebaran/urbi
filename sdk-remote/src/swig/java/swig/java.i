@@ -54,7 +54,8 @@ using urbi::UProp;
 using urbi::baseURBIStarter;
 
 
-namespace urbi {
+namespace urbi
+{
 
   typedef signed char* bytetype;
 
@@ -117,7 +118,7 @@ namespace urbi
 
 %include "generated-comments.i"
 
-// Swig doesn't like these macro
+// SWIG doesn't like this macro.
 #define URBI_SDK_API
 
 namespace urbi
@@ -254,7 +255,7 @@ namespace libport
 typedef unsigned int size_t;
 
 // Java typemap
-// change deafult SWIG mapping of unsigned char* return values
+// change default SWIG mapping of unsigned char* return values
 // to byte[]
 //
 // Assumes that there are the following function defined (T is the
@@ -511,7 +512,7 @@ namespace urbi
 
   %extend UList {
 
-    std::string		toString ()
+    std::string toString ()
       {
 	std::ostringstream os;
 	os << *self;
@@ -540,6 +541,10 @@ namespace std
 {
   %template(IntPair) std::pair<int, int>;
 }
+
+/*------------------.
+| Boost.SharedPtr.  |
+`------------------*/
 
 %include "boost_shared_ptr.i"
 
