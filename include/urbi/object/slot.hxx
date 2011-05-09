@@ -11,6 +11,7 @@
 #ifndef OBJECT_SLOT_HXX
 # define OBJECT_SLOT_HXX
 
+# include <eval/fwd.hh>
 # include <urbi/object/cxx-conversions.hh>
 # include <urbi/runner/raise.hh>
 
@@ -31,11 +32,12 @@ namespace urbi
     Slot::Slot(const Slot& model)
       : Object()
       , constant_(false)
-      , value_(model.value_)
+      , value_(0)
       , properties_(model.properties_
                     ? new properties_type(*model.properties_) : 0)
     {
       proto_add(proto);
+      set(model.value_);
     }
 
     template <typename T>
@@ -59,14 +61,24 @@ namespace urbi
     inline T
     Slot::get()
     {
-      return from_urbi<T>(value_);
+      return from_urbi<T>(value());
     }
 
     template <typename T>
     inline void
     Slot::set(const T& value)
     {
-      value_ = object::CxxConvert<T>::from(value);
+      if (constant_)
+        runner::raise_const_error();
+      if (set_)
+      {
+        object::objects_type args;
+        args << object::CxxConvert<T>::from(value);
+        eval::call_apply(::kernel::runner(),
+                         const_cast<Slot*>(this), set_, SYMBOL(set), args);
+      }
+      else
+        value_ = object::CxxConvert<T>::from(value);
       if (changed_)
         changed_->call(SYMBOL(emit));
     }
@@ -88,28 +100,33 @@ namespace urbi
     inline
     Slot::operator bool ()
     {
-      return value_;
+      return value();
     }
 
     inline
     Object*
     Slot::operator->()
     {
-      return assert_exp(value_.get());
+      return assert_exp(value());
     }
 
     inline
     const Object*
     Slot::operator->() const
     {
-      return assert_exp(value_.get());
+      return assert_exp(value());
     }
 
     inline
     rObject
     Slot::value() const
     {
-      return value_;
+      if (get_)
+        return eval::call_apply(::kernel::runner(),
+                                const_cast<Slot*>(this),
+                                get_, SYMBOL(get));
+      else
+        return value_;
     }
 
     inline

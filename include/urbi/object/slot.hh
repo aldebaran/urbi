@@ -33,6 +33,8 @@ namespace urbi
   {
 #define URBI_OBJECT_SLOT_CACHED_PROPERTIES      \
     ((bool, constant, 1))                       \
+    ((rObject, get, 0))                         \
+    ((rObject, set, 0))                         \
     ((rObject, value, 0))                       \
 
     class Slot: public Object
