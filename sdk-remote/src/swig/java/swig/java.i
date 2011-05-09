@@ -701,48 +701,6 @@ namespace urbi
 %include "urbi/uvalue.hh";
 
 
-////////////////////////////
-///                      ///
-///       UEvent         ///
-///                      ///
-////////////////////////////
-
-namespace urbi
-{
-  %ignore UEvent::get_name() const;
-
-  %typemap(javacode) UEvent
-  %{
-    public void emit(UValue v1, UValue v2, UValue v3, UValue v4, UValue v5, UValue v6, UValue v7) {
-      emit(new UAutoValue(v1), new UAutoValue(v2), new UAutoValue(v3),
-           new UAutoValue(v4), new UAutoValue(v5), new UAutoValue(v6),
-           new UAutoValue(v7));
-    }
-    public void emit(UValue v1, UValue v2, UValue v3, UValue v4, UValue v5, UValue v6) {
-      emit(new UAutoValue(v1), new UAutoValue(v2), new UAutoValue(v3),
-           new UAutoValue(v4), new UAutoValue(v5), new UAutoValue(v6));
-    }
-    public void emit(UValue v1, UValue v2, UValue v3, UValue v4, UValue v5) {
-      emit(new UAutoValue(v1), new UAutoValue(v2), new UAutoValue(v3),
-           new UAutoValue(v4), new UAutoValue(v5));
-    }
-    public void emit(UValue v1, UValue v2, UValue v3, UValue v4) {
-      emit(new UAutoValue(v1), new UAutoValue(v2), new UAutoValue(v3),
-           new UAutoValue(v4));
-    }
-    public void emit(UValue v1, UValue v2, UValue v3) {
-      emit(new UAutoValue(v1), new UAutoValue(v2), new UAutoValue(v3));
-    }
-    public void emit(UValue v1, UValue v2) {
-      emit(new UAutoValue(v1), new UAutoValue(v2));
-    }
-    public void emit(UValue v1) {
-      emit(new UAutoValue(v1));
-    }
-  %}
-}
-
-%include "urbi/uevent.hh"
 
 
 ////////////////////////////
@@ -1007,6 +965,51 @@ namespace urbi
 }
 
 %include "urbi/ucontext.hh"
+
+
+////////////////////////////
+///                      ///
+///       UEvent         ///
+///                      ///
+////////////////////////////
+
+namespace urbi
+{
+  %ignore UEvent::get_name() const;
+
+  %typemap(javacode) UEvent
+  %{
+    public void emit(UValue v1, UValue v2, UValue v3, UValue v4, UValue v5, UValue v6, UValue v7) {
+      emit(new UAutoValue(v1), new UAutoValue(v2), new UAutoValue(v3),
+           new UAutoValue(v4), new UAutoValue(v5), new UAutoValue(v6),
+           new UAutoValue(v7));
+    }
+    public void emit(UValue v1, UValue v2, UValue v3, UValue v4, UValue v5, UValue v6) {
+      emit(new UAutoValue(v1), new UAutoValue(v2), new UAutoValue(v3),
+           new UAutoValue(v4), new UAutoValue(v5), new UAutoValue(v6));
+    }
+    public void emit(UValue v1, UValue v2, UValue v3, UValue v4, UValue v5) {
+      emit(new UAutoValue(v1), new UAutoValue(v2), new UAutoValue(v3),
+           new UAutoValue(v4), new UAutoValue(v5));
+    }
+    public void emit(UValue v1, UValue v2, UValue v3, UValue v4) {
+      emit(new UAutoValue(v1), new UAutoValue(v2), new UAutoValue(v3),
+           new UAutoValue(v4));
+    }
+    public void emit(UValue v1, UValue v2, UValue v3) {
+      emit(new UAutoValue(v1), new UAutoValue(v2), new UAutoValue(v3));
+    }
+    public void emit(UValue v1, UValue v2) {
+      emit(new UAutoValue(v1), new UAutoValue(v2));
+    }
+    public void emit(UValue v1) {
+      emit(new UAutoValue(v1));
+    }
+  %}
+}
+
+%include "urbi/uevent.hh"
+
 
 
 ////////////////////////////
