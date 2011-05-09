@@ -43,9 +43,11 @@ EXTRA_DIST +=					\
 java_src_outdir = urbi
 java_package = urbi
 
+# Pass CPPFLAGS to get things like -I/opt/local/include.
 SWIGFLAGS =					\
   -c++ -java -Wall				\
   -outdir $(java_src_outdir)			\
+  $(subst -isystem ,-I,$(CPPFLAGS))		\
   $(LIBPORT_CPPFLAGS)				\
   -I$(sdk_remote_srcdir)/src/liburbi/uobject	\
   -I$(sdk_remote_srcdir)/include		\
@@ -59,7 +61,7 @@ endif
 java.cc: swig/java.i
 	$(AM_V_GEN)$(mkdir_p) $(java_src_outdir)
 	$(AM_V_at)test -n "$(SWIG)" || { echo "SWIG not defined"; exit 1; }
-	$(AM_V_at)$(SWIG) $(SWIGFLAGS) $(SWIG_ARGS) -o $@.tmp $<
+	$(AM_V_at)$(SWIG) $(SWIGFLAGS) -o $@.tmp $<
 	$(AM_V_at)mv $@.tmp $@
 
 urbi/urbi.java java.cc.h: java.cc
