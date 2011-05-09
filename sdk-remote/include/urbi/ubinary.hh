@@ -94,6 +94,7 @@ namespace urbi
     std::ostream& print(std::ostream& o, int kernelMajor = 2) const;
 
     UBinaryType type;
+
     union
     {
       struct
@@ -104,6 +105,7 @@ namespace urbi
       UImageImpl image;
       USoundImpl sound;
     };
+
     /// Headers (everything after "BIN theSize" and before ';' or \n).
     std::string message;
 

@@ -278,7 +278,7 @@ namespace urbi
   UObject* getUObject(const std::string& n);
   void uobject_unarmorAndSend(const char* str);
   void send(const char* str);
-  void send(const std::string&s);
+  void send(const std::string& s);
   void send(const void* buf, size_t size);
   UObjectMode getRunningMode();
   bool isPluginMode();

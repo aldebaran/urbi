@@ -220,17 +220,17 @@ namespace urbi
 %ignore wavheader;
 
 /// Ignore global variable defaultClient (setter/getter conflict)
-%ignore urbi::defaultClient;
-%ignore urbi::default_stream;
-%ignore urbi::kernelMajor;
-%ignore urbi::unarmorAndSend;
-%ignore urbi_main_args;
-%ignore urbi::main(const libport::cli_args_type&, UrbiRoot&, bool, bool);
-%ignore urbi::main(const libport::cli_args_type&, UrbiRoot&, bool);
-%ignore urbi::main(const libport::cli_args_type&, UrbiRoot&);
-%ignore urbi::callback(UCustomCallback, void*);
-%ignore urbi::callback(UCallback);
-%ignore urbi::send(const void*, size_t);
+namespace urbi
+{
+  %ignore callback(UCallback);
+  %ignore callback(UCustomCallback, void*);
+  %ignore defaultClient;
+  %ignore default_stream;
+  %ignore kernelMajor;
+  %ignore send(const char*);
+  %ignore send(const void*, size_t);
+  %ignore unarmorAndSend;
+}
 
 /// Tell swig that UClient is not abstract
 %feature("notabstract") UClient;
@@ -362,10 +362,10 @@ namespace urbi
 ///                      ///
 ////////////////////////////
 
-%ignore urbi::USound::dump;
-
 namespace urbi
 {
+  %ignore USound::dump;
+
   %extend USoundImpl {
     // Place this definition of data before the usound.hh header
     // so that swig consider data as unsigned char and generate correct
@@ -409,43 +409,18 @@ namespace urbi
 ///                      ///
 ////////////////////////////
 
-%ignore urbi::BinaryData;
-
-/// Ignore the attribute message
-/// Because swig generate a accessor named getMessage
-/// which conflict with getMessage method.
-/// We manually rewrite the accessor in %extend UBinary
-%ignore urbi::UBinary::message;
-%ignore urbi::UBinary::print;
-%ignore urbi::UBinary::parse;
-
-
-%include "urbi/ubinary.hh"
-
-%{
-  void urbi_UBinary_data_set(urbi::UBinary* b, unsigned char* data)
-  {
-    b->common.data = data;
-  }
-
-  unsigned char* urbi_UBinary_data_get(urbi::UBinary* b)
-  {
-    return (unsigned char*) b->common.data;
-  }
-
-  void setSize(urbi::UBinary* b, size_t size)
-  {
-    b->common.size = size;
-  }
-
-  size_t getSize(urbi::UBinary* b)
-  {
-    return b->common.size;
-  }
-%}
 
 namespace urbi
 {
+  %ignore BinaryData;
+
+  // Ignore the attribute message because SWIG generates a accessor
+  // named getMessage which conflicts with the getMessage method.  We
+  // manually rewrite the accessor in %extend UBinary
+  %ignore UBinary::message;
+  %ignore UBinary::parse;
+  %ignore UBinary::print;
+
   %extend UBinary
   {
     /// Accessor for the UImage
@@ -483,6 +458,30 @@ namespace urbi
   }
 };
 
+%include "urbi/ubinary.hh"
+
+%{
+  void urbi_UBinary_data_set(urbi::UBinary* b, unsigned char* data)
+  {
+    b->common.data = data;
+  }
+
+  unsigned char* urbi_UBinary_data_get(urbi::UBinary* b)
+  {
+    return (unsigned char*) b->common.data;
+  }
+
+  void setSize(urbi::UBinary* b, size_t size)
+  {
+    b->common.size = size;
+  }
+
+  size_t getSize(urbi::UBinary* b)
+  {
+    return b->common.size;
+  }
+%}
+
 
 ////////////////////////////
 ///                      ///
@@ -490,30 +489,27 @@ namespace urbi
 ///                      ///
 ////////////////////////////
 
-%ignore urbi::UList::print;
-%ignore urbi::UList::begin() const;
-%ignore urbi::UList::end() const;
-%ignore urbi::UList::operator[](size_t i) const;
-
-%include "urbi/ulist.hh"
-
 namespace urbi
 {
+  %ignore UList::print;
+  %ignore UList::begin() const;
+  %ignore UList::end() const;
+  %ignore UList::operator[](size_t i) const;
 
   %define ULIST_PUSH_BACK(value_type)
     %extend UList {
-      urbi::UList& push_back(value_type v)
+      UList& push_back(value_type v)
       {
 	return self->push_back(v);
       }
     }
   %enddef
 
-  ULIST_PUSH_BACK(const urbi::UValue&)
-  ULIST_PUSH_BACK(const urbi::UList&)
-  ULIST_PUSH_BACK(const urbi::UBinary&)
-  ULIST_PUSH_BACK(const urbi::USound&)
-  ULIST_PUSH_BACK(const urbi::UImage&)
+  ULIST_PUSH_BACK(const UValue&)
+  ULIST_PUSH_BACK(const UList&)
+  ULIST_PUSH_BACK(const UBinary&)
+  ULIST_PUSH_BACK(const USound&)
+  ULIST_PUSH_BACK(const UImage&)
   ULIST_PUSH_BACK(const std::string&)
 
    // See http://www.swig.org/Doc2.0/SWIGDocumentation.html#SWIGPlus,
@@ -537,6 +533,9 @@ namespace urbi
 
   }
 }
+
+%include "urbi/ulist.hh"
+
 
   /// Thanks to
 %include "std_vector.i"
@@ -708,34 +707,40 @@ namespace urbi
 ///                      ///
 ////////////////////////////
 
-%typemap(javacode) urbi::UEvent %{
-  public void emit(UValue v1, UValue v2, UValue v3, UValue v4, UValue v5, UValue v6, UValue v7) {
-    emit(new UAutoValue(v1), new UAutoValue(v2), new UAutoValue(v3),
-	 new UAutoValue(v4), new UAutoValue(v5), new UAutoValue(v6),
-	 new UAutoValue(v7));
-  }
-  public void emit(UValue v1, UValue v2, UValue v3, UValue v4, UValue v5, UValue v6) {
-    emit(new UAutoValue(v1), new UAutoValue(v2), new UAutoValue(v3),
-	 new UAutoValue(v4), new UAutoValue(v5), new UAutoValue(v6));
-  }
-  public void emit(UValue v1, UValue v2, UValue v3, UValue v4, UValue v5) {
-    emit(new UAutoValue(v1), new UAutoValue(v2), new UAutoValue(v3),
-	 new UAutoValue(v4), new UAutoValue(v5));
-  }
-  public void emit(UValue v1, UValue v2, UValue v3, UValue v4) {
-    emit(new UAutoValue(v1), new UAutoValue(v2), new UAutoValue(v3),
-	 new UAutoValue(v4));
-  }
-  public void emit(UValue v1, UValue v2, UValue v3) {
-    emit(new UAutoValue(v1), new UAutoValue(v2), new UAutoValue(v3));
-  }
-  public void emit(UValue v1, UValue v2) {
-    emit(new UAutoValue(v1), new UAutoValue(v2));
-  }
-  public void emit(UValue v1) {
-    emit(new UAutoValue(v1));
-  }
-%}
+namespace urbi
+{
+  %ignore UEvent::get_name() const;
+
+  %typemap(javacode) UEvent
+  %{
+    public void emit(UValue v1, UValue v2, UValue v3, UValue v4, UValue v5, UValue v6, UValue v7) {
+      emit(new UAutoValue(v1), new UAutoValue(v2), new UAutoValue(v3),
+           new UAutoValue(v4), new UAutoValue(v5), new UAutoValue(v6),
+           new UAutoValue(v7));
+    }
+    public void emit(UValue v1, UValue v2, UValue v3, UValue v4, UValue v5, UValue v6) {
+      emit(new UAutoValue(v1), new UAutoValue(v2), new UAutoValue(v3),
+           new UAutoValue(v4), new UAutoValue(v5), new UAutoValue(v6));
+    }
+    public void emit(UValue v1, UValue v2, UValue v3, UValue v4, UValue v5) {
+      emit(new UAutoValue(v1), new UAutoValue(v2), new UAutoValue(v3),
+           new UAutoValue(v4), new UAutoValue(v5));
+    }
+    public void emit(UValue v1, UValue v2, UValue v3, UValue v4) {
+      emit(new UAutoValue(v1), new UAutoValue(v2), new UAutoValue(v3),
+           new UAutoValue(v4));
+    }
+    public void emit(UValue v1, UValue v2, UValue v3) {
+      emit(new UAutoValue(v1), new UAutoValue(v2), new UAutoValue(v3));
+    }
+    public void emit(UValue v1, UValue v2) {
+      emit(new UAutoValue(v1), new UAutoValue(v2));
+    }
+    public void emit(UValue v1) {
+      emit(new UAutoValue(v1));
+    }
+  %}
+}
 
 %include "urbi/uevent.hh"
 
@@ -960,6 +965,7 @@ namespace urbi
     %ignore UContextImpl::hubs;
     %ignore UContextImpl::initialized;
     %ignore UContextImpl::objects;
+    %ignore UContextImpl::send(const char*);
     %ignore UContextImpl::send(const void*, size_t);
     %ignore UContextImpl::setTimer;
   }
@@ -974,15 +980,13 @@ namespace urbi
 ///                      ///
 ////////////////////////////
 
-
-%ignore urbi::UContext::yield_for(libport::utime_t) const;
-%ignore urbi::UContext::yield_until(libport::utime_t) const;
-%ignore urbi::UContext::send(const void*, size_t);
-
-%include "urbi/ucontext.hh"
-
 namespace urbi
 {
+  %ignore UContext::send(const char *);
+  %ignore UContext::send(const void*, size_t);
+  %ignore UContext::yield_for(libport::utime_t) const;
+  %ignore UContext::yield_until(libport::utime_t) const;
+
   %extend UContext
   {
     void send(bytetype buf, size_t size)
@@ -1002,6 +1006,9 @@ namespace urbi
   }
 }
 
+%include "urbi/ucontext.hh"
+
+
 ////////////////////////////
 ///                      ///
 ///        UVar          ///
@@ -1013,12 +1020,16 @@ namespace urbi
   %ignore UVar::blend;
   %ignore UVar::constant;
   %ignore UVar::delta;
+  %ignore UVar::get_local() const;
   %ignore UVar::get_name;
+  %ignore UVar::get_rtp() const;
+  %ignore UVar::get_temp() const;
   %ignore UVar::in;
   %ignore UVar::name;
   %ignore UVar::out;
   %ignore UVar::rangemax;
   %ignore UVar::rangemin;
+  %ignore UVar::setProp(UProperty, const char *);
   %ignore UVar::set_name;
   %ignore UVar::speedmax;
   %ignore UVar::speedmin;
@@ -1084,9 +1095,6 @@ namespace urbi
 
 %include "urbi/uvar.hh"
 
-namespace urbi
-{
-};
 
 
 ////////////////////////////
@@ -1100,19 +1108,16 @@ namespace urbi
 %rename("UObjectCPP") urbi::UObject;
 
 
-/// ignore 'load' attribute (swig generate the setter and try to do
-/// load = some_UVar which is not possible since you can't assign
-/// an UVar to an UVar)
-%ignore urbi::UObject::load;
-%ignore urbi::UObject::gc;
-%ignore urbi::UObject::members;
-%ignore urbi::UObject::cloner;
-%include "urbi/uobject.hh"
-
-
-
 namespace urbi
 {
+  // ignore 'load' attribute (SWIG generates the setter and tries to
+  // do load = some_UVar which is not possible since you can't assign
+  // an UVar to an UVar).
+  %ignore UObject::cloner;
+  %ignore UObject::gc;
+  %ignore UObject::load;
+  %ignore UObject::members;
+
   %extend UObject
   {
     /// 'load' attibutte setter
@@ -1127,12 +1132,15 @@ namespace urbi
       return self->load;
     }
 
-    void setCloner(urbi::baseURBIStarter* cloner)
+    void setCloner(baseURBIStarter* cloner)
     {
       self->cloner = cloner;
     }
   }
-};
+}
+%include "urbi/uobject.hh"
+
+
 
 ////////////////////////////
 ///                      ///
@@ -1140,10 +1148,12 @@ namespace urbi
 ///                      ///
 ////////////////////////////
 
-// FIXME: handle UObjectList (so handle std_list)
-%ignore urbi::UObjectHub::members;
-%ignore urbi::UObjectHub::getSubClass;
-
+namespace urbi
+{
+  // FIXME: handle UObjectList (so handle std_list)
+  %ignore UObjectHub::members;
+  %ignore UObjectHub::getSubClass;
+}
 %include "urbi/uobject-hub.hh"
 
 ////////////////////////////
@@ -1153,14 +1163,17 @@ namespace urbi
 ////////////////////////////
 
 
-%feature("director") urbi::URBIStarterJAVA;
+namespace urbi
+{
+  %feature("director") URBIStarterJAVA;
 
-/// Tell swig that urbi::URBIStarterJAVA is not abstract
-%feature("notabstract") urbi::URBIStarterJAVA;
+  // Tell swig that URBIStarterJAVA is not abstract
+  %feature("notabstract") URBIStarterJAVA;
 
-%ignore urbi::baseURBIStarter::list;
-%ignore urbi::baseURBIStarter::getFullName;
-%ignore urbi::baseURBIStarterHub::list;
+  %ignore baseURBIStarter::list;
+  %ignore baseURBIStarter::getFullName;
+  %ignore baseURBIStarterHub::list;
+}
 
 %include "urbi/ustarter.hh"
 
@@ -1182,7 +1195,23 @@ namespace urbi
 
 };
 
+/*--------------------.
+| urbi/urbi-root.hh.  |
+`--------------------*/
+%ignore UrbiRoot::urbi_launch(int,char **);
 %include "urbi/urbi-root.hh"
+
+
+/*----------------.
+| urbi/umain.hh.  |
+`----------------*/
+%ignore urbi_main_args;
+namespace urbi
+{
+  %ignore main(const libport::cli_args_type&, UrbiRoot&);
+  %ignore main(const libport::cli_args_type&, UrbiRoot&, bool);
+  %ignore main(const libport::cli_args_type&, UrbiRoot&, bool, bool);
+}
 %include "urbi/umain.hh"
 
 // Local variables:

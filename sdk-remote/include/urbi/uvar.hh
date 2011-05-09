@@ -133,9 +133,9 @@ namespace urbi
     UProp constant;
 
     UValue getProp(UProperty prop);
-    void setProp(UProperty prop, const UValue &v);
+    void setProp(UProperty prop, const UValue& v);
     void setProp(UProperty prop, ufloat v);
-    void setProp(UProperty prop, const char * v);
+    void setProp(UProperty prop, const char* v);
     void setProp(UProperty prop, const std::string& v)
     {
       setProp(prop, v.c_str());
@@ -155,8 +155,8 @@ namespace urbi
     ATTRIBUTE_PURE
     libport::utime_t timestamp() const;
 
-
-    enum RtpMode {
+    enum RtpMode
+    {
       RTP_DEFAULT, ///< Use RTP if it is the default mode
       RTP_YES,     ///< Force RTP
       RTP_NO       ///< Do not use RTP
@@ -164,6 +164,7 @@ namespace urbi
 
      /// Check that impl_ is set or throw a runtime error.
     void check() const;
+
   private:
     /// Pointer to internal data specifics.
     UVardata* vardata;
@@ -209,7 +210,7 @@ namespace urbi
   `-------------------------*/
 
   /// Helper macro to initialize UProps in UVar constructors.
-#   define VAR_PROP_INIT			\
+#  define VAR_PROP_INIT                         \
   rangemin(*this, PROP_RANGEMIN),		\
   rangemax(*this, PROP_RANGEMAX),		\
   speedmin(*this, PROP_SPEEDMIN),		\
