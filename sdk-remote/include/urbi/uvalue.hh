@@ -177,15 +177,10 @@ namespace urbi
 # if defined SWIG
     // UFloats.
     DECLARE(ufloat);
-    DECLARE(int);
     DECLARE(long);
-    DECLARE(unsigned int);
     DECLARE(unsigned long);
-    DECLARE(unsigned long long);
-    DECLARE(long long);
 
     // Strings.
-    DECLARE(const char*);
     DECLARE(const void*);
     DECLARE(const std::string&);
 

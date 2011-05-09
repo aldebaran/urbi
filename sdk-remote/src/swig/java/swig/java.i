@@ -643,7 +643,8 @@ namespace boost
 %ignore urbi::UValue::UValue(unsigned int, bool);
 %ignore urbi::UValue::UValue(unsigned long, bool);
 %ignore urbi::UValue::UValue(long long, bool);
-%ignore urbi::UValue::operator=(const void*);
+// Use the UValue::set functions instead.
+%ignore urbi::UValue::operator=;
 %ignore urbi::UValue::parse;
 %ignore urbi::UValue::print;
 %ignore urbi::UValue::copy;
