@@ -10,6 +10,10 @@
 
 %module(directors="1") urbi
 
+ // Disable warnings we are not interested in.
+ // 322. Multiple declarations.
+#pragma SWIG nowarn=322
+
  // Define __attribute__, ATTRIBUTE_* etc., before that SWIG tries to
  // read them.
 %include "libport/compiler.hh"
@@ -120,48 +124,7 @@ namespace urbi
 // Swig doesn't like these macro
 #define URBI_SDK_API
 
-namespace urbi
-{
-  class UAbstractClient;
-  class UAutoValue;
-  class UBinary;
-  class UCallback;
-  class UCallbackList;
-  class UCallbackWrapper;
-  class UClient;
-  class UContext;
-  class UEvent;
-  class UGenericCallback;
-  class UImage;
-  class UList;
-  class UMessage;
-  class UObject;
-  class UObjectData;
-  class UObjectHub;
-  class USound;
-  class UTimerCallback;
-  class UValue;
-  class UVar;
-  class UVardata;
-
-  typedef std::list<UObject*> UObjectList;
-
-  class UVariable;
-
-  namespace impl
-  {
-    class UContextImpl;
-    class UGenericCallbackImpl;
-    class UObjectImpl;
-    class UVarImpl;
-    class UGenericCallbackImpl;
-  }
-  typedef boost::shared_ptr<std::string> TimerHandle;
-  class baseURBIStarter;
-  class baseURBIStarterHub;
-
-  enum UObjectMode;
-};
+%include "urbi/fwd.hh"
 
 
 /**************************************************************************\
