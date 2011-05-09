@@ -56,7 +56,7 @@ namespace urbi
     return *this = b;
   }
 
-#  define CONTAINER_TO_UVALUE_DECLARE(Type)                     \
+#  define DECLARE(Type)                                         \
   template <typename T>                                         \
   inline                                                        \
   UValue&                                                       \
@@ -75,36 +75,36 @@ namespace urbi
     return b;                                                   \
   }
 
-  CONTAINER_TO_UVALUE_DECLARE(std::list)
-  CONTAINER_TO_UVALUE_DECLARE(std::vector)
+  DECLARE(std::list)
+  DECLARE(std::vector)
 
-# undef CONTAINER_TO_UVALUE_DECLARE
+# undef DECLARE
 
 
-# define OP_COMMA(Type)                         \
+# define DECLARE(Type)                          \
   inline                                        \
   UValue& UValue::operator, (Type rhs)          \
   {						\
     return *this = rhs;                         \
   }
 
-  LIBPORT_LIST_APPLY(OP_COMMA, URBI_NUMERIC_TYPES)
-  LIBPORT_LIST_APPLY(OP_COMMA, URBI_STRING_TYPES)
-  LIBPORT_LIST_APPLY(OP_COMMA, URBI_MISC_TYPES)
+  LIBPORT_LIST_APPLY(DECLARE, URBI_NUMERIC_TYPES)
+  LIBPORT_LIST_APPLY(DECLARE, URBI_STRING_TYPES)
+  LIBPORT_LIST_APPLY(DECLARE, URBI_MISC_TYPES)
 
-# undef OP_COMMA
+# undef DECLARE
 
 
 
-# define UVALUE_INTEGRAL_CAST(Type)                             \
+# define DECLARE(Type)                                          \
   inline                                                        \
   UValue::operator Type() const                                 \
   {                                                             \
     return static_cast<Type>(static_cast<ufloat>((*this)));     \
   }
 
-  LIBPORT_LIST_APPLY(UVALUE_INTEGRAL_CAST, URBI_DERIVED_NUMERIC_TYPES)
-# undef UVALUE_INTEGRAL_CAST
+  LIBPORT_LIST_APPLY(DECLARE, URBI_DERIVED_NUMERIC_TYPES)
+# undef DECLARE
 
 
   inline
@@ -149,7 +149,7 @@ namespace urbi
   }
 
 
-# define UVALUE_CASTER_DEFINE(Type)		\
+# define DECLARE(Type)                          \
   template <>					\
   struct uvalue_caster <Type>			\
   {						\
@@ -159,14 +159,14 @@ namespace urbi
     }						\
   };
 
-  LIBPORT_LIST_APPLY(UVALUE_CASTER_DEFINE, URBI_NUMERIC_TYPES)
-  UVALUE_CASTER_DEFINE(std::string);
-  UVALUE_CASTER_DEFINE(const std::string);
-  UVALUE_CASTER_DEFINE(bool);
-  UVALUE_CASTER_DEFINE(UImage);
-  UVALUE_CASTER_DEFINE(USound);
+  LIBPORT_LIST_APPLY(DECLARE, URBI_NUMERIC_TYPES)
+  DECLARE(std::string);
+  DECLARE(const std::string);
+  DECLARE(bool);
+  DECLARE(UImage);
+  DECLARE(USound);
 
-#undef UVALUE_CASTER_DEFINE
+#undef DECLARE
 
 
   /*-----------------------------------.
@@ -174,7 +174,7 @@ namespace urbi
   `-----------------------------------*/
 
   // Always return a const UValue&, a copy will be made if required.
-# define UVALUE_CASTER_DEFINE(Type)              \
+# define DEFINE(Type)                           \
   template <>                                   \
   struct uvalue_caster<Type>                    \
   {                                             \
@@ -184,11 +184,11 @@ namespace urbi
     }                                           \
   }
 
-  UVALUE_CASTER_DEFINE(const UValue&);
-  UVALUE_CASTER_DEFINE(UValue&);
-  UVALUE_CASTER_DEFINE(const UValue);
-  UVALUE_CASTER_DEFINE(UValue);
-# undef UVALUE_CASTER_DEFINE
+  DEFINE(const UValue&);
+  DEFINE(UValue&);
+  DEFINE(const UValue);
+  DEFINE(UValue);
+# undef DEFINE
 
 
 
@@ -200,24 +200,24 @@ namespace urbi
   };
 
 
-# define UVALUE_CASTER_DECLARE(Type)		\
+# define DECLARE(Type)                          \
   template <>					\
   struct URBI_SDK_API uvalue_caster<Type>       \
   {                                             \
     Type operator () (UValue& v);		\
   }
 
-  UVALUE_CASTER_DECLARE(UBinary);
-  UVALUE_CASTER_DECLARE(UList);
-  UVALUE_CASTER_DECLARE(UDictionary);
-  UVALUE_CASTER_DECLARE(const char*);
+  DECLARE(UBinary);
+  DECLARE(UList);
+  DECLARE(UDictionary);
+  DECLARE(const char*);
 
-# undef UVALUE_CASTER_DECLARE
+# undef DECLARE
 
 
 # ifndef UOBJECT_NO_LIST_CAST
 
-#  define UVALUE_CONTAINER_CASTER_DECLARE(Type)                 \
+#  define DECLARE(Type)                                         \
   template <typename T>                                         \
   struct uvalue_caster< Type<T> >                               \
   {                                                             \
@@ -235,10 +235,10 @@ namespace urbi
     }                                                           \
   }
 
-  UVALUE_CONTAINER_CASTER_DECLARE(std::list);
-  UVALUE_CONTAINER_CASTER_DECLARE(std::vector);
+  DECLARE(std::list);
+  DECLARE(std::vector);
 
-#  undef UVALUE_CONTAINER_CASTER_DECLARE
+#  undef DECLARE
 
 # endif
 
