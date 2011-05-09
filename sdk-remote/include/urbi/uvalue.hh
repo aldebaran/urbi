@@ -174,7 +174,7 @@ namespace urbi
 
 // Currently SWIG is not able to cope with Boost.Preprocessor.
 // http://sourceforge.net/tracker/?func=detail&aid=3299307&group_id=1645&atid=101645
-# if 1
+# if defined SWIG
     // UFloats.
     DECLARE(ufloat);
     DECLARE(int);
