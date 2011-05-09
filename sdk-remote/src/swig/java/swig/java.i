@@ -501,7 +501,10 @@ namespace urbi
   ULIST_PUSH_BACK(const urbi::USound&)
   ULIST_PUSH_BACK(const urbi::UImage&)
   ULIST_PUSH_BACK(const std::string&)
-  ULIST_PUSH_BACK(int)
+
+   // See http://www.swig.org/Doc2.0/SWIGDocumentation.html#SWIGPlus,
+   // some overloads cannot be solved.
+   //  ULIST_PUSH_BACK(int)
   ULIST_PUSH_BACK(long)
   ULIST_PUSH_BACK(long long)
   ULIST_PUSH_BACK(double)
