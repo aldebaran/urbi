@@ -38,6 +38,8 @@ urbiinclude_HEADERS =                           \
   include/urbi/uevent.hh                        \
   include/urbi/uevent.hxx                       \
   include/urbi/uimage.hh                        \
+  include/urbi/ulist.hh                         \
+  include/urbi/ulist.hxx                        \
   include/urbi/umain.hh                         \
   include/urbi/umessage.hh                      \
   include/urbi/umessage.hxx                     \

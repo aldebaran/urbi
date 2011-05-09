@@ -78,69 +78,6 @@ namespace urbi
     DATA_VOID = 7,
   };
 
-  /*--------.
-  | UList.  |
-  `--------*/
-
-  /// Class storing URBI List type
-  class URBI_SDK_API UList
-  {
-  public:
-    UList();
-    UList(const UList &b);
-    ~UList();
-
-    UList& operator=(const UList &b);
-
-    // Assign a container to the UList
-    template<typename T>
-    UList& operator=(const T& container);
-
-    UList& operator=(UVar& v);
-
-    // Transform the UList to a container.
-    template<typename T>
-    T as();
-
-    /// Iteration.
-    typedef std::vector<UValue*> list_type;
-    typedef list_type::iterator iterator;
-    typedef list_type::const_iterator const_iterator;
-    iterator begin();
-    iterator end();
-    const_iterator begin() const;
-    const_iterator end() const;
-
-    // Append an element to the end.
-    template<typename T>
-    UList&
-    push_back(const T& v);
-
-    void pop_back();
-
-    UValue& front();
-
-    UValue& operator[](size_t i);
-    const UValue& operator[](size_t i) const;
-
-    size_t size() const;
-    void setOffset(size_t n);
-
-    std::ostream& print(std::ostream& o) const;
-
-    // The actual contents.
-    list_type array;
-
-  private:
-    void clear();
-    size_t offset;
-    friend class UValue;
-  };
-
-  URBI_SDK_API
-  std::ostream& operator<< (std::ostream& o, const UList& t);
-
-
   /*--------------.
   | UDictionary.  |
   `--------------*/
@@ -438,6 +375,7 @@ public:
   {}
 };
 
+# include <urbi/ulist.hh>
 # include <urbi/uvalue.hxx>
 
 # include <libport/warning-pop.hh>

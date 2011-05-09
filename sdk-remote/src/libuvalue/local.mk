@@ -27,5 +27,6 @@ dist_libuvalue_libuvalue_la_SOURCES =		\
   libuvalue/package-info.cc			\
   libuvalue/ubinary.cc				\
   libuvalue/uimage.cc				\
+  libuvalue/ulist.cc				\
   libuvalue/usound.cc				\
   libuvalue/uvalue-common.cc
