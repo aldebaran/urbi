@@ -106,8 +106,7 @@ namespace urbi
   | UValue.  |
   `---------*/
 
-  /** Container for a value that handles all types known to URBI.
-   */
+  /// Container for a value that handles all types known to Urbi.
   class URBI_SDK_API UValue
   {
   public:
@@ -176,17 +175,13 @@ namespace urbi
 // http://sourceforge.net/tracker/?func=detail&aid=3299307&group_id=1645&atid=101645
 # if defined SWIG
     // UFloats.
-    DECLARE(ufloat);
     DECLARE(long);
     DECLARE(unsigned long);
 
     // Strings.
     DECLARE(const void*);
-    DECLARE(const std::string&);
 
     // Others.
-    DECLARE(const UBinary&);
-    DECLARE(const UList&);
     DECLARE(const UDictionary&);
     DECLARE(const USound&);
     DECLARE(const UImage&);
@@ -207,7 +202,6 @@ namespace urbi
     // operator unsigned int() const;
     operator long() const;
     operator unsigned long() const;
-    operator ufloat() const;
 # else // !SWIG
     LIBPORT_LIST_APPLY(DECLARE, URBI_NUMERIC_TYPES)
 # endif

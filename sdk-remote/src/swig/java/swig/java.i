@@ -42,21 +42,23 @@
 #include <urbi/umain.hh>
 
 using urbi::BinaryData;
-using urbi::UImage;
-using urbi::USound;
-using urbi::UList;
-using urbi::UVar;
-using urbi::UMessage;
-using urbi::UAutoValue;
-using urbi::UEvent;
-using urbi::UObjectMode;
-using urbi::impl::UVarImpl;
-using urbi::impl::UObjectImpl;
-using urbi::impl::UGenericCallbackImpl;
-using urbi::UTimerCallback;
 using urbi::TimerHandle;
+using urbi::UAutoValue;
+using urbi::UDataType;
+using urbi::UDictionary;
+using urbi::UEvent;
+using urbi::UImage;
+using urbi::UList;
+using urbi::UMessage;
+using urbi::UObjectMode;
 using urbi::UProp;
+using urbi::USound;
+using urbi::UTimerCallback;
+using urbi::UVar;
 using urbi::baseURBIStarter;
+using urbi::impl::UGenericCallbackImpl;
+using urbi::impl::UObjectImpl;
+using urbi::impl::UVarImpl;
 
 
 namespace urbi
@@ -67,9 +69,9 @@ namespace urbi
   class UCallbackInterface
   {
   public:
-    UCallbackInterface () {};
-    virtual UCallbackAction onMessage (const UMessage &) = 0;
-    virtual ~UCallbackInterface () {};
+    UCallbackInterface() {};
+    virtual UCallbackAction onMessage(const UMessage &) = 0;
+    virtual ~UCallbackInterface() {};
   };
 
   /// temporary buffer used to copy images
@@ -90,7 +92,7 @@ namespace urbi
   class URBIStarterJAVA : public baseURBIStarter
   {
   public:
-    URBIStarterJAVA (const std::string& name, bool local = false)
+    URBIStarterJAVA(const std::string& name, bool local = false)
       : baseURBIStarter(name, local)
     {
       list().push_back(this);
@@ -190,6 +192,7 @@ namespace urbi
 %rename("setValue") operator=;
 %rename("get") operator[];
 %rename("getConst") operator[](int) const;
+%rename("getConst") operator[](size_t) const;
 
 %rename("isEqual") operator ==;
 %rename("doubleValue") operator ufloat;
@@ -446,28 +449,28 @@ namespace urbi
   %extend UBinary
   {
     /// Accessor for the UImage
-    UImage uimageValue ()
+    UImage uimageValue()
     {
       return self->image;
     }
 
     /// Accessor for the USound
-    USound usoundValue ()
+    USound usoundValue()
     {
       return self->sound;
     }
 
-    size_t getSize ()
+    size_t getSize()
     {
       return self->common.size;
     }
 
-    std::string getExtraHeader ()
+    std::string getExtraHeader()
     {
       return self->message;
     }
 
-    void setExtraHeader (const std::string& msg)
+    void setExtraHeader(const std::string& msg)
     {
       self->message = msg;
     }
@@ -488,6 +491,11 @@ namespace urbi
 ////////////////////////////
 
 %ignore urbi::UList::print;
+%ignore urbi::UList::begin() const;
+%ignore urbi::UList::end() const;
+%ignore urbi::UList::operator[](size_t i) const;
+
+%include "urbi/ulist.hh"
 
 namespace urbi
 {
@@ -520,11 +528,11 @@ namespace urbi
 
   %extend UList {
 
-    std::string toString ()
+    std::string toString()
       {
 	std::ostringstream os;
 	os << *self;
-	return os.str ();
+	return os.str();
       }
 
   }
@@ -568,7 +576,7 @@ namespace boost
   {
     static boost::shared_ptr<std::string> create(const std::string& s)
     {
-      return boost::shared_ptr<std::string>(new std::string (s));
+      return boost::shared_ptr<std::string>(new std::string(s));
     }
 
     std::string get()
@@ -637,53 +645,51 @@ namespace boost
 ///                      ///
 ////////////////////////////
 
-%ignore urbi::UValue::UValue(const void*);
-%ignore urbi::UValue::UValue(const void*, bool);
-%ignore urbi::UValue::UValue(long, bool);
-%ignore urbi::UValue::UValue(unsigned int, bool);
-%ignore urbi::UValue::UValue(unsigned long, bool);
-%ignore urbi::UValue::UValue(long long, bool);
-// Use the UValue::set functions instead.
-%ignore urbi::UValue::operator=;
-%ignore urbi::UValue::parse;
-%ignore urbi::UValue::print;
-%ignore urbi::UValue::copy;
-
-%rename("setValue") urbi::UValue::set;
-
-%include "urbi/uvalue.hh";
-
 namespace urbi
 {
 
+  %ignore UValue::UValue(const void*);
+  %ignore UValue::UValue(const void*, bool);
+  %ignore UValue::UValue(long, bool);
+  %ignore UValue::UValue(unsigned int, bool);
+  %ignore UValue::UValue(unsigned long, bool);
+  %ignore UValue::UValue(long long, bool);
+  // Use the UValue::set functions instead.
+  %ignore UValue::operator=;
+  %ignore UValue::parse;
+  %ignore UValue::print;
+  %ignore UValue::copy;
+
+  %rename("setValue") UValue::set;
+
   %extend UValue
   {
-    double doubleValue ()
+    double doubleValue()
     {
       return self->val;
     }
 
-    void setValue (std::string s)
+    void setValue(std::string s)
     {
-      self->stringValue = new std::string (s);
+      self->stringValue = new std::string(s);
     }
 
-    void setValue (double d)
+    void setValue(double d)
     {
       self->val = d;
     }
 
-    void setValue (UBinary& b)
+    void setValue(UBinary& b)
     {
-      self->binary = new urbi::UBinary (b);
+      self->binary = new urbi::UBinary(b);
     }
 
-    void setValue (UList& l)
+    void setValue(UList& l)
     {
-      self->list = new urbi::UList (l);
+      self->list = new urbi::UList(l);
     }
 
-    std::string toString ()
+    std::string toString()
     {
       std::ostringstream os;
       self->print(os);
@@ -692,6 +698,8 @@ namespace urbi
   }
 
 };
+
+%include "urbi/uvalue.hh";
 
 
 ////////////////////////////
@@ -738,24 +746,29 @@ namespace urbi
 ///                      ///
 ////////////////////////////
 
-%ignore urbi::UMessage::UMessage(UAbstractClient&, int, const char*, const char*, const binaries_type&);
-
-/// Ignore attribute client (setter/getter conflict)
-%ignore urbi::UMessage::client;
-%ignore urbi::UMessage::print;
-
-%include "urbi/umessage.hh"
-
 namespace urbi
 {
+
+  %ignore UMessage::UMessage(UAbstractClient& client, int timestamp,
+                             const char* tag, const char* message,
+                             const binaries_type& bins = binaries_type());
+
+  // Ignore attribute client (setter/getter conflict)
+  %ignore UMessage::client;
+  %ignore UMessage::print;
+
   %extend UMessage
   {
-    UAbstractClient& getClient ()
+    UAbstractClient& getClient()
       {
 	return self->client;
       }
   }
 };
+
+%include "urbi/umessage.hh"
+
+
 
 ////////////////////////////
 ///                      ///
@@ -763,25 +776,23 @@ namespace urbi
 ///                      ///
 ////////////////////////////
 
-%ignore urbi::UAbstractClient::vpack;
-%ignore urbi::UAbstractClient::sendBinary;
-%ignore urbi::UAbstractClient::sendBin(const void*, size_t);
-%ignore urbi::UAbstractClient::sendBin(const void*, size_t, const char*, ...);
-%ignore urbi::UAbstractClient::stream_get;
-%ignore urbi::UAbstractClient::send(std::istream&);
-%ignore urbi::UAbstractClient::sendCommand(UCallback, const char*, ...);
-%ignore urbi::UAbstractClient::sendCommand(UCustomCallback, void*, const char*, ...);
-%ignore urbi::UAbstractClient::putFile(const void*, size_t, const char*);
-%ignore urbi::UAbstractClient::setCallback(UCallback, const char*);
-%ignore urbi::UAbstractClient::setCallback(UCustomCallback, void*, const char*);
-
-%ignore urbi::UCallbackWrapperF;
-%ignore urbi::UCallbackWrapperCF;
-
-%include "urbi/uabstractclient.hh"
-
 namespace urbi
 {
+  %ignore UAbstractClient::vpack;
+  %ignore UAbstractClient::sendBinary;
+  %ignore UAbstractClient::sendBin(const void*, size_t);
+  %ignore UAbstractClient::sendBin(const void*, size_t, const char*, ...);
+  %ignore UAbstractClient::stream_get;
+  %ignore UAbstractClient::send(std::istream&);
+  %ignore UAbstractClient::sendCommand(UCallback, const char*, ...);
+  %ignore UAbstractClient::sendCommand(UCustomCallback, void*, const char*, ...);
+  %ignore UAbstractClient::putFile(const void*, size_t, const char*);
+  %ignore UAbstractClient::setCallback(UCallback, const char*);
+  %ignore UAbstractClient::setCallback(UCustomCallback, void*, const char*);
+
+  %ignore UCallbackWrapperF;
+  %ignore UCallbackWrapperCF;
+
   %extend UAbstractClient
   {
 
@@ -805,6 +816,9 @@ namespace urbi
 };
 
 
+%include "urbi/uabstractclient.hh"
+
+
 ////////////////////////////
 ///                      ///
 ///  UCallbackInterface  ///
@@ -825,9 +839,9 @@ namespace urbi
   class UCallbackInterface
   {
   public:
-    UCallbackInterface ();
-    virtual UCallbackAction onMessage (const UMessage &msg) = 0;
-    virtual ~UCallbackInterface ();
+    UCallbackInterface();
+    virtual UCallbackAction onMessage(const UMessage &msg) = 0;
+    virtual ~UCallbackInterface();
   };
 };
 
@@ -1027,19 +1041,19 @@ namespace urbi
 {
   %extend UVar
   {
-    const UValue& getUValue ()
+    const UValue& getUValue()
     {
-      return self->val ();
+      return self->val();
     }
 
-    std::string getName ()
+    std::string getName()
     {
-      return self->get_name ();
+      return self->get_name();
     }
 
-    void setName (std::string name)
+    void setName(std::string name)
     {
-      self->set_name (name);
+      self->set_name(name);
     }
 
   }
@@ -1073,18 +1087,18 @@ namespace urbi
   %extend UObject
   {
     /// 'load' attibutte setter
-    void setLoad (UValue val)
+    void setLoad(UValue val)
     {
       self->load = val;
     }
 
     /// 'load' attibutter getter
-    const UVar& getLoad ()
+    const UVar& getLoad()
     {
       return self->load;
     }
 
-    void setCloner (urbi::baseURBIStarter* cloner)
+    void setCloner(urbi::baseURBIStarter* cloner)
     {
       self->cloner = cloner;
     }
@@ -1126,7 +1140,7 @@ namespace urbi
   class URBIStarterJAVA : public baseURBIStarter
   {
   public:
-    URBIStarterJAVA (const std::string& name, bool local = false);
+    URBIStarterJAVA(const std::string& name, bool local = false);
     virtual ~URBIStarterJAVA();
 
   public:

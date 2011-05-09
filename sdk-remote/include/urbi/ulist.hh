@@ -14,6 +14,7 @@
 
 # include <vector>
 # include <urbi/export.hh>
+# include <urbi/fwd.hh>
 
 namespace urbi
 {
