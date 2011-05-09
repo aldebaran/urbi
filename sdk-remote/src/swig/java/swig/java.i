@@ -650,18 +650,6 @@ namespace boost
 
 %rename("setValue") urbi::UValue::set;
 
-%include "libport/preproc.hh"
-%include "boost/preprocessor/config/config.hpp"
-%include "boost/preprocessor/cat.hpp"
-%include "boost/preprocessor/control/iif.hpp"
-%include "boost/preprocessor/detail/auto_rec.hpp"
-%include "boost/preprocessor/tuple/elem.hpp"
-%include "boost/preprocessor/repetition/for.hpp"
-%include "boost/preprocessor/seq/for_each.hpp"
-%include "boost/preprocessor/seq/remove.hpp"
-%include "boost/preprocessor/seq/transform.hpp"
-%include "urbi/uvalue.hh"
-
 namespace urbi
 {
 
