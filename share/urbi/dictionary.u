@@ -56,6 +56,7 @@ do (Global.Dictionary)
       "[ => ]"
     else
     {
+      noVoidError |
       var sep = "" |
       var res = "[" |
       for| (var k: keys)
