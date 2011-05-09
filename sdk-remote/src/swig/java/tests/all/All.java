@@ -128,13 +128,9 @@ public class All extends UObject
 	//UBindFunction(all, writeRI);
 	//UBindFunction(all, writeRSnd);
 	//
-	UBindFunction("transmitD");
-	UBindFunction("transmitS");
-	UBindFunction("transmitL");
-	UBindFunction("transmitM");
-	UBindFunction("transmitB");
-	//UBindFunction(all, transmitI);
-	//UBindFunction(all, transmitSnd);
+	UBindFunctions
+            ("transmitD", "transmitS", "transmitL", "transmitM", "transmitB",
+             "transmitI", "transmitSnd");
 	//UBindFunction(this, "transmitO");
 	//
 	//UBindFunction(all, loop_yield);
@@ -619,19 +615,25 @@ public class All extends UObject
 	return res;
     }
 
-    //    urbi::UImage transmitI(urbi::UImage im)
-    //    {
-    //	for (unsigned int i=0; i<im.size; i++)
-    //	    im.data[i] -= 1;
-    //	return im;
-    //    }
+    public UImage transmitI(UImage im)
+    {
+	UImage res = new UImage(im);
+	byte[] data = res.getData();
+    	for (int i = 0; i < data.length; ++i)
+    	    data[i] -= 1;
+        res.setData(data);
+    	return im;
+    }
 
-    //    urbi::USound transmitSnd(urbi::USound im)
-    //    {
-    //	for (unsigned int i=0; i<im.size; i++)
-    //	    im.data[i] -= 1;
-    //	return im;
-    //    }
+    public USound transmitSnd(USound im)
+    {
+	USound res = new USound(im);
+	byte[] data = res.getData();
+    	for (int i = 0; i < data.length; ++i)
+    	    data[i] -= 1;
+        res.setData(data);
+    	return im;
+    }
 
     /*
       urbi::UObject* transmitO(UObject* o)

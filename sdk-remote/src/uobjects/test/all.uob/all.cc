@@ -158,16 +158,11 @@ public:
     UBindFunction(all, writeRI);
     UBindFunction(all, writeRSnd);
 
-    UBindFunction(all, transmitD);
-    UBindFunction(all, transmitS);
-    UBindFunction(all, transmitL);
-    UBindFunction(all, transmitM);
-    UBindFunction(all, transmitB);
-    UBindFunction(all, transmitI);
-    UBindFunction(all, transmitSnd);
-    UBindFunction(all, transmitO);
-    UBindFunction(all, transmitVector);
-    UBindFunction(all, transmitMatrix);
+    UBindFunctions
+      (all,
+       transmitD, transmitS, transmitL, transmitM, transmitB,
+       transmitI, transmitSnd, transmitO,
+       transmitVector, transmitMatrix);
 
     UBindFunction(all, loop_yield);
     UBindFunction(urbi::UContext, side_effect_free_get);
@@ -740,7 +735,7 @@ public:
   urbi::UList transmitL(urbi::UList l) const
   {
     urbi::UList r;
-    for (unsigned int i=0; i<l.array.size(); i++)
+    for (unsigned int i=0; i<l.array.size(); ++i)
       r.array.push_back(new urbi::UValue(*l.array[l.array.size()-i-1]));
     return r;
   }
@@ -770,14 +765,14 @@ public:
 
   urbi::UImage transmitI(urbi::UImage im) const
   {
-    for (unsigned int i=0; i<im.size; i++)
+    for (unsigned int i = 0; i < im.size; ++i)
       im.data[i] -= 1;
     return im;
   }
 
   urbi::USound transmitSnd(urbi::USound im) const
   {
-    for (unsigned int i=0; i<im.size; i++)
+    for (unsigned int i = 0; i < im.size; ++i)
       im.data[i] -= 1;
     return im;
   }
