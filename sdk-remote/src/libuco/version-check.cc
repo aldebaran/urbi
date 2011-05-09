@@ -37,8 +37,8 @@ namespace urbi
         GD_WARN(msg);
       else
       {
+        msg += libport::format(", define %s to ignore", var);
         GD_ERROR(msg);
-        GD_FERROR("define %s to bypass this error", var);
         throw std::runtime_error(msg);
       }
     }

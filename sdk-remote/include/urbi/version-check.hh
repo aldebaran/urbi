@@ -11,6 +11,7 @@
 #ifndef URBI_VERSION_CHECK_HH
 # define URBI_VERSION_CHECK_HH
 
+# include <string>
 # include <libport/fwd.hh>
 # include <urbi/export.hh>
 
