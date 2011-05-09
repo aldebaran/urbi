@@ -45,17 +45,17 @@ namespace urbi
   std::string
   syncline_push(const std::string& srcdir, std::string file, unsigned line);
 
-#define SYNCLINE_PUSH()                                         \
+# define SYNCLINE_PUSH()                                        \
   "//#push " BOOST_PP_STRINGIZE(__LINE__) " \"" __FILE__ "\"\n"
 
-#define SYNCLINE_POP()                          \
+# define SYNCLINE_POP()                         \
   "//#pop\n"
 
-#ifndef __SRCDIR__
-# define __SRCDIR__ ""
-#endif
+# ifndef __SRCDIR__
+#  define __SRCDIR__ ""
+# endif
 
-#define SYNCLINE_WRAP(...)                                      \
+# define SYNCLINE_WRAP(...)                                     \
   (::urbi::syncline_push(__SRCDIR__, __FILE__, __LINE__)        \
    + libport::format(__VA_ARGS__)                               \
    + "\n"                                                       \
@@ -376,18 +376,18 @@ namespace urbi
 
 } // namespace urbi
 
-#define URBI_STRUCT_CAST_FIELD(_, Cname, Field)                         \
+# define URBI_STRUCT_CAST_FIELD(_, Cname, Field)                       \
   if (libport::has(dict, BOOST_PP_STRINGIZE(Field)))                   \
     uvalue_cast_bounce(res.Field, dict[BOOST_PP_STRINGIZE(Field)]);     \
   else                                                                  \
     GD_WARN("Serialized data for " #Cname "is missing field"            \
             BOOST_PP_STRINGIZE(Field));                                 \
 
-#define URBI_STRUCT_BCAST_FIELD(_, Cname, Field)        \
+# define URBI_STRUCT_BCAST_FIELD(_, Cname, Field)       \
   dict[BOOST_PP_STRINGIZE(Field)], c.Field;
 
 
-#define URBI_REGISTER_STRUCT(Cname, ...)                                \
+# define URBI_REGISTER_STRUCT(Cname, ...)                               \
   namespace urbi                                                        \
   {                                                                     \
     template<>                                                          \
@@ -423,9 +423,17 @@ namespace urbi
 template<typename T> class UPackedData: public std::vector<T>
 {
 public:
-  UPackedData() {};
-  UPackedData(const std::vector<T>& src): std::vector<T>(src) {};
-  template<typename I> UPackedData(I begin, I end):std::vector<T>(begin, end){};
+  UPackedData()
+  {}
+
+  UPackedData(const std::vector<T>& src)
+    : std::vector<T>(src)
+  {}
+
+  template<typename I>
+  UPackedData(I begin, I end)
+    :std::vector<T>(begin, end)
+  {}
 };
 
 # include <urbi/uvalue.hxx>
