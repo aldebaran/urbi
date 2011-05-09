@@ -778,17 +778,18 @@ namespace urbi
 
 namespace urbi
 {
-  %ignore UAbstractClient::vpack;
-  %ignore UAbstractClient::sendBinary;
+  %ignore UAbstractClient::putFile(const void*, size_t, const char*);
+  %ignore UAbstractClient::send(std::istream&);
+  %ignore UAbstractClient::send(const char*, ...);
   %ignore UAbstractClient::sendBin(const void*, size_t);
   %ignore UAbstractClient::sendBin(const void*, size_t, const char*, ...);
-  %ignore UAbstractClient::stream_get;
-  %ignore UAbstractClient::send(std::istream&);
+  %ignore UAbstractClient::sendBinary;
   %ignore UAbstractClient::sendCommand(UCallback, const char*, ...);
   %ignore UAbstractClient::sendCommand(UCustomCallback, void*, const char*, ...);
-  %ignore UAbstractClient::putFile(const void*, size_t, const char*);
   %ignore UAbstractClient::setCallback(UCallback, const char*);
   %ignore UAbstractClient::setCallback(UCustomCallback, void*, const char*);
+  %ignore UAbstractClient::stream_get;
+  %ignore UAbstractClient::vpack;
 
   %ignore UCallbackWrapperF;
   %ignore UCallbackWrapperCF;
@@ -854,10 +855,12 @@ namespace urbi
 ////////////////////////////
 
 // FIXME: handle options
-
-%ignore urbi::UClient::UClient(const std::string&, unsigned, size_t, const UClient::options&);
-%ignore urbi::UClient::send(std::istream&);
-%ignore urbi::UClient::pong;
+namespace urbi
+{
+  %ignore UClient::UClient(const std::string&, unsigned, size_t, const UClient::options&);
+  %ignore UClient::send(std::istream&);
+  %ignore UClient::pong;
+}
 
 /// Generate code for UClient:
 %include "urbi/uclient.hh"
@@ -869,45 +872,53 @@ namespace urbi
 ///                      ///
 ////////////////////////////
 
-%ignore urbi::USyncClient::USyncClient(const std::string&, unsigned, size_t, const USyncClient::options&);
-%ignore urbi::USyncClient::syncGetDevice(const char*, double &, libport::utime_t);
-%ignore urbi::USyncClient::syncGetResult(const char*, double &, libport::utime_t);
-%ignore urbi::USyncClient::syncGetNormalizedDevice(const char*, double &, libport::utime_t);
-%ignore urbi::USyncClient::syncGetDevice(const char*, const char*, double &, libport::utime_t);
-%ignore urbi::USyncClient::syncGetDevice(const char*, double &);
-%ignore urbi::USyncClient::syncGetResult(const char*, double &);
-%ignore urbi::USyncClient::syncGetNormalizedDevice(const char*, double &);
-%ignore urbi::USyncClient::syncGetDevice(const char*, const char*, double &);
-%ignore urbi::USyncClient::syncSend(const void*, size_t);
-%ignore urbi::USyncClient::syncGetImage(const char*, void*, size_t&, int, int, size_t&, size_t&, libport::utime_t);
-%ignore urbi::USyncClient::syncGetImage(const char*, void*, size_t&, int, int, size_t&, size_t&);
-%ignore urbi::USyncClient::setDefaultOptions;
-%ignore urbi::USyncClient::getOptions;
-%ignore urbi::USyncClient::listen;
+namespace urbi
+{
+  %ignore USyncClient::USyncClient(const std::string&, unsigned, size_t, const USyncClient::options&);
+  %ignore USyncClient::getOptions;
+  %ignore USyncClient::listen;
+  %ignore USyncClient::setDefaultOptions;
+  %ignore USyncClient::syncGet(const char*, ...);
+  %ignore USyncClient::syncGetDevice(const char*, const char*, double &);
+  %ignore USyncClient::syncGetDevice(const char*, const char*, double &, libport::utime_t);
+  %ignore USyncClient::syncGetDevice(const char*, double &);
+  %ignore USyncClient::syncGetDevice(const char*, double &, libport::utime_t);
+  %ignore USyncClient::syncGetImage(const char*, void*, size_t&, int, int, size_t&, size_t&);
+  %ignore USyncClient::syncGetImage(const char*, void*, size_t&, int, int, size_t&, size_t&, libport::utime_t);
+  %ignore USyncClient::syncGetNormalizedDevice(const char*, double &);
+  %ignore USyncClient::syncGetNormalizedDevice(const char*, double &, libport::utime_t);
+  %ignore USyncClient::syncGetResult(const char*, double &);
+  %ignore USyncClient::syncGetResult(const char*, double &, libport::utime_t);
+  %ignore USyncClient::syncSend(const void*, size_t);
 
-// FIXME: handle options (and setDefaultOptions and getOptions)
-// FIXME: handle listen ?
+  // FIXME: handle options (and setDefaultOptions and getOptions)
+  // FIXME: handle listen ?
+  %extend USyncClient
+  {
+
+  }
+}
 
 /// Generate code for UClient:
 %include "urbi/usyncclient.hh"
 
 
+ /*----------------------.
+ | urbi/uconversion.hh.  |
+ `----------------------*/
+
 namespace urbi
 {
-  %extend USyncClient
-  {
-
-  }
+  %ignore convertJPEGtoRGB;
+  %ignore convertJPEGtoYCrCb;
+  %ignore convertRGBtoGrey8_601;
+  %ignore convertRGBtoJPEG;
+  %ignore convertRGBtoYCbCr;
+  %ignore convertYCbCrtoRGB;
+  %ignore convertYCrCbtoJPEG;
+  %ignore convertYCrCbtoYCbCr;
 };
 
-%ignore urbi::convertJPEGtoRGB;
-%ignore urbi::convertJPEGtoYCrCb;
-%ignore urbi::convertRGBtoGrey8_601;
-%ignore urbi::convertRGBtoJPEG;
-%ignore urbi::convertRGBtoYCbCr;
-%ignore urbi::convertYCbCrtoRGB;
-%ignore urbi::convertYCrCbtoJPEG;
-%ignore urbi::convertYCrCbtoYCbCr;
 
 %include "urbi/uconversion.hh"
 
@@ -932,15 +943,27 @@ namespace urbi
 
 %include "urbi/uproperty.hh"
 
-%ignore urbi::impl::UVarImpl::timestamp;
 
-%ignore urbi::impl::UContextImpl::getIoService;
-%ignore urbi::impl::UContextImpl::send(const void*, size_t);
-%ignore urbi::impl::UContextImpl::setTimer;
-%ignore urbi::impl::UContextImpl::getGenericCallbackImpl;
-%ignore urbi::impl::UContextImpl::hubs;
-%ignore urbi::impl::UContextImpl::objects;
-%ignore urbi::impl::UContextImpl::initialized;
+ /*------------------------.
+ | urbi/ucontext-impl.hh.  |
+ `------------------------*/
+
+namespace urbi
+{
+  namespace impl
+  {
+
+    %ignore UVarImpl::timestamp;
+
+    %ignore UContextImpl::getGenericCallbackImpl;
+    %ignore UContextImpl::getIoService;
+    %ignore UContextImpl::hubs;
+    %ignore UContextImpl::initialized;
+    %ignore UContextImpl::objects;
+    %ignore UContextImpl::send(const void*, size_t);
+    %ignore UContextImpl::setTimer;
+  }
+}
 
 %include "urbi/ucontext-impl.hh"
 
@@ -985,60 +1008,60 @@ namespace urbi
 ///                      ///
 ////////////////////////////
 
-%ignore urbi::UVar::name;
-%ignore urbi::UVar::set_name;
-%ignore urbi::UVar::get_name;
-%ignore urbi::UVar::rangemin;
-%ignore urbi::UVar::rangemax;
-%ignore urbi::UVar::speedmin;
-%ignore urbi::UVar::speedmax;
-%ignore urbi::UVar::delta;
-%ignore urbi::UVar::blend;
-%ignore urbi::UVar::constant;
-%ignore urbi::UVar::in;
-%ignore urbi::UVar::out;
-
-%define CPP_RUNTIME_ERROR_CATCH(function)
-%exception function {
-  try {
-     $action
-  }
-  catch (std::runtime_error &e) {
-    jclass clazz = jenv->FindClass("java/lang/RuntimeException");
-    jenv->ThrowNew(clazz, e.what());
-    return $null;
-  }
-}
-%enddef
-
-// Catch runtime errors thrown by UVar functions (for example when
-// uvar is not binded) and rethrow as Java RuntimeExceptions
-CPP_RUNTIME_ERROR_CATCH(urbi::UVar::operator=)
-CPP_RUNTIME_ERROR_CATCH(urbi::UVar::setOwned)
-CPP_RUNTIME_ERROR_CATCH(urbi::UVar::type)
-CPP_RUNTIME_ERROR_CATCH(urbi::UVar::syncValue)
-CPP_RUNTIME_ERROR_CATCH(urbi::UVar::val)
-CPP_RUNTIME_ERROR_CATCH(urbi::UVar::keepSynchronized)
-CPP_RUNTIME_ERROR_CATCH(urbi::UVar::setProp)
-CPP_RUNTIME_ERROR_CATCH(urbi::UVar::setBypass)
-CPP_RUNTIME_ERROR_CATCH(urbi::UVar::getProp)
-CPP_RUNTIME_ERROR_CATCH(urbi::UVar::unnotify)
-CPP_RUNTIME_ERROR_CATCH(urbi::UVar::operator UImage)
-CPP_RUNTIME_ERROR_CATCH(urbi::UVar::operator UList)
-CPP_RUNTIME_ERROR_CATCH(urbi::UVar::operator UDictionary)
-CPP_RUNTIME_ERROR_CATCH(urbi::UVar::operator USound)
-CPP_RUNTIME_ERROR_CATCH(urbi::UVar::operator UBinary)
-CPP_RUNTIME_ERROR_CATCH(urbi::UVar::operator const UBinary&)
-CPP_RUNTIME_ERROR_CATCH(urbi::UVar::operator int)
-CPP_RUNTIME_ERROR_CATCH(urbi::UVar::operator std::string)
-CPP_RUNTIME_ERROR_CATCH(urbi::UVar::operator ufloat)
-CPP_RUNTIME_ERROR_CATCH(urbi::UVar::operator UBinary*)
-CPP_RUNTIME_ERROR_CATCH(urbi::UVar::getUValue)
-
-%include "urbi/uvar.hh"
-
 namespace urbi
 {
+  %ignore UVar::blend;
+  %ignore UVar::constant;
+  %ignore UVar::delta;
+  %ignore UVar::get_name;
+  %ignore UVar::in;
+  %ignore UVar::name;
+  %ignore UVar::out;
+  %ignore UVar::rangemax;
+  %ignore UVar::rangemin;
+  %ignore UVar::set_name;
+  %ignore UVar::speedmax;
+  %ignore UVar::speedmin;
+
+  %define DEFINE(Function)
+    %exception UVar::Function {
+    try
+    {
+      $action
+    }
+    catch (const std::runtime_error &e)
+    {
+      jclass clazz = jenv->FindClass("java/lang/RuntimeException");
+      jenv->ThrowNew(clazz, e.what());
+      return $null;
+    }
+  }
+  %enddef
+
+  // Catch runtime errors thrown by UVar functions (for example when
+  // uvar is not binded) and rethrow as Java RuntimeExceptions
+  DEFINE(operator=)
+  DEFINE(setOwned)
+  DEFINE(type)
+  DEFINE(syncValue)
+  DEFINE(val)
+  DEFINE(keepSynchronized)
+  DEFINE(setProp)
+  DEFINE(setBypass)
+  DEFINE(getProp)
+  DEFINE(unnotify)
+  DEFINE(operator UImage)
+  DEFINE(operator UList)
+  DEFINE(operator UDictionary)
+  DEFINE(operator USound)
+  DEFINE(operator UBinary)
+  DEFINE(operator const UBinary&)
+  DEFINE(operator int)
+  DEFINE(operator std::string)
+  DEFINE(operator ufloat)
+  DEFINE(operator UBinary*)
+  DEFINE(getUValue)
+
   %extend UVar
   {
     const UValue& getUValue()
@@ -1057,6 +1080,12 @@ namespace urbi
     }
 
   }
+}
+
+%include "urbi/uvar.hh"
+
+namespace urbi
+{
 };
 
 
