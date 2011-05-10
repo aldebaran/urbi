@@ -18,6 +18,8 @@
 # include <boost/multi_index/hashed_index.hpp>
 # include <boost/multi_index/member.hpp>
 
+# include <libport/symbol.hh>
+
 # include <urbi/object/fwd.hh>
 
 namespace urbi
