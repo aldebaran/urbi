@@ -202,18 +202,6 @@ namespace urbi
 /// Tell swig that UClient is not abstract
 %feature("notabstract") UClient;
 
-namespace urbi
-{
-  //typedef unsigned int UCallbackID;
-  class UAbstractClient;
-  class UCallback;
-  class UCustomCallback;
-  class UValue;
-  class UCallbackWrapper;
-  class UCallbackInterface;
-  class UClient;
-};
-
 %include "arrays_java.i"
 
 /// Tell swig that ufloat is a double (I wonder if it's that much
