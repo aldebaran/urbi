@@ -584,7 +584,8 @@ namespace urbi
       {
         libport::utime_t deadline = ::kernel::scheduler().deadline_get();
         if (deadline != sched::SCHED_IMMEDIATE)
-          select_time = deadline - libport::utime();
+          select_time = std::max(deadline - libport::utime(),
+                               (libport::utime_t)0);
       }
 #ifdef WIN32
       // Linux and MacOS are using a POSIX file descriptor integrated in
