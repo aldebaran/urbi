@@ -236,13 +236,14 @@ namespace urbi
      * @param hasProcessingThread true if a processing thread is running, false
      * if processEvents must be called while waiting.
      */
-    using super_type::waitForKernelVersion;
+    // Not using super_type here to please SWIG.
+    using UClient::waitForKernelVersion;
     void waitForKernelVersion(bool hasProcessingThread);
 
     void setDefaultOptions(const USyncClient::send_options& opt);
     const USyncClient::send_options&
-      getOptions(const USyncClient::send_options& opt =
-                 USyncClient::send_options::default_options) const;
+    getOptions(const USyncClient::send_options& opt =
+               USyncClient::send_options::default_options) const;
 
     /**
      * Listen on the specified host:port pair. Bind an USyncClient on each
@@ -261,6 +262,7 @@ namespace urbi
 
     /// @return true if the current thread is the callback thread.
     bool isCallbackThread() const;
+
   protected:
     int joinCallbackThread_();
 

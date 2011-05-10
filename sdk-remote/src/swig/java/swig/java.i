@@ -199,9 +199,6 @@ namespace urbi
   %ignore unarmorAndSend;
 }
 
-/// Tell swig that UClient is not abstract
-%feature("notabstract") UClient;
-
 %include "arrays_java.i"
 
 /// Tell swig that ufloat is a double (I wonder if it's that much
@@ -284,6 +281,17 @@ namespace urbi
   typedef signed char* bytetype;
   %apply signed char[] {bytetype};
 
+  %ignore UImageImpl::operator UImage&;
+
+  %extend UImageImpl
+  {
+    // Delete data if allocated _JAVA_SIDE_.
+    void deleteData()
+    {
+      delete[] self->data;
+      self->data = 0;
+    }
+  }
 };
 
 %include "urbi/uimage.hh"
@@ -299,17 +307,7 @@ namespace urbi
   }
 %}
 
-namespace urbi
-{
-  %extend UImageImpl {
-    // Delete data if allocated _JAVA_SIDE_
-    void deleteData()
-    {
-      delete[] self->data;
-      self->data = 0;
-    }
-  }
-};
+
 
 ////////////////////////////
 ///                      ///
@@ -320,14 +318,16 @@ namespace urbi
 namespace urbi
 {
   %ignore USound::dump;
+  %ignore USoundImpl::operator USound&;
 
-  %extend USoundImpl {
-    // Place this definition of data before the usound.hh header
-    // so that swig consider data as unsigned char and generate correct
-    // setter to -> byte[]
+  %extend USoundImpl
+  {
+    // Place this definition of data before the usound.hh header so
+    // that SWIG consider data as unsigned char and generate correct
+    // setter to -> byte[].
     unsigned char* data;
 
-    // Delete data if allocated _JAVA_SIDE_
+    // Delete data if allocated _JAVA_SIDE_.
     void deleteData()
     {
       delete[] self->data;
@@ -671,13 +671,14 @@ namespace urbi
   // Ignore attribute client (setter/getter conflict)
   %ignore UMessage::client;
   %ignore UMessage::print;
+  %ignore UMessage::operator UValue&;
 
   %extend UMessage
   {
     UAbstractClient& getClient()
-      {
-	return self->client;
-      }
+    {
+      return self->client;
+    }
   }
 };
 
@@ -693,6 +694,11 @@ namespace urbi
 
 namespace urbi
 {
+  // Forget about the std::ostream inheritance.
+  // Forget about the libport::Socket inheritance.
+  %ignore LockableOstream;
+  %warnfilter(401) LockableOstream;
+
   %ignore UAbstractClient::putFile(const void*, size_t, const char*);
   %ignore UAbstractClient::send(std::istream&);
   %ignore UAbstractClient::send(const char*, ...);
@@ -769,9 +775,15 @@ namespace urbi
 ///                      ///
 ////////////////////////////
 
-// FIXME: handle options
+/// Tell swig that UClient is not abstract
+%feature("notabstract") UClient;
+
 namespace urbi
 {
+  // Forget about the libport::Socket inheritance.
+  %warnfilter(401) UClient;
+
+  // FIXME: handle options
   %ignore UClient::UClient(const std::string&, unsigned, size_t, const UClient::options&);
   %ignore UClient::send(std::istream&);
   %ignore UClient::pong;
@@ -805,13 +817,6 @@ namespace urbi
   %ignore USyncClient::syncGetResult(const char*, double &);
   %ignore USyncClient::syncGetResult(const char*, double &, libport::utime_t);
   %ignore USyncClient::syncSend(const void*, size_t);
-
-  // FIXME: handle options (and setDefaultOptions and getOptions)
-  // FIXME: handle listen ?
-  %extend USyncClient
-  {
-
-  }
 }
 
 /// Generate code for UClient:
@@ -1005,7 +1010,7 @@ namespace urbi
   %enddef
 
   // Catch runtime errors thrown by UVar functions (for example when
-  // uvar is not binded) and rethrow as Java RuntimeExceptions
+  // uvar is not binded) and rethrow as Java RuntimeExceptions.
   DEFINE(operator=)
   DEFINE(setOwned)
   DEFINE(type)
