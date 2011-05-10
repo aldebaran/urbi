@@ -30,7 +30,6 @@ public class UMain
 
     static
     {
-
 	try
 	{
 	    /// Load the c++ native library.
@@ -59,14 +58,15 @@ public class UMain
 	}
     }
 
-    // The methods addFile and associated final Class[] parameters were gratefully copied from
-    // anthony_miguel @ http://forum.java.sun.com/thread.jsp?forum=32&thread=300557&tstart=0&trange=15
+    // The methods addFile and associated final Class[] parameters
+    // were gratefully copied from anthony_miguel @
+    // http://forum.java.sun.com/thread.jsp?forum=32&thread=300557&tstart=0&trange=15
     private static final Class[] parameters = new Class[]{URL.class};
 
     public static void addFile(String s) throws IOException
     {
 	addURL(new URL("file", null, s));
-    }//end method
+    }
 
     public static void addURL(URL u) throws IOException
     {
