@@ -808,16 +808,15 @@ namespace urbi
 
 #undef INTERRUPTIBLE
 
-    void KernelUContextImpl::side_effect_free_set(bool s)
+    void KernelUContextImpl::side_effect_free_set(bool)
     {
       CHECK_MAINTHREAD();
-      ::kernel::runner().side_effect_free_set(s);
     }
 
     bool KernelUContextImpl::side_effect_free_get() const
     {
       CHECK_MAINTHREAD();
-      return ::kernel::runner().side_effect_free_get();
+      return false;
     }
 
     UObjectHub*

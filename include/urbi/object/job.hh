@@ -39,7 +39,6 @@ namespace urbi
 
       rList backtrace();
       const std::string& name();
-      void setSideEffectFree(rObject);
       std::string status();
       const runner::State::tag_stack_type tags();
       void terminate();

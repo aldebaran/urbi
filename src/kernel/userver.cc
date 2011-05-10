@@ -129,9 +129,9 @@ namespace kernel
 
   static
   size_t
-  waker_socket_on_read(sched::Scheduler* sc, const void*, size_t sz)
+  waker_socket_on_read(sched::Scheduler*, const void*, size_t sz)
   {
-    sc->signal_world_change();
+    // Nothing to do.
     return sz;
   }
 

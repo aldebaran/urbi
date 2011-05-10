@@ -94,7 +94,6 @@ namespace runner
   void Job::frozen_set(bool v)
   {
     state.frozen_set(v);
-    scheduler_get().signal_world_change();
   }
 
   LIBPORT_SPEED_ALWAYS_INLINE

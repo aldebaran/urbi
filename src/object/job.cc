@@ -49,7 +49,6 @@ namespace urbi
     URBI_CXX_OBJECT_INIT(Job)
     {
       BIND(DOLLAR_backtrace, backtrace);
-      BIND(setSideEffectFree);
       BIND(status);
       BIND(tags);
       BIND(terminate);
@@ -108,8 +107,6 @@ namespace urbi
         status << " (frozen)";
       if (value_->has_pending_exception())
         status << " (pending exception)";
-      if (value_->side_effect_free_get())
-        status << " (side effect free)";
       if (value_->non_interruptible_get())
         status << " (non interruptible)";
       return status.str();
@@ -154,14 +151,6 @@ namespace urbi
       if (!value_)
         return;
       value_->terminate_now();
-    }
-
-    void
-    Job::setSideEffectFree(rObject b)
-    {
-      if (!value_)
-        return;
-      value_->side_effect_free_set(b->as_bool());
     }
 
     rFloat
