@@ -11,8 +11,10 @@
 %module(directors="1") urbi
 
  // Disable warnings we are not interested in.
+ // 312. Unnamed nested class not currently supported (ignored).
  // 322. Multiple declarations.
-#pragma SWIG nowarn=322
+ // 325. Nested class not currently supported (name ignored).
+#pragma SWIG nowarn=312,322,325
 
  // Define __attribute__, ATTRIBUTE_* etc., before that SWIG tries to
  // read them.
@@ -121,8 +123,10 @@ namespace urbi
 
 %include "generated-comments.i"
 
-// Swig doesn't like these macro
+// SWIG doesn't like these macros.
+// FIXME: Factor all the Libport.Compiler construct handling?
 #define URBI_SDK_API
+#define LIBPORT_API
 
 %include "urbi/fwd.hh"
 
@@ -513,10 +517,7 @@ namespace boost
 {
   %template(FinallySharedPtr) boost::shared_ptr<libport::Finally>;
   %template(TimerHandle) boost::shared_ptr<std::string>;
-}
 
-namespace boost
-{
   %extend shared_ptr<std::string>
   {
     static boost::shared_ptr<std::string> create(const std::string& s)
