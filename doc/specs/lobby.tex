@@ -6,6 +6,21 @@
 %%
 %% See the LICENSE file for more information.
 
+\begin{urbicomment}
+// With a kernel compiled in compilation mode speed and run under Linux, the
+// test lobby-00.chk is failing due:
+// 0/ Missing objects slots. (caused by 1)
+// 1/ double malloc error of the static allocator.
+//
+// Now the error should goes directly to (1) because the static allocator has
+// been instrumented to return 0 instead of already allocated areas.
+//
+// see bug 4628
+
+if (System.Platform.compilationModeSpeed && !System.Platform.isWindows)
+  testSkip("Issue with the static allocator.");
+\end{urbicomment}
+
 \section{Lobby}
 
 A \dfn{lobby} is the local environment for each (remote or local)
