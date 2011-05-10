@@ -71,8 +71,10 @@ DEFINE(UBinary);
 DEFINE(UDictionary);
 DEFINE(UImage);
 DEFINE(UList);
+DEFINE(UMatrix);
 DEFINE(USound);
 DEFINE(UValue);
+DEFINE(UVector);
 DEFINE(Void);
 #undef CASE
 #undef DEFINE
@@ -103,8 +105,10 @@ createFunctionCallback(JNIEnv* env,
   CASE(urbi.UDictionary, UDictionary);
   CASE(urbi.UImage, UImage);
   CASE(urbi.UList, UList);
+  CASE(urbi.UMatrix, UMatrix);
   CASE(urbi.USound, USound);
   CASE(urbi.UValue, UValue);
+  CASE(urbi.UVector, UVector);
   CASE(void, Void);
 #undef CASE
   FRAISE("Can't define a callback on a function with return type %s", retType);

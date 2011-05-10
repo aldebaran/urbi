@@ -12,12 +12,20 @@
 # define CONVERTER_HH_
 
 # include <jni.h>
+# include <libport/uvector.hh>
+# include <libport/umatrix.hh>
 # include <urbi/uobject.hh>
 # include <urbi/uvalue.hh>
 # include <urbi/ucallbacks.hh>
 
 # define FRAISE(...)                                            \
   throw std::runtime_error(libport::format(__VA_ARGS__))
+
+namespace urbi
+{
+  typedef libport::matrix_type UMatrix;
+  typedef libport::vector_type UVector;
+}
 
 class Converter
 {
@@ -49,11 +57,12 @@ protected:
   {
     assert (0);
     return jval;
-  };
+  }
+
   virtual jvalue convert_ (JNIEnv* env, urbi::UVar& val)
   {
     return convert_(env, val.val());
-  };
+  }
 
   static void allocationCheck(jobject jobj, const std::string& name)
   {
@@ -126,6 +135,7 @@ protected:
 									\
     virtual Type* alloc(const urbi::UValue& v)                          \
     {									\
+      /* FIXME: Try to preserve constness, and ref, to save trees. */   \
       Type val = urbi::uvalue_cast<Type>(const_cast<urbi::UValue&>(v)); \
       allocated = new Type(val);                                        \
       return allocated;                                                 \
@@ -210,11 +220,13 @@ CAST_CONVERTER(short, jshort, int);
 
 OBJECT_CONVERTER(UBinary, urbi::UBinary, "urbi/UBinary", "<init>", "(JZ)V");
 OBJECT_CONVERTER(UDictionary, urbi::UDictionary, "urbi/UDictionary", "<init>", "(JZ)V");
-OBJECT_CONVERTER(UImage, urbi::UImage, "urbi/UImage", "<init>", "(JZ)V");
-OBJECT_CONVERTER(UList, urbi::UList, "urbi/UList", "<init>", "(JZ)V");
-OBJECT_CONVERTER(USound, urbi::USound, "urbi/USound", "<init>", "(JZ)V");
-OBJECT_CONVERTER(UValue, urbi::UValue, "urbi/UValue", "<init>", "(JZ)V");
-OBJECT_CONVERTER(UVarBase, urbi::UVar, "urbi/UVar", "<init>", "(JZ)V");
+OBJECT_CONVERTER(UImage,   urbi::UImage, "urbi/UImage", "<init>", "(JZ)V");
+OBJECT_CONVERTER(UList,    urbi::UList,  "urbi/UList", "<init>", "(JZ)V");
+OBJECT_CONVERTER(USound,   urbi::USound, "urbi/USound", "<init>", "(JZ)V");
+OBJECT_CONVERTER(UValue,   urbi::UValue, "urbi/UValue", "<init>", "(JZ)V");
+OBJECT_CONVERTER(UVarBase, urbi::UVar,   "urbi/UVar", "<init>", "(JZ)V");
+OBJECT_CONVERTER(UVector,  urbi::UVector, "urbi/UVector", "<init>", "(JZ)V");
+OBJECT_CONVERTER(UMatrix,  urbi::UMatrix, "urbi/UMatrix", "<init>", "(JZ)V");
 
 PRIMITIVE_OBJECT_CONVERTER(Boolean, jboolean, int, "java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;");
 PRIMITIVE_OBJECT_CONVERTER(Byte, jbyte, int, "java/lang/Byte", "valueOf", "(B)Ljava/lang/Byte;");
@@ -264,8 +276,10 @@ protected:
   Macro(UDictionary)                            \
   Macro(UImage)                                 \
   Macro(UList)                                  \
+  Macro(UMatrix)                                \
   Macro(USound)                                 \
   Macro(UValue)                                 \
-  Macro(UVarBase)
+  Macro(UVarBase)                               \
+  Macro(UVector)
 
 #endif

@@ -47,8 +47,10 @@ public:
   CALL_METHODS(UDictionary, Object,  urbi::UDictionary, urbi::UDictionary(), jobject res = ,         jobject ret_no_pop = res; const urbi::UDictionary& r = getUDictionaryFromObject(res);, return r);
   CALL_METHODS(UImage,      Object,  urbi::UImage,      urbi::UImage(),      jobject res = ,         jobject ret_no_pop = res; const urbi::UImage& r = getUImageFromObject(res);,           return r);
   CALL_METHODS(UList,       Object,  urbi::UList,       urbi::UList(),       jobject res = ,         jobject ret_no_pop = res; const urbi::UList& r = getUListFromObject(res);,             return r);
+  CALL_METHODS(UMatrix,     Object,  urbi::UMatrix,     urbi::UMatrix(),     jobject res = ,         jobject ret_no_pop = res; const urbi::UMatrix& r = getUMatrixFromObject(res);,         return r);
   CALL_METHODS(USound,      Object,  urbi::USound,      urbi::USound(),      jobject res = ,         jobject ret_no_pop = res; const urbi::USound& r = getUSoundFromObject(res);,           return r);
   CALL_METHODS(UValue,      Object,  urbi::UValue,      urbi::UValue(),      jobject res = ,         jobject ret_no_pop = res; const urbi::UValue& r = getUValueFromObject(res);,           return r);
+  CALL_METHODS(UVector,     Object,  urbi::UVector,     urbi::UVector(),     jobject res = ,         jobject ret_no_pop = res; const urbi::UVector& r = getUVectorFromObject(res);,         return r);
   CALL_METHODS(String,      Object,  std::string,       std::string(),       jstring res =(jstring), jobject ret_no_pop = res; const std::string& r = getStringFromJString(res);,           return r);
   CALL_METHODS(Void,        Void,    void,              ,                    ,                       jobject ret_no_pop = NULL;,                                                           );
   CALL_METHODS(Boolean,     Boolean, jboolean,          0,                   jboolean res = ,        jobject ret_no_pop = NULL;,                                                            return res;);
@@ -93,15 +95,17 @@ public:
 
   /// Private conversion functions. These functions are used to
   /// convert from Java object(jobject) to C++ real object type.
-  static urbi::UObject* getUObjectFromObject(jobject obj, JNIEnv* env);
   std::string getStringFromJString(jstring obj);
   urbi::UBinary getUBinaryFromObject(jobject obj);
   urbi::UDictionary getUDictionaryFromObject(jobject obj);
   urbi::UImage getUImageFromObject(jobject obj);
   urbi::UList getUListFromObject(jobject obj);
+  urbi::UMatrix getUMatrixFromObject(jobject obj);
   urbi::USound getUSoundFromObject(jobject obj);
   urbi::UValue getUValueFromObject(jobject obj);
   urbi::UVar* getUVarFromObject(jobject obj);
+  urbi::UVector getUVectorFromObject(jobject obj);
+  static urbi::UObject* getUObjectFromObject(jobject obj, JNIEnv* env);
 
 public:
 
@@ -128,15 +132,19 @@ private:
   /// convert from jobject to UVar or UValue or UObject.
   /// We cache these variable because it is costly to retrieve them.
   static jclass uobject_cls;
-  static jfieldID ubinary_swigptr_id;
-  static jfieldID udictionary_swigptr_id;
-  static jfieldID uimage_swigptr_id;
-  static jfieldID ulist_swigptr_id;
-  static jfieldID uobject_swigptr_id;
-  static jfieldID usound_swigptr_id;
-  static jfieldID uvalue_swigptr_id;
-  static jfieldID uvar_swigptr_id;
-
+#define DECLARE(Name)                                    \
+  static jfieldID Name ## _swigptr_id
+  DECLARE(ubinary);
+  DECLARE(udictionary);
+  DECLARE(uimage);
+  DECLARE(ulist);
+  DECLARE(umatrix);
+  DECLARE(uobject);
+  DECLARE(usound);
+  DECLARE(uvalue);
+  DECLARE(uvar);
+  DECLARE(uvector);
+#undef DECLARE
   static jclass class_cls;
   static jmethodID class_getname_id;
 

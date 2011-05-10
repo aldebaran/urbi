@@ -46,8 +46,10 @@ Converter::instance(const std::string& type_name,
     CASE("class urbi.UDictionary", UDictionary);
     CASE("class urbi.UImage", UImage);
     CASE("class urbi.UList", UList);
+    CASE("class urbi.UMatrix", UMatrix);
     CASE("class urbi.USound", USound);
     CASE("class urbi.UValue", UValue);
+    CASE("class urbi.UVector", UVector);
   }
   else
   {

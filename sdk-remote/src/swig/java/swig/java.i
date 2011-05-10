@@ -539,6 +539,85 @@ namespace boost
 
 
 
+///////////////////////
+///                 ///
+///     Linear      ///
+///                 ///
+///////////////////////
+
+%{
+#include "libport/uvector.hh"
+%}
+%include "libport/uvector.hh"
+
+namespace boost
+{
+  namespace numeric
+  {
+    namespace ublas
+    {
+      template <typename T>
+      class vector
+      {
+      public:
+        size_t size();
+      };
+
+      %extend vector
+       {
+         T get (int i)
+           {
+             return (*self)(i);
+           }
+         void set (int i, T v)
+           {
+             (*self)(i) = v;
+           }
+      }
+
+      %template(UVector) vector<ufloat>;
+    }
+  }
+}
+
+%{
+#include "libport/umatrix.hh"
+%}
+%include "libport/umatrix.hh"
+
+namespace boost
+{
+  namespace numeric
+  {
+    namespace ublas
+    {
+
+      template <typename T>
+      class matrix
+      {
+      public:
+        size_t size1();
+        size_t size2();
+      };
+
+      %extend matrix
+       {
+         T get (int i, int j)
+           {
+             return (*self)(i, j);
+           }
+         void set (int i, int j, T v)
+           {
+             (*self)(i, j) = v;
+           }
+      }
+
+      %template(UMatrix) matrix<ufloat>;
+    }
+  }
+}
+
+
 
 ////////////////////////////
 ///                      ///

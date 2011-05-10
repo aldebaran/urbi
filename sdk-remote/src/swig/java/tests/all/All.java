@@ -20,6 +20,7 @@ import urbi.UEvent;
 import urbi.UImage;
 import urbi.UImageFormat;
 import urbi.UList;
+import urbi.UMatrix;
 import urbi.UObject;
 import urbi.UProperty;
 import urbi.USound;
@@ -28,6 +29,7 @@ import urbi.USoundSampleFormat;
 import urbi.UValue;
 import urbi.UValueVector;
 import urbi.UVar;
+import urbi.UVector;
 
 // TODO:
 // - changer les getters
@@ -125,7 +127,8 @@ public class All extends UObject
 	//
 	UBindFunctions
             ("transmitD", "transmitS", "transmitL", "transmitM", "transmitB",
-             "transmitI", "transmitSnd");
+             "transmitI", "transmitSnd",
+             "transmitVector", "transmitMatrix");
 	//UBindFunction(this, "transmitO");
 
 	//UBindFunction(all, loop_yield);
@@ -638,6 +641,22 @@ public class All extends UObject
       return o;
       }
     */
+
+    public UVector transmitVector(UVector v)
+    {
+        Log.info("transmitVector (size = " + Double.toString(v.size()) + ")");
+        for (int i = 0; i < v.size(); ++i)
+            v.set(i, v.get(i) + 1);
+        return v;
+    }
+
+    public UMatrix transmitMatrix(UMatrix m)
+    {
+        for (int i = 0; i < m.size1(); ++i)
+            for (int j = 0; j < m.size2(); ++j)
+                m.set(i, j, m.get(i, j) + i);
+        return m;
+    }
 
     public int sendString(String s)
     {

@@ -21,10 +21,12 @@ DEFINE(ubinary);
 DEFINE(udictionary);
 DEFINE(uimage);
 DEFINE(ulist);
+DEFINE(umatrix);
 DEFINE(uobject);
 DEFINE(usound);
 DEFINE(uvalue);
 DEFINE(uvar);
+DEFINE(uvector);
 #undef DEFINE
 
 jmethodID CallbacksCaller::class_getname_id = 0;
@@ -141,6 +143,8 @@ CallbacksCaller::cacheJNIVariables(JNIEnv* env)
   CASE(UList, ulist);
   CASE(USound, usound);
   CASE(UValue, uvalue);
+  CASE(UMatrix, umatrix);
+  CASE(UVector, uvector);
   CASE(UVar, uvar);
 #undef CASE
 
@@ -216,8 +220,10 @@ DEFINE(UBinary, ubinary);
 DEFINE(UDictionary, udictionary);
 DEFINE(UImage, uimage);
 DEFINE(UList, ulist);
+DEFINE(UMatrix, umatrix);
 DEFINE(USound, usound);
 DEFINE(UValue, uvalue);
+DEFINE(UVector, uvector);
 #undef DEFINE
 
 std::string
