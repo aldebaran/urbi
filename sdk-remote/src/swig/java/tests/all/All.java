@@ -619,20 +619,20 @@ public class All extends UObject
     {
 	UImage res = new UImage(im);
 	byte[] data = res.getData();
-    	for (int i = 0; i < data.length; ++i)
-    	    data[i] -= 1;
+	for (int i = 0; i < data.length; ++i)
+	    data[i] -= 1;
         res.setData(data);
-    	return im;
+	return im;
     }
 
     public USound transmitSnd(USound im)
     {
 	USound res = new USound(im);
 	byte[] data = res.getData();
-    	for (int i = 0; i < data.length; ++i)
-    	    data[i] -= 1;
+	for (int i = 0; i < data.length; ++i)
+	    data[i] -= 1;
         res.setData(data);
-    	return im;
+	return im;
     }
 
     /*

@@ -58,9 +58,12 @@ if APPLE
 SWIGFLAGS += -DAPPLE
 endif
 
-# Invoque Swig and generate: java sources & C++ jni code (liburbi_java.cc)
-java.cc: swig/java.i
-	$(AM_V_GEN)$(mkdir_p) $(java_src_outdir)
+# Invoque SWIG and generate Java sources & C++ JNI code
+# (liburbi_java.cc).  Remove the output dir so that there are no stray
+# files from previous runs that may confuse us when trying to
+# understand the generated code.
+	$(AM_V_GEN)rm -rf $(java_src_outdir)
+	$(AM_V_at)$(mkdir_p) $(java_src_outdir)
 	$(AM_V_at)test -n "$(SWIG)" || { echo "SWIG not defined"; exit 1; }
 	$(AM_V_at)$(SWIG) $(SWIGFLAGS) -o $@.tmp $<
 	$(AM_V_at)mv $@.tmp $@
