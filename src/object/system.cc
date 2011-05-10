@@ -580,21 +580,22 @@ namespace urbi
     {
       libport::utime_t select_time = 0;
       // 0-delay in fast mode
-      if (!system_class->slot_get(SYMBOL(fast))->as_bool())
+      static bool fast = system_class->call(SYMBOL(fast))->as_bool();
+      if (!fast)
       {
         libport::utime_t deadline = ::kernel::scheduler().deadline_get();
         if (deadline != sched::SCHED_IMMEDIATE)
           select_time = std::max(deadline - libport::utime(),
                                (libport::utime_t)0);
       }
+      static bool interactive =
+        system_class->call(SYMBOL(interactive))->as_bool();
 #ifdef WIN32
       // Linux and MacOS are using a POSIX file descriptor integrated in
       // the io_service for stdin, but not Windows.
-      if (kernel::urbiserver->interactive_get())
+      if (interactive)
         select_time = std::min((libport::utime_t)100000, select_time);
 #else
-      bool interactive =
-        system_class->slot_get(SYMBOL(interactive))->as_bool();
       int flags = 0;
       if (interactive)
       {
@@ -617,8 +618,6 @@ namespace urbi
 #ifndef WIN32
       if (interactive)
       {
-        // Reset stdin/out/err flags.
-        fcntl(STDOUT_FILENO, F_GETFL);
         ERRNO_RUN(fcntl, STDOUT_FILENO, F_SETFL, flags & ~O_NONBLOCK);
       }
 #endif
