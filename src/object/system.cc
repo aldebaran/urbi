@@ -604,9 +604,13 @@ namespace urbi
       }
 #endif
       boost::asio::io_service& ios = ::kernel::urbiserver->get_io_service();
+      GD_FINFO_TRACE("Poll task will poll for %s", select_time);
       // Return without delay after the first operation, but perform all
-      // pending operations
-      if (select_time > 0)
+      // pending operations.
+      // pollFor has a minimum duration time (which depends on the OS), so
+      // if we call it when our select_time is constantly below this value,
+      // this will limit the CPU time urbi will use. So we set a threshold.
+      if (select_time > 1000)
         libport::pollFor(select_time, true, ios);
       ios.reset();
       ios.poll();
