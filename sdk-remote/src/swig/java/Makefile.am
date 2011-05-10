@@ -62,13 +62,13 @@ endif
 # (liburbi_java.cc).  Remove the output dir so that there are no stray
 # files from previous runs that may confuse us when trying to
 # understand the generated code.
+%.cc %/%.java %.cc.h: swig/%.i
 	$(AM_V_GEN)rm -rf $(java_src_outdir)
 	$(AM_V_at)$(mkdir_p) $(java_src_outdir)
 	$(AM_V_at)test -n "$(SWIG)" || { echo "SWIG not defined"; exit 1; }
 	$(AM_V_at)$(SWIG) $(SWIGFLAGS) -o $@.tmp $<
 	$(AM_V_at)mv $@.tmp $@
 
-urbi/urbi.java java.cc.h: java.cc
 
 BUILT_SOURCES += java.cc java.cc.h
 
