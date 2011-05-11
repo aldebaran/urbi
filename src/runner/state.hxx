@@ -23,6 +23,8 @@
 # include <urbi/object/slot.hh>
 # include <urbi/object/slot.hxx>
 
+# include <kernel/userver.hh>
+
 namespace runner
 {
 
@@ -96,6 +98,8 @@ namespace runner
   LIBPORT_SPEED_INLINE void
   State::frozen_set(bool v)
   {
+    if (frozen_ && !v)
+      kernel::server().scheduler_get().job_was_woken_up();
     frozen_ = v;
   }
 
