@@ -44,6 +44,7 @@
 #include <runner/sneaker.hh>
 #include <runner/shell.hh>
 
+GD_CATEGORY(Urbi.UConnection);
 namespace kernel
 {
 
@@ -76,6 +77,7 @@ namespace kernel
 
   UConnection::~UConnection()
   {
+    GD_FINFO_TRACE("destroying %s", this);
     close(); // Just in case we reached here without closing.
     shell_->terminate_now();
   }
@@ -204,8 +206,14 @@ namespace kernel
   {
     if (closing_)
       return;
+    GD_FINFO_TRACE("close %s (lobby %s, shell %s shelllobby %s)", this,
+                   lobby_get().get(),
+                   shell_get().get(), shell_get()->state.lobby_get());
     closing_ = true;
     close_();
+    // If the shell is currently executing a closure, its lobby has been
+    // changed, so restore it. Its code will be stopped anyway.
+    shell_get()->state.lobby_set(lobby_get());
     stream_buffer_.close();
     kernel::server().schedule_fast(boost::bind(&shell_stop,
                                                shell_get()));

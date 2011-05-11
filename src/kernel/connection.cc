@@ -14,6 +14,8 @@
 #include <urbi/object/lobby.hh>
 #include <object/symbols.hh>
 
+GD_CATEGORY(Urbi.Connection);
+
 namespace kernel
 {
 
@@ -56,6 +58,7 @@ namespace kernel
   void
   Connection::onError(boost::system::error_code)
   {
+    GD_FINFO_TRACE("onError on %s", this);
     if (!closing_)
       UConnection::close();
   }

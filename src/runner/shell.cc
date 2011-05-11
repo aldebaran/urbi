@@ -379,8 +379,8 @@ namespace runner
   {
     if (stop_)
       return;
-    GD_FPUSH_TRACE("%s: end reached.", name_get());
     object::Lobby *l = state.lobby_get();
+    GD_FPUSH_TRACE("%s (lobby %s): end reached.", name_get(), l);
     object::Lobby::connection_type* c = &l->connection_get();
     if (c != &kernel::urbiserver->ghost_connection_get())
     {
@@ -392,7 +392,7 @@ namespace runner
       // ansynchronous destruction will destroy the lobby and the shell.
       // The UConnection should be fetch before disconnecting the lobby,
       // because the lobby will lose it's reference on the connection.
-      GD_FPUSH_DUMP("%s: schedule connection destruction.", name_get());
+      GD_FPUSH_DUMP("%s: schedule connection destruction %s.", name_get(), c);
       aver(c);
       kernel::server().schedule(SYMBOL(collect_connection),
                                 boost::bind(collect_connection, c));
