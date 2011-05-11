@@ -1155,6 +1155,7 @@ teleport
 TemperatureSensor
 TerminateException
 testPi
+testSkip
 testTimeOut
 tex
 texinfo
