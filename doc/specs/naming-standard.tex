@@ -7,22 +7,20 @@
 %% See the LICENSE file for more information.
 
 \newcommand{\refFacet}[2][]%
-  {\hyperref[sec:interface:#2]{\lstinline|#2|#1 (\autoref*{sec:interface:#2})}}
+  {\refObject[#1]{Interface.#2}}
 
 \newcommand{\interface}[2][]{%
-  %% It is on purpose that we pass [] to lstinline, because we do in many
-  %% other places, and that would result in index entries that makeindex is
-  %% unable to merge.
   \ifthenelse{\equal{#1}{}}{%
-    \subsection{#2\index{#2@\lstinline[]{#2}}}%
+    \subsection{\lstinline{#2}}%
   }{%
-    \subsection{#2 (subclass of #1)\index{#2@\lstinline[]{#2}}}%
+    \subsection[\lstinline{#2} (subclass of #1)]%
+               {\lstindex{#2} (subclass of \refFacet{#1})}%
   }%
-  \defObject{Interface.#2}%
-  \label{sec:interface:#2}
+  \labelObject{Interface.#2}%
 }
 
 \newcommand{\gsrapi}{Gostai Standard Robotics API\xspace}
+
 \chapter{Gostai Standard Robotics API}
 \label{sec:naming}
 

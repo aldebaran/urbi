@@ -13,7 +13,7 @@
 %% call \labelObject each time.  See the bottom of this file for the
 %% restoring of \section.
 \let\sectionOrig\section
-\let\section\sectionObject
+\renewcommand{\section}[1]{\clearpage\sectionObject{#1}}
 
 \input{specs/barrier}
 \input{specs/binary}

@@ -188,8 +188,14 @@ This is the second chapter.
   Fire \this.
 \item \lstinline|launch|~\\
   Fire \this.
-
 \end{urbiscriptapi}
+
+
+\let\sectionOrig\section
+\renewcommand{\section}[1]{\clearpage\sectionObject{#1}}
+\input{specs/pair}
+\let\section\sectionOrig
+
 
 \part{Second Part}
 \label{sec:second}
