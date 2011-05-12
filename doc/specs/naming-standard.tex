@@ -27,38 +27,37 @@
 \label{sec:naming}
 
 
-This section aims at clarifying the naming conventions in \urbi
-Engines for standard hardware/software devices and components
-implemented as UObject and the corresponding methods/attributes/events
-to access them. The list of available hardware types and software
-component is increasing and this document will be updated
-accordingly. Please contact us directly, should you be working on a
-component not described or closely related to one described here:
+This section aims at clarifying the naming conventions in \urbi Engines for
+standard hardware/software devices and components implemented as UObject and
+the corresponding methods/attributes/events to access them. The list of
+available hardware types and software component is increasing and this
+document will be updated accordingly. Please contact us directly, should you
+be working on a component not described or closely related to one described
+here:
 
 \begin{center}
   \email{standard@gostai.com}
 \end{center}
 
-Any implementation of an \urbi server must comply with the latest
-version of this standard to get the ``\urbi Ready'' certification from
-Gostai S.A.S.
+Any implementation of an \urbi server must comply with the latest version of
+this standard to get the ``\urbi Ready'' certification from Gostai S.A.S.
 
 Gostai S.A.S. is currently the only authority which has the ability to
 deliver an ``\urbi Ready'' certification.
 
-``\urbi Ready'' and the associated logo are trademarks of Gostai
-S.A.S. and should not be used or displayed in any way without an
-explicit written agreement from Gostai.
+``\urbi Ready'' and the associated logo are trademarks of Gostai S.A.S. and
+should not be used or displayed in any way without an explicit written
+agreement from Gostai.
 
 \section{The Structure Tree}
 
-The robot will be described as a set of \dfn[component]{components} organized
-in a hierarchical structure called the \dfn{structure tree}. The
+The robot will be described as a set of \dfn[component]{components}
+organized in a hierarchical structure called the \dfn{structure tree}. The
 relationship between a component and a sub-component in the tree is a
-`part-of' inclusion relationship. From the point of view of \urbi,
-each component in the tree is an object, and it contains attributes
-pointing to its sub-components. Here is an example illustrating a part
-of a hierarchy that could be found with a wheeled robot with a gripper:
+`part-of' inclusion relationship. From the point of view of \urbi, each
+component in the tree is an object, and it contains attributes pointing to
+its sub-components. Here is an example illustrating a part of a hierarchy
+that could be found with a wheeled robot with a gripper:
 
 \begin{center}
   \includegraphics[width=.8\linewidth]{img/structure-tree-wheeled}
