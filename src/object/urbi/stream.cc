@@ -63,6 +63,7 @@ namespace urbi
 
     Stream::~Stream()
     {
+      close();
     }
 
     void
