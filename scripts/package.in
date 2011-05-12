@@ -172,12 +172,10 @@ else
   stderr "Documentation is NOT compiled, looking for it in $archivedir"
   if test -f "$archivedir/$urbi_doc.tar.bz2"; then
     stderr "Documentation found, installing"
-    # Do not remove what's there, as we might remove architecture
+    # Do not remove what's in $docsrc, as we might remove architecture
     # specific files, such as COMPONENTS.txt.
-    # rm -rf "$docsrc"
-    tar -C "$(dirname $docsrc)" -xf "$archivedir/$urbi_doc.tar.bz2"
-    mv "$(dirname $docsrc)/$urbi_doc" "$docsrc"
-    # So remove the one without doc if there is one.
+    tar -C "$docsrc"  --strip=1 -xf "$archivedir/$urbi_doc.tar.bz2"
+    # So remove the package without doc if there is one.
     rm -f "$archivedir/$urbi_sdk_no_doc".*
   else
     # We couldn't find the doc, and it's not our job to compile it.
