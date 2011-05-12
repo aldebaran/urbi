@@ -30,6 +30,7 @@ Akim
 ALAudioPlayer
 ALFrameManager
 aliveJobs
+allocator
 ALLogger
 allProto
 allSlotNames
