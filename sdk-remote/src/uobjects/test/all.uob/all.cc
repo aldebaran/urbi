@@ -191,6 +191,7 @@ public:
     UBindFunctions(all, pack, unpack);
     UBindVars(all, periodicWriteTarget, periodicWriteType, periodicWriteRate,
               periodicWriteCount, changeCount);
+
     UBindCacheVar(all, writeLastChangeVal, bool);
     writeLastChangeVal = true;
     periodicWriteCount = 1;

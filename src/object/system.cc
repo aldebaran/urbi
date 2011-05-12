@@ -283,7 +283,7 @@ namespace urbi
       // symbol generation code
       Dictionary::value_type res;
 #define ADDSTAT(Suffix, Function, Divisor)      \
-      res[new String("cycles" # Suffix)] = \
+      res[new String("cycles" # Suffix)] =      \
         new Float(stats.Function() / Divisor)
       ADDSTAT(, size, 1);
       ADDSTAT(Max, max, 1e6);
@@ -362,12 +362,12 @@ namespace urbi
       return res ? new String(res) : nil_class;
     }
 
-    static rObject
+    static std::string
     system_setenv(const rObject&, const std::string& name, rObject value)
     {
-      std::string v = value->as_string();
-      setenv(name.c_str(), v.c_str(), 1);
-      return new String(v);
+      std::string res = value->as_string();
+      setenv(name.c_str(), res.c_str(), 1);
+      return res;
     }
 
     static rObject
@@ -496,9 +496,9 @@ namespace urbi
     static system_files_type system_files_;
 
     static void
-    system_addSystemFile(const rObject&, rObject name)
+    system_addSystemFile(const rObject&, const std::string& name)
     {
-      system_files_.insert(libport::Symbol(from_urbi<std::string>(name)));
+      system_files_.insert(libport::Symbol(name));
     }
 
     static void
@@ -642,10 +642,10 @@ namespace urbi
     system_class_initialize()
     {
 #define DECLARE(Name)                                           \
-      system_class->slot_set(SYMBOL_(Name),                     \
-                             primitive(&system_##Name))         \
+      system_class->bind(SYMBOL_(Name), &system_##Name)
 
       DECLARE(_exit);
+      DECLARE(addSystemFile);
       DECLARE(aliveJobs);
       DECLARE(arguments);
       DECLARE(backtrace);
@@ -667,6 +667,7 @@ namespace urbi
       DECLARE(redefinitionMode);
       DECLARE(resetStats);
       DECLARE(searchFile);
+      DECLARE(setSystemFiles);
       DECLARE(setenv);
       DECLARE(shiftedTime);
       DECLARE(shutdown);
@@ -674,13 +675,10 @@ namespace urbi
       DECLARE(stats);
       DECLARE(stopall);
       DECLARE(system);
+      DECLARE(systemFiles);
       DECLARE(time);
       DECLARE(unsetenv);
       DECLARE(urbiRoot);
-
-      DECLARE(addSystemFile);
-      DECLARE(setSystemFiles);
-      DECLARE(systemFiles);
 
 #undef DECLARE
 
