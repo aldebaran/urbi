@@ -126,28 +126,7 @@ namespace urbi
     };
 
 
-    /*-------------.
-    | Conversion.  |
-    `-------------*/
-
-    template <>
-    struct CxxConvert<Vector::value_type>
-    {
-      typedef       Vector::value_type& target_type;
-      typedef const Vector::value_type& source_type;
-      static target_type
-      to(const rObject& o)
-      {
-        type_check<Vector>(o);
-        return o->as<Vector>()->value_get();
-      }
-
-      static rObject
-      from(source_type v)
-      {
-        return new Vector(v);
-      }
-    };
+    CONVERT_VALUE_TYPE(Vector);
 
   };
 }

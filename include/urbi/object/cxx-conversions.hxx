@@ -542,6 +542,35 @@ namespace urbi
       }
     };
 
+
+    /*---------------------.
+    | CONVERT_VALUE_TYPE.  |
+    `---------------------*/
+
+    // Conversion for CxxObjects that define a value_type, provide
+    // a constructor for it, and a value_get() accessor.
+
+# define CONVERT_VALUE_TYPE(Type)                       \
+    template <>                                         \
+    struct CxxConvert<Type::value_type>                 \
+    {                                                   \
+      typedef       Type::value_type& target_type;      \
+      typedef const Type::value_type& source_type;      \
+      static target_type                                \
+      to(const rObject& o)                              \
+      {                                                 \
+        type_check<Type>(o);                            \
+        return o->as<Type>()->value_get();              \
+      }                                                 \
+                                                        \
+      static rObject                                    \
+      from(source_type v)                               \
+      {                                                 \
+        return new Type(v);                             \
+      }                                                 \
+    };
+
+
     /*--------------------.
     | to_urbi/from_urbi.  |
     `--------------------*/

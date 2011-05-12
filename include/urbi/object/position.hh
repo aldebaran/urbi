@@ -93,28 +93,7 @@ namespace urbi
     operator <(const Position::value_type& lhs,
                const Position::value_type& rhs);
 
-    /*-------------.
-    | Conversion.  |
-    `-------------*/
-
-    template <>
-    struct CxxConvert<Position::value_type>
-    {
-      typedef       Position::value_type& target_type;
-      typedef const Position::value_type& source_type;
-      static target_type
-      to(const rObject& o)
-      {
-        type_check<Position>(o);
-        return o->as<Position>()->value_get();
-      }
-
-      static rObject
-      from(source_type v)
-      {
-        return new Position(v);
-      }
-    };
+    CONVERT_VALUE_TYPE(Position);
 
   } // namespace object
 } // namespace urbi

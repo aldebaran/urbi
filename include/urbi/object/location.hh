@@ -69,28 +69,8 @@ namespace urbi
     operator ==(const Location::value_type& lhs,
                 const Location::value_type& rhs);
 
-    /*-------------.
-    | Conversion.  |
-    `-------------*/
 
-    template <>
-    struct CxxConvert<Location::value_type>
-    {
-      typedef       Location::value_type& target_type;
-      typedef const Location::value_type& source_type;
-      static target_type
-      to(const rObject& o)
-      {
-        type_check<Location>(o);
-        return o->as<Location>()->value_get();
-      }
-
-      static rObject
-      from(source_type v)
-      {
-        return new Location(v);
-      }
-    };
+    CONVERT_VALUE_TYPE(Location);
 
   } // namespace object
 } // namespace urbi

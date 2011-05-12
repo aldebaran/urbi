@@ -117,28 +117,7 @@ namespace urbi
     };
 
 
-    /*-------------.
-    | Conversion.  |
-    `-------------*/
-
-    template <>
-    struct CxxConvert<matrix_type>
-    {
-      typedef       matrix_type& target_type;
-      typedef const matrix_type& source_type;
-      static target_type
-      to(const rObject& o)
-      {
-        type_check<Matrix>(o);
-        return o->as<Matrix>()->value_get();
-      }
-
-      static rObject
-      from(source_type v)
-      {
-        return new Matrix(v);
-      }
-    };
+    CONVERT_VALUE_TYPE(Matrix);
 
   } // namespace object
 } // namespace urbi
