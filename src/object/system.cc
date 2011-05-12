@@ -268,7 +268,7 @@ namespace urbi
       return new_runner->as_job();
     }
 
-    static rObject
+    static boost::optional<Dictionary::value_type>
     system_stats()
     {
       const sched::scheduler_stats_type& stats =
@@ -277,7 +277,7 @@ namespace urbi
       // If statistics have just been reset, return "nil" since we cannot
       // return anything significant.
       if (stats.empty())
-        return nil_class;
+        return 0;
 
       // The space after "Symbol(" is mandatory to avoid triggering an error in
       // symbol generation code
@@ -292,7 +292,7 @@ namespace urbi
       ADDSTAT(StdDev, standard_deviation, 1e6);
       ADDSTAT(Variance, variance, 1e3);
 #undef ADDSTAT
-      return new Dictionary(res);
+      return res;
     }
 
     static void
@@ -355,11 +355,12 @@ namespace urbi
 
 #undef SERVER_SET_VAR
 
-    static rObject
+    static boost::optional<std::string>
     system_getenv(const rObject&, const std::string& name)
     {
-      char* res = getenv(name.c_str());
-      return res ? new String(res) : nil_class;
+      if (const char* res = getenv(name.c_str()))
+        return std::string(res);
+      return 0;
     }
 
     static std::string
@@ -370,10 +371,10 @@ namespace urbi
       return res;
     }
 
-    static rObject
+    static boost::optional<std::string>
     system_unsetenv(const rObject&, const std::string& name)
     {
-      rObject res = system_getenv(0, name);
+      boost::optional<std::string> res = system_getenv(0, name);
       unsetenv(name.c_str());
       return res;
     }

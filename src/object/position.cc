@@ -184,19 +184,18 @@ namespace urbi
     | Accessor.  |
     `-----------*/
 
-    rObject
+    boost::optional<libport::path>
     Position::file_get() const
     {
-      if (!pos_.filename)
-        return nil_class;
-      return to_urbi<libport::path>(pos_.filename->name_get());
+      if (pos_.filename)
+        return libport::path(pos_.filename->name_get());
+      return 0;
     }
 
     void
     Position::file_set(rObject o)
     {
-      if (!pos_.filename)
-        delete pos_.filename;
+      delete pos_.filename;
       pos_.filename = 0;
       if (o != nil_class)
         pos_.filename = new libport::Symbol(from_urbi<std::string>(o));

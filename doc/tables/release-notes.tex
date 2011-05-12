@@ -55,6 +55,27 @@ This chapter lists the user-visible changes in \usdk releases.
          1e1_0 == 1e10;
 \end{urbiassert}
 
+\item \refSlot[InputStream]{get} (and \refSlot[InputStream]{getChar},
+  \refSlot[InputStream]{getLine}) now returns \refObject{nil} instead of
+  \refObject{void} when it reached the end of file.  To provide backward
+  compatibility with previous code such as:
+\begin{urbiunchecked}
+var i = InputStream.new(File.new("file.txt"))|;
+var x;
+while (!(x = i.get.acceptVoid).isVoid)
+  cout << x;
+i.close;
+\end{urbiunchecked}
+  \refSlot[nil]{isVoid} now returns \lstinline|true| and issues a warning:
+  eventually it will return again \lstinline|false|.  Rewrite your code as:
+\begin{urbiunchecked}
+var i = InputStream.new(File.new("file.txt"))|;
+var x;
+while (!(x = i.get).isNil)
+  cout << x;
+i.close;
+\end{urbiunchecked}
+
 \item \refSlot[String]{'[]'} accepts negative indexes, as
   \refSlot[List]{'[]'} did.
 \begin{urbiassert}

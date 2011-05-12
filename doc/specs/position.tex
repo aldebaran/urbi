@@ -54,30 +54,30 @@ Position.new("file.u", 2, 3);
 
 \begin{urbiscriptapi}
 \item['+'](<n>)%
-  Return a new Position which is shifted from \var{n} columns to the
-  right.  The minimal value of the new position column is 1.
+  A new Position shifted from \var{n} columns to the right of \this.  The
+  minimal value of the new position column is 1.
 \begin{urbiassert}
-Position.new(2, 3) + 2 == Position.new(2, 5);
+Position.new(2, 3) + 2  == Position.new(2, 5);
 Position.new(2, 3) + -4 == Position.new(2, 1);
 \end{urbiassert}
 
 \item['-'](<n>)%
-  Return a new Position which is shifted from \var{n} columns to the
-  left.  The minimal value of the new Position column is 1.
+  A new Position shifted from \var{n} columns to the left of \this.  The
+  minimal value of the new Position column is 1.
 \begin{urbiassert}
-Position.new(2, 3) - 1 == Position.new(2, 2);
+Position.new(2, 3) - 1  == Position.new(2, 2);
 Position.new(2, 3) - -4 == Position.new(2, 7);
 \end{urbiassert}
 
-\item['=='](<other>)%
+\item['=='](<that>)%
   Compare the lines and columns of two Positions.
 \begin{urbiassert}
-Position.new(2, 3) == Position.new(2, 3);
+Position.new(2, 3)        == Position.new(2, 3);
 Position.new("a.u", 2, 3) == Position.new("b.u", 2, 3);
-Position.new(2, 3) != Position.new(2, 2);
+Position.new(2, 3)        != Position.new(2, 2);
 \end{urbiassert}
 
-\item['<'](<other>)%
+\item['<'](<that>)%
   Order comparison of lines and columns.
 \begin{urbiassert}
 Position.new(2, 3) < Position.new(2, 4);
@@ -92,7 +92,7 @@ Position.new("file.u", 2, 3).asString == "file.u:2.3";
 \end{urbiassert}
 
 \item[column]
-  Field which give access to the column number of the Position.
+  The column number of the Position.
 \begin{urbiassert}
 Position.new(2, 3).column == 3;
 \end{urbiassert}
@@ -100,19 +100,19 @@ Position.new(2, 3).column == 3;
 \item[columns](<n>)%
   Identical to \lstinline|'+'(\var{n})|.
 \begin{urbiassert}
-Position.new(2, 3).columns(2) == Position.new(2, 5);
+Position.new(2, 3).columns(2)  == Position.new(2, 5);
 Position.new(2, 3).columns(-4) == Position.new(2, 1);
 \end{urbiassert}
 
 \item[file]
-  The \lstinline|Path| of the Position file.
+  The \refObject{Path} of the Position file.
 \begin{urbiassert}
 Position.new("file.u", 2, 3).file == Path.new("file.u");
 Position.new(2, 3).file == nil;
 \end{urbiassert}
 
 \item[line]
-  Field which give access to the line number of the Position.
+  The line number of the Position.
 \begin{urbiassert}
 Position.new(2, 3).line == 2;
 \end{urbiassert}
@@ -120,7 +120,7 @@ Position.new(2, 3).line == 2;
 \item[lines](<n>)%
   Add \var{n} lines and reset the column number to 1.
 \begin{urbiassert}
-Position.new(2, 3).lines(2) == Position.new(4, 1);
+Position.new(2, 3).lines(2)  == Position.new(4, 1);
 Position.new(2, 3).lines(-1) == Position.new(1, 1);
 \end{urbiassert}
 

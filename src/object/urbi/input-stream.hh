@@ -64,8 +64,8 @@ namespace urbi
     public:
       void init(rFile f);
       rObject get();
-      rObject getChar();
-      rObject getLine();
+      boost::optional<std::string> getChar();
+      boost::optional<std::string> getLine();
 
       /*----------.
       | Details.  |

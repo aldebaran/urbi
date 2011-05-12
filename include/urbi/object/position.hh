@@ -72,7 +72,7 @@ namespace urbi
     `-----------*/
 
     private:
-      rObject file_get() const;
+      boost::optional<libport::path> file_get() const;
       void file_set(rObject o);
 
     /*----------.

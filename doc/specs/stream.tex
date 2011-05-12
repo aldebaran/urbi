@@ -32,8 +32,8 @@ removed at all.  Therefore, do not forget to close the streams you opened.
 \subsection{Slots}
 
 \begin{urbiscriptapi}
-\item[close] Flush the buffers, close the stream, return void.  Raise an
-  error if the file is closed.
+\item[close] Flush the buffers, close the stream, return \refSlot{void}.
+  Raise an error if the file is closed.
 \begin{urbiscript}
 var i = InputStream.new(File.create("file.txt"))|;
 assert(i.close.isVoid);

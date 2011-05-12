@@ -18,6 +18,21 @@ do (nil)
   var asString = "nil";
   // nil prints nothing in the toplevel
   var asTopLevelPrintable = nil;
+
+  function isVoid ()
+  {
+    for| (var m : [
+      "nil.isVoid will return false eventually, adjust your code.",
+      "    For instance replace InputStream loops from",
+      "      while (!(x = i.get.acceptVoid).isVoid)",
+      "        cout << x;",
+      "    to",
+      "      while (!(x = i.get).isNil)",
+      "        cout << x;",
+      ])
+        Logger.warn << m|
+    true;
+  };
 };
 
 do (Object)

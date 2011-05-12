@@ -17,9 +17,7 @@ do (InputStream)
   {
     var l|
     var res = []|
-    for| (l = getLine.acceptVoid;
-         !l.isVoid;
-         l = getLine.acceptVoid)
+    while| ((l = getLine) != nil)
       res << l|
     res
   };

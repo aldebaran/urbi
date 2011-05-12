@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -62,7 +62,12 @@ class Global.CallMessage
     var unevaluated = Object.new |
     var unevaluated.asString = "?" |
     argsVal = allArgs.map(closure (var v) {
-      if (v.&val.isVoid || v.&val.allProtos.hasSame(Executable))
+      // FIXME: We check if this object is "nil" because currently
+      // (Urbi 2.8) nil.isVoid issues a warning and returns true.
+      // Eventually it will return false again, without warning.  But
+      // meanwhile, checking for nil.isVoid would issue a warning.
+      if (!v.&val.acceptVoid.isNil && v.&val.isVoid
+          || v.&val.allProtos.hasSame(Executable))
         unevaluated
       else
         v.val

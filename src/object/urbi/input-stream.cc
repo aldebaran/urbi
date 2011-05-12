@@ -153,22 +153,22 @@ namespace urbi
       return to_urbi(res);
     }
 
-    rObject
+    boost::optional<std::string>
     InputStream::getChar()
     {
       int res = get_();
       if (res == -1)
         return 0;
-      return to_urbi(std::string(1, res));
+      return std::string(1, res);
     }
 
-    rObject
+    boost::optional<std::string>
     InputStream::getLine()
     {
       bool ok;
       std::string res = getSeparator_('\n', false, ok);
       if (ok)
-        return to_urbi(res);
+        return res;
       return 0;
     }
 

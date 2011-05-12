@@ -71,7 +71,11 @@ namespace urbi
       URBI_ATTRIBUTE_ON_DEMAND_DECLARE(Event, elementChanged);
       URBI_ATTRIBUTE_ON_DEMAND_DECLARE(Event, elementRemoved);
     };
-  }; // namespace object
+
+
+    CONVERT_VALUE_TYPE(Dictionary);
+
+  } // namespace object
 }
 
 #endif // !OBJECT_DICTIONARY_HH

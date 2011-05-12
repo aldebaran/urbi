@@ -356,7 +356,7 @@ do (System)
     var is = InputStream.new(File.new(procStatus));
     var d = [ => ];
     var line;
-    while (!(line = is.getLine.acceptVoid).isVoid)
+    while (!(line = is.getLine).isNil)
     {
       var l = line.split(":\t");
       try {

@@ -91,9 +91,9 @@ namespace urbi
       static rObject
       from(rObject o)
       {
-        if (!o)
-          return void_class;
-        return o;
+        if (o)
+          return o;
+        return nil_class;
       }
     };
 
@@ -498,7 +498,7 @@ namespace urbi
       static target_type
       to(const rObject& o)
       {
-        if (o == void_class)
+        if (o == nil_class)
           return target_type();
         return CxxConvert<T>::to(o);
       }
@@ -506,9 +506,9 @@ namespace urbi
       static rObject
       from(const target_type& v)
       {
-        if (!v)
-          return void_class;
-        return CxxConvert<T>::from(v.get());
+        if (v)
+          return CxxConvert<T>::from(v.get());
+        return nil_class;
       }
     };
 
