@@ -74,14 +74,13 @@ namespace urbi
 }
 
 # define URBI_CHECK_SDK_VERSION(Where)                          \
-  ::urbi::check_sdk_version(__HERE__ ": " Where,                \
-                            urbi::compiler_info())
+  ::urbi::check_sdk_version(Where, urbi::compiler_info())
 
 /// Same as URBI_CHECK_SDK_VERSION, but callable from anywhere.
-#  define URBI_CHECK_SDK_VERSION_BARE(Where)                            \
-  static                                                                \
-  ::urbi::VersionChecker                                                \
-  LIBPORT_CAT(urbicheck, __LINE__) (__HERE__ ": " Where,                \
+#  define URBI_CHECK_SDK_VERSION_BARE(Where)                    \
+  static                                                        \
+  ::urbi::VersionChecker                                        \
+  LIBPORT_CAT(urbicheck, __LINE__) (Where,                      \
                                     urbi::compiler_info())
 
 # endif // ! URBI_INHIBIT_REVISION_CHECK
