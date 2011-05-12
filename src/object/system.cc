@@ -493,6 +493,11 @@ namespace urbi
       }
     }
 
+
+    /*---------------.
+    | System files.  |
+    `---------------*/
+
     static system_files_type system_files_;
 
     static void

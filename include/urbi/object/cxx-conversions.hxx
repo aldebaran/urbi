@@ -359,17 +359,17 @@ namespace urbi
 /// For char* and const char* the CxxConvert template is intentionally
 /// specialized without the 'to' method that would imply a memory leak.
 
-#define CONVERT(Type)                                                   \
-    template <>                                                         \
-    struct CxxConvert<Type>                                             \
-    {                                                                   \
-      typedef Type target_type;                                         \
-                                                                        \
-      static rObject                                                    \
-        from(target_type v)                                             \
-      {                                                                 \
-        return CxxConvert<std::string>::from(std::string(v));           \
-      }                                                                 \
+#define CONVERT(Type)                                           \
+    template <>                                                 \
+    struct CxxConvert<Type>                                     \
+    {                                                           \
+      typedef Type target_type;                                 \
+                                                                \
+      static rObject                                            \
+      from(target_type v)                                       \
+      {                                                         \
+        return CxxConvert<std::string>::from(std::string(v));   \
+      }                                                         \
     };
 
     CONVERT(char*);
@@ -481,7 +481,7 @@ namespace urbi
       {
         objects_type res;
         foreach (Object* elt, v)
-          res.push_back(elt);
+          res << elt;
         return new List(res);
       }
     };
@@ -527,7 +527,7 @@ namespace urbi
         type_check<List>(o);
         const List::value_type& list = o->as<List>()->value_get();
         if (list.size() != 2)
-          runner::raise_primitive_error("Expected a list of size 2");
+          runner::raise_primitive_error("expected a list of size 2");
         return std::make_pair(CxxConvert<T1>::to(list[0]),
                               CxxConvert<T2>::to(list[1]));
       }
@@ -536,8 +536,8 @@ namespace urbi
       from(const target_type& v)
       {
         List::value_type content;
-        content.push_back(CxxConvert<T1>::from(v.first ));
-        content.push_back(CxxConvert<T2>::from(v.second));
+        content << CxxConvert<T1>::from(v.first)
+                << CxxConvert<T2>::from(v.second);
         return new List(content);
       }
     };
@@ -567,7 +567,7 @@ namespace urbi
       {
         return CxxConvert<T>::to(o);
       }
-      catch (UrbiException& e)
+      catch (const UrbiException& e)
       {
         runner::raise_argument_error(idx, e.value());
       }
