@@ -150,20 +150,15 @@ namespace urbi
         e.raise(code);
       }
 
-    // The type for eval and load overloads.
-    typedef rObject (*eval_type)
-      (rObject, const std::string&);
-    typedef rObject (*eval_with_this_type)
-      (rObject, const std::string&, rObject);
 
     static rObject
-    eval(rObject, const std::string& code)
+    system_eval(rObject, const std::string& code)
     {
       return eval(code);
     }
 
     static rObject
-    eval(rObject, const std::string& code, rObject self)
+    system_eval(rObject, const std::string& code, rObject self)
     {
       return eval(code, self);
     }
@@ -207,7 +202,7 @@ namespace urbi
     }
 
     static rObject
-    loadFile(rObject, const std::string& filename, rObject self)
+    system_loadFile(rObject, const std::string& filename, rObject self)
     {
       GD_FPUSH_TRACE("Load file: %s", filename);
 #if defined ENABLE_SERIALIZATION
@@ -225,9 +220,9 @@ namespace urbi
     }
 
     static rObject
-    loadFile(rObject self, const std::string& filename)
+    system_loadFile(rObject self, const std::string& filename)
     {
-      return loadFile(self, filename, 0);
+      return system_loadFile(self, filename, 0);
     }
 
     static rObject
@@ -627,9 +622,7 @@ namespace urbi
       ios.poll();
 #ifndef WIN32
       if (interactive)
-      {
         ERRNO_RUN(fcntl, STDOUT_FILENO, F_SETFL, flags & ~O_NONBLOCK);
-      }
 #endif
     }
 
@@ -694,12 +687,15 @@ namespace urbi
       system_class->bind(SYMBOL(searchPath), &system_searchPath,
                          SYMBOL(searchPathSet), &system_searchPathSet);
 
-#define DECLARE(Name, Type)                             \
-      system_class->bind(SYMBOL_(Name), static_cast<Type>(&Name))
-      DECLARE(eval, eval_type);
-      DECLARE(eval, eval_with_this_type);
-      DECLARE(loadFile, eval_type);
-      DECLARE(loadFile, eval_with_this_type);
+#define DECLARE(Name, Ret, ...)                                         \
+      system_class->bind                                                \
+        (SYMBOL_(Name),                                                 \
+         static_cast<Ret (*) (rObject, __VA_ARGS__)>(&system_ ## Name))
+
+      DECLARE(eval, rObject, const std::string&);
+      DECLARE(eval, rObject, const std::string&, rObject);
+      DECLARE(loadFile, rObject, const std::string&);
+      DECLARE(loadFile, rObject, const std::string&, rObject);
 #undef DECLARE
     }
 
