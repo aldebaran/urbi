@@ -13,6 +13,7 @@
 #include <libport/compiler.hh>
 #include <libport/containers.hh>
 #include <libport/debug.hh>
+#include <libport/locale.hh>
 #include <libport/ufloat.hh>
 #include <libport/unistd.h>
 #include <sstream>
@@ -191,6 +192,8 @@ public:
     UBindFunctions(all, pack, unpack);
     UBindVars(all, periodicWriteTarget, periodicWriteType, periodicWriteRate,
               periodicWriteCount, changeCount);
+
+    UBindFunctions(all, setLocale, getLocale);
 
     UBindCacheVar(all, writeLastChangeVal, bool);
     writeLastChangeVal = true;
@@ -990,6 +993,24 @@ public:
   {
     return d;
   }
+
+  /*---------.
+  | Locale.  |
+  `---------*/
+  void
+  setLocale(const std::string& cat, const std::string& loc)
+  {
+    libport::setlocale(cat, loc);
+  }
+
+  std::string
+  getLocale(const std::string& cat)
+  {
+    return libport::setlocale(cat, 0);
+  }
+
+
+
   urbi::UVar a, b, c, d, unbound;
   urbi::UVar* vars[10];
   urbi::InputPort* ports[5];

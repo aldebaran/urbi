@@ -13,16 +13,16 @@
  ** \brief Creation of the Urbi object system.
  */
 
-#include <libport/config.h>
-#include <libport/asio.hh>
-#include <libport/cstdlib>
-#include <libport/format.hh>
-#include <libport/program-name.hh>
-#include <libport/xltdl.hh>
-
-#include <libport/cerrno>
 #include <memory>
 #include <sstream>
+
+#include <libport/asio.hh>
+#include <libport/cerrno>
+#include <libport/cstdlib>
+#include <libport/format.hh>
+#include <libport/locale.hh>
+#include <libport/program-name.hh>
+#include <libport/xltdl.hh>
 
 #include <kernel/uobject.hh>
 #include <kernel/userver.hh>
@@ -535,58 +535,30 @@ namespace urbi
     | Locale.  |
     `---------*/
 
-    static std::string
-    setLocale(const std::string& cat, const char* loc = 0)
-    {
-      int c = -1;
-#define CASE(Name)                              \
-      if (cat == #Name) c = Name
-      CASE(LC_ALL);
-      CASE(LC_COLLATE);
-      CASE(LC_CTYPE);
-// Courtesy of MS Windows.
-#if defined LC_MESSAGES
-      CASE(LC_MESSAGES);
-#endif
-      CASE(LC_MONETARY);
-      CASE(LC_NUMERIC);
-      CASE(LC_TIME);
-#undef CASE
-      if (c == -1)
-        FRAISE("invalid category: %s", cat);
-      char *r = setlocale(c, loc);
-      if (r)
-        return r;
-      if (!loc)
-        FRAISE("cannot get locale %s", cat);
-      else if (*loc == 0)
-        FRAISE("cannot set locale %s", cat);
-      else
-        FRAISE("cannot set locale %s to %s", cat, loc);
+#define FORWARD_EXCEPTION(Command)              \
+    try                                         \
+    {                                           \
+      Command;                                  \
+    }                                           \
+    catch (const std::runtime_error& e)         \
+    {                                           \
+      FRAISE(e.what());                         \
     }
-
 
     static void
     system_setLocale(rObject,
                      const std::string& cat, const std::string& loc)
-    {
-      setLocale(cat, loc.c_str());
-    }
+      FORWARD_EXCEPTION(libport::setlocale(cat, loc));
 
     static void
     system_setLocale(rObject,
                      const std::string& cat)
-    {
-      setLocale(cat, "");
-    }
+      FORWARD_EXCEPTION(libport::setlocale(cat));
 
     static std::string
     system_getLocale(rObject,
                      const std::string& cat)
-    {
-      return setLocale(cat);
-    }
-
+      FORWARD_EXCEPTION(return libport::setlocale(cat, 0));
 
 
     void
