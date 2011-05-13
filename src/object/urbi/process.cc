@@ -71,6 +71,9 @@ namespace urbi
         foreach (runner::Runner* job, owner->joiners_)
           // FIXME: Is there a risk we cancel a double freeze?
           job->frozen_set(false);
+        // The Process no longer needs to be protected against
+        // ref-counting.
+        owner->ward_ = 0;
       }
     }
 
