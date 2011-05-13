@@ -77,7 +77,7 @@ namespace
     exit(status);
   }
 
-#define ERROR(Status, ...)                      \
+#define FRAISE(Status, ...)                      \
   error(Status, libport::format(__VA_ARGS__))
 
 
@@ -111,7 +111,7 @@ endProgram(const urbi::UMessage&)
     //file = fopen(fname, "w");
     // seek to set correct size in wav header
     if (fseek(file, offsetof(wavheader, length), SEEK_SET) == -1)
-      ERROR(1, "cannot seek output file (stdout?)");
+      FRAISE(1, "cannot seek output file (stdout?)");
     int len = totallength  - 8;
     ignore = fwrite(&len, 1, 4, file);
     fseek(file,offsetof(wavheader, datalength),SEEK_SET);
@@ -208,14 +208,14 @@ int main(int argc, char *argv[])
     with_header = false;
     file = fopen(dsp, "wb");
     if (!file)
-      ERROR(1, "error opening device %s: %s", dsp, strerror(errno));
+      FRAISE(1, "error opening device %s: %s", dsp, strerror(errno));
 
     int f = fileno(file);
 # define IOCTL(Name, Key, Param)                        \
     do {                                                \
       int param = Param;                                \
       if (ioctl(f, SNDCTL_DSP_ ## Key, &param) == -1)   \
-        ERROR(1, "failed to set %s for %s: %s",         \
+        FRAISE(1, "failed to set %s for %s: %s",         \
               dsp, Name, strerror(errno));              \
     } while (false)
 
@@ -235,7 +235,7 @@ int main(int argc, char *argv[])
   {
     file = fopen(output.c_str(), "wb+");
     if (!file)
-      ERROR(2, "error creating file %s: %s", output, strerror(errno));
+      FRAISE(2, "error creating file %s: %s", output, strerror(errno));
   }
 
   with_header = !arg_no_headers.get();
@@ -249,7 +249,7 @@ int main(int argc, char *argv[])
     client(libport::opts::host.value(urbi::UClient::default_host()),
            port);
   if (client.error())
-    ERROR(1, "client failed to set up");
+    FRAISE(1, "client failed to set up");
 
   client.setCallback(getSound, "usound");
   client.setCallback(endProgram, "end");
