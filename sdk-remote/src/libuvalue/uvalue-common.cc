@@ -12,6 +12,8 @@
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
+#include <xlocale.h>
+
 #include <libport/cassert>
 #include <libport/compiler.hh>
 #include <libport/cstdio>
@@ -287,14 +289,22 @@ namespace urbi
 
     // Last attempt: it should be a double.
     {
-      int p;
-      double dval; // in case ufloat is not double
-      if (sscanf(message+pos, "%lf%n", &dval, &p))
+      static locale_t cloc = newlocale(LC_CTYPE_MASK, 0, 0);
+      char *end;
+      errno = 0;
+      double d = strtod_l(message+pos, &end, cloc);
+      // Did we find a number?  Make sure we don't overflow.
+      if (end != message + pos)
       {
+        if (errno)
+        {
+          GD_FWARN("syntax error (ignored): %s: \"%s\"",
+                   libport::strerror(errno), libport::escape(message + pos));
+          d = 0;
+        }
         type = DATA_DOUBLE;
-        pos += p;
-        val = dval;
-        return pos;
+        val = d;
+        return end - message;
       }
     }
 
