@@ -584,21 +584,53 @@ namespace urbi
 static libport::local_data&
 debugger_data_thread_coro_local()
 {
-  typedef boost::thread_specific_ptr<libport::local_data> thread_storage;
-  typedef sched::CoroutineLocalStorage<thread_storage> coro_storage;
+# if ! defined __UCLIBC__ && defined LIBPORT_SCHED_MULTITHREAD
+  // Per thread per coro storage.
+  // Use only one thread_local_storage key, implementation may limit
+  // the number of keys, or not free them, and we allocate/free a lot of
+  // coroutines.
+  typedef sched::CoroutineLocalStorage<libport::local_data> clocal;
+  typedef boost::thread_specific_ptr<clocal> coro_storage;
 
   static coro_storage cstorage;
 
-  thread_storage& tstorage = *cstorage;
-  if (!tstorage.get())
-    tstorage.reset(new libport::local_data);
-  return *tstorage;
+  clocal* tstorage = cstorage.get();
+  if (!tstorage)
+  {
+    tstorage = new clocal;
+    cstorage.reset(tstorage);
+  }
+  return tstorage->get();
+#else
+  // Per-coro storage in main-thread, per-thread otherwise
+  static pthread_t main_thread = pthread_self();
+  static sched::CoroutineLocalStorage<libport::local_data> clocal;
+  static boost::thread_specific_ptr<libport::local_data> tlocal;
+  libport::local_data* res;
+  if (pthread_self() == main_thread)
+  {
+    res = &clocal.get();
+  }
+  else
+  {
+    res = tlocal.get();
+    if (!res)
+    {
+      res = new libport::local_data;
+      tlocal.reset(res);
+    }
+  }
+  return *res;
+#endif
 }
 #endif
   int
   main(const libport::cli_args_type& args,
        UrbiRoot& urbi_root, bool block, bool errors)
   {
+    // Safet to call debugger_data_thread_coro_local() to initialize its static
+    // members before passing it to GD or it could deadlock.
+    debugger_data_thread_coro_local();
     GD_INIT_DEBUG_PER(debugger_data_thread_coro_local);
 
     if (block)
