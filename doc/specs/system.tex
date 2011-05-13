@@ -202,6 +202,15 @@ getenv("UndefinedEnvironmentVariable").isNil;
 \end{urbiassert}
 
 
+\item[getLocale](<category>)%
+  Return a \refObject{String} denoting the locale set for \var{category}, or
+  raise an error.  See \refSlot{setLocale} for more details.
+\begin{urbiscript}
+getLocale("LC_IMAGINARY");
+[00006328:error] !!! getLocale: invalid category: LC_IMAGINARY
+\end{urbiscript}
+
+
 %% \item[jobs]
 
 
@@ -445,6 +454,79 @@ System.system("exit $MyVar") >> 8 ==
 setenv("MyVar", "") == "";
 getenv("MyVar").isNil == Platform.isWindows;
 \end{urbiassert}
+
+
+\item[setLocale](<category>, <locale> = "")%
+  Change the system's \dfn{locale} for the \var{category} to \var{locale}
+  and return void.  If \var{locale} is empty, then use the locale specified
+  by the user's environment (e.g., the environment variables).  The
+  \var{category} can be:
+  \begin{sublist}
+    \begin{envs}
+    \item[LC\_ALL] Overrides all the following categories.
+    \item[LC\_COLLATE] Controls how string sorting is performed.
+    \item[LC\_CTYPE] Change what characters are considered as letters and so
+      on.
+    \item[LC\_MESSAGES] The catalog of translated messages.  This category
+      is not supported by Microsoft Windows.
+    \item[LC\_MONETARY] How to format monetary values.
+    \item[LC\_NUMERIC] Set a locale for formatting numbers.
+    \item[LC\_TIME] Set a locale for formatting dates and times.
+    \end{envs}
+  \end{sublist}
+  With \command{urbi} is run, it does \emph{not} change its locales: it
+  defaults to the ``good old C mode'', which corresponds to the \samp{C} (or
+  \samp{POSIX}) locale.  See also \refSlot{getLocale}.
+\begin{urbicomment}
+// Be sure not to depend on the user environment.
+for (var i : ["ALL", "COLLATE", "CTYPE", "MESSAGES", "MONETARY",
+              "NUMERIC", "TIME"])
+  unsetenv("LC_" + i);
+\end{urbicomment}
+\begin{urbiassert}
+// Initially they are all set to "C".
+getLocale("LC_ALL")     == "C";
+getLocale("LC_CTYPE")   == "C";
+getLocale("LC_NUMERIC") == "C";
+
+// Changing one via the environment does not affect the others.
+setenv("LC_CTYPE", "fr_FR") == "fr_FR";
+getLocale("LC_CTYPE")   == "C";
+setLocale("LC_CTYPE").isVoid;
+getLocale("LC_CTYPE")   == "fr_FR";
+getLocale("LC_NUMERIC") == "C";
+
+// Changing one via setLocale does not change the others either.
+setLocale("LC_CTYPE", "C").isVoid;
+getLocale("LC_CTYPE")   == "C";
+getLocale("LC_NUMERIC") == "C";
+
+// The environment variable LC_ALL overrides all the others.
+setenv("LC_ALL", "fr_FR");
+setLocale("LC_ALL").isVoid;
+getLocale("LC_ALL")     == "fr_FR";
+getLocale("LC_CTYPE")   == "fr_FR";
+getLocale("LC_NUMERIC") == "fr_FR";
+
+// Explicit changes of LC_ALL overrides all the others.
+setLocale("LC_ALL", "C").isVoid;
+getLocale("LC_ALL")     == "C";
+getLocale("LC_CTYPE")   == "C";
+getLocale("LC_NUMERIC") == "C";
+\end{urbiassert}
+
+  On invalid requests, raise an error.
+\begin{urbiscript}
+setLocale("LC_IMAGINARY");
+[00006328:error] !!! setLocale: invalid category: LC_IMAGINARY
+
+setenv("LC_ALL", "elfic")|;
+setLocale("LC_ALL");
+[00024950:error] !!! setLocale: cannot set locale LC_ALL
+
+setLocale("LC_ALL", "klingon");
+[00074958:error] !!! setLocale: cannot set locale LC_ALL to klingon
+\end{urbiscript}
 
 
 \item[shiftedTime] Return the number of seconds elapsed since the

@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1418 utf-8
+personal_ws-1.1 en 1423 utf-8
 aaa
 abc
 abcd
@@ -249,6 +249,7 @@ createSlot
 createZeros
 criticalSection
 Ctrl
+CTYPE
 CustomUVar
 cvf
 cvs
@@ -437,6 +438,7 @@ getImage
 getIoService
 getLazyLocalSlot
 getLine
+getLocale
 getLocalSlot
 getMine
 getOne
@@ -1035,6 +1037,7 @@ setConstSlot
 setDCMShift
 setDCMWrite
 setenv
+setLocale
 setModuleDescription
 setNth
 setPID

@@ -530,6 +530,65 @@ namespace urbi
               && libport::has(system_files_, *l.begin.filename));
     }
 
+
+    /*---------.
+    | Locale.  |
+    `---------*/
+
+    static std::string
+    setLocale(const std::string& cat, const char* loc = 0)
+    {
+      int c = -1;
+#define CASE(Name)                              \
+      if (cat == #Name) c = Name
+      CASE(LC_ALL);
+      CASE(LC_COLLATE);
+      CASE(LC_CTYPE);
+// Courtesy of MS Windows.
+#if defined LC_MESSAGES
+      CASE(LC_MESSAGES);
+#endif
+      CASE(LC_MONETARY);
+      CASE(LC_NUMERIC);
+      CASE(LC_TIME);
+#undef CASE
+      if (c == -1)
+        FRAISE("invalid category: %s", cat);
+      char *r = setlocale(c, loc);
+      if (r)
+        return r;
+      if (!loc)
+        FRAISE("cannot get locale %s", cat);
+      else if (*loc == 0)
+        FRAISE("cannot set locale %s", cat);
+      else
+        FRAISE("cannot set locale %s to %s", cat, loc);
+    }
+
+
+    static void
+    system_setLocale(rObject,
+                     const std::string& cat, const std::string& loc)
+    {
+      setLocale(cat, loc.c_str());
+    }
+
+    static void
+    system_setLocale(rObject,
+                     const std::string& cat)
+    {
+      setLocale(cat, "");
+    }
+
+    static std::string
+    system_getLocale(rObject,
+                     const std::string& cat)
+    {
+      return setLocale(cat);
+    }
+
+
+
     void
     system_redefinitionMode()
     {
@@ -651,6 +710,7 @@ namespace urbi
       DECLARE(breakpoint);
       DECLARE(currentRunner);
       DECLARE(cycle);
+      DECLARE(getLocale);
       DECLARE(getenv);
       DECLARE(interactive);
       DECLARE(jobs);
@@ -696,6 +756,8 @@ namespace urbi
       DECLARE(eval, rObject, const std::string&, rObject);
       DECLARE(loadFile, rObject, const std::string&);
       DECLARE(loadFile, rObject, const std::string&, rObject);
+      DECLARE(setLocale, void, const std::string& cat);
+      DECLARE(setLocale, void, const std::string& cat, const std::string& loc);
 #undef DECLARE
     }
 
