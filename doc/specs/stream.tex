@@ -23,17 +23,18 @@ Streams are not meant to be built, rather, use \refObject{InputStream} or
 \refObject{OutputStream}.
 
 When a stream (\refObject{OutputStream} or \refObject{InputStream}) is
-opened on a File, that File cannot be removed.  On Unix systems, this is
-handled gracefully (the references to the file are removed, but the content
-is still there for the streams that were already bound to this file); so in
-practice, the File appears to be removable.  On Windows, the File cannot be
-removed at all.  Therefore, do not forget to close the streams you opened.
+opened on a \refObject{File}, that File cannot be removed.  On Unix systems,
+this is handled gracefully (the references to the file are removed, but the
+content is still there for the streams that were already bound to this
+file); so in practice, the File appears to be removable.  On Windows, the
+File cannot be removed at all.  Therefore, do not forget to close the
+streams you opened.
 
 \subsection{Slots}
 
 \begin{urbiscriptapi}
-\item[close] Flush the buffers, close the stream, return \refSlot{void}.
-  Raise an error if the file is closed.
+\item[close] Flush the buffers, close \this, return \refObject{void}.  Raise
+  an error \this is closed.
 \begin{urbiscript}
 var i = InputStream.new(File.create("file.txt"))|;
 assert(i.close.isVoid);
@@ -45,6 +46,18 @@ assert(o.close.isVoid);
 o.close;
 [00000002:error] !!! close: stream is closed
 \end{urbiscript}
+
+  The file is actually closed with \this is destroyed, if it was not already
+  closed.
+
+\item[closed] Whether \this is closed.
+\begin{urbiassert}
+var i = InputStream.new(File.create("file.txt"));
+
+!i.closed;
+i.close.isVoid;
+i.closed;
+\end{urbiassert}
 \end{urbiscriptapi}
 
 %%% Local Variables:
