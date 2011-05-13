@@ -63,7 +63,10 @@ namespace urbi
 
     Stream::~Stream()
     {
-      close();
+      // When destructed, close the file descriptor owned by this class if
+      // this is not already done by the user.
+      if (!closed())
+        close();
     }
 
     void
