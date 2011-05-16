@@ -12,8 +12,6 @@
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
-#include <xlocale.h>
-
 #include <libport/cassert>
 #include <libport/compiler.hh>
 #include <libport/cstdio>
@@ -26,6 +24,7 @@
 #include <libport/iostream>
 #include <libport/lexical-cast.hh>
 #include <libport/xalloc.hh>
+#include <libport/xlocale.hh>
 #include <sstream>
 #include <iomanip>
 
@@ -289,10 +288,8 @@ namespace urbi
 
     // Last attempt: it should be a double.
     {
-      static locale_t cloc = newlocale(LC_CTYPE_MASK, 0, 0);
       char *end;
-      errno = 0;
-      double d = strtod_l(message+pos, &end, cloc);
+      double d = libport::strtod_c(message+pos, &end);
       // Did we find a number?  Make sure we don't overflow.
       if (end != message + pos)
       {
