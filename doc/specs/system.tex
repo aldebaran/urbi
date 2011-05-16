@@ -489,11 +489,15 @@ getLocale("LC_ALL")     == "C";
 getLocale("LC_CTYPE")   == "C";
 getLocale("LC_NUMERIC") == "C";
 
+// Windows does not under the "fr_FR" locale, it supports "French"
+// which actually denotes "French_France.1252".
+var fr_FR = 
+  { if (System.Platform.isWindows) "French_France.1252" else "fr_FR" };
 // Changing one via the environment does not affect the others.
-setenv("LC_CTYPE", "fr_FR") == "fr_FR";
+setenv("LC_CTYPE", fr_FR) == fr_FR;
 getLocale("LC_CTYPE")   == "C";
 setLocale("LC_CTYPE").isVoid;
-getLocale("LC_CTYPE")   == "fr_FR";
+getLocale("LC_CTYPE")   == fr_FR;
 getLocale("LC_NUMERIC") == "C";
 
 // Changing one via setLocale does not change the others either.
@@ -502,11 +506,11 @@ getLocale("LC_CTYPE")   == "C";
 getLocale("LC_NUMERIC") == "C";
 
 // The environment variable LC_ALL overrides all the others.
-setenv("LC_ALL", "fr_FR");
+setenv("LC_ALL", fr_FR);
 setLocale("LC_ALL").isVoid;
-getLocale("LC_ALL")     == "fr_FR";
-getLocale("LC_CTYPE")   == "fr_FR";
-getLocale("LC_NUMERIC") == "fr_FR";
+getLocale("LC_ALL")     == fr_FR;
+getLocale("LC_CTYPE")   == fr_FR;
+getLocale("LC_NUMERIC") == fr_FR;
 
 // Explicit changes of LC_ALL overrides all the others.
 setLocale("LC_ALL", "C").isVoid;
@@ -522,7 +526,7 @@ setLocale("LC_IMAGINARY");
 
 setenv("LC_ALL", "elfic")|;
 setLocale("LC_ALL");
-[00024950:error] !!! setLocale: cannot set locale LC_ALL
+[00024950:error] !!! setLocale: cannot set locale LC_ALL to elfic
 
 setLocale("LC_ALL", "klingon");
 [00074958:error] !!! setLocale: cannot set locale LC_ALL to klingon
