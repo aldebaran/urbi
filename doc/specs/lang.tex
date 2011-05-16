@@ -1495,12 +1495,11 @@ expressions, nested, and so forth.
 \dfn{Local variables} are introduced with the \lstinline|var| keyword,
 followed by an identifier (see \autoref{sec:us-syn-id}) and an optional
 initialization value assignment. If the initial value is omitted, it
-defaults to \refObject{void}. Variable
-declarations evaluate to
-the initialization value. They can later be referred to by their
-name. Their value can be changed with the assignment operator; such an
-assignment expression returns the new value. The use of local
-variables is illustrated below.
+defaults to \refObject{void}. Variable declarations evaluate to the
+initialization value. They can later be referred to by their name. Their
+value can be changed with the assignment operator; such an assignment
+expression returns the new value. The use of local variables is illustrated
+below.
 
 \begin{urbiscript}
 // This declare variable x with value 42, and evaluates to 42.
@@ -1887,13 +1886,12 @@ and a value. Slots are often called ``fields'', ``attributes'' or
 \subsubsection{Manipulation}
 
 The \refSlot[Object]{createSlot} function adds a slot to an object with the
-void (\autoref{sec:std-void}) value. The \refSlot[Object]{updateSlot}
-function changes the value of a slot; \refSlot[Object]{getSlot} reads
-it. The \refSlot[Object]{setSlot} method creates a slot with a given
-value. Finally, the \refSlot[Object]{localSlotNames} method returns the list
-of the object slot's name. The listing below shows how to manipulate
-slots. More documentation about these methods can be found in
-\autorefObject{Object}.
+\refObject{void} value. The \refSlot[Object]{updateSlot} function changes
+the value of a slot; \refSlot[Object]{getSlot} reads it. The
+\refSlot[Object]{setSlot} method creates a slot with a given value. Finally,
+the \refSlot[Object]{localSlotNames} method returns the list of the object
+slot's name. The listing below shows how to manipulate slots. More
+documentation about these methods can be found in \autorefObject{Object}.
 
 \begin{urbiscript}
 var o = Object.new|

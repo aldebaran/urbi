@@ -42,10 +42,20 @@ void.acceptVoid.foo;
 
 \item[isVoid]%
   Whether \this is \lstinline|void|.  Therefore, return \lstinline|true|.
+  Actually there is a temporary exception: \refSlot[nil]{isVoid}.
 \begin{urbiassert}
 void.isVoid;
 void.acceptVoid.isVoid;
 ! 123.isVoid;
+
+nil.isVoid;
+[     Logger     ] nil.isVoid will return false eventually, adjust your code.
+[     Logger     ]     For instance replace InputStream loops from
+[     Logger     ]       while (!(x = i.get.acceptVoid).isVoid)
+[     Logger     ]         cout << x;
+[     Logger     ]     to
+[     Logger     ]       while (!(x = i.get).isNil)
+[     Logger     ]         cout << x;
 \end{urbiassert}
 
 \item[unacceptVoid]%
@@ -55,7 +65,6 @@ void.acceptVoid.isVoid;
 void.acceptVoid.unacceptVoid.foo;
 [00096374:error] !!! unexpected void
 \end{urbiscript}
-
 \end{urbiscriptapi}
 
 
