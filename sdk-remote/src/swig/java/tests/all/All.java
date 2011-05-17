@@ -27,6 +27,7 @@ import urbi.UValue;
 import urbi.UValueVector;
 import urbi.UVar;
 import java.util.Map;
+import java.util.Locale;
 
 // TODO:
 // - changer les getters
@@ -116,23 +117,17 @@ public class All extends UObject
 	UBindFunction("readProps");
 	UBindFunction("writeProps");
 
-	UBindFunction("writeD");
-	UBindFunction("writeS");
-	UBindFunction("writeL");
-	UBindFunction("writeM"); // M for Map
-	UBindFunction("writeB");
-	UBindFunction("makeCall");
-	UBindFunction("writeBNone");
-	UBindFunction("writeI");
-	UBindFunction("writeSnd");
-	//UBindFunction(all, writeRI);
-	//UBindFunction(all, writeRSnd);
+	UBindFunctions
+            ("writeD", "writeS", "writeL", "writeM",
+             "writeB", "makeCall", "writeBNone", "writeI", "writeSnd"
+             //, "writeRI", "writeRSnd"
+             );
 	//
 	UBindFunctions
             ("transmitD", "transmitS", "transmitL", "transmitM", "transmitB",
              "transmitI", "transmitSnd");
 	//UBindFunction(this, "transmitO");
-	//
+
 	//UBindFunction(all, loop_yield);
 	//UBindFunction(urbi::UContext, side_effect_free_get);
 	//UBindFunction(urbi::UContext, side_effect_free_set);
@@ -154,6 +149,8 @@ public class All extends UObject
 	//UBindFunction(all, socketStats);
 	//UBindVars(all, periodicWriteTarget, periodicWriteType, periodicWriteRate,
 	//	  changeCount);
+        UBindFunctions("setLocale", "getLocale");
+
 	UBindVar(changeCount, "changeCount");
 	//UNotifyChange(periodicWriteRate, &all::onRateChange);
 	vars[0] = a;
@@ -757,6 +754,34 @@ public class All extends UObject
     //	res.push_back(cl->bytesReceived());
     //	return res;
     //    }
+
+
+    /*---------.
+    | Locale.  |
+    `---------*/
+    public void setLocale(String cat, String loc)
+    {
+        // Ignore the category, it's a completely different story in
+        // Java.  Besides, we might need to split the loc in two:
+        // "fr_FR" => "fr", "FR".
+        int pos = loc.indexOf('_');
+        if (pos == -1)
+            {
+                Locale.setDefault(new Locale(loc));
+            }
+        else
+            {
+                String lang = loc.substring(0, pos - 1);
+                String country = loc.substring(pos + 1);
+                Locale.setDefault(new Locale(lang, country));
+            }
+    }
+
+    public String getLocale(String cat)
+    {
+        return Locale.getDefault().toString();
+    }
+
 
 
     public UVar a = new UVar(), b = new UVar(), c = new UVar(), d = new UVar();

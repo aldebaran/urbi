@@ -40,6 +40,8 @@ This chapter lists the user-visible changes in \usdk releases.
 \item Avoid unexpected execution of code caused by
   \refSlot[Barrier]{signal} (or \refSlot[Barrier]{signalAll}) and a stop
   of the code waiting on the barrier.
+\item Be independent of changes of locale settings (such as input/output
+  format for floats) in \Cxx user code.
 \end{itemize}
 
 \subsection{Changes}
@@ -57,7 +59,7 @@ This chapter lists the user-visible changes in \usdk releases.
 
 \item \refSlot[InputStream]{get} (and \refSlot[InputStream]{getChar},
   \refSlot[InputStream]{getLine}) now returns \refObject{nil} instead of
-  \refObject{void} when it reached the end of file.  To provide backward
+  \refObject{void} when it reaches the end of file.  To provide backward
   compatibility with previous code such as:
 \begin{urbiunchecked}
 var i = InputStream.new(File.new("file.txt"))|;
@@ -86,9 +88,13 @@ i.close;
 "foobar"[-1] == "r";    "foobar"[-6, -3] == "foo";
 \end{urbiassert}
 
+\item \refSlot[System]{getLocale} and \refSlot[System]{getLocale} allow to
+  change the locale settings.
+
 \item The \lstinline|timeout| construct now features optional
   \lstinline|catch|, \lstinline|else|, and \lstinline|finally| clauses,
-  modeled after the syntax of \lstinline|try|-blocks.
+  modeled after the syntax of \lstinline|try|-blocks.  See
+  \autoref{sec:lang:timeout}.
 \begin{urbiscript}
 function testTimeOut(var duration)
 {
@@ -116,10 +122,10 @@ testTimeOut(2s);
 \item \refObject{Vector} and \refObject{Matrix} provide support for
   efficient linear algebra operations.
 
-\item \lstinline|USound| and \lstinline|UImage| now gets properly
-  initialized to empty sound/image.
-
+\item The \Cxx classes \lstinline|USound| and \lstinline|UImage| now
+  properly initialize their instances to empty sound/image.
 \end{itemize}
+
 
 \section{\usdk 2.7.1}
 \release{2.7}{2011-03-17}

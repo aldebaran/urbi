@@ -147,17 +147,10 @@ public:
     UBindFunction(all, readProps);
     UBindFunction(all, writeProps);
 
-    UBindFunction(all, writeD);
-    UBindFunction(all, writeS);
-    UBindFunction(all, writeL);
-    UBindFunction(all, writeM); // M for Map
-    UBindFunction(all, writeB);
-    UBindFunction(all, makeCall);
-    UBindFunction(all, writeBNone);
-    UBindFunction(all, writeI);
-    UBindFunction(all, writeSnd);
-    UBindFunction(all, writeRI);
-    UBindFunction(all, writeRSnd);
+    UBindFunctions
+      (all, writeD, writeS, writeL, writeM,
+       writeB, makeCall, writeBNone, writeI, writeSnd,
+       writeRI, writeRSnd);
 
     UBindFunctions
       (all,

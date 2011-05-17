@@ -491,7 +491,7 @@ getLocale("LC_NUMERIC") == "C";
 
 // Windows does not under the "fr_FR" locale, it supports "French"
 // which actually denotes "French_France.1252".
-var fr_FR = 
+var fr_FR =
   { if (System.Platform.isWindows) "French_France.1252" else "fr_FR" };
 // Changing one via the environment does not affect the others.
 setenv("LC_CTYPE", fr_FR) == fr_FR;
