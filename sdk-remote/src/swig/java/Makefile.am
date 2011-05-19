@@ -45,13 +45,14 @@ java_package = urbi
 
 # Pass CPPFLAGS to get things like -I/opt/local/include.  Don't use
 # -Wall, which is -Wextra + "ignore warning disabling".
-SWIGFLAGS =					\
-  -c++ -java -Wextra				\
-  -outdir $(java_src_outdir)			\
-  $(subst -isystem ,-I,$(CPPFLAGS))		\
-  $(LIBPORT_CPPFLAGS)				\
-  -I$(sdk_remote_srcdir)/src/liburbi/uobject	\
-  -I$(sdk_remote_srcdir)/include		\
+SWIGFLAGS =                                     \
+  -c++ -java -Wextra                            \
+  -outdir $(java_src_outdir)                    \
+  -MD -MF "$(DEPDIR)/$*.Tcc"                    \
+  $(subst -isystem ,-I,$(CPPFLAGS))             \
+  $(LIBPORT_CPPFLAGS)                           \
+  -I$(sdk_remote_srcdir)/src/liburbi/uobject    \
+  -I$(sdk_remote_srcdir)/include                \
   -package $(java_package)
 
 if APPLE
@@ -66,8 +67,14 @@ endif
 	$(AM_V_GEN)rm -rf $(java_src_outdir)
 	$(AM_V_at)$(mkdir_p) $(java_src_outdir)
 	$(AM_V_at)test -n "$(SWIG)" || { echo "SWIG not defined"; exit 1; }
-	$(AM_V_at)$(SWIG) $(SWIGFLAGS) -o $@.tmp $<
-	$(AM_V_at)mv $@.tmp $@
+	$(AM_V_at)\
+	if $(SWIG) $(SWIGFLAGS) -o $@.tmp $<; then		\
+	  mv -f "$(DEPDIR)/$*.Tcc" "$(DEPDIR)/$*.Pcc";		\
+	  mv $@.tmp $@;						\
+	else							\
+	  rm -f "$(DEPDIR)/tiger_misc-wrap.Tcc"; exit 1;	\
+	fi
+-include $(DEPSDIR)/java.Pcc
 
 
 BUILT_SOURCES += java.cc java.cc.h
