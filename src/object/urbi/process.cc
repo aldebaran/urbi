@@ -62,8 +62,7 @@ namespace urbi
       LIBPORT_USE(res);
       assert_gt(res, 0);
       {
-        libport::Synchronizer::SynchroPoint
-          lock(kernel::server().big_kernel_lock_get());
+        KERNEL_BLOCK_LOCK();
         owner->status_ = status;
         foreach (runner::Job* job, owner->joiners_)
           // FIXME: Is there a risk we cancel a double freeze?

@@ -321,14 +321,32 @@ namespace kernel
     /// Dead jobs from last sched cycle.
     sched::jobs_type dead_jobs_;
 
-    ///
+    /// Used by the threads for Process and Directory events.
     ATTRIBUTE_RX(libport::Synchronizer, big_kernel_lock);
   };
 
 }
 
-// Disable debug traces until we find a better means to do it.
-# define DEBUG(Msg) ((void) 0)
+// When protected by the big kernel lock, we are allowed to play with
+// the allocated memory.  Protect ourselves from the inner assertion
+// than requires that we are in the right thread.
+#if defined NDEBUG
+# define KERNEL_PACIFY_ALLOCATOR()              \
+  LIBPORT_NOP
+#else
+# define KERNEL_PACIFY_ALLOCATOR()                                      \
+  pthread_t previousAllocatorThread = Object::thread;                   \
+  Object::thread = pthread_self();                                      \
+  FINALLY(((pthread_t, previousAllocatorThread)),                       \
+          Object::thread = previousAllocatorThread;                     \
+    )
+#endif
+
+// Require the big kernel lock, and pacify the allocator.
+# define KERNEL_BLOCK_LOCK()                                          \
+  libport::Synchronizer::SynchroPoint                                 \
+  lock(kernel::server().big_kernel_lock_get());                       \
+  KERNEL_PACIFY_ALLOCATOR()
 
 # include <kernel/userver.hxx>
 
