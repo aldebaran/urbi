@@ -319,14 +319,16 @@ namespace kernel
     /// Dead jobs from last sched cycle.
     sched::jobs_type dead_jobs_;
 
-    ///
+    /// Used by the threads for Process and Directory events.
     ATTRIBUTE_RX(libport::Synchronizer, big_kernel_lock);
   };
 
 }
 
-// Disable debug traces until we find a better means to do it.
-# define DEBUG(Msg) ((void) 0)
+// Require the big kernel lock, and pacify the allocator.
+# define KERNEL_BLOCK_LOCK()                                          \
+  libport::Synchronizer::SynchroPoint                                 \
+  lock(kernel::server().big_kernel_lock_get())
 
 # include <kernel/userver.hxx>
 
