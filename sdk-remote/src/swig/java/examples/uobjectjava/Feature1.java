@@ -142,4 +142,3 @@ public class Feature1 extends UObject
         send ("Lobby.systemLobby.send (\"" + str +  "\");");
     }
 }
-

@@ -175,16 +175,20 @@ namespace urbi
 // http://sourceforge.net/tracker/?func=detail&aid=3299307&group_id=1645&atid=101645
 # if defined SWIG
     // UFloats.
+    DECLARE(ufloat);
     DECLARE(long);
     DECLARE(unsigned long);
 
     // Strings.
     DECLARE(const void*);
+    DECLARE(const std::string&);
 
     // Others.
+    DECLARE(const UBinary&);
     DECLARE(const UDictionary&);
-    DECLARE(const USound&);
     DECLARE(const UImage&);
+    DECLARE(const UList&);
+    DECLARE(const USound&);
 # else // !SWIG
     LIBPORT_LIST_APPLY(DECLARE, URBI_NUMERIC_TYPES)
     LIBPORT_LIST_APPLY(DECLARE, URBI_STRING_TYPES)
@@ -198,19 +202,21 @@ namespace urbi
 
 # if defined SWIG
     // SWIG does not support int/long overloading.
-    // operator int() const;
-    // operator unsigned int() const;
-    operator long() const;
-    operator unsigned long() const;
+    // DECLARE(int);
+    // DECLARE(unsigned int);
+    DECLARE(long);
+    DECLARE(unsigned long);
+    // promote doubleValue instead.
+    DECLARE(ufloat);
 # else // !SWIG
     LIBPORT_LIST_APPLY(DECLARE, URBI_NUMERIC_TYPES)
 # endif
-# undef DECLARE
 
 #ifdef DOXYGEN
     // Doxygens needs a prototype for ufloat.
-    operator ufloat() const;
+    DECLARE(ufloat);
 #endif
+# undef DECLARE
 
     operator std::string() const;
     operator bool() const;

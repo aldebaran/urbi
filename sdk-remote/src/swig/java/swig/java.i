@@ -610,7 +610,7 @@ namespace urbi
   %ignore UValue::parse;
   %ignore UValue::print;
   %ignore UValue::copy;
-
+  %ignore UValue::operator ufloat;
   %rename("setValue") UValue::set;
 
   %extend UValue
