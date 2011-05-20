@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -96,30 +96,30 @@ protected:
 };
 
 // Convert simple types that only need casting
-# define CAST_CONVERTER(name, type, precast)   			\
-  class name##Converter : public Converter			\
+# define CAST_CONVERTER(Name, Type, Precast)			\
+  class Name##Converter : public Converter			\
   {								\
   protected:							\
     jvalue convert_ (JNIEnv* env, const urbi::UValue& val)	\
     {								\
-      const type& v = (type)(precast)val;			\
+      const Type& v = (Type)(Precast)val;			\
       return *(jvalue*)&v;					\
     }								\
   };
 
 // Convert object that needs allocation on a java object using NewObject
 // and java constructor
-# define OBJECT_CONVERTER(name,						\
-                          type,						\
-                          javaname,					\
-		          method_name,					\
-		          method_args)					\
-  class name##Converter : public ObjectConverter			\
+# define OBJECT_CONVERTER(Name,						\
+                          Type,						\
+                          JavaName,					\
+		          MethodName,					\
+		          MethodArgs)					\
+  class Name##Converter : public ObjectConverter			\
   {									\
     typedef ObjectConverter super;					\
 									\
   public:								\
-    name##Converter () : allocated(0) {}				\
+    Name##Converter () : allocated(0) {}				\
 									\
   protected:								\
     jvalue convert_ (JNIEnv* env, const urbi::UValue& val)		\
@@ -127,13 +127,13 @@ protected:
       jobject jobj = env->NewObject(cls, mid,				\
 				    (jlong) alloc(val),			\
 				    false);				\
-      allocationCheck(jobj, #name);					\
+      allocationCheck(jobj, #Name);					\
       return *(jvalue*)&jobj;						\
     }									\
 									\
-    virtual type* alloc(const urbi::UValue& val)			\
+    virtual Type* alloc(const urbi::UValue& val)			\
     {									\
-      return (type*)(allocated = new type((const type&)val));		\
+      return (Type*)(allocated = new Type((const Type&)val));		\
     }									\
 									\
     virtual void destroy_(JNIEnv* env, jvalue jval)			\
@@ -260,12 +260,12 @@ protected:
   }
 };
 
-#define DECLARE_STATIC_ATTR_(name)		\
-  jclass name##Converter::cls = 0;		\
-  jmethodID name##Converter::mid = 0;
+#define DECLARE_STATIC_ATTR_(Name)		\
+  jclass Name##Converter::cls = 0;		\
+  jmethodID Name##Converter::mid = 0;
 
-#define STATIC_ATTR_INIT_(name, env)		\
-  name##Converter::init(env);
+#define STATIC_ATTR_INIT_(Name, Env)		\
+  Name##Converter::init(Env);
 
 /// To be inserted in a .cc file
 #define DECLARE_CONVERTERS_STATIC_ATTRS		\
@@ -275,7 +275,7 @@ protected:
   DECLARE_STATIC_ATTR_(UList);			\
   DECLARE_STATIC_ATTR_(USound);			\
   DECLARE_STATIC_ATTR_(UValue);			\
-  DECLARE_STATIC_ATTR_(UVarBase);      		\
+  DECLARE_STATIC_ATTR_(UVarBase);		\
   DECLARE_STATIC_ATTR_(Boolean);		\
   DECLARE_STATIC_ATTR_(Byte);			\
   DECLARE_STATIC_ATTR_(Character);		\
@@ -292,7 +292,7 @@ protected:
   STATIC_ATTR_INIT_(UList, env);		\
   STATIC_ATTR_INIT_(USound, env);		\
   STATIC_ATTR_INIT_(UValue, env);		\
-  STATIC_ATTR_INIT_(UVarBase, env);    		\
+  STATIC_ATTR_INIT_(UVarBase, env);		\
   STATIC_ATTR_INIT_(Boolean, env);		\
   STATIC_ATTR_INIT_(Byte, env);			\
   STATIC_ATTR_INIT_(Character, env);		\

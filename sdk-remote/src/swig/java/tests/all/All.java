@@ -9,8 +9,9 @@
  */
 package tests.all;
 
+import java.util.Locale;
+import java.util.Map;
 import urbi.Log;
-import urbi.UObject;
 import urbi.UBinary;
 import urbi.UBinaryType;
 import urbi.UDataType;
@@ -19,6 +20,7 @@ import urbi.UEvent;
 import urbi.UImage;
 import urbi.UImageFormat;
 import urbi.UList;
+import urbi.UObject;
 import urbi.UProperty;
 import urbi.USound;
 import urbi.USoundFormat;
@@ -26,8 +28,6 @@ import urbi.USoundSampleFormat;
 import urbi.UValue;
 import urbi.UValueVector;
 import urbi.UVar;
-import java.util.Map;
-import java.util.Locale;
 
 // TODO:
 // - changer les getters
@@ -788,22 +788,22 @@ public class All extends UObject
     public UVar[] vars = new UVar[4];
     public UEvent ev = new UEvent();
 
-    //name of var that trigerred notifyChange
+    // Name of var that trigerred notifyChange.
     public UVar lastChange = new UVar();
-    //value read on said var
+    // Value read on said var.
     public UVar lastChangeVal = new UVar();
-    //name of var that triggered notifyAccess
+    // Name of var that triggered notifyAccess.
     public UVar lastAccess = new UVar();
-    //value written to said var
+    // Value written to said var.
     public UVar lastAccessVal = new UVar();
-    //Set to 0 in ctor, 1 in init
+    // Set to 0 in ctor, 1 in init.
     public UVar initCalled = new UVar();
 
-    // Periodic write target (0, 1 or 2 for a, b or c)
+    // Periodic write target (0, 1 or 2 for a, b or c).
     public UVar periodicWriteTarget = new UVar();
-    // Write rate (seconds)
+    // Write rate (seconds).
     public UVar periodicWriteRate = new UVar();
-    // Write data type
+    // Write data type.
     public UVar periodicWriteType = new UVar();
 
     // If an UVar with the name in removeNotify reaches a callback,

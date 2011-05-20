@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -151,11 +151,12 @@ struct MethodIdAndUrbiName
   std::string	urbi_method_name;
 };
 
-static MethodIdAndUrbiName getMethodIdAndUrbiName (JNIEnv *env,
-						   jobject obj,
-						   jstring obj_name,
-						   jstring method_name,
-						   jstring method_signature)
+static MethodIdAndUrbiName
+getMethodIdAndUrbiName(JNIEnv *env,
+                       jobject obj,
+                       jstring obj_name,
+                       jstring method_name,
+                       jstring method_signature)
 {
   MethodIdAndUrbiName res;
   res.java_mid = 0;
@@ -191,18 +192,19 @@ static MethodIdAndUrbiName getMethodIdAndUrbiName (JNIEnv *env,
 }
 
 
-void registerNotify (JNIEnv *env,
-		     jobject obj,
-		     jlong var, // can contains NULL UVar (in case name is given)
-		     jstring var_name,
-		     jboolean is_owned,
-		     jstring obj_name,
-		     jstring method_name,
-		     jstring method_signature,
-		     jstring return_type,
-		     jint arg_nb,
-		     const char *notify_type,
-		     jobjectArray types)
+void
+registerNotify(JNIEnv *env,
+               jobject obj,
+               jlong var, // can contains NULL UVar (in case name is given)
+               jstring var_name,
+               jboolean is_owned,
+               jstring obj_name,
+               jstring method_name,
+               jstring method_signature,
+               jstring return_type,
+               jint arg_nb,
+               const char *notify_type,
+               jobjectArray types)
 {
   /// First, assure that the JNI variables used by the caller are correctly
   /// set. If the are not and we can't set them, return.
@@ -277,15 +279,15 @@ void registerNotify (JNIEnv *env,
 
 JNIEXPORT void JNICALL
 Java_urbi_UObject_registerNotifyChange(JNIEnv *env,
-					   jobject obj,
-					   jlong var,
-					   jstring var_name,
-					   jboolean is_owned,
-					   jstring obj_name,
-					   jstring method_name,
-					   jstring method_signature,
+                                       jobject obj,
+                                       jlong var,
+                                       jstring var_name,
+                                       jboolean is_owned,
+                                       jstring obj_name,
+                                       jstring method_name,
+                                       jstring method_signature,
 				       jstring return_type,
-					   jint arg_nb,
+                                       jint arg_nb,
 				       jobjectArray types)
 {
   registerNotify (env, obj, var, var_name, is_owned, obj_name,
@@ -294,15 +296,15 @@ Java_urbi_UObject_registerNotifyChange(JNIEnv *env,
 
 JNIEXPORT void JNICALL
 Java_urbi_UObject_registerNotifyOnRequest(JNIEnv *env,
-					      jobject obj,
-					      jlong var,
-					      jstring var_name,
-					      jboolean is_owned,
-					      jstring obj_name,
-					      jstring method_name,
-					      jstring method_signature,
-				       jstring return_type,
-					      jint arg_nb,
+                                          jobject obj,
+                                          jlong var,
+                                          jstring var_name,
+                                          jboolean is_owned,
+                                          jstring obj_name,
+                                          jstring method_name,
+                                          jstring method_signature,
+                                          jstring return_type,
+                                          jint arg_nb,
 					  jobjectArray types)
 {
   registerNotify (env, obj, var, var_name, is_owned, obj_name,
@@ -313,12 +315,12 @@ Java_urbi_UObject_registerNotifyOnRequest(JNIEnv *env,
 
 JNIEXPORT void JNICALL
 Java_urbi_UObject_registerFunction(JNIEnv *env,
-				       jobject,
-				       jobject obj,
-				       jstring obj_name,
-				       jstring method_name,
-				       jstring method_signature,
-				       jstring return_type,
+                                   jobject,
+                                   jobject obj,
+                                   jstring obj_name,
+                                   jstring method_name,
+                                   jstring method_signature,
+                                   jstring return_type,
 				   jint arg_nb,
 				   jobjectArray types)
 {
@@ -369,14 +371,14 @@ Java_urbi_UObject_registerFunction(JNIEnv *env,
 
 JNIEXPORT jstring JNICALL
 Java_urbi_UObject_registerTimerFunction(JNIEnv *env,
-					    jobject,
-					    jobject obj,
-					    jstring obj_name,
-					    jdouble period,
-					    jstring method_name,
-					    jstring method_signature,
-					    jstring return_type,
-					    jint arg_nb)
+                                        jobject,
+                                        jobject obj,
+                                        jstring obj_name,
+                                        jdouble period,
+                                        jstring method_name,
+                                        jstring method_signature,
+                                        jstring return_type,
+                                        jint arg_nb)
 {
   /// First, assure that the JNI variables used by the caller are correctly
   /// set. If the are not and we can't set them, return.
@@ -401,11 +403,12 @@ Java_urbi_UObject_registerTimerFunction(JNIEnv *env,
   {
     case 0:
       urbi::TimerHandle th =
-	(new urbi::UTimerCallbackobj<CallbacksCaller> (obj_name_,
-						       (double) period,
-						       f,
-						       boost::bind(&CallbacksCaller::callNotifyChangeInt_0, f),
-						       urbi::getCurrentContext()))->handle_get();
+	(new urbi::UTimerCallbackobj<CallbacksCaller>
+         (obj_name_,
+          (double) period,
+          f,
+          boost::bind(&CallbacksCaller::callNotifyChangeInt_0, f),
+          urbi::getCurrentContext()))->handle_get();
       res = *th;
       break;
   }
