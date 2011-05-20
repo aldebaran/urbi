@@ -205,12 +205,13 @@ CallbacksCaller::getUVarFromObject(jobject obj)
     return 0;
 }
 
+// For non pointer types.
 #define DEFINE(Type, Where)                                             \
   urbi::Type                                                            \
   CallbacksCaller::get ## Type ##FromObject(jobject obj)                \
   {                                                                     \
     if (obj)                                                            \
-      /* Java alocated memory, prefer allocate mine. */                 \
+      /* Java allocated memory, prefer allocate mine. */                \
       if (jlong ptr = env_->GetLongField(obj, Where ## _swigptr_id))    \
         return *(urbi::Type*) ptr;                                      \
     return urbi::Type();                                                \

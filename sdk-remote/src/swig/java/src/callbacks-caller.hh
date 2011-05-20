@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -90,8 +90,8 @@ private:
 
 public:
 
-  /// Private conversion functions. These function are used to convert from
-  /// Java object(jobject) to C++ real object type.
+  /// Private conversion functions. These functions are used to
+  /// convert from Java object(jobject) to C++ real object type.
   urbi::UValue getUValueFromObject(jobject obj);
   urbi::UBinary getUBinaryFromObject(jobject obj);
   urbi::UImage getUImageFromObject(jobject obj);
