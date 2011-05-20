@@ -322,7 +322,10 @@ namespace urbi
                         bool hook)
     {
       // The updated slot.
-      Slot& s = slot_get(k);
+      location_type r = slot_locate(k, true);
+       if (!r.first)
+        runner::raise_lookup_error(k, const_cast<Object*>(this));
+      Slot& s = *r.second;
       // Value to write to the slot.
       rObject v = o;
 
@@ -353,7 +356,7 @@ namespace urbi
         runner::raise_const_error();
 
       // If return-value of hook is not void, write it to slot.
-      if (slot_locate(k).first == this)
+      if (r.first == this)
       {
         if (runner::Job* r = ::kernel::urbiserver->getCurrentRunnerOpt())
         {
