@@ -313,18 +313,13 @@ Java_urbi_UObject_registerFunction(JNIEnv *env,
     env->ReleaseStringUTFChars(jstr, type_);
   }
   urbi::UObject* uob = CallbacksCaller::getUObjectFromObject(obj, env);
-  if (!uob)
+  if (!uob
+      || !createFunctionCallback (env, uob, f, obj_name_,
+                                  miaun.urbi_method_name, return_type_, arg_nb))
   {
     delete f;
     env->DeleteGlobalRef (obj);
   }
-  else
-    if (!createFunctionCallback (env, uob, f, obj_name_,
-				 miaun.urbi_method_name, return_type_, arg_nb))
-    {
-      delete f;
-      env->DeleteGlobalRef (obj);
-    }
 
   env->ReleaseStringUTFChars(obj_name, obj_name_);
   env->ReleaseStringUTFChars(return_type, return_type_);
@@ -361,18 +356,17 @@ Java_urbi_UObject_registerTimerFunction(JNIEnv *env,
   const char* obj_name_ = env->GetStringUTFChars(obj_name, 0);
 
   std::string res = "";
-  switch ((int) arg_nb)
+  if ((int) arg_nb == 0)
   {
-    case 0:
-      urbi::TimerHandle th =
-	(new urbi::UTimerCallbackobj<CallbacksCaller>
-         (obj_name_,
-          (double) period,
-          f,
-          boost::bind(&CallbacksCaller::callNotifyChangeInt_0, f),
-          urbi::getCurrentContext()))->handle_get();
-      res = *th;
-      break;
+    urbi::TimerHandle th =
+      (new urbi::UTimerCallbackobj<CallbacksCaller>
+       (obj_name_,
+        (double) period,
+        f,
+        boost::bind(&CallbacksCaller::callNotifyChangeInt_0, f),
+        urbi::getCurrentContext()))
+      ->handle_get();
+    res = *th;
   }
   env->ReleaseStringUTFChars(obj_name, obj_name_);
   env->ReleaseStringUTFChars(return_type, return_type_);
