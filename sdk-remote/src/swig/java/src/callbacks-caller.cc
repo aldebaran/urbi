@@ -205,95 +205,24 @@ CallbacksCaller::getUVarFromObject(jobject obj)
     return 0;
 }
 
-urbi::UValue
-CallbacksCaller::getUValueFromObject(jobject obj)
-{
-  if (obj)
-  {
-    jlong ptr = env_->GetLongField(obj, uvalue_swigptr_id);
-    if (ptr)  /// Java alocated memory, prefer allocate mine
-      return *(urbi::UValue*) ptr;
-    else
-      return urbi::UValue();
+#define DEFINE(Type, Where)                                             \
+  urbi::Type                                                            \
+  CallbacksCaller::get ## Type ##FromObject(jobject obj)                \
+  {                                                                     \
+    if (obj)                                                            \
+      /* Java alocated memory, prefer allocate mine. */                 \
+      if (jlong ptr = env_->GetLongField(obj, Where ## _swigptr_id))    \
+        return *(urbi::Type*) ptr;                                      \
+    return urbi::Type();                                                \
   }
-  else
-    return urbi::UValue();
-}
 
-urbi::UDictionary
-CallbacksCaller::getUDictionaryFromObject(jobject obj)
-{
-  if (obj)
-  {
-    jlong ptr = env_->GetLongField(obj, udictionary_swigptr_id);
-    if (ptr)  /// Java alocated memory, prefer allocate mine
-      return *(urbi::UDictionary*) ptr;
-    else
-      return urbi::UDictionary();
-  }
-  else
-    return urbi::UDictionary();
-}
-
-urbi::UBinary
-CallbacksCaller::getUBinaryFromObject(jobject obj)
-{
-  if (obj)
-  {
-    jlong ptr = env_->GetLongField(obj, ubinary_swigptr_id);
-    if (ptr)  /// Java alocated memory, prefer allocate mine
-      return *(urbi::UBinary*) ptr;
-    else
-      return urbi::UBinary();
-  }
-  else
-    return urbi::UBinary();
-}
-
-urbi::UImage
-CallbacksCaller::getUImageFromObject(jobject obj)
-{
-  if (obj)
-  {
-    jlong ptr = env_->GetLongField(obj, uimage_swigptr_id);
-    if (ptr)  /// Java alocated memory, prefer allocate mine
-      return *(urbi::UImage*) ptr;
-    else
-      return urbi::UImage();
-  }
-  else
-    return urbi::UImage();
-}
-
-urbi::USound
-CallbacksCaller::getUSoundFromObject(jobject obj)
-{
-  if (obj)
-  {
-    jlong ptr = env_->GetLongField(obj, usound_swigptr_id);
-    if (ptr)  /// Java alocated memory, prefer allocate mine
-      return *(urbi::USound*) ptr;
-    else
-      return urbi::USound();
-  }
-  else
-    return urbi::USound();
-}
-
-urbi::UList
-CallbacksCaller::getUListFromObject(jobject obj)
-{
-  if (obj)
-  {
-    jlong ptr = env_->GetLongField(obj, ulist_swigptr_id);
-    if (ptr)  /// Java alocated memory, prefer allocate mine
-      return *(urbi::UList*) ptr;
-    else
-      return urbi::UList();
-  }
-  else
-    return urbi::UList();
-}
+DEFINE(UBinary, ubinary);
+DEFINE(UDictionary, udictionary);
+DEFINE(UImage, uimage);
+DEFINE(UList, ulist);
+DEFINE(USound, usound);
+DEFINE(UValue, uvalue);
+#undef DEFINE
 
 std::string
 CallbacksCaller::getStringFromJString(jstring obj)
