@@ -16,75 +16,46 @@ Converter*
 Converter::instance(const std::string& type_name,
 		    bool is_notify_change_arg)
 {
-  if (type_name.length() > 10)
+#define CASE(Name, Type)                       \
+  if (type_name == Name)                       \
+    return new Type ## Converter()
+
+  if (type_name.length() <= 10)
   {
-    if (type_name[6] == 'u')
-    {
-      if (type_name == "class urbi.UValue")
-	return new UValueConverter();
-      else if (type_name == "class urbi.UVar")
-      {
-	if (is_notify_change_arg)
-	  return new UVarNotifyConverter();
-	else
-	  return new UVarConverter();
-      }
-      else if (type_name == "class urbi.UList")
-	return new UListConverter();
-      else if (type_name == "class urbi.UBinary")
-	return new UBinaryConverter();
-      else if (type_name == "class urbi.UImage")
-	return new UImageConverter();
-      else if (type_name == "class urbi.USound")
-	return new USoundConverter();
-      else if (type_name == "class urbi.UDictionary")
-	return new UDictionaryConverter();
-      else
-	FRAISE("type %s not supported", type_name);
-    }
-    else
-    {
-      if (type_name == "class java.lang.String")
-	return new StringConverter();
-      else if (type_name == "class java.lang.Integer")
-	return new IntegerConverter();
-      else if (type_name == "class java.lang.Boolean")
-	return new BooleanConverter();
-      else if (type_name == "class java.lang.Double")
-	return new DoubleConverter();
-      else if (type_name == "class java.lang.Float")
-	return new FloatConverter();
-      else if (type_name == "class java.lang.Long")
-	return new LongConverter();
-      else if (type_name == "class java.lang.Short")
-	return new ShortConverter();
-      else if (type_name == "class java.lang.Character")
-	return new CharacterConverter();
-      else if (type_name == "class java.lang.Byte")
-	return new ByteConverter();
-      else
-	FRAISE("type %s not supported", type_name);
-    }
+    CASE("boolean", boolean);
+    CASE("byte", byte);
+    CASE("char", char);
+    CASE("double", double);
+    CASE("float", float);
+    CASE("int", int);
+    CASE("long", long);
+    CASE("short", short);
+  }
+  else if (type_name[6] == 'u')
+  {
+    if (type_name == "class urbi.UVar")
+      return (is_notify_change_arg
+              ? new UVarNotifyConverter()
+              : new UVarConverter());
+    CASE("class urbi.UBinary", UBinary);
+    CASE("class urbi.UDictionary", UDictionary);
+    CASE("class urbi.UImage", UImage);
+    CASE("class urbi.UList", UList);
+    CASE("class urbi.USound", USound);
+    CASE("class urbi.UValue", UValue);
   }
   else
   {
-    if (type_name == "int")
-      return new intConverter();
-    else if (type_name == "boolean")
-      return new booleanConverter();
-    else if (type_name == "byte")
-      return new byteConverter();
-    else if (type_name == "char")
-      return new charConverter();
-    else if (type_name == "short")
-      return new shortConverter();
-    else if (type_name == "long")
-      return new longConverter();
-    else if (type_name == "float")
-      return new floatConverter();
-    else if (type_name == "double")
-      return new doubleConverter();
-    else
-      FRAISE("type %s not supported", type_name);
+    CASE("class java.lang.Boolean", Boolean);
+    CASE("class java.lang.Byte", Byte);
+    CASE("class java.lang.Character", Character);
+    CASE("class java.lang.Double", Double);
+    CASE("class java.lang.Float", Float);
+    CASE("class java.lang.Integer", Integer);
+    CASE("class java.lang.Long", Long);
+    CASE("class java.lang.Short", Short);
+    CASE("class java.lang.String", String);
   }
+#undef CASE
+  FRAISE("type %s not supported", type_name);
 }
