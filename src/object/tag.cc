@@ -191,7 +191,7 @@ namespace urbi
     tag_event(Tag* owner, libport::Symbol field)
     {
       if (owner->local_slot_get(field))
-        return owner->slot_get(field);
+        return owner->slot_get_value(field);
 
       CAPTURE_GLOBAL(Event);
       rObject evt = Event->call(SYMBOL(new));

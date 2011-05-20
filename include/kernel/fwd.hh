@@ -27,12 +27,21 @@ namespace ast
   typedef libport::intrusive_ptr<Nary> rNary;
 }
 
+namespace runner
+{
+  class Job;
+
+  class Shell;
+  typedef libport::intrusive_ptr<Shell> rShell;
+}
+
 namespace kernel
 {
   class UConnection;
   class UGhostConnection;
   class UServer;
   class ConnectionSet;
+  runner::Job& runner();
 }
 
 namespace urbi
@@ -58,14 +67,6 @@ namespace urbi
 namespace parser
 {
   class UParser;
-}
-
-namespace runner
-{
-  class Job;
-
-  class Shell;
-  typedef libport::intrusive_ptr<Shell> rShell;
 }
 
 namespace sched

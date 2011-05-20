@@ -43,7 +43,7 @@ namespace urbi
         GD_FABORT("CAPTURE_ from CAPTURE_: %s.", name);
 
       LIBPORT_SCOPE_SET(capturing, true);
-      return from->slot_get(name);
+      return from->slot_get_value(name);
     }
   }; // namespace object
 }

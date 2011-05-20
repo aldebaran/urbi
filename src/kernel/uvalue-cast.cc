@@ -159,7 +159,8 @@ object_cast(const urbi::UValue& v)
       break;
 
     case urbi::DATA_SLOTNAME:
-      return object::global_class->slot_get(libport::Symbol(*v.stringValue));
+      return
+        object::global_class->slot_get_value(libport::Symbol(*v.stringValue));
       break;
 
     case urbi::DATA_LIST:

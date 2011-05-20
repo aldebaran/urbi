@@ -103,7 +103,7 @@ do (Object)
 
   function overrideSlot(var slot, var value)
   {
-    copySlot(slot, slot + "$old")|
+    setSlot(slot+"$old", getSlot(slot))|
     setProperty(slot, "constant", false)|
     updateSlot(slot, value)|
     setProperty(slot, "constant", true)|

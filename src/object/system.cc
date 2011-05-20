@@ -218,7 +218,7 @@ namespace urbi
     }
 
     static List::value_type
-    system_searchPath()
+    system_searchPath(const rObject&)
     {
       List::value_type res;
       foreach (const libport::path& p,
@@ -780,9 +780,8 @@ namespace urbi
 
       system_class->bind(SYMBOL(sleep), &system_sleep);
       system_class->bind(SYMBOL(sleep), &system_sleep_inf);
-
       system_class->bind(SYMBOL(searchPath), &system_searchPath,
-                         SYMBOL(searchPathSet), &system_searchPathSet);
+                         &system_searchPathSet);
 
 #define DECLARE(Name, Ret, ...)                                         \
       system_class->bind                                                \

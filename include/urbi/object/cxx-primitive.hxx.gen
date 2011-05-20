@@ -194,18 +194,6 @@ namespace urbi
       self->call(name, value);
     }
 
-    template <typename F1, typename F2>
-    inline void
-    Object::bind(const std::string& getter_name, F1 getter,
-                 const std::string& setter_name, F2 setter)
-    {
-      slot_set(libport::Symbol(getter_name), primitive(getter));
-      slot_set(libport::Symbol(setter_name), primitive(setter));
-      boost::function3<void, rObject, const std::string&, rObject>
-        f(boost::bind(&setter_bouncer, _1, _2, _3, setter_name));
-      setProperty(getter_name, "updateHook", primitive(f));
-    }
-
     template <typename Return, typename Self>
     struct bind_variadic_bouncer
     {

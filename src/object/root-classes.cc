@@ -165,10 +165,10 @@ namespace urbi
 
       // Object is a special case: it is not built as a clone of itself.
       Object::proto = new Object();
-
+      void_class = Object::proto->clone();
       // Slot
-      Slot::proto = new Object;
-      Slot::proto->proto_add(Object::proto);
+      //Slot::proto = new Object;
+      //Slot::proto->proto_add(Object::proto);
 
       // These guys are used in the property system, we need them
       // early.  But completing their initialization requires String
@@ -183,7 +183,6 @@ namespace urbi
       // Run the initialization hook that where setup at static build
       // time.
       object::initializations_run();
-      Slot::proto->setSlot(SYMBOL(type), to_urbi(std::string("Slot")));
 
       // The other primitives.  Because primitive initialization depend
       // a lot on one another (e.g., String is used everywhere for slot
@@ -202,9 +201,9 @@ namespace urbi
       EXISTING_CLASS_SETUP(true_class, true);
       EXISTING_CLASS_SETUP(false_class, false);
 
+      EXISTING_CLASS_SETUP(void_class, void);
       CLASS_SETUP(nil_class, nil);
       CLASS_SETUP(system_class, System);
-      CLASS_SETUP(void_class, void);
 
       ANONYMOUS_CLASS_SETUP(accepted_void_class, acceptedVoid);
 

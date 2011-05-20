@@ -12,6 +12,7 @@
 # define OBJECT_SLOT_HXX
 
 # include <eval/fwd.hh>
+# include <urbi/object/slot.hh>
 # include <urbi/object/cxx-conversions.hh>
 # include <urbi/runner/raise.hh>
 
@@ -23,30 +24,42 @@ namespace urbi
     Slot::Slot()
       : constant_(false)
       , value_(object::void_class)
-      , properties_(0)
     {
+      if (!proto)
+        proto = new Slot(FirstPrototypeFlag());
       proto_add(proto);
     }
 
     inline
     Slot::Slot(const Slot& model)
-      : Object()
-      , constant_(false)
-      , value_(0)
-      , properties_(model.properties_
-                    ? new properties_type(*model.properties_) : 0)
+      : CxxObject()
+      , constant_(model.constant_)
+      , value_(model.value_)
     {
-      proto_add(proto);
-      set(model.value_);
+      aver(&model);
+      proto_add(rSlot(const_cast<Slot*>(&model)));
+      if (model.set_)
+        set_ = model.set_->call(SYMBOL(new));
+      if (model.get_)
+        get_ = model.get_->call(SYMBOL(new));
+      if (model.oset_)
+        oset_ = model.oset_->call(SYMBOL(new));
+      if (model.oget_)
+        oget_ = model.oget_->call(SYMBOL(new));
+      //NM: I don't think calling the setter is a good idea here
+      // Main usage for this function is the COW that will call
+      // the setter immediately after. So calling it with an outdated value
+      // seems bad.
     }
 
     template <typename T>
     inline
     Slot::Slot(const T& value)
       : constant_(false)
-      , value_(0)
-      , properties_(0)
+      , value_(void_class)
     {
+      if (!proto)
+        proto = new Slot(FirstPrototypeFlag());
       proto_add(proto);
       set(value);
     }
@@ -54,22 +67,28 @@ namespace urbi
     inline
     Slot::~Slot()
     {
-      delete properties_;
     }
 
     template <typename T>
     inline T
-    Slot::get()
+    Slot::get(Object* sender)
     {
-      return from_urbi<T>(value());
+      return from_urbi<T>(value(sender));
     }
 
     template <typename T>
     inline void
-    Slot::set(const T& value)
+    Slot::set(const T& value, Object* sender)
     {
       if (constant_)
         runner::raise_const_error();
+      if (sender && oset_)
+      {
+         object::objects_type args;
+         args << object::CxxConvert<T>::from(value) << this;
+         eval::call_apply(::kernel::runner(),
+                          sender, oset_, SYMBOL(oset), args);
+      }
       if (set_)
       {
         object::objects_type args;
@@ -78,7 +97,10 @@ namespace urbi
                          const_cast<Slot*>(this), set_, SYMBOL(set), args);
       }
       else
+      {
         value_ = object::CxxConvert<T>::from(value);
+        assert(value_);
+      }
       if (changed_)
         changed_->call(SYMBOL(emit));
     }
@@ -92,6 +114,17 @@ namespace urbi
     }
 
     inline
+    rObject
+    Slot::changed()
+    {
+      CAPTURE_GLOBAL(Event);
+      if (!changed_)
+        changed_ = Event->call(SYMBOL(new));
+      return changed_;
+    }
+
+    /*
+    inline
     Slot::operator rObject ()
     {
       return get<rObject>();
@@ -102,6 +135,7 @@ namespace urbi
     {
       return value();
     }
+    */
 
     inline
     Object*
@@ -119,12 +153,23 @@ namespace urbi
 
     inline
     rObject
-    Slot::value() const
+    Slot::value(Object* sender) const
     {
+      if (sender && oget_)
+      {
+         object::objects_type args;
+         args << const_cast<Slot*>(this);
+         return eval::call_apply(::kernel::runner(),
+                                 sender,
+                                 oget_, SYMBOL(oget), args);
+      }
       if (get_)
+      {
+        object::objects_type args;
         return eval::call_apply(::kernel::runner(),
-                                const_cast<Slot*>(this),
-                                get_, SYMBOL(get));
+                              const_cast<Slot*>(this),
+                              get_, SYMBOL(get), args);
+      }
       else
         return value_;
     }

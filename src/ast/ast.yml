@@ -149,7 +149,6 @@ printer_cc_prologue: |2
   #include <libport/indent.hh>
   #include <libport/pair.hh>
 
-  #include <kernel/userver.hh>
 ---
 
 # ----------- #

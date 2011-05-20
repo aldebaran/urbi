@@ -193,6 +193,7 @@ namespace urbi
       /// \throw Exception.Lookup if the slot isn't found.
       rObject slot_get(key_type k) const;
       Slot& slot_get(key_type k);
+      rObject slot_get_value(key_type k);
 
       /// Implement low-level copy-on-write.
       /// \param name	The slot to update.
@@ -215,6 +216,9 @@ namespace urbi
       Object& slot_set(key_type k, rObject o, bool constant = false);
       Object& slot_set(key_type k, Slot* o);
 
+      /// Create a slot with a getter and a setter.
+      Slot& slot_set(key_type slot, rObject getter, rObject setter);
+
       /// \brief Copy another object's slot.
       ///
       /// \precondition the slot does not exist in this.
@@ -228,6 +232,10 @@ namespace urbi
       /// Get the object pointed to by the *local* slot.
       /// \return 0 if there is no such slot.
       rSlot local_slot_get(key_type k) const;
+
+      /// Get the value in the *local* slot.
+      /// \return 0 if there is no such slot.
+      rObject local_slot_get_value(key_type k) const;
 
       /// Remove (local) slot.
       /// \return  Whether there was such a slot.
@@ -370,9 +378,6 @@ namespace urbi
     public:
       template <typename T>
       void bind(const std::string& name, T);
-      template <typename F1, typename F2>
-      void bind(const std::string& getter_name, F1 getter,
-                const std::string& setter_name, F2 setter);
       typedef boost::function1<rObject, const objects_type&> function1_type;
       void bind_variadic(const std::string& name,
                          const function1_type& val);
@@ -383,6 +388,13 @@ namespace urbi
       template <typename Return, typename Self>
       void bind_variadic(const std::string& name,
                          Return (Self::*val)(const objects_type&));
+      // Bind with a T ThisType::getter() and a void ThisType::setter(T)
+      // Make the getter/setter free template to allow variations
+      // like const or not, and return by const reference.
+      template <typename G, typename S>
+      void bind(const std::string& name,
+                G g,
+                S s);
     private:
       template <bool mem, typename T>
       friend struct DispatchBind_;
@@ -494,9 +506,5 @@ namespace urbi
   bind_variadic(SYMBOL_(Name), &self_type::Cxx)
 
 # include <urbi/object/object.hxx>
-
-# ifndef OBJECT_FLOAT_HH
-#  include <urbi/object/slot.hh>
-# endif
 
 #endif // !OBJECT_OBJECT_HH

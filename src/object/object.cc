@@ -192,6 +192,16 @@ namespace urbi
       return res;
     }
 
+    rObject
+    Object::local_slot_get_value(key_type k) const
+    {
+      rSlot s = local_slot_get(k);
+      if (s)
+        return s->value(const_cast<Object*>(this));
+      else
+        return 0;
+    }
+
     Object::location_type
     Object::slot_locate(key_type k,
                         bool fallback) const
@@ -212,7 +222,13 @@ namespace urbi
     rObject
     Object::slot_get(key_type k) const
     {
-      return const_cast<Object*>(this)->slot_get(k);
+      return const_cast<Object*>(this)->slot_get_value(k);
+    }
+
+    rObject
+    Object::slot_get_value(key_type k)
+    {
+      return slot_get(k).value(this);
     }
 
     Slot&
@@ -241,6 +257,7 @@ namespace urbi
     Object&
     Object::slot_set(key_type k, rObject o, bool constant)
     {
+      // FIXME: no slot by default
       Slot* slot = new Slot(o);
       slot->constant_set(constant);
       return slot_set(k, slot);
@@ -269,10 +286,21 @@ namespace urbi
       return *this;
     }
 
+    Slot&
+    Object::slot_set(key_type slot, rObject getter, rObject setter)
+    {
+      slot_set(slot, void_class);
+      Slot& s = slot_get(libport::Symbol(slot));
+      s.oget_set(getter);
+      s.oset_set(setter);
+      return s;
+    }
+
     Object&
     Object::slot_copy(key_type name, const rObject& from)
     {
-      return this->slot_set(name, from->slot_get(name), redefinition_mode());
+      this->slot_set(name, &from->slot_get(name), redefinition_mode());
+      return *this;
     }
 
     Slot&
@@ -302,7 +330,7 @@ namespace urbi
       // named 'updateHook', call it, passing the object owning the
       // slot, the slot name and the target.
       if (hook)
-        if (rObject hook = s.property_get(SYMBOL(updateHook)))
+        if (rObject hook = s.updateHook_get())
         {
           objects_type args;
           args << rObject(this)
@@ -333,7 +361,7 @@ namespace urbi
           try
           {
             r->dependencies_log_set(false);
-            s = v;
+            s.set(v, this);
             r->dependencies_log_set(d);
           }
           catch (...)
@@ -343,11 +371,16 @@ namespace urbi
           }
         }
         else
-          s = v;
+          s.set(v, this);
       }
       else
       {
-        slot_copy_on_write(k, s) = v;
+        // Here comes the cow
+        Slot& slot = slot_copy_on_write(k, s);
+        bool cst = slot.constant_get();
+        FINALLY(((Slot&, slot))((bool, cst)), slot.constant_set(cst));
+        slot.constant_set(false);
+        slot.set(v, this);
       }
       return v;
     };
@@ -371,15 +404,26 @@ namespace urbi
     rDictionary
     Object::properties_get(key_type k)
     {
-      if (Slot::properties_type* props = slot_get(k).properties_get())
-      {
-        Dictionary::value_type res;
-        foreach (const Slot::properties_type::value_type& elt, *props)
-          res.insert(std::make_pair(new String(elt.first), elt.second));
-        return new Dictionary(res);
-      }
-      else
-        return new Dictionary();
+      Slot& s = slot_get(k);
+      Dictionary::value_type res;
+      for (slots_implem::const_iterator slot = slots_.begin(&s);
+           slot != slots_.end(&s);
+           ++slot)
+        res[new String(slot->first.second)] = slot->second->value(this);
+      // Add cached slots
+      res[new String("constant")] = to_urbi(s.constant_get());
+      if (s.get_get())
+        res[new String("get")] = s.get_get();
+      if (s.set_get())
+        res[new String("set")] = s.set_get();
+      if (s.oget_get())
+        res[new String("oget")] = s.oget_get();
+      if (s.oset_get())
+        res[new String("oset")] = s.oset_get();
+      // Should we display this?
+      //if (s.value_get())
+        //res[new String("value")] = s.value_get();
+      return new Dictionary(res);
     }
 
     rObject
@@ -408,8 +452,8 @@ namespace urbi
         slot_copy_on_write(k, slot_get(k));
       Slot& slot = slot_get(k);
       if (slot.property_set(p, value)
-          && slot->slot_has(SYMBOL(newPropertyHook)))
-        slot->call(SYMBOL(newPropertyHook),
+          && slot.slot_has(SYMBOL(newPropertyHook)))
+        slot.call(SYMBOL(newPropertyHook),
                    this, new String(k), new String(p), value);
       return value;
     }
@@ -438,33 +482,49 @@ namespace urbi
 
     std::ostream&
     Object::slot_dump(std::ostream& o,
-                      const CentralizedSlots::q_slot_type& slot,
+                      const CentralizedSlots::q_slot_type& s,
                       int depth_max) const
     {
-      o << slot.first.second << " = ";
-      if (slot.second->constant_get())
+      o << s.first.second << " = ";
+      if (s.second->constant_get())
         o << "const ";
-      slot.second->value()->dump(o, depth_max) << libport::iendl;
-
-      Slot::properties_type props;
-      if (Slot::properties_type* ps = slot.second->properties_get())
-        props = *ps;
-      props.erase(SYMBOL(constant));
-      if (!props.empty())
+      s.second->value(const_cast<Object*>(this))->dump(o, depth_max)
+        << libport::iendl;
+      bool started = false;
+      for (slots_implem::const_iterator slot = slots_.begin(s.second);
+           slot != slots_.end(s.second);
+           ++slot)
       {
-        o << "  /* Properties */" << libport::incendl;
-        bool first = true;
-        foreach (const Slot::properties_type::value_type& p, props)
-        {
-          if (first)
-            first = false;
-          else
-            o << libport::iendl;
-          o << p.first << " = ";
-          p.second->dump(o, depth_max);
-        }
-        o << libport::decendl;
+        libport::Symbol k = libport::Symbol(slot->first.second);
+        if (k == SYMBOL(constant))
+          continue;
+        if (!started)
+          o << "  /* Properties */" << libport::incendl;
+        else
+          o << libport::iendl;
+        o << k << " = ";
+        slot->second->value(const_cast<Object*>(this))->dump(o, depth_max);
+        started = true;
       }
+      #define CHECK(n)                                    \
+      if (s.second->n ## _get())                          \
+      {                                                   \
+        if (!started)                                     \
+          o << "  /* Properties */" << libport::incendl;  \
+        else                                              \
+          o << libport::iendl;                            \
+        o << #n " = ";                                    \
+        s.second->n ## _get()->dump(o, depth_max);        \
+        started = true;                                   \
+      }
+      CHECK(value)
+      CHECK(get)
+      CHECK(set)
+      CHECK(oget)
+      CHECK(oset)
+
+      if (started)
+         o << libport::decendl;
       return o;
     }
 
@@ -579,10 +639,10 @@ namespace urbi
     Object&
     Object::proto_add(const rObject& p)
     {
-      passert(p,
+      passert(
               "referring to a not-yet-initialized class\n"
               "See the stack trace to find the dependency to add in "
-              "root_classes_initialize().");
+              "root_classes_initialize().", p.get());
       if (!protos_)
       {
         if (proto_ == p)
@@ -642,7 +702,7 @@ namespace urbi
     rObject
     Object::getSlot(key_type name)
     {
-      return slot_get(name);
+      return slot_get_value(name);
     }
 
     rObject
@@ -667,7 +727,7 @@ namespace urbi
     Object::getLocalSlot(key_type name)
     {
       if (rSlot s = local_slot_get(name))
-        return s->value();
+        return s->value(this);
       else
         runner::raise_lookup_error(name, const_cast<Object*>(this), false);
     }
@@ -819,7 +879,7 @@ namespace urbi
     Object::call_with_this(libport::Symbol name,
                            const objects_type& args)
     {
-      rObject fun = slot_get(name);
+      rObject fun = slot_get_value(name);
       return eval::call_apply(::kernel::runner(), fun, name, args);
     }
 
@@ -864,7 +924,7 @@ namespace urbi
     {
       rObject res = call(SYMBOL(clone));
       if (Slot* init = slot_locate(SYMBOL(init)).second)
-        eval::call_apply(::kernel::runner(), res, init->value(),
+        eval::call_apply(::kernel::runner(), res, init->value(res),
                          SYMBOL(init), args);
       return res;
     }

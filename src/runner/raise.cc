@@ -70,7 +70,7 @@ namespace runner
     assert_ne(exn_name, SYMBOL(Exception));
     Job& r = dbg::runner_or_sneaker_get();
     CAPTURE_GLOBAL(Exception);
-    const rObject& exn = Exception->slot_get(exn_name);
+    const rObject& exn = Exception->slot_get_value(exn_name);
     if (arg1 == void_class)
       raise_unexpected_void_error();
     eval::raise(r,

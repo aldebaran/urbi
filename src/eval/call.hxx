@@ -277,7 +277,7 @@ namespace eval
                    object::Object* call_message,
                    boost::optional< ::ast::loc> loc)
    {
-    rObject target = call_message->slot_get(SYMBOL(target));
+    rObject target = call_message->slot_get_value(SYMBOL(target));
     object::objects_type args;
     args << target;
     // This function is called when arguments haven't been evaluated:
@@ -499,7 +499,7 @@ namespace eval
     // Bounce on the same function with routine argument.
     return call_msg(job,
                     target,
-                    target->slot_get(message).value(),
+                    target->slot_get_value(message),
                     message,
                     arguments, location);
   }

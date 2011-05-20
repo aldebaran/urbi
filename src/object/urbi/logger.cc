@@ -52,8 +52,8 @@ namespace urbi
       category_ = name;
       // Make it exist, at least for sake of "categories()".
       libport::debug::add_category(name);
-      slot_set(SYMBOL(onEnter), proto->slot_get(SYMBOL(onEnter)));
-      slot_set(SYMBOL(onLeave), proto->slot_get(SYMBOL(onLeave)));
+      slot_set(SYMBOL(onEnter), proto->slot_get_value(SYMBOL(onEnter)));
+      slot_set(SYMBOL(onLeave), proto->slot_get_value(SYMBOL(onLeave)));
     }
 
     void
@@ -233,8 +233,7 @@ namespace urbi
       BIND(onLeave);
       BIND(set);
       bind(libport::Symbol( "<<" ), &Logger::operator<<);
-      bind(SYMBOL(level), &Logger::level_get,
-           SYMBOL(levelSet), &Logger::level_set);
+      bind(SYMBOL(level), &Logger::level_get, &Logger::level_set);
 
 #define DECLARE(Name)                                                   \
       BIND(Name, Name, Logger*, (const std::string&, const std::string&)); \

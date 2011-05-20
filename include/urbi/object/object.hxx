@@ -34,7 +34,6 @@
 # include <kernel/userver.hh>
 
 # include <urbi/runner/raise.hh>
-# include <urbi/object/slot.hh>
 
 namespace urbi
 {
@@ -212,7 +211,8 @@ namespace urbi
       GD_CATEGORY(Urbi.Object);
 
       libport::Symbol sym(name);
-      if (!local_slot_get(sym))
+      rObject v = local_slot_get_value(sym);
+      if (!v)
       {
         GD_FINFO_DEBUG("create primitive %s with C++ routine (type: %s)",
                        name, typeid(T).name());
@@ -222,8 +222,7 @@ namespace urbi
       {
         GD_FINFO_DEBUG("extend primitive %s with C++ routine (type: %s)",
                        name, typeid(T).name());
-        rSlot v = local_slot_get(sym);
-        rPrimitive prim = v->value()->as<Primitive>();
+        rPrimitive prim = v->as<Primitive>();
         assert(prim);
         primitive(prim, p);
 
@@ -249,7 +248,7 @@ namespace urbi
     };
 
     template <typename Self, typename T>
-    T bindvar_setter_(typename Ref<Self>::res  self, const std::string&, T val, T (Self::*Attr))
+    T bindvar_setter_(typename Ref<Self>::res  self, T val, T (Self::*Attr))
     {
       return self.*Attr = val;
     }
@@ -258,10 +257,67 @@ namespace urbi
     inline void
     Object::bindvar_(const std::string& name, T (Self::*attr))
     {
-      boost::function1<T, Self&> getter(boost::bind(&bindvar_getter_<Self, T>, _1, attr));
-      boost::function3<void, Self&, const std::string&, T> setter(boost::bind(&bindvar_setter_<Self, T>, _1, _2, _3, attr));
-      bind(libport::Symbol(name), getter);
-      setProperty(name, "updateHook", primitive(setter));
+      boost::function2<T, Self&, rObject>
+        getter(boost::bind(&bindvar_getter_<Self, T>, _1, attr));
+      boost::function3<void, Self&, T, rObject>
+        setter(boost::bind(&bindvar_setter_<Self, T>, _1, _2, attr));
+      slot_set(libport::Symbol(name), primitive(getter)->as<Object>(),
+               primitive(setter)->as<Object>());
+    }
+    namespace detail
+    {
+      // Not in boost yet :(
+      template<typename T> struct member_function_1_trait
+      {
+      };
+      template<typename T, typename R, typename P1>
+      struct member_function_1_trait<R (T::*)(P1)>
+      {
+        typedef typename std::tr1::remove_reference<T>::type class_type;
+        typedef R return_type;
+        typedef P1 argument_1_type;
+        typedef typename std::tr1::remove_const<typename std::tr1::remove_reference<P1>::type >::type
+          base_argument_1_type;
+        typedef typename std::tr1::remove_const<typename std::tr1::remove_reference<R>::type >::type
+          base_return_type;
+      };
+      template<typename T, typename R, typename P1>
+      struct member_function_1_trait<R (T::*)(P1) const>
+      {
+        typedef typename std::tr1::remove_reference<T>::type class_type;
+        typedef R return_type;
+        typedef P1 argument_1_type;
+        typedef typename std::tr1::remove_const<typename std::tr1::remove_reference<P1>::type >::type
+          base_argument_1_type;
+        typedef typename std::tr1::remove_const<typename std::tr1::remove_reference<R>::type >::type
+          base_return_type;
+      };
+      template<typename T, typename R, typename P1>
+      struct member_function_1_trait<R (*)(T, P1)>
+      {
+        typedef typename std::tr1::remove_reference<T>::type class_type;
+        typedef R return_type;
+        typedef P1 argument_1_type;
+        typedef typename std::tr1::remove_const<typename std::tr1::remove_reference<P1>::type >::type
+          base_argument_1_type;
+        typedef typename std::tr1::remove_const<typename std::tr1::remove_reference<R>::type >::type
+          base_return_type;
+      };
+    }
+
+    template <typename G, typename S>
+    inline void
+    Object::bind(const std::string& name,
+                G g,
+                S s)
+    {
+      typedef typename detail::member_function_1_trait<S>::class_type Self;
+      typedef typename detail::member_function_1_trait<S>::base_argument_1_type
+        T;
+      boost::function2<T, Self&, rObject> getter(boost::bind(g, _1));
+      boost::function3<void, Self&, T, rObject> setter(boost::bind(s, _1, _2));
+      slot_set(libport::Symbol(name), primitive(getter)->as<Object>(),
+               primitive(setter)->as<Object>());
     }
 
     bool

@@ -400,7 +400,8 @@ namespace urbi
       rObject r =  kernel::urbiserver->getCurrentRunner().as_job();
       // Prevent loopback notification on the remote who called us.
       if (!r->slot_has(SYMBOL(DOLLAR_uobjectInUpdate)))
-        r->slot_set(SYMBOL(DOLLAR_uobjectInUpdate), slot_get(SYMBOL(fullName)));
+        r->slot_set(SYMBOL(DOLLAR_uobjectInUpdate),
+                    slot_get_value(SYMBOL(fullName)));
       update_timed_(val, timestamp);
       r->slot_remove(SYMBOL(DOLLAR_uobjectInUpdate));
       return void_class;

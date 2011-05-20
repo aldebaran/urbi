@@ -72,10 +72,7 @@ namespace urbi
       BIND(asString, as_string);
 
 #define DECLARE(Name)                                     \
-      bind(SYMBOL_(Name), &Position::Name ##_get);        \
-      property_set(SYMBOL_(Name),                         \
-                   SYMBOL(updateHook),                    \
-                   primitive(&Position::Name ##_set))
+      bind(#Name, &Position::Name ##_get, &Position::Name ##_set);
 
       DECLARE(file);
 

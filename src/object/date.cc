@@ -66,9 +66,9 @@ namespace urbi
     {
       bind_variadic(SYMBOL(MINUS), MINUS);
 
-#define DECLARE(Unit)                                         \
-      bind(libport::Symbol(#Unit),       &Date::Unit ## _get, \
-           libport::Symbol(#Unit "Set"), &Date::Unit ## _set)
+#define DECLARE(Unit)                        \
+      bind(#Unit,       &Date::Unit ## _get, \
+           &Date::Unit ## _set)
 
       DECLARE(day);
       DECLARE(hour);

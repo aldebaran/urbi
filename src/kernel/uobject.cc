@@ -338,7 +338,7 @@ static inline void traceOperation(urbi::UVar*v, libport::Symbol op)
     object::global_class
       ->slot_get(SYMBOL(UVar))
       ->slot_get(op)
-      ->call(SYMBOL(syncEmit), o, o->slot_get(Symbol(p.second)),
+      ->call(SYMBOL(syncEmit), o, o->slot_get_value(Symbol(p.second)),
              object::to_urbi(bound_context));
   }
 }
@@ -845,7 +845,7 @@ namespace urbi
       if (!r)
         return 0;
       std::string name =
-        object::from_urbi<std::string>(r->slot_get(SYMBOL(__uobjectName)));
+        object::from_urbi<std::string>(r->slot_get_value(SYMBOL(__uobjectName)));
       if (name == n)
         return 0;
       return getUObject(name);
@@ -926,7 +926,7 @@ namespace urbi
     doEmit(const std::string& object, const object::objects_type& args)
     {
       StringPair p = uname_split(object);
-      rObject o = xget_base(p.first)->slot_get(libport::Symbol(p.second));
+      rObject o = xget_base(p.first)->slot_get_value(libport::Symbol(p.second));
       o->call(SYMBOL(emit), args);
     }
 
@@ -1031,7 +1031,7 @@ namespace urbi
         return th;
       }
       rObject me = xget_base(cb->objname);
-      rObject f = me->slot_get(SYMBOL(setTimer));
+      rObject f = me->slot_get_value(SYMBOL(setTimer));
       rObject p = new object::Float(cb->period / 1000.0);
       std::string stag = object::String::proto->as<object::String>()->fresh();
       rObject tag = new object::String(stag);
@@ -1086,8 +1086,8 @@ namespace urbi
           boost::bind(&KernelUContextImpl::setHubUpdate, this, hub, period));
         return;
       }
-      rObject uob = object::Object::proto->slot_get(SYMBOL(UObject));
-      rObject f = uob->slot_get(SYMBOL(setHubUpdate));
+      rObject uob = object::Object::proto->slot_get_value(SYMBOL(UObject));
+      rObject f = uob->slot_get_value(SYMBOL(setHubUpdate));
       object::objects_type args;
       args << uob
            << rObject(new object::String(hub->get_name()))
@@ -1142,8 +1142,9 @@ namespace urbi
       if (fromcxx)
       {
         rObject r = ::urbi::uobjects::uobject_new(
-          where->slot_get(SYMBOL(UObject)), false, false);
-        owner->__name = r->slot_get(SYMBOL(__uobjectName))->as<object::String>()
+          where->slot_get_value(SYMBOL(UObject)), false, false);
+        owner->__name = r->slot_get_value(SYMBOL(__uobjectName))
+          ->as<object::String>()
           ->value_get();
       }
       uobject_to_robject[owner_->__name] = owner;
@@ -1179,7 +1180,7 @@ namespace urbi
       return
         eval::call_apply(
           ::kernel::runner(),
-          me->slot_get(SYMBOL(DOLLAR_id)), SYMBOL(DOLLAR_id), args)
+          me->slot_get_value(SYMBOL(DOLLAR_id)), SYMBOL(DOLLAR_id), args)
         ->as<object::String>()
         ->value_get();
     }
@@ -1215,7 +1216,7 @@ namespace urbi
         return;
       }
       rObject me = xget_base(owner_->__name);
-      rObject f = me->slot_get(SYMBOL(setUpdate));
+      rObject f = me->slot_get_value(SYMBOL(setUpdate));
       me->slot_update
         (SYMBOL(update),
          object::primitive
@@ -1358,12 +1359,12 @@ namespace urbi
           o->slot_remove(varName);
       }
 
-      rObject protouvar = object::Object::proto->slot_get(SYMBOL(UVar));
+      rObject protouvar = object::Object::proto->slot_get_value(SYMBOL(UVar));
       rObject uvar = protouvar->call(SYMBOL(new),
                                      o, new object::String(varName));
       // If the variable existed but was not an uvar, copy its old value.
       if (initVal)
-        o->slot_get(varName)->slot_update(SYMBOL(val), initVal);
+        o->slot_get_value(varName)->slot_update(SYMBOL(val), initVal);
       traceOperation(owner, SYMBOL(traceBind));
       ruvar_ = uvar->as<object::UVar>();
       GD_FINFO_DUMP("Uvar %s creating new object %s.",
@@ -1769,13 +1770,13 @@ namespace urbi
         // Not simplifyable! If the rSlot contains 0, casting to
         // rObject will segv.
         if (s.second)
-          res = *s.second;
+          res = s.second->value();
       }
       if (!res)
       {
         s = where->slot_locate(libport::Symbol(objname));
         if (s.second)
-          res = *s.second;
+          res = s.second->value();
       }
       return res;
     }
@@ -1796,7 +1797,7 @@ namespace urbi
       Global->slot_set(SYMBOL(uvalueDeserialize), primitive(&uvalue_deserialize));
 
       where->bind(SYMBOL(searchPath),    &uobject_uobjectsPath,
-                  SYMBOL(searchPathSet), &uobject_uobjectsPathSet);
+                  &uobject_uobjectsPathSet);
       uobjects_path
         .push_back(libport::xgetenv("URBI_UOBJECT_PATH", ".:"),
                    kernel::urbiserver->urbi_root_get().uobjects_path(),
@@ -1836,7 +1837,7 @@ namespace urbi
       rObject res = new object::Finalizable(proto->as<object::Finalizable>());
 
       // Get UObject name.
-      rObject rcName = proto->slot_get(SYMBOL(__uobject_cname));
+      rObject rcName = proto->slot_get_value(SYMBOL(__uobject_cname));
       const std::string& cname = rcName.cast<object::String>()->value_get();
 
       // Get the name we will pass to uobject.

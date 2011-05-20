@@ -81,8 +81,8 @@ var profile_async = System.profile(&profiled);
 [:]  Yields:                    0
 [:]  Total time (us):         485
 [:]  Wall-clock time (us):    485
-[:]  Function calls:            8
-[:]  Max depth:                 4
+[:]  Function calls:            9
+[:]  Max depth:                 5
 [:]
 [:]  .-------------------------------------------------------------------.
 [:]  |   function   |   %    | cumulative |  self  |  calls  |   self    |
@@ -93,6 +93,7 @@ var profile_async = System.profile(&profiled);
 [:]  |    at: { x } |  12.37 |        309 |     60 |       1 |        60 |
 [:]  |      onEvent |  10.10 |        358 |     49 |       1 |        49 |
 [:]  |        clone |   3.30 |        446 |     16 |       1 |        16 |
+[:]  |         oget |   3.20 |        342 |     20 |       1 |        20 |
 [:]  |         init |   0.82 |        479 |      4 |       1 |         4 |
 [:]  |            x |   0.82 |        483 |      4 |       2 |         2 |
 [:]  '--------------'--------'------------'--------'---------'-----------'
@@ -113,7 +114,7 @@ profile_async;
 [:]  Yields:                    2
 [:]  Total time (us):        1307
 [:]  Wall-clock time (us):   1307
-[:]  Function calls:           44
+[:]  Function calls:           47
 [:]  Max depth:                 5
 [:]
 [:]  .-------------------------------------------------------------------.
@@ -131,6 +132,7 @@ profile_async;
 [:]  |      onEvent |   3.75 |       1038 |     49 |       1 |        49 |
 [:]  |         send |   2.60 |       1072 |     34 |       2 |        17 |
 [:]  |      getSlot |   1.99 |       1126 |     26 |       2 |     8.667 |
+[:]  |         oget |   1.68 |       1819 |     34 |       3 |    11.333 |
 [:]  |            + |   1.53 |       1171 |     20 |       4 |         5 |
 [:]  |            + |   1.30 |       1207 |     17 |       2 |     8.500 |
 [:]  |        clone |   1.22 |       1223 |     16 |       1 |        16 |

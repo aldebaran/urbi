@@ -89,7 +89,7 @@ namespace runner
     sched::Job::Collector collector(this);
     sched::rJob child =
       spawn_child(
-        eval::call(Scheduling->slot_get(SYMBOL(throwNew)), args),
+        eval::call(Scheduling->slot_get_value(SYMBOL(throwNew)), args),
         collector)
       ->name_set("Scheduling");
     child->start_job();

@@ -101,14 +101,14 @@ namespace runner
   Stacks::rObject
   Stacks::this_get()
   {
-    return *current_frame_.first[0];
+    return current_frame_.first[0]->value();
   }
 
   LIBPORT_SPEED_ALWAYS_INLINE
   Stacks::rObject
   Stacks::call()
   {
-    return *current_frame_.first[1];
+    return current_frame_.first[1]->value();
   }
 
   LIBPORT_SPEED_ALWAYS_INLINE
@@ -220,7 +220,7 @@ namespace runner
   LIBPORT_SPEED_ALWAYS_INLINE
   Stacks::rObject Stacks::get(ast::rConstLocal e)
   {
-    return *rget(e);
+    return rget(e)->value();
   }
 
   LIBPORT_SPEED_ALWAYS_INLINE

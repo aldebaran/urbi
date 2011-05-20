@@ -143,9 +143,9 @@ namespace urbi
       runner::Job& r = ::kernel::runner();
 
       // We need to set the 'code' slot: make a copy of the call message.
-      const rObject& message = call_message->slot_get(SYMBOL(message));
+      const rObject& message = call_message->slot_get_value(SYMBOL(message));
       const libport::Symbol msg(from_urbi<std::string>(message));
-      const rObject& code = target->slot_get(msg);
+      const rObject& code = target->slot_get_value(msg);
       call_message->slot_update(SYMBOL(code), code);
       call_message->slot_update(SYMBOL(target), target);
       // FIXME: Sanity checks on the call message are probably required

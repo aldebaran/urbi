@@ -57,6 +57,7 @@ namespace urbi
       : content_()
     {
       extend(nil);
+      proto = this;
       proto_add(Executable::proto);
       proto_remove(Object::proto);
 

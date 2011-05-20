@@ -17,7 +17,6 @@
 
 # include <libport/preproc.hh>
 
-# include <kernel/userver.hh>
 # include <urbi/object/enumeration.hh>
 # include <urbi/object/object.hh>
 # include <urbi/version-check.hh>
@@ -130,10 +129,6 @@ namespace urbi
         /// Bind \a method with \a name
         template <typename M>
         void operator()(libport::Symbol name, M method);
-        template <typename A>
-        void var(libport::Symbol name, A (T::*attr));
-        template <typename A>
-        void var(libport::Symbol name, A* (T::*ref)());
         rObject proto() { return tgt_; }
 
       private:
@@ -225,7 +220,8 @@ namespace urbi
       && ! defined OBJECT_FLOAT_HH              \
       && ! defined OBJECT_LIST_HH               \
       && ! defined OBJECT_STRING_HH             \
-      && ! defined OBJECT_TAG_HH
+      && ! defined OBJECT_TAG_HH                \
+      && ! defined OBJECT_SLOT_HH
 #  include <urbi/object/cxx-object.hxx>
 # endif
 

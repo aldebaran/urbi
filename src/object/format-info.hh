@@ -77,7 +77,15 @@ namespace urbi
     private:
 
       void compute_pattern() const;
-      rObject update_hook(const std::string& slot, rObject val);
+      void alignment_set(Align::position v);
+      void group_set(std::string s);
+      void pad_set(std::string v);
+      void prefix_set(std::string v);
+      void spec_set(std::string v);
+      void uppercase_set(int v);
+      void alt_set(bool v);
+      void precision_set(int v);
+      void width_set(int v);
     };
 
   } // namaspace object
