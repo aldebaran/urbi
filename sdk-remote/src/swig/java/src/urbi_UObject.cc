@@ -18,130 +18,96 @@
 #include "callbacks-caller.hh"
 #include "urbi_UObject.h"
 
-#define CREATE_FUN_CALLBACK(uobj, obj, fun, func_name)			\
-  ::urbi::createUCallback(*uobj, 0, "function", obj, fun, func_name)
+#define CASE(Ret, N)                                                    \
+  case N:                                                               \
+  return createUCallback(*uobj, 0, "function", obj,                     \
+                         &CallbacksCaller::call ## Ret ## _ ## N,       \
+                         funcName)
 
-
-
-#define createFunctionCallbackType(RetType)				\
-static urbi::UGenericCallback*						\
-createFunctionCallback##RetType (JNIEnv* env,				\
-                                 urbi::UObject *uobj,			\
-                                 CallbacksCaller* obj,			\
-                                 std::string obj_name,			\
-				 std::string funcName,			\
-				 int argNb)				\
-{									\
-  switch (argNb)							\
+#define DEFINE(RetType)                                                 \
+  static urbi::UGenericCallback*                                        \
+  createFunctionCallback##RetType (JNIEnv* env,				\
+                                   urbi::UObject* uobj,			\
+                                   CallbacksCaller* obj,                \
+                                   std::string obj_name,                \
+                                   std::string funcName,                \
+                                   int argNb)				\
   {									\
-    case 0:								\
-      return CREATE_FUN_CALLBACK(uobj, obj, (&CallbacksCaller::call##RetType##_0), funcName); \
-    case 1:								\
-      return CREATE_FUN_CALLBACK(uobj, obj, (&CallbacksCaller::call##RetType##_1), funcName); \
-    case 2:								\
-      return CREATE_FUN_CALLBACK(uobj, obj, (&CallbacksCaller::call##RetType##_2), funcName); \
-    case 3:								\
-      return CREATE_FUN_CALLBACK(uobj, obj, (&CallbacksCaller::call##RetType##_3), funcName); \
-    case 4:								\
-      return CREATE_FUN_CALLBACK(uobj, obj, (&CallbacksCaller::call##RetType##_4), funcName); \
-    case 5:								\
-      return CREATE_FUN_CALLBACK(uobj, obj, (&CallbacksCaller::call##RetType##_5), funcName); \
-    case 6:								\
-      return CREATE_FUN_CALLBACK(uobj, obj, (&CallbacksCaller::call##RetType##_6), funcName); \
-    case 7:								\
-      return CREATE_FUN_CALLBACK(uobj, obj, (&CallbacksCaller::call##RetType##_7), funcName); \
-    case 8:								\
-      return CREATE_FUN_CALLBACK(uobj, obj, (&CallbacksCaller::call##RetType##_8), funcName); \
-    case 9:								\
-      return CREATE_FUN_CALLBACK(uobj, obj, (&CallbacksCaller::call##RetType##_9), funcName); \
-    case 10:								\
-      return CREATE_FUN_CALLBACK(uobj, obj, (&CallbacksCaller::call##RetType##_10), funcName); \
-    case 11:								\
-      return CREATE_FUN_CALLBACK(uobj, obj, (&CallbacksCaller::call##RetType##_11), funcName); \
-    case 12:								\
-      return CREATE_FUN_CALLBACK(uobj, obj, (&CallbacksCaller::call##RetType##_12), funcName); \
-    case 13:								\
-      return CREATE_FUN_CALLBACK(uobj, obj, (&CallbacksCaller::call##RetType##_13), funcName); \
-    case 14:								\
-      return CREATE_FUN_CALLBACK(uobj, obj, (&CallbacksCaller::call##RetType##_14), funcName); \
-    case 15:								\
-      return CREATE_FUN_CALLBACK(uobj, obj, (&CallbacksCaller::call##RetType##_15), funcName); \
-    case 16:								\
-      return CREATE_FUN_CALLBACK(uobj, obj, (&CallbacksCaller::call##RetType##_16), funcName); \
-    default:								\
-      char tmp[256];							\
-      std::string msg = "Can't define a callback on a function with ";	\
-      sprintf(tmp,"%d", argNb);						\
-      msg += tmp;							\
-      msg += " arguments. Maximum is 16.";				\
-      THROW_RUNTIME(env, msg.c_str ());					\
-  }									\
-  return 0;								\
-}
+    using ::urbi::createUCallback;                                      \
+    switch (argNb)							\
+    {									\
+      CASE(RetType, 0);                                                 \
+      CASE(RetType, 1);                                                 \
+      CASE(RetType, 2);                                                 \
+      CASE(RetType, 3);                                                 \
+      CASE(RetType, 4);                                                 \
+      CASE(RetType, 5);                                                 \
+      CASE(RetType, 6);                                                 \
+      CASE(RetType, 7);                                                 \
+      CASE(RetType, 8);                                                 \
+      CASE(RetType, 9);                                                 \
+      CASE(RetType, 10);                                                \
+      CASE(RetType, 11);                                                \
+      CASE(RetType, 12);                                                \
+      CASE(RetType, 13);                                                \
+      CASE(RetType, 14);                                                \
+      CASE(RetType, 15);                                                \
+      CASE(RetType, 16);                                                \
+    }                                                                   \
+    FRAISE("Can't define a callback on a function with %d arguments."   \
+           " Maximum is 16.", argNb);                                   \
+  }
 
-createFunctionCallbackType(Void);
-createFunctionCallbackType(Boolean);
-createFunctionCallbackType(Byte);
-createFunctionCallbackType(Char);
-createFunctionCallbackType(Short);
-createFunctionCallbackType(Int);
-createFunctionCallbackType(Long);
-createFunctionCallbackType(Float);
-createFunctionCallbackType(Double);
-createFunctionCallbackType(UValue);
-createFunctionCallbackType(UList);
-createFunctionCallbackType(UBinary);
-createFunctionCallbackType(UImage);
-createFunctionCallbackType(USound);
-createFunctionCallbackType(UDictionary);
-createFunctionCallbackType(String);
+DEFINE(Boolean);
+DEFINE(Byte);
+DEFINE(Char);
+DEFINE(Double);
+DEFINE(Float);
+DEFINE(Int);
+DEFINE(Long);
+DEFINE(Short);
+DEFINE(String);
+DEFINE(UBinary);
+DEFINE(UDictionary);
+DEFINE(UImage);
+DEFINE(UList);
+DEFINE(USound);
+DEFINE(UValue);
+DEFINE(Void);
+#undef CASE
+#undef DEFINE
 
-
-static urbi::UGenericCallback* createFunctionCallback (JNIEnv* env,
-						       urbi::UObject* uobj,
-						       CallbacksCaller* obj,
-						       const std::string obj_name,
-						       const std::string& funcName,
-						       const std::string& retType,
-						       int argNb)
+static urbi::UGenericCallback*
+createFunctionCallback(JNIEnv* env,
+                       urbi::UObject* uobj,
+                       CallbacksCaller* obj,
+                       const std::string obj_name,
+                       const std::string& funcName,
+                       const std::string& retType,
+                       int argNb)
 {
-  if ("void" == retType)
-    return createFunctionCallbackVoid (env, uobj, obj, obj_name, funcName, argNb);
-  else if ("boolean" == retType)
-    return createFunctionCallbackBoolean (env, uobj, obj, obj_name, funcName, argNb);
-  else if ("byte" == retType)
-    return createFunctionCallbackByte (env, uobj, obj, obj_name, funcName, argNb);
-  else if ("char" == retType)
-    return createFunctionCallbackChar (env, uobj, obj, obj_name, funcName, argNb);
-  else if ("short" == retType)
-    return createFunctionCallbackShort (env, uobj, obj, obj_name, funcName, argNb);
-  else if ("int" == retType)
-    return createFunctionCallbackInt (env, uobj, obj, obj_name, funcName, argNb);
-  else if ("long" == retType)
-    return createFunctionCallbackLong (env, uobj, obj, obj_name, funcName, argNb);
-  else if ("float" == retType)
-    return createFunctionCallbackFloat (env, uobj, obj, obj_name, funcName, argNb);
-  else if ("double" == retType)
-    return createFunctionCallbackDouble (env, uobj, obj, obj_name, funcName, argNb);
-  else if ("urbi.UValue" == retType)
-    return createFunctionCallbackUValue (env, uobj, obj, obj_name, funcName, argNb);
-  else if ("urbi.UList" == retType)
-    return createFunctionCallbackUList (env, uobj, obj, obj_name, funcName, argNb);
-  else if ("urbi.UBinary" == retType)
-    return createFunctionCallbackUBinary (env, uobj, obj, obj_name, funcName, argNb);
-  else if ("urbi.UImage" == retType)
-    return createFunctionCallbackUImage (env, uobj, obj, obj_name, funcName, argNb);
-  else if ("urbi.USound" == retType)
-    return createFunctionCallbackUSound (env, uobj, obj, obj_name, funcName, argNb);
-  else if ("urbi.UDictionary" == retType)
-    return createFunctionCallbackUDictionary (env, uobj, obj, obj_name, funcName, argNb);
-  else if ("java.lang.String" == retType)
-    return createFunctionCallbackString (env, uobj, obj, obj_name, funcName, argNb);
-
-  std::string msg = "Can't define a callback on a function with return type ";
-  msg += retType;
-  THROW_RUNTIME(env, msg.c_str ());
-  return 0;
+#define CASE(Name, JavaName)                                            \
+  if (retType == #Name)                                                 \
+    return createFunctionCallback ## JavaName(env, uobj, obj,           \
+                                              obj_name, funcName, argNb)
+  CASE(boolean, Boolean);
+  CASE(byte, Byte);
+  CASE(char, Char);
+  CASE(double, Double);
+  CASE(float, Float);
+  CASE(int, Int);
+  CASE(java.lang.String, String);
+  CASE(long, Long);
+  CASE(short, Short);
+  CASE(urbi.UBinary, UBinary);
+  CASE(urbi.UDictionary, UDictionary);
+  CASE(urbi.UImage, UImage);
+  CASE(urbi.UList, UList);
+  CASE(urbi.USound, USound);
+  CASE(urbi.UValue, UValue);
+  CASE(void, Void);
+#undef CASE
+  FRAISE("Can't define a callback on a function with return type %s", retType);
 }
 
 
@@ -163,20 +129,14 @@ getMethodIdAndUrbiName(JNIEnv *env,
 
   jclass cls = env->GetObjectClass(obj);
   if (!cls)
-  {
-    THROW_RUNTIME(env, "Can't find java object class");
-    return res;
-  }
+    FRAISE("Can't find java object class");
 
   const char* method_name_ = env->GetStringUTFChars(method_name, 0);
   const char* method_signature_ = env->GetStringUTFChars(method_signature, 0);
 
   res.java_mid = env->GetMethodID(cls, method_name_, method_signature_);
   if (!res.java_mid)
-  {
-    THROW_RUNTIME(env, "Can't find java callback method id");
-    return res;
-  }
+    FRAISE("Can't find java callback method id");
 
   const char* obj_name_ = env->GetStringUTFChars(obj_name, 0);
 
@@ -224,8 +184,8 @@ registerNotify(JNIEnv *env,
   const char* uvar_name = env->GetStringUTFChars(var_name, 0);
   const char* obj_name_ = env->GetStringUTFChars(obj_name, 0);
 
-  if (arg_nb > 0) {
-
+  if (arg_nb > 0)
+  {
     jstring jstr = (jstring) env->GetObjectArrayElement(types, 0);
     const char* type_ = env->GetStringUTFChars(jstr, 0);
     Converter* c = Converter::instance(type_, true);
@@ -246,30 +206,32 @@ registerNotify(JNIEnv *env,
   const std::string ret_type = return_type_;
   switch ((int) arg_nb)
   {
-    case 0:
-      if (ret_type == "int")
-	::urbi::createUCallback(*uob, (urbi::UVar*) var, notify_type, f,
-				(&CallbacksCaller::callNotifyChangeInt_0),
-				uvar_name);
-      else if (ret_type == "void")
-	::urbi::createUCallback(*uob, (urbi::UVar*) var, notify_type, f,
-				(&CallbacksCaller::callNotifyChangeVoid_0),
-				uvar_name);
-      else
-	throw std::runtime_error(libport::format("%s is not supported as a return type for notify change", return_type_));
-      break;
-    case 1:
-      if (ret_type == "int")
-	::urbi::createUCallback(*uob, new urbi::UVar(uvar_name), notify_type, f,
-				(&CallbacksCaller::callNotifyChangeInt_1),
-				uvar_name);
-      else if (ret_type == "void")
-	::urbi::createUCallback(*uob, new urbi::UVar(uvar_name), notify_type, f,
-				(&CallbacksCaller::callNotifyChangeVoid_1),
-				uvar_name);
-      else
-	throw std::runtime_error(libport::format("%s is not supported as a return type for notify change", return_type_));
-      break;
+  case 0:
+    if (ret_type == "int")
+      ::urbi::createUCallback(*uob, (urbi::UVar*) var, notify_type, f,
+                              (&CallbacksCaller::callNotifyChangeInt_0),
+                              uvar_name);
+    else if (ret_type == "void")
+      ::urbi::createUCallback(*uob, (urbi::UVar*) var, notify_type, f,
+                              (&CallbacksCaller::callNotifyChangeVoid_0),
+                              uvar_name);
+    else
+      FRAISE("%s is not supported as a return type for notify change",
+             return_type_);
+    break;
+  case 1:
+    if (ret_type == "int")
+      ::urbi::createUCallback(*uob, new urbi::UVar(uvar_name), notify_type, f,
+                              (&CallbacksCaller::callNotifyChangeInt_1),
+                              uvar_name);
+    else if (ret_type == "void")
+      ::urbi::createUCallback(*uob, new urbi::UVar(uvar_name), notify_type, f,
+                              (&CallbacksCaller::callNotifyChangeVoid_1),
+                              uvar_name);
+    else
+      FRAISE("%s is not supported as a return type for notify change",
+             return_type_);
+    break;
   }
   env->ReleaseStringUTFChars(return_type, return_type_);
   env->ReleaseStringUTFChars(obj_name, obj_name_);

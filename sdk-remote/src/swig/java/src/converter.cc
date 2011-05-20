@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -40,7 +40,7 @@ Converter::instance(const std::string& type_name,
       else if (type_name == "class urbi.UDictionary")
 	return new UDictionaryConverter();
       else
-	throw std::runtime_error(libport::format("type %s not supported", type_name));
+	FRAISE("type %s not supported", type_name);
     }
     else
     {
@@ -63,7 +63,7 @@ Converter::instance(const std::string& type_name,
       else if (type_name == "class java.lang.Byte")
 	return new ByteConverter();
       else
-	throw std::runtime_error(libport::format("type %s not supported", type_name));
+	FRAISE("type %s not supported", type_name);
     }
   }
   else
@@ -85,6 +85,6 @@ Converter::instance(const std::string& type_name,
     else if (type_name == "double")
       return new doubleConverter();
     else
-      throw std::runtime_error(libport::format("type %s not supported", type_name));
+      FRAISE("type %s not supported", type_name);
   }
 }

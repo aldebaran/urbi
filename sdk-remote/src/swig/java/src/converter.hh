@@ -15,8 +15,8 @@
 # include <urbi/uobject.hh>
 # include <urbi/ucallbacks.hh>
 
-# define THROW_RUNTIME(Env, Msg) \
-  throw std::runtime_error(Msg)
+# define FRAISE(...)                                            \
+  throw std::runtime_error(libport::format(__VA_ARGS__))
 
 class Converter
 {
@@ -79,17 +79,9 @@ protected:
     /// Get the jclass for UValue
     jclass tmp, res;
     if (!(tmp = env->FindClass(classname)))
-    {
-      THROW_RUNTIME(env, libport::format("Can't find class %s", classname));
-      return 0;
-    }
+      FRAISE("Can't find class %s", classname);
     if (!(res = (jclass) env->NewGlobalRef(tmp)))
-    {
-      THROW_RUNTIME(env,
-		   libport::format("Can't create Global Ref for class %s",
-				   classname));
-      return 0;
-    }
+      FRAISE("Can't create Global Ref for class %s", classname);
     env->DeleteLocalRef(tmp);
     return res;
   };
@@ -145,42 +137,40 @@ protected:
   public:								\
     static void init(JNIEnv* env)					\
     {									\
-      if (!(cls = getGlobalRef (env, javaname)))			\
-	THROW_RUNTIME(env, libport::format("Can't find %s class", #name)); \
-      if (!(mid = env->GetMethodID(cls, method_name, method_args)))	\
-	THROW_RUNTIME(env, libport::format("Can't find %s constructor",	\
-					   #name));			\
+      if (!(cls = getGlobalRef (env, JavaName)))			\
+	FRAISE("Can't find %s class", #Name);                           \
+      if (!(mid = env->GetMethodID(cls, MethodName, MethodArgs)))	\
+	FRAISE("Can't find %s constructor", #Name);			\
     }									\
   protected:								\
-    type* allocated;							\
+    Type* allocated;							\
 									\
   public:								\
     static jclass cls;							\
     static jmethodID mid;						\
   };
 
-# define PRIMITIVE_OBJECT_CONVERTER(name, type, precast, javaname,	\
-                                    method_name, method_args)		\
-  class name##Converter : public ObjectConverter			\
+# define PRIMITIVE_OBJECT_CONVERTER(Name, Type, Precast, JavaName,	\
+                                    MethodName, MethodArgs)		\
+  class Name##Converter : public ObjectConverter			\
   {									\
   protected:								\
-    jvalue convert_ (JNIEnv* env, const urbi::UValue& val)		\
+    jvalue convert_(JNIEnv* env, const urbi::UValue& val)		\
     {									\
       jobject jobj							\
 	= env->CallStaticObjectMethod(cls, mid,				\
-				      static_cast<type>((precast)val));	\
-      allocationCheck(jobj, #name);					\
+				      static_cast<Type>((Precast)val));	\
+      allocationCheck(jobj, #Name);					\
       return *(jvalue*)&jobj;						\
     }									\
 									\
   public:								\
     static void init(JNIEnv* env)					\
     {									\
-      if (!(cls = getGlobalRef (env, javaname)))			\
-	THROW_RUNTIME(env, libport::format("Can't find %s class", #name)); \
-      if (!(mid = env->GetStaticMethodID(cls, method_name, method_args))) \
-	THROW_RUNTIME(env, libport::format("Can't find %s %s function",	\
-					   #name, method_name));	\
+      if (!(cls = getGlobalRef (env, JavaName)))			\
+	FRAISE("Can't find %s class", #Name);                           \
+      if (!(mid = env->GetStaticMethodID(cls, MethodName, MethodArgs))) \
+	FRAISE("Can't find %s %s function", #Name, MethodName);         \
     }									\
 									\
   public:								\

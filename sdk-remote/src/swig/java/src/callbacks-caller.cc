@@ -125,10 +125,10 @@ CallbacksCaller::cacheJNIVariables(JNIEnv* env)
 
   INIT_CONVERTERS_STATIC_ATTRS(env);
 
-#define CLEAN_AND_THROW(msg)			\
+#define CLEAN_AND_THROW(Msg)			\
   do						\
   {						\
-    THROW_RUNTIME(env, msg);			\
+    FRAISE(Msg);                                \
     return false;				\
   } while (false)
 
@@ -190,13 +190,13 @@ CallbacksCaller::getGlobalRef(JNIEnv* env, const char* classname)
   jclass tmp, res;
   if (!(tmp = env->FindClass(classname)))
   {
-    THROW_RUNTIME(env, libport::format("Can't find class %s", classname));
+    FRAISE("Can't find class %s", classname);
     return false;
   }
 
   if (!(res = (jclass) env->NewGlobalRef(tmp)))
   {
-    THROW_RUNTIME(env, libport::format("Can't create Global Ref for class %s", classname));
+    FRAISE("Can't create Global Ref for class %s", classname);
     return false;
   }
 
@@ -360,7 +360,7 @@ CallbacksCaller::testForException()
     std::string n = utfName;
     env_->ReleaseStringUTFChars(message, utfMessage);
     env_->ReleaseStringUTFChars(name, utfName);
-    throw std::runtime_error(n + ": " + m);
+    FRAISE("%s: %s", n, m);
   }
 };
 
