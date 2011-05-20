@@ -189,16 +189,10 @@ CallbacksCaller::getGlobalRef(JNIEnv* env, const char* classname)
   /// Get the jclass for UValue
   jclass tmp, res;
   if (!(tmp = env->FindClass(classname)))
-  {
     FRAISE("Can't find class %s", classname);
-    return false;
-  }
 
   if (!(res = (jclass) env->NewGlobalRef(tmp)))
-  {
     FRAISE("Can't create Global Ref for class %s", classname);
-    return false;
-  }
 
   env->DeleteLocalRef(tmp);
   return res;

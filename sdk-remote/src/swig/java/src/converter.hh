@@ -206,6 +206,7 @@ CAST_CONVERTER(float, jfloat, ufloat);
 CAST_CONVERTER(int, jint, jint);
 CAST_CONVERTER(long, jlong, jlong);
 CAST_CONVERTER(short, jshort, int);
+
 OBJECT_CONVERTER(UBinary, urbi::UBinary, "urbi/UBinary", "<init>", "(JZ)V");
 OBJECT_CONVERTER(UDictionary, urbi::UDictionary, "urbi/UDictionary", "<init>", "(JZ)V");
 OBJECT_CONVERTER(UImage, urbi::UImage, "urbi/UImage", "<init>", "(JZ)V");
@@ -213,6 +214,7 @@ OBJECT_CONVERTER(UList, urbi::UList, "urbi/UList", "<init>", "(JZ)V");
 OBJECT_CONVERTER(USound, urbi::USound, "urbi/USound", "<init>", "(JZ)V");
 OBJECT_CONVERTER(UValue, urbi::UValue, "urbi/UValue", "<init>", "(JZ)V");
 OBJECT_CONVERTER(UVarBase, urbi::UVar, "urbi/UVar", "<init>", "(JZ)V");
+
 PRIMITIVE_OBJECT_CONVERTER(Boolean, jboolean, int, "java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;");
 PRIMITIVE_OBJECT_CONVERTER(Byte, jbyte, int, "java/lang/Byte", "valueOf", "(B)Ljava/lang/Byte;");
 PRIMITIVE_OBJECT_CONVERTER(Character, jchar, int, "java/lang/Character", "valueOf", "(C)Ljava/lang/Character;");
@@ -259,13 +261,6 @@ protected:
 
 /// To be inserted in a .cc file
 #define DECLARE_CONVERTERS_STATIC_ATTRS		\
-  DECLARE_STATIC_ATTR_(UBinary);		\
-  DECLARE_STATIC_ATTR_(UDictionary);		\
-  DECLARE_STATIC_ATTR_(UImage);			\
-  DECLARE_STATIC_ATTR_(UList);			\
-  DECLARE_STATIC_ATTR_(USound);			\
-  DECLARE_STATIC_ATTR_(UValue);			\
-  DECLARE_STATIC_ATTR_(UVarBase);		\
   DECLARE_STATIC_ATTR_(Boolean);		\
   DECLARE_STATIC_ATTR_(Byte);			\
   DECLARE_STATIC_ATTR_(Character);		\
@@ -273,16 +268,16 @@ protected:
   DECLARE_STATIC_ATTR_(Float);			\
   DECLARE_STATIC_ATTR_(Integer);		\
   DECLARE_STATIC_ATTR_(Long);			\
-  DECLARE_STATIC_ATTR_(Short);
+  DECLARE_STATIC_ATTR_(Short);                  \
+  DECLARE_STATIC_ATTR_(UBinary);		\
+  DECLARE_STATIC_ATTR_(UDictionary);		\
+  DECLARE_STATIC_ATTR_(UImage);			\
+  DECLARE_STATIC_ATTR_(UList);			\
+  DECLARE_STATIC_ATTR_(USound);			\
+  DECLARE_STATIC_ATTR_(UValue);			\
+  DECLARE_STATIC_ATTR_(UVarBase);
 
 #define INIT_CONVERTERS_STATIC_ATTRS(env)	\
-  STATIC_ATTR_INIT_(UBinary, env);		\
-  STATIC_ATTR_INIT_(UDictionary, env);		\
-  STATIC_ATTR_INIT_(UImage, env);		\
-  STATIC_ATTR_INIT_(UList, env);		\
-  STATIC_ATTR_INIT_(USound, env);		\
-  STATIC_ATTR_INIT_(UValue, env);		\
-  STATIC_ATTR_INIT_(UVarBase, env);		\
   STATIC_ATTR_INIT_(Boolean, env);		\
   STATIC_ATTR_INIT_(Byte, env);			\
   STATIC_ATTR_INIT_(Character, env);		\
@@ -290,6 +285,13 @@ protected:
   STATIC_ATTR_INIT_(Float, env);		\
   STATIC_ATTR_INIT_(Integer, env);		\
   STATIC_ATTR_INIT_(Long, env);			\
-  STATIC_ATTR_INIT_(Short, env);
+  STATIC_ATTR_INIT_(Short, env);                \
+  STATIC_ATTR_INIT_(UBinary, env);		\
+  STATIC_ATTR_INIT_(UDictionary, env);		\
+  STATIC_ATTR_INIT_(UImage, env);		\
+  STATIC_ATTR_INIT_(UList, env);		\
+  STATIC_ATTR_INIT_(USound, env);		\
+  STATIC_ATTR_INIT_(UValue, env);		\
+  STATIC_ATTR_INIT_(UVarBase, env);
 
 #endif
