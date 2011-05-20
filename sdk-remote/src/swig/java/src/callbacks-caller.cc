@@ -125,59 +125,36 @@ CallbacksCaller::cacheJNIVariables(JNIEnv* env)
 
   INIT_CONVERTERS_STATIC_ATTRS(env);
 
-#define CLEAN_AND_THROW(Msg)			\
-  do						\
-  {						\
-    FRAISE(Msg);                                \
-    return false;				\
-  } while (false)
+#define CASE(Type, Var)                                                 \
+  if (!(Var ## _swigptr_id =                                            \
+        env->GetFieldID(Type ## Converter::cls, "swigCPtr", "J")))      \
+    FRAISE("Can't find %s swigCPtr", #Type)
 
+  CASE(UBinary, ubinary);
+  CASE(UDictionary, udictionary);
+  CASE(UImage, uimage);
+  CASE(UList, ulist);
+  CASE(USound, usound);
+  CASE(UValue, uvalue);
+  CASE(UVar, uvar);
+#undef CASE
 
-  /// Get UValue swigCPtr attribute id
-  if (!(uvalue_swigptr_id = env->GetFieldID(UValueConverter::cls, "swigCPtr", "J")))
-    CLEAN_AND_THROW("Can't find UValue swigCPtr");
-
-  /// Get UList swigCPtr attribute id
-  if (!(ulist_swigptr_id = env->GetFieldID(UListConverter::cls, "swigCPtr", "J")))
-    CLEAN_AND_THROW("Can't find UList swigCPtr");
-
-  /// Get UImage swigCPtr attribute id
-  if (!(uimage_swigptr_id = env->GetFieldID(UImageConverter::cls, "swigCPtr", "J")))
-    CLEAN_AND_THROW("Can't find UImage swigCPtr");
-
-  /// Get UBinary swigCPtr attribute id
-  if (!(ubinary_swigptr_id = env->GetFieldID(UBinaryConverter::cls, "swigCPtr", "J")))
-    CLEAN_AND_THROW("Can't find UBinary swigCPtr");
-
-  /// Get Usound swigCPtr attribute id
-  if (!(usound_swigptr_id = env->GetFieldID(USoundConverter::cls, "swigCPtr", "J")))
-    CLEAN_AND_THROW("Can't find USound swigCPtr");
-
-  /// Get Udictionary swigCPtr attribute id
-  if (!(udictionary_swigptr_id = env->GetFieldID(UDictionaryConverter::cls, "swigCPtr", "J")))
-    CLEAN_AND_THROW("Can't find UDictionary swigCPtr");
-
-  /// Get UValue swigCPtr attribute id
-  if (!(uvar_swigptr_id = env->GetFieldID(UVarConverter::cls, "swigCPtr", "J")))
-    CLEAN_AND_THROW("Can't find UVar swigCPtr");
-
-  /// Get the jclass for UObject
+  // Get the jclass for UObject
   if (!(uobject_cls = getGlobalRef(env, "urbi/UObjectCPP")))
-    CLEAN_AND_THROW("Can't find UObject class");
+    FRAISE("Can't find UObject class");
 
-  /// Get UObject swigCPtr attribute id
+  // Get UObject swigCPtr attribute id
   if (!(uobject_swigptr_id = env->GetFieldID(uobject_cls, "swigCPtr", "J")))
-    CLEAN_AND_THROW("Can't find UObject swigCPtr");
+    FRAISE("Can't find UObject swigCPtr");
 
-  /// Get the jclass for Class
+  // Get the jclass for Class
   if (!(class_cls = getGlobalRef(env, "java/lang/Class")))
-    CLEAN_AND_THROW("Can't find Class class");
+    FRAISE("Can't find Class class");
 
-  /// Get String (char) Constructor id
-  if (!(class_getname_id = env->GetMethodID(class_cls, "getName", "()Ljava/lang/String;")))
-    CLEAN_AND_THROW("Can't find Class getName function");
-
-#undef CLEAN_AND_THROW
+  // Get String (char) Constructor id
+  if (!(class_getname_id =
+        env->GetMethodID(class_cls, "getName", "()Ljava/lang/String;")))
+    FRAISE("Can't find Class getName function");
 
   jni_variables_cached_ = true;
   return true; /// all went OK
