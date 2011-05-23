@@ -181,7 +181,6 @@ protected:
 class StringConverter : public ObjectConverter
 {
 public:
-
   static jstring staticConvert(JNIEnv* env, const std::string& val)
   {
     jobject jobj = env->NewStringUTF(val.c_str());
@@ -190,7 +189,6 @@ public:
   }
 
 protected:
-
   jvalue convert_ (JNIEnv* env, const urbi::UValue& val)
   {
     jobject jobj = staticConvert(env, val);
@@ -227,20 +225,17 @@ PRIMITIVE_OBJECT_CONVERTER(Short, jshort, int, "java/lang/Short", "valueOf", "(S
 class UVarConverter : public UVarBaseConverter
 {
 protected:
-
   virtual urbi::UVar* alloc(const urbi::UValue& val)
   {
     urbi::UVar var =
       urbi::uvar_uvalue_cast<urbi::UVar&>(const_cast<urbi::UValue&>(val));
     return (urbi::UVar*)(allocated = new urbi::UVar(var));
   }
-
 };
 
 class UVarNotifyConverter : public UVarConverter
 {
 protected:
-
   jvalue convert_ (JNIEnv* env, urbi::UVar& val)
   {
     jobject jobj = env->NewObject(UVarConverter::cls,
@@ -254,10 +249,10 @@ protected:
 
 #define DECLARE_STATIC_ATTR_(Name)		\
   jclass Name##Converter::cls = 0;		\
-  jmethodID Name##Converter::mid = 0;
+  jmethodID Name##Converter::mid = 0
 
 #define STATIC_ATTR_INIT_(Name, Env)		\
-  Name##Converter::init(Env);
+  Name##Converter::init(Env)
 
 /// To be inserted in a .cc file
 #define DECLARE_CONVERTERS_STATIC_ATTRS		\

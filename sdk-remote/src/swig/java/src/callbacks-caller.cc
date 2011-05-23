@@ -179,30 +179,20 @@ urbi::UObject*
 CallbacksCaller::getUObjectFromObject(jobject obj, JNIEnv* env)
 {
   if (obj)
-  {
-    jlong ptr = env->GetLongField(obj, uobject_swigptr_id);
-    if (ptr)  /// Java alocated memory, prefer allocate mine
+    // Java allocated memory, prefer allocate mine.
+    if (jlong ptr = env->GetLongField(obj, uobject_swigptr_id))
       return (urbi::UObject*) ptr;
-    else
-      return 0;
-  }
-  else
-    return 0;
+  return 0;
 }
 
 urbi::UVar*
 CallbacksCaller::getUVarFromObject(jobject obj)
 {
   if (obj)
-  {
-    jlong ptr = env_->GetLongField(obj, uobject_swigptr_id);
-    if (ptr)  /// Java alocated memory, prefer allocate mine
+    // Java allocated memory, prefer allocate mine.
+    if (jlong ptr = env_->GetLongField(obj, uobject_swigptr_id))
       return (urbi::UVar*) ptr;
-    else
-      return 0;
-  }
-  else
-    return 0;
+  return 0;
 }
 
 // For non pointer types.
