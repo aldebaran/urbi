@@ -279,13 +279,13 @@ namespace urbi
       return lhs->call(SYMBOL(MINUS_EQ), one);
     }
 
-    static rSlot
+    static rObject
     object_class_dollarGetSlot(rObject tgt, libport::Symbol name)
     {
-      return &tgt->slot_get(name);
+      return tgt->slot_get(name);
     }
 
-    static rSlot
+    static rObject
     object_class_dollarSetSlot(rObject tgt, libport::Symbol name, rSlot slot)
     {
       tgt->slot_set(name, slot.get());
@@ -295,13 +295,13 @@ namespace urbi
     void
     object_class_initialize()
     {
-      Object::proto->slot_set(SYMBOL(isA),
+      Object::proto->slot_set_value(SYMBOL(isA),
                               primitive(object_class_isA));
-      Object::proto->slot_set(SYMBOL(hasLocalSlot),
+      Object::proto->slot_set_value(SYMBOL(hasLocalSlot),
                               primitive(&Object::hasLocalSlot));
 
 #define DECLARE(Name)                                                   \
-      Object::proto->slot_set(SYMBOL_(Name),                            \
+      Object::proto->slot_set_value(SYMBOL_(Name),                            \
                               new Primitive(object_class_##Name),       \
                               true)                                     \
 
@@ -317,7 +317,7 @@ namespace urbi
 #undef DECLARE
 
 #define DECLARE(Name, Code)                                             \
-      Object::proto->slot_set(SYMBOL_(Name), primitive(Code))
+      Object::proto->slot_set_value(SYMBOL_(Name), primitive(Code))
 
       DECLARE(DOLLAR_getSlot     , object_class_dollarGetSlot);
       DECLARE(DOLLAR_setSlot     , object_class_dollarSetSlot);

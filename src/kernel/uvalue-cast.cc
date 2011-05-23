@@ -96,9 +96,9 @@ urbi::UValue uvalue_cast(const object::rObject& o, int recursionLevel)
   else if (is_a(o, Binary))
   {
     const std::string& data =
-      o->slot_get(SYMBOL(data))->as<object::String>()->value_get();
+      o->slot_get_value(SYMBOL(data))->as<object::String>()->value_get();
     std::string keywords =
-      o->slot_get(SYMBOL(keywords))->as<object::String>()->value_get();
+      o->slot_get_value(SYMBOL(keywords))->as<object::String>()->value_get();
     std::list<urbi::BinaryData> l;
     l.push_back(urbi::BinaryData(const_cast<char*>(data.c_str()), data.size()));
     std::list<urbi::BinaryData>::const_iterator i = l.begin();
@@ -111,13 +111,13 @@ urbi::UValue uvalue_cast(const object::rObject& o, int recursionLevel)
   }
   else if (is_a(o, UObject))
   {
-    res = o->slot_get(SYMBOL(__uobjectName))
+    res = o->slot_get_value(SYMBOL(__uobjectName))
       ->as<object::String>()->value_get();
   }
   else if (is_a(o, UVar))
   {
     res =
-      o->slot_get(SYMBOL(ownerName))->as<object::String>()->value_get()
+      o->slot_get_value(SYMBOL(ownerName))->as<object::String>()->value_get()
       + "."
       + o->as<object::UVar>()->initialName.name_get();
   }
@@ -136,7 +136,7 @@ urbi::UValue uvalue_cast(const object::rObject& o, int recursionLevel)
   else // We could not find how to cast this value
   {
     const object::rString& rs =
-      o->slot_get(SYMBOL(type))->as<object::String>();
+      o->slot_get_value(SYMBOL(type))->as<object::String>();
     runner::raise_argument_type_error
       (0, rs, object::to_urbi(SYMBOL(LT_exportable_SP_object_GT)),
        object::to_urbi(SYMBOL(cast)));
@@ -206,8 +206,8 @@ object_cast(const urbi::UValue& v)
                                     (const_cast<urbi::UValue&>(v)));
       }
       // The rest goes into a generic Binary.
-      res->slot_set(SYMBOL(keywords), new object::String(msg));
-      res->slot_set(SYMBOL(data),
+      res->slot_set_value(SYMBOL(keywords), new object::String(msg));
+      res->slot_set_value(SYMBOL(data),
                     new object::String
                     (std::string(static_cast<char*>(v.binary->common.data),
 				 v.binary->common.size)));
@@ -254,28 +254,23 @@ object::rObject uvalue_deserialize(object::rObject s)
     { // Look for the class
       libport::Symbol cn
         = from_urbi<libport::Symbol>(d->get(sn));
-      rObject proto;
-      Object::location_type l = lobby->slot_locate(cn);
-      if (l.first)
-        proto = l.second->value();
-      else
+      rObject proto = lobby->slot_get_value(cn, false);
+      if (!proto)
       {
-        l = Serializables->slot_locate(cn);
-        if (l.first)
-          proto = l.second->value();
-        else
+        proto = Serializables->slot_get_value(cn, false);
+        if (!proto)
           proto = Object;
       }
-      rObject res = proto->call(SYMBOL(new));
+    rObject res = proto->call(SYMBOL(new));
       foreach(Dictionary::value_type::value_type& v, d->value_get())
       {
         libport::Symbol key = object::from_urbi<libport::Symbol>(v.first);
         if (key != SYMBOL(DOLLAR_sn))
         {
-          if (rSlot s = res->local_slot_get(key))
-            s->set(uvalue_deserialize(v.second));
+          if (rObject s = res->local_slot_get(key))
+            res->slot_update(key, uvalue_deserialize(v.second));
           else
-            res->slot_set(key, uvalue_deserialize(v.second));
+            res->slot_set_value(key, uvalue_deserialize(v.second));
         }
       }
       return res;

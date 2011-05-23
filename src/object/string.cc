@@ -119,6 +119,8 @@ namespace urbi
 
     URBI_CXX_OBJECT_INIT(String)
     {
+      proto = this;
+      Ward w(this);
       bind_variadic(SYMBOL(split), string_split_bouncer);
 
       BIND(EQ_EQ, operator==, bool, (const rObject&) const);

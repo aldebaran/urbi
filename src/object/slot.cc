@@ -25,6 +25,7 @@ namespace urbi
     URBI_CXX_OBJECT_INIT(Slot)
     : value_(void_class)
     {
+      Ward w(this);
       // The BIND below will create slots that will use this, aka proto,
       // as their proto, so we must be valid right now.
       proto = this;
@@ -36,25 +37,23 @@ namespace urbi
       BIND(oset, set_);
       BIND(oget, get_);
       BIND(constant, constant_);
+
       BIND(get_get); // debug
       BIND(set_get);
       BIND(oget_get); // debug
       BIND(oset_get);
       BIND(updateHook, updateHook_);
-      slot_set(SYMBOL(changed), void_class);
+      rSlot s(new Slot);
+      slot_set(SYMBOL(changed), s);
       boost::function2<rObject, Slot&, rObject>
         getter(boost::bind(&Slot::changed, _1));
-      slot_get(SYMBOL(changed)).oget_set(primitive(getter));
-      slot_get(SYMBOL(changed)).constant_set(true);
+      s->oget_set(primitive(getter));
+      s->constant_set(true);
     }
     rObject
     Slot::property_get(libport::Symbol k)
     {
-      Object::location_type r = slot_locate(k, true);
-      if (!r.first)
-        return 0;
-      else
-        return r.second->value(this);
+      return slot_get_value(k, false);
     }
 
     /// FIXME: does not work with "changed".
@@ -69,9 +68,9 @@ namespace urbi
     {
       Object::location_type r = slot_locate(k, true);
       if (!r.first)
-        slot_set(k, value);
+        slot_set_value(k, value);
       else
-        r.second->set(value, this);
+        slot_update(k, value);
       return !r.first;
     }
 
@@ -88,6 +87,65 @@ namespace urbi
       return 0;//local_slots_get();
     }
 
+    void
+    Slot::set(rObject value, Object* sender)
+    {
+      GD_CATEGORY(Urbi.Slot);
+      GD_FINFO_DUMP("Slot::set, slot %s, sender %s, oset %s",
+        this, sender, !!oset_);
+      if (!sender)
+      {
+        GD_INFO_TRACE("Set without seneder");
+      }
+      if (constant_)
+        runner::raise_const_error();
+      if (sender && oset_)
+      {
+         object::objects_type args;
+         args << value << this;
+         eval::call_apply(::kernel::runner(),
+                          sender, oset_, SYMBOL(oset), args);
+      }
+      if (set_)
+      {
+        object::objects_type args;
+        args << value;
+        eval::call_apply(::kernel::runner(),
+                         const_cast<Slot*>(this), set_, SYMBOL(set), args);
+      }
+      else
+      {
+        value_ = value;
+        assert(value_);
+      }
+      static libport::Symbol _emit("emit");
+      if (changed_)
+        changed_->call(_emit);
+    }
+
+    Slot::Slot(const Slot& model)
+      : CxxObject()
+      , constant_(model.constant_)
+      , value_(model.value_)
+    {
+      //std::cerr <<"slot copy " << &model <<" -> " << this
+      //<< " oset " << model.oset_ << std::endl;
+      Ward w(this);
+      aver(&model);
+      proto_add(rSlot(const_cast<Slot*>(&model)));
+      if (model.set_)
+        set_ = model.set_->call(SYMBOL(new));
+      if (model.get_)
+        get_ = model.get_->call(SYMBOL(new));
+      if (model.oset_)
+        oset_ = model.oset_->call(SYMBOL(new));
+      if (model.oget_)
+        oget_ = model.oget_->call(SYMBOL(new));
+      //NM: I don't think calling the setter is a good idea here
+      // Main usage for this function is the COW that will call
+      // the setter immediately after. So calling it with an outdated value
+      // seems bad.
+    }
     const size_t Slot::allocator_static_max_size = sizeof(Slot);
   }
 }

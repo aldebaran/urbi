@@ -139,7 +139,7 @@ namespace urbi
 #define EVENT(Name)                             \
       {                                         \
         rObject val = Event->call(SYMBOL(new)); \
-        slot_set(Name, val);                    \
+        slot_set_value(Name, val);                    \
       }                                         \
 /**/
 
@@ -187,14 +187,14 @@ namespace urbi
     }
 
 #define EMIT(Name)                              \
-    slot_get(SYMBOL_(Name))->call(SYMBOL(emit))
+    slot_get_value(SYMBOL_(Name))->call(SYMBOL(emit))
 #define EMIT1(Name, Arg)                                        \
-    slot_get(SYMBOL_(Name))->call(SYMBOL(emit), to_urbi(Arg))
+    slot_get_value(SYMBOL_(Name))->call(SYMBOL(emit), to_urbi(Arg))
 
     void
     Socket::onConnect()
     {
-      disconnect_ = slot_get(SYMBOL(connected))->call(SYMBOL(trigger));
+      disconnect_ = slot_get_value(SYMBOL(connected))->call(SYMBOL(trigger));
       if (server_)
         server_->socket_ready(this);
     }

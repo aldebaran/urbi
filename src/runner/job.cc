@@ -137,7 +137,7 @@ namespace runner
   {
     rObject j = as_job();
     if (!j->local_slot_get(SYMBOL(name)))
-      j->slot_set(SYMBOL(name), object::to_urbi(name));
+      j->slot_set_value(SYMBOL(name), object::to_urbi(name));
     else
       j->slot_update(SYMBOL(name), object::to_urbi(name));
     return this;
@@ -147,9 +147,9 @@ namespace runner
   Job::name_get() const
   {
     if (!terminated() && job_cache_)
-      if (urbi::object::rSlot s =
-          job_cache_->local_slot_get(SYMBOL(name)))
-        return s->value()->as<object::String>()->value_get();
+      if (urbi::object::rObject s =
+          job_cache_->local_slot_get_value(SYMBOL(name)))
+        return s->as<object::String>()->value_get();
     return "Job";
   }
 

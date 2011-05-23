@@ -104,9 +104,14 @@ do (Object)
   function overrideSlot(var slot, var value)
   {
     setSlot(slot+"$old", getSlot(slot))|
+    if (hasLocalSlot(slot))
+      removeSlot(slot)|
+    setSlot(slot, value)|
+    /*
     setProperty(slot, "constant", false)|
     updateSlot(slot, value)|
     setProperty(slot, "constant", true)|
+    */
   };
 
   function ownsSlot(s)

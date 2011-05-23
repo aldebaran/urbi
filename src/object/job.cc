@@ -38,7 +38,7 @@ namespace urbi
       : value_(value)
     {
       proto_add(Job::proto);
-      slot_set(SYMBOL(exceptionHandlerTag), nil_class);
+      slot_set_value(SYMBOL(exceptionHandlerTag), nil_class);
     }
 
     Job::Job(rJob model)

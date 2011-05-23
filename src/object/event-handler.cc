@@ -25,7 +25,7 @@ namespace urbi
       , detach_(false) // trigger has to be called before stop.
     {
       proto_add(model);
-      slot_set(SYMBOL(active), to_urbi(true));
+      slot_set_value(SYMBOL(active), to_urbi(true));
     }
 
     EventHandler::EventHandler(rEvent source, rList payload)
@@ -34,7 +34,7 @@ namespace urbi
       , detach_(false) // trigger has to be called before stop.
     {
       proto_add(proto);
-      slot_set(SYMBOL(active), to_urbi(true));
+      slot_set_value(SYMBOL(active), to_urbi(true));
     }
 
     URBI_CXX_OBJECT_INIT(EventHandler)

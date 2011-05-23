@@ -25,31 +25,10 @@ namespace urbi
       : constant_(false)
       , value_(object::void_class)
     {
+      Ward w(this);
       if (!proto)
         proto = new Slot(FirstPrototypeFlag());
       proto_add(proto);
-    }
-
-    inline
-    Slot::Slot(const Slot& model)
-      : CxxObject()
-      , constant_(model.constant_)
-      , value_(model.value_)
-    {
-      aver(&model);
-      proto_add(rSlot(const_cast<Slot*>(&model)));
-      if (model.set_)
-        set_ = model.set_->call(SYMBOL(new));
-      if (model.get_)
-        get_ = model.get_->call(SYMBOL(new));
-      if (model.oset_)
-        oset_ = model.oset_->call(SYMBOL(new));
-      if (model.oget_)
-        oget_ = model.oget_->call(SYMBOL(new));
-      //NM: I don't think calling the setter is a good idea here
-      // Main usage for this function is the COW that will call
-      // the setter immediately after. So calling it with an outdated value
-      // seems bad.
     }
 
     template <typename T>
@@ -58,10 +37,11 @@ namespace urbi
       : constant_(false)
       , value_(void_class)
     {
+      Ward w(this);
       if (!proto)
         proto = new Slot(FirstPrototypeFlag());
       proto_add(proto);
-      set(value);
+      value_ = object::CxxConvert<T>::from(value);
     }
 
     inline
@@ -80,29 +60,7 @@ namespace urbi
     inline void
     Slot::set(const T& value, Object* sender)
     {
-      if (constant_)
-        runner::raise_const_error();
-      if (sender && oset_)
-      {
-         object::objects_type args;
-         args << object::CxxConvert<T>::from(value) << this;
-         eval::call_apply(::kernel::runner(),
-                          sender, oset_, SYMBOL(oset), args);
-      }
-      if (set_)
-      {
-        object::objects_type args;
-        args << object::CxxConvert<T>::from(value);
-        eval::call_apply(::kernel::runner(),
-                         const_cast<Slot*>(this), set_, SYMBOL(set), args);
-      }
-      else
-      {
-        value_ = object::CxxConvert<T>::from(value);
-        assert(value_);
-      }
-      if (changed_)
-        changed_->call(SYMBOL(emit));
+      set<rObject>(object::CxxConvert<T>::from(value), sender);
     }
 
     template <typename T>

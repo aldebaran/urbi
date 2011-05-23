@@ -216,7 +216,7 @@ namespace urbi
       {
         GD_FINFO_DEBUG("create primitive %s with C++ routine (type: %s)",
                        name, typeid(T).name());
-        slot_set(sym, primitive(p), true);
+        slot_set_value(sym, primitive(p), true);
       }
       else
       {

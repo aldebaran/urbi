@@ -48,9 +48,7 @@ namespace eval
 
     // If there is a Channel object with name 'tag', use it.
     object::Lobby* lobby = job.state.lobby_get();
-    object::rSlot chan_slot =
-      lobby->slot_locate(libport::Symbol(tag), true).second;
-    rObject chan = chan_slot ? chan_slot->value() : rObject();
+    rObject chan = lobby->slot_get_value(libport::Symbol(tag), false);
     if (chan && is_a(chan, lobby->slot_get_value(SYMBOL(Channel))))
       return
         chan->call(SYMBOL(LT_LT),

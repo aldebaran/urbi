@@ -40,7 +40,8 @@ namespace kernel
     initialize();
     try
     {
-      lobby_->slot_set(SYMBOL(remoteIP), object::to_urbi(getRemoteHost()));
+      lobby_->slot_set_value(SYMBOL(remoteIP),
+                             object::to_urbi(getRemoteHost()));
     }
     catch (const std::exception&)
     {

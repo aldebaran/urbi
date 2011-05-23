@@ -92,10 +92,10 @@ namespace runner
         // is set.
         static bool toplevel_debug = getenv("URBI_TOPLEVEL");
 
-        object::rSlot topLevel =
-          state.lobby_get()->slot_locate(SYMBOL(topLevel), false).second;
+        object::rObject topLevel =
+          state.lobby_get()->slot_get_value(SYMBOL(topLevel), false);
        if (topLevel)
-         topLevel->value()->call(SYMBOL(LT_LT), res);
+         topLevel->call(SYMBOL(LT_LT), res);
         else if (toplevel_debug)
         {
           try

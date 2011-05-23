@@ -119,8 +119,8 @@ namespace urbi
 
     void Tag::name_set(const std::string& name)
     {
-      if (!local_slot_get(SYMBOL(name)))
-        slot_set(SYMBOL(name), object::to_urbi(name));
+      if (!local_slot_get_value(SYMBOL(name)))
+        slot_set_value(SYMBOL(name), object::to_urbi(name));
       else
         slot_update(SYMBOL(name), object::to_urbi(name));
     }
@@ -128,8 +128,8 @@ namespace urbi
     const std::string
     Tag::name() const
     {
-      if (rSlot s = local_slot_get(SYMBOL(name)))
-        return s->value()->as<object::String>()->value_get();
+      if (rObject s = local_slot_get_value(SYMBOL(name)))
+        return s->as<object::String>()->value_get();
       return "Tag";
     }
 
@@ -190,12 +190,12 @@ namespace urbi
     static inline rObject
     tag_event(Tag* owner, libport::Symbol field)
     {
-      if (owner->local_slot_get(field))
-        return owner->slot_get_value(field);
+      if (rObject res = owner->local_slot_get_value(field))
+        return res;
 
       CAPTURE_GLOBAL(Event);
       rObject evt = Event->call(SYMBOL(new));
-      owner->slot_set(field, evt);
+      owner->slot_set_value(field, evt);
       return evt;
     }
 
@@ -214,29 +214,29 @@ namespace urbi
     void
     Tag::triggerEnter()
     {
-      if (rSlot f = local_slot_get(SYMBOL(onEnter)))
+      if (rObject f = local_slot_get_value(SYMBOL(onEnter)))
       {
         objects_type args;
         args << this;
         eval::call_apply(::kernel::runner(),
-                         f->value(), SYMBOL(onEnter), args);
+                         f, SYMBOL(onEnter), args);
       }
-      if (local_slot_get(SYMBOL(enterEvent)))
-        slot_get(SYMBOL(enterEvent))->call(SYMBOL(syncEmit));
+      if (rObject ev = local_slot_get_value(SYMBOL(enterEvent)))
+        ev->call(SYMBOL(syncEmit));
     }
 
     void
     Tag::triggerLeave()
     {
-      if (rSlot f = local_slot_get(SYMBOL(onLeave)))
+      if (rObject f = local_slot_get_value(SYMBOL(onLeave)))
       {
         objects_type args;
         args << this;
         eval::call_apply(::kernel::runner(),
-                         f->value(), SYMBOL(onLeave), args);
+                         f, SYMBOL(onLeave), args);
       }
-      if (local_slot_get(SYMBOL(leaveEvent)))
-        slot_get(SYMBOL(leaveEvent))->call(SYMBOL(syncEmit));
+      if (rObject o = local_slot_get_value(SYMBOL(leaveEvent)))
+        o->call(SYMBOL(syncEmit));
     }
 
     rTag

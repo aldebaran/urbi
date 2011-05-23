@@ -126,7 +126,7 @@ namespace urbi
       bind(libport::Symbol("scalar" "EQ"), &Vector::scalarEQ);
       bind(libport::Symbol("scalar" "GT"), &Vector::scalarGT);
       bind(libport::Symbol("scalar" "LT"), &Vector::scalarLT);
-      slot_set(SYMBOL(init), new Primitive(&init));
+      slot_set_value(SYMBOL(init), new Primitive(&init));
     }
 
     std::string
@@ -293,9 +293,9 @@ namespace urbi
       urbi::UValue v = ::uvalue_cast(o);
       rObject res = new object::Object();
       res->proto_add(Binary);
-      res->slot_set(SYMBOL(keywords),
+      res->slot_set_value(SYMBOL(keywords),
                     new object::String(v.binary->getMessage()));
-      res->slot_set(SYMBOL(data),
+      res->slot_set_value(SYMBOL(data),
                     new object::String
                     (std::string(static_cast<char*>(v.binary->common.data),
 				 v.binary->common.size)));

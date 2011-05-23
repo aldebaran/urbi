@@ -56,14 +56,16 @@ namespace urbi
     URBI_CXX_OBJECT_INIT(Primitive)
       : content_()
     {
-      extend(nil);
-      proto = this;
-      proto_add(Executable::proto);
-      proto_remove(Object::proto);
-
+      Ward w(this);
       // Hack to avoid proto = 0,
       // proto will redefined after.
       proto = this;
+      extend(nil);
+      if (!Executable::proto)
+        abort();
+      proto_add(Executable::proto);
+      proto_remove(Object::proto);
+
       BIND(apply);
     }
 

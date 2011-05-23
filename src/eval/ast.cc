@@ -824,7 +824,7 @@ namespace eval
         if (rObject owner = where->slot_locate(elt, false).first)
         {
           GD_FINFO_DUMP("Component %s exists.", elt);
-          where = owner->local_slot_get(elt)->value();
+          where = owner->local_slot_get_value(elt);
           if (object::Tag* parent_ = dynamic_cast<object::Tag*>(where.get()))
           {
             GD_INFO_DUMP("It is a tag, so use it as the new parent.");
@@ -837,7 +837,7 @@ namespace eval
           // to the upper level (hierarchical tags, implicitly
           // rooted by Tags).
           rObject tag = parent->call(SYMBOL(new), new object::String(elt));
-          where->slot_set(elt, tag);
+          where->slot_set_value(elt, tag);
           where = tag;
           parent = where;
         }

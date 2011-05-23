@@ -52,8 +52,8 @@ namespace urbi
       category_ = name;
       // Make it exist, at least for sake of "categories()".
       libport::debug::add_category(name);
-      slot_set(SYMBOL(onEnter), proto->slot_get_value(SYMBOL(onEnter)));
-      slot_set(SYMBOL(onLeave), proto->slot_get_value(SYMBOL(onLeave)));
+      slot_set_value(SYMBOL(onEnter), proto->slot_get_value(SYMBOL(onEnter)));
+      slot_set_value(SYMBOL(onLeave), proto->slot_get_value(SYMBOL(onLeave)));
     }
 
     void

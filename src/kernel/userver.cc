@@ -367,7 +367,7 @@ namespace kernel
 
     // Handle plugged UObjects.
     // Create "uobject" in lobby where UObjects will be put.
-    object::Object::proto->slot_set
+    object::Object::proto->slot_set_value
       (SYMBOL(uobjectInit),
        new object::Primitive(&urbi::uobjects::uobject_initialize));
 

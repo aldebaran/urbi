@@ -470,9 +470,9 @@ namespace urbi
 #if HAVE_SYS_INOTIFY_H
       CAPTURE_GLOBAL(Event);
       on_file_created_ = Event->call("new");
-      slot_set(SYMBOL(fileCreated), on_file_created_);
+      slot_set_value(SYMBOL(fileCreated), on_file_created_);
       on_file_deleted_ = Event->call("new");
-      slot_set(SYMBOL(fileDeleted), on_file_deleted_);
+      slot_set_value(SYMBOL(fileDeleted), on_file_deleted_);
 #endif
     }
 

@@ -55,10 +55,15 @@ namespace urbi
       ~Slot();
       template <typename T>
       T get(Object* sender = 0);
+
       template <typename T>
       void set(const T& value, Object* sender=0);
+
+      void set(rObject value, Object* sender=0);
+
       template <typename T>
       const T& operator=(const T& value);
+
       //operator rObject ();
       //operator bool ();
       Object* operator->();

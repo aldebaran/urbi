@@ -40,7 +40,7 @@ namespace urbi
       , sem_(new Semaphore())
     {
       proto_add(proto ? rObject(proto) : Object::proto);
-      socket_->slot_set(SYMBOL(receive),
+      socket_->slot_set_value(SYMBOL(receive),
         new Primitive(boost::bind(&InputStream::receive_, this, _1)));
       on_error_subscription_ =
         socket_->slot_get(SYMBOL(disconnected))->as<Event>()
@@ -145,7 +145,7 @@ namespace urbi
     InputStream::init(rFile f)
     {
       open(f, libport::Socket::READ);
-      socket_->slot_set(SYMBOL(receive),
+      socket_->slot_set_value(SYMBOL(receive),
                  new Primitive(boost::bind(&InputStream::receive_, this, _1)));
       on_error_subscription_ =
         socket_->slot_get(SYMBOL(disconnected))->as<Event>()

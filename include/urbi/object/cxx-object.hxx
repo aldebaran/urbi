@@ -113,17 +113,18 @@ namespace urbi
 
       // type.
       static libport::Symbol type("type");
-      res->slot_set(type,
+      res->slot_set_value(type,
                      new String(name), true);
       // clone.
       static libport::Symbol clone("clone");
-      res->slot_set(clone,
+      res->slot_set_value(clone,
                     new Primitive(bind(cxx_object_clone<T>, _1)), true);
 
       // asFoo.
       libport::Symbol as(std::string("as") + name);
-      if (!res->slot_locate(as, false).first)
-        res->slot_set(as, new Primitive(bind(cxx_object_id<T>, _1)), true);
+      if (!res->slot_get_value(as, false))
+        res->slot_set_value(as, new Primitive(bind(cxx_object_id<T>, _1)),
+                            true);
       dest->setSlot(libport::Symbol(name), res);
     }
 
@@ -139,7 +140,7 @@ namespace urbi
     CxxObject::Binder<T>::operator()(libport::Symbol name,
                                      M method)
     {
-      tgt_->slot_set(name, primitive(method), true);
+      tgt_->slot_set_value(name, primitive(method), true);
     }
 
     template <typename C, typename T>

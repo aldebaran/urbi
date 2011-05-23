@@ -65,7 +65,7 @@ namespace urbi
       , waiters_()
     {
       proto_add(proto);
-      slot_set(SYMBOL(active), to_urbi(false));
+      slot_set_value(SYMBOL(active), to_urbi(false));
     }
 
     Event::Event(rEvent model)
@@ -73,7 +73,7 @@ namespace urbi
       , waiters_()
     {
       proto_add(model);
-      slot_set(SYMBOL(active), to_urbi(false));
+      slot_set_value(SYMBOL(active), to_urbi(false));
     }
 
     URBI_CXX_OBJECT_INIT(Event)
@@ -153,7 +153,7 @@ namespace urbi
       callback_type* res = new callback_type(cb);
       callbacks_ << res;
       if (slot_has(SYMBOL(onSubscribe)))
-        slot_get(SYMBOL(onSubscribe))->call(SYMBOL(syncEmit));
+        slot_get_value(SYMBOL(onSubscribe))->call(SYMBOL(syncEmit));
       return Subscription(this, res);
     }
 
@@ -194,7 +194,7 @@ namespace urbi
       foreach (const actives_type::value_type& active, active_)
         active->trigger_job(actions, true);
       if (slot_has(SYMBOL(onSubscribe)))
-        slot_get(SYMBOL(onSubscribe))->call(SYMBOL(syncEmit));
+        slot_get_value(SYMBOL(onSubscribe))->call(SYMBOL(syncEmit));
       subscribed_();
     }
 
@@ -202,7 +202,7 @@ namespace urbi
     Event::waituntil(rObject pattern)
     {
       if (slot_has(SYMBOL(onSubscribe)))
-        slot_get(SYMBOL(onSubscribe))->call(SYMBOL(syncEmit));
+        slot_get_value(SYMBOL(onSubscribe))->call(SYMBOL(syncEmit));
       // Check whether there's already a matching instance.
       foreach (const actives_type::value_type& active, active_)
         if (pattern == nil_class

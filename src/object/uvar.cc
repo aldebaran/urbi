@@ -48,7 +48,7 @@ namespace urbi
       std::string msg =
         libport::format("!!! %s %s.%s%s",
                         m1,
-                        (self->slot_get(SYMBOL(ownerName))
+                        (self->slot_get_value(SYMBOL(ownerName))
                          ->as<String>()->value_get()),
                         self->initialName,
                         m2);
@@ -98,7 +98,8 @@ namespace urbi
             (r, self,
              "unknown exception caught while processing notify on");
         }
-        if (failed && self->slot_get(SYMBOL(eraseThrowingCallbacks))->as_bool())
+        if (failed
+            && self->slot_get_value(SYMBOL(eraseThrowingCallbacks))->as_bool())
         {
           self->removeCallback(callbacks_, i->first);
         }
@@ -138,7 +139,7 @@ namespace urbi
       Object* self = o[0];
       Symbol vname = Symbol(o[1]->as_checked<String>()->value_get());
       Symbol pname = Symbol(o[2]->as_checked<String>()->value_get());
-      rUVar v = self->slot_get(vname)->as<UVar>();
+      rUVar v = self->slot_get_value(vname)->as<UVar>();
       if (v && matchCachedProps(pname))
         return v->call(pname);
       else
@@ -151,7 +152,7 @@ namespace urbi
       Object* self = o[0];
       Symbol vname = Symbol(o[1]->as_checked<String>()->value_get());
       Symbol pname = Symbol(o[2]->as_checked<String>()->value_get());
-      rUVar v = self->slot_get(vname)->as<UVar>();
+      rUVar v = self->slot_get_value(vname)->as<UVar>();
       if (v && matchCachedProps(pname))
         return true_class;
       else
@@ -164,7 +165,7 @@ namespace urbi
       Object* self = o[0];
       Symbol vname = Symbol(o[1]->as_checked<String>()->value_get());
       Symbol pname = Symbol(o[2]->as_checked<String>()->value_get());
-      rUVar v = self->slot_get(vname)->as<UVar>();
+      rUVar v = self->slot_get_value(vname)->as<UVar>();
       if (v && matchCachedProps(pname))
         return v->slot_update(pname, o[3]);
       else
@@ -215,8 +216,7 @@ namespace urbi
         ::urbi::uobjects::StringPair p = ::urbi::uobjects::uname_split(name);
         if (rObject o = uobjects::get_base(p.first))
         {
-          location_type l = o->slot_locate(libport::Symbol(p.second), true);
-          return l.first ? l.second->value() : 0;
+          return o->slot_get_value(libport::Symbol(p.second), false);
         }
       }
       catch (const UrbiException& e)
@@ -245,7 +245,7 @@ namespace urbi
       , changed_(0)
     {
       proto_add(proto ? rPrimitive(proto) : Primitive::proto);
-      slot_set(SYMBOL(waiterTag), new Tag());
+      slot_set_value(SYMBOL(waiterTag), new Tag());
     }
 
     UVar::UVar(libport::intrusive_ptr<UVar>)
@@ -263,7 +263,7 @@ namespace urbi
       , changed_(0)
     {
       proto_add(proto ? rPrimitive(proto) : Primitive::proto);
-      slot_set(SYMBOL(waiterTag), new Tag());
+      slot_set_value(SYMBOL(waiterTag), new Tag());
     }
 
     static rObject
@@ -271,10 +271,10 @@ namespace urbi
     {
       //called with self slotname slotval
       check_arg_count(args, 2);
-      libport::intrusive_ptr<UVar> rvar =
-        args.front()
-        ->slot_get(libport::Symbol(args[1]->as<String>()->value_get())).value()
-        .unsafe_cast<UVar>();
+      rObject uv = args.front()
+        ->slot_get_value(libport::Symbol(args[1]->as<String>()->value_get()));
+
+      libport::intrusive_ptr<UVar> rvar = uv->as<UVar>();
       if (!rvar)
         RAISE("UVar updatehook called on non-uvar slot");
       rvar->update_(args[2]);
@@ -309,10 +309,10 @@ namespace urbi
       BIND(valsensor);
       BIND(writeOwned);
 
-      slot_set(SYMBOL(parentGetProperty), new Primitive(&parentGetProperty));
-      slot_set(SYMBOL(parentSetProperty), new Primitive(&parentSetProperty));
-      slot_set(SYMBOL(parentHasProperty), new Primitive(&parentHasProperty));
-      setSlot(SYMBOL(updateBounce), new Primitive(&uvar_update_bounce));
+      slot_set_value(SYMBOL(parentGetProperty), new Primitive(&parentGetProperty));
+      slot_set_value(SYMBOL(parentSetProperty), new Primitive(&parentSetProperty));
+      slot_set_value(SYMBOL(parentHasProperty), new Primitive(&parentHasProperty));
+      slot_set_value(SYMBOL(updateBounce), new Primitive(&uvar_update_bounce));
     }
 
     rObject
@@ -384,7 +384,7 @@ namespace urbi
         val = (owned?valsensor:this->val)->as<UValue>();
         if (val)
           val->extract();
-        slot_get(SYMBOL(waiterTag))->call(SYMBOL(stop));
+        slot_get_value(SYMBOL(waiterTag))->call(SYMBOL(stop));
       }
     }
 
@@ -400,7 +400,7 @@ namespace urbi
       rObject r =  kernel::urbiserver->getCurrentRunner().as_job();
       // Prevent loopback notification on the remote who called us.
       if (!r->slot_has(SYMBOL(DOLLAR_uobjectInUpdate)))
-        r->slot_set(SYMBOL(DOLLAR_uobjectInUpdate),
+        r->slot_set_value(SYMBOL(DOLLAR_uobjectInUpdate),
                     slot_get_value(SYMBOL(fullName)));
       update_timed_(val, timestamp);
       r->slot_remove(SYMBOL(DOLLAR_uobjectInUpdate));
@@ -497,7 +497,7 @@ namespace urbi
             res.reset();
             bv.reset();
             ++waiterCount_;
-            slot_get(SYMBOL(waiterTag))->call(SYMBOL(waitUntilStopped),
+            slot_get_value(SYMBOL(waiterTag))->call(SYMBOL(waitUntilStopped),
                                               new Float(0.5));
             --waiterCount_;
             // The val slot likely changed, fetch it again.

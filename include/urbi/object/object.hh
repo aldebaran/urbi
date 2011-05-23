@@ -31,9 +31,6 @@
 
 # include <urbi/object/fwd.hh>
 # include <urbi/object/centralized-slots.hh>
-# ifndef OBJECT_SLOT_HH
-#  include <urbi/object/centralized-slots.hxx>
-# endif
 # include <urbi/export.hh>
 
 # define URBI_ATTRIBUTE_ON_DEMAND_DECLARE(Type, Name)   \
@@ -175,7 +172,7 @@ namespace urbi
       /// \return Whether the \a k slot exists
       bool slot_has(key_type k) const;
 
-      typedef std::pair<Object*, rSlot> location_type;
+      typedef std::pair<Object*, rObject> location_type;
       /// Lookup field in object hierarchy.
       /// \param k         Slot name.
       /// \param fallback  Whether we agree to use the "fallback" method
@@ -191,9 +188,8 @@ namespace urbi
       /// Lookup field in object hierarchy.
       /// \param name The name of the slot to search
       /// \throw Exception.Lookup if the slot isn't found.
-      rObject slot_get(key_type k) const;
-      Slot& slot_get(key_type k);
-      rObject slot_get_value(key_type k);
+      rObject slot_get(key_type k, bool throwOnFailure = true) const;
+      rObject slot_get_value(key_type k, bool throwOnFailure = true) const;
 
       /// Implement low-level copy-on-write.
       /// \param name	The slot to update.
@@ -213,11 +209,11 @@ namespace urbi
       /// Set slot value in local slot.
       /// \precondition the slot does not exist in this.
       /// \return    *this.
-      Object& slot_set(key_type k, rObject o, bool constant = false);
-      Object& slot_set(key_type k, Slot* o);
+      Object& slot_set_value(key_type k, rObject o, bool constant = false);
+      Object& slot_set(key_type k, rObject o);
 
       /// Create a slot with a getter and a setter.
-      Slot& slot_set(key_type slot, rObject getter, rObject setter);
+      Object& slot_set(key_type slot, rObject getter, rObject setter);
 
       /// \brief Copy another object's slot.
       ///
@@ -231,7 +227,7 @@ namespace urbi
 
       /// Get the object pointed to by the *local* slot.
       /// \return 0 if there is no such slot.
-      rSlot local_slot_get(key_type k) const;
+      rObject local_slot_get(key_type k) const;
 
       /// Get the value in the *local* slot.
       /// \return 0 if there is no such slot.
@@ -424,6 +420,7 @@ namespace urbi
       typedef boost::unordered_set<rObject> objects_set_type;
       template<class F> friend bool
       for_all_protos(const rObject& r, F& f, objects_set_type& objects);
+      friend class CentralizedSlots;
     };
 
     /// Call f(robj) on r and all its protos hierarchy, stop if it returns true.

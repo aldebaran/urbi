@@ -252,9 +252,9 @@ namespace eval
       {
         // GD_INFO_DEBUG("Function has arguments.");
         // FIXME: args is modified.
-	if (rSlot call =
-            function->slot_locate(SYMBOL(LPAREN_RPAREN), false).second)
-	  return call_apply(job, call->value(),
+        if (rObject call =
+            function->slot_get_value(SYMBOL(LPAREN_RPAREN), false))
+	  return call_apply(job, call,
                             SYMBOL(LPAREN_RPAREN), args, call_message, loc);
       }
       // GD_FINFO_DEBUG("Ensure that no arguments are provided (%d == 0)", args.size() - 1);
@@ -573,7 +573,7 @@ namespace eval
     {
       CAPTURE_GLOBAL(PseudoLazy);
       rObject lazy = PseudoLazy->clone();
-      lazy->slot_set(SYMBOL(code), o);
+      lazy->slot_set_value(SYMBOL(code), o);
       args << lazy;
     }
   }
@@ -589,18 +589,18 @@ namespace eval
     rObject res = CallMessage->clone();
 
     // Set the sender to be the current self. self must always exist.
-    res->slot_set(SYMBOL(sender), job.state.this_get().get());
+    res->slot_set_value(SYMBOL(sender), job.state.this_get().get());
 
     // Set the target to be the object on which the function is applied.
-    res->slot_set(SYMBOL(target), args.front());
+    res->slot_set_value(SYMBOL(target), args.front());
 
     // Set the code slot.
-    res->slot_set(SYMBOL(code), code);
+    res->slot_set_value(SYMBOL(code), code);
 
     // Set the name of the message call.
-    res->slot_set(SYMBOL(message), new object::String(msg));
+    res->slot_set_value(SYMBOL(message), new object::String(msg));
 
-    res->slot_set(SYMBOL(args), new object::List(
+    res->slot_set_value(SYMBOL(args), new object::List(
                     object::objects_type(args.begin() + 1, args.end())));
 
     return res;

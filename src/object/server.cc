@@ -58,7 +58,7 @@ namespace urbi
     {
       CAPTURE_GLOBAL(Event);
       connection_ = Event->call(SYMBOL(new));
-      slot_set(SYMBOL(connection), connection_);
+      slot_set_value(SYMBOL(connection), connection_);
     }
 
 #define BOUNCE(Type, From, To)                  \

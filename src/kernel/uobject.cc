@@ -336,8 +336,8 @@ static inline void traceOperation(urbi::UVar*v, libport::Symbol op)
     StringPair p = uname_split(v->get_name());
     rObject o = xget_base(p.first);
     object::global_class
-      ->slot_get(SYMBOL(UVar))
-      ->slot_get(op)
+      ->slot_get_value(SYMBOL(UVar))
+      ->slot_get_value(op)
       ->call(SYMBOL(syncEmit), o, o->slot_get_value(Symbol(p.second)),
              object::to_urbi(bound_context));
   }
@@ -632,7 +632,8 @@ static rObject
 uobject_finalize(const object::objects_type& args)
 {
   rObject o = args.front();
-  std::string objName = o->slot_get(SYMBOL(__uobjectName)).get<std::string>();
+  std::string objName =
+  o->slot_get_value(SYMBOL(__uobjectName))->as<object::String>()->value_get();
   // FIXME: uobject_to_robject[objName] should be enough
   urbi::UObject* uob = urbi::impl::KernelUContextImpl::instance()
     ->getUObject(objName);
@@ -673,7 +674,7 @@ static void writeFromContext(const std::string& ctx,
   rObject o = get_base(p.first);
   if (!o)
     runner::raise_lookup_error(libport::Symbol(varName), object::global_class);
-  o->slot_get(Symbol(p.second))->call(SYMBOL(update_timed), ov,
+  o->slot_get_value(Symbol(p.second))->call(SYMBOL(update_timed), ov,
                                       object::to_urbi(libport::utime()));
   ov->invalidate();
 }
@@ -728,7 +729,7 @@ namespace urbi
       GD_FINFO_TRACE("MakeProto for %s", s->name);
       object::rObject proto = ::urbi::uobjects::uobject_make_proto(s->name);
       GD_FINFO_TRACE("Writing class for %s", s->name);
-      where->slot_set(libport::Symbol(s->name + "_class"), proto);
+      where->slot_set_value(libport::Symbol(s->name + "_class"), proto);
       // Make our first instance.
       GD_FINFO_TRACE("Creating instance for %s", s->name);
       rObject o = ::urbi::uobjects::uobject_new(proto, true);
@@ -907,7 +908,7 @@ namespace urbi
       rObject o = xget_base(p.first,
                             "UEvent creation on non existing object: %s");
       if (!o->local_slot_get(Symbol(p.second)))
-        o->slot_set(Symbol(p.second), e);
+        o->slot_set_value(Symbol(p.second), e);
     }
 
     void
@@ -1154,9 +1155,9 @@ namespace urbi
       {
         // Instanciation occured through ucontext::bind.
         o = ::urbi::uobjects::uobject_make_proto(owner->__name);
-        where->slot_set(Symbol(owner->__name), o);
+        where->slot_set_value(Symbol(owner->__name), o);
       }
-      o->slot_set(SYMBOL(lobby), kernel::runner().state.lobby_get());
+      o->slot_set_value(SYMBOL(lobby), kernel::runner().state.lobby_get());
     }
 
     void
@@ -1192,13 +1193,13 @@ namespace urbi
       if (me->slot_has(SYMBOL(compactName)))
         return
           me
-          ->slot_get(SYMBOL(compactName))
+          ->slot_get_value(SYMBOL(compactName))
           ->as<object::String>()
           ->value_get();
       else if (me->slot_has(SYMBOL(__uobjectName)))
         return
           me
-          ->slot_get(SYMBOL(__uobjectName))
+          ->slot_get_value(SYMBOL(__uobjectName))
           ->as<object::String>()
           ->value_get();
       else
@@ -1342,14 +1343,13 @@ namespace urbi
       Symbol varName(p.second);
       // Force kernel-side variable creation, init to void.
       rObject initVal;
-      if (o->slot_locate(varName).first == o.get())
+      if (initVal = o->local_slot_get_value(varName))
       {
-        initVal = o->local_slot_get(varName)->value();
         // Check if the variable exists and is an uvar.
         if (initVal->slot_has(SYMBOL(owned)))
         {
           traceOperation(owner, SYMBOL(traceBind));
-          ruvar_ = o->slot_get(varName)->as<object::UVar>();
+          ruvar_ = o->slot_get_value(varName)->as<object::UVar>();
           GD_FINFO_DUMP("UVar %s reusing existing object %s",
                         owner_->get_name(),
                         ruvar_.get());
@@ -1560,7 +1560,7 @@ namespace urbi
                                              this, enable));
         return;
       }
-      ruvar_->slot_set(SYMBOL(rtp),  object::to_urbi(enable));
+      ruvar_->slot_set_value(SYMBOL(rtp),  object::to_urbi(enable));
     }
 
     void KernelUVarImpl::setInputPort(bool enable)
@@ -1577,7 +1577,7 @@ namespace urbi
                r.state.redefinition_mode_set(last_rdm));
       r.state.redefinition_mode_set(true);
       if (enable)
-        ruvar_->slot_set(SYMBOL(inputPort), object::to_urbi(true));
+        ruvar_->slot_set_value(SYMBOL(inputPort), object::to_urbi(true));
       else
         ruvar_->slot_remove(SYMBOL(inputPort));
     }
@@ -1630,7 +1630,7 @@ namespace urbi
       if (owner_->type == "function")
       {
         traceName += "." + p.second;
-        me->slot_set(libport::Symbol(method), new object::Primitive(
+        me->slot_set_value(libport::Symbol(method), new object::Primitive(
                        boost::function1<rObject, const objects_type&>
                        (boost::bind(&wrap_ucallback, _1, owner_, traceName,
                                     true))));
@@ -1639,7 +1639,7 @@ namespace urbi
       {
         UEvent e = UEvent(p.first, p.second); // force creation of the event
         rEvent event =
-          me->slot_get(libport::Symbol(method))->as<object::Event>();
+          me->slot_get_value(libport::Symbol(method))->as<object::Event>();
         event->onEvent(0, new object::Primitive(
                          boost::function1<rObject, const objects_type&>
                          (boost::bind(&wrap_event, _1, owner_, traceName))));
@@ -1657,7 +1657,8 @@ namespace urbi
             traceName += trace_name(you);
 
         // Source UVar
-        object::rUVar var = me->slot_get(Symbol(method))->as<object::UVar>();
+        object::rUVar var =
+          me->slot_get_value(Symbol(method))->as<object::UVar>();
         aver(var);
         rObject source = xget_base(owner_->objname);
         GD_FINFO_TRACE("UGC same source: %s (%s==%s)", source == me,
@@ -1694,7 +1695,7 @@ namespace urbi
           boost::function1<rObject, const objects_type&>
           (boost::bind(&wrap_ucallback_notify, _1, owner_,
                        traceName)));
-        callback_->slot_set
+        callback_->slot_set_value
           (SYMBOL(target),
            new object::String(&owner_->owner ? owner_->owner.__name:"unknown"));
 
@@ -1766,17 +1767,12 @@ namespace urbi
       // The user may be using the Urbi variable name.
       if (!res)
       {
-        s = object::global_class->slot_locate(libport::Symbol(objname));
-        // Not simplifyable! If the rSlot contains 0, casting to
-        // rObject will segv.
-        if (s.second)
-          res = s.second->value();
+        res = object::global_class->slot_get_value(libport::Symbol(objname),
+                                                 false);
       }
       if (!res)
       {
-        s = where->slot_locate(libport::Symbol(objname));
-        if (s.second)
-          res = s.second->value();
+        res = where->slot_get_value(libport::Symbol(objname), false);
       }
       return res;
     }
@@ -1789,12 +1785,12 @@ namespace urbi
       CAPTURE_GLOBAL(Global);
       urbi::setCurrentContext(new urbi::impl::KernelUContextImpl());
       where = args.front();
-      where->slot_set(SYMBOL(setTrace), object::primitive(&setTrace));
+      where->slot_set_value(SYMBOL(setTrace), object::primitive(&setTrace));
       uobjects_reload();
-      where->slot_set(SYMBOL(getStats),    object::primitive(&Stats::get));
-      where->slot_set(SYMBOL(clearStats),  object::primitive(&Stats::clear));
-      where->slot_set(SYMBOL(enableStats), object::primitive(&Stats::enable));
-      Global->slot_set(SYMBOL(uvalueDeserialize), primitive(&uvalue_deserialize));
+      where->slot_set_value(SYMBOL(getStats),    object::primitive(&Stats::get));
+      where->slot_set_value(SYMBOL(clearStats),  object::primitive(&Stats::clear));
+      where->slot_set_value(SYMBOL(enableStats), object::primitive(&Stats::enable));
+      Global->slot_set_value(SYMBOL(uvalueDeserialize), primitive(&uvalue_deserialize));
 
       where->bind(SYMBOL(searchPath),    &uobject_uobjectsPath,
                   &uobject_uobjectsPathSet);
@@ -1812,15 +1808,15 @@ namespace urbi
     {
       rObject res =
         object::Object::proto
-        ->slot_get(SYMBOL(UObject))
+        ->slot_get_value(SYMBOL(UObject))
         ->call(SYMBOL(clone));
       res->call(SYMBOL(uobjectInit));
       res->call(SYMBOL(init));
-      res->slot_set(SYMBOL(finalize), new object::Primitive(&uobject_finalize));
-      res->slot_set(SYMBOL(__uobject_cname), new object::String(name));
-      res->slot_set(SYMBOL(__uobject_base), res);
-      res->slot_set(SYMBOL(clone), new object::Primitive(&uobject_clone));
-      res->slot_set(SYMBOL(periodicCall), object::primitive(&periodic_call));
+      res->slot_set_value(SYMBOL(finalize), new object::Primitive(&uobject_finalize));
+      res->slot_set_value(SYMBOL(__uobject_cname), new object::String(name));
+      res->slot_set_value(SYMBOL(__uobject_base), res);
+      res->slot_set_value(SYMBOL(clone), new object::Primitive(&uobject_clone));
+      res->slot_set_value(SYMBOL(periodicCall), object::primitive(&periodic_call));
       return res;
     }
 
@@ -1844,9 +1840,9 @@ namespace urbi
       std::string name;
       if (forceName)
       {
-        res->slot_set(SYMBOL(type), rcName);
+        res->slot_set_value(SYMBOL(type), rcName);
         name = cname;
-        where->slot_set(libport::Symbol(name), res);
+        where->slot_set_value(libport::Symbol(name), res);
       }
       else
       {
@@ -1857,10 +1853,10 @@ namespace urbi
         name = ss.str();
         /* We need to make this name accessible in urbi in case the UObject code
            emits urbi code using this name.*/
-        where->slot_set(libport::Symbol(name), res);
+        where->slot_set_value(libport::Symbol(name), res);
       }
       uobject_map[name] = res.get();
-      res->slot_set(SYMBOL(__uobjectName), object::to_urbi(name));
+      res->slot_set_value(SYMBOL(__uobjectName), object::to_urbi(name));
       res->call(SYMBOL(uobjectInit));
       // Instanciate UObject.
       if (instanciate)
@@ -1893,8 +1889,8 @@ namespace urbi
         GD_FINFO_TRACE("UEM_ASSIGNVALUE %s %s", name, val);
         object::rUValue ov(new object::UValue(val));
         object::global_class
-          ->slot_get(Symbol(p.first))
-          ->slot_get(Symbol(p.second))
+          ->slot_get_value(Symbol(p.first))
+          ->slot_get_value(Symbol(p.second))
           ->call(SYMBOL(update_timed), ov, object::to_urbi(time));
       }
       break;
@@ -1918,7 +1914,7 @@ namespace urbi
         std::string id;
         UValue val;
         ia >> id >> val;
-        object::global_class->slot_get(SYMBOL(UObject))
+        object::global_class->slot_get_value(SYMBOL(UObject))
           ->call(SYMBOL(funCall), object::to_urbi(id),
                  object_cast(val));
       }

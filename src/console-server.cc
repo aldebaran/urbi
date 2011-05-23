@@ -465,11 +465,11 @@ namespace urbi
 #endif
 
     // In Urbi: System.listenPort = <port>.
-    object::system_class->slot_set(SYMBOL(listenPort),
+    object::system_class->slot_set_value(SYMBOL(listenPort),
                                    object::to_urbi(port),
                                    true);
     kernel::urbiserver->interactive_set(data.interactive);
-    object::system_class->slot_set(SYMBOL(fast),
+    object::system_class->slot_set_value(SYMBOL(fast),
                                    object::to_urbi(data.fast),
                                    true);
     s.initialize(data.interactive);

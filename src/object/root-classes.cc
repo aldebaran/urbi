@@ -140,14 +140,14 @@ namespace urbi
       What = Object::proto->clone()
 
 #define CLASS_INIT(What, Name)                          \
-      What->slot_set(SYMBOL(type),                      \
+      What->slot_set_value(SYMBOL(type),                      \
                      new String(SYMBOL_(Name)));        \
-      What->slot_set(SYMBOL(as ## Name),                \
+      What->slot_set_value(SYMBOL(as ## Name),                \
                      new Primitive(id))
 
 #define CLASS_REGISTER(What, Name)                      \
       What ## _initialize();                            \
-      global_class->slot_set(SYMBOL_(Name), What, true)
+      global_class->slot_set_value(SYMBOL_(Name), What, true)
 
 
 #define CLASS_SETUP(What, Name)                 \
@@ -193,9 +193,9 @@ namespace urbi
       CLASS_INIT(global_class, Global);
       CLASS_INIT(Object::proto, Object);
       global_class_initialize();
-      global_class->slot_set(SYMBOL(Global), global_class, true);
+      global_class->slot_set_value(SYMBOL(Global), global_class, true);
       object_class_initialize();
-      global_class->slot_set(SYMBOL(Object), Object::proto, true);
+      global_class->slot_set_value(SYMBOL(Object), Object::proto, true);
 
       // Completion cannot be done before String is complete.
       EXISTING_CLASS_SETUP(true_class, true);
@@ -279,13 +279,13 @@ namespace urbi
       static void
       void_class_initialize()
       {
-        void_class->slot_set(SYMBOL(asString), new String(SYMBOL(void)));
-        void_class->slot_set(SYMBOL(DOLLAR_id), new String(SYMBOL(void)));
+        void_class->slot_set_value(SYMBOL(asString), new String(SYMBOL(void)));
+        void_class->slot_set_value(SYMBOL(DOLLAR_id), new String(SYMBOL(void)));
         // void prints nothing in the toplevel
-        void_class->slot_set(SYMBOL(asTopLevelPrintable), new String(""));
+        void_class->slot_set_value(SYMBOL(asTopLevelPrintable), new String(""));
         passert("void must be initialized after true", true_class);
-        void_class->slot_set(SYMBOL(isVoid), true_class);
-        void_class->slot_set
+        void_class->slot_set_value(SYMBOL(isVoid), true_class);
+        void_class->slot_set_value
           (SYMBOL(acceptVoid), new Primitive(void_class_acceptVoid));
       }
 

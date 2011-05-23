@@ -46,12 +46,12 @@ namespace urbi
     {
       try
       {
-        if (rSlot finalize = slot_locate(SYMBOL(finalize), false).second)
+        if (rObject finalize = slot_get_value(SYMBOL(finalize), false))
         {
           objects_type args;
           args << this;
           eval::call_apply(::kernel::runner(),
-                           finalize->value(),
+                           finalize,
                            SYMBOL(finalize),
                            args);
         }

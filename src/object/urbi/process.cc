@@ -222,10 +222,10 @@ namespace urbi
         {
           XCLOSE(stdout_fd[1]);
           XCLOSE(stderr_fd[1]);
-          slot_set(SYMBOL(stdout), new InputStream(stdout_fd[0], true));
-          slot_set(SYMBOL(stderr), new InputStream(stderr_fd[0], true));
+          slot_set_value(SYMBOL(stdout), new InputStream(stdout_fd[0], true));
+          slot_set_value(SYMBOL(stderr), new InputStream(stderr_fd[0], true));
         }
-        slot_set(SYMBOL(stdin), new OutputStream(stdin_fd[1], true));
+        slot_set_value(SYMBOL(stdin), new OutputStream(stdin_fd[1], true));
 
         // Make sure we stay alive until we're done.
         ward_ = this;
@@ -326,7 +326,7 @@ namespace urbi
       bool done = false;
       if (status_ == -1)
       {
-        res->slot_set(SYMBOL(asString),
+        res->slot_set_value(SYMBOL(asString),
                       to_urbi(pid_ ? "running" : "not started"));
       }
       else
@@ -339,8 +339,8 @@ namespace urbi
         {
           exited = true;
           int rv = WEXITSTATUS(status);
-          res->slot_set(SYMBOL(exitStatus), to_urbi(rv));
-          res->slot_set(SYMBOL(asString),
+          res->slot_set_value(SYMBOL(exitStatus), to_urbi(rv));
+          res->slot_set_value(SYMBOL(asString),
                         to_urbi(libport::format("exited with status %s", rv)));
         }
         else
@@ -348,15 +348,15 @@ namespace urbi
           aver(WIFSIGNALED(status));
           signaled = true;
           int sig = WTERMSIG(status);
-          res->slot_set(SYMBOL(exitSignal), to_urbi(sig));
-          res->slot_set(SYMBOL(asString),
+          res->slot_set_value(SYMBOL(exitSignal), to_urbi(sig));
+          res->slot_set_value(SYMBOL(asString),
                         to_urbi(libport::format("killed by signal %s", sig)));
         }
       }
 
-      res->slot_set(SYMBOL(done), to_urbi(done));
-      res->slot_set(SYMBOL(exited), to_urbi(exited));
-      res->slot_set(SYMBOL(signaled), to_urbi(signaled));
+      res->slot_set_value(SYMBOL(done), to_urbi(done));
+      res->slot_set_value(SYMBOL(exited), to_urbi(exited));
+      res->slot_set_value(SYMBOL(signaled), to_urbi(signaled));
 
       return res;
     }
