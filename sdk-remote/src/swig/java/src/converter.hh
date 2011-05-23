@@ -127,7 +127,7 @@ protected:
     virtual Type* alloc(const urbi::UValue& v)                          \
     {									\
       Type val = urbi::uvalue_cast<Type>(const_cast<urbi::UValue&>(v)); \
-      allocated = new Type(ref);                                        \
+      allocated = new Type(val);                                        \
       return allocated;                                                 \
     }									\
 									\
