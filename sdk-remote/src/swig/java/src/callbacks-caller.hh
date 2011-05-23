@@ -42,22 +42,23 @@ public:
   /// below are macros. The the file call-macros.hh.
   /// NB: long long is not handled in Urbi. jlong is 'long long'.
   /// We cast it to 'long'.
-  CALL_METHODS(UValue, Object, urbi::UValue, urbi::UValue(), jobject res = , jobject ret_no_pop = res; const urbi::UValue& r = getUValueFromObject(res);, return r);
-  CALL_METHODS(UBinary, Object, urbi::UBinary, urbi::UBinary(), jobject res = , jobject ret_no_pop = res; const urbi::UBinary& r = getUBinaryFromObject(res);, return r);
-  CALL_METHODS(UList, Object, urbi::UList, urbi::UList(), jobject res = , jobject ret_no_pop = res; const urbi::UList& r = getUListFromObject(res);, return r);
-  CALL_METHODS(USound, Object, urbi::USound, urbi::USound(), jobject res = , jobject ret_no_pop = res; const urbi::USound& r = getUSoundFromObject(res);, return r);
-  CALL_METHODS(UImage, Object, urbi::UImage, urbi::UImage(), jobject res = , jobject ret_no_pop = res; const urbi::UImage& r = getUImageFromObject(res);, return r);
-  CALL_METHODS(UDictionary, Object, urbi::UDictionary, urbi::UDictionary(), jobject res = , jobject ret_no_pop = res; const urbi::UDictionary& r = getUDictionaryFromObject(res);, return r);
-  CALL_METHODS(String, Object, std::string, std::string(), jstring res =(jstring), jobject ret_no_pop = res; const std::string& r = getStringFromJString(res);, return r);
-  CALL_METHODS(Void, Void, void, , , jobject ret_no_pop = NULL;,);
-  CALL_METHODS(Boolean, Boolean, jboolean, 0, jboolean res = , jobject ret_no_pop = NULL;, return res;);
-  CALL_METHODS(Byte, Byte, jbyte, 0, jbyte res = , jobject ret_no_pop = NULL;, return res;);
-  CALL_METHODS(Char, Char, jchar, 0, jchar res = , jobject ret_no_pop = NULL;, return res;);
-  CALL_METHODS(Short, Short, jshort, 0, jshort res = , jobject ret_no_pop = NULL;, return res;);
-  CALL_METHODS(Int, Int, jint, 0, jint res = , jobject ret_no_pop = NULL;, return res;);
-  CALL_METHODS(Long, Long, jlong, 0, jlong res = , jobject ret_no_pop = NULL;, return res;);
-  CALL_METHODS(Float, Float, jfloat, 0, jfloat res = , jobject ret_no_pop = NULL;, return res;);
-  CALL_METHODS(Double, Double, jdouble, 0, jdouble res = , jobject ret_no_pop = NULL;, return res;);
+  //          (Name,        Type,    JavaType,          error_val,           ret,                    ret_snd,                                                                               ret_ter)
+  CALL_METHODS(UValue,      Object,  urbi::UValue,      urbi::UValue(),      jobject res = ,         jobject ret_no_pop = res; const urbi::UValue& r = getUValueFromObject(res);,           return r);
+  CALL_METHODS(UBinary,     Object,  urbi::UBinary,     urbi::UBinary(),     jobject res = ,         jobject ret_no_pop = res; const urbi::UBinary& r = getUBinaryFromObject(res);,         return r);
+  CALL_METHODS(UList,       Object,  urbi::UList,       urbi::UList(),       jobject res = ,         jobject ret_no_pop = res; const urbi::UList& r = getUListFromObject(res);,             return r);
+  CALL_METHODS(USound,      Object,  urbi::USound,      urbi::USound(),      jobject res = ,         jobject ret_no_pop = res; const urbi::USound& r = getUSoundFromObject(res);,           return r);
+  CALL_METHODS(UImage,      Object,  urbi::UImage,      urbi::UImage(),      jobject res = ,         jobject ret_no_pop = res; const urbi::UImage& r = getUImageFromObject(res);,           return r);
+  CALL_METHODS(UDictionary, Object,  urbi::UDictionary, urbi::UDictionary(), jobject res = ,         jobject ret_no_pop = res; const urbi::UDictionary& r = getUDictionaryFromObject(res);, return r);
+  CALL_METHODS(String,      Object,  std::string,       std::string(),       jstring res =(jstring), jobject ret_no_pop = res; const std::string& r = getStringFromJString(res);,           return r);
+  CALL_METHODS(Void,        Void,    void,              ,                    ,                       jobject ret_no_pop = NULL;,                                                           );
+  CALL_METHODS(Boolean,     Boolean, jboolean,          0,                   jboolean res = ,        jobject ret_no_pop = NULL;,                                                            return res;);
+  CALL_METHODS(Byte,        Byte,    jbyte,             0,                   jbyte res = ,           jobject ret_no_pop = NULL;,                                                            return res;);
+  CALL_METHODS(Char,        Char,    jchar,             0,                   jchar res = ,           jobject ret_no_pop = NULL;,                                                            return res;);
+  CALL_METHODS(Short,       Short,   jshort,            0,                   jshort res = ,          jobject ret_no_pop = NULL;,                                                            return res;);
+  CALL_METHODS(Int,         Int,     jint,              0,                   jint res = ,            jobject ret_no_pop = NULL;,                                                            return res;);
+  CALL_METHODS(Long,        Long,    jlong,             0,                   jlong res = ,           jobject ret_no_pop = NULL;,                                                            return res;);
+  CALL_METHODS(Float,       Float,   jfloat,            0,                   jfloat res = ,          jobject ret_no_pop = NULL;,                                                            return res;);
+  CALL_METHODS(Double,      Double,  jdouble,           0,                   jdouble res = ,         jobject ret_no_pop = NULL;,                                                            return res;);
 
 
   /// UNotifyChange callbacks

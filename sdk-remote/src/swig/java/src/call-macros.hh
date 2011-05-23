@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -23,12 +23,10 @@
             std::cerr << "Error pushing local frame" << std::endl;	\
             throw std::runtime_error("Error pushing local frame");	\
           }								\
-          					\
                                                                \
 	  ret env_->Call##Type##Method(obj, mid);						\
           testForException();						\
           ret_snd;							\
-                 				\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -42,12 +40,12 @@
             std::cerr << "Error pushing local frame" << std::endl;	\
             throw std::runtime_error("Error pushing local frame");	\
           }								\
-          const jvalue obj1 = arg_convert[0]->convert(env_, uval1);					\
+          const jvalue obj1 = arg_convert[1-1]->convert(env_, uval1);	\
           jvalue argument[] = { obj1 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_);	\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -61,12 +59,14 @@
             std::cerr << "Error pushing local frame" << std::endl;	\
             throw std::runtime_error("Error pushing local frame");	\
           }								\
-          const jvalue obj1 = arg_convert[0]->convert(env_, uval1); const jvalue obj2 = arg_convert[1]->convert(env_, uval2);					\
+          const jvalue obj1 = arg_convert[1-1]->convert(env_, uval1);	\
+          const jvalue obj2 = arg_convert[2-1]->convert(env_, uval2);	\
           jvalue argument[] = { obj1, obj2 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_);	\
+          arg_convert[1]->destroy(env_);	\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -80,12 +80,16 @@
             std::cerr << "Error pushing local frame" << std::endl;	\
             throw std::runtime_error("Error pushing local frame");	\
           }								\
-          const jvalue obj1 = arg_convert[0]->convert(env_, uval1); const jvalue obj2 = arg_convert[1]->convert(env_, uval2); const jvalue obj3 = arg_convert[2]->convert(env_, uval3);					\
+          const jvalue obj1 = arg_convert[1-1]->convert(env_, uval1);	\
+          const jvalue obj2 = arg_convert[2-1]->convert(env_, uval2);	\
+          const jvalue obj3 = arg_convert[3-1]->convert(env_, uval3);	\
           jvalue argument[] = { obj1, obj2, obj3 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_);	\
+          arg_convert[1]->destroy(env_);	\
+          arg_convert[2]->destroy(env_);	\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -99,12 +103,18 @@
             std::cerr << "Error pushing local frame" << std::endl;	\
             throw std::runtime_error("Error pushing local frame");	\
           }								\
-          const jvalue obj1 = arg_convert[0]->convert(env_, uval1); const jvalue obj2 = arg_convert[1]->convert(env_, uval2); const jvalue obj3 = arg_convert[2]->convert(env_, uval3); const jvalue obj4 = arg_convert[3]->convert(env_, uval4);					\
+          const jvalue obj1 = arg_convert[1-1]->convert(env_, uval1);	\
+          const jvalue obj2 = arg_convert[2-1]->convert(env_, uval2);	\
+          const jvalue obj3 = arg_convert[3-1]->convert(env_, uval3);	\
+          const jvalue obj4 = arg_convert[4-1]->convert(env_, uval4);	\
           jvalue argument[] = { obj1, obj2, obj3, obj4 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_);	\
+          arg_convert[1]->destroy(env_);	\
+          arg_convert[2]->destroy(env_);	\
+          arg_convert[3]->destroy(env_);	\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -118,12 +128,20 @@
             std::cerr << "Error pushing local frame" << std::endl;	\
             throw std::runtime_error("Error pushing local frame");	\
           }								\
-          const jvalue obj1 = arg_convert[0]->convert(env_, uval1); const jvalue obj2 = arg_convert[1]->convert(env_, uval2); const jvalue obj3 = arg_convert[2]->convert(env_, uval3); const jvalue obj4 = arg_convert[3]->convert(env_, uval4); const jvalue obj5 = arg_convert[4]->convert(env_, uval5);					\
+          const jvalue obj1 = arg_convert[1-1]->convert(env_, uval1);	\
+          const jvalue obj2 = arg_convert[2-1]->convert(env_, uval2);	\
+          const jvalue obj3 = arg_convert[3-1]->convert(env_, uval3);	\
+          const jvalue obj4 = arg_convert[4-1]->convert(env_, uval4);	\
+          const jvalue obj5 = arg_convert[5-1]->convert(env_, uval5);	\
           jvalue argument[] = { obj1, obj2, obj3, obj4, obj5 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_);	\
+          arg_convert[1]->destroy(env_);	\
+          arg_convert[2]->destroy(env_);	\
+          arg_convert[3]->destroy(env_);	\
+          arg_convert[4]->destroy(env_);	\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -137,12 +155,22 @@
             std::cerr << "Error pushing local frame" << std::endl;	\
             throw std::runtime_error("Error pushing local frame");	\
           }								\
-          const jvalue obj1 = arg_convert[0]->convert(env_, uval1); const jvalue obj2 = arg_convert[1]->convert(env_, uval2); const jvalue obj3 = arg_convert[2]->convert(env_, uval3); const jvalue obj4 = arg_convert[3]->convert(env_, uval4); const jvalue obj5 = arg_convert[4]->convert(env_, uval5); const jvalue obj6 = arg_convert[5]->convert(env_, uval6);					\
+          const jvalue obj1 = arg_convert[1-1]->convert(env_, uval1);	\
+          const jvalue obj2 = arg_convert[2-1]->convert(env_, uval2);	\
+          const jvalue obj3 = arg_convert[3-1]->convert(env_, uval3);	\
+          const jvalue obj4 = arg_convert[4-1]->convert(env_, uval4);	\
+          const jvalue obj5 = arg_convert[5-1]->convert(env_, uval5);	\
+          const jvalue obj6 = arg_convert[6-1]->convert(env_, uval6);	\
           jvalue argument[] = { obj1, obj2, obj3, obj4, obj5, obj6 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_);	\
+          arg_convert[1]->destroy(env_);	\
+          arg_convert[2]->destroy(env_);	\
+          arg_convert[3]->destroy(env_);	\
+          arg_convert[4]->destroy(env_);	\
+          arg_convert[5]->destroy(env_);	\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -156,12 +184,24 @@
             std::cerr << "Error pushing local frame" << std::endl;	\
             throw std::runtime_error("Error pushing local frame");	\
           }								\
-          const jvalue obj1 = arg_convert[0]->convert(env_, uval1); const jvalue obj2 = arg_convert[1]->convert(env_, uval2); const jvalue obj3 = arg_convert[2]->convert(env_, uval3); const jvalue obj4 = arg_convert[3]->convert(env_, uval4); const jvalue obj5 = arg_convert[4]->convert(env_, uval5); const jvalue obj6 = arg_convert[5]->convert(env_, uval6); const jvalue obj7 = arg_convert[6]->convert(env_, uval7);					\
+          const jvalue obj1 = arg_convert[1-1]->convert(env_, uval1);	\
+          const jvalue obj2 = arg_convert[2-1]->convert(env_, uval2);	\
+          const jvalue obj3 = arg_convert[3-1]->convert(env_, uval3);	\
+          const jvalue obj4 = arg_convert[4-1]->convert(env_, uval4);	\
+          const jvalue obj5 = arg_convert[5-1]->convert(env_, uval5);	\
+          const jvalue obj6 = arg_convert[6-1]->convert(env_, uval6);	\
+          const jvalue obj7 = arg_convert[7-1]->convert(env_, uval7);	\
           jvalue argument[] = { obj1, obj2, obj3, obj4, obj5, obj6, obj7 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_); arg_convert[6]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_);	\
+          arg_convert[1]->destroy(env_);	\
+          arg_convert[2]->destroy(env_);	\
+          arg_convert[3]->destroy(env_);	\
+          arg_convert[4]->destroy(env_);	\
+          arg_convert[5]->destroy(env_);	\
+          arg_convert[6]->destroy(env_);	\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -175,12 +215,26 @@
             std::cerr << "Error pushing local frame" << std::endl;	\
             throw std::runtime_error("Error pushing local frame");	\
           }								\
-          const jvalue obj1 = arg_convert[0]->convert(env_, uval1); const jvalue obj2 = arg_convert[1]->convert(env_, uval2); const jvalue obj3 = arg_convert[2]->convert(env_, uval3); const jvalue obj4 = arg_convert[3]->convert(env_, uval4); const jvalue obj5 = arg_convert[4]->convert(env_, uval5); const jvalue obj6 = arg_convert[5]->convert(env_, uval6); const jvalue obj7 = arg_convert[6]->convert(env_, uval7); const jvalue obj8 = arg_convert[7]->convert(env_, uval8);					\
+          const jvalue obj1 = arg_convert[1-1]->convert(env_, uval1);	\
+          const jvalue obj2 = arg_convert[2-1]->convert(env_, uval2);	\
+          const jvalue obj3 = arg_convert[3-1]->convert(env_, uval3);	\
+          const jvalue obj4 = arg_convert[4-1]->convert(env_, uval4);	\
+          const jvalue obj5 = arg_convert[5-1]->convert(env_, uval5);	\
+          const jvalue obj6 = arg_convert[6-1]->convert(env_, uval6);	\
+          const jvalue obj7 = arg_convert[7-1]->convert(env_, uval7);	\
+          const jvalue obj8 = arg_convert[8-1]->convert(env_, uval8);	\
           jvalue argument[] = { obj1, obj2, obj3, obj4, obj5, obj6, obj7, obj8 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_); arg_convert[6]->destroy(env_); arg_convert[7]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_);	\
+          arg_convert[1]->destroy(env_);	\
+          arg_convert[2]->destroy(env_);	\
+          arg_convert[3]->destroy(env_);	\
+          arg_convert[4]->destroy(env_);	\
+          arg_convert[5]->destroy(env_);	\
+          arg_convert[6]->destroy(env_);	\
+          arg_convert[7]->destroy(env_);	\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -194,12 +248,28 @@
             std::cerr << "Error pushing local frame" << std::endl;	\
             throw std::runtime_error("Error pushing local frame");	\
           }								\
-          const jvalue obj1 = arg_convert[0]->convert(env_, uval1); const jvalue obj2 = arg_convert[1]->convert(env_, uval2); const jvalue obj3 = arg_convert[2]->convert(env_, uval3); const jvalue obj4 = arg_convert[3]->convert(env_, uval4); const jvalue obj5 = arg_convert[4]->convert(env_, uval5); const jvalue obj6 = arg_convert[5]->convert(env_, uval6); const jvalue obj7 = arg_convert[6]->convert(env_, uval7); const jvalue obj8 = arg_convert[7]->convert(env_, uval8); const jvalue obj9 = arg_convert[8]->convert(env_, uval9);					\
+          const jvalue obj1 = arg_convert[1-1]->convert(env_, uval1);	\
+          const jvalue obj2 = arg_convert[2-1]->convert(env_, uval2);	\
+          const jvalue obj3 = arg_convert[3-1]->convert(env_, uval3);	\
+          const jvalue obj4 = arg_convert[4-1]->convert(env_, uval4);	\
+          const jvalue obj5 = arg_convert[5-1]->convert(env_, uval5);	\
+          const jvalue obj6 = arg_convert[6-1]->convert(env_, uval6);	\
+          const jvalue obj7 = arg_convert[7-1]->convert(env_, uval7);	\
+          const jvalue obj8 = arg_convert[8-1]->convert(env_, uval8);	\
+          const jvalue obj9 = arg_convert[9-1]->convert(env_, uval9);	\
           jvalue argument[] = { obj1, obj2, obj3, obj4, obj5, obj6, obj7, obj8, obj9 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_); arg_convert[6]->destroy(env_); arg_convert[7]->destroy(env_); arg_convert[8]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_);	\
+          arg_convert[1]->destroy(env_);	\
+          arg_convert[2]->destroy(env_);	\
+          arg_convert[3]->destroy(env_);	\
+          arg_convert[4]->destroy(env_);	\
+          arg_convert[5]->destroy(env_);	\
+          arg_convert[6]->destroy(env_);	\
+          arg_convert[7]->destroy(env_);	\
+          arg_convert[8]->destroy(env_);	\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -213,12 +283,30 @@
             std::cerr << "Error pushing local frame" << std::endl;	\
             throw std::runtime_error("Error pushing local frame");	\
           }								\
-          const jvalue obj1 = arg_convert[0]->convert(env_, uval1); const jvalue obj2 = arg_convert[1]->convert(env_, uval2); const jvalue obj3 = arg_convert[2]->convert(env_, uval3); const jvalue obj4 = arg_convert[3]->convert(env_, uval4); const jvalue obj5 = arg_convert[4]->convert(env_, uval5); const jvalue obj6 = arg_convert[5]->convert(env_, uval6); const jvalue obj7 = arg_convert[6]->convert(env_, uval7); const jvalue obj8 = arg_convert[7]->convert(env_, uval8); const jvalue obj9 = arg_convert[8]->convert(env_, uval9); const jvalue obj10 = arg_convert[9]->convert(env_, uval10);					\
+          const jvalue obj1 = arg_convert[1-1]->convert(env_, uval1);	\
+          const jvalue obj2 = arg_convert[2-1]->convert(env_, uval2);	\
+          const jvalue obj3 = arg_convert[3-1]->convert(env_, uval3);	\
+          const jvalue obj4 = arg_convert[4-1]->convert(env_, uval4);	\
+          const jvalue obj5 = arg_convert[5-1]->convert(env_, uval5);	\
+          const jvalue obj6 = arg_convert[6-1]->convert(env_, uval6);	\
+          const jvalue obj7 = arg_convert[7-1]->convert(env_, uval7);	\
+          const jvalue obj8 = arg_convert[8-1]->convert(env_, uval8);	\
+          const jvalue obj9 = arg_convert[9-1]->convert(env_, uval9);	\
+          const jvalue obj10 = arg_convert[10-1]->convert(env_, uval10);	\
           jvalue argument[] = { obj1, obj2, obj3, obj4, obj5, obj6, obj7, obj8, obj9, obj10 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_); arg_convert[6]->destroy(env_); arg_convert[7]->destroy(env_); arg_convert[8]->destroy(env_); arg_convert[9]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_);	\
+          arg_convert[1]->destroy(env_);	\
+          arg_convert[2]->destroy(env_);	\
+          arg_convert[3]->destroy(env_);	\
+          arg_convert[4]->destroy(env_);	\
+          arg_convert[5]->destroy(env_);	\
+          arg_convert[6]->destroy(env_);	\
+          arg_convert[7]->destroy(env_);	\
+          arg_convert[8]->destroy(env_);	\
+          arg_convert[9]->destroy(env_);	\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -232,12 +320,32 @@
             std::cerr << "Error pushing local frame" << std::endl;	\
             throw std::runtime_error("Error pushing local frame");	\
           }								\
-          const jvalue obj1 = arg_convert[0]->convert(env_, uval1); const jvalue obj2 = arg_convert[1]->convert(env_, uval2); const jvalue obj3 = arg_convert[2]->convert(env_, uval3); const jvalue obj4 = arg_convert[3]->convert(env_, uval4); const jvalue obj5 = arg_convert[4]->convert(env_, uval5); const jvalue obj6 = arg_convert[5]->convert(env_, uval6); const jvalue obj7 = arg_convert[6]->convert(env_, uval7); const jvalue obj8 = arg_convert[7]->convert(env_, uval8); const jvalue obj9 = arg_convert[8]->convert(env_, uval9); const jvalue obj10 = arg_convert[9]->convert(env_, uval10); const jvalue obj11 = arg_convert[10]->convert(env_, uval11);					\
+          const jvalue obj1 = arg_convert[1-1]->convert(env_, uval1);	\
+          const jvalue obj2 = arg_convert[2-1]->convert(env_, uval2);	\
+          const jvalue obj3 = arg_convert[3-1]->convert(env_, uval3);	\
+          const jvalue obj4 = arg_convert[4-1]->convert(env_, uval4);	\
+          const jvalue obj5 = arg_convert[5-1]->convert(env_, uval5);	\
+          const jvalue obj6 = arg_convert[6-1]->convert(env_, uval6);	\
+          const jvalue obj7 = arg_convert[7-1]->convert(env_, uval7);	\
+          const jvalue obj8 = arg_convert[8-1]->convert(env_, uval8);	\
+          const jvalue obj9 = arg_convert[9-1]->convert(env_, uval9);	\
+          const jvalue obj10 = arg_convert[10-1]->convert(env_, uval10);	\
+          const jvalue obj11 = arg_convert[11-1]->convert(env_, uval11);	\
           jvalue argument[] = { obj1, obj2, obj3, obj4, obj5, obj6, obj7, obj8, obj9, obj10, obj11 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_); arg_convert[6]->destroy(env_); arg_convert[7]->destroy(env_); arg_convert[8]->destroy(env_); arg_convert[9]->destroy(env_); arg_convert[10]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_);	\
+          arg_convert[1]->destroy(env_);	\
+          arg_convert[2]->destroy(env_);	\
+          arg_convert[3]->destroy(env_);	\
+          arg_convert[4]->destroy(env_);	\
+          arg_convert[5]->destroy(env_);	\
+          arg_convert[6]->destroy(env_);	\
+          arg_convert[7]->destroy(env_);	\
+          arg_convert[8]->destroy(env_);	\
+          arg_convert[9]->destroy(env_);	\
+          arg_convert[10]->destroy(env_);	\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -251,12 +359,34 @@
             std::cerr << "Error pushing local frame" << std::endl;	\
             throw std::runtime_error("Error pushing local frame");	\
           }								\
-          const jvalue obj1 = arg_convert[0]->convert(env_, uval1); const jvalue obj2 = arg_convert[1]->convert(env_, uval2); const jvalue obj3 = arg_convert[2]->convert(env_, uval3); const jvalue obj4 = arg_convert[3]->convert(env_, uval4); const jvalue obj5 = arg_convert[4]->convert(env_, uval5); const jvalue obj6 = arg_convert[5]->convert(env_, uval6); const jvalue obj7 = arg_convert[6]->convert(env_, uval7); const jvalue obj8 = arg_convert[7]->convert(env_, uval8); const jvalue obj9 = arg_convert[8]->convert(env_, uval9); const jvalue obj10 = arg_convert[9]->convert(env_, uval10); const jvalue obj11 = arg_convert[10]->convert(env_, uval11); const jvalue obj12 = arg_convert[11]->convert(env_, uval12);					\
+          const jvalue obj1 = arg_convert[1-1]->convert(env_, uval1);	\
+          const jvalue obj2 = arg_convert[2-1]->convert(env_, uval2);	\
+          const jvalue obj3 = arg_convert[3-1]->convert(env_, uval3);	\
+          const jvalue obj4 = arg_convert[4-1]->convert(env_, uval4);	\
+          const jvalue obj5 = arg_convert[5-1]->convert(env_, uval5);	\
+          const jvalue obj6 = arg_convert[6-1]->convert(env_, uval6);	\
+          const jvalue obj7 = arg_convert[7-1]->convert(env_, uval7);	\
+          const jvalue obj8 = arg_convert[8-1]->convert(env_, uval8);	\
+          const jvalue obj9 = arg_convert[9-1]->convert(env_, uval9);	\
+          const jvalue obj10 = arg_convert[10-1]->convert(env_, uval10);	\
+          const jvalue obj11 = arg_convert[11-1]->convert(env_, uval11);	\
+          const jvalue obj12 = arg_convert[12-1]->convert(env_, uval12);	\
           jvalue argument[] = { obj1, obj2, obj3, obj4, obj5, obj6, obj7, obj8, obj9, obj10, obj11, obj12 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_); arg_convert[6]->destroy(env_); arg_convert[7]->destroy(env_); arg_convert[8]->destroy(env_); arg_convert[9]->destroy(env_); arg_convert[10]->destroy(env_); arg_convert[11]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_);	\
+          arg_convert[1]->destroy(env_);	\
+          arg_convert[2]->destroy(env_);	\
+          arg_convert[3]->destroy(env_);	\
+          arg_convert[4]->destroy(env_);	\
+          arg_convert[5]->destroy(env_);	\
+          arg_convert[6]->destroy(env_);	\
+          arg_convert[7]->destroy(env_);	\
+          arg_convert[8]->destroy(env_);	\
+          arg_convert[9]->destroy(env_);	\
+          arg_convert[10]->destroy(env_);	\
+          arg_convert[11]->destroy(env_);	\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -270,12 +400,36 @@
             std::cerr << "Error pushing local frame" << std::endl;	\
             throw std::runtime_error("Error pushing local frame");	\
           }								\
-          const jvalue obj1 = arg_convert[0]->convert(env_, uval1); const jvalue obj2 = arg_convert[1]->convert(env_, uval2); const jvalue obj3 = arg_convert[2]->convert(env_, uval3); const jvalue obj4 = arg_convert[3]->convert(env_, uval4); const jvalue obj5 = arg_convert[4]->convert(env_, uval5); const jvalue obj6 = arg_convert[5]->convert(env_, uval6); const jvalue obj7 = arg_convert[6]->convert(env_, uval7); const jvalue obj8 = arg_convert[7]->convert(env_, uval8); const jvalue obj9 = arg_convert[8]->convert(env_, uval9); const jvalue obj10 = arg_convert[9]->convert(env_, uval10); const jvalue obj11 = arg_convert[10]->convert(env_, uval11); const jvalue obj12 = arg_convert[11]->convert(env_, uval12); const jvalue obj13 = arg_convert[12]->convert(env_, uval13);					\
+          const jvalue obj1 = arg_convert[1-1]->convert(env_, uval1);	\
+          const jvalue obj2 = arg_convert[2-1]->convert(env_, uval2);	\
+          const jvalue obj3 = arg_convert[3-1]->convert(env_, uval3);	\
+          const jvalue obj4 = arg_convert[4-1]->convert(env_, uval4);	\
+          const jvalue obj5 = arg_convert[5-1]->convert(env_, uval5);	\
+          const jvalue obj6 = arg_convert[6-1]->convert(env_, uval6);	\
+          const jvalue obj7 = arg_convert[7-1]->convert(env_, uval7);	\
+          const jvalue obj8 = arg_convert[8-1]->convert(env_, uval8);	\
+          const jvalue obj9 = arg_convert[9-1]->convert(env_, uval9);	\
+          const jvalue obj10 = arg_convert[10-1]->convert(env_, uval10);	\
+          const jvalue obj11 = arg_convert[11-1]->convert(env_, uval11);	\
+          const jvalue obj12 = arg_convert[12-1]->convert(env_, uval12);	\
+          const jvalue obj13 = arg_convert[13-1]->convert(env_, uval13);	\
           jvalue argument[] = { obj1, obj2, obj3, obj4, obj5, obj6, obj7, obj8, obj9, obj10, obj11, obj12, obj13 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_); arg_convert[6]->destroy(env_); arg_convert[7]->destroy(env_); arg_convert[8]->destroy(env_); arg_convert[9]->destroy(env_); arg_convert[10]->destroy(env_); arg_convert[11]->destroy(env_); arg_convert[12]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_);	\
+          arg_convert[1]->destroy(env_);	\
+          arg_convert[2]->destroy(env_);	\
+          arg_convert[3]->destroy(env_);	\
+          arg_convert[4]->destroy(env_);	\
+          arg_convert[5]->destroy(env_);	\
+          arg_convert[6]->destroy(env_);	\
+          arg_convert[7]->destroy(env_);	\
+          arg_convert[8]->destroy(env_);	\
+          arg_convert[9]->destroy(env_);	\
+          arg_convert[10]->destroy(env_);	\
+          arg_convert[11]->destroy(env_);	\
+          arg_convert[12]->destroy(env_);	\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -289,12 +443,38 @@
             std::cerr << "Error pushing local frame" << std::endl;	\
             throw std::runtime_error("Error pushing local frame");	\
           }								\
-          const jvalue obj1 = arg_convert[0]->convert(env_, uval1); const jvalue obj2 = arg_convert[1]->convert(env_, uval2); const jvalue obj3 = arg_convert[2]->convert(env_, uval3); const jvalue obj4 = arg_convert[3]->convert(env_, uval4); const jvalue obj5 = arg_convert[4]->convert(env_, uval5); const jvalue obj6 = arg_convert[5]->convert(env_, uval6); const jvalue obj7 = arg_convert[6]->convert(env_, uval7); const jvalue obj8 = arg_convert[7]->convert(env_, uval8); const jvalue obj9 = arg_convert[8]->convert(env_, uval9); const jvalue obj10 = arg_convert[9]->convert(env_, uval10); const jvalue obj11 = arg_convert[10]->convert(env_, uval11); const jvalue obj12 = arg_convert[11]->convert(env_, uval12); const jvalue obj13 = arg_convert[12]->convert(env_, uval13); const jvalue obj14 = arg_convert[13]->convert(env_, uval14);					\
+          const jvalue obj1 = arg_convert[1-1]->convert(env_, uval1);	\
+          const jvalue obj2 = arg_convert[2-1]->convert(env_, uval2);	\
+          const jvalue obj3 = arg_convert[3-1]->convert(env_, uval3);	\
+          const jvalue obj4 = arg_convert[4-1]->convert(env_, uval4);	\
+          const jvalue obj5 = arg_convert[5-1]->convert(env_, uval5);	\
+          const jvalue obj6 = arg_convert[6-1]->convert(env_, uval6);	\
+          const jvalue obj7 = arg_convert[7-1]->convert(env_, uval7);	\
+          const jvalue obj8 = arg_convert[8-1]->convert(env_, uval8);	\
+          const jvalue obj9 = arg_convert[9-1]->convert(env_, uval9);	\
+          const jvalue obj10 = arg_convert[10-1]->convert(env_, uval10);	\
+          const jvalue obj11 = arg_convert[11-1]->convert(env_, uval11);	\
+          const jvalue obj12 = arg_convert[12-1]->convert(env_, uval12);	\
+          const jvalue obj13 = arg_convert[13-1]->convert(env_, uval13);	\
+          const jvalue obj14 = arg_convert[14-1]->convert(env_, uval14);	\
           jvalue argument[] = { obj1, obj2, obj3, obj4, obj5, obj6, obj7, obj8, obj9, obj10, obj11, obj12, obj13, obj14 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_); arg_convert[6]->destroy(env_); arg_convert[7]->destroy(env_); arg_convert[8]->destroy(env_); arg_convert[9]->destroy(env_); arg_convert[10]->destroy(env_); arg_convert[11]->destroy(env_); arg_convert[12]->destroy(env_); arg_convert[13]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_);	\
+          arg_convert[1]->destroy(env_);	\
+          arg_convert[2]->destroy(env_);	\
+          arg_convert[3]->destroy(env_);	\
+          arg_convert[4]->destroy(env_);	\
+          arg_convert[5]->destroy(env_);	\
+          arg_convert[6]->destroy(env_);	\
+          arg_convert[7]->destroy(env_);	\
+          arg_convert[8]->destroy(env_);	\
+          arg_convert[9]->destroy(env_);	\
+          arg_convert[10]->destroy(env_);	\
+          arg_convert[11]->destroy(env_);	\
+          arg_convert[12]->destroy(env_);	\
+          arg_convert[13]->destroy(env_);	\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -308,12 +488,40 @@
             std::cerr << "Error pushing local frame" << std::endl;	\
             throw std::runtime_error("Error pushing local frame");	\
           }								\
-          const jvalue obj1 = arg_convert[0]->convert(env_, uval1); const jvalue obj2 = arg_convert[1]->convert(env_, uval2); const jvalue obj3 = arg_convert[2]->convert(env_, uval3); const jvalue obj4 = arg_convert[3]->convert(env_, uval4); const jvalue obj5 = arg_convert[4]->convert(env_, uval5); const jvalue obj6 = arg_convert[5]->convert(env_, uval6); const jvalue obj7 = arg_convert[6]->convert(env_, uval7); const jvalue obj8 = arg_convert[7]->convert(env_, uval8); const jvalue obj9 = arg_convert[8]->convert(env_, uval9); const jvalue obj10 = arg_convert[9]->convert(env_, uval10); const jvalue obj11 = arg_convert[10]->convert(env_, uval11); const jvalue obj12 = arg_convert[11]->convert(env_, uval12); const jvalue obj13 = arg_convert[12]->convert(env_, uval13); const jvalue obj14 = arg_convert[13]->convert(env_, uval14); const jvalue obj15 = arg_convert[14]->convert(env_, uval15);					\
+          const jvalue obj1 = arg_convert[1-1]->convert(env_, uval1);	\
+          const jvalue obj2 = arg_convert[2-1]->convert(env_, uval2);	\
+          const jvalue obj3 = arg_convert[3-1]->convert(env_, uval3);	\
+          const jvalue obj4 = arg_convert[4-1]->convert(env_, uval4);	\
+          const jvalue obj5 = arg_convert[5-1]->convert(env_, uval5);	\
+          const jvalue obj6 = arg_convert[6-1]->convert(env_, uval6);	\
+          const jvalue obj7 = arg_convert[7-1]->convert(env_, uval7);	\
+          const jvalue obj8 = arg_convert[8-1]->convert(env_, uval8);	\
+          const jvalue obj9 = arg_convert[9-1]->convert(env_, uval9);	\
+          const jvalue obj10 = arg_convert[10-1]->convert(env_, uval10);	\
+          const jvalue obj11 = arg_convert[11-1]->convert(env_, uval11);	\
+          const jvalue obj12 = arg_convert[12-1]->convert(env_, uval12);	\
+          const jvalue obj13 = arg_convert[13-1]->convert(env_, uval13);	\
+          const jvalue obj14 = arg_convert[14-1]->convert(env_, uval14);	\
+          const jvalue obj15 = arg_convert[15-1]->convert(env_, uval15);	\
           jvalue argument[] = { obj1, obj2, obj3, obj4, obj5, obj6, obj7, obj8, obj9, obj10, obj11, obj12, obj13, obj14, obj15 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_); arg_convert[6]->destroy(env_); arg_convert[7]->destroy(env_); arg_convert[8]->destroy(env_); arg_convert[9]->destroy(env_); arg_convert[10]->destroy(env_); arg_convert[11]->destroy(env_); arg_convert[12]->destroy(env_); arg_convert[13]->destroy(env_); arg_convert[14]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_);	\
+          arg_convert[1]->destroy(env_);	\
+          arg_convert[2]->destroy(env_);	\
+          arg_convert[3]->destroy(env_);	\
+          arg_convert[4]->destroy(env_);	\
+          arg_convert[5]->destroy(env_);	\
+          arg_convert[6]->destroy(env_);	\
+          arg_convert[7]->destroy(env_);	\
+          arg_convert[8]->destroy(env_);	\
+          arg_convert[9]->destroy(env_);	\
+          arg_convert[10]->destroy(env_);	\
+          arg_convert[11]->destroy(env_);	\
+          arg_convert[12]->destroy(env_);	\
+          arg_convert[13]->destroy(env_);	\
+          arg_convert[14]->destroy(env_);	\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -327,17 +535,62 @@
             std::cerr << "Error pushing local frame" << std::endl;	\
             throw std::runtime_error("Error pushing local frame");	\
           }								\
-          const jvalue obj1 = arg_convert[0]->convert(env_, uval1); const jvalue obj2 = arg_convert[1]->convert(env_, uval2); const jvalue obj3 = arg_convert[2]->convert(env_, uval3); const jvalue obj4 = arg_convert[3]->convert(env_, uval4); const jvalue obj5 = arg_convert[4]->convert(env_, uval5); const jvalue obj6 = arg_convert[5]->convert(env_, uval6); const jvalue obj7 = arg_convert[6]->convert(env_, uval7); const jvalue obj8 = arg_convert[7]->convert(env_, uval8); const jvalue obj9 = arg_convert[8]->convert(env_, uval9); const jvalue obj10 = arg_convert[9]->convert(env_, uval10); const jvalue obj11 = arg_convert[10]->convert(env_, uval11); const jvalue obj12 = arg_convert[11]->convert(env_, uval12); const jvalue obj13 = arg_convert[12]->convert(env_, uval13); const jvalue obj14 = arg_convert[13]->convert(env_, uval14); const jvalue obj15 = arg_convert[14]->convert(env_, uval15); const jvalue obj16 = arg_convert[15]->convert(env_, uval16);					\
+          const jvalue obj1 = arg_convert[1-1]->convert(env_, uval1);	\
+          const jvalue obj2 = arg_convert[2-1]->convert(env_, uval2);	\
+          const jvalue obj3 = arg_convert[3-1]->convert(env_, uval3);	\
+          const jvalue obj4 = arg_convert[4-1]->convert(env_, uval4);	\
+          const jvalue obj5 = arg_convert[5-1]->convert(env_, uval5);	\
+          const jvalue obj6 = arg_convert[6-1]->convert(env_, uval6);	\
+          const jvalue obj7 = arg_convert[7-1]->convert(env_, uval7);	\
+          const jvalue obj8 = arg_convert[8-1]->convert(env_, uval8);	\
+          const jvalue obj9 = arg_convert[9-1]->convert(env_, uval9);	\
+          const jvalue obj10 = arg_convert[10-1]->convert(env_, uval10);	\
+          const jvalue obj11 = arg_convert[11-1]->convert(env_, uval11);	\
+          const jvalue obj12 = arg_convert[12-1]->convert(env_, uval12);	\
+          const jvalue obj13 = arg_convert[13-1]->convert(env_, uval13);	\
+          const jvalue obj14 = arg_convert[14-1]->convert(env_, uval14);	\
+          const jvalue obj15 = arg_convert[15-1]->convert(env_, uval15);	\
+          const jvalue obj16 = arg_convert[16-1]->convert(env_, uval16);	\
           jvalue argument[] = { obj1, obj2, obj3, obj4, obj5, obj6, obj7, obj8, obj9, obj10, obj11, obj12, obj13, obj14, obj15, obj16 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_); arg_convert[6]->destroy(env_); arg_convert[7]->destroy(env_); arg_convert[8]->destroy(env_); arg_convert[9]->destroy(env_); arg_convert[10]->destroy(env_); arg_convert[11]->destroy(env_); arg_convert[12]->destroy(env_); arg_convert[13]->destroy(env_); arg_convert[14]->destroy(env_); arg_convert[15]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_);	\
+          arg_convert[1]->destroy(env_);	\
+          arg_convert[2]->destroy(env_);	\
+          arg_convert[3]->destroy(env_);	\
+          arg_convert[4]->destroy(env_);	\
+          arg_convert[5]->destroy(env_);	\
+          arg_convert[6]->destroy(env_);	\
+          arg_convert[7]->destroy(env_);	\
+          arg_convert[8]->destroy(env_);	\
+          arg_convert[9]->destroy(env_);	\
+          arg_convert[10]->destroy(env_);	\
+          arg_convert[11]->destroy(env_);	\
+          arg_convert[12]->destroy(env_);	\
+          arg_convert[13]->destroy(env_);	\
+          arg_convert[14]->destroy(env_);	\
+          arg_convert[15]->destroy(env_);	\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
 # define CALL_METHODS(Name, Type, JavaType, error_val, ret, ret_snd, ret_ter)		\
-  CALL_METHOD_0 (Name, Type, JavaType, error_val, ret, ret_snd, ret_ter); CALL_METHOD_1 (Name, Type, JavaType, error_val, ret, ret_snd, ret_ter); CALL_METHOD_2 (Name, Type, JavaType, error_val, ret, ret_snd, ret_ter); CALL_METHOD_3 (Name, Type, JavaType, error_val, ret, ret_snd, ret_ter); CALL_METHOD_4 (Name, Type, JavaType, error_val, ret, ret_snd, ret_ter); CALL_METHOD_5 (Name, Type, JavaType, error_val, ret, ret_snd, ret_ter); CALL_METHOD_6 (Name, Type, JavaType, error_val, ret, ret_snd, ret_ter); CALL_METHOD_7 (Name, Type, JavaType, error_val, ret, ret_snd, ret_ter); CALL_METHOD_8 (Name, Type, JavaType, error_val, ret, ret_snd, ret_ter); CALL_METHOD_9 (Name, Type, JavaType, error_val, ret, ret_snd, ret_ter); CALL_METHOD_10 (Name, Type, JavaType, error_val, ret, ret_snd, ret_ter); CALL_METHOD_11 (Name, Type, JavaType, error_val, ret, ret_snd, ret_ter); CALL_METHOD_12 (Name, Type, JavaType, error_val, ret, ret_snd, ret_ter); CALL_METHOD_13 (Name, Type, JavaType, error_val, ret, ret_snd, ret_ter); CALL_METHOD_14 (Name, Type, JavaType, error_val, ret, ret_snd, ret_ter); CALL_METHOD_15 (Name, Type, JavaType, error_val, ret, ret_snd, ret_ter);								\
+  CALL_METHOD_0(Name, Type, JavaType, error_val, ret, ret_snd, ret_ter);	\
+  CALL_METHOD_1(Name, Type, JavaType, error_val, ret, ret_snd, ret_ter);	\
+  CALL_METHOD_2(Name, Type, JavaType, error_val, ret, ret_snd, ret_ter);	\
+  CALL_METHOD_3(Name, Type, JavaType, error_val, ret, ret_snd, ret_ter);	\
+  CALL_METHOD_4(Name, Type, JavaType, error_val, ret, ret_snd, ret_ter);	\
+  CALL_METHOD_5(Name, Type, JavaType, error_val, ret, ret_snd, ret_ter);	\
+  CALL_METHOD_6(Name, Type, JavaType, error_val, ret, ret_snd, ret_ter);	\
+  CALL_METHOD_7(Name, Type, JavaType, error_val, ret, ret_snd, ret_ter);	\
+  CALL_METHOD_8(Name, Type, JavaType, error_val, ret, ret_snd, ret_ter);	\
+  CALL_METHOD_9(Name, Type, JavaType, error_val, ret, ret_snd, ret_ter);	\
+  CALL_METHOD_10(Name, Type, JavaType, error_val, ret, ret_snd, ret_ter);	\
+  CALL_METHOD_11(Name, Type, JavaType, error_val, ret, ret_snd, ret_ter);	\
+  CALL_METHOD_12(Name, Type, JavaType, error_val, ret, ret_snd, ret_ter);	\
+  CALL_METHOD_13(Name, Type, JavaType, error_val, ret, ret_snd, ret_ter);	\
+  CALL_METHOD_14(Name, Type, JavaType, error_val, ret, ret_snd, ret_ter);	\
+  CALL_METHOD_15(Name, Type, JavaType, error_val, ret, ret_snd, ret_ter);	\
   CALL_METHOD_16 (Name, Type, JavaType, error_val, ret, ret_snd, ret_ter);
 
 
