@@ -288,7 +288,7 @@ namespace urbi
     {
       CAPTURE_GLOBAL(Binary);
       // This is ugly: we cannot go through object-cast as it would give us
-      // back the vector. So make the Binary ourselve.
+      // back the vector. So make the Binary ourselves.
       rObject o(const_cast<Vector*>(this));
       urbi::UValue v = ::uvalue_cast(o);
       rObject res = new object::Object();
