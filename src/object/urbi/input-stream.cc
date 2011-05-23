@@ -38,12 +38,17 @@ namespace urbi
       , pos_(0)
       , size_(0)
       , sem_(new Semaphore())
+      , alive_(new bool)
     {
+      *alive_ = true;
       proto_add(proto ? rObject(proto) : Object::proto);
       socket_->slot_set(SYMBOL(receive),
         new Primitive(boost::bind(&InputStream::receive_, this, _1)));
+      // FIXME: ideally we would use a ref of ourselve as extra arg
+      // to prevent our destruction, but the Subscription is leaking
+      // callbacks.
       socket_->slot_get(SYMBOL(disconnected))->as<Event>()
-      ->onEvent(boost::bind(&InputStream::onError_, this, _1));
+      ->onEvent(boost::bind(&InputStream::onError_, this, _1, alive_));
     }
 
     InputStream::InputStream(rInputStream model)
@@ -51,7 +56,9 @@ namespace urbi
       , pos_(0)
       , size_(0)
       , sem_(new Semaphore())
+      , alive_(new bool)
     {
+      *alive_ = true;
       proto_add(model);
     }
 
@@ -64,7 +71,9 @@ namespace urbi
       , pos_(0)
       , size_(0)
       , sem_(new Semaphore())
+      , alive_(new bool)
     {
+      *alive_ = true;
       proto_add(Stream::proto);
       BIND(get);
       BIND(getChar);
@@ -74,6 +83,7 @@ namespace urbi
 
     InputStream::~InputStream()
     {
+      *alive_ = false;
     }
 
     /*--------------.
@@ -141,7 +151,7 @@ namespace urbi
       socket_->slot_set(SYMBOL(receive),
                  new Primitive(boost::bind(&InputStream::receive_, this, _1)));
       socket_->slot_get(SYMBOL(disconnected))->as<Event>()
-        ->onEvent(boost::bind(&InputStream::onError_, this, _1));
+      ->onEvent(boost::bind(&InputStream::onError_, this, _1, alive_));
     }
 
     rObject
@@ -183,8 +193,10 @@ namespace urbi
     }
 
     rObject
-    InputStream::onError_(objects_type)
+    InputStream::onError_(objects_type, boost::shared_ptr<bool> alive)
     {
+      if (!*alive)
+        return void_class;
       if (waiting_)
         sem_->release();
       return void_class;

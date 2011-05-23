@@ -53,6 +53,9 @@ namespace urbi
 
     typedef std::vector<rProcess> processes_type;
     static processes_type processes;
+    static void keep_that_for_me(rObject)
+    {
+    }
 
     void
     Process::monitor_child(Process* owner)
@@ -67,6 +70,9 @@ namespace urbi
         foreach (runner::Job* job, owner->joiners_)
           // FIXME: Is there a risk we cancel a double freeze?
           job->state.frozen_set(false);
+        // In case we were the last ref, schedule destruction in main thread
+        ::kernel::server().schedule_fast(boost::bind(&keep_that_for_me,
+                                                       rObject(owner)));
         // The Process no longer needs to be protected against
         // ref-counting.
         owner->ward_ = 0;

@@ -34,6 +34,7 @@ namespace urbi
       Socket(rServer server);
       Socket(rSocket model);
       Socket(rIoService io_service);
+      ~Socket();
 
       void connect(const std::string& host, const std::string& port);
       void connect(const std::string& host, unsigned port);

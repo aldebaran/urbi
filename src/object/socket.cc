@@ -16,6 +16,8 @@
 #include <object/socket.hh>
 #include <object/symbols.hh>
 
+#include <runner/job.hh>
+
 namespace urbi
 {
   namespace object
@@ -60,6 +62,14 @@ namespace urbi
     {
       proto_add(proto);
       init();
+    }
+
+    Socket::~Socket()
+    {
+      close();
+      wasDestroyed();
+      while (!checkDestructionPermission())
+        ::kernel::runner().yield_for(1000);
     }
 
     OVERLOAD_TYPE(

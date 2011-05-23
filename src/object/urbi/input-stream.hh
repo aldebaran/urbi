@@ -53,7 +53,7 @@ namespace urbi
       size_t size_;
 
       rObject receive_(objects_type args);
-      rObject onError_(objects_type args);
+      rObject onError_(objects_type args, boost::shared_ptr<bool> alive);
       rSemaphore sem_; // For async read
       bool waiting_; // True if someone is waiting on sem_
 
@@ -73,6 +73,7 @@ namespace urbi
 
     private:
       URBI_CXX_OBJECT(InputStream, Stream);
+      boost::shared_ptr<bool> alive_;
     };
   }
 }
