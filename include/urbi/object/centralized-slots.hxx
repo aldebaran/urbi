@@ -21,6 +21,12 @@ namespace urbi
   namespace object
   {
 
+    inline
+    CentralizedSlots::CentralizedSlots()
+    : size_(0)
+    {
+    }
+
     inline CentralizedSlots::iterator
     CentralizedSlots::begin(Object* owner)
     {
@@ -36,7 +42,7 @@ namespace urbi
     inline void
     CentralizedSlots::finalize(Object* owner)
     {
-      if (size_)
+      if (owner->slots_.size_)
         obj_index_.erase(owner);
     }
 
@@ -79,8 +85,7 @@ namespace urbi
         else
           return false;
       }
-      else
-        ++size_;
+      ++owner->slots_.size_;
       content_->insert(content(owner, key, v));
       return true;
     }
@@ -101,7 +106,7 @@ namespace urbi
       if (it == content_->end())
 	return false;
       loc_index_.erase(it);
-      --size_;
+      --owner->slots_.size_;
       return true;
     }
 

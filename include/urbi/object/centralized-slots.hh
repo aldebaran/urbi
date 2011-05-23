@@ -36,8 +36,10 @@ namespace urbi
       `---------------*/
 
     public:
+      CentralizedSlots();
+
       /// The slot type
-      typedef rSlot value_type;
+      typedef rObject value_type;
       /// The key type
       typedef libport::Symbol key_type;
       /// The location of a slot
@@ -81,7 +83,7 @@ namespace urbi
       /// Get a begin const iterator.
       static const_iterator begin(const Object* owner);
       /// Dispose of the slots of \a owner.
-      void finalize(Object* owner);
+      static void finalize(Object* owner);
       /// Get a past-the-end iterator.
       static iterator end(Object* owner);
       /// Get a past-the-end cosnt iterator.
@@ -89,7 +91,7 @@ namespace urbi
       /// Erase \a owner's \a key slot.
       /// @return Success status.
       ///         I.e., false if the slot was not defined (entailing failure).
-      bool erase(Object* owner, const key_type& key);
+      static bool erase(Object* owner, const key_type& key);
       /// Get \a owner's \a key slot's value.
       static value_type get(const Object* owner, const key_type& key);
       /// Return whether \a owner has a \a key slot.
@@ -98,7 +100,7 @@ namespace urbi
       /// Set \a owner's \a key slot's value to \a v.
       /// @return Success status.
       ///         I.e., false if the slot was already defined (entailing failure).
-      bool set(Object* owner,
+      static bool set(Object* owner,
                const key_type& key, value_type v, bool overwrite = false);
 
 
@@ -122,7 +124,7 @@ namespace urbi
       static loc_index_type& loc_index_;
       /// The owner-wise index.
       static obj_index_type& obj_index_;
-      /// The number of slots.
+      /// The number of slots in the Object owning the CentralizedSlot instance.
       int size_;
     };
   }
