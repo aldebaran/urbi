@@ -141,4 +141,4 @@ check-TESTS: clean-semaphores
 ## XFAILS.  ##
 ## -------- ##
 
-TFAIL_TESTS += tests/specs/process-00.chk
+TFAIL_TESTS +=
