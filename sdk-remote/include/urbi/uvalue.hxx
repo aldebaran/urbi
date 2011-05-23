@@ -146,6 +146,8 @@ namespace urbi
   uvalue_cast(UValue& v)
   {
     typedef typename libport::traits::remove_reference<Type>::type res_type;
+    GD_CATEGORY(Urbi.UValue);
+    GD_FINFO_DEBUG("%s.uvalue_cast<%s>()", v, typeid(res_type).name());
     return uvalue_caster<res_type>()(v);
   }
 
@@ -315,16 +317,19 @@ namespace urbi
     t = uvalue_cast<T>(v);
   }
 
+#define CHECK(Cond, Message)                                            \
+  if (!(Cond))                                                          \
+    throw std::runtime_error(libport::format("invalid cast to %s: %s",  \
+                                             Message, v))
+
   template <typename T>
   struct uvalue_caster<UPackedData<T> >
   {
     UPackedData<T> operator() (UValue& v)
     {
-      if (v.type != DATA_BINARY)
-        throw std::runtime_error("invalid cast to UPackedData: not a Binary");
-      if (v.binary->common.size % sizeof(T))
-        throw std::runtime_error("invalid cast to UPackedData: incorrect binary"
-                                 "size");
+      CHECK(v.type == DATA_BINARY, "UPackedData: not a Binary");
+      CHECK(v.binary->common.size % sizeof(T) == 0,
+            "UPackedData: incorrect binary size");
       return UPackedData<T>((T*)v.binary->common.data,
                             (T*)((char*)v.binary->common.data
                                  + v.binary->common.size));
@@ -339,8 +344,8 @@ namespace urbi
     UBinary& b = *v.binary;
     b.common.size = sizeof(T)*d.size();
     b.common.data = malloc(b.common.size);
-    b.message = "packed " + boost::lexical_cast<std::string>(sizeof(T))
-      + " " + typeid(T).name();
+    b.message = libport::format("packed %s %s",
+                                sizeof(T), typeid(T).name());
     memcpy(b.common.data, &d.front(), b.common.size);
     return v;
   }
@@ -349,18 +354,15 @@ namespace urbi
   | boost::numeric::ublas.  |
   `------------------------*/
 
-  #define check(cond, message)                                          \
-    if (!(cond))                                                        \
-      throw std::runtime_error("invalid cast to " message " "           \
-                               + boost::lexical_cast<std::string>(v))
-
   template<typename T>
   struct uvalue_caster<boost::numeric::ublas::vector<T> >
   {
     typedef typename boost::numeric::ublas::vector<T> Target;
     inline Target operator() (UValue& v)
     {
-      check(v.type == DATA_BINARY, "vector: not a Binary");
+      GD_CATEGORY(Urbi.UValue);
+      GD_INFO_DEBUG("making a Vector");
+      CHECK(v.type == DATA_BINARY, "vector: not a Binary");
       std::stringstream s(v.binary->message);
       // Parse message.
       std::string kw;
@@ -370,13 +372,12 @@ namespace urbi
       int count2 = -1;
       s >> kw >> elemSize >> elemType >> count1 >> count2;
       // Validate headers
-      check(kw == "packed", "vector: Binary is not a pack");
-      check(elemSize == sizeof(T), "vector: incorrect element size");
-      check(!(v.binary->common.size % sizeof(T)),
+      CHECK(kw == "packed", "vector: Binary is not a pack");
+      CHECK(elemSize == sizeof(T), "vector: incorrect element size");
+      CHECK(!(v.binary->common.size % sizeof(T)),
             "vector: incorrect binary size");
       Target res(v.binary->common.size / elemSize);
       memcpy(&res(0), v.binary->common.data, v.binary->common.size);
-      GD_CATEGORY(Urbi.UValue);
       GD_FINFO_DEBUG("made a Vector: %s", res);
       return res;
     }
@@ -401,21 +402,22 @@ namespace urbi
     typedef typename boost::numeric::ublas::matrix<T> Target;
     inline Target operator() (UValue& v)
     {
-      check(v.type == DATA_BINARY, "matrix: not a Binary");
+      GD_CATEGORY(Urbi.UValue);
+      GD_INFO_DEBUG("making a Matrix");
+      CHECK(v.type == DATA_BINARY, "matrix: not a Binary");
       std::stringstream s(v.binary->message);
       // Parse message.
       std::string kw; int elemSize; std::string elemType; int count1=-1;
       int count2 = -1;
       s >> kw >> elemSize >> elemType >> count1 >> count2;
       // Validate headers
-      check(kw == "packed", "matrix: Binary is not a pack");
-      check(elemSize == sizeof(T), "matrix: incorrect element size");
-      check(count1>=0 && count2>=0, "matrix: incorrect matrix size");
-      check(count1 * count2 * sizeof(T) == v.binary->common.size,
+      CHECK(kw == "packed", "matrix: Binary is not a pack");
+      CHECK(elemSize == sizeof(T), "matrix: incorrect element size");
+      CHECK(count1>=0 && count2>=0, "matrix: incorrect matrix size");
+      CHECK(count1 * count2 * sizeof(T) == v.binary->common.size,
             "matrix: inconsistent binary size with headers");
       Target res(count1, count2);
       memcpy(&res(0,0), v.binary->common.data, v.binary->common.size);
-      GD_CATEGORY(Urbi.UValue);
       GD_FINFO_DEBUG("made a Matrix: %s", res);
       return res;
     }
@@ -435,5 +437,5 @@ namespace urbi
     memcpy(b.common.data, &d(0,0), b.common.size);
     return v;
   }
-  #undef check
+#undef CHECK
 } // namespace urbi
