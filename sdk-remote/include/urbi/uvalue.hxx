@@ -10,12 +10,13 @@
 
 /// \file urbi/uvalue.hxx
 
-#include <libport/preproc.hh>
 #include <boost/foreach.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/numeric/ublas/blas.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/vector.hpp>
+#include <libport/debug.hh>
+#include <libport/format.hh>
+#include <libport/preproc.hh>
 
 #include <libport/cassert>
 
@@ -344,11 +345,15 @@ namespace urbi
     return v;
   }
 
-  // boost::numeric::ublas types
+  /*------------------------.
+  | boost::numeric::ublas.  |
+  `------------------------*/
 
-  #define check(cond, message) \
-    if (!(cond)) throw std::runtime_error("invalid cast to " message " " \
-                                          + boost::lexical_cast<std::string>(v))
+  #define check(cond, message)                                          \
+    if (!(cond))                                                        \
+      throw std::runtime_error("invalid cast to " message " "           \
+                               + boost::lexical_cast<std::string>(v))
+
   template<typename T>
   struct uvalue_caster<boost::numeric::ublas::vector<T> >
   {
@@ -358,17 +363,22 @@ namespace urbi
       check(v.type == DATA_BINARY, "vector: not a Binary");
       std::stringstream s(v.binary->message);
       // Parse message.
-      std::string kw; int elemSize; std::string elemType; int count1=-1;
+      std::string kw;
+      int elemSize;
+      std::string elemType;
+      int count1=-1;
       int count2 = -1;
-      s >> kw >> elemSize >> elemType >> count1 >>  count2;
+      s >> kw >> elemSize >> elemType >> count1 >> count2;
       // Validate headers
       check(kw == "packed", "vector: Binary is not a pack");
       check(elemSize == sizeof(T), "vector: incorrect element size");
       check(!(v.binary->common.size % sizeof(T)),
             "vector: incorrect binary size");
-      Target t(v.binary->common.size / elemSize);
-      memcpy(&t(0), v.binary->common.data, v.binary->common.size);
-      return t;
+      Target res(v.binary->common.size / elemSize);
+      memcpy(&res(0), v.binary->common.data, v.binary->common.size);
+      GD_CATEGORY(Urbi.UValue);
+      GD_FINFO_DEBUG("made a Vector: %s", res);
+      return res;
     }
   };
 
@@ -380,8 +390,7 @@ namespace urbi
     b.type = BINARY_UNKNOWN;
     b.common.size = sizeof(T)*d.size();
     b.common.data = malloc(b.common.size);
-    b.message = "packed " + boost::lexical_cast<std::string>(sizeof(T))
-       + " " + typeid(T).name();
+    b.message = libport::format("packed %s %s", sizeof(T), typeid(T).name());
     memcpy(b.common.data, &d(0), b.common.size);
     return v;
   }
@@ -397,18 +406,21 @@ namespace urbi
       // Parse message.
       std::string kw; int elemSize; std::string elemType; int count1=-1;
       int count2 = -1;
-      s >> kw >> elemSize >> elemType >> count1 >>  count2;
+      s >> kw >> elemSize >> elemType >> count1 >> count2;
       // Validate headers
       check(kw == "packed", "matrix: Binary is not a pack");
       check(elemSize == sizeof(T), "matrix: incorrect element size");
       check(count1>=0 && count2>=0, "matrix: incorrect matrix size");
       check(count1 * count2 * sizeof(T) == v.binary->common.size,
             "matrix: inconsistent binary size with headers");
-      Target t(count1, count2);
-      memcpy(&t(0,0), v.binary->common.data, v.binary->common.size);
-      return t;
+      Target res(count1, count2);
+      memcpy(&res(0,0), v.binary->common.data, v.binary->common.size);
+      GD_CATEGORY(Urbi.UValue);
+      GD_FINFO_DEBUG("made a Matrix: %s", res);
+      return res;
     }
   };
+
   template<typename T> inline
   UValue& operator, (UValue& v, const boost::numeric::ublas::matrix<T> &d)
   {
@@ -417,11 +429,9 @@ namespace urbi
     b.type = BINARY_UNKNOWN;
     b.common.size = sizeof(T)*d.size1() * d.size2();
     b.common.data = malloc(b.common.size);
-    b.message = "packed "
-      + boost::lexical_cast<std::string>(sizeof(T)) + " "
-      + typeid(T).name() + " "
-      + boost::lexical_cast<std::string>(d.size1()) + " "
-      + boost::lexical_cast<std::string>(d.size2());
+    b.message = libport::format("packed %s %s %s %s",
+                                sizeof(T), typeid(T).name(),
+                                d.size1(), d.size2());
     memcpy(b.common.data, &d(0,0), b.common.size);
     return v;
   }

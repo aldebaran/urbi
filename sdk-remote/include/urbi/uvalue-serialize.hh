@@ -67,14 +67,14 @@ namespace libport
 
 namespace urbi
 {
-template<class Archive>
-void saveUValue(Archive & ar, const urbi::UValue& v, std::ostream& os)
-{
-  unsigned char dt = (unsigned char)v.type;
-  ar << dt;
-  switch(v.type)
+  template<class Archive>
+  void saveUValue(Archive & ar, const urbi::UValue& v, std::ostream& os)
   {
-  case urbi::DATA_BINARY:
+    unsigned char dt = (unsigned char)v.type;
+    ar << dt;
+    switch(v.type)
+    {
+    case urbi::DATA_BINARY:
     {
       std::string m =  v.binary->getMessage();
       unsigned int s = v.binary->common.size;
@@ -83,7 +83,7 @@ void saveUValue(Archive & ar, const urbi::UValue& v, std::ostream& os)
     }
     break;
 
-  case urbi::DATA_DICTIONARY:
+    case urbi::DATA_DICTIONARY:
     {
       unsigned int len =  v.dictionary->size();
       ar << len;
@@ -92,11 +92,11 @@ void saveUValue(Archive & ar, const urbi::UValue& v, std::ostream& os)
     }
     break;
 
-  case urbi::DATA_DOUBLE:
-    ar << v.val;
-    break;
+    case urbi::DATA_DOUBLE:
+      ar << v.val;
+      break;
 
-  case urbi::DATA_LIST:
+    case urbi::DATA_LIST:
     {
       unsigned int len = v.list->size();
       ar << len;
@@ -105,61 +105,61 @@ void saveUValue(Archive & ar, const urbi::UValue& v, std::ostream& os)
     }
     break;
 
-  case urbi::DATA_STRING:
-  case urbi::DATA_SLOTNAME:
-    ar << *v.stringValue;
-    break;
+    case urbi::DATA_STRING:
+    case urbi::DATA_SLOTNAME:
+      ar << *v.stringValue;
+      break;
 
-  case urbi::DATA_VOID:
-    break;
+    case urbi::DATA_VOID:
+      break;
 
-  default:
-    throw std::runtime_error("Unsupported UValue type");
+    default:
+      throw std::runtime_error("Unsupported UValue type");
+    }
   }
-}
 
-template<class Archive>
-void loadUValue(Archive & ar, urbi::UValue& v, std::istream& is)
-{
-  v.clear();
-  unsigned char dt;
-  ar >> dt;
-  unsigned int sz;
-  std::string s;
-  switch((urbi::UDataType)dt)
+  template<class Archive>
+  void loadUValue(Archive & ar, urbi::UValue& v, std::istream& is)
   {
-  case urbi::DATA_BINARY:
-  {
-    std::string headers;
-    ar >> headers;
-    ar >> sz;
-    void* data = malloc(sz);
-    is.read((char*)data, sz);
-    urbi::binaries_type bins;
-    bins.push_back(urbi::BinaryData(data, sz));
-    v.type = urbi::DATA_BINARY;
-    v.binary = new urbi::UBinary;
-    urbi::binaries_type::const_iterator i = bins.begin();
-    headers = (string_cast(sz)
-               + (headers.empty() ? "" : " ")
-               + headers +";");
-    v.binary->parse(headers.c_str(), 0, bins, i, false);
-    v.binary->allocated_ = true;
-  }
-  break;
-
-  case urbi::DATA_DICTIONARY:
-    ar >> sz;
-    v = urbi::UDictionary();
-    for (size_t i=0; i<sz; ++i)
+    v.clear();
+    unsigned char dt;
+    ar >> dt;
+    unsigned int sz;
+    std::string s;
+    switch((urbi::UDataType)dt)
     {
-      std::string key;
-      ar >> key;
-      ar >> (*v.dictionary)[key];
+    case urbi::DATA_BINARY:
+    {
+      std::string headers;
+      ar >> headers;
+      ar >> sz;
+      void* data = malloc(sz);
+      is.read((char*)data, sz);
+      urbi::binaries_type bins;
+      bins.push_back(urbi::BinaryData(data, sz));
+      v.type = urbi::DATA_BINARY;
+      v.binary = new urbi::UBinary;
+      urbi::binaries_type::const_iterator i = bins.begin();
+      headers = (string_cast(sz)
+                 + (headers.empty() ? "" : " ")
+                 + headers +";");
+      v.binary->parse(headers.c_str(), 0, bins, i, false);
+      v.binary->allocated_ = true;
     }
     break;
 
-  case urbi::DATA_DOUBLE:
+    case urbi::DATA_DICTIONARY:
+      ar >> sz;
+      v = urbi::UDictionary();
+      for (size_t i=0; i<sz; ++i)
+      {
+        std::string key;
+        ar >> key;
+        ar >> (*v.dictionary)[key];
+      }
+      break;
+
+    case urbi::DATA_DOUBLE:
     {
       v.type = urbi::DATA_DOUBLE;
       ufloat val;
@@ -168,31 +168,31 @@ void loadUValue(Archive & ar, urbi::UValue& v, std::istream& is)
     }
     break;
 
-  case urbi::DATA_LIST:
-    ar >> sz;
-    v = urbi::UList();
-    for (size_t i=0; i<sz; ++i)
-    {
-      urbi::UValue* val = new urbi::UValue;
-      ar >> *val;
-      v.list->array.push_back(val);
+    case urbi::DATA_LIST:
+      ar >> sz;
+      v = urbi::UList();
+      for (size_t i=0; i<sz; ++i)
+      {
+        urbi::UValue* val = new urbi::UValue;
+        ar >> *val;
+        v.list->array.push_back(val);
+      }
+      break;
+
+    case urbi::DATA_STRING:
+    case urbi::DATA_SLOTNAME:
+      ar >> s;
+      v = s;
+      v.type = (urbi::UDataType)dt;
+      break;
+
+    case urbi::DATA_VOID:
+      v.type = urbi::DATA_VOID;
+      break;
+
+    default:
+      throw std::runtime_error("Unsupported serialized UValue type");
     }
-    break;
-
-  case urbi::DATA_STRING:
-  case urbi::DATA_SLOTNAME:
-    ar >> s;
-    v = s;
-    v.type = (urbi::UDataType)dt;
-    break;
-
-  case urbi::DATA_VOID:
-    v.type = urbi::DATA_VOID;
-    break;
-
-  default:
-    throw std::runtime_error("Unsupported serialized UValue type");
   }
-}
 }
 #endif
