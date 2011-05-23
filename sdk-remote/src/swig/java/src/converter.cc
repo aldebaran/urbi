@@ -10,7 +10,12 @@
 
 #include "converter.hh"
 
-DECLARE_CONVERTERS_STATIC_ATTRS
+// Define the attributes.
+#define DEFINE(Name)                           \
+  jclass Name##Converter::cls = 0;             \
+  jmethodID Name##Converter::mid = 0;
+FOR_ALL_CONVERTERS(DEFINE);
+#undef DEFINE
 
 Converter*
 Converter::instance(const std::string& type_name,

@@ -122,8 +122,10 @@ CallbacksCaller::areJNIVariablesCached()
 bool
 CallbacksCaller::cacheJNIVariables(JNIEnv* env)
 {
-
-  INIT_CONVERTERS_STATIC_ATTRS(env);
+#define INIT(Name)                              \
+  Name##Converter::init(env);
+  FOR_ALL_CONVERTERS(INIT);
+#undef INIT
 
 #define CASE(Type, Var)                                                 \
   if (!(Var ## _swigptr_id =                                            \

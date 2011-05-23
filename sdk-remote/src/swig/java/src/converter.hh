@@ -247,46 +247,22 @@ protected:
   }
 };
 
-#define DECLARE_STATIC_ATTR_(Name)		\
-  jclass Name##Converter::cls = 0;		\
-  jmethodID Name##Converter::mid = 0
-
-#define STATIC_ATTR_INIT_(Name, Env)		\
-  Name##Converter::init(Env)
-
 /// To be inserted in a .cc file
-#define DECLARE_CONVERTERS_STATIC_ATTRS		\
-  DECLARE_STATIC_ATTR_(Boolean);		\
-  DECLARE_STATIC_ATTR_(Byte);			\
-  DECLARE_STATIC_ATTR_(Character);		\
-  DECLARE_STATIC_ATTR_(Double);			\
-  DECLARE_STATIC_ATTR_(Float);			\
-  DECLARE_STATIC_ATTR_(Integer);		\
-  DECLARE_STATIC_ATTR_(Long);			\
-  DECLARE_STATIC_ATTR_(Short);                  \
-  DECLARE_STATIC_ATTR_(UBinary);		\
-  DECLARE_STATIC_ATTR_(UDictionary);		\
-  DECLARE_STATIC_ATTR_(UImage);			\
-  DECLARE_STATIC_ATTR_(UList);			\
-  DECLARE_STATIC_ATTR_(USound);			\
-  DECLARE_STATIC_ATTR_(UValue);			\
-  DECLARE_STATIC_ATTR_(UVarBase);
-
-#define INIT_CONVERTERS_STATIC_ATTRS(env)	\
-  STATIC_ATTR_INIT_(Boolean, env);		\
-  STATIC_ATTR_INIT_(Byte, env);			\
-  STATIC_ATTR_INIT_(Character, env);		\
-  STATIC_ATTR_INIT_(Double, env);		\
-  STATIC_ATTR_INIT_(Float, env);		\
-  STATIC_ATTR_INIT_(Integer, env);		\
-  STATIC_ATTR_INIT_(Long, env);			\
-  STATIC_ATTR_INIT_(Short, env);                \
-  STATIC_ATTR_INIT_(UBinary, env);		\
-  STATIC_ATTR_INIT_(UDictionary, env);		\
-  STATIC_ATTR_INIT_(UImage, env);		\
-  STATIC_ATTR_INIT_(UList, env);		\
-  STATIC_ATTR_INIT_(USound, env);		\
-  STATIC_ATTR_INIT_(UValue, env);		\
-  STATIC_ATTR_INIT_(UVarBase, env);
+#define FOR_ALL_CONVERTERS(Macro)               \
+  Macro(Boolean)                                \
+  Macro(Byte)                                   \
+  Macro(Character)                              \
+  Macro(Double)                                 \
+  Macro(Float)                                  \
+  Macro(Integer)                                \
+  Macro(Long)                                   \
+  Macro(Short)                                  \
+  Macro(UBinary)                                \
+  Macro(UDictionary)                            \
+  Macro(UImage)                                 \
+  Macro(UList)                                  \
+  Macro(USound)                                 \
+  Macro(UValue)                                 \
+  Macro(UVarBase)
 
 #endif
