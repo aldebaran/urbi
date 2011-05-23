@@ -554,7 +554,7 @@ namespace boost
   %template(UDictionary) unordered_map<std::string, urbi::UValue>;
   %template(UDictionaryCPPIterator) iterator_wrapper<std::string, urbi::UValue>;
 
-  %define UDIRECTORY_PUT(value_type)
+  %define UDICTIONARY_PUT(value_type)
 
   %extend unordered_map<std::string, urbi::UValue>
   {
@@ -565,15 +565,15 @@ namespace boost
   }
   %enddef
 
-  UDIRECTORY_PUT(const urbi::UList&)
-  UDIRECTORY_PUT(const urbi::UBinary&)
-  UDIRECTORY_PUT(const urbi::USound&)
-  UDIRECTORY_PUT(const urbi::UImage&)
-  UDIRECTORY_PUT(const std::string&)
-  UDIRECTORY_PUT(int)
-  UDIRECTORY_PUT(long long)
-  UDIRECTORY_PUT(double)
-  UDIRECTORY_PUT(bool)
+  UDICTIONARY_PUT(const urbi::UList&)
+  UDICTIONARY_PUT(const urbi::UBinary&)
+  UDICTIONARY_PUT(const urbi::USound&)
+  UDICTIONARY_PUT(const urbi::UImage&)
+  UDICTIONARY_PUT(const std::string&)
+  UDICTIONARY_PUT(int)
+  UDICTIONARY_PUT(long long)
+  UDICTIONARY_PUT(double)
+  UDICTIONARY_PUT(bool)
 
   %extend unordered_map<std::string, urbi::UValue>
   {
