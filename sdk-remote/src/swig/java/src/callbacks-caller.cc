@@ -190,7 +190,7 @@ CallbacksCaller::getUVarFromObject(jobject obj)
 {
   if (obj)
     // Java allocated memory, prefer allocate mine.
-    if (jlong ptr = env_->GetLongField(obj, uobject_swigptr_id))
+    if (jlong ptr = env_->GetLongField(obj, uvar_swigptr_id))
       return (urbi::UVar*) ptr;
   return 0;
 }
