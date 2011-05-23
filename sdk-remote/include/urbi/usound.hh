@@ -15,6 +15,7 @@
 # include <iosfwd>
 
 # include <urbi/export.hh>
+# include <urbi/fwd.hh>
 
 namespace urbi
 {
@@ -51,11 +52,9 @@ namespace urbi
   std::istream& operator>> (std::istream& is, USoundSampleFormat& f);
 
 
-  /*---------.
-  | USound.  |
-  `---------*/
-
-  class USound;
+  /*-------------.
+  | USoundImpl.  |
+  `-------------*/
 
   /** Class encapsulating sound information.
 
@@ -106,6 +105,14 @@ namespace urbi
     std::string headers_() const;
   };
 
+  // Bounce to USoundImpl::dump.
+  std::ostream& operator<< (std::ostream& o, const USoundImpl& s);
+
+
+  /*---------.
+  | USound.  |
+  `---------*/
+
   /// Wrapper providing a constructor to initialize all fields.
   class URBI_SDK_API USound: public USoundImpl
   {
@@ -118,9 +125,6 @@ namespace urbi
       return *this;
     }
   };
-
-  // Bounce to USound::dump.
-  std::ostream& operator<< (std::ostream& o, const USoundImpl& s);
 
   inline USound::USound()
   {

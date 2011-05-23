@@ -89,9 +89,9 @@ namespace urbi
   }
 
 
-  /*---------.
-  | USound.  |
-  `---------*/
+  /*-------------.
+  | USoundImpl.  |
+  `-------------*/
 
   void
   USoundImpl::init()

@@ -63,9 +63,9 @@ namespace urbi
   }
 
 
-  /*---------.
-  | UImage.  |
-  `---------*/
+  /*-------------.
+  | UImageImpl.  |
+  `-------------*/
 
   void
   UImageImpl::init()
@@ -94,6 +94,20 @@ namespace urbi
   {
     return libport::format("%s %s %s",
                            format_string(), width, height);
+  }
+
+  std::ostream&
+  UImageImpl::dump(std::ostream& o) const
+  {
+    return o << "image(format: " << format_string() << ", "
+             <<         "size: " << size
+             << ")";
+  }
+
+  std::ostream&
+  operator<< (std::ostream& o, const UImageImpl& s)
+  {
+    return s.dump(o);
   }
 
 } // namespace urbi

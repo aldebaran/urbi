@@ -14,6 +14,7 @@
 
 # include <libport/cstdlib>
 # include <urbi/export.hh>
+# include <urbi/fwd.hh>
 
 namespace urbi
 {
@@ -47,11 +48,9 @@ namespace urbi
 
 
 
-  /*---------.
-  | UImage.  |
-  `---------*/
-
-  class UImage;
+  /*-------------.
+  | UImageImpl.  |
+  `-------------*/
 
   /** Class encapsulating an image.
 
@@ -60,7 +59,6 @@ namespace urbi
   class URBI_SDK_API UImageImpl
   {
   public:
-    //UImage();
     /// Return an empty UImage.
     /// Not a constructor so that we can still put it in a union.
     ATTRIBUTE_CONST
@@ -73,6 +71,9 @@ namespace urbi
     /// Return a legible definition of imageFormat.
     const char* format_string() const;
 
+    // For debugging.
+    std::ostream& dump(std::ostream& o) const;
+
     /// Pointer to image data.
     unsigned char* data;
     /// Image size in byte.
@@ -82,11 +83,20 @@ namespace urbi
 
     UImageFormat imageFormat;
     operator UImage&();
+
   private:
     friend class UBinary;
     // The UBinary headers.
     std::string headers_() const;
   };
+
+  // Bounce to UImageImpl::dump.
+  std::ostream& operator<< (std::ostream& o, const UImageImpl& s);
+
+
+  /*---------.
+  | UImage.  |
+  `---------*/
 
   /// Wrapper providing a constructor to initialize all fields.
   class URBI_SDK_API UImage: public UImageImpl
