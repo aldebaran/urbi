@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2009, 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -15,6 +15,7 @@
 
 # include <urbi/fwd.hh>
 # include <urbi/ucontext.hh>
+
 namespace urbi
 {
 
@@ -33,8 +34,8 @@ namespace urbi
     void USetUpdate(ufloat period);
     virtual int update() {return 0;}
 
-    urbi::UObjectList  members;
-    urbi::UObjectList* getSubClass(const std::string&);
+    UObjectList  members;
+    UObjectList* getSubClass(const std::string&);
     //   UObjectList* getAllSubClass(const std::string&); //TODO
     const std::string& get_name() { return name;}
   protected:

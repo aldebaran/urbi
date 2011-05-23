@@ -30,49 +30,44 @@
    *
    */
 
-#  define UMAIN()				\
-  namespace urbi				\
-  {						\
-						\
-  class ProcessUrbiEvent:			\
-    public ::QObject				\
-  {						\
-  public:					\
-						\
-    ProcessUrbiEvent ( QObject* parent = 0 )	\
-      : QObject (parent)			\
-    {						\
-      startTimer(3);				\
-						\
-      cl = dynamic_cast<urbi::USyncClient*>	\
-	(urbi::getDefaultClient ());		\
-      cl->stopCallbackThread ();		\
-    }						\
-						\
-  protected:					\
-						\
-    void					\
-      timerEvent ( QTimerEvent* )		\
-    {						\
-      if (cl)					\
-	cl->processEvents(3 * 1000);		\
-    }						\
-						\
-  protected:					\
-    urbi::USyncClient* cl;			\
-						\
-  };						\
-}						\
-						\
- int main(int argc, char *argv[])		\
- {						\
-   urbi::main(argc, (const char**)argv, false);	\
-						\
-   QApplication app (argc, argv) ;		\
-   urbi::ProcessUrbiEvent obj;			\
-						\
-   return app.exec();				\
- }
+#  define UMAIN()                                               \
+  namespace urbi                                                \
+  {                                                             \
+    class ProcessUrbiEvent:                                     \
+      public ::QObject                                          \
+    {                                                           \
+    public:                                                     \
+                                                                \
+      ProcessUrbiEvent ( QObject* parent = 0 )                  \
+        : QObject (parent)                                      \
+      {                                                         \
+        startTimer(3);                                          \
+                                                                \
+        cl = dynamic_cast<USyncClient*> (getDefaultClient ());  \
+        cl->stopCallbackThread ();                              \
+      }                                                         \
+                                                                \
+    protected:                                                  \
+      void timerEvent(QTimerEvent*)                             \
+      {                                                         \
+        if (cl)                                                 \
+          cl->processEvents(3 * 1000);                          \
+      }                                                         \
+                                                                \
+    protected:                                                  \
+      USyncClient* cl;                                          \
+      };                                                        \
+  }                                                             \
+                                                                \
+  int main(int argc, char *argv[])                              \
+  {                                                             \
+    urbi::main(argc, (const char**)argv, false);                \
+                                                                \
+    QApplication app (argc, argv) ;                             \
+    urbi::ProcessUrbiEvent obj;                                 \
+                                                                \
+    return app.exec();                                          \
+  }
 # else
 #  define UMAIN()
 # endif /* !URBI_ENV_REMOTE */

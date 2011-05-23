@@ -221,7 +221,7 @@ namespace urbi
 
   /// Report \a u on \a o for debugging.
   URBI_SDK_API
-  std::ostream& operator<< (std::ostream& o, const urbi::UVar& u);
+  std::ostream& operator<< (std::ostream& o, const UVar& u);
 
 } // end namespace urbi
 

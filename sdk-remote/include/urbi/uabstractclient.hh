@@ -174,7 +174,7 @@ namespace urbi
     error_type send(const std::string& s);
 
     /// Send the value without any prefix or terminator
-    error_type send(const urbi::UValue& v);
+    error_type send(const UValue& v);
 
     /// Send the remainder of the stream.
     error_type send(std::istream& is);
@@ -224,7 +224,7 @@ namespace urbi
 
     /// Send sound data to the robot for immediate playback.
     error_type sendSound(const char* device,
-		  const urbi::USound& sound, const char* tag = 0);
+                         const USound& sound, const char* tag = 0);
 
     /// Put a file on the robot's mass storage device.
     error_type putFile(const char* localName, const char* remoteName = 0);
@@ -773,7 +773,7 @@ namespace urbi
   /// Conveniant macro for easy insertion of Urbi code in C
   /**
      With this macro, the following code is enough to send a simple
-     command to a robot using URBI:
+     command to a robot using Urbi:
 
      int main()
      {

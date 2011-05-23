@@ -29,25 +29,25 @@ namespace urbi
   public:
     /// Creates an unbound UEvent. Call init() to bind it.
     UEvent();
-    UEvent(const std::string& varname, urbi::impl::UContextImpl* impl = 0);
+    UEvent(const std::string& varname, impl::UContextImpl* impl = 0);
     UEvent(const std::string& objname, const std::string& varname,
-           urbi::impl::UContextImpl* impl = 0);
-    UEvent(urbi::UObject& obj, const std::string& varname,
-           urbi::impl::UContextImpl* impl = 0);
+           impl::UContextImpl* impl = 0);
+    UEvent(UObject& obj, const std::string& varname,
+           impl::UContextImpl* impl = 0);
     UEvent(const UEvent& e);
 
     // Bind to \a object.slot.
     void init(const std::string& object, const std::string& slot,
-              urbi::impl::UContextImpl* = 0);
+              impl::UContextImpl* = 0);
 
     // Emit the event.
-    void emit(urbi::UAutoValue v1 = UAutoValue(),
-              urbi::UAutoValue v2 = UAutoValue(),
-              urbi::UAutoValue v3 = UAutoValue(),
-              urbi::UAutoValue v4 = UAutoValue(),
-              urbi::UAutoValue v5 = UAutoValue(),
-              urbi::UAutoValue v6 = UAutoValue(),
-              urbi::UAutoValue v7 = UAutoValue());
+    void emit(UAutoValue v1 = UAutoValue(),
+              UAutoValue v2 = UAutoValue(),
+              UAutoValue v3 = UAutoValue(),
+              UAutoValue v4 = UAutoValue(),
+              UAutoValue v5 = UAutoValue(),
+              UAutoValue v6 = UAutoValue(),
+              UAutoValue v7 = UAutoValue());
 
  private:
     void __init();
@@ -70,7 +70,7 @@ namespace urbi
   private:					\
     Type Name;
 
-    /// Full name of the variable as seen in URBI.
+    /// Full name of the variable as seen in Urbi.
     PRIVATE(std::string, name)
 # undef PRIVATE
   };

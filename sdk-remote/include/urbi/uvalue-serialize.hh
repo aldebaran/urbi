@@ -19,9 +19,9 @@
 namespace urbi
 {
   template<class Archive>
-  void saveUValue(Archive & ar, const urbi::UValue& v, std::ostream& os);
+  void saveUValue(Archive &ar, const UValue& v, std::ostream& os);
   template<class Archive>
-  void loadUValue(Archive & ar, urbi::UValue& v, std::istream& is);
+  void loadUValue(Archive &ar, UValue& v, std::istream& is);
 }
 
 // libport/serialize functions
@@ -40,6 +40,7 @@ namespace libport
         saveUValue(ser, v, output);
       }
     };
+
     template<>
     struct BinaryOSerializer::Impl<const urbi::UValue>
     {
@@ -51,6 +52,7 @@ namespace libport
         saveUValue(ser, v, output);
       }
     };
+
     template<>
     struct BinaryISerializer::Impl<urbi::UValue>
     {
@@ -68,13 +70,13 @@ namespace libport
 namespace urbi
 {
   template<class Archive>
-  void saveUValue(Archive & ar, const urbi::UValue& v, std::ostream& os)
+  void saveUValue(Archive & ar, const UValue& v, std::ostream& os)
   {
     unsigned char dt = (unsigned char)v.type;
     ar << dt;
     switch(v.type)
     {
-    case urbi::DATA_BINARY:
+    case DATA_BINARY:
     {
       std::string m =  v.binary->getMessage();
       unsigned int s = v.binary->common.size;
@@ -83,20 +85,20 @@ namespace urbi
     }
     break;
 
-    case urbi::DATA_DICTIONARY:
+    case DATA_DICTIONARY:
     {
       unsigned int len =  v.dictionary->size();
       ar << len;
-      foreach(urbi::UDictionary::value_type& e, *v.dictionary)
+      foreach(UDictionary::value_type& e, *v.dictionary)
         ar << e.first << e.second;
     }
     break;
 
-    case urbi::DATA_DOUBLE:
+    case DATA_DOUBLE:
       ar << v.val;
       break;
 
-    case urbi::DATA_LIST:
+    case DATA_LIST:
     {
       unsigned int len = v.list->size();
       ar << len;
@@ -105,12 +107,12 @@ namespace urbi
     }
     break;
 
-    case urbi::DATA_STRING:
-    case urbi::DATA_SLOTNAME:
+    case DATA_STRING:
+    case DATA_SLOTNAME:
       ar << *v.stringValue;
       break;
 
-    case urbi::DATA_VOID:
+    case DATA_VOID:
       break;
 
     default:
@@ -119,27 +121,27 @@ namespace urbi
   }
 
   template<class Archive>
-  void loadUValue(Archive & ar, urbi::UValue& v, std::istream& is)
+  void loadUValue(Archive & ar, UValue& v, std::istream& is)
   {
     v.clear();
     unsigned char dt;
     ar >> dt;
     unsigned int sz;
     std::string s;
-    switch((urbi::UDataType)dt)
+    switch((UDataType)dt)
     {
-    case urbi::DATA_BINARY:
+    case DATA_BINARY:
     {
       std::string headers;
       ar >> headers;
       ar >> sz;
       void* data = malloc(sz);
       is.read((char*)data, sz);
-      urbi::binaries_type bins;
-      bins.push_back(urbi::BinaryData(data, sz));
-      v.type = urbi::DATA_BINARY;
-      v.binary = new urbi::UBinary;
-      urbi::binaries_type::const_iterator i = bins.begin();
+      binaries_type bins;
+      bins.push_back(BinaryData(data, sz));
+      v.type = DATA_BINARY;
+      v.binary = new UBinary;
+      binaries_type::const_iterator i = bins.begin();
       headers = (string_cast(sz)
                  + (headers.empty() ? "" : " ")
                  + headers +";");
@@ -148,9 +150,9 @@ namespace urbi
     }
     break;
 
-    case urbi::DATA_DICTIONARY:
+    case DATA_DICTIONARY:
       ar >> sz;
-      v = urbi::UDictionary();
+      v = UDictionary();
       for (size_t i=0; i<sz; ++i)
       {
         std::string key;
@@ -159,35 +161,35 @@ namespace urbi
       }
       break;
 
-    case urbi::DATA_DOUBLE:
+    case DATA_DOUBLE:
     {
-      v.type = urbi::DATA_DOUBLE;
+      v.type = DATA_DOUBLE;
       ufloat val;
       ar >> val;
       v = val;
     }
     break;
 
-    case urbi::DATA_LIST:
+    case DATA_LIST:
       ar >> sz;
-      v = urbi::UList();
+      v = UList();
       for (size_t i=0; i<sz; ++i)
       {
-        urbi::UValue* val = new urbi::UValue;
+        UValue* val = new UValue;
         ar >> *val;
         v.list->array.push_back(val);
       }
       break;
 
-    case urbi::DATA_STRING:
-    case urbi::DATA_SLOTNAME:
+    case DATA_STRING:
+    case DATA_SLOTNAME:
       ar >> s;
       v = s;
-      v.type = (urbi::UDataType)dt;
+      v.type = (UDataType)dt;
       break;
 
-    case urbi::DATA_VOID:
-      v.type = urbi::DATA_VOID;
+    case DATA_VOID:
+      v.type = DATA_VOID;
       break;
 
     default:

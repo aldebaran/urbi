@@ -31,7 +31,7 @@ namespace urbi
     MESSAGE_DATA    ///< All other messages.
   };
 
-  /// Class containing all informations related to an URBI message.
+  /// All the information related to an Urbi message.
   class URBI_SDK_API UMessage
   {
   public:
@@ -53,7 +53,7 @@ namespace urbi
     ~UMessage();
 
     /// Return the message.
-    operator urbi::UValue&();
+    operator UValue&();
 
     /// Format as "[TIMESTAMP:TAG] (!!!|***)? CONTENTS".
     std::ostream& print(std::ostream& o) const;
@@ -69,7 +69,7 @@ namespace urbi
     UMessageType type;
 
     /// Set only if the message type is MESSAGE_DATA.
-    urbi::UValue* value;
+    UValue* value;
     /// Set only if the message type is MESSAGE_SYSTEM or MESSAGE_ERROR.
     std::string	message;
     /// Raw message without the binary data.

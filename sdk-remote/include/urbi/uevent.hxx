@@ -35,13 +35,13 @@ namespace urbi
 
   inline
   void
-  UEvent::emit(urbi::UAutoValue v1,
-               urbi::UAutoValue v2,
-               urbi::UAutoValue v3,
-               urbi::UAutoValue v4,
-               urbi::UAutoValue v5,
-               urbi::UAutoValue v6,
-               urbi::UAutoValue v7
+  UEvent::emit(UAutoValue v1,
+               UAutoValue v2,
+               UAutoValue v3,
+               UAutoValue v4,
+               UAutoValue v5,
+               UAutoValue v6,
+               UAutoValue v7
                )
   {
     ctx_->emit(name, v1, v2, v3, v4, v5, v6, v7);
