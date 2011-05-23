@@ -12,18 +12,22 @@
 #include <libport/format.hh>
 #include "callbacks-caller.hh"
 
-jfieldID CallbacksCaller::ulist_swigptr_id = 0;
-jfieldID CallbacksCaller::uimage_swigptr_id = 0;
-jfieldID CallbacksCaller::usound_swigptr_id = 0;
-jfieldID CallbacksCaller::udictionary_swigptr_id = 0;
-jfieldID CallbacksCaller::ubinary_swigptr_id = 0;
-jfieldID CallbacksCaller::uvalue_swigptr_id = 0;
-jfieldID CallbacksCaller::uvar_swigptr_id = 0;
-jclass CallbacksCaller::uobject_cls = 0;
-jfieldID CallbacksCaller::uobject_swigptr_id = 0;
-jmethodID CallbacksCaller::class_getname_id = 0;
-jclass CallbacksCaller::class_cls = 0;
 bool CallbacksCaller::jni_variables_cached_ = false;
+jclass CallbacksCaller::class_cls = 0;
+jclass CallbacksCaller::uobject_cls = 0;
+#define DEFINE(Name)                                    \
+  jfieldID CallbacksCaller::Name ## _swigptr_id = 0
+DEFINE(ubinary);
+DEFINE(udictionary);
+DEFINE(uimage);
+DEFINE(ulist);
+DEFINE(uobject);
+DEFINE(usound);
+DEFINE(uvalue);
+DEFINE(uvar);
+#undef DEFINE
+
+jmethodID CallbacksCaller::class_getname_id = 0;
 
 CallbacksCaller::CallbacksCaller()
   : mid(0)
@@ -72,7 +76,6 @@ CallbacksCaller::callNotifyChangeVoid_1(urbi::UVar& v)
   jvalue arg[] = { obj1 };
   env_->CallVoidMethodA(obj, mid, arg);
   testForException();
-
 }
 
 
