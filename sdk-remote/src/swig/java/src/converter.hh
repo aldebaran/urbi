@@ -13,6 +13,7 @@
 
 # include <jni.h>
 # include <urbi/uobject.hh>
+# include <urbi/uvalue.hh>
 # include <urbi/ucallbacks.hh>
 
 # define FRAISE(...)                                            \
@@ -123,9 +124,11 @@ protected:
       return *(jvalue*)&jobj;						\
     }									\
 									\
-    virtual Type* alloc(const urbi::UValue& val)			\
+    virtual Type* alloc(const urbi::UValue& v)                          \
     {									\
-      return (Type*)(allocated = new Type((const Type&)val));		\
+      Type val = urbi::uvalue_cast<Type>(const_cast<urbi::UValue&>(v)); \
+      allocated = new Type(ref);                                        \
+      return allocated;                                                 \
     }									\
 									\
     virtual void destroy_(JNIEnv* env, jvalue jval)			\
