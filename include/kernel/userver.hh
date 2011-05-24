@@ -330,16 +330,16 @@ namespace kernel
 // When protected by the big kernel lock, we are allowed to play with
 // the allocated memory.  Protect ourselves from the inner assertion
 // than requires that we are in the right thread.
-#if defined NDEBUG
-# define KERNEL_PACIFY_ALLOCATOR()              \
-  LIBPORT_NOP
-#else
+#if DEBUG_SA_UNIQ_THREAD_CHECK
 # define KERNEL_PACIFY_ALLOCATOR()                                      \
   pthread_t previousAllocatorThread = Object::thread;                   \
   Object::thread = pthread_self();                                      \
   FINALLY(((pthread_t, previousAllocatorThread)),                       \
           Object::thread = previousAllocatorThread;                     \
     )
+#else
+# define KERNEL_PACIFY_ALLOCATOR()              \
+  LIBPORT_NOP
 #endif
 
 // Require the big kernel lock, and pacify the allocator.
