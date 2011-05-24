@@ -70,7 +70,9 @@ namespace boost
     T getValue();
   };
 
-  template<class K, class T> class unordered_map {
+  template<class K, class T>
+  class unordered_map
+  {
   public:
     typedef K key_type;
     typedef T mapped_type;
@@ -84,27 +86,39 @@ namespace boost
     //boost::unordered_map<K, T>::iterator begin();
     //boost::unordered_map<K, T>::iterator end();
 
-    %extend {
-      bool isEmpty() const {
+    %extend
+    {
+      bool isEmpty() const
+      {
 	return self->empty();
       }
-      bool containsKey(const K& key) {
+
+      bool containsKey(const K& key)
+      {
 	boost::unordered_map<K,T >::iterator i = self->find(key);
 	return i != self->end();
       }
-      const T& get(const K& key) throw (std::out_of_range) {
+
+      const T& get(const K& key)
+        throw (std::out_of_range)
+      {
 	boost::unordered_map<K,T >::iterator i = self->find(key);
 	if (i != self->end())
 	  return i->second;
 	else
 	  throw std::out_of_range("key not found");
       }
-      const T& put(const K& key, const T& x) {
+
+      const T& put(const K& key, const T& x)
+      {
 	return (*self)[key] = x;
       }
-      void del(const K& key) {
+
+      void del(const K& key)
+      {
 	self->erase(key);
       }
+
       iterator_wrapper<K,T> getIterator()
       {
 	return boost::iterator_wrapper<K,T>(*self);
