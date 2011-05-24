@@ -47,26 +47,6 @@
 #include <urbi/urbi-root.hh>
 #include <urbi/umain.hh>
 
-using urbi::BinaryData;
-using urbi::TimerHandle;
-using urbi::UAutoValue;
-using urbi::UDataType;
-using urbi::UDictionary;
-using urbi::UEvent;
-using urbi::UImage;
-using urbi::UList;
-using urbi::UMessage;
-using urbi::UObjectMode;
-using urbi::UProp;
-using urbi::USound;
-using urbi::UTimerCallback;
-using urbi::UVar;
-using urbi::baseURBIStarter;
-using urbi::impl::UGenericCallbackImpl;
-using urbi::impl::UObjectImpl;
-using urbi::impl::UVarImpl;
-
-
 namespace urbi
 {
 
