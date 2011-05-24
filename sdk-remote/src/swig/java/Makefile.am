@@ -60,19 +60,25 @@ SWIGFLAGS += -DAPPLE
 endif
 
 # Invoque SWIG and generate Java sources & C++ JNI code
-# (liburbi_java.cc).  Remove the output dir so that there are no stray
-# files from previous runs that may confuse us when trying to
-# understand the generated code.
+# (liburbi_java.cc).
+#
+# It would be most useful to remove the output dir (so that there are
+# no stray files from previous runs that may confuse us when trying to
+# understand the generated code).  But this is the very same directory
+# (urbi/) in which we also have compiled urbi/UMain.java and others to
+# urbi/UMain.class.  So removing the directory is doomed to failure.
+# Unless we generate SWIG files in another directory.  Meanwhile, do
+# not remove the directory.
 %.cc %/%.java %.cc.h: swig/%.i
-	$(AM_V_GEN)rm -rf $(java_src_outdir)
-	$(AM_V_at)$(mkdir_p) $(java_src_outdir)
+#	$(AM_V_GEN)rm -rf $(java_src_outdir)
+	$(AM_V_GEN)$(mkdir_p) $(java_src_outdir)
 	$(AM_V_at)test -n "$(SWIG)" || { echo "SWIG not defined"; exit 1; }
 	$(AM_V_at)\
-	if $(SWIG) $(SWIGFLAGS) -o $@.tmp $<; then		\
-	  mv -f "$(DEPDIR)/$*.Tcc" "$(DEPDIR)/$*.Pcc";		\
-	  mv $@.tmp $@;						\
-	else							\
-	  rm -f "$(DEPDIR)/tiger_misc-wrap.Tcc"; exit 1;	\
+	if $(SWIG) $(SWIGFLAGS) -o $@.tmp $<; then	\
+	  mv -f "$(DEPDIR)/$*.Tcc" "$(DEPDIR)/$*.Pcc";	\
+	  mv $@.tmp $@;					\
+	else						\
+	  rm -f "$(DEPDIR)/$*.Tcc"; exit 1;		\
 	fi
 -include $(DEPSDIR)/java.Pcc
 
