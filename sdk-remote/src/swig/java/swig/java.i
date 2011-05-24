@@ -642,35 +642,26 @@ namespace boost
 
   %extend unordered_map<std::string, urbi::UValue>
   {
-    value_type put(const std::string& key, value_type v)
+    // Don't try to return a value_type, since we actually
+    // get an UValue from the assignment into the map.
+    void put(const std::string& key, value_type v)
     {
-      return (*self)[key] = v;
+      (*self)[key] = v;
     }
   }
   %enddef
 
-  UDICTIONARY_PUT(const urbi::UList&)
-  UDICTIONARY_PUT(const urbi::UBinary&)
-  UDICTIONARY_PUT(const urbi::USound&)
-  UDICTIONARY_PUT(const urbi::UImage&)
-  UDICTIONARY_PUT(const std::string&)
+  UDICTIONARY_PUT(bool)
+  UDICTIONARY_PUT(char)
+  UDICTIONARY_PUT(double)
+  UDICTIONARY_PUT(float)
   UDICTIONARY_PUT(int)
   UDICTIONARY_PUT(long long)
-  UDICTIONARY_PUT(double)
-  UDICTIONARY_PUT(bool)
-
-  %extend unordered_map<std::string, urbi::UValue>
-  {
-    float put(const std::string& key, float v)
-    {
-      return (ufloat) ((*self)[key] = v);
-    }
-
-    char put(const std::string& key, char v)
-    {
-      return (int) ((*self)[key] = v);
-    }
-  }
+  UDICTIONARY_PUT(const std::string&)
+  UDICTIONARY_PUT(const urbi::UBinary&)
+  UDICTIONARY_PUT(const urbi::UImage&)
+  UDICTIONARY_PUT(const urbi::UList&)
+  UDICTIONARY_PUT(const urbi::USound&)
 }
 
 
@@ -783,6 +774,9 @@ namespace urbi
   %ignore LockableOstream;
   %warnfilter(401) LockableOstream;
 
+  // uabstractclient.hh:362: Warning 451:
+  //    Setting a const char * variable may leak memory.
+  %ignore UAbstractClient::CLIENTERROR_TAG;
   %ignore UAbstractClient::putFile(const void*, size_t, const char*);
   %ignore UAbstractClient::send(const char*, ...);
   %ignore UAbstractClient::send(std::istream&);
