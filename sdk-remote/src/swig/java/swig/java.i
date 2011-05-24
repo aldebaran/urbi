@@ -320,6 +320,11 @@ namespace urbi
   %ignore USound::dump;
   %ignore USoundImpl::operator USound&;
 
+  // Neutralize this warning.
+  // usound.hh:85: Warning 302:
+  //         Identifier 'data' redefined by %extend (ignored),
+  // java.i:328: Warning 302: %extend definition of 'data'.
+  %warnfilter(302) USoundImpl::data;
   %extend USoundImpl
   {
     // Place this definition of data before the usound.hh header so
@@ -1054,6 +1059,7 @@ namespace urbi
   %ignore UVar::get_temp() const;
   %ignore UVar::in;
   %ignore UVar::name;
+  %ignore UVar::operator UBinary*() const;
   %ignore UVar::out;
   %ignore UVar::rangemax;
   %ignore UVar::rangemin;
