@@ -931,31 +931,6 @@ namespace urbi
 %include "urbi/uproperty.hh"
 
 
- /*------------------------.
- | urbi/ucontext-impl.hh.  |
- `------------------------*/
-
-namespace urbi
-{
-  namespace impl
-  {
-
-    %ignore UVarImpl::timestamp;
-
-    %ignore UContextImpl::getGenericCallbackImpl;
-    %ignore UContextImpl::getIoService;
-    %ignore UContextImpl::hubs;
-    %ignore UContextImpl::initialized;
-    %ignore UContextImpl::objects;
-    %ignore UContextImpl::send(const char*);
-    %ignore UContextImpl::send(const void*, size_t);
-    %ignore UContextImpl::setTimer;
-  }
-}
-
-%include "urbi/ucontext-impl.hh"
-
-
 ////////////////////////////
 ///                      ///
 ///      UContext        ///
@@ -989,6 +964,31 @@ namespace urbi
 }
 
 %include "urbi/ucontext.hh"
+
+
+ /*------------------------.
+ | urbi/ucontext-impl.hh.  |
+ `------------------------*/
+
+namespace urbi
+{
+  namespace impl
+  {
+
+    %ignore UVarImpl::timestamp;
+
+    %ignore UContextImpl::getGenericCallbackImpl;
+    %ignore UContextImpl::getIoService;
+    %ignore UContextImpl::hubs;
+    %ignore UContextImpl::initialized;
+    %ignore UContextImpl::objects;
+    %ignore UContextImpl::send(const char*);
+    %ignore UContextImpl::send(const void*, size_t);
+    %ignore UContextImpl::setTimer;
+  }
+}
+
+%include "urbi/ucontext-impl.hh"
 
 
 ////////////////////////////
