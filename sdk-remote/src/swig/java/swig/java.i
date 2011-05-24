@@ -729,7 +729,7 @@ namespace urbi
 
 };
 
-%include "urbi/uvalue.hh";
+%include "urbi/uvalue.hh"
 
 
 
@@ -779,13 +779,14 @@ namespace urbi
   %warnfilter(401) LockableOstream;
 
   %ignore UAbstractClient::putFile(const void*, size_t, const char*);
-  %ignore UAbstractClient::send(std::istream&);
   %ignore UAbstractClient::send(const char*, ...);
+  %ignore UAbstractClient::send(std::istream&);
+  // Weirdly enough, it seems that %ignoring UAbstractClient::sendBin
+  // %results in our definition below being ignored too.
   %ignore UAbstractClient::sendBin(const void*, size_t);
   %ignore UAbstractClient::sendBin(const void*, size_t, const char*, ...);
   %ignore UAbstractClient::sendBinary;
-  %ignore UAbstractClient::sendCommand(UCallback, const char*, ...);
-  %ignore UAbstractClient::sendCommand(UCustomCallback, void*, const char*, ...);
+  %ignore UAbstractClient::sendCommand;
   %ignore UAbstractClient::setCallback(UCallback, const char*);
   %ignore UAbstractClient::setCallback(UCustomCallback, void*, const char*);
   %ignore UAbstractClient::stream_get;
@@ -796,7 +797,6 @@ namespace urbi
 
   %extend UAbstractClient
   {
-
     UCallbackID setCallback(UCallbackInterface& ref, const char* tag)
     {
       return self->setCallback(ref, &urbi::UCallbackInterface::onMessage, tag);
@@ -811,9 +811,7 @@ namespace urbi
     {
       self->sendBin(bin, len, header);
     }
-
   }
-
 };
 
 
@@ -861,10 +859,7 @@ namespace urbi
 {
   // Forget about the libport::Socket inheritance.
   %warnfilter(401) UClient;
-
-  // FIXME: handle options
-  %ignore UClient::UClient(const std::string&, unsigned, size_t, const UClient::options&);
-  %ignore UClient::send(std::istream&);
+  %ignore UClient::UClient;
   %ignore UClient::pong;
 }
 
@@ -880,22 +875,16 @@ namespace urbi
 
 namespace urbi
 {
-  %ignore USyncClient::USyncClient(const std::string&, unsigned, size_t, const USyncClient::options&);
+  %ignore USyncClient::USyncClient;
   %ignore USyncClient::getOptions;
   %ignore USyncClient::listen;
   %ignore USyncClient::setDefaultOptions;
   %ignore USyncClient::syncGet(const char*, ...);
-  %ignore USyncClient::syncGetDevice(const char*, const char*, double &);
-  %ignore USyncClient::syncGetDevice(const char*, const char*, double &, libport::utime_t);
-  %ignore USyncClient::syncGetDevice(const char*, double &);
-  %ignore USyncClient::syncGetDevice(const char*, double &, libport::utime_t);
-  %ignore USyncClient::syncGetImage(const char*, void*, size_t&, int, int, size_t&, size_t&);
-  %ignore USyncClient::syncGetImage(const char*, void*, size_t&, int, int, size_t&, size_t&, libport::utime_t);
-  %ignore USyncClient::syncGetNormalizedDevice(const char*, double &);
-  %ignore USyncClient::syncGetNormalizedDevice(const char*, double &, libport::utime_t);
-  %ignore USyncClient::syncGetResult(const char*, double &);
-  %ignore USyncClient::syncGetResult(const char*, double &, libport::utime_t);
-  %ignore USyncClient::syncSend(const void*, size_t);
+  %ignore USyncClient::syncGetDevice;
+  %ignore USyncClient::syncGetImage;
+  %ignore USyncClient::syncGetNormalizedDevice;
+  %ignore USyncClient::syncGetResult;
+  %ignore USyncClient::syncSend;
 }
 
 /// Generate code for UClient:
@@ -1247,8 +1236,6 @@ namespace urbi
 %ignore urbi_main_args;
 namespace urbi
 {
-  %ignore main(const libport::cli_args_type&, UrbiRoot&);
-  %ignore main(const libport::cli_args_type&, UrbiRoot&, bool);
   %ignore main(const libport::cli_args_type&, UrbiRoot&, bool, bool);
 }
 %include "urbi/umain.hh"
