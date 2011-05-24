@@ -223,9 +223,9 @@ liburbijavadir = $(javadir)
 # _all_ java objects ie, .class from the normal java sources + .class
 # from the generated java sources
 gen-liburbi-java:
-	$(AM_V_GEN)$(JAR) -cf $$(basename $(liburbijava_JAR)) $(liburbijava_OBJECTS)
-	$(AM_V_at)$(mkdir_p) $$(dirname $(liburbijava_JAR))
-	$(AM_V_at)mv $$(basename $(liburbijava_JAR)) $$(dirname $(liburbijava_JAR))
+	$(AM_V_GEN)$(JAR) -cf $(notdir $(liburbijava_JAR)) $(liburbijava_OBJECTS)
+	$(AM_V_at)$(mkdir_p) $(dir $(liburbijava_JAR))
+	$(AM_V_at)mv $(notdir $(liburbijava_JAR)) $(dir $(liburbijava_JAR))
 
 $(liburbijava_JAR): $(liburbijava_SRC) classtobuild.stamp
 	$(AM_V_GEN)$(MAKE) -C . gen-liburbi-java
@@ -349,9 +349,9 @@ $(test_timer_JAR): test_timer
 # Generate all jars files
 .SECONDEXPANSION:
 $(JAR_RULES): $$(patsubst %.java,%.class,$$($$@_SRC))
-	$(AM_V_GEN)$(JAR) -cf $$(basename $($@_JAR)) $+
-	$(AM_V_at)mkdir -p $$(dirname $($@_JAR))
-	$(AM_V_at)mv $$(basename $($@_JAR)) $$(dirname $($@_JAR))
+	$(AM_V_GEN)$(JAR) -cf $(notdir $($@_JAR)) $+
+	$(AM_V_at)mkdir -p $(dir $($@_JAR))
+	$(AM_V_at)mv $(notdir $($@_JAR)) $(dir $($@_JAR))
 
 
 ALL_SOURCES = $(liburbijava_SRC)
