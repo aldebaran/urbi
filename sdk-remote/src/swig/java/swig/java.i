@@ -618,17 +618,14 @@ namespace boost
   %template(UDictionary) unordered_map<std::string, urbi::UValue>;
   %template(UDictionaryCPPIterator) iterator_wrapper<std::string, urbi::UValue>;
 
-  %define UDICTIONARY_PUT(value_type)
-
-  %extend unordered_map<std::string, urbi::UValue>
-  {
-    // Don't try to return a value_type, since we actually
-    // get an UValue from the assignment into the map.
-    void put(const std::string& key, value_type v)
+  %define UDICTIONARY_PUT(ValueType)
+    %extend unordered_map<std::string, urbi::UValue>
     {
-      (*self)[key] = v;
+      const urbi::UValue& put(const std::string& key, ValueType v)
+      {
+        return (*self)[key] = v;
+      }
     }
-  }
   %enddef
 
   UDICTIONARY_PUT(bool)
