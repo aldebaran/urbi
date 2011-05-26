@@ -27,6 +27,7 @@
 #include <libport/package-info.hh>
 #include <libport/program-name.hh>
 #include <libport/sysexits.hh>
+#include <libport/xltdl.hh>
 
 #include <urbi/package-info.hh>
 #include <urbi/uexternal.hh>
@@ -95,6 +96,22 @@ namespace urbi
   {
     std::cout << urbi::package_info() << std::endl
               << libport::exit (EX_OK);
+  }
+
+
+  static
+  void
+  load_module(UrbiRoot& urbi_root, const std::string& m)
+  {
+    // If URBI_UOBJECT_PATH is not defined, first look in ., then in the
+    // stdlib.
+    std::string uobject_path = libport::xgetenv("URBI_UOBJECT_PATH", ".:");
+    // Load the modules using our uobject library path.
+    libport::xlt_advise dl;
+    dl.ext().path().push_back(uobject_path, ":");
+    foreach(const std::string& s, urbi_root.uobjects_path())
+      dl.path().push_back(s);
+    dl.open(m).detach();
   }
 
   typedef std::vector<std::string> files_type;
@@ -179,7 +196,8 @@ namespace urbi
 
 
   URBI_SDK_API int
-  main(const libport::cli_args_type& args, UrbiRoot&, bool block, bool)
+  main(const libport::cli_args_type& args,
+       UrbiRoot& urbi_root, bool block, bool)
   {
     GD_INIT();
 
@@ -211,6 +229,9 @@ namespace urbi
 	usage();
       else if (arg == "--host" || arg == "-H")
 	host = libport::convert_argument<std::string>(args, i++);
+      else if (arg == "--module")
+        load_module(urbi_root,
+                    libport::convert_argument<std::string>(args, i++));
       else if (arg == "--no-sync-client")
         useSyncClient = false;
       else if (arg == "--port" || arg == "-p")
