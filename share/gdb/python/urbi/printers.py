@@ -11,6 +11,14 @@ import gdb
 
 ## expect libport to define gdb_pretty_printer functions.
 from libport.tools import *
+import libport.printers
+
+def pp_rObject(x):
+    val = libport.printers.LibportIntrusivePtr(x).pointer()
+    if val != 0:
+        return "%s" % val.dereference()
+    else:
+        return "??"
 
 
 @gdb_pretty_printer
@@ -163,3 +171,39 @@ class uoFloat(uoObject):
 
     def to_string(self):
         return "%s" % self.value['value_']
+
+
+@gdb_pretty_printer
+class uoList(uoObject):
+    "Pretty Printer for urbi's lists"
+
+    regex = re.compile('^urbi::object::List$')
+    @staticmethod
+    def supports(type):
+        return uoList.regex.search(type.tag)
+
+    def __init__(self, value):
+        super(uoList, self).__init__(value)
+        self.value = castToDynamicType(self.value, 'urbi::object::List')
+
+    def to_string(self):
+        content = libport.printers.LibportVector(self.value['content_'])
+        return "[%s]" % ", ".join([pp_rObject(v) for v in content])
+
+
+@gdb_pretty_printer
+class uoDictionary(uoObject):
+    "Pretty Printer for urbi's dictionaries"
+
+    regex = re.compile('^urbi::object::Dictionary$')
+    @staticmethod
+    def supports(type):
+        return uoDictionary.regex.search(type.tag)
+
+    def __init__(self, value):
+        super(uoDictionary, self).__init__(value)
+        self.value = castToDynamicType(self.value, 'urbi::object::Dictionary')
+
+    def to_string(self):
+        content = libport.printers.BoostUnorderedMap(self.value['content_'])
+        return "[%s]" % ", ".join(["%s => %s" % (pp_rObject(k), pp_rObject(v)) for k, v in content])
