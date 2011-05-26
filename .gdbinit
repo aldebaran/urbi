@@ -1,9 +1,16 @@
-define astloc
-  printf "%s: %s:%d.%d-%d.%d\n", (('ast::Ast'*) $arg0)->node_type().c_str(), (('ast::Ast'*) $arg0)->location_get().begin.filename.str_->c_str(), (('ast::Ast'*) $arg0)->location_get().begin.line, (('ast::Ast'*) $arg0)->location_get().begin.column, (('ast::Ast'*) $arg0)->location_get().end.line, (('ast::Ast'*) $arg0)->location_get().end.column
-end
-document astloc
-astloc EXP
-URBI specific debug function.
+# These lines are tricks to work with the source files of the gdb extensions
+# instead of the installed files.  This gives opportunity to develop new
+# extensions for the debugger without making new installs.
+python urbi_source_dir = ''
+python libport_source_dir = 'sdk-remote/libport/'
+source sdk-remote/libport/share/gdb/python/libport.so-gdb.py
+source share/gdb/python/libuobject.so-gdb.py
 
-Display the type of the AST node and the location in the urbiscript.
-end
+### These lines are useful for testing gdb extensions.
+# set breakpoint pending on
+# break urbi::object::system_backtrace
+# set breakpoint pending off
+# set args -e 'for(var i: [1]) backtrace;' -i
+# run
+# urbi-stack
+
