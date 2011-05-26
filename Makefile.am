@@ -163,6 +163,7 @@ recheck recheck-html:
 spell-check spell-check-buildfarm:
 	$(MAKE) $(AM_MAKEFLAGS) -C doc $(@:-buildfarm=)
 
+
 ## -------- ##
 ## Stamps.  ##
 ## -------- ##
@@ -172,13 +173,25 @@ STAMPS += urbi.stamp
 
 # All the libraries.
 STAMPS += libraries.stamp
-libraries.stamp: src/libuobject$(LIBSFX).la sdk-remote/src/libuobject/libuobject$(LIBSFX).la sdk-remote/src/liburbi/liburbi$(LIBSFX).la
+LIBRARIES_STAMP_DEPS =					\
+  src/libuobject$(LIBSFX).la				\
+  sdk-remote/src/libuobject/libuobject$(LIBSFX).la	\
+  sdk-remote/src/liburbi/liburbi$(LIBSFX).la
+libraries.stamp: $(LIBRARIES_STAMP_DEPS)
+
+# The Java suite.
+STAMPS += java.stamp
+java.stamp: $(JAVA_STAMP_DEPS)
+JAVA_STAMP_DEPS = libraries.stamp
+if BINDING_JAVA
+JAVA_STAMP_DEPS += sdk-remote/src/swig/java/liburbijava.la
+endif
 
 # All the executables.
 STAMPS += executables.stamp
 EXECUTABLES = src/bin/urbi$(EXEEXT)
 if !STATIC_BUILD
-EXECUTABLES += sdk-remote/src/bin/urbi-launch$(EXEEXT)
+  EXECUTABLES += sdk-remote/src/bin/urbi-launch$(EXEEXT)
 endif !STATIC_BUILD
 executables.stamp: $(EXECUTABLES)
 
