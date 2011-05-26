@@ -141,7 +141,6 @@ namespace urbi
     exit(0);
   }
 
-  static
   int
   initialize(const std::string& host, int port, size_t buflen,
 	     bool exitOnDisconnect, bool server,

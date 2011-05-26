@@ -90,7 +90,6 @@ namespace urbi
    *               UAbstractClient::URBI_BUFLEN).
    * \param exitOnDisconnect call exit() if we get disconnected from server.
    * \param server  whether listens instead of connecting.
-   * \param files Files to send when connected.
    * \param useSyncClient use a UClient instead of USyncClient if false.
    * \return 0 if no error occured.
    */
@@ -98,7 +97,6 @@ namespace urbi
   int
   initialize(const std::string& host, int port, size_t buflen,
              bool exitOnDisconnect, bool server = false,
-             const std::vector<std::string>& files = std::vector<std::string>(),
              bool useSyncClient = true);
 }
 
