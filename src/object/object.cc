@@ -45,7 +45,7 @@
 #include <eval/send-message.hh>
 #include <eval/call.hh>
 
-GD_CATEGORY(Urbi);
+GD_CATEGORY(Urbi.Object);
 
 DECLARE_LOCATION_FILE;
 

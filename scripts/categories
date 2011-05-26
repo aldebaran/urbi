@@ -1,0 +1,12 @@
+#! /usr/bin/perl
+
+my $categories = qx(git grep -n GD_CATEGORY);
+
+foreach (split(/\n/, $categories))
+{
+    push @{$cat{$2}}, $1 if
+        /^(.*?:\d+):.*GD_CATEGORY\((.*?)\)/;
+}
+
+printf ("%s (%s)\n", $_, join ", ", @{$cat{$_}})
+    foreach sort keys %cat;

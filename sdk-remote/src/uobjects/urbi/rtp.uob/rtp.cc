@@ -41,7 +41,7 @@
 
 using namespace urbi;
 
-GD_CATEGORY(URTP);
+GD_CATEGORY(Urbi.RTP);
 extern "C"
 {
   // We are using our own network backend, which requires using a bit of the

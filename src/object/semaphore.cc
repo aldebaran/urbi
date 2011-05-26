@@ -17,7 +17,7 @@
 #include <sched/fwd.hh>
 #include <libport/debug.hh>
 
-GD_CATEGORY(Semaphore);
+GD_CATEGORY(Urbi.Object.Semaphore);
 
 namespace urbi
 {

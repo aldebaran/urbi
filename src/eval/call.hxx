@@ -113,7 +113,7 @@ namespace eval
                object::rObject function,
                const object::objects_type& args)
   {
-    // GD_CATEGORY(Eval.Call);
+    // GD_CATEGORY(Urbi.Eval.Call);
     // GD_INFO_TRACE("Call rObject function");
     // FIXME: Duplication is the root of all Evil.
     object::objects_type args_(args);
@@ -333,7 +333,7 @@ namespace eval
                           const object::objects_type& args,
                           object::Object* call_message_)
   {
-    // GD_CATEGORY(Eval.Call);
+    // GD_CATEGORY(Urbi.Eval.Call);
 
     rObject call_message = call_message_;
 

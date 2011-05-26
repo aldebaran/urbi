@@ -209,7 +209,7 @@ namespace urbi
     inline void
     Object::bindfun_(const std::string& name, T p)
     {
-      GD_CATEGORY(Urbi);
+      GD_CATEGORY(Urbi.Object);
 
       libport::Symbol sym(name);
       if (!local_slot_get(sym))

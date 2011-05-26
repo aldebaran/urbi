@@ -57,7 +57,7 @@ namespace eval
 
   rObject ast(Job& job, ast::rConstAst n)
   {
-    // GD_CATEGORY(Eval.Ast);
+    // GD_CATEGORY(Urbi.Eval.Ast);
 
     // GD_FPUSH_TRACE("Ast %s (%s)",
     //                n->node_type(),

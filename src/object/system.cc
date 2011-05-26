@@ -51,7 +51,7 @@
 #include <eval/call.hh>
 #include <eval/send-message.hh>
 
-GD_CATEGORY(Urbi);
+GD_CATEGORY(Urbi.Object);
 
 namespace urbi
 {
