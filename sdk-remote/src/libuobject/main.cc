@@ -23,6 +23,7 @@
 #include <libport/cli.hh>
 #include <libport/containers.hh>
 #include <libport/foreach.hh>
+#include <libport/input-arguments.hh>
 #include <libport/lexical-cast.hh>
 #include <libport/package-info.hh>
 #include <libport/program-name.hh>
@@ -64,30 +65,15 @@ namespace urbi
     exit(0);
   }
 
+  ATTRIBUTE_NORETURN
   static
   void
-  usage()
+  help(libport::OptionParser& parser)
   {
-    std::cout <<
-      "usage:\n" << libport::program_name() << " [OPTION]...\n"
-      "\n"
-      "Options:\n"
-      "  -b, --buffer SIZE     input buffer size"
-		 << " [" << UAbstractClient::URBI_BUFLEN << "]\n"
-      "  -h, --help            display this message and exit\n"
-      "  -H, --host ADDR       server host name"
-                 << " [" << UClient::default_host() << "]\n"
-      "      --server          put remote in server mode\n"
-      "      --no-sync-client  Use UClient instead of USyncClient\n"
-      "  -p, --port PORT       tcp port URBI will listen to"
-		 << " [" << UAbstractClient::URBI_PORT << "]\n"
-      "  -r, --port-file FILE  file containing the port to listen to\n"
-      "  -V, --version         print version information and exit\n"
-      "  -d, --disconnect      exit program if disconnected(defaults)\n"
-      "  -s, --stay-alive      do not exit program if disconnected\n"
-      "  --describe            describe loaded UObjects and exit\n"
-      "  --describe-file FILE  write the list of present UObjects to FILE\n"
-		 << libport::exit (EX_OK);
+    std::cout
+      << "usage: " << libport::program_name() << " [OPTION]..." << std::endl
+      << parser
+      << libport::exit(EX_OK);
   }
 
   ATTRIBUTE_NORETURN
@@ -100,9 +86,10 @@ namespace urbi
   }
 
 
+  typedef std::vector<std::string> strings_type;
   static
   void
-  load_module(UrbiRoot& urbi_root, const std::string& m)
+  load_modules(UrbiRoot& urbi_root, const strings_type& modules)
   {
     // If URBI_UOBJECT_PATH is not defined, first look in ., then in the
     // stdlib.
@@ -112,23 +99,63 @@ namespace urbi
     dl.ext().path().push_back(uobject_path, ":");
     foreach(const std::string& s, urbi_root.uobjects_path())
       dl.path().push_back(s);
-    dl.open(m).detach();
+    foreach (const std::string& m, modules)
+      dl.open(m).detach();
   }
 
-  typedef std::vector<std::string> files_type;
+
+  /// Data to send to the server.
+  struct DataSender : libport::opts::DataVisitor
+  {
+    typedef libport::opts::DataVisitor super_type;
+    DataSender(UClient& client)
+      : client_(client)
+    {}
+
+    using super_type::operator();
+
+    void
+    operator()(const libport::opts::TextData& d)
+    {
+      client_.send(d.command_);
+    }
+
+    void
+    operator()(const libport::opts::FileData& d)
+    {
+      client_.sendFile(d.filename_);
+    }
+
+    UClient& client_;
+  };
+
+  ATTRIBUTE_NORETURN
+  static
+  void
+  describe(std::ostream& o)
+  {
+    foreach (baseURBIStarter* s, baseURBIStarter::list())
+      o << s->name << std::endl;
+    foreach (baseURBIStarterHub* s, baseURBIStarterHub::list())
+      o << s->name << std::endl;
+    exit(0);
+  }
+
+  static
   int
   initialize(const std::string& host, int port, size_t buflen,
-	     bool exitOnDisconnect, bool server, const files_type& files,
+	     bool exitOnDisconnect, bool server,
              bool useSyncClient)
   {
     GD_FINFO_TRACE("this is %s", program_name());
     GD_SINFO_TRACE(urbi::package_info());
     GD_FINFO_TRACE("remote component running on %s:%s", host, port);
+    UClient* client;
     if (useSyncClient)
     {
       USyncClient::options o;
       o.server(server);
-      new USyncClient(host, port, buflen, o);
+      client = new USyncClient(host, port, buflen, o);
     }
     else
     {
@@ -137,62 +164,42 @@ namespace urbi
               " your program.");
       UClient::options o;
       o.server(server);
-      setDefaultClient(new UClient(host, port, buflen, o));
+      client = new UClient(host, port, buflen, o);
     }
 
-    if (!getDefaultClient() || getDefaultClient()->error())
+    if (!client || client->error())
       std::cerr << "ERROR: failed to connect, exiting..." << std::endl
                 << libport::exit(1);
 
+    setDefaultClient(client);
     if (exitOnDisconnect)
-      getDefaultClient()->setClientErrorCallback(callback(&endProgram));
+      client->setClientErrorCallback(callback(&endProgram));
 
 #ifdef LIBURBIDEBUG
-    getDefaultClient()->setWildcardCallback(callback(&debug));
+    client->setWildcardCallback(callback(&debug));
 #else
-    getDefaultClient()->setErrorCallback(callback(&debug));
+    client->setErrorCallback(callback(&debug));
 #endif
 
     // Wait for client to be connected if in server mode.
     // Also wait for initialization exchanges.
-    while (!getDefaultClient()
-           || (!getDefaultClient()->isConnected()
-               && !getDefaultClient()->error())
-	   || getDefaultClient()->connectionID().empty())
+    while (!client->isConnected() && !client->error()
+	   || client->connectionID().empty())
       usleep(20000);
 
     defaultContext = new impl::RemoteUContextImpl(
       (USyncClient*)dynamic_cast<UClient*>(getDefaultClient()));
 
     // Initialize in the correct thread.
-    getDefaultClient()->notifyCallbacks
+    client->notifyCallbacks
       (UMessage(*getDefaultClient(), 0, externalModuleTag,
                 libport::format("[%s]", UEM_INIT)));
-    // Load initialization files.
-    foreach (const std::string& file, files)
-      getDefaultClient()->sendFile(file);
+
+    // Load files and expressions.
+    DataSender send(*client);
+    send(libport::opts::input_arguments);
+    libport::opts::input_arguments.clear();
     return 0;
-  }
-
-  namespace
-  {
-    static
-    void
-    argument_with_option(const char* longopt,
-                         char shortopt,
-                         const std::string& val)
-    {
-      std::cerr
-        << program_name()
-        << ": warning: arguments without options are deprecated"
-        << std::endl
-        << "use `-" << shortopt << ' ' << val << '\''
-        << " or `--" << longopt << ' ' << val << "' instead"
-        << std::endl
-        << "Try `" << program_name() << " --help' for more information."
-        << std::endl;
-    }
-
   }
 
 
@@ -202,91 +209,85 @@ namespace urbi
   {
     GD_INIT();
 
-    std::string host = UClient::default_host();
-    bool exitOnDisconnect = true;
-    int port = UAbstractClient::URBI_PORT;
-    bool server = false;
-    bool useSyncClient = true;
-    bool describeMode = false;
-    std::string describeFile;
-    size_t buflen = UAbstractClient::URBI_BUFLEN;
-    // Files to load
-    files_type files;
+    libport::OptionFlag
+      arg_describe("describe loaded UObjects and exit", "describe"),
+      arg_disconnect("exit program if disconnected (default)",
+                     "disconnect", 'd'),
+      arg_stay_alive("do not exit program if disconnected",
+                     "stay-alive", 's'),
+      arg_async("Use UClient instead of USyncClient",
+                "no-sync-client"),
+      arg_server("put remote in server mode", "server");
+    libport::OptionValue
+      arg_buffer    ("input buffer size",
+                     "buffer", 'b', "SIZE"),
+      arg_describe_file("describe loaded UObjects to FILE and exit",
+                        "describe-file", 0, "FILE");
+    libport::OptionValues
+      arg_module    ("load the MODULE shared library",
+                     "module", 'm', "MODULE");
 
-    // The number of the next (non-option) argument.
-    unsigned argp = 1;
-    for (unsigned i = 1; i < args.size(); ++i)
+    libport::OptionParser opt_parser;
+    opt_parser
+      << "UObject options:"
+      << libport::opts::help
+      << libport::opts::version
+      << arg_describe
+      << arg_describe_file
+      << arg_async
+      << arg_stay_alive
+      << arg_disconnect
+      << arg_server
+      << "Network:"
+      << libport::opts::host
+      << libport::opts::port
+      << libport::opts::port_file
+      << arg_buffer
+      << "Input:"
+      << libport::opts::exp
+      << libport::opts::file
+      << arg_module;
+
+    // The list of modules.
+    libport::cli_args_type modules;
+    try
     {
-      const std::string& arg = args[i];
-      if (arg == "--buffer" || arg == "-b")
-	buflen = libport::convert_argument<size_t>(args, i++);
-      else if (arg == "--disconnect" || arg == "-d")
-	exitOnDisconnect = true;
-      else if (arg == "--file" || arg == "-f")
-        files.push_back(libport::convert_argument<const char*>(args, i++));
-      else if (arg == "--stay-alive" || arg == "-s")
-	exitOnDisconnect = false;
-      else if (arg == "--help" || arg == "-h")
-	usage();
-      else if (arg == "--host" || arg == "-H")
-	host = libport::convert_argument<std::string>(args, i++);
-      else if (arg == "--module")
-        load_module(urbi_root,
-                    libport::convert_argument<std::string>(args, i++));
-      else if (arg == "--no-sync-client")
-        useSyncClient = false;
-      else if (arg == "--port" || arg == "-p")
-	port = libport::convert_argument<unsigned>(args, i++);
-      else if (arg == "--port-file" || arg == "-r")
-	port =
-          (libport::file_contents_get<int>
-           (libport::convert_argument<const char*>(args, i++)));
-      else if (arg == "--server")
-	server = true;
-      // FIXME: Remove -v some day.
-      else if (arg == "--version" || arg == "-V" || arg == "-v")
-	version();
-      else if (arg == "--describe")
-	describeMode = true;
-      else if (arg == "--describe-file")
-         describeFile = libport::convert_argument<const char*>(args, i++);
-      else if (arg[0] == '-')
-	libport::invalid_option(arg);
-      else
-	// A genuine argument.
-	switch (argp++)
-	{
-	  case 1:
-            argument_with_option("host", 'H', args[i]);
-	    host = args[i];
-	    break;
-	  case 2:
-            argument_with_option("port", 'p', args[i]);
-	    port = libport::convert_argument<unsigned>("port", args[i]);
-	    break;
-	  default:
-	    std::cerr << "unexpected argument: " << arg << std::endl
-		      << libport::exit(EX_USAGE);
-	}
+      modules = opt_parser(args);
+    }
+    catch (const libport::Error& e)
+    {
+      foreach (std::string wrong_arg, e.errors())
+        libport::invalid_option(wrong_arg);
     }
 
-    if (describeMode)
+    if (libport::opts::version.get())
+      version();
+    if (libport::opts::help.get())
+      help(opt_parser);
+
+    // Load the modules.
+    load_modules(urbi_root, arg_module.get());
+
+    if (arg_describe.get())
+      describe(std::cout);
+    if (arg_describe_file.filled())
     {
-      foreach(baseURBIStarter* s, baseURBIStarter::list())
-        std::cout << s->name << std::endl;
-      foreach(baseURBIStarterHub* s, baseURBIStarterHub::list())
-        std::cout << s->name << std::endl;
-      return 0;
+      std::ofstream o(arg_describe_file.value().c_str());
+      describe(o);
     }
-    if (!describeFile.empty())
-    {
-      std::ofstream of(describeFile.c_str());
-      foreach(baseURBIStarter* s, baseURBIStarter::list())
-        of << s->name << std::endl;
-      foreach(baseURBIStarterHub* s, baseURBIStarterHub::list())
-        of << s->name << std::endl;
-    }
-    initialize(host, port, buflen, exitOnDisconnect, server, files,
+
+    std::string host = libport::opts::host.value(UClient::default_host());
+    int port =
+      (libport::opts::port_file.filled()
+       ? libport::file_contents_get<int>(libport::opts::port_file.value())
+       : libport::opts::port.get<int>(urbi::UClient::URBI_PORT));
+
+    bool exitOnDisconnect = !arg_stay_alive.get() || arg_disconnect.get();
+    bool server = arg_server.get();
+    bool useSyncClient = !arg_async.get();
+    size_t buflen = arg_buffer.get<size_t>(UAbstractClient::URBI_BUFLEN);
+
+    initialize(host, port, buflen, exitOnDisconnect, server,
                useSyncClient);
 
     if (block)

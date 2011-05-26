@@ -461,6 +461,53 @@ Since \command{urbi-launch} in server mode is basically the same as running
 the \command{urbi} program, both programs are quit the same way (see
 \autoref{sec:tools:urbi:quitting}).
 
+\subsection{UObject Module Options}
+\label{sec:tools:urbi-launch:uobject}
+
+Being a program that runs programs \command{urbi-launch} is also providing
+access to the options supported by the UObject middleware: pass them after
+\option{--} in plugin mode.  For instance:
+
+\begin{shell}
+$ urbi-launch test/all -- --version
+Urbi SDK version 2.7.1 patch 431 revision 828544c
+Copyright (C) 2004-2011 Gostai S.A.S.
+
+Libport version urbi-sdk-2.7.1 patch 97 revision 68db0d9
+Copyright (C) 2005-2010 Gostai S.A.S.
+\end{shell}
+
+The options supporting by the UObject middleware are described below.
+
+\begin{options}[UObject options]
+\item[h]{help} \optionHelp
+\item{version} \optionVersion
+\item{describe} Describe the loaded modules on the standard output and exit.
+\item{describe-file=\var{file}} Describe the loaded modules in the
+  \var{file} exit.
+\item{no-sync-client} Use an asynchronous connection.  This mode is
+  extremely dangerous, any attempt to use synchronous operation will crash.
+\item[s]{stay-alive} Do not disconnect at the end of the program.
+\item[d]{disconnect} Disconnect at the end of the program.   This is
+  the default.
+\item{server} Start the remote in server mode.
+\end{options}
+
+\paragraph{Networking}
+Beside the usual options (\option{--host}, \option{--port},
+\option{--port-file}, see \autoref{sec:tools:urbi}), the following options
+are supported.
+\begin{options}
+\item[b]{buffer=\var{size}} Specify the buffer size.
+\end{options}
+
+\begin{options}[Input]
+\item[e]{expression=\var{exp}} Send the \us expression \var{exp}.
+  No separator is added, you have to pass yours.
+\item[f]{file=\var{file}} Send the contents of the file \var{file}.
+  No separator is added, you have to pass yours.
+\item[m]{module=\var{module}} Load the \UObject \var{module}.
+\end{options}
 
 \section{\command{urbi-ping} --- Checking the Delays with a Server}
 \label{sec:tools:urbi-ping}
