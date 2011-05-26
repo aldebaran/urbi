@@ -82,7 +82,7 @@ endif
 	else						\
 	  rm -f "$(DEPDIR)/$*.Tcc"; exit 1;		\
 	fi
--include $(DEPSDIR)/java.Pcc
+-include $(DEPDIR)/java.Pcc
 
 
 BUILT_SOURCES += java.cc java.cc.h
