@@ -148,8 +148,7 @@ urbi_launch_(int argc, const char* argv[], UrbiRoot& urbi_root)
   }
   catch (const libport::Error& e)
   {
-    const libport::Error::errors_type& err = e.errors();
-    foreach (std::string wrong_arg, err)
+    foreach (std::string wrong_arg, e.errors())
       libport::invalid_option(wrong_arg);
   }
 
@@ -168,21 +167,19 @@ urbi_launch_(int argc, const char* argv[], UrbiRoot& urbi_root)
     /// Connect the module to a running engine (remote uobject)
     MODE_REMOTE
   };
-  ConnectMode connect_mode = MODE_REMOTE;
 
-  if (arg_plugin.get())
-    connect_mode = MODE_PLUGIN_LOAD;
-  if (arg_remote.get())
-    connect_mode = MODE_REMOTE;
-  if (arg_start.get())
-    connect_mode = MODE_PLUGIN_START;
+  ConnectMode connect_mode =
+    arg_plugin.get()   ? MODE_PLUGIN_LOAD
+    : arg_remote.get() ? MODE_REMOTE
+    : arg_start.get()  ? MODE_PLUGIN_START
+    :                    MODE_REMOTE;
 
-  /// Server host name.
+  // Server host name.
   std::string host = libport::opts::host.value(UClient::default_host());
   if (libport::opts::host.filled())
     args << "--host" << host;
 
-  /// Server port.
+  // Server port.
   int port = libport::opts::port.get<int>(urbi::UClient::URBI_PORT);
   if (libport::opts::port.filled())
     args << "--port" << libport::opts::port.value();
@@ -194,13 +191,15 @@ urbi_launch_(int argc, const char* argv[], UrbiRoot& urbi_root)
       port = libport::file_contents_get<int>(file);
     args << "--port-file" << file;
   }
-  args.insert(args.end(), arg_end.get().begin(), arg_end.get().end());
 
-  /// Modules to load.
+  // Modules to load.
   if (connect_mode == MODE_PLUGIN_LOAD)
     return connect_plugin(host, port, modules);
   foreach (const std::string& s, modules)
     args << "--module" << s;
+
+  // Other arguments.
+  args.insert(args.end(), arg_end.get().begin(), arg_end.get().end());
 
   // Open the right core library.
   if (arg_custom.filled())
