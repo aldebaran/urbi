@@ -88,16 +88,16 @@ debug()
     exit(N);                                    \
   } while (0)
 
-/*-----------------.
-| File constants.  |
-`-----------------*/
 
-static const std::string libext =
-                           APPLE_LINUX_WINDOWS(".dylib", ".so", ".dll");
-static const std::string separator =
-                           APPLE_LINUX_WINDOWS("/", "/", "\\");
-static const std::string libdir =
-                           APPLE_LINUX_WINDOWS("lib", "lib", "bin");
+/*--------.
+| Files.  |
+`--------*/
+
+static const std::string
+  libext =    APPLE_LINUX_WINDOWS(".dylib", ".so", ".dll"),
+  libdir =    APPLE_LINUX_WINDOWS("lib", "lib", "bin");
+
+const char separator = APPLE_LINUX_WINDOWS('/', '/', '\\');
 
 /// Join path components.
 static
@@ -107,6 +107,14 @@ operator/(const std::string& lhs, const std::string& rhs)
   return (lhs.empty() ? rhs
           : rhs.empty() ? lhs
           : lhs + separator + rhs);
+}
+
+
+static std::string
+basename(const std::string& path)
+{
+  size_t pos = path.find_last_of(separator);
+  return pos == path.npos ? path : path.substr(pos + 1);
 }
 
 /*-------------------------------------.
@@ -346,7 +354,7 @@ find_program(const std::string& logname,
 `-----------*/
 
 UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
-  : program_(program)
+  : program_(basename(program))
   , root_()
   , handle_libjpeg_(0)
   , handle_libport_(0)
@@ -354,11 +362,12 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
   , handle_liburbi_(0)
   , handle_libuobject_(0)
 {
+  URBI_ROOT_DEBUG(program_, "invoked as: " << program);
   // Find our directory.
   std::string uroot = urbi_getenv(program, "ROOT");
   if (uroot.empty())
   {
-    URBI_ROOT_DEBUG(program_, "guessing Urbi root: invoked as: " << program_);
+    URBI_ROOT_DEBUG(program_, "guessing Urbi root");
     // Handle the chained symlinks case.
     std::string argv0 = resolve_symlinks(program_, program);
     root_ = find_program(program_, argv0);
