@@ -20,12 +20,12 @@ static size_t ignore;
 
 urbi::USound snd;
 
+ATTRIBUTE_NORETURN
 static urbi::UCallbackAction
 endProgram(const urbi::UMessage&)
 {
   std::cout << "done" << std::endl;
   urbi::exit(0);
-  return urbi::URBI_REMOVE;
 }
 
 int

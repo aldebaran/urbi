@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2010, Gostai S.A.S.
+ * Copyright (C) 2005-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -30,6 +30,7 @@ using libport::program_name;
 
 namespace
 {
+  ATTRIBUTE_NORETURN
   static
   void
   usage(libport::OptionParser& parser)
@@ -45,6 +46,7 @@ namespace
                 << libport::exit(EX_OK);
   }
 
+  ATTRIBUTE_NORETURN
   static
   void
   version()
@@ -72,6 +74,7 @@ dump(const urbi::UMessage& msg)
   return urbi::URBI_CONTINUE;
 }
 
+ATTRIBUTE_NORETURN
 static urbi::UCallbackAction
 error(const urbi::UMessage& msg)
 {

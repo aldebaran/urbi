@@ -804,6 +804,7 @@ namespace urbi
   void execute(void);
 
   /// Terminate your Urbi program.
+  ATTRIBUTE_NORETURN
   URBI_SDK_API
   void exit(int code);
 

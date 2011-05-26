@@ -69,6 +69,7 @@ int totallength;
 namespace
 {
 
+  ATTRIBUTE_NORETURN
   static
   void
   error(int status, const std::string& msg)
@@ -81,6 +82,7 @@ namespace
   error(Status, libport::format(__VA_ARGS__))
 
 
+  ATTRIBUTE_NORETURN
   static
   void
   usage(libport::OptionParser& parser)
@@ -92,6 +94,7 @@ namespace
     ::exit(EX_OK);
   }
 
+  ATTRIBUTE_NORETURN
   static
   void
   version()
@@ -102,6 +105,7 @@ namespace
   }
 }
 
+ATTRIBUTE_NORETURN
 static urbi::UCallbackAction
 endProgram(const urbi::UMessage&)
 {
@@ -118,10 +122,8 @@ endProgram(const urbi::UMessage&)
     len = totallength - 44;
     ignore = fwrite(&len, 1, 4, file);
     fclose(file);
-    exit(0);
   }
   exit(0);
-  return urbi::URBI_CONTINUE;
 }
 
 static urbi::UCallbackAction

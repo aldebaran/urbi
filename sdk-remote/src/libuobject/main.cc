@@ -54,6 +54,7 @@ namespace urbi
     return URBI_CONTINUE;
   }
 
+  ATTRIBUTE_NORETURN
   static
   UCallbackAction
   endProgram(const UMessage& msg)
@@ -61,7 +62,6 @@ namespace urbi
     LIBPORT_USE(msg);
     GD_SWARN("got a disconnection message: " << msg);
     exit(0);
-    return URBI_CONTINUE; //stupid gcc
   }
 
   static
@@ -90,12 +90,13 @@ namespace urbi
 		 << libport::exit (EX_OK);
   }
 
+  ATTRIBUTE_NORETURN
   static
   void
   version()
   {
     std::cout << urbi::package_info() << std::endl
-              << libport::exit (EX_OK);
+              << libport::exit(EX_OK);
   }
 
 
