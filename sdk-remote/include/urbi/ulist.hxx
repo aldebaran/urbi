@@ -13,9 +13,6 @@
 #include <libport/preproc.hh>
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/numeric/ublas/blas.hpp>
-#include <boost/numeric/ublas/matrix.hpp>
-#include <boost/numeric/ublas/vector.hpp>
 
 #include <libport/cassert>
 

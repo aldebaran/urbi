@@ -783,9 +783,9 @@ namespace urbi
       self->sendBin(bin, len);
     }
 
-    void sendBin(bytetype bin, int len, char* header)
+    void sendBin(bytetype bin, int len, char* content)
     {
-      self->sendBin(bin, len, header);
+      self->sendBin(bin, len, "%s", content);
     }
   }
 };
