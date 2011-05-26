@@ -114,8 +114,7 @@ urbi_launch_(int argc, const char* argv[], UrbiRoot& urbi_root)
   args << argv[0];
 
   libport::OptionValue
-    arg_custom("start using the shared library FILE", "custom", 'c', "FILE"),
-    arg_pfile("file containing the port to listen to", "port-file", 0, "FILE");
+    arg_custom("start using the shared library FILE", "custom", 'c', "FILE");
   libport::OptionFlag
     arg_plugin("start as a plugin uobject on a running server", "plugin", 'p'),
     arg_remote("start as a remote uobject", "remote", 'r'),
@@ -123,22 +122,23 @@ urbi_launch_(int argc, const char* argv[], UrbiRoot& urbi_root)
   libport::OptionsEnd arg_end;
 
   libport::OptionParser opt_parser;
-  opt_parser << "Urbi-Launch options:"
-	     << libport::opts::help
-	     << libport::opts::version
-	     << arg_custom
+  opt_parser
+    << "Urbi-Launch options:"
+    << libport::opts::help
+    << libport::opts::version
+    << arg_custom
 #ifndef LIBPORT_DEBUG_DISABLE
-	     << libport::opts::debug
+    << libport::opts::debug
 #endif
-	     << "Mode selection:"
-	     << arg_plugin
-	     << arg_remote
-	     << arg_start
-	     << "Urbi-Launch options for plugin mode:"
-	     << libport::opts::host
-	     << libport::opts::port
-	     << arg_pfile
-	     << arg_end;
+    << "Mode selection:"
+    << arg_plugin
+    << arg_remote
+    << arg_start
+    << "For plugin mode:"
+    << libport::opts::host
+    << libport::opts::port
+    << libport::opts::port_file
+    << arg_end;
 
   // The list of modules.
   libport::cli_args_type modules;
@@ -184,9 +184,9 @@ urbi_launch_(int argc, const char* argv[], UrbiRoot& urbi_root)
   if (libport::opts::port.filled())
     args << "--port" << libport::opts::port.value();
 
-  if (arg_pfile.filled())
+  if (libport::opts::port_file.filled())
   {
-    std::string file = arg_pfile.value();
+    std::string file = libport::opts::port_file.value();
     if (connect_mode == MODE_PLUGIN_LOAD)
       port = libport::file_contents_get<int>(file);
     args << "--port-file" << file;
@@ -198,7 +198,7 @@ urbi_launch_(int argc, const char* argv[], UrbiRoot& urbi_root)
   foreach (const std::string& s, modules)
     args << "--module" << s;
 
-  // Other arguments.
+  // Other arguments, after `--'.
   args.insert(args.end(), arg_end.get().begin(), arg_end.get().end());
 
   // Open the right core library.
