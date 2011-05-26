@@ -37,6 +37,7 @@
 #include <urbi/uconversion.hh>
 #include <urbi/umessage.hh>
 #include <urbi/utag.hh>
+#include <urbi/uclient.hh>
 
 #include <liburbi/compatibility.hh>
 
@@ -1100,6 +1101,34 @@ namespace urbi
     if (!cli)
       return "";
     return cli->connectionID();
+  }
+
+
+  /*-----------------------.
+  | Standalone functions.  |
+  `-----------------------*/
+
+  void execute()
+  {
+    while (true)
+      sleep(100);
+  }
+
+  void exit(int code)
+  {
+    ::exit(code);
+  }
+
+  UClient&
+  connect(const std::string& host)
+  {
+    return *new UClient(host);
+  }
+
+  void disconnect(UClient &client)
+  {
+    // Asynchronous deletion to let our async handlers terminate.
+    client.destroy();
   }
 
 

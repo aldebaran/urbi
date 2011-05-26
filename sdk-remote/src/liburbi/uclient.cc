@@ -301,33 +301,4 @@ namespace urbi
     synchronous_send_ = enable;
   }
 
-
-
-/*-----------------------.
-| Standalone functions.  |
-`-----------------------*/
-
-  void execute()
-  {
-    while (true)
-      sleep(100);
-  }
-
-  void exit(int code)
-  {
-    ::exit(code);
-  }
-
-  UClient&
-  connect(const std::string& host)
-  {
-    return *new UClient(host);
-  }
-
-  void disconnect(UClient &client)
-  {
-    // Asynchronous deletion to let our async handlers terminate.
-    client.destroy();
-  }
-
 } // namespace urbi
