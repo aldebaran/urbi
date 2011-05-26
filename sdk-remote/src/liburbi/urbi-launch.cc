@@ -21,16 +21,13 @@ using namespace boost::assign;
 #include <libport/cli.hh>
 #include <libport/containers.hh>
 #include <libport/debug.hh>
-#include <libport/file-system.hh>
 #include <libport/foreach.hh>
-#include <libport/path.hh>
 #include <libport/package-info.hh>
 #include <libport/program-name.hh>
 #include <libport/sysexits.hh>
 #include <libport/unistd.h>
 #include <libport/windows.hh>
 #include <libport/option-parser.hh>
-#include <libport/xltdl.hh>
 
 #include <urbi/exit.hh>
 #include <urbi/package-info.hh>
@@ -199,8 +196,11 @@ urbi_launch_(int argc, const char* argv[], UrbiRoot& urbi_root)
   }
   args.insert(args.end(), arg_end.get().begin(), arg_end.get().end());
 
+  /// Modules to load.
   if (connect_mode == MODE_PLUGIN_LOAD)
     return connect_plugin(host, port, modules);
+  foreach (const std::string& s, modules)
+    args << "--module" << s;
 
   // Open the right core library.
   if (arg_custom.filled())
@@ -209,19 +209,6 @@ urbi_launch_(int argc, const char* argv[], UrbiRoot& urbi_root)
     urbi_root.load_remote();
   else
     urbi_root.load_plugin();
-
-  // If URBI_UOBJECT_PATH is not defined, first look in ., then in the
-  // stdlib.
-  std::string uobject_path = libport::xgetenv("URBI_UOBJECT_PATH", ".:");
-
-  // Load the modules using our uobject library path.
-  libport::xlt_advise dl;
-  dl.ext().path().push_back(uobject_path, ":");
-  foreach(const std::string& s, urbi_root.uobjects_path())
-    dl.path().push_back(s);
-  foreach (const std::string& s, modules)
-    dl.open(s);
-
   return urbi_root.urbi_main(args, true, true);
 }
 
