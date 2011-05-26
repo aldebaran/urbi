@@ -63,7 +63,7 @@ extern "C"
 namespace urbi
 {
 
-  /** Initialisation method.
+  /** Initialization method.
    * Both plugin and remote libraries include a main function whose only
    * effect is to call urbi::main. If you need to write your own main, call
    * urbi::main(argc, argv) after your work is done.
