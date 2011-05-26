@@ -397,13 +397,9 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
 }
 
 RTLD_HANDLE
-UrbiRoot::library_load(const std::string& base, const std::string& env_suffix)
+UrbiRoot::library_load(const std::string& base)
 {
-  std::string envvar;
-  if (env_suffix.empty())
-    envvar = "ROOT_LIB" + base;
-  else
-    envvar = "ROOT_LIB" + env_suffix;
+  std::string envvar = "ROOT_LIB" + base;
   foreach (char& s, envvar)
     s = toupper(s);
 
