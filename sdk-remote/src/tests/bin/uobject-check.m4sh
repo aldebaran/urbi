@@ -17,7 +17,7 @@ require_file "$la"
 
 # For error messages: "test/all" or "test\all".
 me=$(echo "$la" |
-     perl -pe 's{^.*[/\\]([^/\\]+[/\\]/[^/\\]+)\.la$}{$1}')
+     perl -pe ['s{^.*[/\\]([^/\\]+[/\\][^/\\]+)\.la$}{$1}'])
 
 # To load the object: "test/all".
 uob=$me
@@ -35,13 +35,13 @@ urbi_launch=$xfind_prog_result
 # skip the test.  Do pass something that will fail to be loaded,
 # otherwise if it works, a server is launched, and will run endlessly.
 run "urbi-launch --start" \
-  $urbi_launch --debug 3 --start /dev/null ||
+  $urbi_launch --debug 1 --start /dev/null ||
   case $? in
     (72) error SKIP "urbi-launch cannot find libuobject";;
   esac
 
 xrun "urbi-launch $me$ext --version" \
-  "$urbi_launch" --debug 3 --start $uob -- --version
+  "$urbi_launch" --debug 1 --start $uob -- --version
 
 ## Local Variables:
 ## mode: shell-script
