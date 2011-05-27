@@ -73,14 +73,13 @@ endif
 #	$(AM_V_GEN)rm -rf $(java_src_outdir)
 	$(AM_V_GEN)$(mkdir_p) $(java_src_outdir)
 	$(AM_V_at)test -n "$(SWIG)" || { echo "SWIG not defined"; exit 1; }
-	$(AM_V_at)					\
-	if $(SWIG) $(SWIGFLAGS) -o $@.tmp $<; then	\
-	  sed -e 's,$@.tmp,$@,'				\
-	    <"$(DEPDIR)/$*.Tcc" >"$(DEPDIR)/$*.Pcc";	\
-	  mv $@.tmp $@;					\
-	else						\
-	  exit 1;					\
-	fi
+	$(AM_V_at)$(SWIG) $(SWIGFLAGS) -o $@.tmp $<
+	$(AM_V_at)sed -e 's,$@.tmp,$@,'		\
+	    <"$(DEPDIR)/$*.Tcc" >"$(DEPDIR)/$*.Pcc"
+	$(AM_V_at)rm $(DEPDIR)/$*.Tcc
+	$(AM_V_at)mv $@.tmp $@
+CLEANFILES += $(DEPDIR)/java.Pcc $(DEPDIR)/java.Tcc java.cc.tmp
+
 -include $(DEPDIR)/java.Pcc
 
 
