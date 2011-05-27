@@ -83,6 +83,17 @@ do
       ;;
     (*)
       symstack_cp "$lib" "$DESTDIR$libdir"
+      # If the library had a complex name (say
+      # libboost_date_time-gcc44-mt-1_38.so), also install a symlink
+      # with a simpler name, to make our users' life simpler.  It's
+      # simple to match such libraries: the qualifier is after a dash.
+      libname=$(basename "$lib")
+      case $libname in
+        (*-*)
+          simpler=$(echo "$libname" | sed -e 's/-.*\././')
+          ln -s "$libname" "$DESTDIR$libdir/$simpler"
+          ;;
+      esac
       ;;
   esac
 done
