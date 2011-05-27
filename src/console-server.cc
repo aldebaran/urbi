@@ -122,11 +122,12 @@ public:
 
 static void onCloseStdin(kernel::UConnection& c)
 {
-  GD_INFO("stdin Closed.");
-  c.close();
-//  object::objects_type args;
-  // kernel::urbiserver->schedule(urbi::object::global_class,
-  //                             SYMBOL(shutdown), args);
+  GD_INFO_DUMP("stdin Closed.");
+  // In order to have "urbi -e 'echo(1);' -i </dev/null;" work as
+  // expected (i.e., display 1 before dying), send the command in the
+  // flow.  This proves to be much easier that trying to really
+  // c.close() and have the magic happen elsewhere.
+  c.received("Global.System.shutdown;");
 }
 
 
@@ -250,8 +251,7 @@ namespace urbi
     void
     operator()(const libport::opts::FileData& d)
     {
-      if (server_.load_file(d.filename_, connection_)
-          != USUCCESS)
+      if (server_.load_file(d.filename_, connection_) != USUCCESS)
         URBI_EXIT(EX_NOINPUT,
                   "failed to process file %s: %s",
                   d.filename_, strerror(errno));

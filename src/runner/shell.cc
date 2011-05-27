@@ -193,9 +193,7 @@ namespace runner
   Shell::handle_command_end_()
   {
     if (input_.eof())
-    {
       stop();
-    }
   }
 
   void
@@ -379,9 +377,11 @@ namespace runner
   {
     if (stop_)
       return;
+    stop_ = true;
     object::Lobby *l = state.lobby_get();
-    GD_FPUSH_TRACE("%s (lobby %s): end reached.", name_get(), l);
+    GD_FPUSH_TRACE("%s (lobby %s): end reached", name_get(), l);
     object::Lobby::connection_type* c = &l->connection_get();
+
     if (c != &kernel::urbiserver->ghost_connection_get())
     {
       // Asynchronous destruction of the connection is necessary
@@ -392,15 +392,16 @@ namespace runner
       // ansynchronous destruction will destroy the lobby and the shell.
       // The UConnection should be fetch before disconnecting the lobby,
       // because the lobby will lose it's reference on the connection.
-      GD_FPUSH_DUMP("%s: schedule connection destruction %s.", name_get(), c);
+      GD_FINFO_DUMP("%s: schedule connection destruction %s", name_get(), c);
       aver(c);
       kernel::server().schedule(SYMBOL(collect_connection),
                                 boost::bind(collect_connection, c));
-      GD_FPUSH_DUMP("%s: disconnecting.", name_get());
+      GD_FINFO_DUMP("%s: disconnecting", name_get());
       state.lobby_get()->disconnect();
-      stop_ = true;
     }
-    // Force interruption of work_
+
+    // Force interruption of work_.
+    GD_FINFO_DUMP("Kill lobby: %p", l);
     l->tag_get()->stop();
   }
 } // namespace runner

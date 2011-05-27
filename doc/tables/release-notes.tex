@@ -29,19 +29,20 @@ This chapter lists the user-visible changes in \usdk releases.
 
 \subsection{Fixes}
 \begin{itemize}
-\item Avoid executing the body of a \lstinline|finally| a second time when
-  an exception is raised inside the \lstinline|finally| clause.
+\item Don't execute the body of a \lstinline|finally| a second time when an
+  exception is raised inside the \lstinline|finally| clause.
 \item Do not emit \refSlot[Tag]{leave} events when a frozen tag waiting to
   execute statements is stopped.
 \item Avoid unexpected execution of code caused by semaphore release and a
   stop of the code acquiring the semaphore.  This change implies that
   \refSlot[Semaphore]{acquire} either returns when it holds the semaphore
   or jump to the end of the stopped tag.
-\item Avoid unexpected execution of code caused by
-  \refSlot[Barrier]{signal} (or \refSlot[Barrier]{signalAll}) and a stop
-  of the code waiting on the barrier.
+\item Avoid unexpected execution of code caused by \refSlot[Barrier]{signal}
+  (or \refSlot[Barrier]{signalAll}) and a stop of the code waiting on the
+  barrier.
 \item Be independent of changes of locale settings (such as input/output
   format for floats) in \Cxx user code.
+\item Restore proper behavior on closed standard input.
 \end{itemize}
 
 \subsection{Changes}
