@@ -25,19 +25,7 @@ output.'<<' = function(x)
     };
     this
 }|;
-function String.trim()
-  {
-    if (empty)
-      return "";
-    var res = this;
-    var p = res.length-1;
-    while (res[p] == " ")
-      p--;
-    res = res[0, p+1];
-    while (res.length && res[0] == " ")
-      res = res[1, res.length];
-    res;
-  };
+
 do (Dictionary)
 {
   var _default = nil;
@@ -105,10 +93,12 @@ function locToRegex(loc)
   line = line.trim;
   "/" + line.replace("/", "\\/") + "/;\""
 };
+
 function locToLine(loc)
 {
   loc.split(":")[1].split(".")[0]
 };
+
 function findLocation(tree)
 {
   if (tree.location)
@@ -122,6 +112,7 @@ function findLocation(tree)
   else
     wall("no location for tree " + tree)
 }|;
+
 function getLValueName(tree)
 {
   if (tree.Binding && tree.Binding.what)
@@ -130,19 +121,19 @@ function getLValueName(tree)
     tree.Call.name
   else "error"
 }|;
+
 function recurse(tree)
 {
   if (tree.isA(String) || tree.isNil)
-    return|
-  if (tree.isA(List))
+    {}
+  else if (tree.isA(List))
   {
     for|(var e: tree)
       recurse(e)|
-    return
-  };
+  }
   //wall(tree.type);
   //wall("t: " + tree["type"]);
-  if (tree["type"] == "Declaration")
+  else if (tree["type"] == "Declaration")
   {
     var target = tree.what.Call.name;
     var location = locToRegex(findLocation(tree.value));
@@ -153,14 +144,11 @@ function recurse(tree)
     << TAB << "signature:()"
     << TAB << "class:" << currentClass.join("::")
     << "\n";
-    return
-  }|
+  }
   // Merge do and class, but the content are using different keys.
-  if (tree["type"] == "Class" || tree["type"] == "Do")
+  else if (tree["type"] == "Class" || tree["type"] == "Do")
   {
-    var target = {
-      if (tree.what) tree.what.Call.name else tree.target.Call.name
-    };
+    var target = { if (tree.what) tree.what else tree.target }.Call.name;
     var location = locToRegex(findLocation(tree));
     currentClass << target;
     output << currentClass.join("::")
@@ -171,9 +159,8 @@ function recurse(tree)
     recurse(tree.content);
     recurse(tree.body);
     currentClass.removeBack;
-    return
-  }|
-  if (tree["type"] == "Assign")
+  }
+  else if (tree["type"] == "Assign")
   {
     //wall("Assign");
     lastAssign = tree;
@@ -187,12 +174,13 @@ function recurse(tree)
     << TAB << "signature:"
     << TAB << "class:" << currentClass.join("::")
     << "\n";
-    return
-  }|
+  }
   //wall(tree.type);
-  for| (var e: tree.keys)
-    recurse(tree[e])|
-
+  else
+  {
+    for| (var e: tree.keys)
+      recurse(tree[e])|
+  }
 }|;
 recurse(v)|;
 shutdown;

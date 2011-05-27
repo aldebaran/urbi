@@ -71,6 +71,25 @@ do (String)
   // other encodings will make a difference between size and length.
   copySlot("size", "length");
 
+  // FIXME: Before documenting, cover more cases.  Actually,
+  // we should bind the Boost's trim familly.
+  function trim()
+  {
+    if (empty)
+      ""
+    else
+    {
+      var res = this;
+      var p = res.length-1;
+      while (res[p] == " ")
+        p--;
+      res = res[0, p+1];
+      while (res.length && res[0] == " ")
+        res = res[1, res.length];
+      res;
+    }
+  };
+
   // String.'%%'
   // -----------
   // If the Formatter object is not present, provide a simple
