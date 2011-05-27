@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1425 utf-8
+personal_ws-1.1 en 1428 utf-8
 aaa
 abc
 abcd
@@ -608,6 +608,7 @@ lastCaptureTimestamp
 lastModifiedDate
 LaunchThread
 lazyFail
+lboost
 LD
 ldd
 LDFLAGS
