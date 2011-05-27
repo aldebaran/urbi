@@ -900,19 +900,17 @@ public:
   std::vector<unsigned long> socketStats()
   {
     std::vector<unsigned long> res;
-    urbi::UClient* cl = urbi::getDefaultClient();
-    if (!cl)
-      return res;
-   res.push_back(cl->bytesSent());
-   res.push_back(cl->bytesReceived());
+    if (urbi::UClient* cl = urbi::getDefaultClient())
+      res << cl->bytesSent()
+          << cl->bytesReceived();
    return res;
   }
 
   // Test templates UVar.as, UVar.==, UVar.fill
   void manyWriteTest(int i)
   {
-    #define CHECK                                     \
-    if (d.size() !=2 || d[0] != 1 || d[1] != 2)       \
+#define CHECK                                                   \
+    if (d.size() !=2 || d[0] != 1 || d[1] != 2)                 \
       throw std::runtime_error("vector is not what we expect")
     std::vector<ufloat> d;
     d.push_back(1);
