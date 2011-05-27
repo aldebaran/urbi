@@ -184,7 +184,7 @@ STAMPS += java.stamp
 java.stamp: $(JAVA_STAMP_DEPS)
 JAVA_STAMP_DEPS = libraries.stamp
 if BINDING_JAVA
-JAVA_STAMP_DEPS += sdk-remote/src/swig/java/liburbijava.la
+JAVA_STAMP_DEPS += sdk-remote/src/swig/java/liburbijava$(LIBSFX).la
 endif
 
 # All the executables.
