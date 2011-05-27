@@ -572,7 +572,6 @@ g == [1, 2];
 \item \labelSlot{sort}\lstinline|(\var{fun} = function(a, b) { a < b })|\\%
   A new List with the contents of \this, sorted with respect to the
   \var{comp} comparison function.
-
 \begin{urbiassert}
 var l = [3, 0, -2, 1];
 l.sort == [-2, 0, 1, 3];
@@ -581,6 +580,11 @@ l      == [3, 0, -2, 1];
 l.sort(function(a, b) {a.abs < b.abs})
        == [0, 1, -2, 3];
 \end{urbiassert}
+
+\begin{urbiscript}
+[2, 1].sort(1);
+[00000001:error] !!! unexpected 1, expected a Executable
+\end{urbiscript}
 
 \item[subset](<that>)%
   Whether the members of \this are members of \var{that}.
