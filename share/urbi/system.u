@@ -131,6 +131,21 @@ do (System)
     res.unacceptVoid
   };
 
+  /// Same as loadModule, but exit on failure.
+  /// Used for the option --module.
+  function loadModuleOrDie(var module)
+  {
+    try
+    {
+      loadModule(module);
+    }
+    catch (var e)
+    {
+      cerr << e;
+      _exit(1);
+    }
+  };
+
   function lobbies()
   {
     Lobby.instances
