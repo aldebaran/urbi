@@ -31,18 +31,12 @@ URBI_SERVER = urbi-launch$(EXEEXT) --start --
 k2-check:
 	@$(MAKE) $(AM_MAKEFLAGS) check TESTS_DIRS=2.x
 
-# Uobject tests that we fail because features are not implemented
+# UObject tests that we fail because features are not implemented.
 XFAIL_TESTS +=					\
   2.x/derive.chk				\
   2.x/uob/group.chk
 
-# Removing laziness
 XFAIL_TESTS +=					\
-  2.x/lazy-init.chk
-
-XFAIL_TESTS +=						\
-  uob/java/all/change-bypass-external-access.chk	\
-  uob/java/all/change-bypass.chk			\
   uob/java/all/transmit-object.chk
 
 # Memory leaks which have to be fixed.
