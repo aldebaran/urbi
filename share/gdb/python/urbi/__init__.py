@@ -13,3 +13,4 @@ import gdb
 import libport
 import urbi.printers
 import urbi.commands
+import urbi.breakpoints

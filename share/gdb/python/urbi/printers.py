@@ -33,6 +33,16 @@ class yyLocation(object):
     def __init__(self, value):
         self.value = value
 
+    def filename(self):
+        begin = self.value['begin']
+        if begin['filename'] != 0:
+            return "%s" % (str(begin['filename'].dereference()).replace('\"',''))
+        return ""
+
+    def line(self):
+        begin = self.value['begin']
+        return begin['line']
+
     def location(self):
         # see build/src/parser/location.hh
         begin = self.value['begin']
