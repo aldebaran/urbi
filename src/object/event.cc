@@ -230,7 +230,7 @@ namespace urbi
       foreach (const Event::rActions& actions, listeners_type(listeners_))
       {
         if (actions->frozen)
-          return;
+          continue;
         objects_type args;
         args << this << this << payload;
         rObject pattern = nil_class;
