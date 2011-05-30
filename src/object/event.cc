@@ -20,6 +20,8 @@
 
 #include <eval/exec.hh>
 
+GD_CATEGORY(Urbi.Event);
+
 namespace urbi
 {
   namespace object
@@ -84,6 +86,8 @@ namespace urbi
     void
     Event::unregister(Actions* a)
     {
+      GD_FINFO_TRACE("%s: Unregister registration %s.", this, a);
+
       // The erase might make us loose the last counted ref on a.
       rActions ra(a);
       listeners_type::iterator it = libport::find(listeners_, a);
@@ -99,12 +103,14 @@ namespace urbi
     void
     Event::freeze(Actions* a)
     {
+      GD_FINFO_TRACE("%s: Freeze registration %s.", this, a);
       a->frozen++;
     }
 
     void
     Event::unfreeze(Actions* a)
     {
+      GD_FINFO_TRACE("%s: Unfreeze registration %s.", this, a);
       aver(a->frozen);
       a->frozen--;
     }
@@ -128,12 +134,14 @@ namespace urbi
     Event::onEvent(rExecutable guard, rExecutable enter, rExecutable leave, bool sync)
     {
       rActions actions(new Actions(guard, enter, leave, sync));
+      GD_FPUSH_TRACE("%s: New registration %s.", this, actions);
       runner::Job& r = ::kernel::runner();
       actions->profile = r.profile_get();
       actions->tag_stack = r.state.tag_stack_get();
       actions->lobby = r.state.lobby_get();
       foreach (object::rTag& tag, actions->tag_stack)
       {
+        GD_FINFO_DEBUG("%s: Hook tag %s.", this, tag->name());
         sched::rTag t = tag->value_get();
         using boost::bind;
         actions->connections
@@ -214,6 +222,7 @@ namespace urbi
     void
     Event::emit_backend(const objects_type& pl, bool detach)
     {
+      GD_FPUSH_TRACE("%s: Emit.", this);
       sched::rJob enter, leave;
       rList payload = new List(pl);
       slot_update(SYMBOL(active), to_urbi(false));
@@ -230,7 +239,11 @@ namespace urbi
       foreach (const Event::rActions& actions, listeners_type(listeners_))
       {
         if (actions->frozen)
+        {
+          GD_FINFO_TRACE("%s: Skip frozen registration %s.", this, actions);
           continue;
+        }
+        GD_FPUSH_TRACE("%s: Trigger registration %s.", this, actions);
         objects_type args;
         args << this << this << payload;
         rObject pattern = nil_class;
