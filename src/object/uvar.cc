@@ -85,7 +85,7 @@ namespace urbi
         {
           show_exception_message
             (r, self,
-             "Exception caught while processing notify on", ":");
+             "exception caught while processing notify on", ":");
           eval::show_exception(r, e);
         }
         catch (const sched::exception& e)
@@ -96,7 +96,7 @@ namespace urbi
         {
           show_exception_message
             (r, self,
-             "Unknown exception called while processing notify on");
+             "unknown exception caught while processing notify on");
         }
         if (failed && self->slot_get(SYMBOL(eraseThrowingCallbacks))->as_bool())
         {

@@ -501,11 +501,10 @@ namespace urbi
       if (e)
         URBI_SEND_COMMA_COMMAND_C
           (*ctx->outputStream,
-           "Global.UObject.funCall(\"" << var << "\", "
-           << "Exception.new(\""
-           << "Exception caught while calling remote method: "
-           << libport::escape(e->what())
-           << "\"))");
+           libport::format
+           ("Global.UObject.funCall(\"%s\", Exception.new(\""
+            "exception caught while calling remote method: %s\"))",
+            var, libport::escape(e->what())));
       else if (ctx->serializationMode)
       {
         char type = UEM_REPLY;
@@ -531,13 +530,14 @@ namespace urbi
         case DATA_VOID:
           URBI_SEND_COMMAND_C
             (*ctx->outputStream,
-             "Global.UObject.funCall(\"" << var << "\")");
+             libport::format("Global.UObject.funCall(\"%s\")", var));
           break;
 
         default:
           URBI_SEND_COMMA_COMMAND_C
             (*ctx->outputStream,
-             "Global.UObject.funCall(\"" << var << "\", " << retval << ")");
+             libport::format("Global.UObject.funCall(\"%s\", %s)",
+                             var, retval));
           break;
       }
     }
@@ -767,7 +767,7 @@ namespace urbi
       }
       args.setOffset(3);
       cb->eval(args,
-                 boost::bind(&call_result, this, var, _1, _2));
+               boost::bind(&call_result, this, var, _1, _2));
       GD_INFO_DUMP("dispatch call over, async call_result");
     }
 

@@ -587,13 +587,16 @@ static rObject wrap_ucallback(const object::objects_type& ol,
   }
   catch (const std::exception& e)
   {
-    FRAISE("Exception caught while calling %s: %s",
+    // Message matching the one in SDK Remote so that plug/remote give
+    // equivalent messages.
+    FRAISE("exception caught while calling %s: %s",
            ugc->getName(), e.what());
   }
   catch (...)
   {
-    FRAISE("Unknown exception caught while calling %s",
-           ugc->getName());
+    // Likewise.
+    FRAISE("exception caught while calling %s: %s",
+           ugc->getName(), "invalid exception");
   }
   delete async_abort;
   start = libport::utime() - start;
