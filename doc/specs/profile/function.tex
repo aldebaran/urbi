@@ -20,7 +20,8 @@ given function during a profiling operation.
 \subsection{Construction}
 
 \lstinline|Function| objects are not meant to be cloned as they are
-created by \refSlot[System]{profile} internal machinery.
+created by \refSlot[System]{profile} internal machinery.  As an example, let
+us profile the traditional factorial function.
 
 \begin{urbiscript}
 function Float.fact()
@@ -30,6 +31,16 @@ function Float.fact()
   else
     this * (this - 1).fact;
 }|;
+\end{urbiscript}
+
+To improve the consistency of the results, you are advised to run the
+profiling system (and function to profile) once before the real measure.
+This ensures that all the code is loaded and ready to be run: profiling will
+be about computations, not about initializations.
+
+\begin{urbiscript}
+System.profile(function() { 20.fact })|;
+
 var profile = System.profile(function() { 20.fact });
 [00009050] Profile(
 [:]  Yields:                    0
