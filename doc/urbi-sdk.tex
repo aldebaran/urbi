@@ -9,22 +9,11 @@
 \documentclass[openright,twoside,11pt,final]{book}
   \usepackage{gostai-documentation}
   \usepackage{nameref}
+  \usepackage{config}
+  \newcommand{\uobjectsDir}{\absTopSrcdir/sdk-remote/src/uobjects}
 
 % This is not appropriate for Beamer, so not in the lst style UrbiSDK.
 \lstset{xrightmargin=5mm,xleftmargin=5mm}
-
-\newcommand{\UBinary}{\lstinline{UBinary}\xspace}
-\newcommand{\UImage}{\lstinline{UImage}\xspace}
-\newcommand{\UList}{\lstinline{UList}\xspace}
-\newcommand{\UObjectHub}{\lstinline{UObjectHub}\xspace}
-\newcommand{\UObject}{\lstinline{UObject}\xspace}
-\newcommand{\UObjects}{\lstinline{UObjects}\xspace}
-\newcommand{\USound}{\lstinline{USound}\xspace}
-\newcommand{\UVar}{\lstinline{UVar}\xspace}
-\newcommand{\UEvent}{\lstinline{UEvent}\xspace}
-
-\usepackage{config}
-\newcommand{\uobjectsDir}{\absTopSrcdir/sdk-remote/src/uobjects}
 
 %% \marginNotation{Label}{Text}
 %% ----------------------------
@@ -42,8 +31,6 @@
 }
 
 \ifx\ifHtml\undefined
-  \renewcommand{\bnfPre}
-    {\marginNotation{sec:notations:bnf}{Grammar}}
   \renewcommand{\cxxPre}
     {\marginNotation{sec:notations:cxx}{\Cxx}}
   \renewcommand{\javaPre}
@@ -59,25 +46,9 @@
 \fi
 
 
-%% -------------- %%
-%% Experimental.  %%
-%% -------------- %%
-
-\newcommand{\experimentalremoved}
-{%
-  \begin{quote}%
-    This feature is experimental.  It might be changed, or even removed.
-    Feedback on its use would be appreciated.%
-  \end{quote}%
-}
-
-\newcommand{\experimental}
-{%
-  \begin{quote}%
-    This feature is experimental.  It might be changed in the future.
-    Feedback on its use would be appreciated.%
-  \end{quote}%
-}
+%% ---------- %%
+%% Document.  %%
+%% ---------- %%
 
 \title{The Urbi Software Development Kit}
 \subtitle{Version \packageVersion}

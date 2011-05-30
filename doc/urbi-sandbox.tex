@@ -7,35 +7,13 @@
 %% See the LICENSE file for more information.
 
 \documentclass[openright,twoside,11pt]{book}
+  \usepackage[svgnames]{xcolor}
   \usepackage{gostai-documentation}
   \usepackage{config}
   \usepackage[draft]{showlabels}
   \usepackage{lipsum}  % to provide "filler" text
+  \usepackage{experiment}
 
-%% \marginNotation{Label}{Text}
-%% ----------------------------
-\newcommand{\marginNotation}[2]
-{%
-  \marginpar[{\vspace{3mm}\raggedleft\tiny\hyperref[#1]{#2}}]
-            {\vspace{3mm}\raggedright\tiny\hyperref[#1]{#2}}%
-}
-
-\ifx\ifHtml\undefined
-  \renewcommand{\bnfPre}
-    {\marginNotation{sec:notations:bnf}{Grammar}}
-  \renewcommand{\cxxPre}
-    {\marginNotation{sec:notations:cxx}{\Cxx}}
-  \renewcommand{\javaPre}
-    {\marginNotation{sec:notations:java}{\Java}}
-  \renewcommand{\shellPre}
-    {\marginNotation{sec:notations:shell}{Shell\\Session}}
-  \renewcommand{\urbiassertPre}
-    {\marginNotation{sec:notations:urbiassert}{Assertion\\Block}}
-  \renewcommand{\urbiscriptPre}
-    {\marginNotation{sec:notations:urbiassert}{\us\\Session}}
-  \renewcommand{\urbiuncheckedPre}
-    {\urbiscriptPre}
-\fi
 
 \title{Urbi Documentation Sandbox}
 \subtitle{Version \VcsDescription}
