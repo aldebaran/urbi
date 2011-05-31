@@ -11,7 +11,8 @@
 \setHtmlFileName{build}
 
 \lstnewenvironment{package}[1][]
-  {\cxxPre%
+  {% Don't do that: we don't want to show "C++ program" in marginpar
+   % \cxxPre%
     \lstset{language={},
       style=UrbiSDKEnv,
       #1}}
@@ -650,55 +651,53 @@ $ make check -C doc
 \section{Debug}
 \label{sec:build:debug}
 
-Urbi can be debugged with \command{gdb}.  It is highly recommended to use
+\urbi can be debugged with \command{gdb}.  It is highly recommended to use
 \option{--enable-compilation-mode=debug} to configure if you intend to
-debug. (see \autoref{sec:build:configure})
+debug (see \autoref{sec:build:configure}).
 
-When compiled with the debug compilation mode, gdb extensions would be
-installed inside the library directory and inside the share directory.
-These extensions are also available if you run gdb inside the root of the
-source directory.
+When compiled in debug mode, gdb extensions would be installed in the
+library directory and inside the share directory.  These extensions are also
+available if you run gdb inside the root of the source directory.
 
 These extensions provide pretty printing of some \Cxx objects, such as AST
-nodes, Urbi objects, intrusive pointers.  Additional commands are provided
+nodes, \urbi objects, intrusive pointers.  Additional commands are provided
 for printing an equivalent of the \us backtrace and for adding and removing
 breakpoints set on \us.
 
-To benefit from these extensions, install a recent gdb. (higher than 7.2).
-Oldest versions may not be able to load the extensions, and older versions
-may not provide all features on which the extensions are relying on.  To
-avoid disturbance in case the extension cause much trouble than benefits,
-gdb can be run with extra arguments which would disable these extensions.
+To benefit from these extensions, install a recent gdb (higher than 7.2).
+Older versions may not be able to load the extensions, or may not provide
+the features on which the extensions rely.  To avoid disturbance in case the
+extension cause much trouble than benefits, gdb can be run with extra
+arguments to disable these extensions.
 
 \begin{shell}
 $ gdb -xe 'set auto-load-scripts no' urbi
 \end{shell}
 
-The following sections are assuming that gdb is recent enough.
+The following sections assume that gdb is recent enough.
 
 \subsection{GDB commands}
 
 % TeX4HT is having troubles with this...
-\ifHtml\undefined
-  \lstdefinelanguage[]{gdb}{
-    alsoletter={(,)},
-    keywords={(gdb)}
-  }[keywords]
-\else
+\ifx\ifHtml\undefined
   \lstdefinelanguage[]{gdb}{
     otherkeywords={(gdb)},
     keywords={(gdb)}
   }[keywords]
+\else
+  \lstdefinelanguage[]{gdb}{
+    alsoletter={(,)},
+    keywords={(gdb)}
+  }[keywords]
 \fi
 
-\begin{options}
-\item{urbi-stack} Print the backtrace of the current coroutine.  The
+\begin{description}
+\item[urbi-stack] Print the backtrace of the current coroutine.  The
   backtrace is indexed by the \Cxx frame numbers and includes frame which
   are manipulating the sources.  Each primitive object is pretty printed
   inside this backtrace.
 
-\lstset{language=gdb,style=UrbiSDKEnv}
-\begin{lstlisting}
+\begin{lstlisting}[language=gdb,style=UrbiSDKEnv]
 (gdb) b urbi::object::system_backtrace
 Breakpoint 1 at 0x7ffff4be229d: file system.cc, line 305.
 (gdb) c
@@ -725,14 +724,13 @@ Breakpoint 1, urbi::object::system_backtrace () at system.cc:305
 #55 [input.u:2.1-40] Stmt
 \end{lstlisting}
 
-\item{urbi-break} Set a breakpoint on an \us function.  A breakpoint is
+\item[urbi-break] Set a breakpoint on an \us function.  A breakpoint is
   defined with at least a message and additional optional information such
   as a file, a line, a target and arguments can be used as condition for the
   breakpoint.  Be aware that the target and the arguments are lexically
   compared with the pretty-printed versions.
 
-\lstset{language=gdb,style=UrbiSDKEnv}
-\begin{lstlisting}
+\begin{lstlisting}[language=gdb,style=UrbiSDKEnv]
 (gdb) urbi-break input.u:2 Lobby_0x7ffff7f03208.foo(["2" => 2])
 UBreakpoint 1:
         Location: input.u:2
@@ -752,11 +750,10 @@ $1 = ["2" => 2]
 \end{lstlisting}
 
 
-\item{urbi-delete} Remove a breakpoint set by \command{urbi-break}.  It
-  expects one argument which correspond to the Urbi breakpoint number.
+\item[urbi-delete] Remove a breakpoint set by \command{urbi-break}.  It
+  expects one argument: the \urbi breakpoint number.
 
-\lstset{language=gdb,style=UrbiSDKEnv}
-\begin{lstlisting}
+\begin{lstlisting}[language=gdb,style=UrbiSDKEnv]
 (gdb) urbi-break foo
 UBreakpoint 2:
         <any>.foo(<any>)
@@ -764,8 +761,7 @@ UBreakpoint 2:
 UBreakpoint 2:
         Removed
 \end{lstlisting}
-
-\end{options}
+\end{description}
 
 
 %%% Local Variables:
