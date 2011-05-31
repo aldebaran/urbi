@@ -28,6 +28,7 @@ class CallApplyBreakpoint(gdb.Breakpoint):
         super(CallApplyBreakpoint, self).__init__(
             "eval::call_apply(runner::Job&, urbi::object::Object*, libport::Symbol, urbi::object::objects_type const&, urbi::object::Object*, boost::optional<yy::location>)",
             internal = True)
+        self.silent = True
 
     def stopHook(self, ub):
         "Add a new action for the break point"
@@ -110,7 +111,7 @@ class UrbiDelete(gdb.Command):
     def invoke(self, arg, from_tty):
         bp = int(arg)
         UrbiCallBreakpoints.instance().del_breakpoint(bp)
-        print "UBreakpoint %d:\n\tRemoved" % (bp, arg)
+        print "UBreakpoint %d:\n\tRemoved" % bp
 
 
 @gdb_command
@@ -192,7 +193,7 @@ class UrbiBreak(gdb.Command):
                         frame_args = ', '.join([ "%s" % v['pointee_'].dereference() for v in args_it ])
                         res = args == frame_args
                 if res:
-                    print "UBreakpoint %d:%s" % (bp, msg)
+                    print "UBreakpoint %d: %s" % (bp, urbi.commands.UrbiCallApplyFrame(frame))
                 return res
             except ValueError:
                 return False

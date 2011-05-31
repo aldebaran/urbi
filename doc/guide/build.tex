@@ -309,6 +309,7 @@ $ ./bootstrap
 \end{shell}
 
 \section{Configure}
+\label{sec:build:configure}
 
 As of today, building where the source files are is a bad idea (the test
 suite of a sub-component of ours, Libport, is known to fail in that
@@ -645,6 +646,116 @@ $ make check -C tests TESTS='uob/remote/*'
 $ make check -C doc
 \end{shell}
 \end{files}
+
+\section{Debug}
+\label{sec:build:debug}
+
+Urbi can be debugged with \command{gdb}.  It is highly recommended to use
+\option{--enable-compilation-mode=debug} to configure if you intend to
+debug. (see \autoref{sec:build:configure})
+
+When compiled with the debug compilation mode, gdb extensions would be
+installed inside the library directory and inside the share directory.
+These extensions are also available if you run gdb inside the root of the
+source directory.
+
+These extensions provide pretty printing of some \Cxx objects, such as AST
+nodes, Urbi objects, intrusive pointers.  Additional commands are provided
+for printing an equivalent of the \us backtrace and for adding and removing
+breakpoints set on \us.
+
+To benefit from these extensions, install a recent gdb. (higher than 7.2).
+Oldest versions may not be able to load the extensions, and older versions
+may not provide all features on which the extensions are relying on.  To
+avoid disturbance in case the extension cause much trouble than benefits,
+gdb can be run with extra arguments which would disable these extensions.
+
+\begin{shell}
+$ gdb -xe 'set auto-load-scripts no' urbi
+\end{shell}
+
+The following sections are assuming that gdb is recent enough.
+
+\subsection{GDB commands}
+
+\lstdefinelanguage[]{gdb}{otherkeywords={(gdb)},keywords={(gdb)}}[keywords]
+
+\begin{options}
+\item{urbi-stack} Print the backtrace of the current coroutine.  The
+  backtrace is indexed by the \Cxx frame numbers and includes frame which
+  are manipulating the sources.  Each primitive object is pretty printed
+  inside this backtrace.
+
+\lstset{language=gdb,style=UrbiSDKEnv}
+\begin{lstlisting}
+(gdb) b urbi::object::system_backtrace
+Breakpoint 1 at 0x7ffff4be229d: file system.cc, line 305.
+(gdb) c
+Continuing.
+
+//#push 1 "input.u"
+function foo (x) { backtrace }|;
+for(var i: [1]) foo([i.asString => i]);
+
+
+Breakpoint 1, urbi::object::system_backtrace () at system.cc:305
+305           runner::Job& r = runner();
+(gdb) urbi-stack
+#12 [input.u:1.20-29] Lobby_0x7ffff7f03208.backtrace()
+#16 [input.u:1.20-29] Call backtrace
+#19 [input.u:1.20-29] Scope
+#22 [input.u:2.17-39] Lobby_0x7ffff7f03208.foo(["1" => 1])
+#26 [input.u:2.17-39] Call foo
+#29 [input.u:2.17-39] Scope
+#32 [flower/flower.cc:132.19-25] Scope
+#35 [??] Code_0x7ffff7fbdfb8.each(1)
+#48 [input.u:2.12-39] [1].each(Code_0x7ffff7fbdfb8)
+#52 [input.u:2.12-39] Call each
+#55 [input.u:2.1-40] Stmt
+\end{lstlisting}
+
+\item{urbi-break} Set a breakpoint on an \us function.  A breakpoint is
+  defined with at least a message and additional optional information such
+  as a file, a line, a target and arguments can be used as condition for the
+  breakpoint.  Be aware that the target and the arguments are lexically
+  compared with the pretty-printed versions.
+
+\lstset{language=gdb,style=UrbiSDKEnv}
+\begin{lstlisting}
+(gdb) urbi-break input.u:2 Lobby_0x7ffff7f03208.foo(["2" => 2])
+UBreakpoint 1:
+        Location: input.u:2
+        Lobby_0x7ffff7f03208.foo(["2" => 2])
+(gdb) c
+Continuing.
+
+//#push 1 "input.u"
+function foo (x) { backtrace }|;
+for(var i: [1, 2, 3]) foo([i.asString => i]);
+
+[00219506:backtrace] foo (input.u:2.23-44)
+[00219506:backtrace] each (input.u:2.12-44)
+UBreakpoint 1: [input.u:2.23-45] Lobby_0x7ffff7f03208.foo(["2" => 2])
+(gdb) p *(urbi::object::Dictionary *) 0x7ffff7f5b750
+$1 = ["2" => 2]
+\end{lstlisting}
+
+
+\item{urbi-delete} Remove a breakpoint set by \command{urbi-break}.  It
+  expects one argument which correspond to the Urbi breakpoint number.
+
+\lstset{language=gdb,style=UrbiSDKEnv}
+\begin{lstlisting}
+(gdb) urbi-break foo
+UBreakpoint 2:
+        <any>.foo(<any>)
+(gdb) urbi-delete 2
+UBreakpoint 2:
+        Removed
+\end{lstlisting}
+
+\end{options}
+
 
 %%% Local Variables:
 %%% mode: latex

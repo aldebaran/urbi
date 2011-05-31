@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1428 utf-8
+personal_ws-1.1 en 1437 utf-8
 aaa
 abc
 abcd
@@ -155,6 +155,8 @@ bool
 boolean
 brandNewTag
 breakInWhile
+Breakpoint
+breakpoint
 bsd
 bufferIn
 bugReport
@@ -373,6 +375,7 @@ faq
 fastMachine
 fb
 fbar
+fbdfb
 fe
 ffff
 ffffffff
@@ -427,6 +430,7 @@ func
 functionalities
 FunctionProfile
 gcc
+gdb
 ge
 generateALBindings
 getAll
@@ -840,6 +844,7 @@ Orderable
 oRTP
 os
 osx
+otherkeywords
 otool
 OutputStream
 OutputStreams
@@ -1117,6 +1122,7 @@ stdin
 stdlib
 stdout
 stm
+Stmt
 stopif
 str
 stringPub
@@ -1230,6 +1236,7 @@ UBindFunctions
 UBindThreadedFunction
 UBindThreadedFunctionRename
 UBindVar
+UBreakpoint
 ubuild
 UClient
 UClient's
@@ -1390,6 +1397,7 @@ xabcdefg
 xADDR
 xb
 xCoord
+xe
 Xenomai
 xf
 xFF
