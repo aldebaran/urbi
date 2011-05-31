@@ -11,7 +11,8 @@
 \setHtmlFileName{build}
 
 \lstnewenvironment{package}[1][]
-  {\cxxPre%
+  {% Don't do that: we don't want to show "C++ program" in marginpar
+   % \cxxPre%
     \lstset{language={},
       style=UrbiSDKEnv,
       #1}}
