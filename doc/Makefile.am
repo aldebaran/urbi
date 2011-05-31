@@ -25,7 +25,7 @@ EXTRA_DIST +=					\
 	          @{document-aux}/styles/ldf/*)	\
   document-aux/styles/fixme.sty			\
   document-aux/styles/gostai-documentation.sty	\
-  document-aux/styles/gostai-report.sty		\
+  document-aux/styles/gostai.sty		\
   document-aux/styles/hevea.sty			\
   document-aux/styles/misc.hva			\
   document-aux/styles/misc.sty			\
