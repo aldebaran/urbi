@@ -151,12 +151,12 @@ CLEANFILES += config.sty
 ## -------------- ##
 
 # The tricky part is that all our PDF and HTML outputs depend on
-# revision.sty, so it is tempting to put it as a regular
-# prerequisites.  This way we are sure it exists when we need it.  But
-# to ensure that it is always up to date (so that the PDF and HTML
-# output are always referring to the revision info at the time of
-# "make" run) we have to make "revision.sty" a PHONY target, i.e., a
-# target fired at each "make" invocation.
+# revision.sty, so it is tempting to put it as a regular prerequisite.
+# This way we are sure it exists when we need it.  But to ensure that
+# it is always up to date (so that the PDF and HTML output are always
+# referring to the revision info at the time of "make" run) we have to
+# make "revision.sty" a PHONY target, i.e., a target fired at each
+# "make" invocation.
 #
 # But then we have a problem: "make" will notice that revision.sty is
 # to be remade, and therefore that the PDF and HTML have to be remade

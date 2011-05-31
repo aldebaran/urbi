@@ -27,12 +27,18 @@ include build-aux/make/bootstrap.mk
 
 ACLOCAL_AMFLAGS = -I build-aux/m4 -I sdk-remote/sdk -I tests/m4
 
-VERSIONIFYFLAGS +=					\
+## --------------------- ##
+## Version information.  ##
+## --------------------- ##
+VERSIONIFY_CACHE_RUN +=					\
   --prefix=URBI_SDK_					\
   --header=sdk-remote/include/urbi/revision.hh
+sdk-remote/include/urbi/revision.hh: | $(VERSIONIFY_CACHE)
 
-BUILT_SOURCES += sdk-remote/include/urbi/revision.hh
-sdk-remote/include/urbi/revision.hh: $(VERSIONIFY_CACHE)
+VERSIONIFY_CACHE_RUN +=				\
+  --prefix=URBI_SDK_INFO_			\
+  --stub=include/urbi/revision-stub.hh
+include/urbi/revision-stub.hh: | $(VERSIONIFY_CACHE)
 
 # To keep the time stamps up to date, we need to compile our
 # dependencies first, so process sdk-remote and src before "." (where

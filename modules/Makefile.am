@@ -35,7 +35,6 @@ include modules.mk
 VERSIONIFY_STUBS = $(module_LTLIBRARIES)
 stub.stamp: $(VERSIONIFY_STUBS) $(VERSIONIFY_CACHE) $(VERSIONIFY)
 	$(AT_V_PATCH) $(VERSIONIFY_RUN)				\
-	  $(if $(V:0=),-v,-q)					\
 	  $(addprefix --resolve=, $(VERSIONIFY_STUBS))
 ALLS += stub.stamp
 

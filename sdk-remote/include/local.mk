@@ -89,11 +89,3 @@ $(srcdir)/$(ucallbacks_hh): $(ucallbacks_hh).template include/template_autogen.p
 	$(AM_V_at)chmod a-w $@.tmp
 	$(AM_V_at)$(top_srcdir)/build-aux/bin/move-if-change --color $@.tmp $@
 	$(AM_V_at)touch $@
-
-## ----------------------- ##
-## urbi/revision-stub.hh.  ##
-## ----------------------- ##
-
-BUILT_SOURCES += include/urbi/revision-stub.hh
-include/urbi/revision-stub.hh: $(VERSIONIFY)
-	$(AM_V_GEN)$(VERSIONIFY_RUN) --prefix=URBI_SDK_INFO_ --stub=$@
