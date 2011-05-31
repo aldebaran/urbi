@@ -98,7 +98,9 @@ namespace urbi
     /// Sample format.
     USoundSampleFormat sampleFormat;
 
-     operator USound&();
+    operator const USound&() const;
+    operator USound&();
+
   private:
     friend class UBinary;
     // The UBinary headers.
@@ -118,23 +120,12 @@ namespace urbi
   {
   public:
     USound();
-    USound(const USoundImpl& us) { *this = us;}
-    USound& operator = (const USoundImpl& us)
-    {
-      this->USoundImpl::operator=(us);
-      return *this;
-    }
+    USound(const USoundImpl& us);
+    USound& operator = (const USoundImpl& us);
   };
 
-  inline USound::USound()
-  {
-    init();
-  }
-
-  inline USoundImpl::operator USound&()
-  {
-    return *(USound*)this;
-  }
 } // end namespace urbi
+
+# include <urbi/usound.hxx>
 
 #endif // ! URBI_USOUND_HH

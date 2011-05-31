@@ -38,6 +38,7 @@ urbiinclude_HEADERS =                           \
   include/urbi/uevent.hh                        \
   include/urbi/uevent.hxx                       \
   include/urbi/uimage.hh                        \
+  include/urbi/uimage.hxx                       \
   include/urbi/ulist.hh                         \
   include/urbi/ulist.hxx                        \
   include/urbi/umain.hh                         \
@@ -50,6 +51,7 @@ urbiinclude_HEADERS =                           \
   include/urbi/uproperty.hh                     \
   include/urbi/urbi-root.hh                     \
   include/urbi/usound.hh                        \
+  include/urbi/usound.hxx                       \
   include/urbi/ustarter.hh                      \
   include/urbi/ustarter.hxx                     \
   include/urbi/usyncclient.hh                   \

@@ -82,6 +82,7 @@ namespace urbi
     size_t width, height;
 
     UImageFormat imageFormat;
+    operator const UImage&() const;
     operator UImage&();
 
   private:
@@ -103,23 +104,12 @@ namespace urbi
   {
   public:
     UImage();
-    UImage(const UImageImpl& us) { *this = us;}
-    UImage& operator = (const UImageImpl& us)
-    {
-      this->UImageImpl::operator=(us);
-      return *this;
-    }
+    UImage(const UImageImpl& us);
+    UImage& operator = (const UImageImpl& us);
   };
 
-  inline UImage::UImage()
-  {
-    init();
-  }
-
-  inline UImageImpl::operator UImage&()
-  {
-    return *(UImage*)this;
-  }
 } // end namespace urbi
+
+# include <urbi/uimage.hxx>
 
 #endif // ! URBI_UIMAGE_HH
