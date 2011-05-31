@@ -3,7 +3,9 @@
 # extensions for the debugger without making new installs.
 python urbi_source_dir = ''
 python libport_source_dir = 'sdk-remote/libport/'
+python sched_source_dir = 'sdk-remote/libport/'
 source sdk-remote/libport/share/gdb/python/libport.so-gdb.py
+source sdk-remote/libport/share/gdb/python/libsched.so-gdb.py
 source share/gdb/python/libuobject.so-gdb.py
 
 ### These lines are useful for testing gdb extensions.

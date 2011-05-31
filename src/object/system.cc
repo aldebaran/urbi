@@ -150,6 +150,34 @@ namespace urbi
         e.raise(code);
       }
 
+    // This function is only used for debug purpose, by providing a mean to
+    // create an std::string out of a C string which can be produced by gdb.
+    rObject gdb_eval(const char* content);
+
+    rObject
+    gdb_eval(const char* content)
+    {
+      std::string code(content);
+      return eval(code);
+    }
+
+    template <typename T>
+    struct HexTo {
+      T value;
+      operator T() const {return value;}
+      friend std::istream& operator>>(std::istream& in, HexTo& out) {
+        in >> std::hex >> out.value;
+        return in;
+      }
+    };
+
+    // Call "0xffffffff".'$objAddr'()
+    static rObject
+    system_DOLLAR_objAddr(const std::string& addr)
+    {
+      size_t ptr = lexical_cast<HexTo<size_t> >(addr);
+      return reinterpret_cast<Object*>(ptr);
+    }
 
     static rObject
     system_eval(rObject, const std::string& code)
@@ -710,6 +738,7 @@ namespace urbi
       DECLARE(time);
       DECLARE(unsetenv);
       DECLARE(urbiRoot);
+      DECLARE(DOLLAR_objAddr);
 
 #undef DECLARE
 

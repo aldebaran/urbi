@@ -13,7 +13,7 @@ import gdb
 from libport.tools import *
 from libport.printers import BoostOptional, LibportVector
 from urbi.printers import yyLocation
-import urbi.commands
+import urbi.frames
 
 class CallApplyBreakpoint(gdb.Breakpoint):
     "Set a gdb break point on the generic call of Urbi functions."
@@ -74,7 +74,7 @@ class UrbiCallBreakpoints(object):
         self.last = 0
 
     def stop(self, key):
-        current_frame = urbi.commands.FrameIterator().__iter__().next()
+        current_frame = urbi.frames.FrameIterator.newest()
         cond, idx = self.breakpoints[key]
         return cond(current_frame)
 
@@ -104,7 +104,7 @@ class UrbiDelete(gdb.Command):
 
     def __init__(self):
         super (UrbiDelete, self).__init__(
-            "urbi-delete",
+            "urbi delete",
             gdb.COMMAND_BREAKPOINTS,
             gdb.COMPLETE_NONE)
 
@@ -120,7 +120,7 @@ class UrbiBreak(gdb.Command):
 
     def __init__(self):
         super (UrbiBreak, self).__init__(
-            "urbi-break",
+            "urbi break",
             gdb.COMMAND_BREAKPOINTS,
             gdb.COMPLETE_NONE)
 
@@ -169,7 +169,7 @@ class UrbiBreak(gdb.Command):
             else:
                 msg += "(<any>)"
 
-        
+
         def stopIf(frame):
             try:
                 res = True
@@ -193,7 +193,7 @@ class UrbiBreak(gdb.Command):
                         frame_args = ', '.join([ "%s" % v['pointee_'].dereference() for v in args_it ])
                         res = args == frame_args
                 if res:
-                    print "UBreakpoint %d: %s" % (bp, urbi.commands.UrbiCallApplyFrame(frame))
+                    print "UBreakpoint %d: %s" % (bp, urbi.frames.UrbiCallApplyFrame(frame))
                 return res
             except ValueError:
                 return False

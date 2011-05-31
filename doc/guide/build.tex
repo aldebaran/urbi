@@ -692,7 +692,7 @@ The following sections assume that gdb is recent enough.
 \fi
 
 \begin{description}
-\item[urbi-stack] Print the backtrace of the current coroutine.  The
+\item[urbi stack] Print the backtrace of the current coroutine.  The
   backtrace is indexed by the \Cxx frame numbers and includes frame which
   are manipulating the sources.  Each primitive object is pretty printed
   inside this backtrace.
@@ -710,7 +710,7 @@ for(var i: [1]) foo([i.asString => i]);
 
 Breakpoint 1, urbi::object::system_backtrace () at system.cc:305
 305           runner::Job& r = runner();
-(gdb) urbi-stack
+(gdb) urbi stack
 #12 [input.u:1.20-29] Lobby_0x7ffff7f03208.backtrace()
 #16 [input.u:1.20-29] Call backtrace
 #19 [input.u:1.20-29] Scope
@@ -724,14 +724,14 @@ Breakpoint 1, urbi::object::system_backtrace () at system.cc:305
 #55 [input.u:2.1-40] Stmt
 \end{lstlisting}
 
-\item[urbi-break] Set a breakpoint on an \us function.  A breakpoint is
+\item[urbi break] Set a breakpoint on an \us function.  A breakpoint is
   defined with at least a message and additional optional information such
   as a file, a line, a target and arguments can be used as condition for the
   breakpoint.  Be aware that the target and the arguments are lexically
   compared with the pretty-printed versions.
 
 \begin{lstlisting}[language=gdb,style=UrbiSDKEnv]
-(gdb) urbi-break input.u:2 Lobby_0x7ffff7f03208.foo(["2" => 2])
+(gdb) urbi break input.u:2 Lobby_0x7ffff7f03208.foo(["2" => 2])
 UBreakpoint 1:
         Location: input.u:2
         Lobby_0x7ffff7f03208.foo(["2" => 2])
@@ -750,17 +750,37 @@ $1 = ["2" => 2]
 \end{lstlisting}
 
 
-\item[urbi-delete] Remove a breakpoint set by \command{urbi-break}.  It
+\item[urbi delete] Remove a breakpoint set by \command{urbi-break}.  It
   expects one argument: the \urbi breakpoint number.
 
 \begin{lstlisting}[language=gdb,style=UrbiSDKEnv]
-(gdb) urbi-break foo
+(gdb) urbi break foo
 UBreakpoint 2:
         <any>.foo(<any>)
-(gdb) urbi-delete 2
+(gdb) urbi delete 2
 UBreakpoint 2:
         Removed
 \end{lstlisting}
+
+\item[urbi call] Evaluate its arguments as an urbiscript call to eval.
+  Live objects can be manipulated easily by using the object name followed
+  by its address.
+
+\begin{lstlisting}[language=gdb,style=UrbiSDKEnv]
+(gdb) urbi call Lobby_0x7ffff7f03208.echo(42)
+[00219506] *** 42
+\end{lstlisting}
+
+\item[urbi print] Do the same as \command{urbi call} except that the result
+  of the expression is printed at the end of the evaluation.  Objects
+  printed like that are likely to be destroyed at the end of the command
+  unless the value has been stored in a global variable.
+
+\begin{lstlisting}[language=gdb,style=UrbiSDKEnv]
+(gdb) urbi print { var a = "1"; var b = [1]; [a => b] }
+["1" => [1]]
+\end{lstlisting}
+
 \end{description}
 
 
