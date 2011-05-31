@@ -678,7 +678,18 @@ The following sections are assuming that gdb is recent enough.
 
 \subsection{GDB commands}
 
-\lstdefinelanguage[]{gdb}{otherkeywords={(gdb)},keywords={(gdb)}}[keywords]
+% TeX4HT is having troubles with this...
+\ifHtml\undefined
+  \lstdefinelanguage[]{gdb}{
+    alsoletter={(,)},
+    keywords={(gdb)}
+  }[keywords]
+\else
+  \lstdefinelanguage[]{gdb}{
+    otherkeywords={(gdb)},
+    keywords={(gdb)}
+  }[keywords]
+\fi
 
 \begin{options}
 \item{urbi-stack} Print the backtrace of the current coroutine.  The
