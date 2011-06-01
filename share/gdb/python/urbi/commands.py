@@ -66,7 +66,8 @@ class UrbiCall(gdb.Command):
         stmt = stmt.replace('\\', '\\\\').replace('"', '\\"').replace("'", "\\'")
         # Call the eval function with a C string.
         stmt = 'urbi::object::gdb_eval("%s")' % stmt
-        return LibportIntrusivePtr(gdb.parse_and_eval(stmt)).pointer()
+        # some weirdness may happen here, where this command is unstable with the version 7.2.
+        return LibportIntrusivePtr(gdb_parse_and_eval(stmt)).pointer()
 
     def invoke(self, arg, from_tty):
         self.run(arg)

@@ -6,9 +6,11 @@
 #
 # See the LICENSE file for more information.
 
+import sys
 import re
 import gdb
 
+from libport.tools import *
 from libport.printers import BoostOptional, LibportVector
 
 class FrameIterator(object):
@@ -28,16 +30,8 @@ class FrameIterator(object):
         if start != None:
             self.frame = start
         else:
-            # By default the frame is the newest
-            if hasattr(gdb, 'newest_frame'):
-                self.frame = gdb.newest_frame()
-            else:
-                frame = gdb.selected_frame()
-                next = frame
-                while next != None:
-                    frame = next
-                    next = next.newer()
-                self.frame = frame
+            # By default the frame is the newest.
+            self.frame = self.newest()
 
     class _iterator:
         def __init__(self, frame, backward):
@@ -70,8 +64,21 @@ class FrameIterator(object):
         return self._iterator(self.frame, self.backward)
 
     @staticmethod
+    @require_gdb_version(']... 7.2]')
     def newest():
-        return FrameIterator().frame
+        """Return the latest opened frame."""
+
+        frame = gdb.selected_frame()
+        next = frame
+        while next != None:
+            frame = next
+            next = next.newer()
+        return frame
+
+    @staticmethod
+    @require_gdb_version(']7.2 ...[')
+    def newest():
+        return gdb.newest_frame()
 
 
 def first(pred, iterable):
@@ -173,16 +180,12 @@ class UrbiCallApplyFrame(object):
             # to other classes such as the intrusive_ptr<*> ?
             target = "%s" % args_it.next()['pointee_'].dereference()
             args = ', '.join([ "%s" % v['pointee_'].dereference() for v in args_it ])
-        except StopIteration:
+        except:
+            # can except StopIteration, ValueError or gdb.MemoryError
+            # gdb.MemoryError is not present in version 7.2
             target = "Object_0x????"
             args = "..."
-        except ValueError:
-            target = "Object_0x????"
-            args = "..."
-        except gdb.MemoryError as e:
-            target = "Object_0x????"
-            args = "..."
-            return '[%s] %s.%s(%s)\n\t%s' % (loc, target, msg, args, e)
+            return '[%s] %s.%s(%s)\n\tError: %s' % (loc, target, msg, args, sys.exc_info()[0])
 
         return '[%s] %s.%s(%s)' % (loc, target, msg, args)
 

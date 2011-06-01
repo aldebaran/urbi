@@ -15,7 +15,7 @@ from libport.printers import BoostOptional, LibportVector
 from urbi.printers import yyLocation
 import urbi.frames
 
-class CallApplyBreakpoint(gdb.Breakpoint):
+class CallApplyBreakpoint(gdbBreakpoint()):
     "Set a gdb break point on the generic call of Urbi functions."
 
     # Function used for calling the call backs.
@@ -108,6 +108,7 @@ class UrbiDelete(gdb.Command):
             gdb.COMMAND_BREAKPOINTS,
             gdb.COMPLETE_NONE)
 
+    @require_gdb_version(']7.2 ...[')
     def invoke(self, arg, from_tty):
         bp = int(arg)
         UrbiCallBreakpoints.instance().del_breakpoint(bp)
@@ -133,6 +134,7 @@ class UrbiBreak(gdb.Command):
       (?:[(](?P<args>[^)]*)[)])?   # arguments
     $""", re.X)
 
+    @require_gdb_version(']7.2 ...[')
     def invoke(self, arg, from_tty):
         match = UrbiBreak.arg_regex.match(arg)
         if not match:
