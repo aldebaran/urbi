@@ -56,7 +56,7 @@ die "use SYMBOL instead of direct calls to libport::Symbol:\n$literals\n"
 # RETURN_OP(EQ) is used in the scanner to return tokens whose
 # semantical value is the string itself.
 my $symbol_tag =
-  'BIND|BIND_VARIADIC|BOUNCE|CAPTURE_GLOBAL|DECLARE|SYMBOL|RETURN_OP';
+  'BIND|BIND_VARIADIC|BOUNCE|CAPTURE_GLOBAL|DECLARE|DECLARE_UNIX|SYMBOL|RETURN_OP';
 
 # The lines that declare a symbol.
 #
