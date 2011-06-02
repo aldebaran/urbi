@@ -55,6 +55,7 @@ namespace urbi
       {
       public:
         void stop();
+        Subscription();
 
       private:
         friend class Event;
