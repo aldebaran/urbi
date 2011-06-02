@@ -22,6 +22,7 @@
 #include <libport/format.hh>
 #include <libport/locale.hh>
 #include <libport/program-name.hh>
+#include <libport/unistd.h>
 #include <libport/xltdl.hh>
 
 #include <kernel/uobject.hh>
@@ -43,8 +44,8 @@
 #include <urbi/object/job.hh>
 #include <parser/transform.hh>
 #include <runner/exception.hh>
-#include <runner/state.hh>
 #include <runner/job.hh>
+#include <runner/state.hh>
 #include <urbi/runner/raise.hh>
 
 #include <eval/ast.hh>
@@ -696,11 +697,35 @@ namespace urbi
       }
     }
 
+#ifndef WIN32
+    static std::string
+    system_hostname()
+    {
+      static const size_t hostname_length_max = 1024;
+      char result[hostname_length_max];
+      if (gethostname(result, hostname_length_max))
+      {
+        if (errno == ENAMETOOLONG)
+          FRAISE("Hostname is too long (maximum is %s characters).",
+                 hostname_length_max);
+        else
+          RAISE("Unable to get hostname");
+      }
+      return result;
+    }
+#endif
+
     void
     system_class_initialize()
     {
 #define DECLARE(Name)                                           \
       system_class->bind(SYMBOL_(Name), &system_##Name)
+
+#ifdef WIN32
+# define DECLARE_UNIX(Name)
+#else
+# define DECLARE_UNIX(Name) DECLARE(Name)
+#endif
 
       DECLARE(_exit);
       DECLARE(addSystemFile);
@@ -712,6 +737,7 @@ namespace urbi
       DECLARE(cycle);
       DECLARE(getLocale);
       DECLARE(getenv);
+      DECLARE_UNIX(hostname);
       DECLARE(interactive);
       DECLARE(jobs);
       DECLARE(loadLibrary);

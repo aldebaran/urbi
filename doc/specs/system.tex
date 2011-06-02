@@ -210,6 +210,15 @@ getLocale("LC_IMAGINARY");
 [00006328:error] !!! getLocale: invalid category: LC_IMAGINARY
 \end{urbiscript}
 
+\item[hostname]%
+  Return the hostname of the machine, as given by the \command{uname -n}
+  command. Unix only.
+\begin{urbiunchecked}
+System.system("uname -n")|;
+myhostname
+System.hostname;
+[00000000] "myhostname"
+\end{urbiunchecked}
 
 %% \item[jobs]
 
