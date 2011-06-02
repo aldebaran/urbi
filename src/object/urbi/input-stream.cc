@@ -38,17 +38,13 @@ namespace urbi
       , pos_(0)
       , size_(0)
       , sem_(new Semaphore())
-      , alive_(new bool)
     {
-      *alive_ = true;
       proto_add(proto ? rObject(proto) : Object::proto);
       socket_->slot_set(SYMBOL(receive),
         new Primitive(boost::bind(&InputStream::receive_, this, _1)));
-      // FIXME: ideally we would use a ref of ourselve as extra arg
-      // to prevent our destruction, but the Subscription is leaking
-      // callbacks.
-      socket_->slot_get(SYMBOL(disconnected))->as<Event>()
-      ->onEvent(boost::bind(&InputStream::onError_, this, _1, alive_));
+      on_error_subscription_ =
+        socket_->slot_get(SYMBOL(disconnected))->as<Event>()
+        ->onEvent(boost::bind(&InputStream::onError_, this, _1));
     }
 
     InputStream::InputStream(rInputStream model)
@@ -56,9 +52,7 @@ namespace urbi
       , pos_(0)
       , size_(0)
       , sem_(new Semaphore())
-      , alive_(new bool)
     {
-      *alive_ = true;
       proto_add(model);
     }
 
@@ -71,9 +65,7 @@ namespace urbi
       , pos_(0)
       , size_(0)
       , sem_(new Semaphore())
-      , alive_(new bool)
     {
-      *alive_ = true;
       proto_add(Stream::proto);
       BIND(get);
       BIND(getChar);
@@ -83,7 +75,12 @@ namespace urbi
 
     InputStream::~InputStream()
     {
-      *alive_ = false;
+      // Unsubscribe before anything else when we're being
+      // destroyed. Otherwise, when Stream::~Stream closes the socket,
+      // the event will call back our onError_ method, which will
+      // access our already destroyed members and make the whole thing
+      // die painfully.
+      on_error_subscription_.stop();
     }
 
     /*--------------.
@@ -150,8 +147,9 @@ namespace urbi
       open(f, libport::Socket::READ);
       socket_->slot_set(SYMBOL(receive),
                  new Primitive(boost::bind(&InputStream::receive_, this, _1)));
-      socket_->slot_get(SYMBOL(disconnected))->as<Event>()
-      ->onEvent(boost::bind(&InputStream::onError_, this, _1, alive_));
+      on_error_subscription_ =
+        socket_->slot_get(SYMBOL(disconnected))->as<Event>()
+        ->onEvent(boost::bind(&InputStream::onError_, this, _1));
     }
 
     rObject
@@ -193,10 +191,8 @@ namespace urbi
     }
 
     rObject
-    InputStream::onError_(objects_type, boost::shared_ptr<bool> alive)
+    InputStream::onError_(objects_type)
     {
-      if (!*alive)
-        return void_class;
       if (waiting_)
         sem_->release();
       return void_class;

@@ -15,6 +15,7 @@
 
 # include <object/semaphore.hh>
 
+# include <urbi/object/event.hh>
 # include <object/urbi/export.hh>
 # include <object/urbi/stream.hh>
 
@@ -53,7 +54,7 @@ namespace urbi
       size_t size_;
 
       rObject receive_(objects_type args);
-      rObject onError_(objects_type args, boost::shared_ptr<bool> alive);
+      rObject onError_(objects_type args);
       rSemaphore sem_; // For async read
       bool waiting_; // True if someone is waiting on sem_
 
@@ -73,7 +74,7 @@ namespace urbi
 
     private:
       URBI_CXX_OBJECT(InputStream, Stream);
-      boost::shared_ptr<bool> alive_;
+      Event::Subscription on_error_subscription_;
     };
   }
 }
