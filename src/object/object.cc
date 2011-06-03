@@ -317,8 +317,10 @@ namespace urbi
     Object::slot_set(key_type key, rObject getter, rObject setter)
     {
       rSlot s(new Slot);
-      s->oget_set(getter);
-      s->oset_set(setter);
+      if (getter)
+        s->oget_set(getter);
+      if (setter)
+        s->oset_set(setter);
       slot_set(key, s);
       return *s;
     }

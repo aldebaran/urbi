@@ -387,6 +387,7 @@ namespace urbi
       // Bind with a T ThisType::getter() and a void ThisType::setter(T)
       // Make the getter/setter free template to allow variations
       // like const or not, and return by const reference.
+      // You can pass '0' to either the setter or getter.
       template <typename G, typename S>
       void bind(const std::string& name,
                 G g,

@@ -266,58 +266,49 @@ namespace urbi
     }
     namespace detail
     {
-      // Not in boost yet :(
-      template<typename T> struct member_function_1_trait
-      {
-      };
-      template<typename T, typename R, typename P1>
-      struct member_function_1_trait<R (T::*)(P1)>
-      {
-        typedef typename std::tr1::remove_reference<T>::type class_type;
-        typedef R return_type;
-        typedef P1 argument_1_type;
-        typedef typename std::tr1::remove_const<typename std::tr1::remove_reference<P1>::type >::type
-          base_argument_1_type;
-        typedef typename std::tr1::remove_const<typename std::tr1::remove_reference<R>::type >::type
-          base_return_type;
-      };
-      template<typename T, typename R, typename P1>
-      struct member_function_1_trait<R (T::*)(P1) const>
-      {
-        typedef typename std::tr1::remove_reference<T>::type class_type;
-        typedef R return_type;
-        typedef P1 argument_1_type;
-        typedef typename std::tr1::remove_const<typename std::tr1::remove_reference<P1>::type >::type
-          base_argument_1_type;
-        typedef typename std::tr1::remove_const<typename std::tr1::remove_reference<R>::type >::type
-          base_return_type;
-      };
-      template<typename T, typename R, typename P1>
-      struct member_function_1_trait<R (*)(T, P1)>
-      {
-        typedef typename std::tr1::remove_reference<T>::type class_type;
-        typedef R return_type;
-        typedef P1 argument_1_type;
-        typedef typename std::tr1::remove_const<typename std::tr1::remove_reference<P1>::type >::type
-          base_argument_1_type;
-        typedef typename std::tr1::remove_const<typename std::tr1::remove_reference<R>::type >::type
-          base_return_type;
-      };
+
+    template <typename G> rObject make_getter(G, libport::meta::False)
+    {
+      return 0;
     }
 
+    template <typename G> rObject make_getter(G g, libport::meta::True)
+    {
+      typedef typename
+        libport::meta::member_function_0_trait<G>::class_type Self;
+      typedef typename
+        libport::meta::member_function_0_trait<G>::base_return_type T;
+      boost::function2<T, Self&, rObject> getter(boost::bind(g, _1));
+      return primitive(getter);
+    }
+
+    template<typename S> rObject make_setter(S s, libport::meta::True)
+    {
+      typedef typename
+        libport::meta::member_function_1_trait<S>::class_type Self;
+      typedef typename
+        libport::meta::member_function_1_trait<S>::base_argument_1_type T;
+      boost::function3<void, Self&, T, rObject> setter(boost::bind(s, _1, _2));
+      return primitive(setter);
+    }
+
+    template<typename S> rObject make_setter(S, libport::meta::False)
+    {
+      return 0;
+    }
+    }
     template <typename G, typename S>
     inline void
     Object::bind(const std::string& name,
                 G g,
                 S s)
     {
-      typedef typename detail::member_function_1_trait<S>::class_type Self;
-      typedef typename detail::member_function_1_trait<S>::base_argument_1_type
-        T;
-      boost::function2<T, Self&, rObject> getter(boost::bind(g, _1));
-      boost::function3<void, Self&, T, rObject> setter(boost::bind(s, _1, _2));
-      slot_set(libport::Symbol(name), primitive(getter)->as<Object>(),
-               primitive(setter)->as<Object>());
+      rObject getter = detail::make_getter(g,
+        typename libport::meta::member_function_0_trait<G>::is_valid());
+      rObject setter = detail::make_setter(s,
+        typename libport::meta::member_function_1_trait<S>::is_valid());
+      slot_set(libport::Symbol(name),
+               getter, setter);
     }
 
     bool
