@@ -626,16 +626,23 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "self"        DEPRECATED("this");
 "static"      DEPRECATED("");
 
-{ID}{SUFFIX}    { // Treat "n'" as "n.'\''".
+{ID}{SUFFIX}    { // Treat "n'x" as "n->x".
   // Push back "n.'\''" in the stream.
   char* quote = strchr(yytext, '\'');
   std::string s (yytext, quote - yytext);
-  s += "_quote_";
-  s += quote[1] == '\'' ? "quote" : quote + 1;
+  s += "->";
+  if (!quote[1])
+    s += "prime";
+  else if (quote[1] == '\'')
+    s += "second";
+  else
+    s += quote + 1;
   DEPRECATED(s);
 }
+{ID}{SUFFIX}({ID}|{NUMBER}) {
+  SCAN_ERROR("invalid quote: `%s'", strchr(yytext, '\''));
+}
   /*>no-space>*/
-
 
   /* operator XXX -> 'XXX'. */
 {OPERATOR}    {
