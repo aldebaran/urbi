@@ -36,6 +36,8 @@
 // result.  \a Name corresponds to an attribute which of the object
 // accessible through an accessor Name_get().
 #define URBI_AT_HOOK(Name)                                              \
+  URBI_AT_HOOK_(Name##_get)
+#define URBI_AT_HOOK_(accessor)                                         \
   do                                                                    \
   {                                                                     \
     if (runner::Job* r =                                                \
@@ -46,8 +48,8 @@
         {                                                               \
           r->dependencies_log_set(false);                               \
           GD_CATEGORY(Urbi.At);                                         \
-          GD_FPUSH_TRACE("Register %s for at monitoring", #Name);       \
-          rEvent e = Name##_get();                                      \
+          GD_FPUSH_TRACE("Register %s for at monitoring", #accessor);   \
+          rEvent e = accessor()->as<Event>();                           \
           r->dependencies_log_set(true);                                \
           r->dependency_add(e);                                         \
         }                                                               \
