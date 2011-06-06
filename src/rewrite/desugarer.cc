@@ -257,6 +257,9 @@ namespace rewrite
     ast::loc loc = binding->location_get();
     if (!allow_decl_)
       err(loc, "declaration not allowed here");
+    // "const var x;" is invalid.
+    if (binding->constant_get())
+      err(loc, "const declaration without a value");
     result_ = new ast::Declaration(loc, binding->what_get(), 0);
     result_ = recurse(result_);
   }

@@ -2018,9 +2018,12 @@ c = 3;
 [00000000] 3
 \end{urbiscript}
 
-A new slot can be declared constant when first defined:
+A new slot can be declared constant when first defined, in which case the
+initial value is required.
 
 \begin{urbiscript}
+const var two;
+[00000030:error] !!! syntax error: const declaration without a value
 const var two = 2;
 [00000036] 2
 two = 3;
