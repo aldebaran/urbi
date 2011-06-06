@@ -51,7 +51,7 @@ namespace urbi
     public:
       typedef boost::function1<void, const objects_type&> callback_type;
 
-      class Subscription
+      class URBI_SDK_API Subscription
       {
       public:
         void stop();
