@@ -567,7 +567,7 @@ bot.locateSlot("x") === top;
 
 // Setting the property from bot's point of view detaches bot.x from
 // top.x.
-bot.x->myProperty = "irrelevant";
+bot.x->prop = "irrelevant";
 bot.locateSlot("x") === bot;
 bot.x  == top.x;
 bot.x === top.x;
