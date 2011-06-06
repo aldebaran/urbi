@@ -675,18 +675,20 @@ modifiers:
   }
 ;
 
+
 /*-------------.
 | Assignment.  |
 `-------------*/
 
+// Does not seem easy to factor.
 exp:
   exp "=" exp %prec ASSIGN
   {
-    $$ = new ast::Assign(@$, $1, $3, 0);
+    $$ = MAKE(assign, @$, $1, $3);
   }
 | exp "=" exp modifiers %prec ASSIGN
   {
-    $$ = new ast::Assign(@$, $1, $3, $4);
+    $$ = MAKE(assign, @$, $1, $3, $4);
   }
 ;
 

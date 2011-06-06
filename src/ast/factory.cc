@@ -202,6 +202,14 @@ namespace ast
     return false;
   }
 
+  rAssign
+  Factory::make_assign(const location& loc,
+                       const rExp& lvalue, const rExp& rvalue,
+                       const boost::optional<modifiers_type>& modifiers)
+  {
+    return new ast::Assign(loc, lvalue, rvalue, modifiers);
+  }
+
   /// assert(%exps).
   rExp
   Factory::make_assert(const location&,
@@ -415,7 +423,7 @@ namespace ast
 
 
   rBinding
-  Factory::make_binding(const location& l, const
+  Factory::make_binding(const location& l,
                         bool constant,
                         const location& exp_loc, rExp exp)
   {

@@ -46,6 +46,13 @@ namespace ast
     make_assert(const location& loc,
                 exps_type* cond) /* const */;
 
+    /// <lvalue> = <rvalue> <modifiers>
+    static
+    rAssign
+    make_assign(const location& loc,
+                const rExp& lvalue, const rExp& rvalue,
+                const boost::optional<modifiers_type>& modifiers = 0);
+
     /// at%flavor (%cond ~ %duration) {%body} onleave {%onleave}
     static
     rExp
