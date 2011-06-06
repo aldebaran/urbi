@@ -19,6 +19,7 @@
 
 # include <urbi/object/lobby.hh>
 
+GD_CATEGORY(Urbi.UConnection);
 namespace urbi
 {
   namespace object
@@ -65,9 +66,17 @@ namespace urbi
 
     bool UConnection::call(runner::Job& r, rObject self)
     {
-      rObject t = UVar::fromName(target);
+      // FIXME: stay connected in the hope of reconnecting one day?
+      rUVar t = target->as<UVar>();
       if (!t)
         return false;
+      if (t->call(SYMBOL(dead)) == true_class)
+      {
+        //FIXME: try to keep informations for possible future reconnection
+        GD_INFO_TRACE("Target is dead");
+        target = nil_class;
+        return false;
+      }
       if (enabled
           && !processing
           && (libport::utime() - libport::seconds_to_utime(lastCall) >
@@ -92,7 +101,7 @@ namespace urbi
 
     rObject UConnection::doCall(runner::Job& r,
                                 rObject self,
-                                rObject target)
+                                rUVar target)
     {
       processing = true;
       libport::utime_t now = libport::utime();
@@ -100,14 +109,14 @@ namespace urbi
       {
         // If target is InputPut, bypass write and call notifies.
         callNotify(r,
-                   target->as<UVar>(), target->as<UVar>()->change_, self);
+                   target, target->change_, self);
         rList l =  target->call(SYMBOL(changeConnections))->as<List>();
         if (l)
           callConnections(r, self, l);
       }
       else
         // If target is not, write to uvar.
-        target->as<UVar>()->update_(self->as<UVar>()->getter(true));
+        target->update_(self->as<UVar>()->getter(true));
       libport::utime_t end = libport::utime();
       lastCall = (double)end / 1.0e6;
       double ct = (double)(end-now) / 1.0e6;

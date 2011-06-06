@@ -29,7 +29,7 @@ do (Timeout)
     this
   };
   var timedOut = false;
-  var asString = Object.&asString;
+  var asString = Object.getSlotValue("asString");
 
   function init(time_, thrower_ = true)
   {

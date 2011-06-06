@@ -68,7 +68,7 @@ do (System)
 
 
   /// assert_op(Operator: String | Lazy, Lhs, Rhs).
-  var assert_op = &assertCall;
+  var assert_op = getSlotValue("assertCall");
 
   var period = 20ms;
 
@@ -119,7 +119,7 @@ do (System)
     // added.
     searchFile("urbi/component.u").asString,
     searchFile("urbi/naming-standard.u").asString,
-  ].each(&addSystemFile);
+  ].each(getSlotValue("addSystemFile"));
 
   /// Look for file and load it.
   // Throw on errors.
@@ -196,7 +196,7 @@ do (System)
 
   // Do not make a wrapper function here, as you would get a tag for
   // the scope of that function, instead of the caller.
-  setSlot("scopeTag", Tag.&scope);
+  setSlotValue("scopeTag", Tag.getSlotValue("scope"));
 
   function version()
   {

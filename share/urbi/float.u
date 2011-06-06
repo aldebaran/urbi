@@ -106,7 +106,7 @@ do (Float)
         {
           var max = owner.getProperty(name, "rangemax") |
           var min = owner.getProperty(name, "rangemin") |
-          var val = owner.getSlot(name) |
+          var val = owner.getSlotValue(name) |
           (val - min) / (max - min) |
         }|
 
@@ -117,7 +117,7 @@ do (Float)
           updateSlot(name, min + (max - min) * val)
         }|
 
-        owner.setSlot(slotName, quote_n)|
+        owner.setSlotValue(slotName, quote_n)|
         owner.setProperty(slotName, "updateHook", hook)|
       }|
     }|

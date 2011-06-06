@@ -23,7 +23,9 @@ namespace urbi
   namespace object
   {
     URBI_CXX_OBJECT_INIT(Slot)
-    : value_(void_class)
+    : constant_(false)
+    , copyOnWrite_(true)
+    , value_(void_class)
     {
       Ward w(this);
       // The BIND below will create slots that will use this, aka proto,
@@ -34,8 +36,8 @@ namespace urbi
       BIND(value_, value_);
       BIND(set, set_);
       BIND(get, get_);
-      BIND(oset, set_);
-      BIND(oget, get_);
+      BIND(oset, oset_);
+      BIND(oget, oget_);
       BIND(constant, constant_);
 
       BIND(get_get); // debug
@@ -43,6 +45,8 @@ namespace urbi
       BIND(oget_get); // debug
       BIND(oset_get);
       BIND(updateHook, updateHook_);
+      BIND(copyOnWrite, copyOnWrite_);
+      BIND(init);
       rSlot s(new Slot);
       slot_set(SYMBOL(changed), s);
       boost::function2<rObject, Slot&, rObject>
@@ -117,30 +121,50 @@ namespace urbi
       {
         value_ = value;
         assert(value_);
+        static libport::Symbol _emit("emit");
+        if (changed_)
+          changed_->call(_emit);
       }
-      static libport::Symbol _emit("emit");
-      if (changed_)
-        changed_->call(_emit);
+    }
+
+    rObject
+    Slot::init()
+    {
+      rSlot model = protos_get_first()->as<Slot>();
+       if (model->set_)
+        set_ = model->set_->call(SYMBOL(new));
+      if (model->get_)
+        get_ = model->get_->call(SYMBOL(new));
+      if (model->oset_)
+        oset_ = model->oset_->call(SYMBOL(new));
+      if (model->oget_)
+        oget_ = model->oget_->call(SYMBOL(new));
+      return void_class;
+    }
+
+    Slot::Slot(rSlot model)
+      : constant_(model->constant_)
+      , copyOnWrite_(model->copyOnWrite_)
+      , value_(model->value_)
+    {
+      Ward w(this);
+      aver(model);
+      proto_set(model);
+      init();
     }
 
     Slot::Slot(const Slot& model)
       : CxxObject()
       , constant_(model.constant_)
+      , copyOnWrite_(model.copyOnWrite_)
       , value_(model.value_)
     {
       //std::cerr <<"slot copy " << &model <<" -> " << this
       //<< " oset " << model.oset_ << std::endl;
       Ward w(this);
       aver(&model);
-      proto_add(rSlot(const_cast<Slot*>(&model)));
-      if (model.set_)
-        set_ = model.set_->call(SYMBOL(new));
-      if (model.get_)
-        get_ = model.get_->call(SYMBOL(new));
-      if (model.oset_)
-        oset_ = model.oset_->call(SYMBOL(new));
-      if (model.oget_)
-        oget_ = model.oget_->call(SYMBOL(new));
+      proto_set(rSlot(const_cast<Slot*>(&model)));
+      init();
       //NM: I don't think calling the setter is a good idea here
       // Main usage for this function is the COW that will call
       // the setter immediately after. So calling it with an outdated value

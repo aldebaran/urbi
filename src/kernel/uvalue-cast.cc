@@ -12,6 +12,7 @@
 #include <libport/lexical-cast.hh>
 
 #include <kernel/uvalue-cast.hh>
+#include <kernel/uobject.hh>
 #include <urbi/object/cxx-conversions.hh>
 #include <urbi/object/event.hh>
 #include <urbi/object/float.hh>
@@ -116,10 +117,12 @@ urbi::UValue uvalue_cast(const object::rObject& o, int recursionLevel)
   }
   else if (is_a(o, UVar))
   {
-    res =
-      o->slot_get_value(SYMBOL(ownerName))->as<object::String>()->value_get()
-      + "."
-      + o->as<object::UVar>()->initialName.name_get();
+    // Storing the address is Safe: either the callback will use it, in
+    // which case KernelUVarImpl::ruvar_ will hold a ref, or it will be
+    // ignored
+    std::stringstream ss;
+    ss << "@." << o.get();
+    res = ss.str();
   }
   else if (object::rVector ov = o->as<object::Vector>())
   {
@@ -159,7 +162,11 @@ object_cast(const urbi::UValue& v)
       break;
 
     case urbi::DATA_SLOTNAME:
-      return
+        // could be an uobject
+        res = urbi::uobjects::get_base(*v.stringValue);
+        // or anything
+        if (!res)
+          res =
         object::global_class->slot_get_value(libport::Symbol(*v.stringValue));
       break;
 

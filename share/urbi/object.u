@@ -56,7 +56,7 @@ do (Object)
   {
     // Beware that we may be losing the ancestry on Object, which has
     // access to "addProto".
-    var add = Object.&addProto |
+    var add = Object.getSlotValue("addProto") |
     protos.clear() |
     for| (var p: ps.reverse)
       add.apply([this, p]) |
@@ -73,7 +73,7 @@ do (Object)
 
   function as(type)
   {
-    getSlot("as" + type.type).apply([this])
+    getSlotValue("as" + type.type).apply([this])
   };
 
   // To be overridden by subclasses.
@@ -184,7 +184,7 @@ do (Object)
            + "%s : %s%s"
               % [s,
                  { if (constant) "const " else "" },
-                 o.getSlot(s).type])|
+                 o.getSlotValue(s).type])|
       if (ps)
       {
         echo("    Properties:") |

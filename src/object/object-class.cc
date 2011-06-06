@@ -355,6 +355,8 @@ namespace urbi
       DECLARE(setSlot            ,
               static_cast<set_slot_type>(&Object::setSlot));
       DECLARE(updateSlot         , &Object::urbi_updateSlot);
+      DECLARE(setSlotValue       , &Object::setSlotValue);
+      DECLARE(getSlotValue       , &Object::getSlotValue);
 #undef DECLARE
 
       Object::proto->bind(SYMBOL(uid),          &Object::uid);

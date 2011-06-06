@@ -21,7 +21,7 @@ do (Mutex)
 {
   var type = "Mutex";
   function asMutex() { this };
-  var asString = Object.&asString;
+  var asString = Object.getSlotValue("asString");
 
   function init()
   {
@@ -67,7 +67,7 @@ do (NotMutex)
 {
   var type = "NotMutex";
   function asNotMutex() { this };
-  var asString = Object.&asString;
+  var asString = Object.getSlotValue("asString");
 
   function clone()
   {

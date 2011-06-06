@@ -16,7 +16,7 @@ do (Global)
 
   function echo(var args[])
   {
-    lobby.&echo.apply([lobby] + args);
+    lobby.getSlotValue("echo").apply([lobby] + args);
   };
 
   /*---------------------------.
@@ -31,7 +31,7 @@ do (Global)
   {
     function (var args[])
     {
-      var val = args.head.getSlot(name) |
+      var val = args.head.getSlotValue(name) |
       if (val.isA(Executable))
         val.apply(args)
       else
@@ -41,6 +41,6 @@ do (Global)
 
   function wall(var args[])
   {
-    lobby.&wall.apply([lobby] + args);
+    lobby.getSlotValue("wall").apply([lobby] + args);
   };
 };

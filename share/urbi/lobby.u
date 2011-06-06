@@ -25,7 +25,7 @@ do (Lobby)
 
   function asString()
   {
-    var res = Object.&asString.apply([this]) |
+    var res = Object.getSlotValue("asString").apply([this]) |
     if (hasSlot("remoteIP"))
       res += " (%s)" % remoteIP |
     res

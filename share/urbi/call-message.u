@@ -66,8 +66,8 @@ class Global.CallMessage
       // (Urbi 2.8) nil.isVoid issues a warning and returns true.
       // Eventually it will return false again, without warning.  But
       // meanwhile, checking for nil.isVoid would issue a warning.
-      if (!v.&val.acceptVoid.isNil && v.&val.isVoid
-          || v.&val.allProtos.hasSame(Executable))
+      if (!v.getSlotValue("val").acceptVoid.isNil && v.getSlotValue("val").isVoid
+          || v.getSlotValue("val").allProtos.hasSame(Executable))
         unevaluated
       else
         v.val
@@ -84,7 +84,7 @@ class Global.CallMessage
 
   function eval(var args[])
   {
-    value = &target.callMessage(this)
+    value = getSlotValue("target").callMessage(this)
   };
 
   function evalOnce()

@@ -25,9 +25,9 @@ namespace urbi
      *
      *  See uobject.u for the urbi part.
      */
-    class UVar: public Primitive
+    class UVar: public Slot
     {
-      URBI_CXX_OBJECT(UVar, Primitive);
+      URBI_CXX_OBJECT(UVar, Slot);
     public:
       typedef std::pair<unsigned int, rObject> Callback;
       typedef std::vector<Callback> Callbacks;
@@ -38,7 +38,7 @@ namespace urbi
       rObject update_(rObject arg);
       rObject update_timed_(rObject arg, libport::utime_t timestamp);
       rObject update_timed(rObject arg, libport::utime_t timestamp);
-      rObject accessor(const objects_type&);
+      rObject accessor();
       /// Like accessor, but if fromCxx is true and the value is an UValue,
       /// return it instead of its content.
       rObject getter(bool fromCXX);
@@ -56,6 +56,10 @@ namespace urbi
       bool removeCallback(Callbacks& cb, unsigned int id);
       // Return the UVar from its full name.
       static rObject fromName(const std::string& n);
+      // Get normalized value.
+      float normalized();
+      // Set normalized value
+      void normalized_set(float v);
       rList changeConnections; // bound in urbiscript
       ufloat timestamp; // idem
       ufloat rangemin, rangemax;
@@ -84,7 +88,6 @@ namespace urbi
       bool owned;
       static unsigned int uid_; // Unique id for callbacks
       friend class UConnection;
-      URBI_ATTRIBUTE_ON_DEMAND_DECLARE(Event, changed);
     };
     /// Call some notifies on an UVar.
     void callNotify(runner::Job& r, rUVar self,

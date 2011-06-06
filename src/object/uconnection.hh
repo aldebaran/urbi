@@ -33,10 +33,10 @@ namespace urbi
 
       /// Call the connection, returns false if it must be unregistered.
       bool call(runner::Job& r, rObject self);
-      /// Source UVar name (cannot take rObject).
-      std::string source;
-      /// Target UVar name (cannot take rObject).
-      std::string target;
+      /// Source UVar
+      rObject source;
+      /// Target UVar
+      rObject target;
       /// Trigger only if enabled.
       bool enabled;
       /// Do not call faster than this period in seconds.
@@ -52,7 +52,7 @@ namespace urbi
       /// Call asynchronously.
       bool asynchronous;
     private:
-      rObject doCall(runner::Job& r, rObject self, rObject target);
+      rObject doCall(runner::Job& r, rObject self, rUVar target);
       /// True if we are currently processing this connection.
       bool processing;
       void init_();

@@ -97,7 +97,7 @@
          ::urbi::object::to_urbi(name),                         \
          ::urbi::object::to_urbi(values));                      \
     ::urbi::object::CxxConvert< Name >::urbi_enum() = e;        \
-    dest->setSlot(name, e);                                     \
+    dest->setSlotValue(name, e);                                \
     BOOST_PP_SEQ_FOR_EACH(URBI_ENUM_REG, Name,                  \
                           LIBPORT_LIST(__VA_ARGS__,));          \
   }                                                             \

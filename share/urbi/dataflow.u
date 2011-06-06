@@ -107,17 +107,17 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
   function niceName(v)
   {
     var p = v.split(".");
-    if (hasSlot(p[0]) && getSlot(p[0]).hasSlot("compactName"))
-      p[0] = getSlot(p[0]).compactName
-    else if  (hasSlot(p[0]) && getSlot(p[0]).hasSlot("componentName"))
-      p[0] = getSlot(p[0]).componentName;
+    if (hasSlot(p[0]) && getSlotValue(p[0]).hasSlot("compactName"))
+      p[0] = getSlotValue(p[0]).compactName
+    else if  (hasSlot(p[0]) && getSlotValue(p[0]).hasSlot("componentName"))
+      p[0] = getSlotValue(p[0]).componentName;
     p.join(".");
   };
   function isUVar(m)
   {
     //wall("isuvar " + m);
     var comps = m.split(".");
-    getSlot(comps[0]).getSlot(comps[1]).isA(UVar)
+    getSlotValue(comps[0]).getSlotValue(comps[1]).isA(UVar)
   };
   /// Return a dot-formatted string with the data flow graph.
   function makeDot()
@@ -132,7 +132,7 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
     // check all uobjects, pass 1: create UVar nodes
     for| (var s: uobjects.localSlotNames)
     {
-      var o = uobjects.getSlot(s);
+      var o = uobjects.getSlotValue(s);
       if (debug) wall("processing " + o);
       if (!o.isA(UObject) || !o.hasLocalSlot("__uobjectName"))
         continue;
@@ -156,7 +156,7 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
       // Check all its uvars
       for| (var vn: o.localSlotNames)
       {
-        var v = o.getSlot(vn).acceptVoid;
+        var v = o.getSlotValue(vn).acceptVoid;
         if (!v.isA(UVar))
           continue;
         if (v.change.dict.empty && v.access.dict.empty
@@ -177,7 +177,7 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
     // check all uobjects, pass 2: create links
     for| (var s: uobjects.localSlotNames)
     {
-      var o = uobjects.getSlot(s);
+      var o = uobjects.getSlotValue(s);
       if (debug) wall("processing " + o);
       if (!o.isA(UObject) || !o.hasLocalSlot("__uobjectName")
           || o.__uobjectName != s)
@@ -187,7 +187,7 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
       // Check all its uvars
       for| (var vn: o.localSlotNames)
       {
-        var v = o.getSlot(vn).acceptVoid;
+        var v = o.getSlotValue(vn).acceptVoid;
         if (!v.isA(UVar))
           continue;
         if (v.change.dict.empty && v.access.dict.empty
@@ -355,8 +355,8 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
   function getUVar(name)
   {
     var names = name.split(".");
-    if (hasSlot(names[0]) && getSlot(names[0]).hasSlot(names[1]))
-      getSlot(names[0]).getSlot(names[1])
+    if (hasSlot(names[0]) && getSlotValue(names[0]).hasSlot(names[1]))
+      getSlotValue(names[0]).getSlotValue(names[1])
     else
       nil
   };
@@ -372,7 +372,7 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
       if (n.second["kind"] == "method")
       {
         var names = n.first.split("__");
-        var ob = getSlot(names[0]);
+        var ob = getSlotValue(names[0]);
         if (ob.hasLocalSlot("get_kind") // executioncontext method: internal
          || ["connect_uvar", "get_component_profile_", "connect",
             "create_output_port"].has(names[1])
@@ -387,7 +387,7 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
     // Now create connector_profiles and links, update/create UVars
     for|(var on: uobjects.localSlotNames)
     {
-      var o = getSlot(on);
+      var o = getSlotValue(on);
       if (o.hasSlot("get_component_profile_") && o.__uobjectName == on)
         for|(var pp: o.get_component_profile["port_profiles"])
       {

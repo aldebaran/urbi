@@ -15,7 +15,7 @@ do (File)
 
   function '$doInto'(rhs, action, routine)
   {
-    Directory.&'$doInto'.apply([this, rhs, action, routine]);
+    Directory.getSlotValue("$doInto").apply([this, rhs, action, routine]);
   };
 
   function copy(filename)

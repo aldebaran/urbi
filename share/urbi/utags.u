@@ -29,7 +29,7 @@ output.'<<' = function(x)
 do (Dictionary)
 {
   var _default = nil;
-  var oget = getSlot("[]");
+  var oget = getSlotValue("[]");
   '[]' = function(var k)
   {
     if (_default)

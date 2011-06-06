@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, Gostai S.A.S.
+ * Copyright (C) 2010-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -217,7 +217,7 @@ class TrajectoryGenerator.Accel : TrajectoryGenerator.OpenLoop
 
   function reset()
   {
-    TrajectoryGenerator.OpenLoop.&reset.apply([this]) |
+    TrajectoryGenerator.OpenLoop.getSlotValue("reset").apply([this]) |
     var this.duration = sqrt(2 * (targetValue - this.startValue) / accel)
   };
 
@@ -337,7 +337,7 @@ class TrajectoryGenerator.ClosedLoop : TrajectoryGenerator
 
   function reset()
   {
-    TrajectoryGenerator.&reset.apply([this]) |
+    TrajectoryGenerator.getSlotValue("reset").apply([this]) |
     lastVal = getter
   };
 
@@ -392,7 +392,7 @@ class TrajectoryGenerator.TimeAdaptive : TrajectoryGenerator.ClosedLoop
     // Speed is just Time, but with initial conditions expressed in
     // speed instead of duration.  But since this relies on the
     // current time, it must be call in reset, not init.
-    TrajectoryGenerator.ClosedLoop.&reset.apply([this]) |
+    TrajectoryGenerator.ClosedLoop.getSlotValue("reset").apply([this]) |
     duration =
       { if ("time" in args) args["time"] else duration(args["speed"]) }
   };

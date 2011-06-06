@@ -34,7 +34,7 @@ class Global.Exception
   /// Make the instanciation of subobjects easier.
   function '$Exception'(msg)
   {
-    Exception.&init.apply([this, msg])
+    Exception.getSlotValue("init").apply([this, msg])
   };
 
   function location()
@@ -130,26 +130,26 @@ class Global.Exception
         for| (var i: locSize)
           this.updateSlot(locSlots[i], args[i]) |
         for| (var i: fmtSize)
-          this.setSlot(fmtSlots[i], args[i + locSize])
+          this.setSlotValue(fmtSlots[i], args[i + locSize])
       };
 
       function message()
       {
         var l = []|
         for| (var f: fmtSlots)
-          l << { if (hasSlot(f)) getSlot(f) else ""} |
+          l << { if (hasSlot(f)) getSlotValue(f) else ""} |
         fmt % l
       };
     };
 
-    Exception.setSlot(name, Res);
+    Exception.setSlotValue(name, Res);
   };
 
   function makeMsgException(name, inherit, locSlots, msg)
   {
     makeFmtException(name, inherit, locSlots, "", [])|
-    Exception.getSlot(name).removeSlot("fmt")|
-    Exception.getSlot(name).message = msg
+    Exception.getSlotValue(name).removeSlot("fmt")|
+    Exception.getSlotValue(name).message = msg
   };
 
   function makeException(name, inherit, locSlots)
@@ -361,7 +361,7 @@ class Exception.ArgumentType: Exception.Argument
   {
     Kernel1.deprecated("Exception.ArgumentType") |
     var exn = Exception.Type.new(effective, expected) |
-    Exception.Argument.&init.apply([this, routine, index, exn]) |
+    Exception.Argument.getSlotValue("init").apply([this, routine, index, exn]) |
     this.routine = routine |
     this.index = index
   };

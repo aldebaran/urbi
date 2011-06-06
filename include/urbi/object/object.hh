@@ -195,7 +195,7 @@ namespace urbi
       /// \param name	The slot to update.
       /// \param slot	The original slot.
       /// \return  The newly created slot.
-      Slot& slot_copy_on_write(key_type name, const Slot& slot);
+      Slot& slot_copy_on_write(key_type name, Slot& slot);
 
       /// Implement copy-on-write if the owner of the scope is not this.
       /// \param k	The slot to update
@@ -359,6 +359,8 @@ namespace urbi
       rObject setSlot(key_type slot, const rObject& value);
       // Convenience overload because Symbols don't cast to strings.
       rObject setSlot(const std::string& slot, const rObject& value);
+      rObject setSlotValue(const std::string& slot, const rObject& value);
+      rObject getSlotValue(const std::string& slot);
       rObject urbi_setConstSlot(key_type k, const rObject& o);
       rObject urbi_updateSlot(key_type k, const rObject& o);
       rObject asPrintable() const;

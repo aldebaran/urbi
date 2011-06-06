@@ -321,6 +321,7 @@ namespace urbi
         s->oget_set(getter);
       if (setter)
         s->oset_set(setter);
+      s->copyOnWrite_set(false);
       slot_set(key, s);
       return *s;
     }
@@ -333,10 +334,10 @@ namespace urbi
     }
 
     Slot&
-    Object::slot_copy_on_write(key_type name, const Slot& slot)
+    Object::slot_copy_on_write(key_type name, Slot& slot)
     {
       // Careful, we want to call the ctor(Slot&) that copies the slot.
-      Slot* cow = new Slot(slot);
+      rSlot cow = slot->call(SYMBOL(new))->as<Slot>();
       slot_set(name, cow);
       return *cow;
     }
@@ -386,17 +387,18 @@ namespace urbi
         runner::raise_const_error();
 
       // If return-value of hook is not void, write it to slot.
-      if (r.first == this)
+      // Copy on write check
+      if (r.first == this || (s && !s->copyOnWrite_get()))
       {
-        runner::Job* r = ::kernel::urbiserver->getCurrentRunnerOpt();
+        runner::Job* j = ::kernel::urbiserver->getCurrentRunnerOpt();
         bool d = false; // Initialize or GCC complains.
-        if (r)
+        if (j)
         {
-          d = r->dependencies_log_get();
-          r->dependencies_log_set(false);
+          d = j->dependencies_log_get();
+          j->dependencies_log_set(false);
         }
-        FINALLY(((runner::Job*, r))((bool, d)),
-                if (r) r->dependencies_log_set(d));
+        FINALLY(((runner::Job*, j))((bool, d)),
+                if (j) j->dependencies_log_set(d));
 
         if (!s)
         { // Direct object, no slot
@@ -405,10 +407,10 @@ namespace urbi
             // Create a slot with the value in it.
             // This is the ctor taking a rObject as slot value.
             s = new Slot(v);
-            slots_.set(this, k, s, true);
+            slots_.set(r.first, k, s, true);
           }
           else
-            slots_.set(this, k, v, true);
+            slots_.set(r.first, k, v, true);
         }
         else // Slot present, update it.
           s->set(v, this);
@@ -425,8 +427,14 @@ namespace urbi
           slot.set(v, this);
         }
         else
-        {
-          slots_.set(this, k, v, true);
+        { // No slot present
+          if (v->as<Slot>())
+          { // We need a slot.
+            rSlot slot(new Slot(v));
+            slots_.set(this, k, slot, true);
+          }
+          else
+            slots_.set(this, k, v, true);
         }
       }
       return v;
@@ -489,9 +497,29 @@ namespace urbi
     rObject
     Object::property_get(key_type slot, key_type prop)
     {
-      if (rSlot s = slot_get(slot)->as<Slot>())
+      location_type loc = safe_slot_locate(slot);
+      rObject val = loc.second;
+      if (rSlot s = val->as<Slot>())
+      {
         if (rObject res = s->property_get(prop))
           return res;
+      }
+      else if (prop == SYMBOL(oget)
+            || prop == SYMBOL(oset)
+            || prop == SYMBOL(get)
+            || prop == SYMBOL(set))
+        return void_class;
+      else if (prop == SYMBOL(constant))
+          return to_urbi(false);
+      else if (prop == SYMBOL(copyOnWrite))
+          return to_urbi(true);
+      else if (prop == SYMBOL(changed))
+      {
+        // Create the slot
+        rSlot rs(new Slot(val));
+        slots_.set(loc.first, slot, rs, true);
+        return rs->property_get(prop);
+      }
       runner::raise_urbi_skip(SYMBOL(PropertyLookup),
                               this, to_urbi(slot), to_urbi(prop));
     }
@@ -536,7 +564,10 @@ namespace urbi
       rObject o = slot_get(k);
       rSlot rs = o->as<Slot>();
       if (!rs)
+      {
+        warn_hard(libport::format("no such property: %s->%s", k, p));
         return nil_class;
+      }
       Slot& slot = *rs;
       rObject res = slot.property_get(p);
       if (res)
@@ -789,7 +820,7 @@ namespace urbi
     rObject
     Object::getSlot(key_type name)
     {
-      return slot_get_value(name);
+      return slot_get(name);
     }
 
     rObject
@@ -861,7 +892,7 @@ namespace urbi
     Object::setSlot(key_type slot, const rObject& value)
     {
       //FIXME: for now, old setSlot...
-      slot_set_value(slot, value);
+      slot_set(slot, value);
       return value;
     }
 
@@ -869,6 +900,19 @@ namespace urbi
     Object::setSlot(const std::string& slot, const rObject& value)
     {
       return setSlot(libport::Symbol(slot), value);
+    }
+
+    rObject
+    Object::setSlotValue(const std::string& slot, const rObject& value)
+    {
+      slot_set_value(libport::Symbol(slot), value);
+      return value;
+    }
+
+    rObject
+    Object::getSlotValue(const std::string& slot)
+    {
+      return slot_get_value(libport::Symbol(slot));
     }
 
     rObject

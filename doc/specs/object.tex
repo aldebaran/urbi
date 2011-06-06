@@ -347,7 +347,6 @@ do (2) { var this.attr = "foo"; this.attr->prop = "bar"}.inspect;
 [00001228] ***   attr : String
 [00001228] ***     Properties:
 [00001228] ***      prop : String = "bar"
-[00001228] ***      value : String = "foo"
 \end{urbiscript}
 
 \item[isA](<obj>)%
@@ -422,9 +421,9 @@ locateSlot("doesNotExist").isNil;
 2.properties("foo");
 [00238495:error] !!! lookup failed: foo
 do (2) { var foo = "foo" }.properties("foo");
-[00238501] ["constant" => false, "value" => "foo"]
+[00238501] ["constant" => false]
 do (2) { var foo = "foo" ; foo->bar = "bar" }.properties("foo");
-[00238502] ["bar" => "bar", "constant" => false, "value" => "foo"]
+[00238502] ["bar" => "bar", "constant" => false]
 \end{urbiscript}
 
 \item[removeLocalSlot](<slot>)%

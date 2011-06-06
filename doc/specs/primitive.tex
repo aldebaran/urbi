@@ -25,16 +25,16 @@ It is not possible to construct a Primitive.
   Invoke a primitive.  The argument list, \var{args}, must start with
   the target.
 \begin{urbiassert}
-Float.getSlot("+").isA(Global.getSlot("Primitive"));
-Float.getSlot("+").apply([1, 2]) == 3;
+Float.getSlotValue("+").isA(Global.getSlotValue("Primitive"));
+Float.getSlotValue("+").apply([1, 2]) == 3;
 
-String.getSlot("+").isA(Global.getSlot("Primitive"));
-String.getSlot("+").apply(["1", "2"]);
+String.getSlotValue("+").isA(Global.getSlotValue("Primitive"));
+String.getSlotValue("+").apply(["1", "2"]);
 \end{urbiassert}
 
 \item[asPrimitive] Return \this.
 \begin{urbiassert}
-Float.getSlot("+").asPrimitive === Float.getSlot("+");
+Float.getSlotValue("+").asPrimitive === Float.getSlotValue("+");
 \end{urbiassert}
 \end{urbiscriptapi}
 

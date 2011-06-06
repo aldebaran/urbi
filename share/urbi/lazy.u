@@ -27,31 +27,32 @@ class Global.Lazy : Global.Comparable
   {
     // code is very likely to be a closure, do not fire it, otherwise
     // we might compare two values instead of two expressions.
-    &code == other.&code && &val.acceptVoid == other.&val.acceptVoid;
+    getSlotValue("code") == other.getSlotValue("code")
+      && getSlotValue("val").acceptVoid == other.getSlotValue("val").acceptVoid;
   };
 
   function eval()
   {
     val = code.acceptVoid|
-    &val.unacceptVoid
+    getSlotValue("val").unacceptVoid
   };
 
   function value()
   {
-    if (&val.isVoid)
+    if (getSlotValue("val").isVoid)
       eval|
-    &val.unacceptVoid
+    getSlotValue("val").unacceptVoid
   };
 
   function asString ()
   {
-    // FIXME: These braces are a nuisance.
-    if (&code.isVoid)
+    var c = getSlotValue("code") |
+    if (c.isVoid)
       type
-    else if (&code.hasSlot("bodyString"))
-      { &code.bodyString }
+    else if (c.hasSlot("bodyString"))
+      c.bodyString
     else
-      { &code.asString }
+      c.asString
   };
 };
 
@@ -61,7 +62,7 @@ class Global.PseudoLazy: Lazy
   function eval()
   {
     val = &code.acceptVoid|
-    &val.unacceptVoid
+    getSlotValue("val").unacceptVoid
   };
 
 };

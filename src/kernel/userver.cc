@@ -519,9 +519,7 @@ namespace kernel
     if (fast_async_jobs_start_)
       fast_async_jobs_tag_->as<object::Tag>()->unfreeze();
 
-    dead_jobs_.clear();
-    dead_jobs_ = scheduler_->terminated_jobs_get();
-    scheduler_->terminated_jobs_clear(); // let refcounting do the job.
+    // Dead jobs cycling is handled in system_poll() to have a runner.
 
     // To make sure that we get different times before and after every work
     // phase if we use a monotonic clock, update the time before and after

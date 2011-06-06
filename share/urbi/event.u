@@ -51,7 +51,7 @@ do (Event)
       control:
       {
         sleep(duration) |
-        handler = res.&trigger.apply([res] + '$payload')
+        handler = res.getSlotValue("trigger").apply([res] + '$payload')
       }
     }
     onleave

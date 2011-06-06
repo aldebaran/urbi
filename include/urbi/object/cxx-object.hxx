@@ -125,7 +125,7 @@ namespace urbi
       if (!res->slot_get_value(as, false))
         res->slot_set_value(as, new Primitive(bind(cxx_object_id<T>, _1)),
                             true);
-      dest->setSlot(libport::Symbol(name), res);
+      dest->slot_set_value(libport::Symbol(name), res);
     }
 
     // BINDER

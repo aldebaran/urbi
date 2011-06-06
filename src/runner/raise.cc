@@ -152,7 +152,7 @@ namespace runner
                     to_urbi(effective),
                     to_urbi(minimum),
                     maximum == UINT_MAX
-                    ? Float->getSlot(SYMBOL(inf))
+                    ? Float->getSlotValue(SYMBOL(inf))
                     : to_urbi(maximum));
   }
 

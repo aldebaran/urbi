@@ -23,6 +23,7 @@ namespace urbi
     inline
     Slot::Slot()
       : constant_(false)
+      , copyOnWrite_(true)
       , value_(object::void_class)
     {
       Ward w(this);
@@ -35,6 +36,7 @@ namespace urbi
     inline
     Slot::Slot(const T& value)
       : constant_(false)
+      , copyOnWrite_(true)
       , value_(void_class)
     {
       Ward w(this);

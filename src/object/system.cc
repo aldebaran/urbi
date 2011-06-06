@@ -444,6 +444,8 @@ namespace urbi
     static void
     load(const std::string& filename, bool global)
     {
+      GD_FINFO_TRACE("load library %s from %s", filename,
+                     uobject_uobjects_path());
       libport::xlt_advise dl;
       dl.ext   ()
         .global(global)
@@ -649,9 +651,15 @@ namespace urbi
       return profile;
     }
 
+    static sched::jobs_type dead_jobs_;
+
     static void
     system_poll()
     {
+      dead_jobs_.clear();
+      dead_jobs_ = kernel::scheduler().terminated_jobs_get();
+      // let refcounting do the job.
+      kernel::scheduler().terminated_jobs_clear();
       libport::utime_t select_time = 0;
       // 0-delay in fast mode
       static bool fast = system_class->call(SYMBOL(fast))->as_bool();

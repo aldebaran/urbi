@@ -125,53 +125,6 @@ namespace urbi
 
     unsigned int UVar::uid_ = 0;
 
-    static inline bool matchCachedProps(Symbol s)
-    {
-      return (s == SYMBOL(rangemin)
-              || s == SYMBOL(rangemax)
-              || s == SYMBOL(timestamp)
-              || s == SYMBOL(changed));
-    }
-
-    static rObject parentGetProperty(const objects_type& o)
-    {
-      check_arg_count(o, 2);
-      Object* self = o[0];
-      Symbol vname = Symbol(o[1]->as_checked<String>()->value_get());
-      Symbol pname = Symbol(o[2]->as_checked<String>()->value_get());
-      rUVar v = self->slot_get_value(vname)->as<UVar>();
-      if (v && matchCachedProps(pname))
-        return v->call(pname);
-      else
-        return self->property_get(vname, pname);
-    };
-
-    static rObject parentHasProperty(const objects_type& o)
-    {
-      check_arg_count(o, 2);
-      Object* self = o[0];
-      Symbol vname = Symbol(o[1]->as_checked<String>()->value_get());
-      Symbol pname = Symbol(o[2]->as_checked<String>()->value_get());
-      rUVar v = self->slot_get_value(vname)->as<UVar>();
-      if (v && matchCachedProps(pname))
-        return true_class;
-      else
-        return self->property_has(vname, pname)?true_class:false_class;
-    };
-
-    static rObject parentSetProperty(const objects_type& o)
-    {
-      check_arg_count(o, 3);
-      Object* self = o[0];
-      Symbol vname = Symbol(o[1]->as_checked<String>()->value_get());
-      Symbol pname = Symbol(o[2]->as_checked<String>()->value_get());
-      rUVar v = self->slot_get_value(vname)->as<UVar>();
-      if (v && matchCachedProps(pname))
-        return v->slot_update(pname, o[3]);
-      else
-        return self->property_set(vname, pname, o[3]);
-    };
-
     unsigned int
     UVar::notifyChange_(rObject function)
     {
@@ -216,7 +169,7 @@ namespace urbi
         ::urbi::uobjects::StringPair p = ::urbi::uobjects::uname_split(name);
         if (rObject o = uobjects::get_base(p.first))
         {
-          return o->slot_get_value(libport::Symbol(p.second), false);
+          return o->slot_get(libport::Symbol(p.second), false);
         }
       }
       catch (const UrbiException& e)
@@ -231,8 +184,7 @@ namespace urbi
     }
 
     UVar::UVar()
-      : Primitive(boost::function1<rObject, objects_type>
-                  (boost::bind(&UVar::accessor, this, _1)))
+      : Slot()
       , changeConnections(new List)
       , rangemin(-std::numeric_limits<libport::ufloat>::infinity())
       , rangemax(std::numeric_limits<libport::ufloat>::infinity())
@@ -242,15 +194,15 @@ namespace urbi
       , inAccess_(false)
       , waiterCount_(0)
       , owned(false)
-      , changed_(0)
     {
-      proto_add(proto ? rPrimitive(proto) : Primitive::proto);
+      proto_add(proto ? rSlot(proto) : Slot::proto);
       slot_set_value(SYMBOL(waiterTag), new Tag());
+      get_set(primitive(&UVar::accessor));
+      set_set(primitive(&UVar::update_));
     }
 
     UVar::UVar(libport::intrusive_ptr<UVar>)
-      : Primitive(boost::function1<rObject, const objects_type&>
-                  (boost::bind(&UVar::accessor, this, _1)))
+      : Slot()
       , changeConnections(new List)
       , rangemin(-std::numeric_limits<libport::ufloat>::infinity())
       , rangemax(std::numeric_limits<libport::ufloat>::infinity())
@@ -260,38 +212,23 @@ namespace urbi
       , inAccess_(false)
       , waiterCount_(0)
       , owned(false)
-      , changed_(0)
     {
-      proto_add(proto ? rPrimitive(proto) : Primitive::proto);
+      proto_add(proto ? rSlot(proto) : Slot::proto);
       slot_set_value(SYMBOL(waiterTag), new Tag());
-    }
-
-    static rObject
-    uvar_update_bounce(objects_type args)
-    {
-      //called with self slotname slotval
-      check_arg_count(args, 2);
-      rObject uv = args.front()
-        ->slot_get_value(libport::Symbol(args[1]->as<String>()->value_get()));
-
-      libport::intrusive_ptr<UVar> rvar = uv->as<UVar>();
-      if (!rvar)
-        RAISE("UVar updatehook called on non-uvar slot");
-      rvar->update_(args[2]);
-      return void_class;
+      get_set(primitive(&UVar::accessor));
+      set_set(primitive(&UVar::update_));
     }
 
     URBI_CXX_OBJECT_INIT(UVar)
-      : Primitive(boost::function1<rObject, objects_type>
-                    (boost::bind(&UVar::accessor, this, _1)))
+      : Slot()
       , looping_(false)
       , inAccess_(false)
     {
       BIND(accessor);
       BIND(changeConnections);
-      BIND(changed, changed_get);
       BIND(initialName);
       BIND(loopCheck);
+      bind("n", &UVar::normalized, &UVar::normalized_set);
       BIND(notifyAccess_);
       BIND(notifyChangeOwned_);
       BIND(notifyChange_);
@@ -308,11 +245,6 @@ namespace urbi
       BIND(val);
       BIND(valsensor);
       BIND(writeOwned);
-
-      slot_set_value(SYMBOL(parentGetProperty), new Primitive(&parentGetProperty));
-      slot_set_value(SYMBOL(parentSetProperty), new Primitive(&parentSetProperty));
-      slot_set_value(SYMBOL(parentHasProperty), new Primitive(&parentHasProperty));
-      slot_set_value(SYMBOL(updateBounce), new Primitive(&uvar_update_bounce));
     }
 
     rObject
@@ -345,7 +277,7 @@ namespace urbi
       bool loopChecker = !looping_
           &&
           (!change_.empty()
-           || (changed_ && changed_get()->hasSubscribers())
+           || (changed_get() && changed_get()->as<Event>()->hasSubscribers())
            ||!changeConnections->empty()
            )
           && !access_.empty();
@@ -401,7 +333,7 @@ namespace urbi
       // Prevent loopback notification on the remote who called us.
       if (!r->slot_has(SYMBOL(DOLLAR_uobjectInUpdate)))
         r->slot_set_value(SYMBOL(DOLLAR_uobjectInUpdate),
-                    slot_get_value(SYMBOL(fullName)));
+                    call(SYMBOL(fullName)));
       update_timed_(val, timestamp);
       r->slot_remove(SYMBOL(DOLLAR_uobjectInUpdate));
       return void_class;
@@ -438,9 +370,10 @@ namespace urbi
       {
         checkBypassCopy();
         bool isIn = libport::has(inChange_, &r);
-        GD_FINFO_DUMP("update calling notify if %s", isIn);
+        GD_FINFO_DUMP("update calling notify if %s", !isIn);
         if (!isIn)
         {
+          GD_FINFO_DUMP("  %s notifies", change_.size());
           inChange_.push_back(&r);
           FINALLY(((std::vector<void*>&, inChange_))
                   ((runner::Job&, r)),
@@ -453,17 +386,20 @@ namespace urbi
                   }
                   );
           callNotify(r, rUVar(this), change_);
+          GD_FINFO_DUMP("  %s connections",
+                        changeConnections->value_get().size());
           callConnections(r, rObject(this), changeConnections);
         }
-        changed();
+        if (changed_get())
+          changed_get()->as<object::Event>()->emit();
       }
       return val;
     }
 
     rObject
-    UVar::accessor(const objects_type&)
+    UVar::accessor()
     {
-      URBI_AT_HOOK(changed);
+      URBI_AT_HOOK_(changed);
       return getter(false);
     }
 
@@ -521,7 +457,8 @@ namespace urbi
       checkBypassCopy();
       callNotify(r, rUVar(this), change_);
       callConnections(r, rObject(this), changeConnections);
-      changed();
+      if (changed_get())
+        changed_get()->as<object::Event>()->emit();
       return newval;
     }
 
@@ -559,9 +496,28 @@ namespace urbi
       return false;
     }
 
-    /*
-      SYMBOL(changed)
-    */
-    URBI_ATTRIBUTE_ON_DEMAND_IMPL(UVar, Event, changed);
+    float
+    UVar::normalized()
+    {
+      if (!std::isfinite(rangemin) || !std::isfinite(rangemax))
+        FRAISE("ranges are not finite");
+      rObject value = accessor();
+      if (rFloat rf = value->as<Float>())
+      {
+        ufloat f = rf->value_get();
+        return (f - rangemin) / (rangemax - rangemin);
+      }
+      else
+        FRAISE("Value is not a float");
+    }
+
+    void
+    UVar::normalized_set(float v)
+    {
+      if (!std::isfinite(rangemin) || !std::isfinite(rangemax))
+        FRAISE("ranges are not finite");
+      ufloat tv = v*(rangemax-rangemin) + rangemin;
+      update_(to_urbi(tv));
+    }
   }
 }

@@ -12,8 +12,8 @@
  *  be passed to Python's eval function for instance.
  */
 
-var Float.asPython = Float.&asPrintable;
-var String.asPython = String.&asPrintable;
+var Float.asPython = Float.getSlotValue("asPrintable");
+var String.asPython = String.getSlotValue("asPrintable");
 var true.asPython = "True";
 var false.asPython = "False";
 var nil.asPython = "None";

@@ -90,6 +90,7 @@ requireFile("urbi/require-file.u");
 `----------*/
 
 "Initializing uobjects NOW";
+
 requireFile("urbi/uobject.u");
 
 if ("ros" in Platform.enabledModules && System.getenv("ROS_ROOT"))
@@ -105,7 +106,7 @@ if (!System.Platform.compilationModeSpace)
   requireFile("urbi/process.u");
   requireFile("urbi/regexp.u");
 };
-
+systemFiles = []|
 Channel.topLevel.enabled = true |
 System.defaultIsSystem = false |
 // Used by initialization code to detect the end of urbi.u.

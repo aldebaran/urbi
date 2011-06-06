@@ -62,6 +62,7 @@ using object::rPath;
 //using object::Path;
 using object::rEvent;
 using object::rObject;
+using object::rUVar;
 using object::rLobby;
 using object::objects_type;
 using object::void_class;
@@ -74,6 +75,95 @@ namespace urbi
 {
   namespace impl
   {
+    /* Link between UObject and associated object::Object.
+     * When instanciated from urbiscript, we do not hold a ref count,
+     * so that destruction is possible from urbiscript.
+     * But when instanciated from C++, we do
+     */
+    /// Link to an rObject, refcounted or not
+    class Link
+    {
+    public:
+      Link()
+      : norefPtr(0)
+      , isRef (false)
+      , uobject(0)
+      {
+      }
+      Link(object::Object* target, bool refCount, urbi::UObject* uob)
+      : norefPtr(0)
+      , isRef (refCount)
+      , uobject(uob)
+      {
+        set(target, refCount);
+      }
+      void set(object::Object* target, bool refCount)
+      {
+        isRef = refCount;
+        if (refCount)
+          refPtr = target;
+        else
+          norefPtr = target;
+      }
+      void setUObject(UObject* o)
+      {
+        uobject = o;
+      }
+      void operator = (const Link& b)
+      {
+        set(b.isRef?b.refPtr.get():b.norefPtr, b.isRef);
+        uobject = b.uobject;
+      }
+      bool operator == (const Link& b) const
+      {
+        return uobject->__name == b.uobject->__name;
+      }
+      // Downgrade from refcounted to not-refcounted.
+      void deref()
+      {
+        if (isRef)
+        {
+          norefPtr = refPtr.get();
+          refPtr = 0;
+          isRef = false;
+        }
+      }
+      void ref()
+      {
+        if (!isRef)
+        {
+          refPtr = norefPtr;
+          norefPtr = 0;
+          isRef = true;
+        }
+      }
+      void resetPtr()
+      {
+        norefPtr = 0;
+        refPtr = 0;
+      }
+      void resetUObject()
+      {
+        uobject = 0;
+      }
+      UObject* getUObject()
+      {
+        return uobject;
+      }
+      object::Object* getRef()
+      {
+        return isRef?refPtr.get():norefPtr;
+      }
+    private:
+      object::Object* norefPtr;
+      object::rObject refPtr;
+      bool isRef;
+      urbi::UObject* uobject;
+    };
+
+
+    typedef boost::unordered_map<std::string, Link> ObjectLinks;
+
     class KernelUContextImpl: public UContextImpl
     {
     public:
@@ -140,6 +230,7 @@ namespace urbi
       virtual void setUpdate(ufloat period);
       virtual bool removeTimer(TimerHandle h);
       virtual ~KernelUObjectImpl();
+      std::string bareName() const;
     private:
       UObject* owner_;
       friend class KernelUGenericCallbackImpl;
@@ -169,6 +260,7 @@ namespace urbi
       virtual void useRTP(bool enable);
       virtual void setInputPort(bool enable);
       object::rUVar ruvar() { return ruvar_;}
+      void initialize(UVar* owner, object::rUVar uvar);
     private:
       libport::Lockable asyncLock_; // lock for pending_
       /* Schedule an operation to be executed by the main thread, preventing
@@ -210,26 +302,36 @@ namespace urbi
       /// The connection we implicitly created or 0.
       object::rUConnection connection_;
       /// Input port the notify was redirected to, or empty
-      std::string inportName_;
+      object::rUVar inPort_;
       friend class KernelUObjectImpl;
       friend class KernelUVarImpl;
     };
   }
 }
 
+using urbi::impl::ObjectLinks;
+
+static ObjectLinks& get_object_links()
+{
+  static ObjectLinks* v = new ObjectLinks();
+  return *v;
+}
 // Where to store uobjects
 static rObject where;
-typedef boost::unordered_map<std::string, urbi::UObject*> uobject_to_robject_type;
-static uobject_to_robject_type uobject_to_robject;
+// List of already initialized instances.
 static std::set<void*> initialized;
+// Tracke mode
 static bool trace_uvars = 0;
 static libport::file_library uobjects_path;
+
+// Link between rObject and UObject.
+static ObjectLinks& object_links = get_object_links();
+static libport::Lockable object_links_lock;
+
+
 using urbi::uobjects::get_base;
 using urbi::uobjects::uname_split;
 using urbi::uobjects::StringPair;
-
-// No rObject here as we do not want to prevent object destruction.
-static boost::unordered_map<std::string, object::Object*> uobject_map;
 
 static void setTrace(rObject, bool v)
 {
@@ -250,7 +352,7 @@ namespace
 }
 
 
-// Object,method names of last call
+// Object,method names of last call, using for operation tracing
 static std::vector<std::pair<std::string, std::string> > bound_context;
 
 #define MAKE_VOIDCALL(ptr, cls, meth)                   \
@@ -266,6 +368,8 @@ static std::vector<std::pair<std::string, std::string> > bound_context;
     throw std::runtime_error("Current thread is not main thread")
 #endif
 
+/* Statistics gathering about UObject function call time.
+ */
 namespace Stats
 {
   struct Value
@@ -413,6 +517,16 @@ static void delete_uvar(urbi::UVar* v)
   delete v;
 }
 
+static std::vector<std::string> all_uobjects(rObject)
+{
+  libport::BlockLock bl(object_links_lock);
+  std::vector<std::string> res;
+  for (ObjectLinks::iterator i = object_links.begin(); i!= object_links.end();
+       ++i)
+    res << i->first;
+  return res;
+}
+
 static rObject
 wrap_ucallback_notify(const object::objects_type& ol,
                       urbi::UGenericCallback* ugc,
@@ -433,8 +547,15 @@ wrap_ucallback_notify(const object::objects_type& ol,
   // Decide whether we use the closed UVar, or the one given in arguments.
   bool useArgVar = ol.size() > 1 && !impl.useClosedVar_;
   if (useArgVar)
-    l[0].storage = new urbi::UVar
-      (object::from_urbi<std::string>(ol[1]->call(SYMBOL(fullName))));
+  {
+    urbi::UVar* v = new urbi::UVar;
+    urbi::impl::KernelUVarImpl* vi = new urbi::impl::KernelUVarImpl();
+    vi->initialize(v, ol[1]->as<object::UVar>());
+    v->impl_ = vi;
+    l[0].storage = v;
+    // new urbi::UVar
+    //  (object::from_urbi<std::string>(ol[1]->call(SYMBOL(fullName))));
+  }
   else
     l[0].storage = ugc->target;
   libport::utime_t t = libport::utime();
@@ -631,16 +752,30 @@ uobject_clone(const object::objects_type& l)
 static rObject
 uobject_finalize(const object::objects_type& args)
 {
+  // The object::Object associated with an UObject is being destroyed.
   rObject o = args.front();
   std::string objName =
   o->slot_get_value(SYMBOL(__uobjectName))->as<object::String>()->value_get();
-  // FIXME: uobject_to_robject[objName] should be enough
-  urbi::UObject* uob = urbi::impl::KernelUContextImpl::instance()
-    ->getUObject(objName);
-  if (!uob)
-    FRAISE("uobject_finalize: No uobject by the name of %s found", objName);
-  delete uob;
-  urbi::impl::KernelUContextImpl::instance()->objects.erase(objName);
+  // Call the finalizer part written in urbiscript.
+  o->call(SYMBOL(defaultFinalize));
+  libport::BlockLock bl(object_links_lock);
+  ObjectLinks::iterator i = object_links.find(objName);
+  if (i == object_links.end())
+  {
+    GD_FERROR("Dying object %s is not referenced", objName);
+    return object::void_class;
+  }
+  // Since we are dead, make us inaccessible.
+  i->second.resetPtr();
+  if (!i->second.getUObject()) // UObject already removed.
+  {
+    GD_FINFO_TRACE("uobjects_link removing %s", objName);
+    object_links.erase(i);
+  }
+  else
+  {
+    delete i->second.getUObject();
+  }
   return object::void_class;
 }
 
@@ -674,9 +809,21 @@ static void writeFromContext(const std::string& ctx,
   rObject o = get_base(p.first);
   if (!o)
     runner::raise_lookup_error(libport::Symbol(varName), object::global_class);
-  o->slot_get_value(Symbol(p.second))->call(SYMBOL(update_timed), ov,
+  o->slot_get(Symbol(p.second))->call(SYMBOL(update_timed), ov,
                                       object::to_urbi(libport::utime()));
   ov->invalidate();
+}
+
+static object::rObject get_robject(rObject, const std::string& s)
+{
+  libport::BlockLock bl(object_links_lock);
+  ObjectLinks::iterator i = object_links.find(s);
+  if (i != object_links.end())
+    return i->second.getRef();
+  rObject res = object::global_class->slot_get_value(libport::Symbol(s), false);
+  if (res)
+    return res;
+  return object::void_class;
 }
 
 namespace urbi
@@ -836,20 +983,18 @@ namespace urbi
       UObject* res = UContextImpl::getUObject(n);
       if (res)
         return res;
-      /// But those below cannot.
-      if (server().isAnotherThread())
-        return 0;
-      uobject_to_robject_type::iterator it = uobject_to_robject.find(n);
-      if (it != uobject_to_robject.end())
-        return it->second;
-      rObject r = get_base(n);
-      if (!r)
-        return 0;
-      std::string name =
-        object::from_urbi<std::string>(r->slot_get_value(SYMBOL(__uobjectName)));
-      if (name == n)
-        return 0;
-      return getUObject(name);
+      size_t p = n.find_last_of('.');
+      if (p != n.npos)
+        res = getUObject(n.substr(p+1, n.npos));
+      if (res)
+        return res;
+      libport::BlockLock bl(object_links_lock);
+
+      ObjectLinks::iterator i = object_links.find(n);
+      if (i!= object_links.end())
+        return i->second.getUObject();
+      GD_FINFO_TRACE("getUObject failed for %s", n);
+      return 0;
     }
 
     void
@@ -882,6 +1027,7 @@ namespace urbi
                                            v1, v2, v3, v4, v5, v6));
         return;
       }
+      GD_FINFO_DUMP("Call %s.%s", object, method);
       rObject b = xget_base(object);
       object::objects_type args;
       args << b;
@@ -1128,6 +1274,7 @@ namespace urbi
     void
     KernelUObjectImpl::initialize(UObject* owner)
     {
+      GD_FINFO_TRACE("Initializing %s: %s", owner, owner->__name);
       if (server().isAnotherThread())
       {
         server().schedule_fast(
@@ -1135,20 +1282,16 @@ namespace urbi
                       owner));
         return;
       }
-      static int uid = 0;
       owner_ = owner;
       bool fromcxx = owner_->__name.empty();
-      if (fromcxx)
-        owner_->__name = "uob_plug_" + string_cast(++uid);
+      rObject r; // Must live until we call ref() on object_links's entry.
       if (fromcxx)
       {
-        rObject r = ::urbi::uobjects::uobject_new(
+        r = ::urbi::uobjects::uobject_new(
           where->slot_get_value(SYMBOL(UObject)), false, false);
-        owner->__name = r->slot_get_value(SYMBOL(__uobjectName))
-          ->as<object::String>()
-          ->value_get();
+        owner_->__name =
+        r->call(SYMBOL(__uobjectName))->as<object::String>()->value_get();
       }
-      uobject_to_robject[owner_->__name] = owner;
       owner_->ctx_->registerObject(owner);
       rObject o = get_base(owner->__name);
       if (!o)
@@ -1157,19 +1300,57 @@ namespace urbi
         o = ::urbi::uobjects::uobject_make_proto(owner->__name);
         where->slot_set_value(Symbol(owner->__name), o);
       }
+      libport::BlockLock bl(object_links_lock);
+      ObjectLinks::iterator i = object_links.find(bareName());
+      if (i == object_links.end())
+      { // uobject_new should have created the link
+        GD_ERROR("Object link not found");
+        abort();
+      }
+      i->second.setUObject(owner);
+      if (fromcxx)
+      {
+        i->second.ref();
+        assert(get_base(bareName()));
+      }
       o->slot_set_value(SYMBOL(lobby), kernel::runner().state.lobby_get());
     }
 
     void
     KernelUObjectImpl::clean()
     {
+      // The C++ UObject is getting destroyed.
       if (server().isAnotherThread())
       {
         server().schedule_fast(
           boost::bind(&KernelUObjectImpl::clean, this));
         return;
       }
-      uobject_to_robject.erase(owner_->__name);
+      libport::BlockLock bl(object_links_lock);
+      ObjectLinks::iterator i = object_links.find(bareName());
+      if (i == object_links.end())
+      {
+        GD_FERROR("Dying UObject %s is not referenced", owner_->__name);
+        return;
+      }
+      i->second.resetUObject();
+      i->second.deref();
+      if (!i->second.getRef()) // rObject already removed.
+      {
+        GD_FINFO_TRACE("uobjects_link removing %s", bareName());
+        object_links.erase(i);
+      }
+      owner_->ctx_->objects.erase(owner_->__name);
+    }
+
+    std::string
+    KernelUObjectImpl::bareName() const
+    {
+      std::string res = owner_->__name;
+      size_t pos = res.find_last_of('.');
+      if (pos != res.npos)
+        res = res.substr(pos+1, res.npos);
+      return res;
     }
 
     static
@@ -1270,18 +1451,14 @@ namespace urbi
         schedule(SYMBOL(UObject),boost::bind(&KernelUVarImpl::unnotify, this));
         return;
       }
-      GD_FINFO_TRACE("Unnotify on %s: %s callbacks", owner_->get_name(),
+      GD_FINFO_TRACE("Unnotify on %s: %s callbacks ", owner_->get_name(),
                      callbacks_.size());
       // Try to locate the target urbiscript UVar, which might be
       // gone.  In this case, callbacks are gone too.
       foreach (KernelUGenericCallbackImpl* v, callbacks_)
       {
         GD_FINFO_TRACE("Unnotify processing callback %s", v);
-        object::rUVar r;
-        if (v->inportName_.empty())
-          r = ruvar_;
-        else if (rObject o = object::UVar::fromName(v->inportName_))
-          r = o->as<object::UVar>();
+        object::rUVar r = v->inPort_?v->inPort_:ruvar_;
         if (r)
         {
           bool ok = false;
@@ -1316,7 +1493,19 @@ namespace urbi
     void
     KernelUVarImpl::initialize(UVar* owner)
     {
+      initialize(owner, 0);
+    }
+
+    void
+    KernelUVarImpl::initialize(UVar* owner, rUVar uvar)
+    {
       owner_ = owner; // set at least that even from an other thread.
+      if (uvar)
+      {
+        ruvar_ = uvar;
+        bypassMode_ = false;
+        return;
+      }
       GD_FINFO_TRACE("KernelUVarImpl::init %s", owner->get_name());
       if (server().isAnotherThread())
       {
@@ -1337,36 +1526,31 @@ namespace urbi
       owner_->owned = false;
       bypassMode_ = false;
       StringPair p = uname_split(owner_->get_name());
+      if (p.first == "@")
+      { // UVar address was passed directly.
+        std::stringstream ss;
+        ss.str(p.second);
+        void* addr;
+        ss >> addr;
+        object::UVar* v = (object::UVar*)addr;
+        ruvar_ = v;
+        return;
+      }
       rObject o = get_base(p.first);
       if (!o)
         FRAISE("UVar creation on non existing object: %s", owner->get_name());
       Symbol varName(p.second);
-      // Force kernel-side variable creation, init to void.
-      rObject initVal;
-      if (initVal = o->local_slot_get_value(varName))
+      rObject v = o->local_slot_get(varName);
+      if (v)
+        ruvar_ = v->as<object::UVar>();
+      if (!ruvar_)
       {
-        // Check if the variable exists and is an uvar.
-        if (initVal->slot_has(SYMBOL(owned)))
-        {
-          traceOperation(owner, SYMBOL(traceBind));
-          ruvar_ = o->slot_get_value(varName)->as<object::UVar>();
-          GD_FINFO_DUMP("UVar %s reusing existing object %s",
-                        owner_->get_name(),
-                        ruvar_.get());
-          return;
-        }
-        else
-          o->slot_remove(varName);
+        rObject protouvar = object::Object::proto->slot_get_value(SYMBOL(UVar));
+        ruvar_ = protouvar->call(SYMBOL(new),
+                                 o, new object::String(p.second))
+        ->as<object::UVar>();
       }
-
-      rObject protouvar = object::Object::proto->slot_get_value(SYMBOL(UVar));
-      rObject uvar = protouvar->call(SYMBOL(new),
-                                     o, new object::String(varName));
-      // If the variable existed but was not an uvar, copy its old value.
-      if (initVal)
-        o->slot_get_value(varName)->slot_update(SYMBOL(val), initVal);
       traceOperation(owner, SYMBOL(traceBind));
-      ruvar_ = uvar->as<object::UVar>();
       GD_FINFO_DUMP("Uvar %s creating new object %s.",
                     owner_->get_name(),
                     ruvar_.get());
@@ -1625,10 +1809,17 @@ namespace urbi
       std::string method = p.second;
       GD_FPUSH_DUMP("UGC %s, %s, %s, %s", owner_->type,p.first, method, owned_);
       // UObject owning the variable/event to monitor
-      rObject me = xget_base(p.first); //objname?
-      std::string traceName = trace_name(me);
+      rObject me = get_base(p.first); //objname?
+      std::string traceName;
+      if (me)
+        traceName = trace_name(me);
       if (owner_->type == "function")
       {
+        if (!me)
+        {
+          GD_FERROR("No such UObject %s" , p.first);
+          throw std::runtime_error("No such UObject " + p.first);
+        }
         traceName += "." + p.second;
         me->slot_set_value(libport::Symbol(method), new object::Primitive(
                        boost::function1<rObject, const objects_type&>
@@ -1637,6 +1828,8 @@ namespace urbi
       }
       if (owner_->type == "event")
       {
+        if (!me)
+          throw std::runtime_error("No such UObject " + p.first);
         UEvent e = UEvent(p.first, p.second); // force creation of the event
         rEvent event =
           me->slot_get_value(libport::Symbol(method))->as<object::Event>();
@@ -1657,9 +1850,27 @@ namespace urbi
             traceName += trace_name(you);
 
         // Source UVar
-        object::rUVar var =
-          me->slot_get_value(Symbol(method))->as<object::UVar>();
-        aver(var);
+        object::rUVar var;
+        if (owner_->target)
+          var = ((KernelUVarImpl*)owner_->target->impl_)->ruvar_;
+        else if (me)
+          var = me->slot_get(Symbol(method))->as<object::UVar>();
+        else if (p.first == "@")
+        {
+          void* addr;
+          std::stringstream ss;
+          ss.str(p.second);
+          ss >> addr;
+          var = (object::UVar*)addr;
+        }
+        if (!var)
+        {
+          GD_INFO_TRACE("Upgrading slot to UVar");
+          object::global_class->slot_get_value(SYMBOL(UVar))
+          ->call(SYMBOL(new), me, object::to_urbi(method));
+          var = me->slot_get(Symbol(method))->as<object::UVar>();
+          aver(var);
+        }
         rObject source = xget_base(owner_->objname);
         GD_FINFO_TRACE("UGC same source: %s (%s==%s)", source == me,
                        owner_->objname, p.first);
@@ -1671,16 +1882,19 @@ namespace urbi
             // Use the new mechanism: create an input port and use it
             std::string ipname =
               boost::replace_all_copy(owner_->name, ".", "_");
+            GD_FINFO_TRACE("UGC creating input port %s.%s",
+                           owner_->objname, ipname);
             InputPort ip(owner_->objname, ipname);
-            inportName_ = owner_->objname + "." + ipname;
-            // Retarget callback
-            var = object::UVar::fromName(owner_->objname + "." + ipname)
+            inPort_ = xget_base(owner_->objname)->slot_get(Symbol(ipname))
               ->as<object::UVar>();
+            std::string inportName_ = owner_->objname + "." + ipname;
+            // And link it with the source using a uconnection.
             object::rUConnection c
               = object::UConnection::proto
-              ->CxxObject::call(SYMBOL(new),
-                                object::UVar::fromName(owner_->name), var)
+              ->Object::call(SYMBOL(new), var, inPort_)
               ->as<object::UConnection>();
+            // Retarget callback on our own input port we just created
+            var = inPort_;
             connection_ = c;
             useClosedVar_ = true;
             GD_FINFO_TRACE("UGC %s using UConnection backend %s.", this,
@@ -1748,32 +1962,41 @@ namespace urbi
   namespace uobjects
   {
 
-    /** Find an UObject from its name.
-
-        The UObject class expects to know the variable name, i.e. a =
-        new b; should pass a to b's corresponding UObject ctor. Since
-        we don't have this information, we create a unique string, pass
-        it to the ctor, and store it in a.
-
-        But the user can create UVars based on the variable name it
-        knows about, i.e. a.val. So get_base must look in its uid map,
-        and if it finds nothing, look for an Urbi variable with given
-        name. We expect all UObjects to be created in Global.  */
+    /** Find an UObject from its name passed to us by the user using one of
+     * the UObject API calls.
+     * We look for it in our mapping tables, in case the user used
+     * 'name_get()' on an UObject, and also for Global objects
+     * (which includes GSRAPI short names).
+     */
     rObject
     get_base(const std::string& objname)
     {
-      rObject res = libport::find0(uobject_map, objname);
-      object::Object::location_type s;
-      // The user may be using the Urbi variable name.
-      if (!res)
+      libport::BlockLock bl(object_links_lock);
+      ObjectLinks::iterator i = object_links.find(objname);
+      if (i != object_links.end())
       {
-        res = object::global_class->slot_get_value(libport::Symbol(objname),
-                                                 false);
+        rObject res(i->second.getRef());
+        if (!res)
+          GD_FWARN("get_base: entry present but empty for %s", objname);
+        return res;
       }
+      size_t p = objname.find_last_of('.');
+      // Try with last component.
+      if (p != objname.npos)
+      {
+        rObject res = get_base(objname.substr(p+1, objname.npos));
+        if (res)
+          return res;
+      }
+      GD_FINFO_TRACE("get_base falling back to getSlot for %s", objname);
+      rObject res =
+        object::global_class->slot_get_value(libport::Symbol(objname),
+                                             false);
       if (!res)
       {
         res = where->slot_get_value(libport::Symbol(objname), false);
       }
+      GD_FINFO_TRACE("get_base: %s", res);
       return res;
     }
 
@@ -1787,9 +2010,16 @@ namespace urbi
       where = args.front();
       where->slot_set_value(SYMBOL(setTrace), object::primitive(&setTrace));
       uobjects_reload();
-      where->slot_set_value(SYMBOL(getStats),    object::primitive(&Stats::get));
-      where->slot_set_value(SYMBOL(clearStats),  object::primitive(&Stats::clear));
-      where->slot_set_value(SYMBOL(enableStats), object::primitive(&Stats::enable));
+      where->slot_set_value(SYMBOL(getStats),
+                            object::primitive(&Stats::get));
+      where->slot_set_value(SYMBOL(clearStats),
+                            object::primitive(&Stats::clear));
+      where->slot_set_value(SYMBOL(enableStats),
+                            object::primitive(&Stats::enable));
+      where->slot_set_value(SYMBOL(allUObjects),
+                            object::primitive(&all_uobjects));
+      where->slot_set_value(SYMBOL(getUObject),
+                            object::primitive(&get_robject));
       Global->slot_set_value(SYMBOL(uvalueDeserialize), primitive(&uvalue_deserialize));
 
       where->bind(SYMBOL(searchPath),    &uobject_uobjectsPath,
@@ -1851,12 +2081,20 @@ namespace urbi
         std::stringstream ss;
         ss << "uob_" << res.get();
         name = ss.str();
-        /* We need to make this name accessible in urbi in case the UObject code
-           emits urbi code using this name.*/
-        where->slot_set_value(libport::Symbol(name), res);
       }
-      uobject_map[name] = res.get();
       res->slot_set_value(SYMBOL(__uobjectName), object::to_urbi(name));
+      {
+        libport::BlockLock bl(object_links_lock);
+        ObjectLinks::iterator i = object_links.find(name);
+        if (i == object_links.end())
+        {
+          std::cerr <<"pushing " << name << " " << res << std::endl;
+          object_links[name] = urbi::impl::Link(res.get(), false, 0);
+          assert(get_base(name));
+        }
+        else
+          i->second.set(res, false);
+      }
       res->call(SYMBOL(uobjectInit));
       // Instanciate UObject.
       if (instanciate)
@@ -1865,7 +2103,8 @@ namespace urbi
           {
             bound_context.push_back(std::make_pair(name, name + ".new"));
             FINALLY(((std::string, name)), bound_context.pop_back());
-            i->instanciate(urbi::impl::KernelUContextImpl::instance(), name);
+            i->instanciate(urbi::impl::KernelUContextImpl::instance(),
+                           forceName?name:("getUObject." + name));
             return res;
           }
       return res;
@@ -1888,9 +2127,8 @@ namespace urbi
         StringPair p = uname_split(name);
         GD_FINFO_TRACE("UEM_ASSIGNVALUE %s %s", name, val);
         object::rUValue ov(new object::UValue(val));
-        object::global_class
-          ->slot_get_value(Symbol(p.first))
-          ->slot_get_value(Symbol(p.second))
+        rObject o = xget_base(p.first);
+        o->slot_get(Symbol(p.second))
           ->call(SYMBOL(update_timed), ov, object::to_urbi(time));
       }
       break;

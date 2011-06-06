@@ -111,14 +111,14 @@ class Global.Tuple : Global.RangeIterable, Global.Container
                                     size)|
         var m = args |
         m += m.range(size - m.size) |
-        Tuple.&init.apply([this, m])
+        Tuple.getSlotValue("init").apply([this, m])
       };
 
       var idx = 0;
       for (var name: names.range(size))
       {
         var n = idx;
-        setSlot(name, function () { members[n] });
+        setSlotValue(name, function () { members[n] });
         setProperty(name, "updateHook",
           function (name, val) {
             // Copy members if needed before altering it
@@ -130,7 +130,7 @@ class Global.Tuple : Global.RangeIterable, Global.Container
         idx++;
       };
     };
-    Global.setSlot(name, Res);
+    Global.setSlotValue(name, Res);
   };
 
   makeTupleClass("Pair", 2);

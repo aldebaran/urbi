@@ -50,6 +50,7 @@ namespace urbi
 
       Slot();
       Slot(const Slot& model);
+      Slot(rSlot model);
       template <typename T>
       Slot(const T& value);
       ~Slot();
@@ -69,7 +70,7 @@ namespace urbi
       Object* operator->();
       const Object* operator->() const;
       rObject value(Object* sender = 0) const;
-
+      rObject init();
       /*-------------.
       | Properties.  |
       `-------------*/
@@ -98,6 +99,7 @@ namespace urbi
     protected:
       ATTRIBUTE_RW(rObject, changed);
       ATTRIBUTE_RW(bool, constant);
+      ATTRIBUTE_RW(bool, copyOnWrite);
       // Slot getter hook: val slot.get()
       ATTRIBUTE_RW(rObject, get);
       // Slot setter hook: slot.set(val)

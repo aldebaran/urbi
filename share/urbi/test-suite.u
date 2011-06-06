@@ -123,7 +123,7 @@ do (Global)
     {
       res << "\\item[%s]%s%%"
              % [{ if (i.isAlnum) i else "'%s'" % i },
-                { if (getSlot(i).isA(&Primitive)) "(<arg>)" else "" }];
+                { if (getSlotValue(i).isA(getSlotValue("Primitive"))) "(<arg>)" else "" }];
       res << "\\begin{urbiassert}";
       res << "";
       res << "\\end{urbiassert}";

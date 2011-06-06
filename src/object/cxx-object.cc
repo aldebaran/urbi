@@ -44,12 +44,12 @@ namespace urbi
         std::string ns = name.substr(0, dot);
         name = name.substr(dot + 1);
         if (res->hasLocalSlot(ns))
-          res = res->getSlot(ns);
+          res = res->getSlotValue(ns);
         else
         {
           ::urbi::object::rObject o = new ::urbi::object::Object;
           o->proto_add(::urbi::object::Object::proto);
-          o->setSlot(SYMBOL(asString), to_urbi(ns));
+          o->setSlotValue(SYMBOL(asString), to_urbi(ns));
           res = res->setSlot(ns, o);
         }
       }
