@@ -820,7 +820,13 @@ namespace urbi
     rObject
     Object::getSlot(key_type name)
     {
-      return slot_get(name);
+      location_type r = slot_locate(name, true);
+      if (rSlot s = r.second->as<Slot>())
+        return s;
+      // Convert it to a slot.
+      rSlot s(new Slot(r.second));
+      slots_.set(r.first, name, s, true);
+      return s;
     }
 
     rObject
