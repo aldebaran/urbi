@@ -13,7 +13,7 @@
 #include <libport/preproc.hh>
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
-
+#include <urbi/uvalue.hh>
 #include <libport/cassert>
 
 namespace urbi
