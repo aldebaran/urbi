@@ -194,8 +194,13 @@ namespace urbi
       rObject slot_get(key_type k) const;
       Slot& slot_get(key_type k);
 
+      /// Implement low-level copy-on-write.
+      /// \param name	The slot to update.
+      /// \param slot	The original slot.
+      /// \return  The newly created slot.
+      Slot& slot_copy_on_write(key_type name, const Slot& slot);
+
       /// Implement copy-on-write if the owner of the scope is not this.
-      /// \param r        Runner to run the updateHook.
       /// \param k	The slot to update
       /// \param o	The new value
       /// \param hook	Whether to trigger the potential updateHook

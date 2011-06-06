@@ -274,8 +274,15 @@ namespace urbi
     Object&
     Object::slot_copy(key_type name, const rObject& from)
     {
-      this->slot_set(name, from->slot_get(name), redefinition_mode());
-      return *this;
+      return this->slot_set(name, from->slot_get(name), redefinition_mode());
+    }
+
+    Slot&
+    Object::slot_copy_on_write(key_type name, const Slot& slot)
+    {
+      Slot* cow = new Slot(slot);
+      slot_set(name, cow);
+      return *cow;
     }
 
     bool
@@ -334,10 +341,7 @@ namespace urbi
       }
       else
       {
-        // Here comes the cow
-        Slot* slot = new Slot(s);
-        *slot = v;
-        slot_set(k, slot);
+        slot_copy_on_write(k, s) = v;
       }
       return v;
     };
@@ -393,8 +397,9 @@ namespace urbi
                          const rObject& value)
     {
       // CoW
+      // FIXME: We are not running the updateHook etc.
       if (safe_slot_locate(k).first != this)
-        slot_set(k, &slot_get(k));
+        slot_copy_on_write(k, slot_get(k));
       Slot& slot = slot_get(k);
       if (slot.property_set(p, value)
           && slot->slot_has(SYMBOL(newPropertyHook)))

@@ -554,6 +554,27 @@ o.setProperty("noSuchSlot", "prop", "12");
 [00000081:error] !!! lookup failed: noSuchSlot
 \end{urbiassert}
 
+  In order to respect copy-on-write semantics, when a property is added to
+  an inherited slot, the slot value is first copied.
+
+\begin{urbiassert}
+var top = Object.new;
+var top.x = "top";
+var bot = top.new;
+
+// bot.x is inherited from top.
+bot.locateSlot("x") === top;
+
+// Setting the property from bot's point of view detaches bot.x from
+// top.x.
+bot.x->myProperty = "irrelevant";
+bot.locateSlot("x") === bot;
+bot.x  == top.x;
+bot.x === top.x;
+// top.x and bot.x are detached.
+top.x  = "new top";
+bot.x == "top";
+\end{urbiassert}
 
 \item[setProtos](<protos>)%
   Set the list of prototypes of \this to \var{protos}.  Return
