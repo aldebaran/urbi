@@ -229,9 +229,7 @@ namespace urbi
           {
             FINALLY(((runner::Job*, r)), r->dependencies_log_set(true));
             r->dependencies_log_set(false);
-            GD_CATEGORY(Urbi.At);
-            e = static_cast<Event*>
-              (res->property_get(SYMBOL(changed)).get());
+            e = static_cast<Event*>(res->property_get(SYMBOL(changed)).get());
           }
           r->dependency_add(e);
         }
@@ -295,9 +293,9 @@ namespace urbi
     Object::slot_update(key_type k, const rObject& o,
                         bool hook)
     {
-      // The updated slot
+      // The updated slot.
       Slot& s = slot_get(k);
-      // Value to write to the slot
+      // Value to write to the slot.
       rObject v = o;
 
       // If the current value in the slot to be written in has a slot

@@ -63,9 +63,8 @@ namespace urbi
       if (constant_)
         runner::raise_const_error();
       value_ = object::CxxConvert<T>::from(value);
-      static libport::Symbol _emit("emit");
       if (changed_)
-        changed_->call(_emit);
+        changed_->call(SYMBOL(emit));
     }
 
     template <typename T>
