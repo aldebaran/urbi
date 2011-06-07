@@ -697,7 +697,6 @@ namespace urbi
       }
     }
 
-#ifndef WIN32
     static std::string
     system_hostname()
     {
@@ -713,7 +712,6 @@ namespace urbi
       }
       return result;
     }
-#endif
 
     void
     system_class_initialize()
@@ -737,7 +735,7 @@ namespace urbi
       DECLARE(cycle);
       DECLARE(getLocale);
       DECLARE(getenv);
-      DECLARE_UNIX(hostname);
+      DECLARE(hostname);
       DECLARE(interactive);
       DECLARE(jobs);
       DECLARE(loadLibrary);
