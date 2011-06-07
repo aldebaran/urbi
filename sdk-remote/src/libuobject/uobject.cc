@@ -56,7 +56,7 @@ class HookPoint: public urbi::UObject
 {
 public:
   HookPoint(const std::string&n, urbi::impl::UContextImpl* impl)
-  : UObject(n, impl)
+    : UObject(n, impl)
   {
     UBindFunction(HookPoint, init);
   }
@@ -65,6 +65,7 @@ public:
     return 1;
   }
 };
+
 namespace urbi
 {
   UObjectMode running_mode()
@@ -718,7 +719,7 @@ namespace urbi
         {
           // Get first UVarImpl to get pointers to val and timestamp
           RemoteUVarImpl* vimpl =
-          static_cast<RemoteUVarImpl*>(us->front()->impl_);
+            static_cast<RemoteUVarImpl*>(us->front()->impl_);
           val = vimpl->value_;
           timestamp = vimpl->timestamp_;
         }

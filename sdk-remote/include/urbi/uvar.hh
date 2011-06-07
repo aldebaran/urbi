@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2010, 2011, Gostai S.A.S.
+ * Copyright (C) 2007-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -18,6 +18,7 @@
 # include <libport/fwd.hh>
 # include <libport/ufloat.hh>
 
+# include <urbi/fwd.hh>
 # include <urbi/ucontext.hh>
 # include <urbi/uvalue.hh>
 # include <urbi/uprop.hh>
@@ -136,10 +137,7 @@ namespace urbi
     void setProp(UProperty prop, const UValue& v);
     void setProp(UProperty prop, ufloat v);
     void setProp(UProperty prop, const char* v);
-    void setProp(UProperty prop, const std::string& v)
-    {
-      setProp(prop, v.c_str());
-    }
+    void setProp(UProperty prop, const std::string& v);
 
     /// Enable bypass-mode for this UVar. Plugin-mode only.
     /// In bypass mode, if the UVar contains binary data, the data is never

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2011, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -21,12 +21,24 @@
 
 namespace urbi
 {
+  namespace impl
+  {
+    class RemoteUContextImpl;
+    class RemoteUVarImpl;
+    class UContextImpl;
+    class UGenericCallbackImpl;
+    class UObjectImpl;
+    class UVarImpl;
+  }
+
+  class InputPort;
   class UAbstractClient;
   class UBinary;
   class UCallbackInterface;
   class UCallbackList;
   class UCallbackWrapper;
   class UClient;
+  class UContext;
   class UEvent;
   class UGenericCallback;
   class UImage;
@@ -40,24 +52,16 @@ namespace urbi
   class UValue;
   class UVar;
   class UVardata;
+  class UVariable;
+  class baseURBIStarter;
+  class baseURBIStarterHub;
 
   typedef std::list<UObject*> UObjectList;
 
-  URBI_SDK_API std::string getClientConnectionID(const UAbstractClient* cli);
+  URBI_SDK_API std::string getClientConnectionID(const UAbstractClient* c);
   URBI_SDK_API UClient* getDefaultClient();
 
-  class UVariable;
-  class UContext;
-  namespace impl
-  {
-    class UContextImpl;
-    class UObjectImpl;
-    class UVarImpl;
-    class UGenericCallbackImpl;
-  }
   typedef boost::shared_ptr<std::string> TimerHandle;
-  class baseURBIStarter;
-  class baseURBIStarterHub;
 };
 
 #endif //! URBI_FWD_HH

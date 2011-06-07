@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2007-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -18,12 +18,6 @@
 
 namespace urbi
 {
-  inline
-  UVar::operator bool() const
-  {
-    return static_cast<int>(*this) != 0;
-  }
-
   inline
   UVar::UVar()
     : owned(false)
@@ -44,6 +38,12 @@ namespace urbi
     init(objname + '.' + varname, ctx);
   }
 
+
+  inline
+  UVar::operator bool() const
+  {
+    return static_cast<int>(*this) != 0;
+  }
 
   inline
   void
@@ -144,6 +144,10 @@ namespace urbi
     return new UBinary(static_cast<const UBinary&>(*this));
   }
 
+  /*-------------.
+  | Properties.  |
+  `-------------*/
+
   inline void UVar::setProp(UProperty prop, const UValue &v)
   {
     check();
@@ -155,6 +159,11 @@ namespace urbi
     check();
     UValue tv(v);
     impl_->setProp(prop, tv);
+  }
+
+  inline void UVar::setProp(UProperty prop, const std::string& v)
+  {
+    setProp(prop, v.c_str());
   }
 
   inline void UVar::setProp(UProperty prop, ufloat v)
