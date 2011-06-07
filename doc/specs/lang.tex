@@ -2032,6 +2032,19 @@ two->constant;
 [00000038] true
 \end{urbiscript}
 
+When a slot is declared constant, copy-on-write does not apply (see
+\refSlot[Object]{updateSlot}).
+
+\begin{urbiscript}
+class Top
+{
+  const var x = 1;
+}|;
+var t = Top.new|;
+t.x = 2;
+[00000047:error] !!! cannot modify const slot
+\end{urbiscript}
+
 
 
 \subsection{Prototypes}

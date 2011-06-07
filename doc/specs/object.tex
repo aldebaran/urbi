@@ -654,6 +654,52 @@ Object.updateSlot("one", 2) == 2;
 Object.one                  == 2;
 \end{urbiassert}
 
+  Implements \dfn{copy-on-write}, i.e., when updating an inherited slot,
+  first copy this slot in \this.
+
+\begin{urbiassert}
+var top = Object.new;
+var top.x = 123;
+var bot = top.new;
+// x is inherited.
+bot.locateSlot("x") === top;
+bot.updateSlot("x", 456) == 456;
+// x is local.
+bot.locateSlot("x") === bot;
+\end{urbiassert}
+
+  If the slot is declared constant (\autoref{sec:lang:prop:std}), updating
+  the slot is invalid, even for inherited slots.
+
+\begin{urbiscript}
+class Top
+{
+  const var x = [1];
+}|;
+// Cannot update local const slot.
+Top.updateSlot("x", [2]);
+[00007858:error] !!! cannot modify const slot
+
+// Cannot update inherited const slot.
+var bot = Top.new|;
+bot.updateSlot("x", [3]);
+[00007872:error] !!! cannot modify const slot
+\end{urbiscript}
+
+  The constant property prevents the slot from being assigned a new value,
+  it does not forbid mutable values from being modified.
+
+\begin{urbiscript}
+bot.x << 2|;
+assert
+{
+  // The slot is still inherited.
+  bot.locateSlot("x") === Top;
+  // and its associated value is updated.
+  Top.x == [1, 2];
+};
+\end{urbiscript}
+
 \item['&&'](<that>)%
   Short-circuiting logical and. If \this evaluates to true evaluate and
   return \var{that}, otherwise return \this without evaluating \var{that}.

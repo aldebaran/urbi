@@ -89,6 +89,8 @@ namespace urbi
       /// The properties hash map of this slot, or NULL if there are no
       /// property at all.
       properties_type* properties_get();
+      /// Whether is const.
+      bool constant() const;
 
 #define URBI_OBJECT_SLOT_CACHED_PROPERTY_DECLARE(R, Data, Elem)         \
         ATTRIBUTE_Rw(BOOST_PP_TUPLE_ELEM(2, 0, Elem),                   \

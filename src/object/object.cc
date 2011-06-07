@@ -316,6 +316,14 @@ namespace urbi
             return o;
         }
 
+      // Handle const here, in order to prevent COW on const, but to
+      // allow updateHook on functions.  For instance, "protos" is a
+      // function (and therefore is defined as "const"), yet, thanks
+      // to the updateHook, "protos = [Object]" does not really make
+      // the assignment.
+      if (s.constant())
+        runner::raise_const_error();
+
       // If return-value of hook is not void, write it to slot.
       if (slot_locate(k).first == this)
       {

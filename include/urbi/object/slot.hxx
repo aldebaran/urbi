@@ -49,6 +49,12 @@ namespace urbi
       set(value);
     }
 
+    inline
+    Slot::~Slot()
+    {
+      delete properties_;
+    }
+
     template <typename T>
     inline T
     Slot::get()
@@ -60,8 +66,6 @@ namespace urbi
     inline void
     Slot::set(const T& value)
     {
-      if (constant_)
-        runner::raise_const_error();
       value_ = object::CxxConvert<T>::from(value);
       if (changed_)
         changed_->call(SYMBOL(emit));
@@ -115,9 +119,10 @@ namespace urbi
     }
 
     inline
-    Slot::~Slot()
+    bool
+    Slot::constant() const
     {
-      delete properties_;
+      return constant_;
     }
   }
 }

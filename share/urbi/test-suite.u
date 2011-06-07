@@ -213,10 +213,12 @@ do (Dictionary)
 do (Directory)
 {
   var fileCreated = Event.new;
-  fileCreated.'waituntil' = function(var args[]) /* skip_if_no_inotify */
-  {
-    testSkip("requires inotify support");
-  }|;
+
+  fileCreated.overrideSlot("waituntil",
+    function /* skip_if_no_inotify */(var args[])
+    {
+      testSkip("requires inotify support");
+    });
 
   // Deterministic content.
   overrideSlot("content",
