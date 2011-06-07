@@ -76,6 +76,12 @@ namespace urbi
     return impl_->get();
   }
 
+  inline const UValue&
+  UVar::operator*() const
+  {
+    return val();
+  }
+
   inline
   void
   UVar::keepSynchronized()

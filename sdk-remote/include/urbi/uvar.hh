@@ -150,6 +150,9 @@ namespace urbi
     void useRTP(bool enable=true);
     impl::UVarImpl* impl_;
     const UValue& val() const;
+    // Alias to val().
+    const UValue& operator*() const;
+
     ATTRIBUTE_PURE
     libport::utime_t timestamp() const;
 
@@ -171,9 +174,6 @@ namespace urbi
     bool invariant() const;
     friend class impl::UVarImpl;
 
-    // C++ allows "*uvar", it makes it "*(uvar.operator UBinary*())".
-    // This operator is there to avoid this.
-    void operator*() const;
 
 /// Define an attribute and its accessors.
 # define PRIVATE(Type, Name)			\
