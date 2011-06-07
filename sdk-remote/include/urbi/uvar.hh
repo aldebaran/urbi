@@ -159,7 +159,7 @@ namespace urbi
     {
       RTP_DEFAULT, ///< Use RTP if it is the default mode
       RTP_YES,     ///< Force RTP
-      RTP_NO       ///< Do not use RTP
+      RTP_NO,      ///< Do not use RTP
     };
 
      /// Check that impl_ is set or throw a runtime error.
@@ -169,6 +169,13 @@ namespace urbi
     /// Pointer to internal data specifics.
     UVardata* vardata;
     void __init();
+    /// Check that the invariants of this class are verified.
+    bool invariant() const;
+    friend class impl::UVarImpl;
+
+    // C++ allows "*uvar", it makes it "*(uvar.operator UBinary*())".
+    // This operator is there to avoid this.
+    void operator*() const;
 
 /// Define an attribute and its accessors.
 # define PRIVATE(Type, Name)			\
@@ -199,10 +206,6 @@ namespace urbi
     /// If set, this variable will never export its content remotely.
     PRIVATE(bool, local);
 # undef PRIVATE
-
-    // Check that the invariants of this class are verified.
-    bool invariant() const;
-    friend class impl::UVarImpl;
   };
 
   /*-------------------------.
