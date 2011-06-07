@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1440 utf-8
+personal_ws-1.1 en 1442 utf-8
 aaa
 abc
 abcd
@@ -510,6 +510,7 @@ Hocquet
 hookChanged
 hostAlias
 hostCpu
+hostName
 hostOs
 hostVendor
 hpp
@@ -1267,6 +1268,7 @@ Un
 unacceptVoid
 unacceptvoid
 unadvertise
+uname
 unary
 UnaryLazy
 uncompress

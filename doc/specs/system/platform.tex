@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2009-2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -37,6 +37,14 @@ System.Platform.hostAlias.isA(String);
 \begin{urbiassert}
 System.Platform.hostCpu in ["i386", "i686", "x86_64"];
 \end{urbiassert}
+
+\item[hostName]%
+  The name of the machine, as given by the \command{uname -n} command. Unix
+  only.
+\begin{urbiunchecked}
+if (!System.Platform.isWindows)
+  assert(System.Platform.hostName == System.system("uname -n"));
+\end{urbiunchecked}
 
 \item[hostOs] The OS type of system \usdk runs on.  For instance
   \lstinline|darwin9.8.0| or \lstinline|linux-gnu| or \lstinline|mingw32|.
