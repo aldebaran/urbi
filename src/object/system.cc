@@ -698,7 +698,7 @@ namespace urbi
     }
 
     static std::string
-    system_hostname()
+    system_hostName()
     {
       static const size_t hostname_length_max = 1024;
       char result[hostname_length_max];
@@ -735,7 +735,7 @@ namespace urbi
       DECLARE(cycle);
       DECLARE(getLocale);
       DECLARE(getenv);
-      DECLARE(hostname);
+      DECLARE(hostName);
       DECLARE(interactive);
       DECLARE(jobs);
       DECLARE(loadLibrary);
