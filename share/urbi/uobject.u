@@ -358,9 +358,10 @@ do (UVar)
     var this.rtp = false |
     var this.dead = false| // I'm not dead
     this.initialName = name|
+    // Check if our parent can be found, or use the VAR mechanism.
     var this.ownerName = {
-      if (uobjects.hasSlot(parent.asString))
-        parent.asString
+      if (parent.hasLocalSlot("__uobjectName"))
+        parent.__uobjectName
       else
         "VAR"
     }|
