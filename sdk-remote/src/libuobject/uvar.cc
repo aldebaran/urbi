@@ -261,10 +261,10 @@ namespace urbi
   {
     RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
     libport::utime_t time = libport::utime();
-    if (!owner_->get_local())
-      transmit(v, time);
     // Loopback notification
     ctx->assignMessage(owner_->get_name(), v, time, bypass_);
+    if (!owner_->get_local())
+      transmit(v, time);
   }
 
   void
