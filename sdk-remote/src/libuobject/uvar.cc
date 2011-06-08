@@ -245,9 +245,13 @@ namespace urbi
     URBI_SEND_COMMA_COMMAND_C
       (*outputStream,
        libport::format
-       ("detach('external'.monitorRTP(%s, %s, closure() {'external'.failRTP}))|"
-        "%s.receiveVar(\"%s\")",
-        linkName, rLinkName, rLinkName, varname));
+       ("detach('external'.monitorRTP(%s, %s, closure() {'external'.failRTP}))",
+        linkName, rLinkName));
+    // If link is not the shared link which uses group mode, set target.
+    if (varname != "_shared_")
+       URBI_SEND_COMMA_COMMAND_C
+       (*outputStream, libport::format("%s.receiveVar(\"%s\")",
+                                       rLinkName, varname));
     rtpLinks[key]  = ob;
     return URBI_REMOVE;
   }
