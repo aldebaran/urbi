@@ -272,15 +272,15 @@ var b.slot = 21;
 
 // Local slot.
 b.locateSlot("slot") === b;
-b.getSlot("slot") == 21;
+b.getSlotValue("slot") == 21;
 
 // Inherited slot.
 b.locateSlot("init") === Object;
-b.getSlot("init") == Object.getSlot("init");
+b.getSlotValue("init") == Object.getSlot("init");
 
 // Unknown slot.
 b.locateSlot("ENOENT") == nil;
-b.getSlot("ENOENT");
+b.getSlotValue("ENOENT");
 [00041066:error] !!! lookup failed: ENOENT
 \end{urbiassert}
 

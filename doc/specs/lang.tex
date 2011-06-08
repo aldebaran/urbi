@@ -1351,7 +1351,7 @@ var obj.f = function() { 24 };
 
   obj.f == 24;
   obj.&f != 24;
-  obj.&f.isA(&Code);
+  obj.&f.isA(Slot);
   obj.&f === obj.getSlot("f");
 \end{urbiassert}
 
@@ -1880,14 +1880,14 @@ o.createSlot("test");
 assert
 {
   o.localSlotNames == ["test"];
-  o.&test.isVoid;
+  o.getSlotValue("test").isVoid;
 };
 
 o.updateSlot("test", 42);
 [00000000] 42
 assert
 {
-  o.&test == 42;
+  o.getSlotValue("test") == 42;
 };
 \end{urbiscript}
 
@@ -2085,22 +2085,22 @@ The following example shows how slots are inherited.
 var a = Object.new|
 var b = Object.new|
 var c = Object.new|
-a.setSlot("x", "slot in a")|
-b.setSlot("x", "slot in b")|
+a.setSlotValue("x", "slot in a")|
+b.setSlotValue("x", "slot in b")|
 // c has no "x" slot
-c.getSlot("x");
+c.getSlotValue("x");
 [00000000:error] !!! lookup failed: x
 // c can inherit the "x" slot from a.
 c.addProto(a)|
-c.getSlot("x");
+c.getSlotValue("x");
 [00000000] "slot in a"
 // b is prepended to the prototype list, and has thus priority.
 c.addProto(b)|
-c.getSlot("x");
+c.getSlotValue("x");
 [00000000] "slot in b"
 // A local slot in c has priority over prototypes.
-c.setSlot("x", "slot in c")|
-c.getSlot("x");
+c.setSlotValue("x", "slot in c")|
+c.getSlotValue("x");
 [00000000] "slot in c"
 \end{urbiscript}
 

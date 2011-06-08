@@ -24,9 +24,9 @@ object, you can simply use \lstinline{setSlot}.
 % FIXME: doesn't work, toplevel, puke, etc
 \begin{urbiscript}[firstnumber=1]
 var o = Object.clone|;
-// Here we can use f as any regular value
-o.setSlot("m1", function () { echo("Hello") })|;
-// This is strictly equivalent
+// Here we can use f as any regular value.
+o.setSlotValue("m1", function () { echo("Hello") })|;
+// This is strictly equivalent/
 var o.m2 = function () { echo("Hello") }|;
 o.m1;
 [00000000] *** Hello
@@ -51,9 +51,9 @@ function all(list, predicate)
 }|;
 // Check if all elements in a list are positive.
 function positive(x) { x >= 0 }|;
-all([1, 2, 3], getSlot("positive"));
+all([1, 2, 3], getSlotValue("positive"));
 [00000000] true
-all([1, 2, -3], getSlot("positive"));
+all([1, 2, -3], getSlotValue("positive"));
 [00000000] false
 \end{urbiscript}
 

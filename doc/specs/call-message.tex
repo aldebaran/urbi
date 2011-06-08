@@ -97,8 +97,8 @@ assert
 \item[code]
   The body of the called function as a \refObject{Code}.
 \begin{urbiscript}
-function code { call.getSlot("code") }|
-assert (code == getSlot("code"));
+function code { call.getSlotValue("code") }|
+assert (code == getSlotValue("code"));
 \end{urbiscript}
 
 \item[eval] Evaluate \this, and return the result.

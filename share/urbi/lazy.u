@@ -61,7 +61,7 @@ class Global.PseudoLazy: Lazy
 
   function eval()
   {
-    val = &code.acceptVoid|
+    val = getSlotValue("code").acceptVoid|
     getSlotValue("val").unacceptVoid
   };
 

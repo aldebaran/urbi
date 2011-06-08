@@ -288,7 +288,7 @@ class TrajectoryGenerator.Time : TrajectoryGenerator.OpenLoop
     // Speed is just Time, but with initial conditions expressed in
     // speed instead of duration.  But since this relies on the
     // current time, it must be call in reset, not init.
-    TrajectoryGenerator.OpenLoop.&reset.apply([this]) |
+    TrajectoryGenerator.OpenLoop.getSlotValue("reset").apply([this]) |
     var this.duration =
       { if ("time" in args) args["time"] else duration(args["speed"]) }
   };
@@ -365,7 +365,7 @@ class TrajectoryGenerator.SpeedAdaptive : TrajectoryGenerator.ClosedLoop
 
   function reset()
   {
-    TrajectoryGenerator.ClosedLoop.&reset.apply([this]) |
+    TrajectoryGenerator.ClosedLoop.getSlotValue("reset").apply([this]) |
   };
 
   function get(currentVal)

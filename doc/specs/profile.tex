@@ -76,7 +76,7 @@ function profiled()
 // This is the profiling for the creation of the 'at'. Note that the
 // condition was already evaluated once, to see whether it should trigger
 // immediately.
-var profile_async = System.profile(&profiled);
+var profile_async = System.profile(getSlotValue("profiled"));
 [00000000] Profile(
 [:]  Yields:                    0
 [:]  Total time (us):         485

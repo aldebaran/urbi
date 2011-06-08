@@ -146,14 +146,14 @@ function set(object, name, value)
 {
   // We have to use setSlot here, since we don't
   // know the actual name of the slot.
-  return object.setSlot("x_" + name, value);
+  return object.setSlotValue("x_" + name, value);
 }|;
 
 function get(object, name)
 {
   // We have to use getSlot here, since we don't
   // know the actual name of the slot.
-  return object.getSlot("x_" + name);
+  return object.getSlotValue("x_" + name);
 }|;
 
 var x = Object.clone;
@@ -262,7 +262,7 @@ function o.f ()
   return 42;
 } |;
 // The slot value is the function.
-o.getSlot("f");
+o.getSlotValue("f");
 [00000001] function () {
 [:]  echo("This is f with target ".'+'(this));
 [:]  return 42;

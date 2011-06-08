@@ -98,7 +98,7 @@ class UnaryLazy
 var inc = function(x) { echo("incing " + x) | x+1 } |
 // The function with cache.
 // Use "getSlot" to get the function, not its evaluation.
-var p = UnaryLazy.new(getSlot("inc"));
+var p = UnaryLazy.new(getSlotValue("inc"));
 [00062847] UnaryLazy_0x78b750
 p.value(1);
 [00066758] *** incing 1
