@@ -76,9 +76,6 @@ namespace urbi
     }
     URBI_SEND_PIPED_COMMAND_C
       (*outputStream,
-       libport::format("if (!isdef(%s)) var %s", name, name));
-    URBI_SEND_PIPED_COMMAND_C
-      (*outputStream,
        libport::format("external var %s from %s",
                        owner_->get_name(), ctx->hookPointName()));
     ctx->markDataSent();
