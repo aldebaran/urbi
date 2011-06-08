@@ -198,39 +198,41 @@ do (Global.UObject)
   {
     if (lobby.hasLocalSlot("__bindingCount"))
     {
-      var fullname = objname + "." + varname |
-      var cnt = lobby.__bindingCount.getWithDefault(fullname, -1) |
+      var fullName = getSlotValue(objname).getSlot(varname).fullName|
+      var cnt = lobby.__bindingCount.getWithDefault(fullName, -1) |
       if (cnt <= 0)
       {
-        logger.warn << "Error, unnotify on unknown variable " + fullname
+        logger.warn << "Error, unnotify on unknown variable " + fullName
       }
       else
       {
         cnt -= count |
-        lobby.__bindingCount[fullname] = cnt |
+        lobby.__bindingCount[fullName] = cnt |
         if (!cnt && hasSlot(objname) && getSlotValue(objname).hasSlot(varname))
         {
           // May or may not be present, never mind
           // Check if the binding is a uconnection
-          if (lobby.__bindingFunc[fullname].isA(UConnection))
-            lobby.__bindingFunc[fullname].disconnect
+          if (lobby.__bindingFunc[fullName].isA(UConnection))
+            lobby.__bindingFunc[fullName].disconnect
           // Check if it is a notify handle
-          else if (lobby.__bindingFunc[fullname].isA(Float))
+          else if (lobby.__bindingFunc[fullName].isA(Float))
             getSlotValue(objname).getSlot(varname)
-              .removeNotifyChange(lobby.__bindingFunc[fullname])|
+              .removeNotifyChange(lobby.__bindingFunc[fullName])|
           // Check if using the shared RTP object
           if (lobby.hasLocalSlot("sharedRTP")
-              && lobby.__bindingFunc[fullname] === lobby.sharedRTP)
+              && lobby.__bindingFunc[fullName] === lobby.sharedRTP)
           {
-            lobby.sharedRTP.unGroupedSendVar(fullname)
+            lobby.sharedRTP.unGroupedSendVar(fullName)
           }|
           // Check if it is a list of uobjects
-          if (lobby.__bindingFunc[fullname].isA(List))
+          if (lobby.__bindingFunc[fullName].isA(List))
           {
-            for|(var i: lobby.__bindingFunc[fullname])
+            for|(var i: lobby.__bindingFunc[fullName])
               try{i.destroy} catch {}|
-            lobby.__bindingFunc[fullname] = []
-          }
+            lobby.__bindingFunc[fullName] = []
+          }|
+          lobby.__bindingCount.erase(fullName)|
+          getSlotValue(objname).getSlot(varname).dereference
         }
       }
     }
@@ -815,6 +817,7 @@ class Global.'external'
         nil
       }
     }|
+    var fullName = obj.getSlot(varname).fullName|
     // Refcount number of binds to this var
     if (!lobby.hasLocalSlot("__bindingCount"))
     {
@@ -822,8 +825,13 @@ class Global.'external'
       // Variable name => bound function for this lobby, or list of UObject
       var lobby.__bindingFunc = [ => ]
     } |
-    var currentCount = lobby.__bindingCount.getWithDefault(fullname, 0) |
-    lobby.__bindingCount[fullname] = currentCount + 1 |
+    var currentCount = lobby.__bindingCount.getWithDefault(fullName, nil) |
+    if (currentCount.isNil)
+    {
+      currentCount = 0|
+      obj.getSlot(varname).reference
+    }|
+    lobby.__bindingCount[fullName] = currentCount + 1 |
     if (currentCount)
       return |
     var obj = uobjects.getUObject(objname)|
@@ -906,10 +914,11 @@ class Global.'external'
   {
     // Create a 'notifyChange' function that generates the UObject
     // message and sends it through the remote connection.
-    var uob = uobjects.getSlotValue(objname)|
+    var uob = uobjects.getUObject(objname)|
     var chan = Channel.new(MODULE_TAG)|
     var chan.lobby = lobby|
     var fullname = objname + "." + varname|
+    var fullName = uob.getSlot(varname).fullName|
     var chan.source = fullname +" " + uob.protos[0].asString|
     // Construct the callback function
     function f(args[])
@@ -917,7 +926,7 @@ class Global.'external'
       // If source is the current lobby, loopback took care of notification
       if (lobby == chan.lobby
           && currentRunner.hasLocalSlot("$uobjectInUpdate")
-          && currentRunner.'$uobjectInUpdate' == fullname)
+          && currentRunner.'$uobjectInUpdate' == fullName)
         return|
       var uvar =
       {
@@ -933,7 +942,7 @@ class Global.'external'
       currentRunner.removeSlot("targetLobby")|
       if (!v.isNil && !v.isVoid)
         chan << ['external'.UEM_ASSIGNVALUE,
-                 fullname,
+                 fullName,
                  v,
                  uvar.timestamp]
     }|
@@ -942,7 +951,7 @@ class Global.'external'
     if (getSlotValue(objname).hasLocalSlot("lobby")
          && getSlotValue(objname).lobby == lobby)
     {
-      lobby.__bindingFunc[fullname] =
+      lobby.__bindingFunc[fullName] =
         uobjects.getUObject(objname).getSlot(varname).notifyChange(f)
     }
     else
@@ -965,7 +974,7 @@ class Global.'external'
         var o.getSlot(iportname).inputPort = true
       }|
       o.getSlot(iportname).notifyChange(f)|
-      lobby.__bindingFunc[fullname] =
+      lobby.__bindingFunc[fullName] =
       uobjects.getSlotValue(objname).getSlot(varname) >> o.getSlot(iportname)
           |
     }|
@@ -1078,7 +1087,7 @@ class Global.'external'
     for|(var n: l.__bindingCount.keys)
     {
       var parts = n.split(".")|
-      if (parts[0] == "VAR" && l.__bindingCount.getWithDefault(n, 0))
+      if (parts[0] == "VAR" && !l.__bindingCount.getWithDefault(n, nil).isNil)
         VAR.getSlot(parts[1]).dereference
     }
   };
