@@ -75,6 +75,17 @@ tree_copy ()
 : ${URBI_HOST_CPU='@URBI_HOST_CPU@'}
 : ${URBI_HOST_OS='@URBI_HOST_OS@'}
 
+# Compilation mode.
+: ${COMPILATION_MODE_DEBUG='@COMPILATION_MODE_DEBUG@'}
+if $COMPILATION_MODE_DEBUG; then
+  COMPILATION_MODE_RELEASE=false
+else
+  COMPILATION_MODE_RELEASE=true
+fi
+
+# The kind of package: OS-CPU-COMPILER.
+CONFIGURATION=$URBI_HOST_OS-$URBI_HOST_CPU-$URBI_HOST_COMP
+
 : ${TMPDIR=/tmp}
 
 # Machine kinds.
@@ -95,6 +106,8 @@ exec_prefix="@exec_prefix@"
 bindir="@bindir@"
 libdir="@libdir@"
 includedir="@includedir@"
+datarootdir="@datarootdir@"
+datadir="@datadir@"
 
 # The build-farm defines destdir, not DESTDIR.  But DESTDIR is
 # definitely more traditional and allows to run "make

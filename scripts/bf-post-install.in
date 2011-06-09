@@ -1,9 +1,71 @@
 #! /bin/sh
 
-set -e
+set -ex
 . $(dirname $0)/common.sh
 set -x
 
+gostai_console_version=2.6-rc-0
+
+
+install_gostai_console ()
+{
+  local sharedir=$HOME/share
+  local readme=$sharedir/README-share.txt
+  if test ! -f $readme; then
+    stderr "Gostai Console is not available: there is no $readme"
+    return
+  fi
+
+  local toolsdir=$sharedir/tools
+  local consoledir=$toolsdir/gostai-console/$gostai_console_version/$CONFIGURATION
+  if test ! -d $consoledir; then
+    stderr "Gostai Console is not available: cannot read directory $consoledir"
+    return
+  fi
+
+  local i
+  for i in $consoledir/*
+  do
+    local dir=$(basename "$i")
+    case $dir in
+      (bin)
+        cp -a $i/* $DESTDIR$bindir
+        # Edit the qt.conf file so that it looks for libs in the right place.
+        perl -pi -e 's{\.\./share/GostaiConsole/.*/lib}{../lib}' \
+          $DESTDIR$bindir/qt.conf
+        ;;
+
+      (share)
+        # Copy everything but the "lib" directory into $datadir.
+        # Which is easier to do by actually copying all the share/
+        # directory, and moving lib/'s content in a second step.
+        cp -a $i/* $DESTDIR$datadir
+
+        # Move new libraries to the right place, remove the duplicates.
+        local lib
+        for lib in $DESTDIR$datadir/GostaiConsole/*/lib/*
+        do
+          local libname=$(basename $lib)
+          # Failed globbing, if for instance the dir is not there.
+          test "$libname" != '*' ||
+            fatal "cannot read in $lib"
+          if test -f $DESTDIR$libdir/$libname; then
+            stderr "no need for Gostai Console's $libname, removed"
+            rm $lib
+          else
+            stderr "installing Gostai Console's $libname"
+            mv $lib $DESTDIR$libdir
+          fi
+        done
+        rmdir $DESTDIR$datadir/GostaiConsole/*/lib
+        ;;
+
+      (*)
+        fatal "unexpected content in Gostai Console besides bin and share: $dir"
+        ;;
+    esac
+  done
+}
 
 ## -------------- ##
 ## Post-install.  ##
@@ -20,6 +82,10 @@ $builddir/scripts/install-boost
 # JVM.
 #
 $builddir/scripts/install-java
+
+# Gostai Console.
+#
+install_gostai_console
 
 # Shared lib dependencies.
 #
