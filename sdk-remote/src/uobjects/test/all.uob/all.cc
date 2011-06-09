@@ -103,7 +103,6 @@ public:
   {
     UBindFunction(all, init);
     UBindFunction(all, setOwned);
-    UBindFunction(all, setNotifyChange);
     UBindFunctions(all, multiRead, multiWrite);
 
     /** BYPASS check **/
@@ -114,7 +113,8 @@ public:
 
     UBindFunctions
       (all,
-       setNotifyAccess, setNotifyChangeByName, setNotifyChangeByUVar,
+       setNotifyAccess,
+       setNotifyChange, setNotifyChangeByName, setNotifyChangeByUVar,
        sendEvent8Args,
        unnotify,
        setThreadedNotifyChange, setThreadedNotifyChangeByUVar);
@@ -395,31 +395,25 @@ public:
     return 0;
   }
 
-  int setNotifyChange(int id)
-  {
-    threadCheck();
-    if (id < 5)
-      UNotifyChange(*vars[id], &all::onChange);
-    else
-      UNotifyChange(*ports[id - 5], &all::onChange);
-    return 0;
-  }
 
-  int setThreadedNotifyChange(int id)
-  {
-    threadCheck();
-    if (id<5)
-      UNotifyThreadedChange(*vars[id], &all::onChange, urbi::LOCK_FUNCTION);
-    else
-      UNotifyThreadedChange(*ports[id-5], &all::onChange, urbi::LOCK_FUNCTION);
-    return 0;
-  }
-
-  int setThreadedNotifyChangeByUVar(urbi::UVar& v)
-  {
-    UNotifyThreadedChange(v, &all::onChange, urbi::LOCK_FUNCTION);
-    return 0;
-  }
+  /*---------.
+  | Notify.  |
+  `---------*/
+// InputPort is not a UVar (private inheritance), so we are not
+// allowed to bounce from setNotifyChange to setNotifyChangeByUVar for
+// instance, since that requires to see *ports[0] as an UVar, which we
+// are not entitled to see.
+//
+// UObject is a friend, so UNotifyChange is allowed to do that.
+#define UVAR_DISPATH(Function, ...)             \
+  do {                                          \
+    threadCheck();                              \
+    if (id < 5)                                 \
+      Function(*vars[id], __VA_ARGS__);         \
+    else                                        \
+      Function(*ports[id - 5], __VA_ARGS__);    \
+    return 0;                                   \
+  } while (false);
 
   int setNotifyChangeByUVar(urbi::UVar& v)
   {
@@ -428,11 +422,25 @@ public:
     return 0;
   }
 
+  int setNotifyChange(int id)
+  {
+    UVAR_DISPATH(UNotifyChange, &all::onChange);
+  }
+
+  int setThreadedNotifyChangeByUVar(urbi::UVar& v)
+  {
+    UNotifyThreadedChange(v, &all::onChange, urbi::LOCK_FUNCTION);
+    return 0;
+  }
+
+  int setThreadedNotifyChange(int id)
+  {
+    UVAR_DISPATH(UNotifyThreadedChange, &all::onChange, urbi::LOCK_FUNCTION);
+  }
+
   int setNotifyAccess(int id)
   {
-    threadCheck();
-    UNotifyAccess(*vars[id], &all::onAccess);
-    return 0;
+    UVAR_DISPATH(UNotifyAccess, &all::onAccess);
   }
 
   int setNotifyChangeByName(const std::string& name)
