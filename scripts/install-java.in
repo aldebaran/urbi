@@ -1,27 +1,8 @@
 #!/bin/sh
 
-fatal ()
-{
-  echo >&2 "$0: $*"
-  exit 1
-}
-
-set -e -x
-
-builddir="@builddir@"
-host="@host@"
-prefix="@prefix@"
-build="@build@"
-# Do not sort by alphabetical order here.  exec_prefix typically uses
-# $prefix, and libdir uses $exec_prefix.  Hence the double quotes too.
-# $bindir is needed because on Windows we define libdir as ${bindir}.
-exec_prefix="@exec_prefix@"
-bindir="@bindir@"
-libdir="@libdir@"
-includedir="@includedir@"
-
-test -n "$DESTDIR" ||
-  fatal "DESTDIR is not defined"
+set -e
+. $(dirname "$0")/common.sh
+set -x
 
 case $host in
   (*mingw*)

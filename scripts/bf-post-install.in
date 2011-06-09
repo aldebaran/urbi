@@ -1,44 +1,13 @@
 #! /bin/sh
 
-set -x
 set -e
+. $(dirname $0)/common.sh
+set -x
 
-: ${BOOST_LDPATH='@BOOST_LDPATH@'}
-: ${COMPILATION_MODE_DEBUG='@COMPILATION_MODE_DEBUG@'}
-: ${PROJECT='@PACKAGE_TARNAME@'}
-: ${STRIP='@STRIP@'}
-: ${URBI_HOST_COMP='@URBI_HOST_COMP@'}
-: ${URBI_HOST_CPU='@URBI_HOST_CPU@'}
-: ${URBI_HOST_OS='@URBI_HOST_OS@'}
-
-builddir='@abs_top_builddir@'
-host='@host@'
-prefix='@prefix@'
-srcdir='@abs_top_srcdir@'
-
-# Do not sort by alphabetical order here.  exec_prefix typically uses
-# $prefix, and libdir uses $exec_prefix.  Hence the double quotes too.
-# $bindir is needed because on Windows we define libdir as ${bindir}.
-exec_prefix="@exec_prefix@"
-bindir="@bindir@"
-libdir="@libdir@"
-
-# The build-farm defines destdir, not DESTDIR.  But DESTDIR is
-# definitely more traditional and allows to run "make
-# DESTDIR=/tmp/here install relocatable" instead of having to use two
-# different names.
-: ${DESTDIR=$destdir}
-
-if test -z "$DESTDIR"; then
-  echo >&2 "$0: DESTDIR (or destdir) must be defined (and used with make install)"
-  exit 1
-fi
-export DESTDIR
 
 ## -------------- ##
 ## Post-install.  ##
 ## -------------- ##
-
 
 # --------------------------- #
 # Completion/relocatability.  #

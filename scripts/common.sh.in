@@ -1,0 +1,81 @@
+## ---------- ##
+## Routines.  ##
+## ---------- ##
+
+stderr ()
+{
+  local i
+  for i
+  do
+    echo >&2 "$0: $i"
+  done
+}
+
+error ()
+{
+  local status="$1"
+  shift
+  stderr "$@"
+  exit $status
+}
+
+fatal ()
+{
+  error 1 "$@"
+}
+
+
+# tree_copy SOURCE DEST
+# ---------------------
+# Copy a file-system tree from SOURCE to DEST.  Preserve rights etc.
+# DEST is cleared first.
+tree_copy ()
+{
+  local source=$1
+  local dest=$2
+  rm -rf "$dest"
+  mkdir -p "$dest"
+  tar -C "$source" -cf - . | tar -C "$dest" -xpBf -
+}
+
+## ----------- ##
+## Variables.  ##
+## ----------- ##
+
+: ${BOOST_LDPATH='@BOOST_LDPATH@'}
+: ${COMPILATION_MODE_DEBUG='@COMPILATION_MODE_DEBUG@'}
+: ${PROJECT='@PACKAGE_TARNAME@'}
+: ${STRIP='@STRIP@'}
+: ${URBI_HOST_COMP='@URBI_HOST_COMP@'}
+: ${URBI_HOST_CPU='@URBI_HOST_CPU@'}
+: ${URBI_HOST_OS='@URBI_HOST_OS@'}
+
+: ${TMPDIR=/tmp}
+
+# Machine kinds.
+build="@build@"
+host='@host@'
+
+# Source/build locations.
+builddir='@abs_top_builddir@'
+srcdir='@abs_top_srcdir@'
+
+# Install locations.
+#
+# Do not sort by alphabetical order here.  exec_prefix typically uses
+# $prefix, and libdir uses $exec_prefix.  Hence the double quotes too.
+# $bindir is needed because on Windows we define libdir as ${bindir}.
+prefix='@prefix@'
+exec_prefix="@exec_prefix@"
+bindir="@bindir@"
+libdir="@libdir@"
+includedir="@includedir@"
+
+# The build-farm defines destdir, not DESTDIR.  But DESTDIR is
+# definitely more traditional and allows to run "make
+# DESTDIR=/tmp/here install relocatable" instead of having to use two
+# different names.
+: ${DESTDIR=$destdir}
+test -n "$DESTDIR" ||
+  fatal "DESTDIR (or destdir) must be defined (and used with make install)"
+export DESTDIR
