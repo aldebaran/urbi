@@ -155,6 +155,8 @@ namespace kernel
 
     //! Overload this function to specify how your system will shutdown
     virtual void shutdown();
+    //! Overload this function to specify how your system will shutdown
+    virtual void shutdown(int return_value);
 
     //! Function called before work
     /*! Redefine this virtual function if you need to do pre-processing before
@@ -323,6 +325,9 @@ namespace kernel
 
     /// Used by the threads for Process and Directory events.
     ATTRIBUTE_RX(libport::Synchronizer, big_kernel_lock);
+
+    /// Exit code.
+    ATTRIBUTE_R(int, return_value);
   };
 
 }

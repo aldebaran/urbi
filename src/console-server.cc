@@ -576,7 +576,7 @@ namespace urbi
       s.ctime = std::max(next_time, s.ctime + 1000L);
     }
 
-    return EX_OK;
+    return s.return_value_get();
   }
 
 #ifndef LIBPORT_DEBUG_DISABLE

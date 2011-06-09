@@ -161,6 +161,7 @@ namespace kernel
     , interactive_(true)
     , thread_id_(pthread_self())
     , urbi_root_(urbi_root)
+    , return_value_(EX_OK)
   {
     TIMER_INIT();
     TIMER_PUSH("server");
@@ -684,6 +685,12 @@ namespace kernel
     effectiveDisplay(s);
   }
 
+  void
+  UServer::shutdown(int return_value)
+  {
+    return_value_ = return_value;
+    shutdown();
+  }
 
   void
   UServer::shutdown()
@@ -692,7 +699,6 @@ namespace kernel
     scheduler_->killall_jobs();
     GD_INFO_TRACE("Shutting down: done");
   }
-
 
   void
   UServer::updateTime()

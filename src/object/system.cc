@@ -98,15 +98,25 @@ namespace urbi
     `--------------------*/
 
 
-#define SERVER_FUNCTION(Function)               \
-    static void                                 \
-    system_ ## Function()                       \
-    {                                           \
-      ::kernel::urbiserver->Function();         \
+#define SERVER_FUNCTION(Function)                       \
+    static void                                         \
+    system_ ## Function()                               \
+    {                                                   \
+      ::kernel::urbiserver->Function();                 \
+    }
+    SERVER_FUNCTION(reboot)
+
+    static void
+    system_shutdown(Object* /*self*/)
+    {
+      ::kernel::urbiserver->shutdown();
     }
 
-    SERVER_FUNCTION(reboot)
-    SERVER_FUNCTION(shutdown)
+    static void
+    system_shutdown(Object* /*self*/, int rv)
+    {
+      ::kernel::urbiserver->shutdown(rv);
+    }
 
 #undef SERVER_FUNCTION
 
@@ -753,7 +763,10 @@ namespace urbi
       DECLARE(setSystemFiles);
       DECLARE(setenv);
       DECLARE(shiftedTime);
-      DECLARE(shutdown);
+      system_class->bind(SYMBOL(shutdown),
+                         static_cast<void (*)(Object*)>(&system_shutdown));
+      system_class->bind(SYMBOL(shutdown),
+                         static_cast<void (*)(Object*, int)>(&system_shutdown));
       DECLARE(spawn);
       DECLARE(stats);
       DECLARE(stopall);
