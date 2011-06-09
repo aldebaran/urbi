@@ -34,13 +34,7 @@ error ()
   local status="$1"
   shift
   stderr "$@"
-  finalize
   exit $status
-}
-
-finalize ()
-{
-  rm -rf "$tmp"
 }
 
 find_dual ()
