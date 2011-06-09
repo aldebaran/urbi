@@ -25,6 +25,31 @@ fatal ()
 }
 
 
+# symstack_cp SOURCE DIR
+# ----------------------
+# Copy SOURCE to DIR.  If it is a symlink, also copy what it points to
+# in DIR (and recursively).
+symstack_cp ()
+{
+  local source=$1
+  local base=$(basename "$source")
+  local dir=$2
+  local dest=$dir/$base
+
+  # The owner is allowed to change the libraries, and they should be
+  # executable.  Do not use "install", as it cannot preserve symlinks.
+  # And when installing shared libraries, there are often many.
+  cp -P "$source" "$dest"
+  if test -L "$source"; then
+    local linked=$(readlink "$source")
+    local srcdir=$(dirname "$source")
+    symstack_cp "$srcdir/$linked" "$dir"
+  else
+    chmod 0755 "$dest"
+  fi
+}
+
+
 # tree_copy SOURCE DEST
 # ---------------------
 # Copy a file-system tree from SOURCE to DEST.  Preserve rights etc.
