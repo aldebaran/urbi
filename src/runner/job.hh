@@ -82,9 +82,6 @@ namespace runner
     ///
     /// \param model The parent job. The scheduler and tags will be inherited
     //         from it.
-    ///
-    /// \param name The name of the new job, or a name derived from \a model
-    ///        if none is provided.
     Job(const Job& model);
 
     /// Create a new job.
@@ -92,9 +89,6 @@ namespace runner
     /// \param lobby The lobby attached to the current job.
     ///
     /// \param scheduler The scheduler to which this job will be attached.
-    ///
-    /// \param name The name of the new job, or an automatically created
-    ///        one if none is provided.
     Job(rLobby lobby,
         sched::Scheduler& scheduler);
 

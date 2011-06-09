@@ -88,7 +88,7 @@ assert
   Similar to the \Cxx \lstinline|UNotifyChange| for a non-owned UVar (see
   \autoref{sec:uobject:uvar-notify}), register \var{onChange} and call it
   each time this \lstinline|UVar| is written to.  Return an identifier that
-  can be passed to removeNotifyChange to unregister the callback.
+  can be passed to \refSlot{removeNotifyChange} to unregister the callback.
 
 \begin{urbiscript}
 UVar.new(Global, "y")|
@@ -107,7 +107,8 @@ Global.y = 13;
   Similar to the \Cxx \lstinline|UNotifyChange| for an owned UVar (see
   \autoref{sec:uobject:uvar-notify}), register \var{onChange} and call it
   each time this \lstinline|UVar| is written to.  Return an identifier that
-  can be passed to removeNotifyChange to unregister the callback.
+  can be passed to \refSlot{removeNotifyChangeOwned} to unregister the
+  callback.
 
 \item[removeNotifyAccess](<id>)%
   Disable the notification installed as \var{id} by \refSlot{notifyAccess}.
