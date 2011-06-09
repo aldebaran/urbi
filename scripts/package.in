@@ -1,51 +1,24 @@
 #! /bin/sh
-#
 
-set -x
 set -e
 
-stderr ()
-{
-  local i
-  for i
-  do
-    echo >&2 "$0: $i"
-  done
-}
-
-error ()
-{
-  local status="$1"
-  shift
-  stderr "$@"
-  exit $status
-}
-
-fatal ()
-{
-  error 1 "$@"
-}
+# Define before loading common.sh which uses destdir.
+DESTDIR=$4
+. $(dirname $0)/common.sh
+set -x
 
 ## ----------- ##
 ## Variables.  ##
 ## ----------- ##
-
-: ${TMPDIR=/tmp}
 
 case $# in
   (10);;
   (*) fatal "not enough arguments: $#, expecting 10";;
 esac
 
-PROJECT='@PACKAGE_TARNAME@'
 PACKAGE_VERSION='@PACKAGE_VERSION@'
-URBI_HOST_COMP='@URBI_HOST_COMP@'
-URBI_HOST_CPU='@URBI_HOST_CPU@'
-URBI_HOST_OS='@URBI_HOST_OS@'
-abs_top_builddir='@abs_top_builddir@'
-abs_top_srcdir='@abs_top_srcdir@'
 buildprefix='@prefix@'
-host='@host@'
+
 COMPILATION_MODE_DEBUG='@COMPILATION_MODE_DEBUG@'
 if $COMPILATION_MODE_DEBUG; then
   COMPILATION_MODE_RELEASE=false
@@ -53,9 +26,11 @@ else
   COMPILATION_MODE_RELEASE=true
 fi
 
+abs_top_builddir=$builddir
+abs_top_srcdir=$srcdir
+
 srcdir=$2
 builddir=$3
-DESTDIR=$4
 # Directories/tarballs left in this directory (updir) will be
 # published by the buildfarm's package script.
 updir=$5
@@ -84,19 +59,6 @@ check_equal ()
            "proceeding with $1 = $rhs"
     eval "$1=\$$2"
   fi
-}
-
-# tree_copy SOURCE DEST
-# ---------------------
-# Copy a file-system tree from SOURCE to DEST.  Preserve rights etc.
-# DEST is cleared first.
-tree_copy ()
-{
-  local source=$1
-  local dest=$2
-  rm -rf "$dest"
-  mkdir -p "$dest"
-  tar -C "$source" -cf - . | tar -C "$dest" -xpBf -
 }
 
 check_equal ARCH         URBI_HOST_CPU

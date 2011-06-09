@@ -343,6 +343,7 @@ URBI_TESTS
 AC_CONFIG_FILES([Makefile src/Makefile])
 
 URBI_CONFIG_SCRIPTS([scripts/bf-post-install],
+                    [scripts/common.sh],
                     [scripts/install-boost],
                     [scripts/install-java],
                     [scripts/package])

@@ -1,7 +1,7 @@
 #! /bin/sh
 
-set -x
 set -e
+set -x
 
 ## ----------- ##
 ## Functions.  ##
@@ -155,9 +155,9 @@ updir=$(dirname "$upname")
 ## Main.  ##
 ## ------ ##
 
-# my_zip represents the archive build by this slave.
+# The archive built by this slave.
 my_zip="$upname.zip"
-# other_zip represents the archive build by the other slave.
+# The archive built by the other one.
 other_zip=$(find_dual "$my_zip")
 installer=$(get_installer_name "$(basename $my_zip)")
 
@@ -179,7 +179,7 @@ if test -r "$my_zip"                             \
       "$my_zip" "$other_zip"
 
   # Upload the installer and its MD5.  Be sure to generate an MD5sum
-  # file that does not include a path: cd into
+  # file that does not include a path: cd into it.
   here=$(pwd)
   cd $tmp
   $MD5SUM "$installer" >"$installer.md5"
