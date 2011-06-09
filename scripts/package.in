@@ -19,13 +19,6 @@ esac
 PACKAGE_VERSION='@PACKAGE_VERSION@'
 buildprefix='@prefix@'
 
-COMPILATION_MODE_DEBUG='@COMPILATION_MODE_DEBUG@'
-if $COMPILATION_MODE_DEBUG; then
-  COMPILATION_MODE_RELEASE=false
-else
-  COMPILATION_MODE_RELEASE=true
-fi
-
 abs_top_builddir=$builddir
 abs_top_srcdir=$srcdir
 
