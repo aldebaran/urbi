@@ -28,4 +28,4 @@ class Global.Traceable
           sf.location.isNil || !sf.location.isSystemLocation
         })
   };
-}
+};
