@@ -16,7 +16,6 @@ case $# in
   (*) fatal "not enough arguments: $#, expecting 10";;
 esac
 
-PACKAGE_VERSION='@PACKAGE_VERSION@'
 buildprefix='@prefix@'
 
 abs_top_builddir=$builddir
@@ -28,7 +27,7 @@ builddir=$3
 # published by the buildfarm's package script.
 updir=$5
 ARCH=$6       # ARM|ppc|x86|x86_64.
-OS=$7         # linux|macos|windows.
+#OS=$7         # linux|macos|windows.
 COMP=$8       # ex. gcc4, vcxx2005.
 MODE=$9       # [release|debug]_[static|dynamic].
 prefix=${10}
@@ -62,37 +61,12 @@ check_equal prefix       buildprefix
 check_equal release_mode COMPILATION_MODE_RELEASE
 check_equal srcdir       abs_top_srcdir
 
-# OS and URBI_HOST_OS.
-#
-# OS might be different from URBI_HOST_OS.  For instance
-# URBI_HOST_OS=linux, but OS=linux-bleeding-edge.  If we drop the
-# bleeding-edge part, we will make bleeding-edge tarballs not labeled
-# as such, so we might ship bleeding-edge tarballs instead of the old
-# Debian etch.
-#
-# Don't accept - in the OS.
-OS=$(echo "$OS" | sed -e 's/-/_/g')
-# bleeding-edge actually means Ubuntu Lucid.
-OS=$(echo "$OS" | sed -e 's/bleeding_edge/lucid/g')
-# and actually, the debug package is made on lucid too.
-case $OS:$COMPILATION_MODE_DEBUG in
-  (linux:true) OS="${OS}_lucid";;
-esac
-if test "$OS" = "$URBI_HOST_OS"; then
-  stderr "OS = URBI_HOST_OS = $OS"
-else
-  stderr "OS = $OS" "URBI_HOST_OS = $URBI_HOST_OS" \
-         "proceeding with $OS"
-  URBI_HOST_OS=$OS
-fi
-
-
 # Determine the version from the latest component of the tag. This will
 # ease ordering.
 version=$(cd "$srcdir" && git describe | sed -e "s,^preview/,,;s,/,-,g")
 # If we are in release mode, do not tell it, the final users won't care.
 # Otherwise, add "-debug".
-configuration=$version-$URBI_HOST_OS-$URBI_HOST_CPU-$URBI_HOST_COMP
+configuration=$version-$CONFIGURATION
 $release_mode || configuration=$configuration-$MODE
 
 # The SDK package.
