@@ -294,7 +294,7 @@ namespace runner
 
     /// \}
 
-    /// \ name Properties.
+    /// \name Properties.
     /// \{
     /// Whether to err on redefinition or overwrite the slot.
     ATTRIBUTE_RW(bool, redefinition_mode);
@@ -302,7 +302,7 @@ namespace runner
     ATTRIBUTE_RW(bool, void_error);
     /// \}
 
-    /// \ name Last location
+    /// \name Innermost node.
     /// \{
   public:
     void innermost_node_set(const ast::Ast* n);
@@ -312,7 +312,7 @@ namespace runner
     const ast::Ast* innermost_node_;
     /// \}
 
-    /// \ name Last location
+    /// \name Current exception.
     /// \{
   public:
     /// The current exception when executing a "catch" block

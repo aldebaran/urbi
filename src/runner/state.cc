@@ -67,8 +67,7 @@ namespace runner
     create_scope_tag();
   }
 
-  /// Handle tags.
-  /// \{
+  // Handle tags.
 
   size_t
   State::has_tag(const sched::Tag& tag, size_t max_depth) const
@@ -118,19 +117,10 @@ namespace runner
     return res;
   }
 
-  /// \}
 
-
-  /// Scope tag
-  /// \{
-
-  // empty
-
-  /// \}
 
 
   /// Call Stack
-  /// \{
 
   State::backtrace_type
   State::backtrace_get() const
@@ -151,15 +141,5 @@ namespace runner
     }
     return res;
   }
-
-  /// \}
-
-
-  /// Frame stack
-  /// \{
-
-  // empty
-
-  /// \}
 
 } // namespace runner

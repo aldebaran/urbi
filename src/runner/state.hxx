@@ -29,7 +29,6 @@ namespace runner
 {
 
   /// Handle tags.
-  /// \{
 
   LIBPORT_SPEED_INLINE void
   State::update_priority_cache(sched::prio_type prio)
@@ -103,11 +102,8 @@ namespace runner
     frozen_ = v;
   }
 
-  /// \}
-
 
   /// Scope tag
-  /// \{
 
   // Scope tag are likely to be removed by static analysis.
 
@@ -152,11 +148,8 @@ namespace runner
     return scope_tags_.back();
   }
 
-  /// \}
 
 
-  /// Call Stack
-  /// \{
 
   LIBPORT_SPEED_ALWAYS_INLINE
   const State::call_stack_type&
@@ -182,11 +175,9 @@ namespace runner
       return call_stack_.back().first;
   }
 
-  /// \}
 
 
-  /// Frame stack
-  /// \{
+  // Frame stack
 
   // This is a duplication of the interface of Stacks, but this is
   // temporary and should be modified as soon as the State can be
@@ -318,10 +309,6 @@ namespace runner
     stacks_.this_switch(s);
   }
 
-  /// \}
-
-  /// Lobby
-  /// \{
 
   LIBPORT_SPEED_ALWAYS_INLINE
   State::Lobby* State::lobby_get()
@@ -335,10 +322,6 @@ namespace runner
     lobby_ = lobby;
   }
 
-  /// \}
-
-  /// \ name Last location
-  /// \{
 
   LIBPORT_SPEED_ALWAYS_INLINE
   void State::innermost_node_set(const ast::Ast* n)
@@ -351,8 +334,6 @@ namespace runner
   {
     return innermost_node_;
   }
-
-  /// \}
 
 
 } // namespace runner
