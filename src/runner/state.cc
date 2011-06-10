@@ -42,6 +42,8 @@ namespace runner
     , current_exception_()
       // When creating a new stack, "this" is the current lobby.
   {
+    if (runner::Job* r = ::kernel::server().getCurrentRunnerOpt())
+      call_stack_ = r->state.call_stack_get();
     // Push a dummy scope tag, in case we do have an "at" at the
     // toplevel.
     create_scope_tag();
