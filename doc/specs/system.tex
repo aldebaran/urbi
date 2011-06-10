@@ -104,7 +104,31 @@ outermost;
 %% \item[breakpoint]
 
 
-%% \item[currentRunner]
+\item[currentRunner] The \refObject{Job} in charge of executing this
+  ``thread'' of code.
+\begin{urbiscript}
+var j = currentRunner|;
+assert { j.isA(Job) };
+
+var j1; var j2;
+
+// Both sequential compositions use the same job: the current one.
+{ j1 = currentRunner; j2 = currentRunner }|;
+assert { j1 == j2; j1 == j };
+
+{ j1 = currentRunner | j2 = currentRunner }|;
+assert { j1 == j2; j1 == j };
+
+// Concurrency requires several jobs: j1 and j2 are different.
+//
+// As an optimization, the current job is used for one of these
+// jobs.  This is an implementation detail, do not rely on it.
+{ j1 = currentRunner & j2 = currentRunner }|;
+assert { j1 != j2; j1 == j; j2 != j };
+
+{ j1 = currentRunner, j2 = currentRunner }|;
+assert { j1 != j2; j1 != j; j2 == j };
+\end{urbiscript}
 
 
 \item[cycle]%

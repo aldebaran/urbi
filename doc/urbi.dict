@@ -255,6 +255,7 @@ createZeros
 criticalSection
 Ctrl
 CTYPE
+currentRunner
 CustomUVar
 cvf
 cvs
