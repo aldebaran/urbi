@@ -53,18 +53,7 @@ This chapter lists the user-visible changes in \usdk releases.
 
 \subsection{Changes}
 \begin{itemize}
-\item To augment legibility, underscores can be used to separate groups of
-  digits in numbers (\autoref{sec:us-syn-lit-float}).
-\begin{urbiassert}
-   123_456_789 == 123456789;
-12_34_56_78_90 == 1234567890;
-   1_2__3___45 == 12345;
-      1_2.3__4 == 12.34;
-   0xFFFF_FFFF == 0xFFFFFFFF;
-         1e1_0 == 1e10;
-\end{urbiassert}
-
-\item \refSlot[Job]{backtrace} now displays information about event handling
+\item \refSlot[Job]{backtrace} now includes information about event handling
   (both sending and receiving parts).
 
 \begin{urbiscript}
@@ -119,6 +108,23 @@ i.close;
   \refObject[s]{InputStream} and \refObject[s]{OutputStream}), are closed if
   not already closed.
 
+\item The \Cxx classes \lstinline|USound| and \lstinline|UImage| now
+  properly initialize their instances to empty sound/image.
+\end{itemize}
+
+\subsection{New features}
+\begin{itemize}
+\item To augment legibility, underscores can be used to separate groups of
+  digits in numbers (\autoref{sec:us-syn-lit-float}).
+\begin{urbiassert}
+   123_456_789 == 123456789;
+12_34_56_78_90 == 1234567890;
+   1_2__3___45 == 12345;
+      1_2.3__4 == 12.34;
+   0xFFFF_FFFF == 0xFFFFFFFF;
+         1e1_0 == 1e10;
+\end{urbiassert}
+
 \item \refSlot[String]{'[]'} accepts negative indexes, as
   \refSlot[List]{'[]'} did.
 \begin{urbiassert}
@@ -159,20 +165,14 @@ testTimeOut(2s);
 \item \refObject{Vector} and \refObject{Matrix} provide support for
   efficient linear algebra operations.
 
-\item The \Cxx classes \lstinline|USound| and \lstinline|UImage| now
-  properly initialize their instances to empty sound/image.
-
-\item Binary packages now include simple aliases to the Boost libraries
-  (e.g., you may use \option{-lboost\_date\_time} instead of
-  \option{-lboost\_date\_time-gcc44-mt-1\_38}).
-\end{itemize}
-
-\subsection{New features}
-\begin{itemize}
 \item Add \command{gdb} extensions to improve debug experience of Urbi and
   \us.  Urbi objects are pretty printed when accessed and commands are
   available for printing the backtrace of the current Job and for
   adding/removing breakpoints on \us.
+
+\item Binary packages now include simple aliases to the Boost libraries
+  (e.g., you may use \option{-lboost\_date\_time} instead of
+  \option{-lboost\_date\_time-gcc44-mt-1\_38}).
 \end{itemize}
 
 
