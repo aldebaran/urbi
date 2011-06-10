@@ -73,7 +73,6 @@ namespace urbi
   namespace object
   {
 
-    using ::kernel::interpreter;
     using ::kernel::runner;
 
     namespace
@@ -83,7 +82,7 @@ namespace urbi
       execute_parsed(parser::parse_result_type p, rObject self)
       {
         ast::rConstAst ast = parser::transform(ast::rConstExp(p));
-        runner::Job& run = interpreter();
+        runner::Job& run = runner();
         return
           eval::ast_context(run, ast.get(),
                             self ? self : rObject(run.state.lobby_get()));
@@ -627,10 +626,10 @@ namespace urbi
     static rObject
     system_profile(Object* self, Executable* action)
     {
-      if (interpreter().is_profiling())
+      if (runner().is_profiling())
       {
         runner::Exception::warn(
-          interpreter().state.innermost_node_get()->location_get(),
+          runner().state.innermost_node_get()->location_get(),
           "already profiling");
         objects_type args;
         args << self;
@@ -640,8 +639,8 @@ namespace urbi
 
       object::rProfile profile = new object::Profile;
       {
-        FINALLY(((Object*, self)), ::kernel:: interpreter().profile_stop());
-        interpreter().profile_start(profile, SYMBOL(LT_profiled_GT), action);
+        FINALLY(((Object*, self)), ::kernel:: runner().profile_stop());
+        runner().profile_start(profile, SYMBOL(LT_profiled_GT), action);
         objects_type args;
         args << self;
         (*action)(args);

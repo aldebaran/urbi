@@ -436,7 +436,7 @@ namespace urbi
       if (value_ < 0)
         runner::raise_bad_integer_error(value_, positive_error_fmt);
       // Iterate, yielding at each iteration.
-      runner::Job& r = ::kernel::interpreter();
+      runner::Job& r = ::kernel::runner();
       for (int i = 0; i < value_; ++i)
       {
         object::objects_type args;

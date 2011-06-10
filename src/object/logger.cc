@@ -73,8 +73,7 @@ namespace urbi
       std::string file = "<urbi-stdin>";
       int line = 0;
 
-      const ast::Ast* ast =
-        ::kernel::interpreter().state.innermost_node_get();
+      const ast::Ast* ast = ::kernel::runner().state.innermost_node_get();
       if (ast)
       {
         if (libport::Symbol* f = ast->location_get().begin.filename)
@@ -83,7 +82,7 @@ namespace urbi
       }
 
       const runner::State::call_stack_type& bt =
-        ::kernel::interpreter().state.call_stack_get();
+        ::kernel::runner().state.call_stack_get();
       if (bt.size() > 1)
         function = bt[bt.size() - 2].first.name_get();
 

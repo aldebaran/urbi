@@ -106,10 +106,7 @@ namespace kernel
   inline runner::Job*
   UServer::getCurrentRunnerOpt() const
   {
-    sched::Job* j = scheduler_->current_job_opt();
-    if (j)
-      return reinterpret_cast<runner::Job*>(j);
-    return 0;
+    return reinterpret_cast<runner::Job*>(scheduler_->current_job_opt());
   }
 
   /*-------------------------.
@@ -130,12 +127,6 @@ namespace kernel
     return server().getCurrentRunner();
   }
 
-  inline
-  runner::Job&
-  interpreter()
-  {
-    return runner();
-  }
 }
 
 #endif // !KERNEL_USERVER_HXX

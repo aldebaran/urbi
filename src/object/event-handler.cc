@@ -57,7 +57,7 @@ namespace urbi
                       rProfile profile, const objects_type& args)
     {
       typedef rObject(Executable::*fun_type)(objects_type);
-      runner::Job& r = ::kernel::interpreter();
+      runner::Job& r = ::kernel::runner();
       runner::Job* res =
         e->make_job(lobby, r.scheduler_get(), args, SYMBOL(event));
       if (profile)

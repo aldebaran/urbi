@@ -100,7 +100,7 @@ namespace kernel
   std::string current_function_name()
   {
     const ::runner::State::call_stack_type& bt =
-      interpreter().state.call_stack_get();
+      runner().state.call_stack_get();
     if (bt.size() > 1)
       return bt[bt.size() - 2].first.name_get();
     else
@@ -109,7 +109,7 @@ namespace kernel
 
   ast::loc current_location()
   {
-    if (const ast::Ast* ast = interpreter().state.innermost_node_get())
+    if (const ast::Ast* ast = runner().state.innermost_node_get())
       return ast->location_get();
     else
       return ast::loc();

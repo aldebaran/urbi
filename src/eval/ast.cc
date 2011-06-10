@@ -195,7 +195,7 @@ namespace eval
   LIBPORT_SPEED_ALWAYS_INLINE object::rObject
   Visitor::watch_eval(WatchEventData* data)
   {
-    runner::Job& r = ::kernel::interpreter();
+    runner::Job& r = ::kernel::runner();
     GD_CATEGORY(Urbi.At);
     GD_FPUSH_TRACE("Evaluating watch expression: %s",
                    data->exp->body_string());
@@ -267,7 +267,7 @@ namespace eval
     GD_FPUSH_TRACE("Evaluating watch event expression: %s",
                    data->exp->body_string());
 
-    runner::Job& r = ::kernel::interpreter();
+    runner::Job& r = ::kernel::runner();
     rObject v = watch_eval(data);
     foreach (object::Event* evt, r.dependencies())
       data->subscriptions <<
@@ -321,7 +321,7 @@ namespace eval
 
     // FIXME: what is the kernel main interpreter in the new
     // implementation ?!
-    Job& r = ::kernel::interpreter();
+    Job& r = ::kernel::runner();
 
     rObject res = watch_eval(data);
     if (dynamic_cast<object::Event*>(res.get()))

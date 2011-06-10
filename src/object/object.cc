@@ -859,7 +859,7 @@ namespace urbi
     {
       rObject res = call(SYMBOL(clone));
       if (Slot* init = slot_locate(SYMBOL(init)).second)
-        eval::call_apply(::kernel::interpreter(), res, init->value(),
+        eval::call_apply(::kernel::runner(), res, init->value(),
                          SYMBOL(init), args);
       return res;
     }
