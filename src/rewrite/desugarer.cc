@@ -227,19 +227,19 @@ namespace rewrite
   void
   Desugarer::visit(const ast::At* at)
   {
-    ast::Factory factory;
-
     ast::loc loc = at->location_get();
     ast::loc cond_loc = at->cond_get()->location_get();
     ast::rRoutine closure =
       new ast::Routine(cond_loc, true, new ast::local_declarations_type,
-                       factory.make_scope(cond_loc, at->cond_get()));
+                       factory_->make_scope(cond_loc, at->cond_get()));
 
-    ast::EventMatch match(new ast::Event(cond_loc, closure), 0, at->duration_get(), 0);
-    result_ = factory.make_at_event(loc,
-                                    at->flavor_location_get(), at->flavor_get(),
-                                    at->sync_get(),
-                                    match, at->body_get(), at->onleave_get());
+    ast::EventMatch match(new ast::Event(cond_loc, closure),
+                          0, at->duration_get(), 0);
+    result_ =
+      factory_->make_at_event(loc,
+                              at->flavor_location_get(), at->flavor_get(),
+                              at->sync_get(),
+                              match, at->body_get(), at->onleave_get());
     recurse(result_);
   }
 
@@ -350,7 +350,9 @@ namespace rewrite
 
   void Desugarer::visit_dincrementation(ast::rLValue what, libport::Symbol meth)
   {
-    PARAMETRIC_AST(desugar, "{var '$save' = %exp:1 | %lvalue:2 = %exp:3.%id:4() | '$save'}");
+    PARAMETRIC_AST
+      (desugar,
+       "{var '$save' = %exp:1 | %lvalue:2 = %exp:3.%id:4() | '$save'}");
 
     ast::rLValue tgt = factory_->make_lvalue_once(what);
 
