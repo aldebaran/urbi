@@ -577,8 +577,10 @@ setLocale("LC_ALL", "klingon");
 \end{urbiassert}
 
 
-\item[shutdown] Have the \urbi server shut down.  All the connections
-  are closed, the resources are released.  Architecture dependent.
+\item[shutdown](<exit_status> = 0)%
+  Have the \urbi server shut down, with exit status \var{exit\_status}.  All
+  the connections are closed, the resources are released.  Architecture
+  dependent.
 
 
 \item[sleep](<duration> = inf)%
