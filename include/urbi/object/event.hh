@@ -103,18 +103,10 @@ namespace urbi
        */
       struct Actions: public libport::RefCounted
       {
-        Actions(rExecutable g, rExecutable e, rExecutable l, bool s)
-          : guard(g), enter(e), leave(l), frozen(0), sync(s)
-        {}
+        Actions(rExecutable g, rExecutable e, rExecutable l, bool s);
 	~Actions();
 
-        bool
-        operator==(const Actions& other)
-        {
-          return (guard == other.guard
-                  && enter == other.enter
-                  && leave == other.leave);
-        }
+        bool operator==(const Actions& other) const;
 
         rExecutable guard, enter, leave;
         rProfile profile;
@@ -146,8 +138,7 @@ namespace urbi
 
       struct Waiter
       {
-        Waiter(rTag ct, runner::Job* r, rObject& p)
-        : controlTag(ct), runner(r), pattern(p) {}
+        Waiter(rTag ct, runner::Job* r, rObject& p);
         rTag controlTag;
         runner::Job* runner;
         rObject pattern;

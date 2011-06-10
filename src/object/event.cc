@@ -26,6 +26,39 @@ namespace urbi
 {
   namespace object
   {
+
+    /*----------.
+    | Actions.  |
+    `----------*/
+
+    inline
+    Event::Actions::Actions(rExecutable g, rExecutable e, rExecutable l, bool s)
+      : guard(g), enter(e), leave(l), frozen(0), sync(s)
+    {}
+
+    inline
+    bool
+    Event::Actions::operator==(const Actions& other) const
+    {
+      return (guard == other.guard
+              && enter == other.enter
+              && leave == other.leave);
+    }
+
+
+    /*---------.
+    | Waiter.  |
+    `---------*/
+
+    inline
+    Event::Waiter::Waiter(rTag ct, runner::Job* r, rObject& p)
+      : controlTag(ct), runner(r), pattern(p)
+    {}
+
+    /*--------.
+    | Event.  |
+    `--------*/
+
     Event::Event()
       : listeners_()
       , waiters_()
@@ -143,12 +176,12 @@ namespace urbi
         sched::rTag t = tag->value_get();
         using boost::bind;
         actions->connections
-          << t->stop_hook_get().connect(
-            bind(&Event::unregister, this, actions.get()))
-          << t->freeze_hook_get().connect(
-            bind(&Event::freeze, this, actions.get()))
-          << t->unfreeze_hook_get().connect(
-            bind(&Event::unfreeze, this, actions.get()));
+          << (t->stop_hook_get()
+              .connect(bind(&Event::unregister, this, actions.get())))
+          << (t->freeze_hook_get()
+              .connect(bind(&Event::freeze, this, actions.get())))
+          << (t->unfreeze_hook_get()
+              .connect(bind(&Event::unfreeze, this, actions.get())));
       }
 
       listeners_ << actions;
