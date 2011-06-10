@@ -92,8 +92,10 @@ namespace urbi
 
     private:
       void emit_backend(const objects_type& pl, bool detach);
-      sched::rJob spawn_actions_job(rLobby lobby, rExecutable e,
-                                    rProfile profile, const objects_type& args);
+      sched::rJob
+        spawn_actions_job(rLobby lobby, const call_stack_type& stack,
+                          rExecutable e,
+                          rProfile profile, const objects_type& args);
       rEventHandler trigger_backend(const objects_type& pl, bool detach);
 
       /** Callbacks listening on this event.
@@ -118,6 +120,8 @@ namespace urbi
         runner::State::tag_stack_type tag_stack;
         /// Create job with this lobby when executing actions if set.
         rLobby lobby;
+        /// Call stack from the event handler.
+        call_stack_type call_stack;
       };
       typedef libport::intrusive_ptr<Actions> rActions;
 

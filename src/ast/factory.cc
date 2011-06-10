@@ -272,6 +272,7 @@ namespace ast
       guard = exp(desugar_guard);
     }
 
+    rExp res;
     if (event.pattern)
     {
       rExp pattern = make_list(loc, event.pattern);
@@ -292,8 +293,7 @@ namespace ast
 
       PARAMETRIC_AST
         (desugar,
-         "{\n"
-         "  %exp:1.onEvent(\n"
+         "%exp:1.onEvent(\n"
          "  closure ('$evt', '$payload')\n"
          "  {\n"
          "    var '$pattern' = Pattern.new(%exp:2) |\n"
@@ -312,36 +312,37 @@ namespace ast
          "    %exp: 6 |\n"
          "    %exp: 7 |\n"
          "  },\n"
-         "  %exp: 8)\n"
-         "}\n");
-      return exp(desugar
-                 % event.event
-                 % bind.result_get().unchecked_cast<Exp>()
-                 % positive
-                 % bind.bindings_get()
-                 % enter
-                 % bind.bindings_get()
-                 % ensure(loc, leave)
-                 % make_bool(loc, sync));
+         "  %exp: 8\n"
+         ")\n");
+      res = exp(desugar
+                % event.event
+                % bind.result_get().unchecked_cast<Exp>()
+                % positive
+                % bind.bindings_get()
+                % enter
+                % bind.bindings_get()
+                % ensure(loc, leave)
+                % make_bool(loc, sync));
     }
     else
     {
       PARAMETRIC_AST
         (desugar_no_pattern,
-         "{\n"
-         "  %exp:1.onEvent(\n"
+         "%exp:1.onEvent(\n"
          "  closure ('$evt', '$payload') { var '$pattern' = true | %exp:2 },\n"
          "  closure ('$evt', '$payload', '$pattern') { %exp:3 },\n"
          "  closure ('$evt', '$payload', '$pattern') { %exp:4 },\n"
-         "  %exp:5)\n"
-         "}\n");
-      return exp(desugar_no_pattern
-                 % event.event
-                 % guard
-                 % enter
-                 % ensure(loc, leave)
-                 % make_bool(loc, sync));
+         "  %exp:5\n"
+         ")\n");
+      res = exp(desugar_no_pattern
+                % event.event
+                % guard
+                % enter
+                % ensure(loc, leave)
+                % make_bool(loc, sync));
     }
+    res->location_set(loc);
+    return res;
   }
 
 

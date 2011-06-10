@@ -1,4 +1,4 @@
-%% Copyright (C) 2010, Gostai S.A.S.
+%% Copyright (C) 2010, 2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -39,9 +39,17 @@ spawn (function () { sleep(10) }, false);
 \begin{urbiscriptapi}
 \item[asJob]
   Return \lstinline|this|.
+\begin{urbiassert}
+currentRunner.asJob === currentRunner;
+\end{urbiassert}
+
 
 \item[asString] The string \lstinline|Job<\var{name}>| where \var{name} is
   the name of the job.
+\begin{urbiassert}
+currentRunner.asString == "Job<shell>";
+spawn (function () { sleep(10) }, false).asString == "Job<shell_11>";
+\end{urbiassert}
 
 \item[backtrace] The current backtrace of the job as a list of
   \refObject[s]{StackFrame}.  Uses \refSlot[Traceable]{backtrace}.
@@ -59,8 +67,46 @@ assert
 //#pop
 \end{urbiscript}
 
+  In the case of events, the backtrace is composite: the bottom part
+  corresponds to the location of the event handler, and the top part is the
+  location of the event emission.  The event emission is denoted by
+  \refSlot[Event]{'emit'} rather than \lstinline|!|, and its reception by
+  \refSlot[Event]{onEvent} rather than \lstinline|?| or \lstinline|at|.
+
+\begin{urbiscript}
+//#push 1 "file.u"
+var e = Event.new|;
+at (e?)
+  lobby.echoEach(currentRunner.backtrace);
+e!;
+[00000149] *** file.u:3.18-40: backtrace
+[00000149] *** file.u:4.1: emit
+[00000149] *** ---- event handler backtrace:
+[00000149] *** file.u:2.1-3.41: onEvent
+
+//#push 1 "file.u"
+var f = Event.new|;
+function watchEvent()
+{
+  at (f?)
+    lobby.echoEach(currentRunner.backtrace);
+}|;
+function sendEvent()
+{
+  f!;
+}|;
+watchEvent;
+sendEvent;
+[00008208] *** file.u:5.20-42: backtrace
+[00008208] *** file.u:9.3: emit
+[00008208] *** file.u:12.1-9: sendEvent
+[00008208] *** ---- event handler backtrace:
+[00008208] *** file.u:4.3-5.43: onEvent
+[00008208] *** file.u:11.1-10: watchEvent
+\end{urbiscript}
+
 \item[clone]
-  Cloning a job is impossible since Job is considered as being an atom.
+  Cloning a job is forbidden.
 
 \item[dumpState]
   Pretty-print the state of the job.
@@ -93,9 +139,13 @@ detach(sleep(10)).name;
   used by the scheduler to choose whether other jobs need scheduling or not.
   The default value is false.
 
-\item[status]
-  The current status of the job (starting, running, \ldots), and its
-  properties (frozen, \ldots).
+\item[status] A \refObject{String} that describes the current status of the
+  job (starting, running, \ldots), and its properties (frozen, \ldots).
+\begin{urbiassert}
+var t = detach(sleep(10));
+currentRunner.status == "running (current job)";
+t.status == "sleeping" ;
+\end{urbiassert}
 
 \item[tags] The list of \refObject[s]{Tag} that manage this job.
 

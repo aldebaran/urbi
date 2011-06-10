@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1442 utf-8
+personal_ws-1.1 en 1445 utf-8
 aaa
 abc
 abcd
@@ -1035,6 +1035,7 @@ selfCombIndexes
 selfTime
 selfTimePer
 sendbin
+sendEvent
 sendsound
 sensorsLoad
 sensorsOff
@@ -1375,6 +1376,7 @@ waituntilWalkIsFinished
 walkTo
 wallClockTime
 watchdogInterval
+watchEvent
 wav
 wb
 wbt

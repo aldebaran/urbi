@@ -34,6 +34,7 @@ namespace urbi
     inline
     Event::Actions::Actions(rExecutable g, rExecutable e, rExecutable l, bool s)
       : guard(g), enter(e), leave(l), frozen(0), sync(s)
+      , call_stack()
     {}
 
     inline
@@ -167,6 +168,11 @@ namespace urbi
       rActions actions(new Actions(guard, enter, leave, sync));
       GD_FPUSH_TRACE("%s: New registration %s.", this, actions);
       runner::Job& r = ::kernel::runner();
+      actions->call_stack = r.state.call_stack_get();
+      actions->call_stack <<
+        std::make_pair(SYMBOL(MINUS_MINUS_MINUS_MINUS_SP_event_SP_handler_SP_backtrace_COLON),
+                       boost::optional<ast::loc>());
+
       actions->profile = r.profile_get();
       actions->tag_stack = r.state.tag_stack_get();
       actions->lobby = r.state.lobby_get();
@@ -236,7 +242,8 @@ namespace urbi
     `-------*/
 
     sched::rJob
-    Event::spawn_actions_job(rLobby lobby, rExecutable e,
+    Event::spawn_actions_job(rLobby lobby, const call_stack_type& stack,
+                             rExecutable e,
                              rProfile profile, const objects_type& args)
     {
       typedef rObject(Executable::*fun_type)(objects_type);
@@ -245,6 +252,12 @@ namespace urbi
         lobby = r.state.lobby_get();
       runner::Job* res =
         e->make_job(lobby, r.scheduler_get(), args, SYMBOL(event));
+      // Append the back-trace of the event handler (the "at") below
+      // that of the emission back trace.
+      res->state
+        .call_stack_get()
+        .insert(res->state.call_stack_get().begin(),
+                stack.begin(), stack.end());
       if (profile)
         res->profile_start(profile, SYMBOL(event), e.get());
       return res;
@@ -289,10 +302,12 @@ namespace urbi
           if (detach && !actions->sync)
           {
             if (actions->enter)
-              enter = spawn_actions_job(actions->lobby, actions->enter,
+              enter = spawn_actions_job(actions->lobby, actions->call_stack,
+                                        actions->enter,
                                         actions->profile, args);
             if (actions->leave)
-              leave = spawn_actions_job(actions->lobby, actions->leave,
+              leave = spawn_actions_job(actions->lobby, actions->call_stack,
+                                        actions->leave,
                                         actions->profile, args);
 
             // Start jobs simultaneously.
