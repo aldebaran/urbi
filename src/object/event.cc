@@ -44,16 +44,13 @@ namespace urbi
 
     URBI_CXX_OBJECT_INIT(Event)
     {
-      typedef void (Event::*emit_type)(const objects_type& args);
-      bind_variadic<void, Event>(SYMBOL(emit),
-                                 static_cast<emit_type>(&Event::emit));
       BIND(hasSubscribers);
       BIND(onEvent, onEvent, on_event_type);
-      bind_variadic<void, Event>(SYMBOL(syncEmit), &Event::syncEmit);
-      bind_variadic<rEventHandler, Event>(SYMBOL(syncTrigger), &Event::syncTrigger);
-      bind_variadic<rEventHandler, Event>(SYMBOL(trigger), &Event::trigger);
-
       BIND(waituntil);
+      BIND_VARIADIC(emit);
+      BIND_VARIADIC(syncEmit);
+      BIND_VARIADIC(syncTrigger);
+      BIND_VARIADIC(trigger);
     }
 
     Event::~Event()
@@ -131,7 +128,8 @@ namespace urbi
     `-----------------*/
 
     void
-    Event::onEvent(rExecutable guard, rExecutable enter, rExecutable leave, bool sync)
+    Event::onEvent(rExecutable guard, rExecutable enter, rExecutable leave,
+                   bool sync)
     {
       rActions actions(new Actions(guard, enter, leave, sync));
       GD_FPUSH_TRACE("%s: New registration %s.", this, actions);
@@ -391,7 +389,8 @@ namespace urbi
     {
       assert(event_);
       assert(cb_);
-      Event::callbacks_type::iterator it = libport::find(event_->callbacks_, cb_);
+      Event::callbacks_type::iterator it =
+        libport::find(event_->callbacks_, cb_);
       assert(it != event_->callbacks_.end());
       delete *it;
       event_->callbacks_.erase(it);
