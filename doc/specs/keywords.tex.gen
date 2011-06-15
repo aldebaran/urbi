@@ -109,7 +109,7 @@ sub pdf()
   my $size = int ((scalar @keyword + 1) / 2);
 
   print <<'EOF';
-\begin{tabular}{|c|c||c|c|}
+\begin{tabular}{|c|l||c|l|}
   \hline
   Keyword & Remark & Keyword & Remark \\
   \hline
@@ -139,11 +139,39 @@ EOF
 EOF
 }
 
+# Generate for HTML: one column only.
+sub html()
+{
+  print <<'EOF';
+\begin{tabular}{|c|l|}
+  \hline
+  Keyword & Remark \\
+  \hline
+EOF
+
+  # Issue the lines.
+  for my $k (@keyword)
+  {
+    printf("%20s & %-40s %s\n",
+           "\\lstinline\"$k\"", $keyword{$k}, '\\\\');
+  }
+  print <<'EOF';
+  \hline
+\end{tabular}
+EOF
+}
+
+
+
 ## ------ ##
 ## Main.  ##
 ## ------ ##
 
+print '\ifx\ifHtml\undefined', "\n";
 pdf;
+print '\else', "\n";
+html;
+print '\fi', "\n";
 
 
 
