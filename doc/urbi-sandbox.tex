@@ -167,6 +167,17 @@ This is the second chapter.
 \end{urbiscriptapi}
 
 
+\renewcommand{\baselinestretch}{.85}
+\begin{table}[\floatpos]
+  \centering
+    \input{specs/keywords}
+  \caption{Keywords}
+  \label{tab:keywords}
+\end{table}
+\renewcommand{\baselinestretch}{1}
+
+
+
 \let\sectionOrig\section
 \renewcommand{\section}[1]{\clearpage\sectionObject{#1}}
 \input{specs/pair}

@@ -101,27 +101,50 @@ my %keyword = map { split (/\s*:\s*/, $_, 2) }
 # keywords, sorted.
 my @keyword = sort keys %keyword;
 
-# number of lines in the table.
-my $size = int ((scalar @keyword + 1) / 2);
 
-# Issue the lines.
-for my $i (0 .. $size - 1)
+# Generate for PDF: two columns.
+sub pdf()
 {
-  my $k = $keyword[$i*2];
-  printf("%20s & %-40s %s\n",
-         "\\lstinline\"$k\"", $keyword{$k}, '&');
-  if ($i * 2 + 1 < scalar @keyword)
+  # number of lines in the table.
+  my $size = int ((scalar @keyword + 1) / 2);
+
+  print <<'EOF';
+\begin{tabular}{|c|c||c|c|}
+  \hline
+  Keyword & Remark & Keyword & Remark \\
+  \hline
+EOF
+
+  # Issue the lines.
+  for my $i (0 .. $size - 1)
   {
-    $k = $keyword[$i*2 + 1];
+    my $k = $keyword[$i*2];
     printf("%20s & %-40s %s\n",
-           "\\lstinline\"$k\"", $keyword{$k}, '\\\\');
+           "\\lstinline\"$k\"", $keyword{$k}, '&');
+    if ($i * 2 + 1 < scalar @keyword)
+    {
+      $k = $keyword[$i*2 + 1];
+      printf("%20s & %-40s %s\n",
+             "\\lstinline\"$k\"", $keyword{$k}, '\\\\');
+    }
+    # In case we have an odd number of items.
+    elsif ($i * 2 == scalar @keyword - 1)
+    {
+      print "\\\\\n";
+    }
   }
-  # In case we have an odd number of items.
-  elsif ($i * 2 == scalar @keyword - 1)
-  {
-    print "\\\\\n";
-  }
-};
+  print <<'EOF';
+  \hline
+\end{tabular}
+EOF
+}
+
+## ------ ##
+## Main.  ##
+## ------ ##
+
+pdf;
+
 
 
 ### Setup "Gostai" style for perl-mode and cperl-mode.
