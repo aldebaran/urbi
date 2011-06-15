@@ -152,8 +152,16 @@ EOF
   # Issue the lines.
   for my $k (@keyword)
   {
+    my $desc = $keyword{$k};
+    # There is something fishy here, TeX4HT issues some '<p
+    # class="indent">' around our uses of \lstinline in tables.  This
+    # is ugly.  It does so for both the first and second column, but
+    # it's only troublesome in the latter.
+    #
+    # FIXME: send bug report.
+    $desc =~ s/\\lstinline/\\verb/g;
     printf("%20s & %-40s %s\n",
-           "\\lstinline\"$k\"", $keyword{$k}, '\\\\');
+           "\\lstinline\"$k\"", $desc, '\\\\');
   }
   print <<'EOF';
   \hline
