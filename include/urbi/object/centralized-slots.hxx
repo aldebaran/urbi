@@ -77,17 +77,20 @@ namespace urbi
     CentralizedSlots::set(Object* owner,
 			  const key_type& key, value_type v, bool overwrite)
     {
-      loc_index_type::iterator it = where(owner, key);
-      if (it != content_->end())
+      q_slot_type c = content(owner, key, v);
+      std::pair<content_type::iterator, bool> p = content_->insert(c);
+      if (p.second)
       {
-        if (overwrite)
-          erase(owner, key);
-        else
-          return false;
+        ++owner->slots_.size_;
+        return true;
       }
-      ++owner->slots_.size_;
-      content_->insert(content(owner, key, v));
-      return true;
+      else if (overwrite)
+      {
+        content_->replace(p.first, c);
+        return true;
+      }
+      else
+        return false;
     }
 
     inline CentralizedSlots::value_type

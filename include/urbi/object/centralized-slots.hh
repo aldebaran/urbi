@@ -99,9 +99,10 @@ namespace urbi
 
       /// Set \a owner's \a key slot's value to \a v.
       /// @return Success status.
-      ///         I.e., false if the slot was already defined (entailing failure).
-      static bool set(Object* owner,
-               const key_type& key, value_type v, bool overwrite = false);
+      ///         (false iff the slot was already defined (entailing failure)).
+      static bool
+      set(Object* owner, const key_type& key, value_type v,
+          bool overwrite = false);
 
 
       /*----------.
@@ -110,7 +111,7 @@ namespace urbi
 
     private:
       static loc_index_type::iterator
-        where(const Object* owner, const key_type& key);
+      where(const Object* owner, const key_type& key);
 
 
       /*----------.
