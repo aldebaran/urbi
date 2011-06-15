@@ -20,9 +20,10 @@ TEST_SUITE_LOG = tests/test-suite.log
 
 # The list of LaTeX source files from the Kernel documentation that
 # will be turned into tests.
-test_tex = 					\
-  $(filter-out document-aux/%,			\
-    $(call ls_files,*.tex))
+test_tex =					\
+  $(filter-out $(FROM_GEN),			\
+    $(filter-out document-aux/%,		\
+      $(call ls_files,*.tex)))
 
 # Look in addons/ if there are additional LaTeX files that should
 # generate test cases.  To this end, we call `ls-file
