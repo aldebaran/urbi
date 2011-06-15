@@ -53,6 +53,11 @@ This chapter lists the user-visible changes in \usdk releases.
 
 \subsection{Changes}
 \begin{itemize}
+\item Drop support for the obsolete syntax for events: \lstinline{at (?e)}
+  and \lstinline{emit e} instead of \lstinline{at (e?)} and \lstinline{e!}
+  (\autoref{sec:k1:emit}).  As a consequence, \lstinline|emit| is now a
+  regular identifier.
+
 \item \refSlot[Job]{backtrace} now includes information about event handling
   (both sending and receiving parts).
 
@@ -340,10 +345,10 @@ which provide significant optimizations.  Several bugs have been fixed too.
 \subsection{Optimizations}
 \begin{itemize}
 \item \us interpretation has been globally sped up by around 30\%.
-\item Event emission routines have been optimized: \refSlot[Event]{'emit'} by
+\item Event emission routines have been optimized: \refSlot[Event]{emit} by
   around 25\%, \refSlot[Event]{syncEmit} by around 13\%,
-  \refSlot[Event]{trigger} by around 25\% and \refSlot[Event]{syncTrigger} by
-  around 10\%.
+  \refSlot[Event]{trigger} by around 25\% and \refSlot[Event]{syncTrigger}
+  by around 10\%.
 \end{itemize}
 
 \subsection{New Features}

@@ -335,7 +335,7 @@ namespace rewrite
     }
     else
     {
-      PARAMETRIC_AST(emit, "%exp:1 . 'emit'(%exps:2)");
+      PARAMETRIC_AST(emit, "%exp:1.emit(%exps:2)");
       result_ = exp(emit % event % args);
     }
     result_->original_set(e);

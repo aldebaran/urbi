@@ -170,7 +170,6 @@
         COLON        ":"
         DEFAULT       "default"
         ELSE         "else"
-        EMIT         "emit"
         FINALLY      "finally"
         FREEZEIF     "freezeif"
         FUNCTION     "function"
@@ -581,13 +580,6 @@ stmt:
   {
     $$ = new ast::Emit(@$, $1, $3, $4);
   }
-//<no-space< Emit.
-| "emit" k1_id args.opt tilda.opt
-  {
-    up.deprecated(@$, "emit event(arg, ...)", "event!(arg, ...)");
-    $$ = new ast::Emit(@$, $2, $3, $4);
-  }
-//>no-space>
 ;
 
 
@@ -1175,13 +1167,6 @@ event_match:
   {
     $$ = MAKE(event_match, @$, $[exp], $[args.opt], $[tilda.opt], $[guard.opt]);
   }
-//<no-space< ? event.
-| "?" exp guard.opt
-  {
-    up.deprecated(@$, "?event(arg, ...)", "event?(arg, ...)");
-    $$ = MAKE(event_match, @$, $[exp], $[guard.opt]);
-  }
-//>no-space>
 ;
 
 %type <ast::rExp> guard.opt;

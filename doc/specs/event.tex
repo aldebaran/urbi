@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2009-2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -41,14 +41,13 @@ var e = Event.new;
 \item[asEvent]
   Return \this.
 
-\item['emit']%
-  Throw an \lstinline|Event|. This function is called by the bang
-  operator.  It takes any number of arguments, passed to the receiver
-  when the event is caught. An event can also be emitted for a certain
-  duration using \lstinline|~|.  The execution of \lstinline|at|
-  clauses etc., is asynchronous: the control flow might be released by
-  the \lstinline|emit| call before all the watchers have finished
-  their execution.
+\item[emit]%
+  Throw an \refObject{Event}. This function is called by the bang operator.
+  It takes any number of arguments, passed to the receiver when the event is
+  caught. An event can also be emitted for a certain duration using
+  \lstinline|~|.  The execution of \lstinline|at| clauses etc., is
+  asynchronous: the control flow might be released by the \lstinline|emit|
+  call before all the watchers have finished their execution.
 
 \item[onSubscribe]
   This slot is not set by default. You can optionally assign an event
@@ -67,9 +66,8 @@ var e = Event.new;
   the event. This method is asynchronous and the \lstinline|stop| call
   will be asynchronous as well.
 
-\item[syncEmit]
-  This function does the same job as \refSlot{'emit'} but the call
-  will be synchronous.
+\item[syncEmit] This function does the same job as \refSlot{emit} but the
+  call will be synchronous.
 
 \item[syncTrigger]
   This function does the same job as \refSlot{trigger} but the call

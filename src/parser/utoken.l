@@ -443,7 +443,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "disown"        RETURN(DISOWN);
 "do"            RETURN(DO);
 "else"          RETURN(ELSE);
-"emit"          RETURN(EMIT);
 "enum"          RETURN(ENUM);
 "finally"       RETURN(FINALLY);
 "freezeif"      RETURN(FREEZEIF);

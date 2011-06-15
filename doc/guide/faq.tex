@@ -387,12 +387,12 @@ var myObject = Object.new;
 
 \subsubsection{How do I destroy an Object?}
 There is no \lstindex{delete} in Urbi, for a number of reasons (see
-\autoref{sec:k122:delete}).  Objects are deleted when they are no
-longer used/referenced to.
+\autoref{sec:k1:delete}).  Objects are deleted when they are no longer
+used/referenced to.
 
-In practice, users who want to ``delete an object'' actually want to
-remove a slot --- see \autoref{sec:tut:objects}.  Users who want to
-clear an object can empty it --- see \autoref{sec:k122:delete}.
+In practice, users who want to ``delete an object'' actually want to remove
+a slot --- see \autoref{sec:tut:objects}.  Users who want to clear an object
+can empty it --- see \autoref{sec:k1:delete}.
 
 Note that \lstinline{myObject = nil} does not explicitly destroy the
 object bound to the name \lstinline{myObject}, yet it may do

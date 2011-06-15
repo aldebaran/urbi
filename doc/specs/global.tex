@@ -83,16 +83,15 @@ echo(333);
 [00055205] *** 333
 \end{urbiscript}
 
-\item[evaluate] This \refObject{UVar} provides a synchronous interface
-  to the \urbi engine: write to it to ``send'' an expression to
-  compute it, and ``read'' it to get the result.  This UVar is
-  designed to be used from the \Cxx; it makes little sense in \us, use
-  \refSlot[System]{eval} instead, if it is really required (see
-  \autoref{sec:k122:dollar}).  Since the semantics of the assignment
-  requires that it evaluates to the right-hand side argument, reading
-  \lstinline|evaluate| after the assignment is needed, which makes
-  race conditions likely.  To avoid this, use \lstinline{|} (or better
-  yet, do not use \refSlot{evaluate} at all in \us).
+\item[evaluate] This \refObject{UVar} provides a synchronous interface to
+  the \urbi engine: write to it to ``send'' an expression to compute it, and
+  ``read'' it to get the result.  This UVar is designed to be used from the
+  \Cxx; it makes little sense in \us, use \refSlot[System]{eval} instead, if
+  it is really required (see \autoref{sec:k1:dollar}).  Since the semantics
+  of the assignment requires that it evaluates to the right-hand side
+  argument, reading \lstinline|evaluate| after the assignment is needed,
+  which makes race conditions likely.  To avoid this, use \lstinline{|} (or
+  better yet, do not use \refSlot{evaluate} at all in \us).
 
 \begin{urbiassert}
 (evaluate = "1+2;") == "1+2;";

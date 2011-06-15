@@ -28,7 +28,6 @@ do:
 double: Reserved
 dynamic_cast: Reserved
 else:
-emit: Deprecated
 enum:
 every:
 explicit: Reserved

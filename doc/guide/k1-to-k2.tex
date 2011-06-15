@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2009-2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -19,7 +19,7 @@ functions that support some \us 1 features.
 % \section{One to one translation}
 
 \section{\$(Foo)}
-\label{sec:k122:dollar}
+\label{sec:k1:dollar}
 
 This construct was designed to build identifiers at run-time.  This
 used to be a common idiom to work around some limitations of \us 1
@@ -47,7 +47,7 @@ following table lists common patterns.
 \end{center}
 
 \section{delete Foo}
-\label{sec:k122:delete}
+\label{sec:k1:delete}
 In order to maintain an analogy with the \Cxx language, \us used to
 support \lstinline{delete Foo}, but this was removed for a number of
 reasons:
@@ -96,7 +96,7 @@ Foo.localSlotNames;
 \end{urbiscript}
 
 \section{emit Foo}
-
+\label{sec:k1:emit}
 The keyword \lstinline{emit} is deprecated in favor of \lstinline{!}.
 
 \begin{center}
@@ -130,7 +130,7 @@ The \lstinline{?} construct is changed for symmetry.
 \section{eval(Foo)}
 \lstinline{eval} is still supported, but its use is discouraged: one
 can often easily do without.  For instance, \lstinline{eval} was often
-used to manipulate forged identifiers; see \autoref{sec:k122:dollar}
+used to manipulate forged identifiers; see \autoref{sec:k1:dollar}
 for means of getting rid of them.
 
 \section{foreach}
