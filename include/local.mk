@@ -1,4 +1,4 @@
-## Copyright (C) 2008-2010, Gostai S.A.S.
+## Copyright (C) 2008-2011, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -101,5 +101,5 @@ EXTRA_DIST += $(FROM_GEN:=.gen)
 	$(AM_V_GEN)mkdir -p $(dir $@)
 	$(AM_V_at)$< > $@.tmp
 	$(AM_V_at)chmod a-w $@.tmp
-	$(AM_V_at)$(move_if_change) --color $@.tmp $@
+	$(AM_V_at)$(move_if_change) --verbose --color $@.tmp $@
 	$(AM_V_at)touch $@

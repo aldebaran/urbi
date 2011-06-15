@@ -142,6 +142,7 @@ CLEANFILES += $(pdf_DATA)
 urbi_sdk_tex = $(call ls_files,*.tex)
 urbi_sdk_sources =				\
   $(urbi_sdk_tex)				\
+  specs/keywords.tex				\
   $(call ls_files,*.sty tables/*.txt)
 CLEANFILES += config.sty
 
@@ -183,6 +184,23 @@ $(REVISION_FILE):
 	$(AM_V_GEN)$(VERSIONIFY)			\
 	  --directory --cache=$(top_srcdir)/.version	\
 	  --latex=$@
+
+## ------------------------ ##
+## Generated source files.  ##
+## ------------------------ ##
+
+FROM_GEN =					\
+  specs/keywords.tex
+BUILT_SOURCES += $(FROM_GEN)
+EXTRA_DIST += $(FROM_GEN:=.gen)
+
+$(FROM_GEN): %: %.gen
+	$(AM_V_GEN)mkdir -p $(dir $@)
+	$(AM_V_at)$< > $@.tmp
+	$(AM_V_at)chmod a-w $@.tmp
+	$(AM_V_at)$(move_if_change) --verbose --color $@.tmp $@
+	$(AM_V_at)touch $@
+
 
 EXTRA_DIST += $(urbi_sdk_sources)
 urbi_sdk_deps = 				\

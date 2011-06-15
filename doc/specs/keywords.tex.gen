@@ -1,0 +1,143 @@
+#! /usr/bin/perl -w
+
+use strict;
+
+my $keywords = <<'EOF';
+and: Synonym for \lstinline|&&|
+and_eq: Synonym for \lstinline|&=|
+asm: Reserved
+at:
+auto: Reserved
+bitand: Synonym for \lstinline|&|
+bitor: Synonym for \lstinline-|-
+bool: Reserved
+break:
+call:
+case:
+catch:
+char: Reserved
+class:
+closure:
+compl: Synonym for \lstinline|~|
+const:
+const_cast: Reserved
+continue:
+default:
+delete: Reserved
+do:
+double: Reserved
+dynamic_cast: Reserved
+else:
+emit: Deprecated
+enum:
+every:
+explicit: Reserved
+export: Reserved
+extern: Reserved
+external:
+float: Reserved
+for: \lstinline|for&| and \lstinline-for|- flavors
+foreach: Deprecated, use \lstinline|for|
+freezeif:
+friend: Reserved
+function:
+goto: Reserved
+if:
+in:
+inline: Reserved
+int: Reserved
+internal: Deprecated
+long: Reserved
+loop: \lstinline|loop&| and \lstinline-loop|- flavors
+loopn: Deprecated, use \lstinline|for|
+mutable: Reserved
+namespace: Reserved
+new:
+not: Synonym for \lstinline|!|
+not_eq: Synonym for \lstinline|!=|
+onleave:
+or: Synonym for \lstinline-||-
+or_eq: Synonym for \lstinline-|=-
+private: Ignored
+protected: Ignored
+public: Ignored
+register: Reserved
+reinterpret_cast: Reserved
+return:
+short: Reserved
+signed: Reserved
+sizeof: Reserved
+static: Deprecated
+static_cast: Reserved
+stopif:
+struct: Reserved
+switch:
+template: Reserved
+this:
+throw:
+timeout:
+try:
+typedef: Reserved
+typeid: Reserved
+typename: Reserved
+union: Reserved
+unsigned: Reserved
+using: Reserved
+var:
+virtual: Reserved
+volatile: Reserved
+waituntil:
+wchar_t: Reserved
+whenever:
+while: \lstinline|while&| and \lstinline-while|- flavors
+xor: Synonym for \lstinline|^|
+xor_eq: Synonym \lstinline|^=|
+EOF
+
+# keyword => description
+my %keyword = map { split (/\s*:\s*/, $_, 2) }
+              map { split ("\n") }
+              $keywords;
+
+# keywords, sorted.
+my @keyword = sort keys %keyword;
+
+# number of lines in the table.
+my $size = int ((scalar @keyword + 1) / 2);
+
+# Issue the lines.
+for my $i (0 .. $size - 1)
+{
+  my $k = $keyword[$i*2];
+  printf("%20s & %-40s %s\n",
+         "\\lstinline\"$k\"", $keyword{$k}, '&');
+  if ($i * 2 + 1 < scalar @keyword)
+  {
+    $k = $keyword[$i*2 + 1];
+    printf("%20s & %-40s %s\n",
+           "\\lstinline\"$k\"", $keyword{$k}, '\\\\');
+  }
+  # In case we have an odd number of items.
+  elsif ($i * 2 == scalar @keyword - 1)
+  {
+    print "\\\\\n";
+  }
+};
+
+
+### Setup "Gostai" style for perl-mode and cperl-mode.
+## Local Variables:
+## perl-indent-level: 2
+## perl-continued-statement-offset: 2
+## perl-continued-brace-offset: -2
+## perl-brace-offset: 0
+## perl-brace-imaginary-offset: 0
+## perl-label-offset: -2
+## cperl-indent-level: 2
+## cperl-brace-offset: 0
+## cperl-continued-brace-offset: -2
+## cperl-label-offset: -2
+## cperl-extra-newline-before-brace: t
+## cperl-merge-trailing-else: nil
+## cperl-continued-statement-offset: 2
+## End:
