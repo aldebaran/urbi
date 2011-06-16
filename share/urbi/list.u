@@ -190,6 +190,14 @@ do (List)
     this[argMin(comp)];
   };
 
+  function unique()
+  {
+    var t = [=>] |
+    for| (var i: this)
+      t[i] = true |
+    t.keys;
+  };
+
   // The list of elements zipped with the \a f function.
   function zip(f, l)
   {

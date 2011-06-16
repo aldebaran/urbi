@@ -601,15 +601,26 @@ l.sort(function(a, b) {a.abs < b.abs})
 ![1, 2, 3].subset([1, 2]);
 \end{urbiassert}
 
-\item[tail]
-  Return the target, minus the first element. An error if the target
-  is empty.
 
+\item[tail]%
+  \this minus the first element. An error if the target is empty.
 \begin{urbiscript}
 assert([0, 1, 2].tail == [1, 2]);
 [].tail;
 [00000000:error] !!! tail: cannot be applied onto empty list
 \end{urbiscript}
+
+
+\item[unique]%
+  A new List composed of a single (based on \lstinline|==| comparison) copy
+  of all the members of \this in no particular order.
+\begin{urbiassert}
+             [].unique == [];
+            [1].unique == [1];
+         [1, 1].unique == [1];
+[1, 2, 3, 2, 1].unique == [1, 2, 3];
+\end{urbiassert}
+
 
 \item[zip](<fun>, <other>)%
   Zip \this list and the \var{other} list with the \var{fun} function, and
