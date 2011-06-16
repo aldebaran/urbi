@@ -135,7 +135,6 @@ namespace urbi
       URBI_AT_HOOK(elementChanged);
       key_check(key);
       return content_[key];
-      unreachable(); // wtf?
     }
 
     rDictionary

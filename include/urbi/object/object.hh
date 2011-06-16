@@ -436,7 +436,7 @@ namespace urbi
 | BIND.  |
 `-------*/
 
-// n-arity macro to bind functions.
+// N-ary macro to bind functions.
 //
 // For example:
 //
