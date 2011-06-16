@@ -43,14 +43,11 @@ namespace parser
   | ParserImpl.  |
   `-------------*/
 
-  static bool yydebug = getenv("URBI_PARSER");
-
   ParserImpl::ParserImpl(std::istream& input)
     : input_(input)
     , loc_()
     , synclines_()
     , result_(0)
-    , debug_(yydebug)
     , meta_(false)
     , factory_(new ast::Factory)
     , initial_token_()
@@ -94,7 +91,8 @@ namespace parser
     // Set up parser.
     parser_type p(*this);
 #if defined YYDEBUG && YYDEBUG
-    p.set_debug_level(debug_);
+    static bool yydebug = getenv("URBI_PARSER");
+    p.set_debug_level(yydebug || GD_ENABLED(dump));
 #endif
 
     // Save the current location so that we can restore it afterwards
@@ -126,7 +124,7 @@ namespace parser
     result_ = 0;
 
     TIMER_POP("parse");
-    if (debug_ && res)
+    if (res)
       GD_SINFO_DEBUG("Parse end:" << *res);
 
     if (!errors_.empty())

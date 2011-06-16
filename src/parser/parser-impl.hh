@@ -102,10 +102,6 @@ namespace parser
     /// The resut of the parsing.
     parse_result_type result_;
 
-    /// Whether in debug mode.
-    /// Enabled when the envvar YYDEBUG is defined (whatever the value).
-    bool debug_;
-
     /// Whether meta-variables are enabled.
     bool meta_;
 

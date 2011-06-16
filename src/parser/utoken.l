@@ -87,7 +87,7 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc,
 
 # define YY_USER_INIT                                                   \
   static bool flex_debug = getenv("URBI_SCANNER");                      \
-  yy_flex_debug = flex_debug;                                           \
+  yy_flex_debug = flex_debug || GD_ENABLED(dump);                       \
                                                                         \
   static bool urbi_check_mode = getenv ("URBI_CHECK_MODE");             \
                                                                         \
