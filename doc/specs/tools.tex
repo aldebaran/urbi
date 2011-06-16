@@ -75,22 +75,11 @@ They are meant for developers.
 \item[GD\_COLOR] If set, force the use of colors in the logs, even if the
   output device does not seem to support them.  See also
   \env{GD\_NO\_COLOR}.
-\item[GD\_CATEGORY] If set, a comma-separated list of categories or globs
-  (e.g., \samp{UValue}, \samp{Urbi.*}) with modifiers \samp{+} or
-  \samp{-}. If the modifier is a \samp{+} or if there is no modifier the
-  category will be displayed.  If the modifier is a \samp{-} it will be
-  hidden.
-
-  Modifiers can be chained, accumulated from left to right:
-  \samp{-*,+Urbi.*,-Urbi.At} will only display categories beginning with
-  \samp{Urbi.} except \samp{Urbi.At}, \samp{-Urbi.*} will display all
-  categories except those beginning with \samp{Urbi.}.
-
-  Actually, the first character defines the state for unspecified
-  categories: \samp{Urbi} (or \samp{+Urbi}) enables only the \samp{Urbi}
-  category, while \samp{-Urbi} enables everything but \samp{Urbi}.
-  Therefore, \samp{+Urbi.*,-Urbi.At} and \samp{Urbi.*,-Urbi.At} are
-  equivalent to \samp{-*,+Urbi.*,-Urbi.At}.
+\item[GD\_CATEGORY] If set, a comma-separated list of category patterns with
+  optional modifiers \samp{+} or \samp{-}; for instance,
+  \samp{-Urbi.*,Urbi.UObject}.  See \refSlot[Logger]{set} for a more precise
+  description of syntax, and \label{sec:logger:categories} for a description
+  of the categories used by \usdk.
 
 \item[GD\_ENABLE\_CATEGORY] If set, a comma-separated list of categories or
   globs (e.g., \samp{UValue}, \samp{Urbi.*}) to display.  All the others

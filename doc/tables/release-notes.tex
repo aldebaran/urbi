@@ -134,6 +134,25 @@ i.close;
 
 \item \refSlot[List]{unique}.
 
+\item \refObject{Logger} provides runtime control over the debug traces:
+  \begin{itemize}
+  \item \refSlot[Logger]{level} provides read/write access to the current
+    verbosity level,
+  \item \refSlot[Logger]{categories} gives the set of existing categories,
+  \item categories that match a given pattern can be enabled/disabled
+    (\refSlot[Logger]{enable}, \refSlot[Logger]{disable}),
+\begin{urbiscript}
+Logger.enable("Category*");
+Logger.disable("Category.Sub");
+\end{urbiscript}
+  \item the status of all the categories can be changed according to a given
+    specification string similar to \env{GD\_CATEGORY}
+    (\refSlot[Logger]{set}).
+\begin{urbiscript}
+Logger.set("+Category*,-Category.Sub");
+\end{urbiscript}
+  \end{itemize}
+
 \item \refSlot[String]{'[]'} accepts negative indexes, as
   \refSlot[List]{'[]'} did.
 \begin{urbiassert}
@@ -187,8 +206,10 @@ testTimeOut(2s);
 
 \subsection{Documentation}
 \begin{itemize}
-\item \autoref{sec:tools:urbi-launch:uobject} describes what command line
-  options are supported by the UObjects launched by \command{urbi-launch}.
+\item The logging categories used by \usdk
+  (\autoref{sec:logger:categories}).
+\item The command line interface of UObjects launched by
+  \command{urbi-launch} (\autoref{sec:tools:urbi-launch:uobject}).
 \item Bibliography, \autoref{sec:bibliography}.
 \item \refSlot[System]{currentRunner}.
 \end{itemize}

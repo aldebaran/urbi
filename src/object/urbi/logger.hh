@@ -41,6 +41,22 @@ namespace urbi
       std::string as_printable() const;
       Logger* operator<<(rObject o);
 
+      /// The list of the known categories.
+      /// Changes in this Dictionary have no impact.
+      rDictionary categories() const;
+      /// Enable all the categories (existing/future) that match \a pattern.
+      void enable(const std::string& pattern);
+      /// Disable all the categories (existing/future) that match \a pattern.
+      void disable(const std::string& pattern);
+      /// Change the status of all the categories based on \a specs.
+      void set(const std::string& pattern);
+
+      /// The current level.
+      levels::Level level_get() const;
+      /// Set the current level.
+      void level_set(levels::Level level) const;
+
+
     private:
       void init_helper(category_type name);
 

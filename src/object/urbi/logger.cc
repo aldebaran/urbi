@@ -8,10 +8,10 @@
  * See the LICENSE file for more information.
  */
 
-#include <urbi/object/enumeration.hh>
-
-#include <object/urbi/symbols.hh>
 #include <object/urbi/logger.hh>
+#include <object/urbi/symbols.hh>
+#include <urbi/object/dictionary.hh>
+#include <urbi/object/enumeration.hh>
 
 namespace urbi
 {
@@ -24,6 +24,7 @@ namespace urbi
       , level_(levels::log)
     {
       proto_add(proto);
+      init_helper(SYMBOL(Logger));
     }
 
     Logger::Logger(rLogger model)
@@ -49,6 +50,8 @@ namespace urbi
     Logger::init_helper(category_type name)
     {
       category_ = name;
+      // Make it exist, at least for sake of "categories()".
+      libport::debug::add_category(name);
       slot_set(SYMBOL(onEnter), proto->slot_get(SYMBOL(onEnter)));
       slot_set(SYMBOL(onLeave), proto->slot_get(SYMBOL(onLeave)));
     }
@@ -67,6 +70,54 @@ namespace urbi
       init_helper(name);
     }
 
+    /*-------------.
+    | Categories.  |
+    `-------------*/
+
+    rDictionary
+    Logger::categories() const
+    {
+      rDictionary res = new Dictionary;
+      foreach (const libport::debug::categories_type::value_type &p,
+               libport::debug::categories())
+        res->set(to_urbi(p.first), to_urbi(p.second));
+      return res;
+    }
+
+    void
+    Logger::enable(const std::string& pattern)
+    {
+      libport::debug::enable_category(libport::Symbol(pattern));
+    }
+
+    void
+    Logger::disable(const std::string& pattern)
+    {
+      libport::debug::disable_category(libport::Symbol(pattern));
+    }
+
+    void
+    Logger::set(const std::string& specs)
+    {
+      libport::debug::set_categories_state(specs, libport::debug::AUTO);
+    }
+
+
+    /*---------.
+    | Levels.  |
+    `---------*/
+
+    Logger::levels::Level
+    Logger::level_get() const
+    {
+      return GD_CURRENT_LEVEL();
+    }
+
+    void
+    Logger::level_set(levels::Level level) const
+    {
+      GD_FILTER(level);
+    }
 
     /*-----------.
     | Messages.  |
@@ -172,12 +223,18 @@ namespace urbi
       proto_add(Tag::proto);
 
       BIND(asPrintable, as_printable);
+      BIND(categories);
+      BIND(disable);
+      BIND(enable);
       BIND(init, init, void, ());
       BIND(init, init, void, (category_type));
       BIND(init, init, void, (category_type, rObject));
       BIND(onEnter);
       BIND(onLeave);
+      BIND(set);
       bind(libport::Symbol( "<<" ), &Logger::operator<<);
+      bind(SYMBOL(level), &Logger::level_get,
+           SYMBOL(levelSet), &Logger::level_set);
 
 #define DECLARE(Name)                                                   \
       BIND(Name, Name, Logger*, (const std::string&, const std::string&)); \

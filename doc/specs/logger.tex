@@ -52,6 +52,26 @@ Logger.log("message", "Category") :
 [      SubCategory      ]   indented message
 \end{urbiscript}
 
+\subsection{Existing Categories}
+\label{sec:logger:categories}
+\usdk comes with a number of built-in categories that all belong to one of
+the four following category families.  Precise categories are provided for
+information, but there is no guarantee that these categories will
+maintained, that their semantics will not change, or that they are all
+listed here.
+
+\begin{description}
+\item[Libport] The Libport library.
+\item[Sched] The coroutine library.
+\item[Serialize] The serialization library.
+\item[Urbi] Everything about \usdk.
+  \begin{description}
+  \item[Urbi.Parser] Bison parser traces.
+  \item[Urbi.Scanner] Flex scanner traces.
+  \end{description}
+\end{description}
+
+
 \subsection{Prototypes}
 \begin{refObjects}
 \item[Tag]
@@ -67,8 +87,8 @@ Logger.log("foo");
 [        Logger         ] foo
 [00004702] Logger<Logger>
 
-Logger.log("foo", "Category") |;
-[       Category        ] foo
+Logger.log("bar", "Category") |;
+[       Category        ] bar
 
 var l = Logger.new("Category2");
 [00004703] Logger<Category2>
@@ -92,10 +112,24 @@ l.log("foo", "ForcedCategory") |;
 \begin{urbiscript}
 l = Logger.new("Category", Logger.Levels.Log);
 [00090939] Logger<Category>
-l << "foo";
-[       Category        ] foo
+l << "abc";
+[       Category        ] abc
 [00091939] Logger<Category>
 \end{urbiscript}
+
+\item[categories]%
+  A \refObject{Dictionary} of known categories, mapping their name to their
+  activation status as a Boolean.  Note that changing this dictionary has no
+  influence over the set of active categories, see \refSlot{enable} and
+  \refSlot{disable}.
+\begin{urbiassert}[firstnumber=1]
+var c = Logger.categories;
+c.isA(Dictionary);
+c["Urbi.Call"];
+// The four category families used by Urbi SDK.
+c.keys.map (function (var s) { s.split(".")[0] }).unique
+  == ["Libport", "Sched", "Serialize", "Urbi"];
+\end{urbiassert}
 
 \item[debug](<message> = "", <category> = category)%
   Report a debug \var{message} of \var{category} to the user. It will be
@@ -103,10 +137,31 @@ l << "foo";
   \this to allow chained operations.
 \begin{urbiscript}
 // None of these are displayed unless the current level is at least DEBUG.
-logger.debug << "debug 1"|;
-logger.debug("debug 2")|;
-logger.debug("debug 3", "Category2")|;
+Logger.debug << "debug 1"|;
+Logger.debug("debug 2")|;
+Logger.debug("debug 3", "Category2")|;
 \end{urbiscript}
+
+\item[disable](<pattern>)%
+  Disable the categories that match the \var{pattern}, i.e., suppress logs
+  about these categories independently of the current \refSlot{level}.
+  Affects existing and future categories.  See also \refSlot{enable}.
+\begin{urbiassert}
+var c = Logger.new("Logger.Foo");
+c << "Enabled";
+// Enabled by default.
+Logger.categories["Logger.Foo"];
+
+// Disable any categories that starts with Logger.Foo, existing or not.
+Logger.disable("Logger.Foo*").isVoid;
+c << "Disabled";
+!Logger.categories["Logger.Foo"];
+
+// A new category, disabled at creation.
+var c2 = Logger.new("Logger.Foo.Bar");
+c2 << "Disabled";
+!Logger.categories["Logger.Foo.Bar"];
+\end{urbiassert}
 
 \item[dump](<message> = "", <category> = category)%
   Report a debug \var{message} of \var{category} to the user. It will be
@@ -114,10 +169,29 @@ logger.debug("debug 3", "Category2")|;
   chained operations.
 \begin{urbiscript}
 // None of these are displayed unless the current level is at least DEBUG.
-logger.dump << "dump 1"|;
-logger.dump("dump 2")|;
-logger.dump("dump 3", "Category2")|;
+Logger.dump << "dump 1"|;
+Logger.dump("dump 2")|;
+Logger.dump("dump 3", "Category2")|;
 \end{urbiscript}
+
+\item[enable](<pattern>)%
+  Enable the categories that match the \var{pattern}, i.e., suppress logs
+  about these categories independently of the current \refSlot{level}.
+  Affects existing and future categories.  See also \refSlot{disable}.
+\begin{urbiassert}
+// Disable any categories that starts with Logger.Foo, existing or not.
+Logger.disable("Logger.Foo*").isVoid;
+Logger.log("disabled", "Logger.Foo.Bar");
+Logger.log("disabled", "Logger.Foo.Baz");
+
+// Enable those that start with Logger.Foo.Bar.
+Logger.enable("Logger.Foo.Bar*").isVoid;
+Logger.log("enabled", "Logger.Foo.Bar");
+[    Logger.Foo.Bar     ] enabled
+Logger.log("enabled", "Logger.Foo.Bar.Qux");
+[  Logger.Foo.Bar.Qux   ] enabled
+Logger.log("disabled", "Logger.Foo.Baz");
+\end{urbiassert}
 
 \item[err](<message> = "", <category> = category)%
   Report an error \var{message} of \var{category} to the user. Return \this
@@ -127,6 +201,28 @@ logger.dump("dump 3", "Category2")|;
   Define the \var{category} of the new \lstinline|Logger| object. If no
   category is given the new \lstinline|Logger| will inherit the category of
   its prototype.
+
+\item[level]%
+  The current level of verbosity (see \refSlot{Levels}).  Can be read and
+  assigned to.
+\begin{urbiassert}
+// Logger is enabled by default.
+Logger.categories["Logger"];
+// Log level is enabled by default.
+Logger.level == Logger.Levels.Log;
+Logger.log("Logger enabled");
+[        Logger         ] Logger enabled
+
+// Disable it.
+Logger.level = Logger.Levels.None;
+Logger.level == Logger.Levels.None;
+Logger.log("Logger is disabled");
+
+// Enable it back.
+Logger.level = Logger.Levels.Log;
+Logger.log("Logger enable again");
+[        Logger         ] Logger enable again
+\end{urbiassert}
 
 \item[Levels]%
   An \refObject{Enumeration} of the log levels defined in
@@ -141,14 +237,14 @@ Logger.Levels.values;
   Report a debug \var{message} of \var{category} to the user. It will be
   shown if debug is not disabled. Return \this to allow chained operations.
 \begin{urbiscript}
-logger.log << "log 1"|;
-[       Category        ] log 1
+Logger.log << "log 1"|;
+[       Logger        ] log 1
 
-logger.log("log 2")|;
-[       Category        ] log 2
+Logger.log("log 2")|;
+[       Logger        ] log 2
 
-logger.log("log 3", "Category2")|;
-[       Category2       ] log 3
+Logger.log("log 3", "Category")|;
+[      Category       ] log 3
 \end{urbiscript}
 
 \item[onEnter]%
@@ -159,29 +255,78 @@ logger.log("log 3", "Category2")|;
   The primitive called when \lstinline|Logger| is used as a \lstinline|Tag|
   and is left. This primitive only decrements the indentation level.
 
+\item[set](<specs>)%
+  Enable/disable the categories according to the \var{specs}.  The
+  \var{specs} is a comma-separated list of categories or globs (e.g.,
+  \samp{Libport}, \samp{Urbi.*}) with optional modifiers \samp{+} or
+  \samp{-}.  If the modifier is a \samp{+} or if there is no modifier the
+  category will be displayed.  If the modifier is a \samp{-} it will be
+  hidden.
+
+  Modifiers can be chained, accumulated from left to right:
+  \samp{-*,+Urbi.*,-Urbi.At} will only display categories beginning with
+  \samp{Urbi.} except \samp{Urbi.At}, \samp{-Urbi.*} will display all
+  categories except those beginning with \samp{Urbi.}.
+
+  Actually, the first character defines the state for unspecified
+  categories: \samp{Urbi} (or \samp{+Urbi}) enables only the \samp{Urbi}
+  category, while \samp{-Urbi} enables everything but \samp{Urbi}.
+  Therefore, \samp{+Urbi.*,-Urbi.At} and \samp{Urbi.*,-Urbi.At} are
+  equivalent to \samp{-*,+Urbi.*,-Urbi.At}.
+
+\begin{urbiscript}
+var l1 = Logger.new("Logger")|;
+var l2 = Logger.new("Logger.Sub")|;
+var l3 = Logger.new("Logger.Sub.Sub")|;
+function check(specs, s1, s2, s3)
+{
+  Logger.set(specs);
+  assert
+  {
+    Logger.categories["Logger"]         == s1;
+    Logger.categories["Logger.Sub"]     == s2;
+    Logger.categories["Logger.Sub.Sub"] == s3;
+  };
+}|;
+
+check("-L*",      false, false, false);
+check("L*",       true, true, true);
+check("-L*,+Lo*", true, true, true);
+check("-L*,+Logger", true, false, false);
+
+check("+Logger,-Logger.*", true, false, false);
+check("-*,+Logger.*,-Logger.Sub.*", false, true, false);
+check("+Logger*,-Logger.*,+Logger.Sub.*", true, false, true);
+\end{urbiscript}
+
+\begin{urbicomment}
+// Restore the rights.
+Logger.enable("*");
+\end{urbicomment}
+
 \item[trace](<message> = "", <category> = category)%
   Report a debug \var{message} of \var{category} to the user. It will be
   shown if the debug level is \lstinline|Trace|, \lstinline|Debug| or
   \lstinline|Dump|. Return \this to allow chained operations.
 \begin{urbiscript}
 // None of these are displayed unless the current level is at least TRACE.
-logger.trace << "trace 1"|;
-logger.trace("trace 2")|;
-logger.trace("trace 3", "Category2")|;
+Logger.trace << "trace 1"|;
+Logger.trace("trace 2")|;
+Logger.trace("trace 3", "Category2")|;
 \end{urbiscript}
 
 \item[warn](<message> = "", <category> = category)%
   Report a warning \var{message} of \var{category} to the user. Return \this
   to allow chained operations.
 \begin{urbiscript}
-logger.warn << "warn 1"|;
-[       Category        ] warn 1
+Logger.warn << "warn 1"|;
+[       Logger        ] warn 1
 
-logger.warn("warn 2")|;
-[       Category        ] warn 2
+Logger.warn("warn 2")|;
+[       Logger        ] warn 2
 
-logger.warn("warn 3", "Category2")|;
-[       Category2       ] warn 3
+Logger.warn("warn 3", "Category")|;
+[       Category       ] warn 3
 \end{urbiscript}
 \end{urbiscriptapi}
 
