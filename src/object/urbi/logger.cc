@@ -46,7 +46,7 @@ namespace urbi
     }
 
     void
-    Logger::init_helper(libport::debug::category_type name)
+    Logger::init_helper(category_type name)
     {
       category_ = name;
       slot_set(SYMBOL(onEnter), proto->slot_get(SYMBOL(onEnter)));
@@ -54,22 +54,27 @@ namespace urbi
     }
 
     void
-    Logger::init(libport::debug::category_type name)
+    Logger::init(category_type name)
     {
       level_ = proto->level_;
       init_helper(name);
     }
 
     void
-    Logger::init(libport::debug::category_type name, rObject level)
+    Logger::init(category_type name, rObject level)
     {
-      level_ = from_urbi<libport::Debug::levels::Level>(level);
+      level_ = from_urbi<levels::Level>(level);
       init_helper(name);
     }
 
+
+    /*-----------.
+    | Messages.  |
+    `-----------*/
+
     void
-    Logger::msg_(libport::Debug::types::Type type,
-                 libport::Debug::levels::Level level,
+    Logger::msg_(types::Type type,
+                 levels::Level level,
                  const std::string& msg,
                  boost::optional<std::string> category)
     {
@@ -78,8 +83,7 @@ namespace urbi
       if (! category && ! category_)
         FRAISE("no category defined");
 
-      libport::debug::category_type c =
-        category ? libport::debug::category_type(*category) : *category_;
+      category_type c = category ? category_type(*category) : *category_;
 
       libport::debug::add_category(c);
 
@@ -167,9 +171,13 @@ namespace urbi
     {
       proto_add(Tag::proto);
 
+      BIND(asPrintable, as_printable);
       BIND(init, init, void, ());
-      BIND(init, init, void, (libport::debug::category_type));
-      BIND(init, init, void, (libport::debug::category_type, rObject));
+      BIND(init, init, void, (category_type));
+      BIND(init, init, void, (category_type, rObject));
+      BIND(onEnter);
+      BIND(onLeave);
+      bind(libport::Symbol( "<<" ), &Logger::operator<<);
 
 #define DECLARE(Name)                                                   \
       BIND(Name, Name, Logger*, (const std::string&, const std::string&)); \
@@ -183,11 +191,6 @@ namespace urbi
       DECLARE(trace);
       DECLARE(warn);
 #undef DECLARE
-
-      bind(libport::Symbol( "<<" ), &Logger::operator<<);
-      BIND(asPrintable, as_printable);
-      BIND(onEnter);
-      BIND(onLeave);
     }
 
     URBI_ENUM_REGISTER(Logger::levels::Level, Global.Logger.Levels,
