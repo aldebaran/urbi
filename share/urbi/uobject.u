@@ -24,7 +24,7 @@ do (Global.UObject)
   // call.
   function logger()
   {
-    UObject.logger = Logger.new("UObject")
+    UObject.logger = Logger.new("Urbi.UObject")
   };
 
   var minimumInterval = System.period;
@@ -257,7 +257,7 @@ do (&UVar)
 {
   function logger()
   {
-    &UVar.logger = Logger.new("UObject")
+    &UVar.logger = Logger.new("Urbi.UObject")
   };
   var traceSet = Event.new;
   var traceGet = Event.new;
@@ -305,7 +305,8 @@ do (&UVar)
       {
         uobjects.setSlot(parent.__uobjectName, parent)|
         if (hasSlot("Logger"))
-          Logger.warn("Copying object " + parent +" into uobjects", "UObjects")
+          Logger.warn("Copying object " + parent +" into uobjects",
+                      "Urbi.UObjects")
       }|
       ownerName = parent.__uobjectName
     }|
@@ -640,7 +641,7 @@ class Global.'external'
 {
   function logger()
   {
-    Global.'external'.logger = Logger.new("UObject")
+    Global.'external'.logger = Logger.new("Urbi.UObject")
   };
   var MODULE_TAG = "__ExternalMessage__";
   var UEM_EVALFUNCTION = 0;
