@@ -20,8 +20,10 @@ do (Global.Tag)
   {
     if (this === Tag)
       type
-    else
+    else if (hasSlot("name"))
       "%s<%s>" % [type, name]
+    else
+      "%s<%s>" % [type, uid]
   };
 
   function begin()
