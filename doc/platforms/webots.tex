@@ -194,12 +194,12 @@ minutes, thus letting you test all the features of the registered
 version during this amount of time. In evaluation mode, the \urbi
 controller will display the following message in the \webots console:
 
-\begin{lstlisting}
+\begin{verbatim}
 **************************************************
 * URBI: Invalid or missing license.
 * Urbi for Webots will quit after five minutes.
 **************************************************
-\end{lstlisting}
+\end{verbatim}
 
 In order to run \uwebots without constraints you must provide it with a
 license file, as described in the following section.
@@ -262,13 +262,13 @@ port and control the \aibo like a regular one.
 To use an urbi controller in your \webots world, first define an
 \verb+urbi-2.0+ controller for your webots node:
 
-\begin{lstlisting}
+\begin{verbatim}
 DEF MYNODE Robot
 {
   ...
   controller "urbi-2.0"
 }
-\end{lstlisting}
+\end{verbatim}
 
 This will start an \urbi server to interact with your robot. This
 server is however useless since it doesn't run any specific behavior
@@ -285,14 +285,14 @@ exact same as the \verb+urbi+ program, as described in
 \paragraph{Listening for incoming connections:} pass a \verb+--port+
 option to the controller.
 
-\begin{lstlisting}
+\begin{verbatim}
 DEF MYNODE Robot
 {
   ...
   controller "urbi-2.0"
   controllerArgs "--port 54000"
 }
-\end{lstlisting}
+\end{verbatim}
 
 \paragraph{Loading an \us file:} pass a \verb+--file+ option to the
 controller. In addition to standard directories, scripts are also
@@ -301,14 +301,14 @@ your webots installation. For instance, you could create a
 \file{my\_behavior/my\_script.u} script in this directory, and use the
 following \verb+controllerArgs+.
 
-\begin{lstlisting}
+\begin{verbatim}
 DEF MYNODE Robot
 {
   ...
   controller "urbi-2.0"
   controllerArgs "--file my_behavior/my_script.u"
 }
-\end{lstlisting}
+\end{verbatim}
 
 \subsection{Defining custom \urbi controllers}
 

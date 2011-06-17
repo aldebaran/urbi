@@ -701,7 +701,7 @@ The following sections assume that gdb is recent enough.
   are manipulating the sources.  Each primitive object is pretty printed
   inside this backtrace.
 
-\begin{lstlisting}[language=gdb,style=UrbiSDKEnv]
+\begin{verbatim}[language=gdb]
 (gdb) b urbi::object::system_backtrace
 Breakpoint 1 at 0x7ffff4be229d: file system.cc, line 305.
 (gdb) c
@@ -726,7 +726,7 @@ Breakpoint 1, urbi::object::system_backtrace () at system.cc:305
 #48 [input.u:2.12-39] [1].each(Code_0x7ffff7fbdfb8)
 #52 [input.u:2.12-39] Call each
 #55 [input.u:2.1-40] Stmt
-\end{lstlisting}
+\end{verbatim}
 
 \item[urbi break] Set a breakpoint on an \us function.  A breakpoint is
   defined with at least a message and additional optional information such
@@ -734,7 +734,7 @@ Breakpoint 1, urbi::object::system_backtrace () at system.cc:305
   breakpoint.  Be aware that the target and the arguments are lexically
   compared with the pretty-printed versions.
 
-\begin{lstlisting}[language=gdb,style=UrbiSDKEnv]
+\begin{verbatim}[language=gdb]
 (gdb) urbi break input.u:2 Lobby_0x7ffff7f03208.foo(["2" => 2])
 UBreakpoint 1:
         Location: input.u:2
@@ -751,39 +751,39 @@ for(var i: [1, 2, 3]) foo([i.asString => i]);
 UBreakpoint 1: [input.u:2.23-45] Lobby_0x7ffff7f03208.foo(["2" => 2])
 (gdb) p *(urbi::object::Dictionary *) 0x7ffff7f5b750
 $1 = ["2" => 2]
-\end{lstlisting}
+\end{verbatim}
 
 
 \item[urbi delete] Remove a breakpoint set by \command{urbi-break}.  It
   expects one argument: the \urbi breakpoint number.
 
-\begin{lstlisting}[language=gdb,style=UrbiSDKEnv]
+\begin{verbatim}[language=gdb]
 (gdb) urbi break foo
 UBreakpoint 2:
         <any>.foo(<any>)
 (gdb) urbi delete 2
 UBreakpoint 2:
         Removed
-\end{lstlisting}
+\end{verbatim}
 
 \item[urbi call] Evaluate its arguments as an urbiscript call to eval.
   Live objects can be manipulated easily by using the object name followed
   by its address.
 
-\begin{lstlisting}[language=gdb,style=UrbiSDKEnv]
+\begin{verbatim}[language=gdb]
 (gdb) urbi call Lobby_0x7ffff7f03208.echo(42)
 [00219506] *** 42
-\end{lstlisting}
+\end{verbatim}
 
 \item[urbi print] Do the same as \command{urbi call} except that the result
   of the expression is printed at the end of the evaluation.  Objects
   printed like that are likely to be destroyed at the end of the command
   unless the value has been stored in a global variable.
 
-\begin{lstlisting}[language=gdb,style=UrbiSDKEnv]
+\begin{verbatim}[language=gdb]
 (gdb) urbi print { var a = "1"; var b = [1]; [a => b] }
 ["1" => [1]]
-\end{lstlisting}
+\end{verbatim}
 
 \end{description}
 

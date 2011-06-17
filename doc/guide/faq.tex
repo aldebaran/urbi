@@ -28,7 +28,7 @@ At random places we use \samp{+=} in \command{/bin/sh} scripts, which Ash
 
 If you encounter this error:
 
-\begin{lstlisting}[language={},style=UrbiSDK]
+\begin{verbatim}
 cc1plus: warnings being treated as errors
 parser/ugrammar.hh: In member function \
   `void yy::parser::yypush_(const char*, int, yy::parser::symbol_type&)':
@@ -40,7 +40,7 @@ parser/ugrammar.hh: In member function \
 parser/ugrammar.hh:1240: error: `<anonymous>' is used uninitialized \
   in this function
 parser/ugrammar.cc:1475: note: `<anonymous>' was declared here
-\end{lstlisting}
+\end{verbatim}
 
 \noindent
 then you found a problem that we don't know how to resolved currently.
@@ -50,12 +50,12 @@ Downgrade from GCC-4.4 to GCC-4.3.
 
 If at bootstrap you have something like:
 
-\begin{lstlisting}[language={}]
+\begin{verbatim}
 configure:12176: error: possibly undefined macro: AM_LANGINFO_CODESET
  If this token and others are legitimate, please use m4_pattern_allow.
  See the Autoconf documentation.
 configure:12246: error: possibly undefined macro: gl_GLIBC21
-\end{lstlisting}
+\end{verbatim}
 
 \noindent
 it probably means your Automake installation is incomplete.  See the
@@ -956,12 +956,12 @@ MyObject.test(1), MyObject.test(1)
 will produce the following output (assuming the first call to
 \lstinline|time| returns 1000).
 
-\begin{lstlisting}
+\begin{verbatim}
 in 1: 1000
 out 1: 1001
 in 2: 1001
 out 2: 1002
-\end{lstlisting}
+\end{verbatim}
 
 However, the execution of the \urbi kernel is not ``stuck'' while the
 remote function executes, as the following code demonstrates:
@@ -975,14 +975,14 @@ t:every(300ms)
 
 The corresponding output is (mixing the kernel and the remote outputs):
 
-\begin{lstlisting}
+\begin{verbatim}
 [0] running
 in 1: 1000
 [300] running
 [600] running
 [900] running
 out 1: 1001
-\end{lstlisting}
+\end{verbatim}
 
 As you can see, \urbi semantics is respected (the execution flow is
 stuck until the return value from the function is returned), but the
