@@ -1030,7 +1030,7 @@ class Counter
 \end{urbiscript}
 
 \begin{multicols}{2}
-\begin{urbiscript}
+\begin{urbiscript}[xrightmargin=0mm,xleftmargin=0mm]
 class ImmutableCounter : Counter
 {
   function '+='(var n) { this + n };
@@ -1053,7 +1053,7 @@ ic2;
 [00010594] 0 @ 0x100354b70
 \end{urbiscript}
 \columnbreak
-\begin{urbiscript}
+\begin{urbiscript}[xrightmargin=0mm,xleftmargin=0mm]
 class MutableCounter : Counter
 {
   function '+='(var n) { count += n | this };
@@ -2528,9 +2528,20 @@ if (var xx = 123) xx | xx;
 
 \subsection{for}
 \label{sec:lang:for}
-\lstinline|for| comes in several flavors.
+There are several kinds of \lstinline|for| loops:
+\begin{description}
+\item[C-like for] such as
+  \lstinline|for (var i = 0; i < n; i += 1) echo(i);|, see
+  \autoref{sec:lang:for:c}.
+\item[Range-for] also known as \dfn{foreach}-loops,
+  \lstinline|for (var i : [0, 1, 2, 4]) echo(i);|, see
+  \autoref{sec:lang:for:each}.
+\item[for $n$-times] for instance \lstinline|for (10) echo(10);|, see
+  \autoref{sec:lang:for:n}.
+\end{description}
 
 \subsubsection{C-like for}
+\label{sec:lang:for:c}
 
 \us support the classical \C-like \lstinline|for| construct.
 
@@ -2758,6 +2769,7 @@ sw("foobar");
 % $ Pacify emacs math mode.
 
 \subsection{while}
+\label{sec:lang:while}
 
 The \lstinline|while| loop is similar to \C's one.
 
@@ -3742,7 +3754,7 @@ echo("done");
 \end{urbiscript}
 
 
-\subsubsection{range-for\& (:)}
+\subsubsection{range-for\&}
 \label{sec:lang:for:each:and}
 
 One can iterate concurrently over the members of a collection.
