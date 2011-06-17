@@ -20,16 +20,190 @@ An \dfn{event} can be ``emitted'' and ``caught'', or ``sent'' and
 
 There are several examples of uses of events in the documentation of
 event-based constructs.  See \lstinline{at} (\autoref{sec:lang:at}),
-\lstinline{waituntil} (\autoref{sec:lang:waituntil}),
-\lstinline{whenever} (\autoref{sec:lang:whenever}), and so forth.  The
-tutorial chapter about event-based programming contains other
-examples, see \autoref{sec:tut:event-prog}.
+\lstinline{waituntil} (\autoref{sec:lang:waituntil}), \lstinline{whenever}
+(\autoref{sec:lang:whenever}), and so forth.  The tutorial chapter about
+event-based programming contains other examples, see
+\autoref{sec:tut:event-prog}.
+
+\subsection{Synchronicity of Event Handling}
+\label{sec:event:sync}
+A particular emphasis should be put on the \dfn{synchronicity} of the event
+handling, i.e., whether the bodies of the event handlers are run before the
+control flow returns from the event emission.  By default, (i.e.,
+\lstinline|at (e?...)| and \lstinline|e!(...)|/\lstinline|e.emit(...)|)) the
+execution is \dfn{asynchronous}, but if either the emitted or the handler is
+marked asynchronous (i.e., \lstinline|at sync (e?...)| or
+\lstinline|e.syncEmit(...)|), then the execution is \dfn{synchronous}.
+
+Contrast the following examples:
+
+\begin{multicols}{2}
+\paragraph{Asynchronous handlers}~
+
+\begin{urbiscript}[xrightmargin=0mm,xleftmargin=0mm]
+var e = Event.new |;
+
+at (e?)
+  { echo("a"); sleep(20ms); echo("b") }
+onleave
+  { echo("c"); sleep(20ms); echo("d") };
+
+e! | echo("done");
+[00000001] *** done
+sleep(25ms);
+[00000002] *** a
+[00000003] *** c
+[00000101] *** b
+[00000102] *** d
+
+e.syncEmit | echo("done");
+[00000001] *** a
+[00000101] *** b
+[00000102] *** c
+[00000202] *** d
+[00000203] *** done
+\end{urbiscript}
+\columnbreak
+
+\paragraph{Synchronous handlers}~
+
+\begin{urbicomment}
+removeSlots("e");
+\end{urbicomment}
+\begin{urbiscript}[xrightmargin=0mm,xleftmargin=0mm]
+var e = Event.new |;
+
+at sync (e?)
+  { echo("a"); sleep(20ms); echo("b") }
+onleave
+  { echo("c"); sleep(20ms); echo("d") };
+
+e! | echo("done");
+// No need to sleep.
+[00000011] *** a
+[00000031] *** b
+[00000031] *** c
+[00000052] *** d
+[00000052] *** done
+
+e.syncEmit | echo("done");
+[00000052] *** a
+[00000073] *** b
+[00000073] *** c
+[00000094] *** d
+[00000094] *** done
+\end{urbiscript}
+\end{multicols}
+
+For more information about the synchronicity of event handlers, see
+\autoref{sec:lang:at:sync-async}.
+
+\subsection{Sustained Events}
+\label{sec:event:sustain}
+
+Events can also be sustained during a time span starting at
+\refSlot{trigger} and ending at \lstinline|handler.stop|.  Note that the
+\lstinline|onleave|-clauses of the event handlers is not executed right
+after the event was first triggered, but rather when it is stopped.
+
+Synchronicity for sustained events is more complex: the
+\lstinline|at|-clause is handled asynchronously iff \emph{both} the emission
+and the handler are asynchronous, whereas the \lstinline|onleave|-clause is
+handled asynchronously iff the emission was synchronous.  Be warned, but do
+not depend on this, as in the future we might change this.
+
+\begin{multicols}{2}
+\paragraph{Asynchronous Trigger}~
+
+\begin{urbicomment}
+removeSlots("e");
+\end{urbicomment}
+\begin{urbiscript}[xrightmargin=0mm,xleftmargin=0mm]
+var e = Event.new|;
+at (e?)
+  { echo("a"); sleep(20ms); echo("b") }
+onleave
+  { echo("c"); sleep(20ms); echo("d") };
+
+var handler = e.trigger | echo("?");
+[00000001] *** ?
+[00000002] *** a
+[00000102] *** b
+sleep(200ms);
+handler.stop | echo("?");
+[00000301] *** ?
+sleep(25ms);
+[00000302] *** c
+[00000402] *** d
+
+// at and onleave clauses may overlap.
+handler = e.trigger | handler.stop;
+sleep(25ms);
+[00000001] *** a
+[00000002] *** c
+sleep(25ms);
+[00000201] *** b
+[00000202] *** d
+
+handler = e.syncTrigger | echo("?");
+[00000002] *** a
+[00000102] *** b
+[00000001] *** ?
+handler.stop | echo("?");
+[00000302] *** c
+[00000402] *** d
+[00000301] *** ?
+\end{urbiscript}
+\columnbreak
+
+\paragraph{Synchronous Trigger}~
+
+\begin{urbicomment}
+removeSlots("e", "handler");
+\end{urbicomment}
+\begin{urbiscript}[xrightmargin=0mm,xleftmargin=0mm]
+var e = Event.new|;
+at sync (e?)
+  { echo("a"); sleep(20ms); echo("b") }
+onleave
+  { echo("c"); sleep(20ms); echo("d") };
+
+var handler = e.trigger | echo("?");
+// No need to sleep.
+[00000002] *** a
+[00000102] *** b
+[00000001] *** ?
+handler.stop | echo("?");
+[00000301] *** ?
+sleep(25ms);
+[00000302] *** c
+[00000402] *** d
+
+// at and onleave clauses don't overlap.
+handler = e.trigger | handler.stop;
+sleep(25ms);
+[00000001] *** a
+[00000201] *** b
+[00000002] *** c
+[00000202] *** d
+
+handler = e.syncTrigger | echo("?");
+[00000002] *** a
+[00000102] *** b
+[00000001] *** ?
+handler.stop | echo("?");
+[00000302] *** c
+[00000402] *** d
+[00000301] *** ?
+\end{urbiscript}
+\end{multicols}
+
 
 \subsection{Construction}
 \label{sec:stdlib:event:ctor}
 
-An \lstinline{Event} is created like any other object, without
-arguments.
+An \lstinline{Event} is created like any other object.  The constructor
+takes no argument.
 
 \begin{urbiscript}[firstnumber=1]
 var e = Event.new;
@@ -41,42 +215,79 @@ var e = Event.new;
 \item[asEvent]
   Return \this.
 
-\item[emit]%
-  Throw an \refObject{Event}. This function is called by the bang operator.
-  It takes any number of arguments, passed to the receiver when the event is
-  caught. An event can also be emitted for a certain duration using
-  \lstinline|~|.  The execution of \lstinline|at| clauses etc., is
-  asynchronous: the control flow might be released by the \lstinline|emit|
-  call before all the watchers have finished their execution.
+\item[emit](...)%
+  Fire an ``instantaneous'' and ``asynchronous'' \refObject{Event}. This
+  function is called by the \lstinline|!| operator.  It takes any number of
+  arguments, passed to the receiver when the event is caught.
+\begin{urbicomment}
+removeSlots("e");
+\end{urbicomment}
+\begin{urbiscript}
+var e = Event.new|;
+// No handler, lost message.
+e.emit;
+at (e?)               echo("e");
+at (e?())             echo("e()");
+at (e?(var x))        echo("e(%s)" % [x]);
+at (e?(var x, var y)) echo("e(%s, %s)" % [x, y]);
 
-\item[onSubscribe]
-  This slot is not set by default. You can optionally assign an event
-  to it. In this case, onSubscribe is triggered each time some code
-  starts watching this event (by setting up an \lstinline|at| or
-  a \lstinline|waituntil| on it for instance).
+// This is what e! does.
+e.emit;
+[00000135] *** e
+[00000135] *** e()
 
-  Throw a synchronized event. This call awaits that all functions that
-  have to react to this event have returned.  This function can have
-  the same arguments as \lstinline|emit|.
+// This is what e!() does: same as e!.
+e.emit();
+[00000138] *** e
+[00000138] *** e()
 
-\item[trigger]
-  This function is used to launch an event during an unknown amount of
-  time. Calling this function launches and keeps the event triggered
-  and returns a handler object whose \lstinline|stop| method stops launching
-  the event. This method is asynchronous and the \lstinline|stop| call
-  will be asynchronous as well.
+// This is what e!(1, [2]) does.
+e.emit(1, [2]);
+[00000141] *** e
+[00000141] *** e(1, [2])
 
-\item[syncEmit] This function does the same job as \refSlot{emit} but the
-  call will be synchronous.
+// This is what e!(1, [2], "three") does.
+e.emit(1, [2], "three");
+[00000146] *** e
+\end{urbiscript}
 
-\item[syncTrigger]
-  This function does the same job as \refSlot{trigger} but the call
-  will be synchronous. The stop method of the handler object will be
-  synchronous as well.
+To sustain an event, see \refSlot{trigger}.  See \autoref{sec:event:sync}
+and \refSlot{syncEmit} for details about the synchronicity of the handling.
 
-\item['||'](<other>)%
-  Logical or on events: a new Event that triggers whenever \var{this}
-  or \var{other} triggers.
+  %% An event can also be emitted for a certain duration using
+  %% \lstinline|~|.  The execution of \lstinline|at| clauses etc., is
+  %% asynchronous: the control flow might be released by the
+  %% \lstinline|emit| call before all the watchers have finished their
+  %% execution.
+
+\item[onSubscribe]%
+  This slot is not set by default. You can optionally assign an event to
+  it. In this case, it is triggered each time some code starts watching this
+  event (by setting up an \lstinline|at| or a \lstinline|waituntil| on it
+  for instance).
+
+  Throw a synchronized event. This call awaits that all functions that have
+  to react to this event have returned.  This function can have the same
+  arguments as \refSlot{emit}.
+
+\item[trigger]%
+  Fire a sustained event (for an unknown amount of time) and return a
+  handler object whose \lstinline|stop| method stops the event. This method
+  is asynchronous and the \lstinline|stop| call will be asynchronous as
+  well.  See \autoref{sec:event:sustain} for examples.
+
+\item[syncEmit] Same as \refSlot{emit} but require a synchronous handling.
+  See \autoref{sec:event:sync} for details.
+
+\item[syncTrigger]%
+  Same as \refSlot{trigger} but the call will be synchronous (see
+  \autoref{sec:event:sync}). The \lstinline|stop| method of the handler
+  object will be synchronous as well.  See \autoref{sec:event:sustain} for
+  examples.
+
+\item['||'](<that>)%
+  Logical ``or'' on events: a new Event that triggers whenever \this or
+  \that triggers.
 
 \begin{urbiscript}
 var e1 = Event.new|;
@@ -90,10 +301,10 @@ e2!;
 [00000005] *** !
 \end{urbiscript}
 
-\item['<<'](<other>)%
-  Watch an \var{other} event status and reproduce it on itself, return
-  \this.  This operator is similar to an optimized \lstinline,||=, operator.
-  Do not make events watch for themselves, directly or indirectly.
+\item['<<'](<that>)%
+  Watch a \that event status and reproduce it on itself, return \this.  This
+  operator is similar to an optimized \lstinline,||=, operator.  Do not make
+  events watch for themselves, directly or indirectly.
 
 \begin{urbiscript}
 var e3 = Event.new|;

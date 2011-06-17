@@ -187,7 +187,11 @@ do (Object)
   function removeSlots(var names[])
   {
     for| (var s : names)
-      removeSlot(s)|
+      // Removing names that no longer exist is no big deal.
+      if (hasLocalSlot(s))
+        removeSlot(s)
+      else
+        clog << Exception.Lookup.new(s, this, false)|
     {}
   };
 }|;
