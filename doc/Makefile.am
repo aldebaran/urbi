@@ -253,6 +253,12 @@ spell-check: $(urbi_sdk_tex) $(dist_doc_DATA)
 	$(AM_V_GEN) $(RUN_SPELL_CHECK) $(if $(V:0=),-v,-q) $^
 
 
+# This is not spell-checking, but that's easier for the BF.
+.PHONY spell-check: style-check
+style-check: $(urbi_sdk_sources)
+## Use the {verbatim} environment, not {lstlisting}.
+	$(AM_V_GEN) ! grep '{lstlisting}' $^
+
 ## --------- ##
 ## install.  ##
 ## --------- ##
