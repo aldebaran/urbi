@@ -90,8 +90,8 @@ export srcdir
 # Move to a private dir.
 mkcd $me.dir
 
-# Be verbose.
-export GD_LEVEL=DUMP
+# Let the user chose the log level.
+#export GD_LEVEL=DUMP
 
 # Help debugging
 set |
