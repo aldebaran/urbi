@@ -82,7 +82,7 @@ class Global.camera: Loadable
 do (Global)
 {
   // A channel for synclines.
-  var syncline = Channel.new("syncline")|;
+  var syncline = Channel.new("#")|;
 
   function testExit(var status, var why)
   {

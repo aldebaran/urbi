@@ -100,7 +100,7 @@ sub lineno (\%)
   my $line = $$lst{_line};
   my $file = $$lst{_file};
   "syncline << \"$file:$line\";\n"
-  . "[01234567:syncline] \"$file:$line\"\n"
+  . "[01234567:#] \"$file:$line\"\n"
   . ($synclines ? "//#line $line \"$file\"\n" : "")
 }
 
