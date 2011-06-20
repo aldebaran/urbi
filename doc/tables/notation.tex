@@ -68,13 +68,12 @@ private:
 \subsection{Grammar Excerpts}
 \label{sec:notations:bnf}
 
-The grammars are written in Extend Backus-Naur Form.  The symbol
-\lstinline|::=| separates the left-hand symbol from the right-hand side part
-of the rule.  We use infix \lstinline{|} to denote alternation,
-postfix-\lstinline{*} for 0-or-more repetition, postfix-\lstinline{+} for
-1-or-more repetition, and postfix-\lstinline{?} for optional parts.
-Terminal symbols are written since double-quotes, and non-terminals inside
-angle-brackets.  We use parenthesis to group.
+The grammar fragments are written in Extend Backus-Naur Form.  The symbol
+\lstindex{::=} separates the left-hand symbol from the right-hand side part
+of the rule.  Infix \lstinline{|} denotes alternation, postfix-\lstinline{*}
+0-or-more repetition, postfix-\lstinline{+} 1-or-more repetition, and
+postfix-\lstinline{?} denotes optional parts.  Terminal symbols are written
+in double-quotes, and non-terminals in angle-brackets.  Parentheses group.
 
 \begin{bnf}
 <grammar> ::= <rule>+
@@ -147,7 +146,7 @@ cout << "toto";
 \subsection{\us Assertions}
 \label{sec:notations:urbiassert}
 
-\us features assertions blocks, see \autoref{sec:assertions}.  The
+\us features assertions blocks, see \autoref{sec:lang:assert}.  The
 following assertion frame:
 
 \begin{urbiassert}
@@ -161,7 +160,7 @@ true;
 
 \noindent
 actually denotes the following assertion-block in an \us-session
-frame (\autoref{sec:assertions}):
+frame (\autoref{sec:lang:assert}):
 
 \begin{urbiscript}
 assert

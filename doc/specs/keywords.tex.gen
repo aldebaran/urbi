@@ -6,30 +6,31 @@ my $keywords = <<'EOF';
 and: Synonym for \lstinline|&&|
 and_eq: Synonym for \lstinline|&=|
 asm: Reserved
-at:
+assert: \autoref{sec:lang:assert}
+at: \autoref{sec:lang:at}
 auto: Reserved
 bitand: Synonym for \lstinline|&|
 bitor: Synonym for \lstinline-|-
 bool: Reserved
-break:
-call:
-case:
-catch:
+break: \autoref{sec:lang:break}
+call: \autoref{sec:lang:rv}
+case: \autoref{sec:lang:switch}
+catch: \autoref{sec:lang:catch}, \autoref{sec:lang:timeout}
 char: Reserved
-class:
+class: \autoref{sec:lang:class}
 closure:
 compl: Synonym for \lstinline|~|
-const:
+const: \autoref{sec:lang:prop:std}
 const_cast: Reserved
-continue:
-default:
+continue: \autoref{sec:lang:continue}
+default: \autoref{sec:lang:switch}
 delete: Reserved
-do:
+do: \autoref{sec:lang:do}
 double: Reserved
 dynamic_cast: Reserved
-else:
-enum:
-every:
+else: \autoref{sec:lang:if}
+enum: \autoref{sec:lang:continue}
+every: \autoref{sec:lang:every}
 explicit: Reserved
 export: Reserved
 extern: Reserved
@@ -39,22 +40,22 @@ for: \lstinline|for&| and \lstinline-for|- flavors
 foreach: Deprecated, use \lstinline|for|
 freezeif:
 friend: Reserved
-function:
+function: \autoref{sec:lang:function}
 goto: Reserved
-if:
-in:
+if: \autoref{sec:lang:if}
+in: \autoref{sec:lang:for:each}
 inline: Reserved
 int: Reserved
 internal: Deprecated
 long: Reserved
-loop: \lstinline|loop&| and \lstinline-loop|- flavors
+loop: \lstinline|loop&|, \lstinline-loop|-, \autoref{sec:lang:loop}
 loopn: Deprecated, use \lstinline|for|
 mutable: Reserved
 namespace: Reserved
-new:
+new: \autoref{sec:tut:ctor}
 not: Synonym for \lstinline|!|
 not_eq: Synonym for \lstinline|!=|
-onleave:
+onleave: \autoref{sec:lang:at}
 or: Synonym for \lstinline-||-
 or_eq: Synonym for \lstinline-|=-
 private: Ignored
@@ -62,7 +63,7 @@ protected: Ignored
 public: Ignored
 register: Reserved
 reinterpret_cast: Reserved
-return:
+return: \autoref{sec:lang:rv}
 short: Reserved
 signed: Reserved
 sizeof: Reserved
@@ -70,12 +71,12 @@ static: Deprecated
 static_cast: Reserved
 stopif:
 struct: Reserved
-switch:
+switch: \autoref{sec:lang:switch}
 template: Reserved
 this:
-throw:
-timeout:
-try:
+throw: \autoref{sec:lang:throw}
+timeout: \autoref{sec:lang:timeout}
+try: \autoref{sec:lang:catch}
 typedef: Reserved
 typeid: Reserved
 typename: Reserved
@@ -85,9 +86,10 @@ using: Reserved
 var:
 virtual: Reserved
 volatile: Reserved
-waituntil:
+waituntil: \autoref{sec:lang:waituntil}
+watch: \autoref{sec:lang:watch}
 wchar_t: Reserved
-whenever:
+whenever: \autoref{sec:lang:whenever}
 while: \lstinline|while&| and \lstinline-while|- flavors
 xor: Synonym for \lstinline|^|
 xor_eq: Synonym \lstinline|^=|

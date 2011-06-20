@@ -31,6 +31,8 @@
 }
 
 \ifx\ifHtml\undefined
+  \renewcommand{\bnfPre}
+    {\marginNotation{sec:notations:bnf}{Grammar\\Excerpt}}
   \renewcommand{\cxxPre}
     {\marginNotation{sec:notations:cxx}{\Cxx}}
   \renewcommand{\javaPre}

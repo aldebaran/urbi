@@ -60,7 +60,7 @@ $ ./echo -x 12 -v "foo"
 \item['assert'](<assertion>)%
   Unless \refSlot{ndebug} is true, throw an error if
   \var{assertion} is not verified.  See also the assertion support in
-  \us, \autoref{sec:assertions}.
+  \us, \autoref{sec:lang:assert}.
 \begin{urbiscript}
 'assert'(true);
 'assert'(42);
@@ -81,7 +81,7 @@ assert_(1 == 1 + 1, "one is not two");
 
 
 \item[assert_op](<operator>, <lhs>, <rhs>)%
-  Deprecated, use \lstinline|assert| instead, see \autoref{sec:assertions}.
+  Deprecated, use \lstinline|assert| instead, see \autoref{sec:lang:assert}.
 
 
 \item[backtrace]%
@@ -312,7 +312,7 @@ assert
 
 
 \item[ndebug] If true, do not evaluate the assertions.  See
-  \autoref{sec:assertions}.
+  \autoref{sec:lang:assert}.
 \begin{urbiscript}
 function one() { echo("called!"); 1 }|;
 assert(!System.ndebug);
