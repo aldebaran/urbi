@@ -623,7 +623,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 
 "foreach"     DEPRECATED("for");
 "internal"    DEPRECATED("");
-"loopn"       DEPRECATED("for");
 "self"        DEPRECATED("this");
 "static"      DEPRECATED("");
 

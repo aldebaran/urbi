@@ -53,10 +53,13 @@ This chapter lists the user-visible changes in \usdk releases.
 
 \subsection{Changes}
 \begin{itemize}
-\item Drop support for the obsolete syntax for events: \lstinline{at (?e)}
-  and \lstinline{emit e} instead of \lstinline{at (e?)} and \lstinline{e!}
-  (\autoref{sec:k1:emit}).  As a consequence, \lstinline|emit| is now a
-  regular identifier.
+\item Drop support for the obsolete \usdk 1 syntax for events:
+  \lstinline{at (?e)} and \lstinline{emit e} instead of \lstinline{at (e?)}
+  and \lstinline{e!}  (\autoref{sec:k1:emit}).  As a consequence,
+  \lstinline|emit| is now a regular identifier.
+
+\item Drop support for the obsolete \lstinline{loopn} keyword, replaced by
+  \lstinline{for} since \usdk 2.0 (\label{sec:k1:loopn}).
 
 \item \refSlot[Job]{backtrace} now includes information about event handling
   (both sending and receiving parts).

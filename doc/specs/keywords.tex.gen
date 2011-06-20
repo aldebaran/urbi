@@ -49,7 +49,6 @@ int: Reserved
 internal: Deprecated
 long: Reserved
 loop: \lstinline|loop&|, \lstinline-loop|-, \autoref{sec:lang:loop}
-loopn: Deprecated, use \lstinline|for|
 mutable: Reserved
 namespace: Reserved
 new: \autoref{sec:tut:ctor}
