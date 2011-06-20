@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1446 utf-8
+personal_ws-1.1 en 1448 utf-8
 aaa
 abc
 abcd
@@ -92,6 +92,7 @@ asPrimitive
 asPrintable
 asProcess
 assertCall
+associativities
 associativity
 asString
 AST
@@ -1408,6 +1409,7 @@ xb
 xCoord
 xe
 Xenomai
+xF
 xf
 xFF
 xfF

@@ -816,6 +816,11 @@ documentation of the classes that provide them.
 \newcommand{\operatorinfeq}  {\boperator {<=}   {None} {Less than or equal to}  }
 \newcommand{\operatorsup}    {\boperator {>}    {None} {Greater than}           }
 \newcommand{\operatorsupeq}  {\boperator {>=}   {None} {Greater than or equal to}}
+% Need a space bw compl and a, cannot use \poperator.
+%\newcommand{\operatorbcompl} {\poperator {compl}    {-} {Bitwise complement}   }
+\newcommand{\operatorbcompl} {\operator{compl}{compl a}{-}{Bitwise complement}{a.'compl'()}}
+\newcommand{\operatorband}   {\boperator {bitand}    {Left} {Bitwise and}   }
+\newcommand{\operatorbor}    {\boperator {bitor}    {Left} {Bitwise or}   }
 \newcommand{\operatorbxor}   {\boperator {^}    {Left} {Bitwise exclusive or}   }
 \newcommand{\operatorneg}    {\poperator {!}    {Left} {Logical negation}       }
 \newcommand{\operatorand}    {\boperator {\&\&} {Left} {Logical and}            }
@@ -1124,6 +1129,7 @@ Redefining \lstinline|'++'| is still an experimental feature which might be
 changed in future releases of \usdk, do not rely on it.
 
 \subsubsection{Bitwise operators}
+\label{sec:lang:bitwise}
 
 \us features \dfn{bitwise operators}.  They are also used for other
 purpose than bit-related operations. See \autoref{tab:bitwise} and the
@@ -1133,12 +1139,38 @@ listing below.
   \operatorlshift\\
   \operatorrshift\\
   \hline
+  \operatorbcompl\\
+  \operatorband\\
+  \operatorbor\\
   \operatorbxor
 \end{operatorTable}
+
+Beware that \us follows the precedences and associativities that were chosen
+for \C, which is very debatable: for instance they bind tighter that
+comparisons.  In other words \lstinline|0xF0F0 bitor 0xF0F0 == 0xF0F0| is
+parsed as \lstinline|0xF0F0 bitor (0xF0F0 == 0xF0F0)|, i.e., it actually
+runs \lstinline|0xF0F0.'bitor'(0xF0F0.'=='(0xF0F0))|.
 
 \begin{urbiassert}
 4 << 2 == 16;
 4 >> 2 ==  1;
+
+compl 0x0F0F_F0F0 == 0xF0F0_0F0F;
+
+(0x0000 bitand 0xF0F0) == 0x0000;
+(0x0F0F bitand 0xF0F0) == 0x0000;
+(0xF0F0 bitand 0xF0F0) == 0xF0F0;
+(0xFFFF bitand 0xF0F0) == 0xF0F0;
+
+(0x0000 bitor  0xF0F0) == 0xF0F0;
+(0x0F0F bitor  0xF0F0) == 0xFFFF;
+(0xF0F0 bitor  0xF0F0) == 0xF0F0;
+(0xFFFF bitor  0xF0F0) == 0xFFFF;
+
+(0x0000 ^ 0xF0F0) == 0xF0F0;
+(0x0F0F ^ 0xF0F0) == 0xFFFF;
+(0xF0F0 ^ 0xF0F0) == 0x0000;
+(0xFFFF ^ 0xF0F0) == 0x0F0F;
 \end{urbiassert}
 
 \subsubsection{Logical operators}
@@ -1311,6 +1343,9 @@ precedence.
   \operatorsup\\
   \operatorsupeq\\
   \hline
+  \operatorbcompl\\
+  \operatorband\\
+  \operatorbor\\
   \operatorbxor\\
   \hline
   \operatorneg\\
@@ -1336,11 +1371,10 @@ precedence.
 
 \dfn{Scopes} are sequences of statements, enclosed in curly brackets
 (\lstinline|{}|). Statements are separated with the four statements
-separators (see \autoref{sec:lang:separators}).  A trailing \samp{;}
-or \samp{,} is ignored.  A trailing \samp{\&} or \samp{|} behaves as
-if \lstinline|& {}| or \lstinline'| {}' was used.  This particular
-case is heavily used by \us programmers to discard the value of an
-expression:
+separators (see \autoref{sec:lang:separators}).  A trailing \samp{;} or
+\samp{,} is ignored.  A trailing \samp{\&} or \samp{|} behaves as if
+\lstinline|& {}| or \lstinline'| {}' was used.  This particular case is
+heavily used by \us programmers to discard the value of an expression:
 
 \begin{urbiscript}
 // Return value is 1.  Displayed.
