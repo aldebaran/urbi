@@ -783,7 +783,7 @@ documentation of the classes that provide them.
 \newcommand{\operatorass}[1][]{\operator[#1]
                                          {=}    {a = b}            {Right} {Assignment}             {updateSlot("a", b)}    }
 
-\newcommand{\operatoriass}[1]{\operator  {#1=}  {a #1= b}          {Right} {In place assignment}    {a = a.'#1='(b)}            }
+\newcommand{\operatoriass}[1]{\operator  {#1=}  {a #1= b}          {Right} {In place #1}    {a = a.'#1='(b)}            }
 \newcommand{\operatorsiass}  {
   \operatoriass{+}\\
   \operatoriass{-}\\
@@ -867,12 +867,12 @@ below.
 %%   1 & 2 & 3 & 4 & 5 \\
 %%   \hline
 %% \end{operatorTable}
-\newenvironment{operatorTable}[2]
+\newenvironment{operatorTable}[3][]
 {
-  \def\operatorTableLabel{#1}%
-  \def\operatorTableCaption{#2}%
+  \def\operatorTableLabel{#2}%
+  \def\operatorTableCaption{#3}%
   \begin{table}[\floatposh]
-    \centering
+    \centering#1%
     \begin{operatorTabular}
     }{%
     \end{operatorTabular}
@@ -1305,7 +1305,7 @@ highlight the overall precedences. Operators are sorted by decreasing
 precedence. Groups of rows represent operators with the same
 precedence.
 
-\begin{operatorTable}{tab:operators-summary}{Operators summary}
+\begin{operatorTable}[\ifx\ifHtml\undefined\small\fi]{tab:operators-summary}{Operators summary}
   \operatordot\\
   \operatordota\\
   \hline
