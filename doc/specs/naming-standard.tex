@@ -796,16 +796,28 @@ robot.
   #5 &
   \code{#2} &
   \code{#3} &
-  \code{#4}\\\hline
+  \code{#4}\\
+  \hline
 }
 
-\tablehead{\hline
-\textbf{Name} &
-\textbf{Description} &
-\textbf{Sub. of} &
-\textbf{Contains} &
-\textbf{Facets} \\\hline}
-\begin{supertabular}{|m{.115\linewidth}|m{.45\linewidth}|*{4}{m{.12\linewidth}|}}
+\tablehead{%
+  \hline
+  \textbf{Name} &
+  \textbf{Description} &
+  \textbf{Sub. of} &
+  \textbf{Contains} &
+  \textbf{Facets} \\
+  \hline%
+}
+\tabletail{%
+  \hline
+  \multicolumn{5}{|r|}{\small\sl continued on next page}\\
+  \hline%
+}
+\tablelasttail{%
+  \hline
+}
+\begin{supertabular}{|p{.115\linewidth}|p{.45\linewidth}|*{4}{p{.12\linewidth}|}}
   \component{robot}{}{body}{Identity Network Mobile Tracker}{
     %%
     This is the main component that represents an abstraction of the
@@ -1116,27 +1128,25 @@ robot.
 
 \section{Compact notation}
 
-Components are usually identified with their full-length name, which is
-the path to access them inside the structure tree. For convenience and
-backward compatibility with pre-2.0 versions of \urbi, there is also a
-compact notation available. We will describe here how to construct the
-compact notation starting from the full name and the structure tree.
+Components are usually identified with their full-length name, which is the
+path to access them inside the structure tree. For convenience and backward
+compatibility with pre-2.0 versions of \urbi, there is also a compact
+notation available.  We will describe here how to construct the compact
+notation starting from the full name and the structure tree.
 
-\tablehead{\hline
-Full name &
-Compact name\\\hline}
-\begin{supertabular}{|m{9.008cm}|m{5.533cm}|}
-\code{robot.body.armR.elbow} &
-\code{elbowR} \\\hline
-\code{robot.body.head.yaw} &
-\code{headYaw} \\\hline
-\code{robot.body.legL.knee.pitch} &
-\code{kneeL} \\\hline
-\code{robot.body.armR.hand.finger[3][2]} &
-\code{fingerR[3][2]} \\\hline
-\code{robot.body.armL.hand.fingerR} &
-\code{fingerLR} \\\hline
-\end{supertabular}
+\begin{center}
+  \begin{tabular}{|l|l|}
+    \hline
+    \textbf{Full name} & \textbf{Compact name}\\
+    \hline%
+    \code{robot.body.armR.elbow} & \code{elbowR} \\
+    \code{robot.body.head.yaw} & \code{headYaw} \\
+    \code{robot.body.legL.knee.pitch} & \code{kneeL} \\
+    \code{robot.body.armR.hand.finger[3][2]} & \code{fingerR[3][2]} \\
+    \code{robot.body.armL.hand.fingerR} & \code{fingerLR} \\
+    \hline
+  \end{tabular}
+\end{center}
 
 The rule is to move every localization qualifier at the end of the
 compact notation, in the order where they appear in the full-length
