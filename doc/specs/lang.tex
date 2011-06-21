@@ -3233,8 +3233,8 @@ to group claims together.
 \subsection{Asserting an Expression}
 
 \begin{urbiscript}
-assert(true);
-assert(42);
+assert (true);
+assert (42);
 \end{urbiscript}
 
 Failed assertions are displayed in a user friendly fashion: first the
@@ -3254,12 +3254,11 @@ assert (lazyFail(1+2, "+" * 2));
 The following example is more realistic.
 
 \begin{urbiscript}
-function areEqual
+function areEqual(var args[])
 {
   var res = true;
-  if (!call.args.empty)
+  if (!args.empty)
   {
-    var args = call.evalArgs;
     var a = args[0];
     for (var b : args.tail)
       if (a != b)
@@ -3275,13 +3274,13 @@ assert (areEqual(1));
 assert (areEqual(1, 0 + 1));
 assert (areEqual(1, 1, 1+1));
 [00001388:error] !!! failed assertion: areEqual(1, 1, 1.'+'(1)) (areEqual(1, 1, 2) == false)
-assert (areEqual(1+2, 3+3, 4*6));
-[00001393:error] !!! failed assertion: areEqual(1.'+'(2), 3.'+'(3), 4.'*'(6)) (areEqual(3, 6, 24) == false)
+assert (areEqual(1*2, 1+2));
+[00001393:error] !!! failed assertion: areEqual(1.'*'(2), 1.'+'(2)) (areEqual(2, 3) == false)
 \end{urbiscript}
 
 Comparison operators are recognized, and displayed specially:
 \begin{urbiscript}
-assert(1 == 1 + 1);
+assert (1 == 1 + 1);
 [00000002:error] !!! failed assertion: 1 == 1.'+'(1) (1 != 2)
 \end{urbiscript}
 
