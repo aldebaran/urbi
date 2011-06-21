@@ -260,7 +260,7 @@ style-check: $(urbi_sdk_sources)
 	$(AM_V_GEN) ! grep '{lstlisting}' $^
 ## Never indent verbatim environments, it leaves empty lines.
 	$(AM_V_at) ! grep -E \
-	  '^  *\\(begin|end){(cxx|java|urbi(script|unchecked)|verbatim)}' $^
+	  '^  *\\(begin|end){(cxx|java|urbi(comment|script|unchecked)|verbatim)}' $^
 
 ## --------- ##
 ## install.  ##
