@@ -1553,10 +1553,12 @@ f(
 \label{sec:lang:rv}
 The \dfn[function!return value]{return value} of the function is the
 evaluation of its body --- that is, since the body is a scope, the last
-evaluated expression in the scope.  Values can be returned manually with the
-\lstindex{return} keyword followed by the value, in which case the
-evaluation of the function is stopped. If \lstinline|return| is used with no
-value, the function returns \lstinline|void|.
+evaluated expression in the scope.
+
+The execution of the function can be interrupted by a \lstinline{return}
+statement.  The control flow then resumes to the caller.  The value of the
+function call is the argument provided to the \lstinline{return} statement,
+or \lstinline{void} if no argument was provided.
 
 \begin{urbiscript}
 function g1(a, b)
@@ -1587,6 +1589,9 @@ function g3()
 }|
 g3(); // Returns void, so nothing is printed.
 \end{urbiscript}
+
+You are encouraged no to use \lstinline{return} when the control flow needs
+not be interrupted, see \autoref{sec:guideline:return}.
 
 \subsection{Call messages}
 \label{sec:lang:call}
@@ -2974,7 +2979,7 @@ function test(e)
   { echo("zero") }
   catch ([var x, var y])
   { echo(x + y) }
-} | {};
+}|;
 test(0);
 [00002126] *** zero
 test([22, 20]);
