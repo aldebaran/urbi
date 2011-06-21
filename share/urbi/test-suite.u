@@ -432,6 +432,24 @@ do (System)
     memCheck(f, loc);
   };
 
+  // Check that spawn threads do not map too much space.
+  function memThreadCheck(var expectedMem, var f, var loc = nil)
+  {
+    if (loc.isNil)
+      loc = Location.here(-1);
+
+    var beg = System.status.stat("VmData") |
+    clog << "before inotify thread: %d kB" % [beg] |
+
+    memCheck(f, loc) |
+
+    var end = System.status.stat("VmData") |
+    clog << "after inotify thread: %d kB" % [end] |
+
+    // Ensure that the thread does not ask for more than 32 KB.
+    assert { end - beg < expectedMem; } |
+  };
+
 }|;
 
 

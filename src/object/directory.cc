@@ -262,7 +262,8 @@ namespace urbi
         _watch_fd = inotify_init();
         if (_watch_fd == -1)
           FRAISE("cannot start inotify: %s", libport::strerror(errno));
-        libport::startThread(boost::function0<void>(poll));
+        libport::startThread(boost::function0<void>(poll),
+                             PTHREAD_STACK_MIN);
         started = true;
       }
 

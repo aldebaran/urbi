@@ -220,7 +220,8 @@ namespace urbi
 
         // Make sure we stay alive until we're done.
         ward_ = this;
-        libport::startThread(boost::bind(Process::monitor_child, this));
+        libport::startThread(boost::bind(Process::monitor_child, this),
+                             PTHREAD_STACK_MIN);
       }
       else
       {
