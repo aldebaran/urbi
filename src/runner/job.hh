@@ -82,7 +82,8 @@ namespace runner
     ///
     /// \param model The parent job. The scheduler and tags will be inherited
     //         from it.
-    Job(const Job& model);
+    Job(const Job& model,
+        size_t stack_size = 0);
 
     /// Create a new job.
     ///
@@ -161,8 +162,10 @@ namespace runner
     /// This command return a child job which has to be started with
     /// 'start_job()' to execute the action asynchronously.
     Job* spawn_child(eval::Action action,
-                     Job::Collector& collector);
-    Job* spawn_child(eval::Action action);
+                     Job::Collector& collector,
+                     size_t stack_size = 0);
+    Job* spawn_child(eval::Action action,
+                     size_t stack_size = 0);
 
     void set_action(eval::Action action);
 

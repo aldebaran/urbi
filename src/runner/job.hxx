@@ -24,8 +24,9 @@ namespace runner
   // Forking a child Job, implies having the same lobby and cloning the
   // state of the job, while creating a new working queue.
   LIBPORT_SPEED_INLINE
-  Job::Job(const Job& model)
-    : super_type(model)
+  Job::Job(const Job& model,
+           size_t stack_size)
+    : super_type(model, stack_size)
     , profile_(0)
     , profile_info_()
     , dependencies_log_(false)
@@ -115,9 +116,10 @@ namespace runner
 
   LIBPORT_SPEED_INLINE
   Job* Job::spawn_child(eval::Action action,
-                        Job::Collector& collector)
+                        Job::Collector& collector,
+                        size_t stack_size)
   {
-    Job* j = new Job(*this);
+    Job* j = new Job(*this, stack_size);
 
     j->set_action(action);
     register_child(j, collector);
@@ -128,9 +130,10 @@ namespace runner
   }
 
   LIBPORT_SPEED_INLINE
-  Job* Job::spawn_child(eval::Action action)
+  Job* Job::spawn_child(eval::Action action,
+                        size_t stack_size)
   {
-    Job* j = new Job(*this);
+    Job* j = new Job(*this, stack_size);
     j->set_action(action);
     return j;
   }

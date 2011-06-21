@@ -425,7 +425,8 @@ namespace kernel
     scheduler_->add_job(fast_async_jobs_job_);
     sched::rJob poll =
       ghost_->shell_get()->spawn_child(
-        eval::call(object::system_class->slot_get(SYMBOL(pollLoop))))
+        eval::call(object::system_class->slot_get(SYMBOL(pollLoop))),
+        sched::configuration.minimum_stack_size)
       ->name_set("pollLoop");
     scheduler_->idle_job_set(poll);
   }

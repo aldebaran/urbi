@@ -79,7 +79,8 @@ namespace urbi
           // build an Action out of a member function
           sched::rJob job =
             r.spawn_child(
-              boost::bind(&UConnection::doCall, this, _1, self, t))
+              boost::bind(&UConnection::doCall, this, _1, self, t),
+              sched::configuration.minimum_stack_size)
             ->name_set("doCall");
           job->start_job();
         }
