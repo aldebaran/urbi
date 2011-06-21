@@ -258,6 +258,9 @@ spell-check: $(urbi_sdk_tex) $(dist_doc_DATA)
 style-check: $(urbi_sdk_sources)
 ## Use the {verbatim} environment, not {lstlisting}.
 	$(AM_V_GEN) ! grep '{lstlisting}' $^
+## Never indent verbatim environments, it leaves empty lines.
+	$(AM_V_at) ! grep -E \
+	  '^  *\\(begin|end){(cxx|java|urbi(script|unchecked)|verbatim)}' $^
 
 ## --------- ##
 ## install.  ##

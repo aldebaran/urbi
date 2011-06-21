@@ -569,13 +569,13 @@ at (e?) echo("Okay.");
 \item Fix \refSlot[Float]{random} on windows, which always returned
   \lstinline|41| in some situations.
 \item Do not scope variables created inside a pipe inside a comma:
-  \begin{urbiscript}
+\begin{urbiscript}
 var a = 0 | var b = 1,
 echo(a);
 [00000001] *** 0
 echo(b);
 [00000001] *** 1
-  \end{urbiscript}
+\end{urbiscript}
 \end{itemize}
 
 \subsection{New Features}
