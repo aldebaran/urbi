@@ -62,6 +62,7 @@ class UrbiCallBreakpoints(object):
     call_apply_breakpoint = None
     breakpoints = {}
     last = 0
+    last_hidden = -1
 
     __instance__ = None
     @staticmethod
@@ -72,23 +73,29 @@ class UrbiCallBreakpoints(object):
 
     def __init__(self):
         self.last = 0
+        self.last_hidden = 0
 
     def stop(self, key):
         current_frame = urbi.frames.FrameIterator.newest()
         cond, idx = self.breakpoints[key]
         return cond(current_frame)
 
-    def add_breakpoint(self, condition):
+    def add_breakpoint(self, condition, hidden = False):
         """Register a condition function as an Urbi breakpoint.  The
         condition is a function which expects a frame as argument and which
         return True when the breakpoint should stop."""
 
         if self.call_apply_breakpoint == None:
             self.call_apply_breakpoint = CallApplyBreakpoint(self)
-        self.last += 1
-        idx = self.call_apply_breakpoint.stopHook(self.last)
-        self.breakpoints[self.last] = (condition, idx)
-        return self.last
+        if hidden:
+            self.last_hidden -= 1
+            key = self.last_hidden
+        else:
+            self.last += 1
+            key = self.last
+        idx = self.call_apply_breakpoint.stopHook(key)
+        self.breakpoints[key] = (condition, idx)
+        return key
 
     def del_breakpoint(self, key):
         """Remove a breakpoint"""
@@ -207,6 +214,113 @@ class UrbiBreak(gdb.Command):
         bp = UrbiCallBreakpoints.instance().add_breakpoint(stopIf)
 
         print "UBreakpoint %d:%s" % (bp, msg)
+
+
+@gdb_command
+class UrbiContinue(gdb.Command):
+    """Alias of continue."""
+
+    def __init__(self):
+        super (UrbiContinue, self).__init__(
+            "urbi continue",
+            gdb.COMMAND_RUNNING,
+            gdb.COMPLETE_NONE)
+
+    def invoke(self, arg, from_tty):
+        gdb.execute("continue")
+
+@gdb_command
+class UrbiFinish(gdb.Command):
+    """Execute until the end of the current function."""
+
+    def __init__(self):
+        super (UrbiFinish, self).__init__(
+            "urbi finish",
+            gdb.COMMAND_RUNNING,
+            gdb.COMPLETE_NONE)
+
+    def invoke(self, arg, from_tty):
+        gdb.execute("finish", to_string=True)
+        # we should ensure that some frames are still call_apply function
+        # frames before calling urbi next, otherwise this could have a
+        # strange behaviour.
+        gdb.execute("urbi next")
+
+
+class UrbiNextBP(object):
+    """Singleton breakpoint instance which break at the next urbi call.  It
+    automatically disabled it-self when it is stopped."""
+
+    bp = 0
+    # dictionary which map a job to it's silent flag.
+    enabled = {}
+    enabled = False
+    silent = False
+
+    __instance__ = None
+    @staticmethod
+    def instance():
+        if UrbiNextBP.__instance__ == None:
+            UrbiNextBP.__instance__ = UrbiNextBP()
+        return UrbiNextBP.__instance__
+
+    def __init__(self):
+        self.bp = UrbiCallBreakpoints.instance().add_breakpoint(self, hidden = True)
+
+    def enable(self, silent = False):
+        self.enabled = True
+        self.silent = silent
+
+    def __call__(self, frame):
+        if self.enabled:
+            self.enabled = False
+            if not self.silent:
+                print "%s" % urbi.frames.UrbiCallApplyFrame(frame)
+            return True
+        return False
+
+        if not self.broke and self.callback(frame):
+            self.broke = True
+            bp = self.bp
+            def cleanUp():
+                UrbiCallBreakpoints.instance().del_breakpoint(bp)
+            gdb.post_event(cleanUp)
+            return True
+        return False
+
+
+@gdb_command
+class UrbiNext(gdb.Command):
+    """Execute until next function call."""
+
+    def __init__(self):
+        super (UrbiNext, self).__init__(
+            "urbi next",
+            gdb.COMMAND_RUNNING,
+            gdb.COMPLETE_NONE)
+
+    @require_gdb_version(']7.2 ...[')
+    def invoke(self, arg, from_tty):
+        UrbiNextBP.instance().enable()
+        gdb.execute("urbi continue")
+
+@gdb_command
+class UrbiStep(gdb.Command):
+    """Execute next function call in the same function scope."""
+
+    def __init__(self):
+        super (UrbiStep, self).__init__(
+            "urbi step",
+            gdb.COMMAND_RUNNING,
+            gdb.COMPLETE_NONE)
+
+    @require_gdb_version(']7.2 ...[')
+    def invoke(self, arg, from_tty):
+        start_frame = urbi.frames.FrameIterator.newest()
+        UrbiNextBP.instance().enable(silent = True)
+        gdb.execute("urbi continue")
+        if start_frame.is_valid():
+            gdb.execute("urbi finish")
 
 
 gdb_register_commands()
