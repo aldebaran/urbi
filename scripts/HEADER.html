@@ -20,76 +20,134 @@
       <div class="section">
 
         <p>
-          This release includes several performance improvements and
-          bug fixes in both the UObject layer, and the urbiscript
-          engine.  Noteworthy changes include:
+          This release brings too many exciting new features to Urbi
+          and urbiscript for us to list them all here.  Please the
+          see <a href="doc/urbi-sdk.htmldir/release-notes.html">release
+          notes</a> for a more complete description of changes.
+
+          In addition to several fixes, some of the noteworthy changes
+          include:
         </p>
         <ul>
           <li>
-            The Logger object allows to save log information (such as
-            errors, warnings, or traces).
-
-<pre>
-var logger = Logger.new("Category")|;
-
-logger.dump << "Low level debug message"|;
-// Nothing displayed, unless the debug level is set to DUMP.
-
-logger.warn << "something wrong happened, proceeding"|;
-[ Category ] something wrong happened, proceeding
-
-logger.err << "something really bad happened!"|;
-[ Category ] something really bad happened!
-</pre>
+            Support for Vector and Matrix to provide efficient linear
+            algebra and input/output operations.
           </li>
 
-          <li> Support to profile urbiscript code (including code
-            running in background such as "at" clauses).
-
+          <li>
+            The stack traces now include information about event
+            handling (both sending and receiving parts).
 <pre>
-function Float.fact()
+var e = Event.new|;
+function watchEvent()
 {
-  if (this <= 1)
-    this
-  else
-    this * (this - 1).fact;
+  at (e?)
+    lobby.echoEach(currentRunner.backtrace);
 }|;
-System.profile(function() { 20.fact });
-[00009050] Profile(
-  Yields:                    0
-  Total time (us):         171
-  Wall-clock time (us):    171
-  Function calls:           78
-  Max depth:                21
-
-  .------------------------------------------------------------.
-  |  function  |   %    | cumul |  self  |  calls  |   self    |
-  |            |        |  (us) |  (us)  |         | (us/call) |
-  |------------+--------+-------+--------+---------+-----------|
-  |       fact |  70.18 |   120 |    120 |      20 |         6 |
-  |          - |  10.53 |   138 |     18 |      19 |     0.947 |
-  |         <= |   8.77 |   153 |     15 |      20 |     0.750 |
-  |          * |   8.19 |   167 |     14 |      19 |     0.737 |
-  |   profiled |   2.34 |   171 |      4 |       1 |         4 |
-  '------------'--------'-------'--------'---------'-----------'
-)
+function sendEvent()
+{
+  e!;
+}|;
+watchEvent;
+sendEvent;
+[00008208] *** file.u:5.20-42: backtrace
+[00008208] *** file.u:9.3: emit
+[00008208] *** file.u:12.1-9: sendEvent
+[00008208] *** ---- event handler backtrace:
+[00008208] *** file.u:4.3-5.43: onEvent
+[00008208] *** file.u:11.1-10: watchEvent
+</pre>
+On the same example, Urbi 2.7.1 displays:
+<pre>
+[00000030] *** file.u:5.20-42: backtrace
 </pre>
           </li>
 
-          <li> A new construct, "watch", creates an event that allows
-            to monitor any change of an expression.
-
+          <li>
+            To augment legibility, underscores can be used to
+            separate groups of digits in numbers.
 <pre>
-var x = 0|;
-var y = 0|;
-var e = watch(x + y)|;
-at (e?(var value))
-  echo("x + y = %s" % value);
-x = 1|;
-[00000000] *** x + y = 1
-y = 2|;
-[00000000] *** x + y = 3
+assert
+{
+     123_456_789 == 123456789;
+  12_34_56_78_90 == 1234567890;
+     1_2__3___45 == 12345;
+        1_2.3__4 == 12.34;
+     0xFFFF_FFFF == 0xFFFFFFFF;
+           1e1_0 == 1e10;
+};
 </pre>
+          </li>
+
+          <li>
+            Logger provides runtime control over the debug traces:
+            <ul>
+              <li> Logger.level provides read/write access to the
+                current verbosity level,
+              </li>
+              <li> Logger.categories
+                gives the set of existing categories,
+              </li>
+              <li>categories that match a given pattern can be enabled/disabled
+                (Logger.enable, Logger.disable),
+<pre>
+Logger.enable("Category*");
+Logger.disable("Category.Sub");
+</pre>
+              </li>
+              <li>
+                the status of all the categories can be changed
+                according to a given specification string similar to
+                GD_CATEGORY
+<pre>
+Logger.set("+Category*,-Category.Sub");
+</pre>
+              </li>
+            </ul>
+          </li>
+
+          <li>
+            System.getLocale and System.setLocale allow to change the
+            locale settings.
+          </li>
+
+          <li>
+          The timeout construct now features optional catch, else, and
+          finally clauses, modeled after the syntax of try-blocks.
+<pre>
+function testTimeOut(var duration)
+{
+  timeout (1s)  { echo("computation"); sleep(duration); "body-value" }
+  catch         { echo("interrupted!");                "catch-value" }
+  else          { echo("completed");                    "else-value" }
+  finally       { echo("finally");                   "finally-value" }
+}|;
+
+// Run till completion.
+testTimeOut(0s);
+[00000264] *** computation
+[00000265] *** completed
+[00000265] *** finally
+[00000265] "else-value"
+
+// Interrupted before completion.
+testTimeOut(2s);
+[00000266] *** computation
+[00001267] *** interrupted!
+[00001270] *** finally
+[00001271] "catch-value"
+</pre>
+          </li>
+
+          <li>
+            InputStream.get, InputStream.getChar, and
+            InputStream.getLine now return nil instead of void when
+            end of file is reached.
+          </li>
+
+          <li>
+            The C++ classes USound and UImage now properly initialize
+            their instances to empty sound/image.
           </li>
         </ul>
 
