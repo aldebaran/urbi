@@ -166,8 +166,8 @@ namespace binder
       if (value)
         result_ = changeSlot(loc, call->target_get(), name,
                              input->constant_get()
-                             ? SYMBOL(setConstSlot)
-                             : SYMBOL(setSlot), value);
+                             ? SYMBOL(setConstSlotValue)
+                             : SYMBOL(setSlotValue), value);
       else
         result_ = changeSlot(loc, call->target_get(), name,
                              SYMBOL(createSlot));

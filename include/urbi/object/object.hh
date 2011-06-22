@@ -340,6 +340,7 @@ namespace urbi
       rObject getSlot(const std::string& k);
       /// Return the associated value.
       /// \throw Exception.Lookup if not available locally.
+      rObject getLocalSlotValue(key_type k);
       rObject getLocalSlot(key_type k);
       rObject getProperty(const std::string& slot, const std::string& prop);
       bool hasSlot(const std::string& k);
@@ -361,7 +362,7 @@ namespace urbi
       rObject setSlot(const std::string& slot, const rObject& value);
       rObject setSlotValue(const std::string& slot, const rObject& value);
       rObject getSlotValue(const std::string& slot);
-      rObject urbi_setConstSlot(key_type k, const rObject& o);
+      rObject urbi_setConstSlotValue(key_type k, const rObject& o);
       rObject urbi_updateSlot(key_type k, const rObject& o);
       rObject asPrintable() const;
       rObject asTopLevelPrintable() const;

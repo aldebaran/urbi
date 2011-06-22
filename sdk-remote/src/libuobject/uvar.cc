@@ -505,7 +505,7 @@ namespace urbi
     ctx->send(libport::format("%s.getSlot(\"%s\").%s|",
                               p.first, p.second,
                               enable
-                              ? "setSlot(\"inputPort\", true)"
+                              ? "setSlotValue(\"inputPort\", true)"
                               : "removeLocalSlot(\"inputPort\")"));
     ctx->markDataSent();
   }

@@ -848,10 +848,28 @@ namespace urbi
     }
 
     rObject
-    Object::getLocalSlot(key_type name)
+    Object::getLocalSlotValue(key_type name)
     {
       if (rObject s = local_slot_get_value(name))
         return s;
+      else
+        runner::raise_lookup_error(name, const_cast<Object*>(this), false);
+    }
+
+    rObject
+    Object::getLocalSlot(key_type name)
+    {
+      if (rObject s = local_slot_get(name))
+      {
+        if (!s->as<Slot>())
+        {
+          rSlot rs(new Slot(s));
+          slots_.set(this, name, rs, true);
+          return rs;
+        }
+        else
+          return s;
+      }
       else
         runner::raise_lookup_error(name, const_cast<Object*>(this), false);
     }
@@ -922,7 +940,7 @@ namespace urbi
     }
 
     rObject
-    Object::urbi_setConstSlot(key_type name, const rObject& value)
+    Object::urbi_setConstSlotValue(key_type name, const rObject& value)
     {
       slot_set_value(name, value, true);
       return value;
