@@ -33,7 +33,7 @@
 #include <urbi/object/global.hh>
 #include <urbi/object/lobby.hh>
 #include <urbi/object/object.hh>
-#include <urbi/object/object.hh>
+#include <urbi/object/slot.hh>
 #include <urbi/object/string.hh>
 #include <urbi/object/tag.hh>
 #include <object/symbols.hh>
@@ -41,7 +41,7 @@
 #include <object/uconnection.hh>
 #include <object/urbi-exception.hh>
 #include <object/uvalue.hh>
-#include <object/uvar.hh>
+
 #include <urbi/runner/raise.hh>
 #include <runner/job.hh>
 
@@ -62,7 +62,7 @@ using object::rPath;
 //using object::Path;
 using object::rEvent;
 using object::rObject;
-using object::rUVar;
+using object::rSlot;
 using object::rLobby;
 using object::objects_type;
 using object::void_class;
@@ -259,8 +259,8 @@ namespace urbi
       virtual void unnotify();
       virtual void useRTP(bool enable);
       virtual void setInputPort(bool enable);
-      object::rUVar ruvar() { return ruvar_;}
-      void initialize(UVar* owner, object::rUVar uvar);
+      object::rSlot slot() { return slot_;}
+      void initialize(UVar* owner, object::rSlot slot);
     private:
       libport::Lockable asyncLock_; // lock for pending_
       /* Schedule an operation to be executed by the main thread, preventing
@@ -273,12 +273,13 @@ namespace urbi
       void async_get(UValue**) const;
       void async_get_prop(UValue&, UProperty);
       unsigned pending_; // number of pending asynchronous operations
-      UVar* owner_;
+      urbi::UVar* owner_;
       bool bypassMode_;
       mutable UValue cache_;
       typedef std::vector<KernelUGenericCallbackImpl*> callbacks_type;
       callbacks_type callbacks_;
-      object::rUVar ruvar_;
+      std::pair<std::string, std::string> splitName_;
+      ATTRIBUTE_RW(object::rSlot, slot);
       friend class KernelUGenericCallbackImpl;
     };
 
@@ -289,20 +290,16 @@ namespace urbi
       virtual void initialize(UGenericCallback* owner);
       virtual void registerCallback();
       virtual void clear();
-      /// Force using the closed Var instead of the one given as argument.
-      bool useClosedVar_;
     private:
       UGenericCallback* owner_;
       bool owned_;
       bool registered_;
-      // Notify id
-      int id_;
       /// The Primitive we put in 'change'.
       rObject callback_;
       /// The connection we implicitly created or 0.
       object::rUConnection connection_;
       /// Input port the notify was redirected to, or empty
-      object::rUVar inPort_;
+      ATTRIBUTE_RW(object::rSlot, inPort);
       friend class KernelUObjectImpl;
       friend class KernelUVarImpl;
     };
@@ -512,11 +509,6 @@ uobject_uobjectsPathSet(const rObject&, List::value_type list)
   }
 }
 
-static void delete_uvar(urbi::UVar* v)
-{
-  delete v;
-}
-
 static std::vector<std::string> all_uobjects(rObject)
 {
   libport::BlockLock bl(object_links_lock);
@@ -527,62 +519,82 @@ static std::vector<std::string> all_uobjects(rObject)
   return res;
 }
 
+/* Setter/getter put in oset/oget, bouncing to UObject notifyChange or
+ * notifyAccess function.
+ */
 static rObject
 wrap_ucallback_notify(const object::objects_type& ol,
                       urbi::UGenericCallback* ugc,
-                      const std::string& traceName)
+                      const std::string& traceName,
+                      bool isChange)
 {
+  if (isChange && ol.size() != 3)
+    runner::raise_arity_error(ol.size()-1, 2);
+  if (!isChange && ol.size() != 2)
+    runner::raise_arity_error(ol.size()-1, 1);
+  URBI_SCOPE_DISABLE_DEPENDENCY_TRACKER;
+  { // cannot put two finally in the same scope
+  /* if isChange:  bound to oset. Args: (obj, newVal, slot)
+  *  else: bound to oget. Args: (obj, slot)
+  */
   GD_FPUSH_TRACE("Calling bound notify %s sync=%s", traceName,
                  ugc->isSynchronous());
   urbi::setCurrentContext(urbi::impl::KernelUContextImpl::instance());
+
+  // UObject backtrace
   bound_context
     << std::make_pair(&ugc->owner ? ugc->owner.__name : "unknown",
                       ugc->name);
-  urbi::impl::KernelUGenericCallbackImpl& impl =
-    static_cast<urbi::impl::KernelUGenericCallbackImpl&>  (*ugc->impl_);
   bool dummy = false;
   FINALLY(((bool, dummy)), bound_context.pop_back(); GD_INFO_TRACE("Done"));
+
+  rSlot slot = static_cast<urbi::impl::KernelUVarImpl*>(ugc->target->impl_)
+    ->slot_get();
+  /* We need to write the value to the backend, as Slot will not do it, and
+   * UObject will read it instead of using the value in argument.
+   */
+  if (isChange)
+    slot->value_set(ol[1]);
+
+  urbi::impl::KernelUGenericCallbackImpl& impl =
+    static_cast<urbi::impl::KernelUGenericCallbackImpl&>  (*ugc->impl_);
   urbi::UList l;
   l.array << new urbi::UValue();
-  // Decide whether we use the closed UVar, or the one given in arguments.
-  bool useArgVar = ol.size() > 1 && !impl.useClosedVar_;
-  if (useArgVar)
-  {
-    urbi::UVar* v = new urbi::UVar;
-    urbi::impl::KernelUVarImpl* vi = new urbi::impl::KernelUVarImpl();
-    vi->initialize(v, ol[1]->as<object::UVar>());
-    v->impl_ = vi;
-    l[0].storage = v;
-    // new urbi::UVar
-    //  (object::from_urbi<std::string>(ol[1]->call(SYMBOL(fullName))));
-  }
-  else
-    l[0].storage = ugc->target;
+
+  l[0].storage = ugc->target;
   libport::utime_t t = libport::utime();
   if (!ugc->isSynchronous())
   {
-    // If the value is in bypass mode we must force cache generation so that
-    // this asynchronous callback will get a value.
-    object::rUVar v
-    = static_cast<urbi::impl::KernelUVarImpl*>(
-        ((urbi::UVar*)l[0].storage)->impl_)
-        ->ruvar();
-    object::rObject val = v->getter(true);
-    if (object::rUValue bv = val->as<object::UValue>())
-    {
-      GD_INFO_DUMP("Asynchronous call: forcing cache extraction");
-      bv->extract();
-    }
-    else
-      GD_INFO_DUMP("Not an UValue, no cache");
+    /* This is an asynchronous notifychange. For synchronous ones we pass the
+     * UVar to the callback function, but it is not appropriate for asynchronous
+     * calls: we want each call to receive the value at the time of the call.
+     * So we pass the value. It just means our user cannot take a UVar& as
+     * callback argument, and must take the value directly.
+     */
+     l[0] = uvalue_cast(slot->value(object::nil_class, true));
+     ugc->eval(l);
   }
-  if (useArgVar)
-    ugc->eval(l, boost::bind(delete_uvar, (urbi::UVar*)l[0].storage));
   else
-    ugc->eval(l);
+    ugc->syncEval(l);
+
+
+  if (isChange && impl.inPort_get()) // Input port do not store the value
+  { // FIXME: actualy we never wrote to the damm port, so this should be useless
+    GD_FINFO_TRACE("Reseting value on input port %s", impl.inPort_get());
+    impl.inPort_get()->value_set(object::void_class);
+  }
+  if (isChange && slot->local_slot_get(SYMBOL(inputPort)))
+  {
+    slot->value_set(object::void_class);
+  }
+  rObject ret = object::void_class;
+  // If getter, it expects the value back, but the UObject just wrote it.
+  if (!isChange)
+    ret = slot->output_value_get();
+
   Stats::add(ol.front().get(), traceName, libport::utime() - t);
-  return object::void_class;
-}
+  return ret;
+}}
 
 static void write_and_unfreeze_mainthread(object::rTag* tag,
                                           urbi::UValue& resSlot,
@@ -632,6 +644,7 @@ static void write_and_unfreeze(urbi::UValue& r, std::string& exception,
 
 }
 
+// UObject bound function.
 static rObject wrap_ucallback(const object::objects_type& ol,
                               urbi::UGenericCallback* ugc,
                               const std::string& message, bool withThis)
@@ -689,8 +702,8 @@ static rObject wrap_ucallback(const object::objects_type& ol,
       object::rTag* tag = new object::rTag(new object::Tag);
       ::kernel::runner().state.apply_tag(*tag, &f);
       // Tricky: tag->freeze() yields, but we must freeze tag before calling
-      // eval or there will be a race if asyncEval goes to fast and unfreeze
-      // before we freeze. So go throug backend.
+      // eval or there will be a race if asyncEval goes too fast and unfreeze
+      // before we freeze. So go through backend.
       (*tag)->value_get()->freeze(::kernel::scheduler());
       std::string exception;
       ugc->eval(l, boost::bind(write_and_unfreeze, boost::ref(res),
@@ -809,8 +822,8 @@ static void writeFromContext(const std::string& ctx,
   rObject o = get_base(p.first);
   if (!o)
     runner::raise_lookup_error(libport::Symbol(varName), object::global_class);
-  o->slot_get(Symbol(p.second))->call(SYMBOL(update_timed), ov,
-                                      object::to_urbi(libport::utime()));
+  o->slot_get(Symbol(p.second))->as<object::Slot>()
+    ->uobject_set(ov, o, libport::utime());
   ov->invalidate();
 }
 
@@ -1453,28 +1466,20 @@ namespace urbi
       }
       GD_FINFO_TRACE("Unnotify on %s: %s callbacks ", owner_->get_name(),
                      callbacks_.size());
-      // Try to locate the target urbiscript UVar, which might be
-      // gone.  In this case, callbacks are gone too.
       foreach (KernelUGenericCallbackImpl* v, callbacks_)
       {
         GD_FINFO_TRACE("Unnotify processing callback %s", v);
-        object::rUVar r = v->inPort_?v->inPort_:ruvar_;
+        /* We are stored either:
+         * -as a oget/oset of slot_ if there is no inPort_
+         * -as a oget/oset of inPort_, and as a UConnection otherwise
+         */
+        object::rSlot r = v->inPort_?v->inPort_:slot_;
         if (r)
         {
-          bool ok = false;
-          if (v->owner_->type == "var")
-          {
-            if (v->owned_)
-              ok = r->removeNotifyChangeOwned(v->id_);
-            else
-              ok = r->removeNotifyChange(v->id_);
-          }
-          else if (v->owner_->type == "varaccess")
-          {
-            ok = r->removeNotifyAccess(v->id_);
-          }
-          GD_FINFO_TRACE("Removal said %s for id %s on %s(%s)", ok, v->id_,
-                         owner_->get_name(), ruvar_.get());
+          if (v->owner_->type == "var") // We are the osetter
+            r->oset_set(0);
+          else if (v->owner_->type == "varaccess") // ogetter
+            r->oget_set(0);
         }
         if (v->connection_)
         {
@@ -1497,12 +1502,13 @@ namespace urbi
     }
 
     void
-    KernelUVarImpl::initialize(UVar* owner, rUVar uvar)
+    KernelUVarImpl::initialize(UVar* owner, rSlot slot)
     {
       owner_ = owner; // set at least that even from an other thread.
-      if (uvar)
+      splitName_ = uname_split(owner->get_name());
+      if (slot)
       {
-        ruvar_ = uvar;
+        slot_ = slot;
         bypassMode_ = false;
         return;
       }
@@ -1525,35 +1531,39 @@ namespace urbi
       owner_ = owner;
       owner_->owned = false;
       bypassMode_ = false;
-      StringPair p = uname_split(owner_->get_name());
-      if (p.first == "@")
+      if (splitName_.first == "@")
       { // UVar address was passed directly.
         std::stringstream ss;
-        ss.str(p.second);
+        ss.str(splitName_.second);
         void* addr;
         ss >> addr;
-        object::UVar* v = (object::UVar*)addr;
-        ruvar_ = v;
+        object::Slot* v = (object::Slot*)addr;
+        slot_ = v;
+        GD_FINFO_DUMP("UVar created from address %s", addr);
         return;
       }
-      rObject o = get_base(p.first);
+      rObject o = get_base(splitName_.first);
       if (!o)
         FRAISE("UVar creation on non existing object: %s", owner->get_name());
-      Symbol varName(p.second);
+      Symbol varName(splitName_.second);
       rObject v = o->local_slot_get(varName);
       if (v)
-        ruvar_ = v->as<object::UVar>();
-      if (!ruvar_)
       {
-        rObject protouvar = object::Object::proto->slot_get_value(SYMBOL(UVar));
-        ruvar_ = protouvar->call(SYMBOL(new),
-                                 o, new object::String(p.second))
-        ->as<object::UVar>();
+        slot_ = v->as<object::Slot>();
+        if (!slot_)  //trigger transparent slot creations
+          slot_ = o->getSlot(varName)->as<object::Slot>();
+      }
+      if (!slot_)
+      {
+        rObject protoslot = object::Object::proto->slot_get_value(SYMBOL(Slot));
+        slot_ = protoslot->call(SYMBOL(new),
+                                 o, new object::String(splitName_.second))
+        ->as<object::Slot>();
       }
       traceOperation(owner, SYMBOL(traceBind));
       GD_FINFO_DUMP("Uvar %s creating new object %s.",
                     owner_->get_name(),
-                    ruvar_.get());
+                    slot_.get());
     }
 
     void KernelUVarImpl::clean()
@@ -1580,7 +1590,7 @@ namespace urbi
 
       owner_->owned = true;
       // Write 1 to the Urbi-side uvar owned slot.
-      ruvar_->slot_update(SYMBOL(owned), object::true_class);
+      slot_->split_set(true);
     }
 
     void KernelUVarImpl::sync()
@@ -1614,9 +1624,14 @@ namespace urbi
       object::rUValue ov(new object::UValue());
       ov->put(v, bypassMode_);
       if (owner_->owned)
-        ruvar_->writeOwned(ov);
+        slot_->set_output_value(ov);
       else
-        ruvar_->update_(ov);
+      {
+        object::Object* sender = 0;
+        // We need to find out the owner UObject to pass the correct sender.
+        sender = get_base(splitName_.first);
+        slot_->set(ov, sender, libport::utime());
+      }
       ov->invalidate();
     }
 
@@ -1635,13 +1650,15 @@ namespace urbi
                  true);
         return *v;
       }
-      aver(ruvar_);
+      aver(slot_);
       traceOperation(owner_, SYMBOL(traceGet));
       try
       {
+        object::Object* sender;
+        sender = get_base(splitName_.first);
         rObject o = (owner_->owned
-                     ? ruvar_->val
-                     : ruvar_->getter(true));
+                     ? slot_->value_get()
+                     : slot_->value(sender, true));
         aver(o);
         if (object::rUValue bv = o->as<object::UValue>())
           return bv->value_get();
@@ -1671,6 +1688,7 @@ namespace urbi
     UDataType
     KernelUVarImpl::type() const
     {
+      // Do not bounce to get().type which might need to copy the value.
       if (server().isAnotherThread())
       {
         urbi::UValue* v;
@@ -1679,9 +1697,11 @@ namespace urbi
                              &v), true);
         return v->type;
       }
+      object::Object* sender;
+      sender = get_base(splitName_.first);
       rObject o = (owner_->owned
-                   ? ruvar_->val
-                   : ruvar_->getter(true));
+                     ? slot_->value_get()
+                     : slot_->value(sender, true));
       return ::uvalue_type(o);
     }
 
@@ -1702,15 +1722,14 @@ namespace urbi
                              boost::ref(v), prop), true);
         return v;
       }
-      aver(ruvar_);
+      aver(slot_);
       if (prop == urbi::PROP_RANGEMIN)
-        return UValue(ruvar_->rangemin);
+        return UValue(slot_->rangemin_get());
       else if (prop == urbi::PROP_RANGEMAX)
-        return UValue(ruvar_->rangemax);
-      StringPair p = uname_split(owner_->get_name());
-      rObject o = xget_base(p.first);
+        return UValue(slot_->rangemax_get());
+      rObject o = xget_base(splitName_.first);
       return ::uvalue_cast(o->call(SYMBOL(getProperty),
-                                   new object::String(p.second),
+                                   new object::String(splitName_.second),
                                    new object::String(UPropertyNames[prop])));
     }
 
@@ -1722,10 +1741,9 @@ namespace urbi
                                              this, prop, v));
         return;
       }
-      StringPair p = uname_split(owner_->get_name());
-      rObject o = xget_base(p.first);
+      rObject o = xget_base(splitName_.first);
       o->call(SYMBOL(setProperty),
-              new object::String(p.second),
+              new object::String(splitName_.second),
               new object::String(UPropertyNames[prop]),
               object_cast(v));
     }
@@ -1744,7 +1762,7 @@ namespace urbi
                                              this, enable));
         return;
       }
-      ruvar_->slot_set_value(SYMBOL(rtp),  object::to_urbi(enable));
+      slot_->slot_set_value(SYMBOL(rtp),  object::to_urbi(enable));
     }
 
     void KernelUVarImpl::setInputPort(bool enable)
@@ -1761,17 +1779,17 @@ namespace urbi
                r.state.redefinition_mode_set(last_rdm));
       r.state.redefinition_mode_set(true);
       if (enable)
-        ruvar_->slot_set_value(SYMBOL(inputPort), object::to_urbi(true));
+        slot_->slot_set_value(SYMBOL(inputPort), object::to_urbi(true));
       else
-        ruvar_->slot_remove(SYMBOL(inputPort));
+        slot_->slot_remove(SYMBOL(inputPort));
     }
 
     time_t
     KernelUVarImpl::timestamp() const
     {
-      if (!ruvar_)
+      if (!slot_)
         throw std::runtime_error("UVar without cache");
-      return time_t(ruvar_->timestamp);
+      return time_t(slot_->timestamp_get());
     }
 
     void
@@ -1803,7 +1821,6 @@ namespace urbi
                   << " already registered" << std::endl;
         return;
       }
-      useClosedVar_ = false;
       registered_ = true;
       StringPair p = uname_split(owner_->name);
       std::string method = p.second;
@@ -1850,33 +1867,29 @@ namespace urbi
             traceName += trace_name(you);
 
         // Source UVar
-        object::rUVar var;
+        object::rSlot var;
         if (owner_->target)
-          var = ((KernelUVarImpl*)owner_->target->impl_)->ruvar_;
+          var = ((KernelUVarImpl*)owner_->target->impl_)->slot_;
         else if (me)
-          var = me->slot_get(Symbol(method))->as<object::UVar>();
+          var = me->slot_get(Symbol(method))->as<object::Slot>();
         else if (p.first == "@")
         {
           void* addr;
           std::stringstream ss;
           ss.str(p.second);
           ss >> addr;
-          var = (object::UVar*)addr;
+          var = (object::Slot*)addr;
         }
-        if (!var)
-        {
-          GD_INFO_TRACE("Upgrading slot to UVar");
-          object::global_class->slot_get_value(SYMBOL(UVar))
-          ->call(SYMBOL(new), me, object::to_urbi(method));
-          var = me->slot_get(Symbol(method))->as<object::UVar>();
-          aver(var);
-        }
+        aver(var);
         rObject source = xget_base(owner_->objname);
         GD_FINFO_TRACE("UGC same source: %s (%s==%s)", source == me,
                        owner_->objname, p.first);
         if (source != me)
         {
-          if (owner_->type != "varaccess" && !owned_)
+          /* We do not own the slot to hook, so create a new Slot in our
+          * uobject, hook that instead, and setup a UConnection between them.
+          */
+          if (owner_->type == "var" && !owned_)
           {
             GD_FINFO_TRACE("UGC %s using UConnection backend.", this);
             // Use the new mechanism: create an input port and use it
@@ -1886,7 +1899,7 @@ namespace urbi
                            owner_->objname, ipname);
             InputPort ip(owner_->objname, ipname);
             inPort_ = xget_base(owner_->objname)->slot_get(Symbol(ipname))
-              ->as<object::UVar>();
+              ->as<object::Slot>();
             std::string inportName_ = owner_->objname + "." + ipname;
             // And link it with the source using a uconnection.
             object::rUConnection c
@@ -1896,7 +1909,6 @@ namespace urbi
             // Retarget callback on our own input port we just created
             var = inPort_;
             connection_ = c;
-            useClosedVar_ = true;
             GD_FINFO_TRACE("UGC %s using UConnection backend %s.", this,
                            connection_.get());
           }
@@ -1908,18 +1920,18 @@ namespace urbi
         callback_ = new object::Primitive(
           boost::function1<rObject, const objects_type&>
           (boost::bind(&wrap_ucallback_notify, _1, owner_,
-                       traceName)));
+                       traceName, owner_->type == "var")));
         callback_->slot_set_value
           (SYMBOL(target),
            new object::String(&owner_->owner ? owner_->owner.__name:"unknown"));
 
         if (owner_->type == "varaccess")
-          id_ = var->notifyAccess_(callback_);
+          var->oget_set(callback_);
         else if (owned_)
-          id_ = var->notifyChangeOwned_(callback_);
+          var->oset_set(callback_);
         else
-          id_ = var->notifyChange_(callback_);
-        GD_FINFO_DUMP("Registered gave id %s on %s(%s)", id_, owner_->name,
+          var->oset_set(callback_);
+        GD_FINFO_DUMP("Registered on %s(%s)", owner_->name,
                       var.get());
         if (owner_->target)
         {
@@ -2128,8 +2140,8 @@ namespace urbi
         GD_FINFO_TRACE("UEM_ASSIGNVALUE %s %s", name, val);
         object::rUValue ov(new object::UValue(val));
         rObject o = xget_base(p.first);
-        o->slot_get(Symbol(p.second))
-          ->call(SYMBOL(update_timed), ov, object::to_urbi(time));
+        o->slot_get(Symbol(p.second))->as<object::Slot>()
+        ->uobject_set(ov, o, time);
       }
       break;
       case urbi::UEM_EMITEVENT:

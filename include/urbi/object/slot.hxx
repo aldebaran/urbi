@@ -30,20 +30,14 @@ namespace urbi
       if (!proto)
         proto = new Slot(FirstPrototypeFlag());
       proto_add(proto);
+      init();
     }
 
     template <typename T>
-    inline
-    Slot::Slot(const T& value)
-      : constant_(false)
-      , copyOnWrite_(true)
-      , value_(void_class)
+    inline rSlot
+    Slot::create(const T& value)
     {
-      Ward w(this);
-      if (!proto)
-        proto = new Slot(FirstPrototypeFlag());
-      proto_add(proto);
-      value_ = object::CxxConvert<T>::from(value);
+      return new Slot(object::CxxConvert<T>::from(value));
     }
 
     inline
@@ -74,30 +68,6 @@ namespace urbi
     }
 
     inline
-    rObject
-    Slot::changed()
-    {
-      CAPTURE_GLOBAL(Event);
-      if (!changed_)
-        changed_ = Event->call(SYMBOL(new));
-      return changed_;
-    }
-
-    /*
-    inline
-    Slot::operator rObject ()
-    {
-      return get<rObject>();
-    }
-
-    inline
-    Slot::operator bool ()
-    {
-      return value();
-    }
-    */
-
-    inline
     Object*
     Slot::operator->()
     {
@@ -111,28 +81,6 @@ namespace urbi
       return assert_exp(value());
     }
 
-    inline
-    rObject
-    Slot::value(Object* sender) const
-    {
-      if (sender && oget_)
-      {
-         object::objects_type args;
-         args << const_cast<Slot*>(this);
-         return eval::call_apply(::kernel::runner(),
-                                 sender,
-                                 oget_, SYMBOL(oget), args);
-      }
-      if (get_)
-      {
-        object::objects_type args;
-        return eval::call_apply(::kernel::runner(),
-                              const_cast<Slot*>(this),
-                              get_, SYMBOL(get), args);
-      }
-      else
-        return value_;
-    }
 
     inline
     bool

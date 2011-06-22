@@ -160,7 +160,7 @@ Object.clone.localSlotNames == [];
 \begin{urbiscript}
 var foo = Object.new |;
 cloneSlot("foo", "bar") |;
-assert(!(foo === bar));
+assert(!(&foo === &bar));
 \end{urbiscript}
 
 \item[copySlot](<from>, <to>)%
@@ -168,8 +168,8 @@ assert(!(foo === bar));
   are the same.
 \begin{urbiscript}
 var moo = Object.new |;
-cloneSlot("moo", "loo") |;
-assert(!(moo === loo));
+copySlot("moo", "loo") |;
+assert(&moo === &loo);
 \end{urbiscript}
 
 \item[createSlot](<name>)%
@@ -254,12 +254,12 @@ var a.slot = 21|;
 assert
 {
   a.locateSlot("slot") === a;
-  a.getLocalSlot("slot") == 21;
+  a.getLocalSlotValue("slot") == 21;
 };
 
 // Inherited slot are not looked-up.
 assert { a.locateSlot("init") == Object };
-a.getLocalSlot("init");
+a.getLocalSlotValue("init");
 [00041066:error] !!! lookup failed: init
 \end{urbiscript}
 
@@ -276,7 +276,7 @@ b.getSlotValue("slot") == 21;
 
 // Inherited slot.
 b.locateSlot("init") === Object;
-b.getSlotValue("init") == Object.getSlot("init");
+b.getSlotValue("init") == Object.getSlotValue("init");
 
 // Unknown slot.
 b.locateSlot("ENOENT") == nil;
@@ -532,9 +532,9 @@ base.slot == "base";
 
 
 \item[setConstSlot]%
-  Like \refSlot{setSlot} but the created slot is const.
+  Like \refSlot{setSlotValue} but the created slot is const.
 \begin{urbiscript}
-assert(setConstSlot("fortyTwo", 42) == 42);
+assert(setConstSlotValue("fortyTwo", 42) == 42);
 fortyTwo = 51;
 [00000000:error] !!! cannot modify const slot
 \end{urbiscript}

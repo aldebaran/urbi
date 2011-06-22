@@ -234,9 +234,9 @@ namespace urbi
         return 0;
       Slot* s = o->as<Slot>();
       if (s)
-        return s->value(const_cast<Object*>(this));
-      else
-        return o;
+        o = s->value(const_cast<Object*>(this));
+      aver(o);
+      return o;
     }
 
     rObject
@@ -246,27 +246,15 @@ namespace urbi
       if (!loc.first)
         return 0;
       rObject res = loc.second;
-      if (runner::Job* r = ::kernel::urbiserver->getCurrentRunnerOpt())
+      runner::Job* r = ::kernel::urbiserver->getCurrentRunnerOpt();
+      if (r && r->dependencies_log_get() && !res->as<Slot>())
       {
-        if (r->dependencies_log_get())
-        {
-          GD_CATEGORY(Urbi.At);
-          GD_FPUSH_TRACE("Register slot '%s' for at monitoring", k);
-          Event* e;
-          {
-            FINALLY(((runner::Job*, r)), r->dependencies_log_set(true));
-            r->dependencies_log_set(false);
-            GD_CATEGORY(Urbi.At);
-            rSlot rs = res->as<Slot>();
-            if (!rs)
-            {
-              rs = new Slot(res);
-              loc.first->slots_.set(loc.first, k, rs, true);
-            }
-            e = static_cast<Event*>(rs->property_get(SYMBOL(changed)).get());
-          }
-          r->dependency_add(e);
-        }
+        // We want to hook changed, so create on-demand slot
+        rSlot rs = new Slot(res);
+        GD_FINFO_TRACE("Transparent slot creation for %s: %s", k, rs);
+        loc.first->slots_.set(loc.first, k, rs, true);
+        res = rs;
+        // no need to hook anything, slot getter will take care of that.
       }
       return res;
     }
@@ -820,7 +808,7 @@ namespace urbi
     rObject
     Object::getSlot(key_type name)
     {
-      location_type r = slot_locate(name, true);
+      location_type r = safe_slot_locate(name);
       if (rSlot s = r.second->as<Slot>())
         return s;
       // Convert it to a slot.
@@ -1073,7 +1061,7 @@ namespace urbi
     Object::uid() const
     {
       static boost::format uid("0x%x");
-      return str(uid % reinterpret_cast<long long>(this));
+      return str(uid % reinterpret_cast<size_t>(this));
     }
 
     rObject

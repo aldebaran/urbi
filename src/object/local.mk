@@ -126,8 +126,6 @@ dist_libuobject@LIBSFX@_la_SOURCES +=		\
   object/urbi-exception.hxx			\
   object/uvalue.cc				\
   object/uvalue.hh				\
-  object/uvar.cc				\
-  object/uvar.hh				\
   object/vector.cc				\
   object/vector-slots.hh			\
   object/vector-slots.hxx

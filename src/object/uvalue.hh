@@ -50,8 +50,7 @@ namespace urbi
       /// False if the value was constructed with copy=false.
       bool allocated_;
       rObject cache_;
-      bool bypassMode_;
-      friend class ::urbi::object::UVar;
+      ATTRIBUTE_RW(bool, bypassMode);
     };
 
   }

@@ -106,7 +106,6 @@ if (!System.Platform.compilationModeSpace)
   requireFile("urbi/process.u");
   requireFile("urbi/regexp.u");
 };
-systemFiles = []|
 Channel.topLevel.enabled = true |
 System.defaultIsSystem = false |
 // Used by initialization code to detect the end of urbi.u.

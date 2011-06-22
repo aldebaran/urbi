@@ -348,8 +348,8 @@ namespace urbi
           r,
           "backtrace",
           libport::format("%s (%s)",
-                          *i->getSlot(SYMBOL(name)),
-                          *i->getSlot(SYMBOL(location))));
+                          *i->getSlotValue(SYMBOL(name)),
+                          *i->getSlotValue(SYMBOL(location))));
     }
 
     static List::value_type

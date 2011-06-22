@@ -4134,7 +4134,7 @@ to \lstinline'waituntil'.
   var foo = Object.new;
   {
     waituntil (foo.hasLocalSlot("bar"));
-    echo(foo.getLocalSlot("bar"));
+    echo(foo.getLocalSlotValue("bar"));
   },
   var foo.bar = 123|;
 };

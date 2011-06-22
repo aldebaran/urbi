@@ -225,7 +225,7 @@ namespace urbi
       new HookPoint(hookPointName_, const_cast<RemoteUContextImpl*>(this));
       URBI_SEND_COMMAND_C
         (*outputStream,
-         "var hookPoint = " << hookPointName_ << "|");
+         "var hookPoint = uobjects.getUObject(\"" << hookPointName_ << "\")|");
     }
 
     RemoteUContextImpl::~RemoteUContextImpl()

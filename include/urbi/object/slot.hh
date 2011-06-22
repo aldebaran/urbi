@@ -31,11 +31,6 @@ namespace urbi
 {
   namespace object
   {
-#define URBI_OBJECT_SLOT_CACHED_PROPERTIES      \
-    ((bool, constant, 1))                       \
-    ((rObject, get, 0))                         \
-    ((rObject, set, 0))                         \
-    ((rObject, value, 0))                       \
 
     class Slot: public CxxObject
     {
@@ -51,26 +46,42 @@ namespace urbi
       Slot();
       Slot(const Slot& model);
       Slot(rSlot model);
+      Slot(rObject& value);
       template <typename T>
-      Slot(const T& value);
+      static rSlot create(const T& value);
       ~Slot();
-      template <typename T>
-      T get(Object* sender = 0);
 
+
+      /*-------------.
+      |   Setters.   |
+      `-------------*/
       template <typename T>
       void set(const T& value, Object* sender=0);
 
       void set(rObject value, Object* sender=0);
-
+      void set(rObject value, Object* sender, libport::utime_t timestamp);
+      // Setter from an uobject. Adds loop detection system to set.
+      void uobject_set(rObject value, Object* sender,
+                       libport::utime_t timestamp);
+      // Invoked by remote uobjects
+      void update_timed(rObject value, libport::utime_t timestamp);
       template <typename T>
       const T& operator=(const T& value);
 
-      //operator rObject ();
-      //operator bool ();
+      /*-------------.
+      |   Getters.   |
+      `-------------*/
       Object* operator->();
       const Object* operator->() const;
-      rObject value(Object* sender = 0) const;
-      rObject init();
+      /** Get current value, calling getters if present.
+       * @arg fromUObject true if the request is made by an UObject. We need
+       *      this information to know how to handle bypass mode writes.
+       */
+      rObject value(Object* sender = 0, bool fromUObject = false) const;
+      rObject init(bool fromModel = false);
+      template <typename T>
+      T get(Object* sender = 0);
+
       /*-------------.
       | Properties.  |
       `-------------*/
@@ -96,20 +107,101 @@ namespace urbi
         = to_urbi(val)                                                  \
 
       rObject changed();
+
+      // Get normalized value.
+      float normalized();
+      // Set normalized value
+      void normalized_set(float v);
+
+      /** Check for push-pull inconsistency and start the push-pull loop
+       * if needed. See push_pull_loop for more.
+       * @param first_getter pass true if the first getter was just installed
+       */
+       bool push_pull_check(bool first_getter = false);
+
+       // Write to output val in split mode.
+       void set_output_value(rObject v);
+       // Read input val in split mode.
+       rObject get_input_value();
     protected:
+      // Changed event, created on demand.
       ATTRIBUTE_RW(rObject, changed);
+      /********************
+      *  Configuration    *
+      *********************/
       ATTRIBUTE_RW(bool, constant);
+      // Disable copy on write for this slot if false.
       ATTRIBUTE_RW(bool, copyOnWrite);
+      // If true, do not bridge input to output
+      ATTRIBUTE_RW(bool, split);
+      // True when we are in the getter. Used for loop detection.
+      ATTRIBUTE_RW(int, in_getter, , , , mutable);
+      // True when we are in setter, loop detection. Per-runner flag.
+      ATTRIBUTE_RW(std::vector<void*>, in_setter);
+      // Enable rtp mode
+      ATTRIBUTE_R(bool, rtp);
+      void rtp_set(bool v);
+
+      /****************
+      *  Callbacks    *
+      ****************/
       // Slot getter hook: val slot.get()
-      ATTRIBUTE_RW(rObject, get);
+      ATTRIBUTE_Rw(rObject, get);
       // Slot setter hook: slot.set(val)
-      ATTRIBUTE_RW(rObject, set);
+      ATTRIBUTE_Rw(rObject, set);
       // Owner object getter hook: val obj.get(slot)
-      ATTRIBUTE_RW(rObject, oget);
+      ATTRIBUTE_Rw(rObject, oget);
       // Owner object setter hook: obj.set(val, slot)
-      ATTRIBUTE_RW(rObject, oset);
-      ATTRIBUTE_RW(rObject, value);
+      ATTRIBUTE_Rw(rObject, oset);
       ATTRIBUTE_RW(rObject, updateHook);
+      // UConnection list
+      ATTRIBUTE_W(rList, connections);
+      rList& connections_get(); // on-demand creation
+      /************
+      *   Value   *
+      *************/
+      // Only value, or if split, inputValue, aka the command we receive.
+      ATTRIBUTE_RW(rObject, value);
+      // aka 'sensor' value, what we expose to the external world
+      ATTRIBUTE_RW(rObject, output_value);
+      ATTRIBUTE_RW(ufloat, timestamp);
+      ATTRIBUTE_RW(ufloat, rangemax);
+      ATTRIBUTE_RW(ufloat, rangemin);
+
+      /* UObject stuff: true if we are dead, ie our owner object is gone.
+       * Needed so that all the components that may hold a ref to us can
+       * know nothing more will happen and let us go.
+       */
+      ATTRIBUTE_RW(bool, dead);
+
+      /******************
+      *  Push-pull loop *
+      ******************/
+      /* Set to true if a push-pull loop is running.
+       * It gets activated when a getter is present, and someone registers
+       * to one of the change notification mechanisms.
+       * In this case the code 'loop getSlotValue("theslot")' is periodicaly
+       * called.
+       */
+      ATTRIBUTE_RW(bool, push_pull_loop);
+      /* Check if there is a push_pull_loop. Must be called when the first
+       * registration occurrs on each notify-change backend(at, connections)
+       * Return true if a push-pull loop was activated.
+       */
+      bool push_pull_loop_check();
+      /// Run the push-pull loop
+      rObject push_pull_loop_run(runner::Job& r);
+      /****************
+      *  Bypass mode *
+      ****************/
+      // Tag used to notify tasks blocked in a read on a slot in bypass mode
+      ATTRIBUTE_RW(rObject, waiter_tag, , , , mutable);
+      // on-demand creation of waiter_tag_
+      rTag waiter_tag() const;
+      // Number of runners blocked using waiter_tag.
+      ATTRIBUTE_RW(unsigned int, waiter_count, , , , mutable);
+      // Check and unlock getters stuck waiting for bypass-mode write.
+      void check_waiters();
     };
 
     typedef libport::intrusive_ptr<Slot> rSlot;

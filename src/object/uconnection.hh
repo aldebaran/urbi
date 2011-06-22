@@ -52,11 +52,15 @@ namespace urbi
       /// Call asynchronously.
       bool asynchronous;
     private:
-      rObject doCall(runner::Job& r, rObject self, rUVar target);
+      /** Synchronous call
+       * @param r current job
+       * @param self the source slot, can be !=source in case of InputPort chain
+       * @param target the resolved target
+       */
+      rObject doCall(runner::Job& r, rObject self, rObject target);
       /// True if we are currently processing this connection.
       bool processing;
       void init_();
-      friend class UVar;
     };
   }
 }

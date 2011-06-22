@@ -20,7 +20,6 @@
 #include <object/socket.hh>
 #include <object/symbols.hh>
 #include <object/system.hh>
-#include <object/uvar.hh>
 #include <urbi/object/barrier.hh>
 #include <urbi/object/code.hh>
 #include <urbi/object/cxx-object.hh>
@@ -225,7 +224,6 @@ namespace urbi
       File        f;
       Path        p;
       Semaphore   s;
-      UVar        v;
       Socket      so;
       Tag         t;
     }

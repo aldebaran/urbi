@@ -13,7 +13,7 @@
 # include <object/uconnection.hh>
 # include <object/urbi-exception.hh>
 # include <object/uvalue.hh>
-# include <object/uvar.hh>
+# include <urbi/object/slot.hh>
 
 # include <runner/job.hh>
 
@@ -67,16 +67,18 @@ namespace urbi
     bool UConnection::call(runner::Job& r, rObject self)
     {
       // FIXME: stay connected in the hope of reconnecting one day?
-      rUVar t = target->as<UVar>();
-      if (!t)
+      rSlot t = target->as<Slot>();
+      if (!t || t == Slot::proto)
         return false;
       if (t->call(SYMBOL(dead)) == true_class)
       {
         //FIXME: try to keep informations for possible future reconnection
         GD_INFO_TRACE("Target is dead");
-        target = nil_class;
+        target = Slot::proto;
         return false;
       }
+      GD_FINFO_DUMP("%s -> %s call, processing: %s enabled: %s",
+                    source, target, processing, enabled);
       if (enabled
           && !processing
           && (libport::utime() - libport::seconds_to_utime(lastCall) >
@@ -99,24 +101,17 @@ namespace urbi
       return true;
     }
 
-    rObject UConnection::doCall(runner::Job& r,
+    rObject UConnection::doCall(runner::Job&,
                                 rObject self,
-                                rUVar target)
+                                rObject target)
     {
       processing = true;
       libport::utime_t now = libport::utime();
-      if (target->slot_has(SYMBOL(inputPort)))
-      {
-        // If target is InputPut, bypass write and call notifies.
-        callNotify(r,
-                   target, target->change_, self);
-        rList l =  target->call(SYMBOL(changeConnections))->as<List>();
-        if (l)
-          callConnections(r, self, l);
-      }
-      else
-        // If target is not, write to uvar.
-        target->update_(self->as<UVar>()->getter(true));
+      // FIXME: fake sender
+      rObject val = self->as<Slot>()->value(nil_class, true);
+      // Do not call uobject_set here as it would reset Slot name
+      // causing the update and break remote loopback detection.
+      target->as<Slot>()->set(val, nil_class, libport::utime());
       libport::utime_t end = libport::utime();
       lastCall = (double)end / 1.0e6;
       double ct = (double)(end-now) / 1.0e6;

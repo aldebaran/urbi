@@ -84,7 +84,6 @@ namespace urbi
     Macro(Tag);                                 \
     Macro(UConnection);                         \
     Macro(UValue);                              \
-    Macro(UVar);                                \
     Macro(Vector);
 
     /*

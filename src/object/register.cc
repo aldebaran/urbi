@@ -56,7 +56,6 @@
 #include <object/symbols.hh>
 #include <object/system.hh>
 #include <object/uvalue.hh>
-#include <object/uvar.hh>
 
 namespace urbi
 {
@@ -72,7 +71,6 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER(Socket);
     URBI_CXX_OBJECT_REGISTER(Semaphore);
     URBI_CXX_OBJECT_REGISTER(Code);
-    URBI_CXX_OBJECT_REGISTER(UVar);
     URBI_CXX_OBJECT_REGISTER(Position);
     URBI_CXX_OBJECT_REGISTER(Location);
     URBI_CXX_OBJECT_REGISTER(Lobby);

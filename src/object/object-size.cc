@@ -21,7 +21,6 @@
 #include <object/urbi/process.hh>
 #include <object/urbi/regexp.hh>
 #include <object/uvalue.hh>
-#include <object/uvar.hh>
 #include <urbi/object/barrier.hh>
 #include <urbi/object/code.hh>
 #include <urbi/object/date.hh>
