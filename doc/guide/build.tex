@@ -683,15 +683,21 @@ The following sections assume that gdb is recent enough.
 \subsection{GDB commands}
 
 % TeX4HT is having troubles with this...
+%% hackery to get only (gdb) #% printed as comments as if the % were not
+%% there.
 \ifx\ifHtml\undefined
   \lstdefinelanguage[]{gdb}{
     otherkeywords={(gdb)},
-    keywords={(gdb)}
+    keywords={(gdb)},
+    literate={\%}{}0,
+    morecomment=[l]{\#\%}
   }[keywords]
 \else
   \lstdefinelanguage[]{gdb}{
     alsoletter={(,)},
-    keywords={(gdb)}
+    keywords={(gdb)},
+    literate={\%}{}0,
+    morecomment=[l]{\#\%}
   }[keywords]
 \fi
 
@@ -749,8 +755,8 @@ for(var i: [1, 2, 3]) foo([i.asString => i]);
 [00219506:backtrace] foo (input.u:2.23-44)
 [00219506:backtrace] each (input.u:2.12-44)
 UBreakpoint 1: [input.u:2.23-45] Lobby_0x7ffff7f03208.foo(["2" => 2])
-(gdb) p *(urbi::object::Dictionary *) 0x7ffff7f5b750
-$1 = ["2" => 2]
+Inside Job 0x6a2f70
+(gdb) 
 \end{verbatim}
 
 
@@ -785,11 +791,12 @@ UBreakpoint 2:
 ["1" => [1]]
 \end{verbatim}
 
+\item[urbi continue] Alias to \command{continue}.
+\item[urbi finish] Execute until the end of the current function.
 \item[urbi next] Execute until next \urbi function call.
+\item[urbi next job] Execute until a function call is executed in another job.
 \item[urbi step] Execute next \urbi function call until it return to the
   current function scope or leave the current scope.
-\item[urbi finish] Execute until the end of the current function
-\item[urbi continue] Alias to \command{continue}.
 
 \begin{verbatim}[language=gdb]
 (gdb) urbi break foo
@@ -799,28 +806,38 @@ UBreakpoint 1:
 
 //#push 1 "input.u"
 function foo () {
-  [1].map(closure (x) { x });
-  [2].map(closure (x) { x });
+  [1].map(closure (x) { x }); // yield
+  [2].map(closure (x) { x }); // yield
   [3].map(closure (x) { x })
 }|
-foo;
+/* first */ foo & foo /* second */;
 
 UBreakpoint 1: [input.u:6.1-4] Lobby_0x7ffff35137a8.foo()
+Inside Job 0x6a2f70
+(gdb) #% Go deeper inside foo
 (gdb) urbi next
-[input.u:2.3-29] [1].map(Code_0x7ffff3658528)
+[input.u:2.3-29] [1].map(Code_0x7ffff3659338)
 (gdb) urbi next
-[inst/debug/bin/../share/gostai/urbi/list.u:129.18-130.18] [1].each|(Code_0x7ffff3657b50)
+[urbi/list.u:129.18-130.18] [1].each|(Code_0x7ffff3658960)
+(gdb) #% The current coroutine will hold on the next function call after map
 (gdb) urbi finish
-[input.u:3.3-29] [2].map(Code_0x7ffff3658ac8)
-(gdb) urbi step
-[input.u:4.3-29] [3].map(Code_0x7ffff365b660)
+UBreakpoint 1: [input.u:6.7-10] Lobby_0x7ffff35137a8.foo()
+Inside Job 0x9fab50
+(gdb) #% The breakpoint has hit on the second job calling foo.
+(gdb) #% Ignore this job, with "urbi continue"
 (gdb) urbi continue
-[00059879] [3]
+[input.u:3.3-29] [2].map(Code_0x7ffff365ca10)
+Inside Job 0x6a2f70
+(gdb) #% Back into the first job where the finish has ended.
+(gdb) #% Step over the map call.
+(gdb) urbi step
+[input.u:4.3-29] [3].map(Code_0x7ffff36600e8)
+(gdb) #% Switch to the next job to be executed.
+(gdb) urbi next job
+[input.u:4.3-29] [3].map(Code_0x7ffff365d6b8)
+Inside Job 0x9fab50
+(gdb)
 \end{verbatim}
-
-
-
-
 
 \end{description}
 

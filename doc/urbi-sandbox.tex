@@ -58,6 +58,48 @@ for (var i: 10)
   echo(i);
 \end{verbatim}
 
+% TeX4HT is having troubles with this...
+%% hackery to get only (gdb) #% printed as comments as if the % were not
+%% there.
+\ifx\ifHtml\undefined
+  \lstdefinelanguage[]{gdb}{
+    otherkeywords={(gdb)},
+    keywords={(gdb)},
+    literate={\%}{}0,
+    morecomment=[l]{\#\%}
+  }[keywords]
+\else
+  \lstdefinelanguage[]{gdb}{
+    alsoletter={(,)},
+    keywords={(gdb)},
+    literate={\%}{}0,
+    morecomment=[l]{\#\%}
+  }[keywords]
+\fi
+
+\begin{verbatim}[language=gdb]
+(gdb) urbi break input.u:2 Lobby_0x7ffff7f03208.foo(["2" => 2])
+UBreakpoint 1:
+        Location: input.u:2
+        Lobby_0x7ffff7f03208.foo(["2" => 2])
+(gdb) c
+Continuing.
+
+//#push 1 "input.u"
+function foo (x) { backtrace }|;
+for(var i: [1, 2, 3]) foo([i.asString => i]);
+
+[00219506:backtrace] foo (input.u:2.23-44)
+[00219506:backtrace] each (input.u:2.12-44)
+UBreakpoint 1: [input.u:2.23-45] Lobby_0x7ffff7f03208.foo(["2" => 2])
+Inside Job 0x6a2f70
+(gdb) urbi stack
+#12 [input.u:1.20-29] Lobby_0x7ffff7f03208.backtrace()
+#16 [input.u:1.20-29] Call backtrace
+#55 [input.u:2.1-40] Stmt
+(gdb) #% comment
+\end{verbatim}
+
 \begin{bnf}
 <class-statement>
   ::= "class" <lvalue> (: <prototypes>)? <block>

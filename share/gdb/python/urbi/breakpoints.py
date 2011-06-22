@@ -22,6 +22,16 @@ class CallApplyBreakpoint(gdbBreakpoint()):
     callback = None
     # List of keys for callbacks properties.
     urbi_breaks = []
+    lastJob = None
+
+    @staticmethod
+    def current_job():
+        frame = urbi.frames.first(
+            urbi.frames.UrbiCallApplyFrame.supports,
+            urbi.frames.FrameIterator())
+        if frame == None:
+            return None
+        return "%s" % frame.read_var('job').address
 
     def __init__(self, callback):
         self.callback = callback
@@ -33,15 +43,20 @@ class CallApplyBreakpoint(gdbBreakpoint()):
     def stopHook(self, ub):
         "Add a new action for the break point"
         self.urbi_breaks.append(ub)
+        self.lastJob = self.current_job()
         return len(self.urbi_breaks) - 1
 
     def stop(self):
         "Dispatch stop actions to urbi break system."
         stopping = False
+        job = self.current_job()
         for i, ub in enumerate(self.urbi_breaks):
             # There is no need to continue here unless we intend to add
             # commands.
-            stopping = self.callback.stop(ub) or stopping
+            stopping = self.callback.stop(ub, job) or stopping
+        if stopping and self.lastJob != job:
+            self.lastJob = job
+            print "Inside Job %s" % job
         return stopping
 
     def delete(self, i):
@@ -75,10 +90,10 @@ class UrbiCallBreakpoints(object):
         self.last = 0
         self.last_hidden = 0
 
-    def stop(self, key):
+    def stop(self, key, current_job):
         current_frame = urbi.frames.FrameIterator.newest()
         cond, idx = self.breakpoints[key]
-        return cond(current_frame)
+        return cond(current_frame, current_job)
 
     def add_breakpoint(self, condition, hidden = False):
         """Register a condition function as an Urbi breakpoint.  The
@@ -179,7 +194,7 @@ class UrbiBreak(gdb.Command):
                 msg += "(<any>)"
 
 
-        def stopIf(frame):
+        def stopIf(frame, job):
             try:
                 res = True
                 if res and line:
@@ -249,11 +264,13 @@ class UrbiFinish(gdb.Command):
 
 class UrbiNextBP(object):
     """Singleton breakpoint instance which break at the next urbi call.  It
-    automatically disabled it-self when it is stopped."""
+    automatically disabled it-self when it is stopped.  It does so for each
+    job and can also set a breakpoint when the job is changing."""
 
     bp = 0
     # dictionary which map a job to it's silent flag.
-    enabled = {}
+    watcher = {}
+    last_job = None
     enabled = False
     silent = False
 
@@ -267,26 +284,43 @@ class UrbiNextBP(object):
     def __init__(self):
         self.bp = UrbiCallBreakpoints.instance().add_breakpoint(self, hidden = True)
 
-    def enable(self, silent = False):
-        self.enabled = True
-        self.silent = silent
+    def enable(self, silent = False, sameJob = True):
+        job = CallApplyBreakpoint.current_job()
+        if job:
+            if sameJob:
+                self.watcher[job] = {
+                    'enabled' : True,
+                    'silent' : silent
+                    }
+            else:
+                self.last_job = job;
+                self.enabled = True
+                self.silent = silent
+        else:
+            print "Unable not find the current job."
 
-    def __call__(self, frame):
-        if self.enabled:
+    def __call__(self, frame, job):
+        res = False
+        doPrint = False
+        jobProp = None
+        if job in self.watcher:
+            jobProp = self.watcher[job]
+
+        if self.enabled and self.last_job != job:
+            res = True
             self.enabled = False
             if not self.silent:
-                print "%s" % urbi.frames.UrbiCallApplyFrame(frame)
-            return True
-        return False
+                doPrint = True
 
-        if not self.broke and self.callback(frame):
-            self.broke = True
-            bp = self.bp
-            def cleanUp():
-                UrbiCallBreakpoints.instance().del_breakpoint(bp)
-            gdb.post_event(cleanUp)
-            return True
-        return False
+        if jobProp != None and jobProp['enabled']:
+            res = True
+            jobProp['enabled'] = False
+            if not jobProp['silent']:
+                doPrint = True
+
+        if doPrint:
+            print "%s" % urbi.frames.UrbiCallApplyFrame(frame)
+        return res
 
 
 @gdb_command
@@ -297,11 +331,27 @@ class UrbiNext(gdb.Command):
         super (UrbiNext, self).__init__(
             "urbi next",
             gdb.COMMAND_RUNNING,
-            gdb.COMPLETE_NONE)
+            gdb.COMPLETE_NONE,
+            prefix=True)
 
     @require_gdb_version(']7.2 ...[')
     def invoke(self, arg, from_tty):
         UrbiNextBP.instance().enable()
+        gdb.execute("urbi continue")
+
+@gdb_command
+class UrbiNextJob(gdb.Command):
+    """Execute until a function call is executed in another job."""
+
+    def __init__(self):
+        super (UrbiNextJob, self).__init__(
+            "urbi next job",
+            gdb.COMMAND_RUNNING,
+            gdb.COMPLETE_NONE)
+
+    @require_gdb_version(']7.2 ...[')
+    def invoke(self, arg, from_tty):
+        UrbiNextBP.instance().enable(sameJob = False)
         gdb.execute("urbi continue")
 
 @gdb_command
