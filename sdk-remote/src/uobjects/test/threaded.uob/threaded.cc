@@ -74,7 +74,7 @@ public:
   UVar lastAccess;
   void init();
   virtual int update();
-  int onChangeDelay(UVar& v);
+  int onChangeDelay(UValue v);
   int onChange(UVar& v);
   int onAccess(UVar& v);
   void onTimer();
@@ -454,10 +454,10 @@ int Threaded::update()
   return 0;
 }
 
-int Threaded::onChangeDelay(UVar& v)
+int Threaded::onChangeDelay(UValue v)
 {
   usleep(500000);
-  lastChange = v.get_name();
+  lastChange = v;
   return 0;
 }
 

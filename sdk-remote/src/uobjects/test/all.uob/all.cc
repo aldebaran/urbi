@@ -121,6 +121,7 @@ public:
     UBindFunction(all, read);
     UBindFunction(all, write);
     UBindFunction(all, readByName);
+    UBindFunction(all, readValByName);
     UBindFunction(all, writeByName);
     UBindFunction(all, writeByUVar);
     UBindFunction(all, writeOwnByName);
@@ -413,7 +414,7 @@ public:
     else                                        \
       Function(*ports[id - 5], __VA_ARGS__);    \
     return 0;                                   \
-  } while (false);
+  } while (false)
 
   int setNotifyChangeByUVar(urbi::UVar& v)
   {
@@ -429,13 +430,14 @@ public:
 
   int setThreadedNotifyChangeByUVar(urbi::UVar& v)
   {
-    UNotifyThreadedChange(v, &all::onChange, urbi::LOCK_FUNCTION);
+    UNotifyThreadedChange(v, &all::onThreadedChange, urbi::LOCK_FUNCTION);
     return 0;
   }
 
   int setThreadedNotifyChange(int id)
   {
-    UVAR_DISPATH(UNotifyThreadedChange, &all::onChange, urbi::LOCK_FUNCTION);
+    UVAR_DISPATH(UNotifyThreadedChange,
+                 &all::onThreadedChange, urbi::LOCK_FUNCTION);
   }
 
   int setNotifyAccess(int id)
@@ -487,6 +489,11 @@ public:
     return v;
   }
 
+  urbi::UValue readValByName(const std::string& name)
+  {
+    urbi::UVar v(name);
+    return v.val();
+  }
   int writeByName(const std::string& name, int val)
   {
     threadCheck();
@@ -499,6 +506,14 @@ public:
   {
     threadCheck();
     v = val;
+    return 0;
+  }
+
+  int onThreadedChange(urbi::UValue v)
+  {
+    lastChange = "<unknown>";
+    changeCount = ++count;
+    lastChangeVal = v;
     return 0;
   }
 
