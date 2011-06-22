@@ -2,18 +2,18 @@
 <html lang="en-US" xml:lang="en-US" xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <title>Urbi 2.8</title>
-    <link rel="stylesheet" type="text/css" href="style.css"></link>
+    <link rel="stylesheet" type="text/css" href="/downloads/urbi/style.css"></link>
   </head>
 
   <body>
-    <h1><img src="../img/2.8/cube-and-disc.png" class="title" alt="Urbi 2.8" /></h1>
+    <h1><img src="/downloads/urbi/img/2.8/cube-and-disc.png" class="title" alt="Urbi 2.8" /></h1>
 
     <div class="section">
       <p class="abstract">
 	All the versions of Urbi packages are
-	available <a href="..">here</a>.  <br/> An introduction about
-	Urbi, including a video, can be
-	found <a href="http://www.gostai.com/products/urbi">here</a>.
+	available <a href="/downloads/urbi/">here</a>.  <br/> An
+	introduction about Urbi, including a video, can be
+	found <a href="/products/urbi">here</a>.
       </p>
 
       <h2>What's new in Urbi 2.8?</h2>
@@ -64,8 +64,8 @@ On the same example, Urbi 2.7.1 displays:
           </li>
 
           <li>
-            To augment legibility, underscores can be used to
-            separate groups of digits in numbers.
+            To augment legibility, underscores can be used to separate
+            groups of digits in numbers.
 <pre>
 assert
 {
@@ -82,14 +82,17 @@ assert
           <li>
             Logger provides runtime control over the debug traces:
             <ul>
-              <li> Logger.level provides read/write access to the
-                current verbosity level,
+              <li>
+                Logger.level provides read/write access to the current
+                verbosity level,
               </li>
-              <li> Logger.categories
-                gives the set of existing categories,
+              <li>
+                Logger.categories gives the set of existing
+                categories,
               </li>
-              <li>categories that match a given pattern can be enabled/disabled
-                (Logger.enable, Logger.disable),
+              <li>
+                categories that match a given pattern can be
+                enabled/disabled (Logger.enable, Logger.disable),
 <pre>
 Logger.enable("Category*");
 Logger.disable("Category.Sub");
@@ -98,7 +101,7 @@ Logger.disable("Category.Sub");
               <li>
                 the status of all the categories can be changed
                 according to a given specification string similar to
-                GD_CATEGORY
+                GD_CATEGORY.
 <pre>
 Logger.set("+Category*,-Category.Sub");
 </pre>
@@ -112,8 +115,9 @@ Logger.set("+Category*,-Category.Sub");
           </li>
 
           <li>
-          The timeout construct now features optional catch, else, and
-          finally clauses, modeled after the syntax of try-blocks.
+            The timeout construct now features optional catch, else,
+            and finally clauses, modeled after the syntax of
+            try-blocks.
 <pre>
 function testTimeOut(var duration)
 {
@@ -158,69 +162,67 @@ testTimeOut(2s);
 	</p>
       </div>
 
-	<h2>Package Types</h2>
+      <h2>Package Types</h2>
+      <div class="section">
+	<p>
+	  There are three kinds of packages:
+	  <dl>
+	    <dt>Urbi SDK (urbi-sdk-*)</dt>
+	    <dd>The full Software Development Kit, including the full
+	      documentation in HTML and PDF.  These packages are made
+	      for computers on which applications are developed.</dd>
+	    <dt>Urbi Runtime (urbi-runtime-*)</dt>
+	    <dd>Only what is needed to run Urbi programs.  These
+	      packages are made for robots running these applications.
+	      They do not contain the documentation.</dd>
+	    <dt>Urbi documentation (urbi-doc-*)</dt>
+	    <dd>The whole documentation, in HTML and PDF.</dd>
+	  </dl>
+	</p>
+      </div>
+
+      <h2>Architectures</h2>
+      <div class="section">
+	<h3>Source</h3>
 	<div class="section">
 	  <p>
-	    There are three kinds of packages:
-	    <dl>
-	      <dt>Urbi SDK (urbi-sdk-*)</dt>
-	      <dd>The full Software Development Kit, including the
-		full documentation in HTML and PDF.  These packages
-		are made for computers on which applications are
-		developed.</dd>
-	      <dt>Urbi Runtime (urbi-runtime-*)</dt>
-	      <dd>Only what is needed to run Urbi programs.  These
-		packages are made for robots running these
-		applications.  They do not contain the
-		documentation.</dd>
-	      <dt>Urbi documentation (urbi-doc-*)</dt>
-	      <dd>The whole documentation, in HTML and PDF.</dd>
-	    </dl>
+	    The files with no architecture specified are BZip2 source
+	    tarballs
+	    (<a href="urbi-sdk-2.8.tar.bz2">urbi-sdk-2.8.tar.bz2</a>).
+	    Use them only if you are ready to compile Urbi SDK
+	    yourself.
+	  </p>
+	</div>
+	<h3>Unix</h3>
+	<div class="section">
+	  <p>
+	    GNU/Linux and Mac OS X packages are regular BZip2
+	    tarballs.
 	  </p>
 	</div>
 
-	<h2>Architectures</h2>
+	<h3>Windows</h3>
 	<div class="section">
-	  <h3>Source</h3>
-	  <div class="section">
-	    <p>
-	      The files with no architecture specified are BZip2
-	      source tarballs
-	      (<a href="urbi-sdk-2.8.tar.bz2">urbi-sdk-2.8.tar.bz2</a>).
-	      Use them only if you are ready to compile Urbi SDK
-	      yourself.
-	    </p>
-	  </div>
-	  <h3>Unix</h3>
-	  <div class="section">
-	    <p>
-	      GNU/Linux and Mac OS X packages are regular BZip2 tarballs.
-	    </p>
-	  </div>
+	  <p>
+	    The packages depend on the version of Visual C++ you use:
+	    2005 or 2008.
+	  </p>
 
-	    <h3>Windows</h3>
-	    <div class="section">
-	      <p>
-		The packages depend on the version of Visual C++ you
-		use: 2005 or 2008.
-	      </p>
+	  <p>
+	    Windows packages in "*.exe" contain an installer that
+	    installs both debug and release libraries, an UObject
+	    wizard for Visual C++, Gostai Editor and Gostai Console.
+	    Using the installers is strongly recommended.
+	  </p>
 
-	      <p>
-		Windows packages in "*.exe" contain an installer that
-		installs both debug and release libraries, an UObject
-		wizard for Visual C++, Gostai Editor and Gostai
-		Console.  Using the installers is strongly
-		recommended.
-	      </p>
-
-	      <p>
-		If you know what you are doing, you might want to use
-		the "*.zip" files.  They come in two flavors: debug or
-		release.  They require that you have MS Visual C++
-		installed, or that you run "vcredist.exe" that can be
-		found <a href="http://www.gostai.com/downloads/urbi/windows/">
-		here</a>.
-	      </p>
-	  </div>
+	  <p>
+	    If you know what you are doing, you might want to use the
+	    "*.zip" files.  They come in two flavors: debug or
+	    release.  They require that you have MS Visual C++
+	    installed, or that you run "vcredist.exe" that can be
+	    found <a href="http://www.gostai.com/downloads/urbi/windows/">
+	    here</a>.
+	  </p>
 	</div>
+      </div>
     </div>
