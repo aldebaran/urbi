@@ -43,14 +43,18 @@ $(srcdir)/%.dat: %.utraj
 	$(AM_V_at)rm $*.plt.tmp $*.eps
 
 
-TRAJECTORIES = $(call ls_files,trajectories/*.utraj)
+TRAJECTORIES := $(call ls_files,trajectories/*.utraj)
 EXTRA_DIST += $(TRAJECTORIES) $(TRAJECTORIES:.utraj=.dat)
-CLEANFILES += $(TRAJECTORIES:.utraj=.pdftex_t)
+CLEANFILES +=					\
+  $(TRAJECTORIES:.utraj=.pdf)			\
+  $(TRAJECTORIES:.utraj=.pdftex_t)		\
+  $(TRAJECTORIES:.utraj=.eps)
 # Not only is this true (i.e., we do want these intermediate files to
 # be kept, as we store them in our repository), but it is also
 # mandated by GNU Make, who, otherwise, does not seem to understand
 # how to go from utraj to pdf with an intermediate step in $(srcdir).
 .SECONDARY: $(addprefix $(srcdir)/,$(TRAJECTORIES:.utraj=.dat))
 
-PDF_IMAGES +=					\
-  $(TRAJECTORIES:.utraj=.pdf)
+PDF_IMAGES += $(TRAJECTORIES:.utraj=.pdf)
+urbi-sdk.pdf: $(TRAJECTORIES:.utraj=.pdftex_t)
+urbi-sdk.htmldir: $(TRAJECTORIES:.utraj=.eps)

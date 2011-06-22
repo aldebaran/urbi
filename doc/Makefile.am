@@ -44,38 +44,44 @@ EXTRA_DIST +=					\
 ## Images.  ##
 ## -------- ##
 
-DOT_IMAGES = $(call ls_files,img/*.dot)
-PNG_IMAGES =							\
+# Images whose original is in DOT.
+DOT_IMAGES := $(call ls_files,img/*.dot)
+# Images whose original is in PNG.
+PNG_IMAGES :=							\
   $(call ls_files,img/*.png					\
                   @{../modules/system/ros}/doc/img/*.png)
 
 logodir = document-aux/figs/urbi-sdk/$(PACKAGE_MAJOR).$(PACKAGE_MINOR)
 cube_and_disc =	$(logodir)/cube-and-disc
-cubes_pdf = $(call ls_files,@document-aux/figs/urbi-sdk/*/cube.pdf)
-PDF_IMAGES =					\
-  $(call ls_files,img/*.pdf)			\
-  document-aux/figs/gostai.pdf			\
-  $(cube_and_disc).pdf				\
-  $(cubes_pdf)					\
-  $(DOT_IMAGES:.dot=.pdf)
+# Images whose original is in PDF.
+PDF_IMAGES :=							\
+  $(call ls_files,img/*.pdf					\
+                  @document-aux/figs/urbi-sdk/*/cube.pdf)	\
+  document-aux/figs/gostai.pdf					\
+  $(cube_and_disc).pdf						\
+  $(cubes_pdf)
 EXTRA_DIST += $(call ls_files,img/*)
 
-EPS_IMAGES = $(PDF_IMAGES:.pdf=.eps) $(PNG_IMAGES:.png=.eps)
+# Images converted to EPS.
+EPS_IMAGES =					\
+  $(DOT_IMAGES:.dot=.eps) 			\
+  $(PDF_IMAGES:.pdf=.eps) 			\
+  $(PNG_IMAGES:.png=.eps)
 CONVERT_TO_EPS =				\
   { $(ENSURE_TARGET_DIR) ; } &&			\
   $(CONVERT) $< eps:$@.tmp &&			\
   mv $@.tmp $@
 
-CLEANFILES += $(PDF_IMAGES) $(EPS_IMAGES)
-
+# We do not need conversion from PNG to PDF.  This rule from
+# pdf-figs.mk is actually a nuisance, it should probably be removed.
+%.pdf: %.png
 %.eps: %.pdf
 	$(AM_V_GEN)$(CONVERT_TO_EPS)
 # We have png => pdf => eps, but the result is poor, and it even fails
 # with old versions of ghostscript.
 %.eps: %.png
 	$(AM_V_GEN)$(CONVERT_TO_EPS)
-CLEANFILES += $(EPS_IMAGES)
-
+CLEANFILES += $(DOT_IMAGES:.dot=.pdf) $(EPS_IMAGES)
 
 # Images to include in the documentation directory.
 if ENABLE_DOC
@@ -209,7 +215,7 @@ urbi_sdk_deps = 				\
 
 $(MASTERS:.tex=.pdf): $(urbi_sdk_deps) $(PDF_IMAGES)	\
                     | $(REVISION_FILE)
-
+urbi-sdk.pdf: $(DOT_IMAGES:.dot=.pdf)
 $(MASTERS:.tex=.dvi) $(MASTERS:.tex=.htmldir): $(urbi_sdk_deps) $(EPS_IMAGES) \
                                              | $(REVISION_FILE)
 
