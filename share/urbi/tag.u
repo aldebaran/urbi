@@ -16,6 +16,7 @@ requireFile("urbi/global.u");
 
 do (Global.Tag)
 {
+  var name = "";
   function asString()
   {
     if (this === Tag)
