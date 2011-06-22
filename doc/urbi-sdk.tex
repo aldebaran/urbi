@@ -12,6 +12,12 @@
   \usepackage{config}
   \newcommand{\uobjectsDir}{\absTopSrcdir/sdk-remote/src/uobjects}
 
+\usepackage{grfext}
+\RemoveGraphicsExtensions{.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPEG}
+\ifx\ifHtml\undefined
+\PrependGraphicsExtensions{.pdf}
+\fi
+
 % This is not appropriate for Beamer, so not in the lst style UrbiSDK.
 \lstset{xrightmargin=5mm,xleftmargin=5mm}
 

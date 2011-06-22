@@ -112,11 +112,9 @@ TEX4HT_POST = $(abs_top_srcdir)/build-aux/bin/tex4ht-post
 	$(AM_V_at)$(TEXI2HTML) $(TEXI2HTMLFLAGS) -o $@.tmp/$(notdir $*).html $<
 	$(AM_V_at)cd $@.tmp \
 	  && $(TEX4HT_POST) --index $(notdir $*).html $(notdir $*)*.html
-# We need to find a better means to provide our own *.png here.  I
-# have not used the name "gostai.png" because stupidly the PDF
-# compilation seems to prefer *.png to *.pdf, which is wrong here.
-	$(AM_V_at)cp $(srcdir)/$(cube_and_disc).png $@.tmp/urbi-sdk0x.png
-	$(AM_V_at)cp $(share_dir)/figs/gostai.png $@.tmp/urbi-sdk1x.png
+	$(AM_V_at)cp $(srcdir)/$(cube_and_disc).png      $@.tmp/urbi-sdk0x.png
+	$(AM_V_at)cp $(share_dir)/figs/gostai.png        $@.tmp/urbi-sdk1x.png
+	$(AM_V_at)cp $(srcdir)/img/urbi-architecture.png $@.tmp/urbi-sdk2x.png
 	$(AM_V_at)mv $@.tmp $@
 
 
