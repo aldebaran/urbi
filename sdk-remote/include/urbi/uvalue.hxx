@@ -146,8 +146,8 @@ namespace urbi
   uvalue_cast(UValue& v)
   {
     typedef typename libport::traits::remove_reference<Type>::type res_type;
-    GD_CATEGORY(Urbi.UValue);
-    GD_FINFO_DEBUG("%s.uvalue_cast<%s>()", v, typeid(res_type).name());
+    //GD_CATEGORY(Urbi.UValue);
+    //GD_FINFO_DEBUG("%s.uvalue_cast<%s>()", v, typeid(res_type).name());
     return uvalue_caster<res_type>()(v);
   }
 
