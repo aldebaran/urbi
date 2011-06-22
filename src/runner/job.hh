@@ -48,7 +48,8 @@
         {                                                               \
           r->dependencies_log_set(false);                               \
           GD_CATEGORY(Urbi.At);                                         \
-          GD_FPUSH_TRACE("Register %s for at monitoring", #accessor);   \
+          GD_FPUSH_TRACE("Register %s for at monitoring on %s", #accessor, \
+                         this);                                         \
           rEvent e = accessor()->as<Event>();                           \
           r->dependencies_log_set(true);                                \
           r->dependency_add(e);                                         \
@@ -61,6 +62,19 @@
       }                                                                 \
   }                                                                     \
   while (false)
+
+// Deactivate dependency tracking for the current scope
+#define URBI_SCOPE_DISABLE_DEPENDENCY_TRACKER                          \
+  runner::Job* usddt_j = ::kernel::urbiserver->getCurrentRunnerOpt();  \
+  bool usddt_d = false;                                                \
+  if (usddt_j)                                                         \
+  {                                                                    \
+    usddt_d = usddt_j->dependencies_log_get();                         \
+    usddt_j->dependencies_log_set(false);                              \
+  }                                                                    \
+  FINALLY(((runner::Job*, usddt_j))((bool, usddt_d)),                  \
+          if (usddt_j)                                                 \
+           usddt_j->dependencies_log_set(usddt_d))
 
 namespace runner
 {
