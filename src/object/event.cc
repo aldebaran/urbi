@@ -19,6 +19,9 @@
 #include <urbi/sdk.hh>
 
 #include <eval/exec.hh>
+#include <eval/send-message.hh>
+
+#include <urbi/runner/raise.hh>
 
 GD_CATEGORY(Urbi.Event);
 
@@ -282,47 +285,67 @@ namespace urbi
       // Copy container to avoid in-place modification problems.
       foreach (const Event::rActions& actions, listeners_type(listeners_))
       {
-        if (actions->frozen)
+        try
         {
-          GD_FINFO_TRACE("%s: Skip frozen registration %s.", this, actions);
-          continue;
-        }
-        GD_FPUSH_TRACE("%s: Trigger registration %s.", this, actions);
-        objects_type args;
-        args << this << this << payload;
-        rObject pattern = nil_class;
-        if (actions->guard)
-          pattern = (*actions->guard)(args);
-        if (pattern != void_class)
-        {
-          args << pattern;
-
-          // FIXME: Start all the sync job in parallel, I think.
-          // FIXME: But leave the one-child case optimized!
-          if (detach && !actions->sync)
+          if (actions->frozen)
           {
-            if (actions->enter)
+            GD_FINFO_TRACE("%s: Skip frozen registration %s.", this, actions);
+            continue;
+          }
+          GD_FPUSH_TRACE("%s: Trigger registration %s.", this, actions);
+          objects_type args;
+          args << this << this << payload;
+          rObject pattern = nil_class;
+          if (actions->guard)
+            pattern = (*actions->guard)(args);
+          if (pattern != void_class)
+          {
+            args << pattern;
+
+            // FIXME: Start all the sync job in parallel, I think.
+            // FIXME: But leave the one-child case optimized!
+            if (detach && !actions->sync)
+            {
+              if (actions->enter)
               enter = spawn_actions_job(actions->lobby, actions->call_stack,
                                         actions->enter,
                                         actions->profile, args);
-            if (actions->leave)
+              if (actions->leave)
               leave = spawn_actions_job(actions->lobby, actions->call_stack,
                                         actions->leave,
                                         actions->profile, args);
 
-            // Start jobs simultaneously.
-            if (actions->enter)
-              enter->start_job();
-            if (actions->leave)
-              leave->start_job();
+              // Start jobs simultaneously.
+              if (actions->enter)
+                enter->start_job();
+              if (actions->leave)
+                leave->start_job();
+            }
+            else
+            {
+              if (actions->enter)
+                (*actions->enter)(args);
+              if (actions->leave)
+                (*actions->leave)(args);
+            }
           }
-          else
-          {
-            if (actions->enter)
-              (*actions->enter)(args);
-            if (actions->leave)
-              (*actions->leave)(args);
-          }
+        }
+        catch (const UrbiException& e)
+        {
+          kernel::runner().state.lobby_get()->call(SYMBOL(send),
+            new String("!!! exception caught while processing Event:"),
+            new String("error"));
+          eval::show_exception(kernel::runner(), e);
+        }
+        catch (const sched::exception&)
+        {
+          throw;
+        }
+        catch (...)
+        {
+          kernel::runner().state.lobby_get()->call(SYMBOL(send),
+           new String("!!! unknown exception caught while processing Event"),
+           new String("error"));
         }
       }
 
