@@ -112,6 +112,25 @@ namespace flower
     result_->original_set(code);
   }
 
+  static inline
+  libport::Symbol
+  symbol(ast::flavor_type f)
+  {
+    switch (f)
+    {
+    case ast::flavor_none:
+    case ast::flavor_semicolon:
+      return SYMBOL(each);
+    case ast::flavor_pipe:
+      return SYMBOL(each_PIPE);
+    case ast::flavor_and:
+      return SYMBOL(each_AMPERSAND);
+    case ast::flavor_comma:
+      pabort("invalid comma flavor");
+    }
+    pabort("invalid comma flavor");
+  }
+
   void
   Flower::visit(const ast::Foreach* code)
   {
@@ -120,7 +139,6 @@ namespace flower
             << scoped_set(has_break_, false)
             << scoped_set(has_continue_, false);
 
-    PARAMETRIC_AST(each, "%exp:1 . %id:2 (%exp:3)");
     ast::rExp target = recurse(code->list_get());
 
     ast::rExp body = recurse(code->body_get());
@@ -134,23 +152,10 @@ namespace flower
     // Rename the 'fillme' closure formal argument
     c->formals_get()->front()->what_set(code->index_get()->what_get());
 
-    each % target;
-    switch (code->flavor_get())
-    {
-    case ast::flavor_none:
-    case ast::flavor_semicolon:
-      each % SYMBOL(each);
-      break;
-    case ast::flavor_pipe:
-      each % SYMBOL(each_PIPE);
-      break;
-    case ast::flavor_and:
-      each % SYMBOL(each_AMPERSAND);
-      break;
-    case ast::flavor_comma:
-      pabort("invalid comma flavor");
-    }
-    each % c;
+    each
+      % target
+      % symbol(code->flavor_get())
+      % c;
 
     result_ = has_break_ ? brk(exp(each)) : exp(each);
     result_->original_set(code);
