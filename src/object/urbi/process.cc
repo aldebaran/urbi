@@ -11,6 +11,7 @@
 #include <libport/cerrno>
 #include <libport/containers.hh>
 #include <libport/csignal>
+#include <libport/debug.hh>
 #include <libport/sys/prctl.h>
 #include <libport/sys/stat.h>
 
@@ -32,6 +33,7 @@
 #include <object/urbi/symbols.hh>
 #include <urbi/sdk.hh>
 
+
 #define XRUN(Function, Args)                    \
   do {                                          \
     if ((Function Args) == -1)                  \
@@ -40,6 +42,8 @@
 
 #define XCLOSE(Fd)                              \
   XRUN(close, (Fd))
+
+GD_CATEGORY(Urbi.Object.Process);
 
 namespace urbi
 {
@@ -72,7 +76,8 @@ namespace urbi
 
     Process::Process(const std::string& binary,
                      const arguments_type& argv)
-      : name_(libport::path(binary).basename())
+      : handle_(0)
+      , name_(libport::path(binary).basename())
       , pid_(0)
       , binary_(binary)
       , argv_(argv)
@@ -82,7 +87,8 @@ namespace urbi
     }
 
     Process::Process(rProcess model)
-      : name_(model->name_)
+      : handle_(0)
+      , name_(model->name_)
       , pid_(0)
       , binary_(model->binary_)
       , argv_(model->argv_)
@@ -92,7 +98,8 @@ namespace urbi
     }
 
     URBI_CXX_OBJECT_REGISTER_INIT(Process)
-      : name_(libport::path("true").basename())
+      : handle_(0)
+      , name_(libport::path("true").basename())
       , pid_(0)
       , binary_("/bin/true")
       , argv_()
@@ -126,6 +133,8 @@ namespace urbi
 
     Process::~Process()
     {
+      if (handle_)
+        GD_WARN("Memory leak: Did you forgot to join with a process?");
     }
 
     std::string
@@ -152,7 +161,7 @@ namespace urbi
 
     void Process::run_(boost::optional<std::string> outFile)
     {
-      if (pid_)
+      if (pid_ || handle_)
         RAISE("Process was already run");
 
       int stdin_fd[2];
@@ -215,7 +224,8 @@ namespace urbi
 
         // Make sure we stay alive until we're done.
         ward_ = this;
-        libport::startThread(boost::bind(Process::monitor_child, this));
+        handle_ =
+          libport::startThread(boost::bind(Process::monitor_child, this));
       }
       else
       {
@@ -252,6 +262,18 @@ namespace urbi
       }
     }
 
+    void
+    Process::join_()
+    {
+      if (handle_ && done())
+      {
+        PTHREAD_RUN(pthread_join, handle_, 0);
+        handle_ = 0;
+      }
+    }
+
+
+
 #define XKILL(Signal)                                           \
     do {                                                        \
       if (::kill(pid_, Signal) && errno != ESRCH)               \
@@ -269,14 +291,17 @@ namespace urbi
 #undef XKILL
 
     void
-    Process::join() const
+    Process::join()
     {
       if (!done())
       {
         runner::rRunner self = &::kernel::runner();
         joiners_.push_back(self);
         self->frozen_set(true);
+        // This line may throw and thus will not execute the join.
+        self->yield();
       }
+      join_();
     }
 
     bool
