@@ -782,17 +782,18 @@ provide them.
 }
 
 % Container operators.
-\newcommand{\operatorin}     {\operator  {in}     {a in b}       {-}     {Membership}            {b.has(a)}          }
-\newcommand{\operatornotin}  {\operator  {not in} {a not in b}   {-}     {Non-membership}        {b.hasNot(a)}      }
-\newcommand{\operatorsub}    {\operator  {[]}   {a[args]}        {-}     {Subscript}             {a.'[]'(args)}          }
-\newcommand{\operatorsubass} {\operator  {[] =} {a[args] = v}    {-}     {Subscript assignment}  {a.'[]='(args, v)}      }
+\newcommand{\operatorin}     {\operator  {in}     {a in b}       {None}     {Membership}            {b.has(a)}          }
+\newcommand{\operatornotin}  {\operator  {not in} {a not in b}   {None}     {Non-membership}        {b.hasNot(a)}      }
+\newcommand{\operatorsub}    {\operator  {[]}   {a[args]}        {Left}     {Subscript}             {a.'[]'(args)}          }
+\newcommand{\operatorsubass} {\operator  {[] =} {a[args] = v}    {Right}     {Subscript assignment}  {a.'[]='(args, v)}      }
 
 % Object operators.
-\newcommand{\operatorprop}   {\operator  {->}   {a->b}             {-}     {Property access}        {getProperty("a", "b")} }
-\newcommand{\operatorpropass}{\operator  {->}   {a->b = v}         {-}     {Property assignment}    {setProperty("a", "b", v)}}
-\newcommand{\operatordot}    {\operator  {.}    {a.b}              {-}     {Message sending}        {Not redefinable}       }
-\newcommand{\operatordota}   {\operator  {.}    {a.b(args)}        {-}     {Message sending}        {Not redefinable}       }
-\newcommand{\operatorcolcol} {\operator  {.\&}   {a.\&b}             {-}     {Slot access}            {a.getSlot("b")}        }
+\newcommand{\operatorprop}   {\operator  {->}   {a->b}             {Left}     {Property access}        {getProperty("a", "b")} }
+\newcommand{\operatorpropass}{\operator  {->}   {a->b = v}         {Right}     {Property assignment}    {setProperty("a", "b", v)}}
+\newcommand{\operatordot}    {\operator  {.}    {a.b}              {Left}     {Message sending}        {Not redefinable}       }
+\newcommand{\operatordota}   {\operator  {.}    {a.b(args)}        {Left}     {Message sending}        {Not redefinable}       }
+\newcommand{\operatordotand} {\operator  {.\&}   {a.\&b}             {Left}     {Slot access}            {a.getSlot("b")}        }
+\newcommand{\operatoruand} {\operator  {\&}   {\&a}             {-}     {Slot access}            {getSlot("a")}        }
 \newcommand{\operatorass}[1][]{\operator[#1]
                                          {=}    {a = b}            {Right} {Assignment}             {updateSlot("a", b)}    }
 
@@ -1148,20 +1149,16 @@ purpose than bit-related operations. See \autoref{tab:bitwise} and the
 listing below.
 
 \begin{operatorTable}{tab:bitwise}{Bitwise operators}
-  \operatorlshift\\
-  \operatorrshift\\
-  \hline
-  \operatorbcompl\\
-  \operatorband\\
-  \operatorbor\\
+  \operatorbcompl
+  \\\hline
+  \operatorlshift\\\operatorrshift
+  \\\hline
+  \operatorband
+  \\\hline
   \operatorbxor
+  \\\hline
+  \operatorbor
 \end{operatorTable}
-
-Beware that \us follows the precedences and associativities that were chosen
-for \C, which is very debatable: for instance they bind tighter that
-comparisons.  In other words \lstinline|0xF0F0 bitor 0xF0F0 == 0xF0F0| is
-parsed as \lstinline|0xF0F0 bitor (0xF0F0 == 0xF0F0)|, i.e., it actually
-runs \lstinline|0xF0F0.'bitor'(0xF0F0.'=='(0xF0F0))|.
 
 \begin{urbiassert}
 4 << 2 == 16;
@@ -1169,20 +1166,20 @@ runs \lstinline|0xF0F0.'bitor'(0xF0F0.'=='(0xF0F0))|.
 
 compl 0x0F0F_F0F0 == 0xF0F0_0F0F;
 
-(0x0000 bitand 0xF0F0) == 0x0000;
-(0x0F0F bitand 0xF0F0) == 0x0000;
-(0xF0F0 bitand 0xF0F0) == 0xF0F0;
-(0xFFFF bitand 0xF0F0) == 0xF0F0;
+0x0000 bitand 0xF0F0 == 0x0000;
+0x0F0F bitand 0xF0F0 == 0x0000;
+0xF0F0 bitand 0xF0F0 == 0xF0F0;
+0xFFFF bitand 0xF0F0 == 0xF0F0;
 
-(0x0000 bitor  0xF0F0) == 0xF0F0;
-(0x0F0F bitor  0xF0F0) == 0xFFFF;
-(0xF0F0 bitor  0xF0F0) == 0xF0F0;
-(0xFFFF bitor  0xF0F0) == 0xFFFF;
+0x0000 bitor  0xF0F0 == 0xF0F0;
+0x0F0F bitor  0xF0F0 == 0xFFFF;
+0xF0F0 bitor  0xF0F0 == 0xF0F0;
+0xFFFF bitor  0xF0F0 == 0xFFFF;
 
-(0x0000 ^ 0xF0F0) == 0xF0F0;
-(0x0F0F ^ 0xF0F0) == 0xFFFF;
-(0xF0F0 ^ 0xF0F0) == 0x0000;
-(0xFFFF ^ 0xF0F0) == 0x0F0F;
+0x0000 ^ 0xF0F0 == 0xF0F0;
+0x0F0F ^ 0xF0F0 == 0xFFFF;
+0xF0F0 ^ 0xF0F0 == 0x0000;
+0xFFFF ^ 0xF0F0 == 0x0F0F;
 \end{urbiassert}
 
 \subsubsection{Logical operators}
@@ -1200,9 +1197,12 @@ short-circuiting: their right-hand side is evaluated only if needed.
 \end{operatorTable}
 
 \begin{urbiassert}
-true && true;
-true || false;
-!true == false;
+true && true;  !(true && false); !(false && true); !(false && false);
+true || false; true || true; false || true; !(false || false);
+
+!true == false; !false == true;
+
+// Right hand-side is not evaluated when not needed.
 true || (1 / 0);
 (false && (1 / 0)) == false;
 \end{urbiassert}
@@ -1243,11 +1243,9 @@ var z = 0;
 These operators work on containers and their members. See
 \autoref{tab:operators:containers}.
 \begin{operatorTable}{tab:operators:containers}{Container operators}
-  \operatorin\\
-  \operatornotin\\
-  \hline
-  \operatorsub\\
-  \operatorsubass
+  \operatorsub\\\operatorsubass
+  \\\hline
+  \operatorin\\\operatornotin
 \end{operatorTable}
 
 The \dfn{in} and \dfn{not in} operators test the membership of an element in
@@ -1295,7 +1293,7 @@ These core operators provide access to slots and their properties. See
   \\\hline
   \operatorprop\\\operatorpropass
   \\\hline
-  \operatorcolcol
+  \operatoruand\\\operatordotand
 \end{operatorTable}
 
 \begin{urbiassert}
@@ -1314,63 +1312,43 @@ var obj.f = function() { 24 };
 the overall precedences. Operators are sorted by decreasing
 precedence. Groups of rows represent operators with the same precedence.
 
-\begin{operatorTable}[\ifx\ifHtml\undefined\small\fi]{tab:operators-summary}{Operators summary}
-  \operatordot\\
-  \operatordota\\
-  \hline
-  \operatorprop\\
-  \operatorpropass\\
-  \hline
-  \operatorcolcol\\
-  \hline
-  \operatorsub\\
-  \operatorsubass\\
-  \hline
-  \operatoruplus\\
-  \operatorumin\\
-  \hline
-  \operatorexp\\
-  \hline
-  \operatormult\\
-  \operatordiv\\
-  \operatormod\\
-  \hline
-  \operatorplus\\
-  \operatorminus\\
-  \hline
-  \operatorlshift\\
-  \operatorrshift\\
-  \hline
-  \operatoreq\\
-  \operatorneq\\
-  \operatorpeq\\
-  \operatorpneq\\
-  \operatoreqaeq\\
-  \operatoraeq\\
-  \operatorinf\\
-  \operatorinfeq\\
-  \operatorsup\\
-  \operatorsupeq\\
-  \hline
-  \operatorbcompl\\
-  \operatorband\\
-  \operatorbor\\
-  \operatorbxor\\
-  \hline
-  \operatorneg\\
-  \hline
-  \operatorin\\
-  \operatornotin\\
-  \hline
-  \operatorand\\
-  \hline
-  \operatoror\\
-  \hline
-  \operatorass\\
-  \operatorsiass\\
-  \hline
-  \operatorinc\\
-  \operatordec
+\begin{operatorTable}[\ifx\ifHtml\undefined\small\fi]%
+  {tab:operators-summary}%
+  {Operators sorted by decreasing precedence groups.}
+  \operatordot\\\operatordota
+  \\\hline
+  \operatorprop\\\operatorpropass
+  \\\hline
+  \operatoruand\\\operatordotand
+  \\\hline
+  \operatorsub\\\operatorsubass
+  \\\hline
+  \operatorexp\\\operatorbcompl\\\operatoruplus\\\operatorumin\\\operatorneg
+  \\\hline
+  \operatormult\\\operatordiv\\\operatormod
+  \\\hline
+  \operatorplus\\\operatorminus
+  \\\hline
+  \operatorlshift\\\operatorrshift
+  \\\hline
+  \operatorband
+  \\\hline
+  \operatorbxor
+  \\\hline
+  \operatorbor
+  \\\hline
+  \operatoreq\\\operatorneq\\\operatorpeq\\\operatorpneq\\\operatoreqaeq\\
+  \operatoraeq\\\operatorinf\\\operatorinfeq\\\operatorsup\\\operatorsupeq
+  \\\hline
+  \operatorin\\\operatornotin
+  \\\hline
+  \operatorand
+  \\\hline
+  \operatoror
+  \\\hline
+  \operatorass\\\operatorsiass
+  \\\hline
+  \operatorinc\\\operatordec
 \end{operatorTable}
 
 
