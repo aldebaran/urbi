@@ -85,25 +85,25 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc,
     Result = yyin->gcount();                            \
   } while (0)
 
-# define YY_USER_INIT                                                   \
-  static bool flex_debug = getenv("URBI_SCANNER");                      \
-  yy_flex_debug = flex_debug || GD_ENABLED(dump);                       \
-                                                                        \
-  static bool urbi_check_mode = getenv ("URBI_CHECK_MODE");             \
-                                                                        \
-  /* The default start condition.  */                                   \
-  sc_default =                                                          \
-    parser_impl_->meta() ? SC_META                                      \
-    : urbi_check_mode ? SC_URBI_CHECK                                   \
-    : INITIAL;                                                          \
-  BEGIN sc_default;                                                     \
-                                                                        \
-  static bool init = false;                                             \
-  if (!init)                                                            \
-  {                                                                     \
-    init = true;                                                        \
-    if (urbi_check_mode)                                                \
-      GD_INFO("URBI_CHECK_MODE enabled.");                              \
+# define YY_USER_INIT                                           \
+  static bool flex_debug = getenv("URBI_SCANNER");              \
+  yy_flex_debug = flex_debug || GD_ENABLED(dump);               \
+                                                                \
+  static bool urbi_check_mode = getenv("URBI_CHECK_MODE");      \
+                                                                \
+  /* The default start condition.  */                           \
+  sc_default =                                                  \
+    parser_impl_->meta() ? SC_META                              \
+    : urbi_check_mode ? SC_URBI_CHECK                           \
+    : INITIAL;                                                  \
+  BEGIN sc_default;                                             \
+                                                                \
+  static bool init = false;                                     \
+  if (!init)                                                    \
+  {                                                             \
+    init = true;                                                \
+    if (urbi_check_mode)                                        \
+      GD_INFO("URBI_CHECK_MODE enabled.");                      \
   }
 
 // Stupidly enough the Flex documentation recommends redefining
@@ -644,7 +644,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
                 RETURN_SYMBOL(IDENTIFIER);
               }
 
-{ID}            RETURN_SYMBOL(IDENTIFIER);
+{ID}          RETURN_SYMBOL(IDENTIFIER);
 
 
     /*--------------------.
@@ -832,7 +832,7 @@ lexical_cast(parser::ParserImpl* parser_impl_, const yy::location& loc,
 /// the first char of keyword, and return the size.
 static
 size_t
-bin_split (char* yytext, size_t yyleng, char*& keywords)
+bin_split(char* yytext, size_t yyleng, char*& keywords)
 {
   // Smash the semicolon.
   yytext[--yyleng] = 0;

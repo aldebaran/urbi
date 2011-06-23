@@ -251,30 +251,6 @@
 
 %expect 0
 
-// man operator (precedences are increasing).
-
-// Operator                        Associativity
-// --------                        -------------
-// ,                               left to right
-// = += -= etc.                    right to left
-// ?:                              right to left
-// ||                              left to right
-// &&                              left to right
-// |                               left to right
-// ^                               left to right
-// &                               left to right
-// == !=                           left to right
-// < <= > >=                       left to right
-// << >>                           left to right
-// + -                             left to right
-// * / %                           left to right
-// ! ~ ++ -- - (type) * & sizeof   right to left
-// () [] -> . ::                   left to right
-
- /*
-   ! < ( so that !m(x) be read as !(m(x)).
- */
-
 %right ASSIGN;
 
 // This is very painful: because we want to declare the resolution
@@ -329,7 +305,7 @@
 %right "!" "compl" "++" "--" UNARY     /* Negation--unary minus */
 %right "**"
 %precedence "=>"
-%precedence "("
+%precedence "("   // "!" < "(" so that !m(x) be read as !(m(x)).
 %precedence "["
 %precedence  "."
 
@@ -717,9 +693,9 @@ exp:
 %token MINUS_GT     "->";
 exp:
   lvalue "->" id
-    {
-      $$ = new ast::Property(@$, $1->call(), $3);
-    }
+  {
+    $$ = new ast::Property(@$, $1->call(), $3);
+  }
 ;
 
 /*---------------------.
@@ -1040,9 +1016,9 @@ id:
 
 exp:
   routine formals block
-    {
-      $$ = MAKE(routine, @$, $1, @2, $2, $3);
-    }
+  {
+    $$ = MAKE(routine, @$, $1, @2, $2, $3);
+  }
 ;
 
 
