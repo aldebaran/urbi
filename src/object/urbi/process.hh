@@ -12,6 +12,7 @@
 # define OBJECT_PROCESS_HH
 
 # include <libport/fd-stream.hh>
+# include <libport/pthread.h>
 
 # include <runner/job.hh>
 # include <urbi/object/cxx-object.hh>
@@ -45,7 +46,7 @@ namespace urbi
       void run();
       /// Run, writing stderr and stdout to filename.
       void runTo(const std::string& filename);
-      void join() const;
+      void join();
       void kill();
       bool done() const;
       rObject status() const;
@@ -58,10 +59,13 @@ namespace urbi
 
     private:
       static void monitor_child(Process*);
+      // FIXME: Does this duplicate what is done for ThreadedCall?
+      pthread_t handle_;
       rProcess ward_;
       ATTRIBUTE_R(std::vector<runner::rJob>, joiners, , , , mutable);
       void run_(boost::optional<std::string> outFile
                 = boost::optional<std::string>());
+      void join_();
       std::string name_;
       pid_t pid_;
       std::string binary_;
