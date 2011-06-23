@@ -126,7 +126,7 @@ namespace flower
     case ast::flavor_and:
       return SYMBOL(each_AMPERSAND);
     case ast::flavor_comma:
-      pabort("invalid comma flavor");
+      break;
     }
     pabort("invalid comma flavor");
   }
@@ -152,6 +152,7 @@ namespace flower
     // Rename the 'fillme' closure formal argument
     c->formals_get()->front()->what_set(code->index_get()->what_get());
 
+    PARAMETRIC_AST(each, "%exp:1 . %id:2 (%exp:3)");
     each
       % target
       % symbol(code->flavor_get())
