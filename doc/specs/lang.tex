@@ -3405,7 +3405,7 @@ current one, and next iterations will occur normally from this point.
   // following one.
   every| (1s)
   {
-    if (! count -=1)
+    if (! (count -=1))
       break;
 
     if (too_long)

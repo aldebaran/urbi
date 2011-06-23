@@ -242,7 +242,7 @@
 | Expressions.  |
 `--------------*/
 
-%type <ast::rExp> block exp exp.opt stmt;
+%type <ast::rExp> bitor-exp block exp exp.opt rel-exp stmt;
 
 
 /*----------------------.
@@ -680,7 +680,8 @@ exp:
 %token  MINUS_MINUS "--"
         PLUS_PLUS   "++"
 ;
-exp:
+
+bitor-exp:
   lvalue "--"      { $$ = new ast::Decrementation(@$, $1); }
 | lvalue "++"      { $$ = new ast::Incrementation(@$, $1); }
 ;
@@ -691,7 +692,7 @@ exp:
 `-------------*/
 
 %token MINUS_GT     "->";
-exp:
+bitor-exp:
   lvalue "->" id
   {
     $$ = new ast::Property(@$, $1->call(), $3);
@@ -920,7 +921,7 @@ in_or_colon: "in" | ":";
 
 %token DO "do";
 
-exp:
+bitor-exp:
                    block  { $$ = MAKE(scope, @$, 0, $1);  }
 | "do" "(" exp ")" block  { $$ = MAKE(scope, @$, $3, $5); }
 ;
@@ -938,7 +939,7 @@ detach:
 | "disown" { $$ = false; }
 ;
 
-exp:
+bitor-exp:
   "assert" "(" exp ")"      { $$ = MAKE(assert, @$, $3); }
 | "assert" "{" claims "}"   { $$ = MAKE(assert, @$, $3); }
 | detach "(" exp[block] ")" { $$ = MAKE(detach, @$, $detach, $block); }
@@ -952,25 +953,25 @@ exp:
 
 %type <ast::rLValue> lvalue;
 lvalue:
-          id    { $$ = MAKE(call, @$, $1); }
-| exp "." id    { $$ = MAKE(call, @$, $1, $3); }
+                id   { $$ = MAKE(call, @$, $1); }
+| bitor-exp "." id   { $$ = MAKE(call, @$, $1, $3); }
 ;
 
-exp:
-          "&" id   { $$ = MAKE(get_slot, @$, $2); }
-| exp "." "&" id   { $$ = MAKE(get_slot, @$, $1, $4); }
+bitor-exp:
+                "&" id   { $$ = MAKE(get_slot, @$, $2); }
+| bitor-exp "." "&" id   { $$ = MAKE(get_slot, @$, $1, $4); }
 ;
 
 id:
   "identifier"  { std::swap($$, $1); }
 ;
 
-exp:
-  "var" exp[lvalue]
+bitor-exp:
+  "var" bitor-exp[lvalue]
   {
     $$ = MAKE(binding, @$, false, @lvalue, $lvalue);
   }
-| "const" "var" exp[lvalue]
+| "const" "var" bitor-exp[lvalue]
   {
     $$ = MAKE(binding, @$, true, @lvalue, $lvalue);
   }
@@ -999,7 +1000,7 @@ new:
   }
 ;
 
-exp:
+bitor-exp:
   new   { std::swap($$, $1); }
 ;
 
@@ -1014,7 +1015,7 @@ id:
 | Anonymous function.  |
 `---------------------*/
 
-exp:
+bitor-exp:
   routine formals block
   {
     $$ = MAKE(routine, @$, $1, @2, $2, $3);
@@ -1106,7 +1107,7 @@ tuple:
 | Literals.  |
 `-----------*/
 
-exp:
+bitor-exp:
   exp_float      { std::swap($$, $1);  }
 | "angle"        { $$ = MAKE(float, @$, $1);  }
 | duration       { $$ = MAKE(float, @$, $1);  }
@@ -1127,7 +1128,7 @@ string:
 | Locations.  |
 `------------*/
 
-exp:
+bitor-exp:
   "__HERE__"  { $$ = MAKE(position, @$); }
 ;
 
@@ -1162,7 +1163,7 @@ tilda.opt:
 `---------------------------*/
 
 lvalue:
-  exp "[" exps "]"
+  bitor-exp "[" exps "]"
   {
     $$ = new ast::Subscript(@$, $3, $1);
   }
@@ -1177,7 +1178,7 @@ lvalue:
         THIS         "this"
 ;
 
-exp:
+bitor-exp:
   "this"         { $$ = new ast::This(@$); }
 | "call"         { $$ = new ast::CallMsg(@$); }
 ;
@@ -1203,24 +1204,24 @@ exp:
         STAR_STAR  "**"
 ;
 
-exp:
-  exp "+" exp             { $$ = MAKE(call, @$, $1, $2, $3); }
-| exp "-" exp             { $$ = MAKE(call, @$, $1, $2, $3); }
-| exp "*" exp             { $$ = MAKE(call, @$, $1, $2, $3); }
-| exp "**" exp            { $$ = MAKE(call, @$, $1, $2, $3); }
-| exp "/" exp             { $$ = MAKE(call, @$, $1, $2, $3); }
-| exp "%" exp             { $$ = MAKE(call, @$, $1, $2, $3); }
-| exp "^" exp             { $$ = MAKE(call, @$, $1, $2, $3); }
-| exp "<<" exp            { $$ = MAKE(call, @$, $1, $2, $3); }
-| exp "bitand" exp        { $$ = MAKE(call, @$, $1, $2, $3); }
-| exp "bitor" exp         { $$ = MAKE(call, @$, $1, $2, $3); }
-| exp ">>" exp            { $$ = MAKE(call, @$, $1, $2, $3); }
-| "+" exp    %prec UNARY  { $$ = MAKE(call, @$, $2, $1); }
-| "-" exp    %prec UNARY  { $$ = MAKE(call, @$, $2, $1); }
-| "!" exp                 { $$ = MAKE(call, @$, $2, $1); }
-| "compl" exp             { $$ = MAKE(call, @$, $2, $1); }
-| "(" exp ")"             { std::swap($$, $2); }
-| "(" error ")"           { $$ = new ast::Noop(@$, 0); }
+bitor-exp:
+  bitor-exp "+"      bitor-exp  { $$ = MAKE(call, @$, $1, $2, $3); }
+| bitor-exp "-"      bitor-exp  { $$ = MAKE(call, @$, $1, $2, $3); }
+| bitor-exp "*"      bitor-exp  { $$ = MAKE(call, @$, $1, $2, $3); }
+| bitor-exp "**"     bitor-exp  { $$ = MAKE(call, @$, $1, $2, $3); }
+| bitor-exp "/"      bitor-exp  { $$ = MAKE(call, @$, $1, $2, $3); }
+| bitor-exp "%"      bitor-exp  { $$ = MAKE(call, @$, $1, $2, $3); }
+| bitor-exp "^"      bitor-exp  { $$ = MAKE(call, @$, $1, $2, $3); }
+| bitor-exp "<<"     bitor-exp  { $$ = MAKE(call, @$, $1, $2, $3); }
+| bitor-exp "bitand" bitor-exp  { $$ = MAKE(call, @$, $1, $2, $3); }
+| bitor-exp "bitor"  bitor-exp  { $$ = MAKE(call, @$, $1, $2, $3); }
+| bitor-exp ">>"     bitor-exp  { $$ = MAKE(call, @$, $1, $2, $3); }
+| "+" bitor-exp    %prec UNARY  { $$ = MAKE(call, @$, $2, $1); }
+| "-" bitor-exp    %prec UNARY  { $$ = MAKE(call, @$, $2, $1); }
+| "!" bitor-exp                 { $$ = MAKE(call, @$, $2, $1); }
+| "compl" bitor-exp             { $$ = MAKE(call, @$, $2, $1); }
+| "(" exp ")"                   { std::swap($$, $2); }
+| "(" error ")"                 { $$ = new ast::Noop(@$, 0); }
 ;
 
 /*--------.
@@ -1242,18 +1243,22 @@ exp:
         PIPE_PIPE            "||"
 ;
 
-exp:
-  exp "!="  exp { $$ = MAKE(call, @$, $1, $2, $3); }
-| exp "!==" exp { $$ = MAKE(call, @$, $1, $2, $3); }
-| exp "<"   exp { $$ = MAKE(call, @$, $1, $2, $3); }
-| exp "<="  exp { $$ = MAKE(call, @$, $1, $2, $3); }
-| exp "=="  exp { $$ = MAKE(call, @$, $1, $2, $3); }
-| exp "===" exp { $$ = MAKE(call, @$, $1, $2, $3); }
-| exp "=~=" exp { $$ = MAKE(call, @$, $1, $2, $3); }
-| exp ">"   exp { $$ = MAKE(call, @$, $1, $2, $3); }
-| exp ">="  exp { $$ = MAKE(call, @$, $1, $2, $3); }
-| exp "~="  exp { $$ = MAKE(call, @$, $1, $2, $3); }
+rel-exp:
+  bitor-exp             { std::swap($$, $1); }
+| rel-exp "!="  rel-exp { $$ = MAKE(call, @$, $1, $2, $3); }
+| rel-exp "!==" rel-exp { $$ = MAKE(call, @$, $1, $2, $3); }
+| rel-exp "<"   rel-exp { $$ = MAKE(call, @$, $1, $2, $3); }
+| rel-exp "<="  rel-exp { $$ = MAKE(call, @$, $1, $2, $3); }
+| rel-exp "=="  rel-exp { $$ = MAKE(call, @$, $1, $2, $3); }
+| rel-exp "===" rel-exp { $$ = MAKE(call, @$, $1, $2, $3); }
+| rel-exp "=~=" rel-exp { $$ = MAKE(call, @$, $1, $2, $3); }
+| rel-exp ">"   rel-exp { $$ = MAKE(call, @$, $1, $2, $3); }
+| rel-exp ">="  rel-exp { $$ = MAKE(call, @$, $1, $2, $3); }
+| rel-exp "~="  rel-exp { $$ = MAKE(call, @$, $1, $2, $3); }
+;
 
+exp:
+  rel-exp       { std::swap($$, $1); }
 | exp "&&" exp  { $$ = MAKE(call, @$, $1, $2, $3); }
 | exp "||" exp  { $$ = MAKE(call, @$, $1, $2, $3); }
 ;
@@ -1273,7 +1278,7 @@ exp.opt:
 | Isdef.  |
 `--------*/
 
-exp:
+bitor-exp:
   "isdef" "(" k1_id ")"
   {
     $$ = MAKE(isdef, @$, $3);
@@ -1305,7 +1310,7 @@ exp:
 `----------------*/
 
 %token PERCENT_EXP_COLON "%exp:";
-exp:
+bitor-exp:
   "%exp:" unsigned
   {
     $$ = new ast::MetaExp(@$, $2);
@@ -1326,7 +1331,7 @@ lvalue:
   {
     $$ = new ast::MetaId(@$, 0, $2);
   }
-| exp "." "%id:" unsigned
+| bitor-exp "." "%id:" unsigned
   {
     $$ = new ast::MetaCall(@$, 0, $1, $4);
   }
@@ -1346,11 +1351,11 @@ exp:
 | Watch.  |
 `--------*/
 
-exp:
+bitor-exp:
   "watch" "(" exp ")"
-    {
-      $$ = MAKE(watch, @$, $3);
-    }
+  {
+    $$ = MAKE(watch, @$, $3);
+  }
 ;
 
 /*--------------.
