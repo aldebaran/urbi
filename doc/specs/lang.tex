@@ -672,10 +672,9 @@ asynchronously.
 [00000316] *** pong
 \end{urbiscript}
 
-Both \samp{;} and \samp{,} have equal precedence.  They are scoped
-too: the execution follow ``waits'' for the end of the jobs
-back-grounded with \samp{,} before proceeding.  Compare the two
-following executions.
+Both \samp{;} and \samp{,} have equal precedence.  They are scoped too: the
+execution follow ``waits'' for the end of the jobs back-grounded with
+\samp{,} before proceeding.  Compare the two following executions.
 
 \begin{urbiscript}
 {
@@ -747,26 +746,40 @@ as a means to fire a set of tasks concurrently.
 \Cxx. Their syntax is presented here, and they are sorted and described with
 their original semantics --- that is, \lstinline|+| is an arithmetic
 operator that sums two numeric values. However, as in \Cxx, these operators
-might be use for any other purpose --- that is, \lstinline|+| can also be
-used as the concatenation operator on lists and strings. Their semantics is
-thus not limited to what is presented here.
+might be used for any other purpose --- for instance, \lstinline|+| is also
+used to concatenate lists and strings.  Their semantics is thus not limited
+to what is presented here.
 
-Tables in this section sort operators top-down, by precedence order.  Group
+Tables in this section sort operators by decreasing precedence order.  Group
 of rows (not separated by horizontal lines) describe operators that have the
-same precedence. Many operators are syntactic sugar that bounce on a
-method. In this case, the equivalent desugared expression is shown in the
-``Equivalence'' column. This can help you determine what method to override
-to define an operator for an object (see \autoref{sec:tut:operators}).
+same precedence. Many operators are syntactic sugar that bounce on a method
+call. In this case, the equivalent desugared expression is shown in the
+``Equivalence'' column.  To define an operator for an object, override the
+corresponding method (see \autoref{sec:tut:operators}).
 
-This section defines the syntax, precedence and associativity of the
-operators. Their semantics is described in \autoref{sec:stdlib} in the
-documentation of the classes that provide them.
+This section defines the syntax (what they look like), precedence and
+associativity of the operators. Their semantics (what they actually do) is
+described in \autoref{sec:stdlib} in the documentation of the classes that
+provide them.
 
 
 % Operator generators.
-\newcommand{\operator}[6][]{\lstinline@#2@&\lstinline@#3@&#4&#5&\lstinline@#6@#1}
-\newcommand{\boperator}[3]{\operator{#1}{a #1 b}{#2}{#3}{a.'#1'(b)}}
-\newcommand{\poperator}[3]{\operator{#1}{#1a}{#2}{#3}{a.'#1'()}}
+% \operator {SYMBOL} {SYNTAX} {ASSOCIATIVITY} {NAME} {SEMANTICS}
+\newcommand{\operator}[6][]{%
+  \lstinline@#2@ & \lstinline@#3@ & #4 & #5 & \lstinline@#6@#1%
+}
+
+% \boperator {SYMBOL} {ASSOCIATIVITY} {NAME}
+% Binary infix operator.
+\newcommand{\boperator}[3]{%
+  \operator{#1}{a #1 b}{#2}{#3}{a.'#1'(b)}%
+}
+
+% \poperator {SYMBOL} {ASSOCIATIVITY} {NAME}
+% Unary postfix operator.
+\newcommand{\poperator}[3]{%
+  \operator{#1}{#1a}{#2}{#3}{a.'#1'()}%
+}
 
 % Container operators.
 \newcommand{\operatorin}     {\operator  {in}     {a in b}       {-}     {Membership}            {b.has(a)}          }
@@ -828,9 +841,8 @@ documentation of the classes that provide them.
 
 \subsubsection{Arithmetic operators}
 
-\us supports classic \dfn{arithmetic operators}, with the classic
-semantics on numeric values. See \autoref{tab:arith} and the listing
-below.
+\us supports classic \dfn{arithmetic operators}, with the classic semantics
+on numeric values. See \autoref{tab:arith} and the listing below.
 
 % \whetherHtml{HTML OUTPUT}{NOT-HTML OUTPUT}
 % ------------------------------------------
@@ -883,14 +895,14 @@ below.
 
 \begin{operatorTable}{tab:arith}{Arithmetic operators}
   \operatoruplus\\
-  \operatorumin \\
-  \hline
-  \operatorexp\\
-  \hline
+  \operatorumin
+  \\\hline
+  \operatorexp
+  \\\hline
   \operatormult\\
   \operatordiv\\
-  \operatormod\\
-  \hline
+  \operatormod
+  \\\hline
   \operatorplus\\
   \operatorminus
 \end{operatorTable}
@@ -1180,10 +1192,10 @@ listing below. The operators \lstinline|&&| and \lstinline-||- are
 short-circuiting: their right-hand side is evaluated only if needed.
 
 \begin{operatorTable}{tab:Boolean}{Boolean operators}
-  \operatorneg\\
-  \hline
-  \operatorand\\
-  \hline
+  \operatorneg
+  \\\hline
+  \operatorand
+  \\\hline
   \operatoror
 \end{operatorTable}
 
@@ -1279,12 +1291,10 @@ These core operators provide access to slots and their properties. See
 \autoref{tab:operators:object}.
 
 \begin{operatorTable}{tab:operators:object}{Object operators}
-  \operatordot\\
-  \operatordota\\
-  \hline
-  \operatorprop\\
-  \operatorpropass\\
-  \hline
+  \operatordot\\\operatordota
+  \\\hline
+  \operatorprop\\\operatorpropass
+  \\\hline
   \operatorcolcol
 \end{operatorTable}
 
@@ -1300,10 +1310,9 @@ var obj.f = function() { 24 };
 
 \subsubsection{All operators summary}
 
-\autoref{tab:operators-summary} is a summary of all operators, to
-highlight the overall precedences. Operators are sorted by decreasing
-precedence. Groups of rows represent operators with the same
-precedence.
+\autoref{tab:operators-summary} is a summary of all operators, to highlight
+the overall precedences. Operators are sorted by decreasing
+precedence. Groups of rows represent operators with the same precedence.
 
 \begin{operatorTable}[\ifx\ifHtml\undefined\small\fi]{tab:operators-summary}{Operators summary}
   \operatordot\\
