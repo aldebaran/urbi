@@ -126,6 +126,7 @@ i.close;
 \end{itemize}
 
 \subsection{New features}
+\subsubsection{\us}
 \begin{itemize}
 \item To augment legibility, underscores can be used to separate groups of
   digits in numbers (\autoref{sec:us-syn-lit-float}).
@@ -138,6 +139,37 @@ i.close;
          1e1_0 == 1e10;
 \end{urbiassert}
 
+\item The \lstinline|timeout| construct now features optional
+  \lstinline|catch|, \lstinline|else|, and \lstinline|finally| clauses,
+  modeled after the syntax of \lstinline|try|-blocks.  See
+  \autoref{sec:lang:timeout}.
+\begin{urbiscript}
+function testTimeOut(var duration)
+{
+  timeout (1s)  { echo("computation"); sleep(duration); "body-value" }
+  catch         { echo("interrupted!");                "catch-value" }
+  else          { echo("completed");                    "else-value" }
+  finally       { echo("finally");                   "finally-value" }
+}|;
+
+// Run till completion.
+testTimeOut(0s);
+[00000264] *** computation
+[00000265] *** completed
+[00000265] *** finally
+[00000265] "else-value"
+
+// Interrupted before completion.
+testTimeOut(2s);
+[00000266] *** computation
+[00001267] *** interrupted!
+[00001270] *** finally
+[00001271] "catch-value"
+\end{urbiscript}
+\end{itemize}
+
+\subsubsection{\us Standard Library}
+\begin{itemize}
 \item \refSlot[List]{unique}.
 
 \item \refObject{Logger} provides runtime control over the debug traces:
@@ -168,41 +200,16 @@ Logger.set("+Category*,-Category.Sub");
 \item \refSlot[System]{getLocale} and \refSlot[System]{setLocale} allow to
   change the locale settings.
 
-\item The \lstinline|timeout| construct now features optional
-  \lstinline|catch|, \lstinline|else|, and \lstinline|finally| clauses,
-  modeled after the syntax of \lstinline|try|-blocks.  See
-  \autoref{sec:lang:timeout}.
-\begin{urbiscript}
-function testTimeOut(var duration)
-{
-  timeout (1s)  { echo("computation"); sleep(duration); "body-value" }
-  catch         { echo("interrupted!");                "catch-value" }
-  else          { echo("completed");                    "else-value" }
-  finally       { echo("finally");                   "finally-value" }
-}|;
-
-// Run till completion.
-testTimeOut(0s);
-[00000264] *** computation
-[00000265] *** completed
-[00000265] *** finally
-[00000265] "else-value"
-
-// Interrupted before completion.
-testTimeOut(2s);
-[00000266] *** computation
-[00001267] *** interrupted!
-[00001270] *** finally
-[00001271] "catch-value"
-\end{urbiscript}
-
 \item \refObject{Vector} and \refObject{Matrix} provide support for
   efficient linear algebra operations.
+\end{itemize}
 
-\item Add \command{gdb} extensions to improve debug experience of Urbi and
-  \us.  Urbi objects are pretty printed when accessed and commands are
-  available for printing the backtrace of the current Job and for
-  adding/removing breakpoints on \us.
+\subsubsection{Miscellaneous}
+\begin{itemize}
+\item Add \command{gdb} extensions to improve debug experience of \urbi and
+  \us (\autoref{sec:build:debug}).  \urbi objects are pretty printed when
+  accessed and commands are available for printing the backtrace of the
+  current Job and for adding/removing breakpoints on \us.
 
 \item Binary packages now include simple aliases to the Boost libraries
   (e.g., you may use \option{-lboost\_date\_time} instead of

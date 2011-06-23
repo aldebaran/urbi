@@ -1,0 +1,48 @@
+body
+{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    width: 750px;
+}
+
+img.title
+{
+    width: 600px;
+}
+
+p.abstract
+{
+    text-align: center;
+    margin-left: 0em;
+}
+
+div.section
+{
+    margin-left: 3em;
+}
+
+h1
+{
+    text-align: center;
+}
+
+h2
+{
+    background-image: url("/static/img/trends/newsseparator2.jpg");
+    background-repeat: no-repeat;
+    padding-top: 1em;
+}
+
+pre
+{
+    margin-left: 60px;
+    padding: 20px;
+    border:1px solid #000000;
+    background: #eeeeee;
+    width: 500px;
+}
+
+ul ul pre
+{
+    margin-left: 20px;
+}

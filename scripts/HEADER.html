@@ -16,13 +16,13 @@
 	found <a href="/products/urbi">here</a>.
       </p>
 
-      <h2>What's new in Urbi 2.8?</h2>
+      <h2>What's new?</h2>
       <div class="section">
 
         <p>
           This release brings too many exciting new features to Urbi
-          and urbiscript for us to list them all here.  Please the
-          see <a href="doc/urbi-sdk.htmldir/release-notes.html">release
+          and urbiscript for us to list them all here.  Please see
+          the <a href="doc/urbi-sdk.htmldir/release-notes.html">release
           notes</a> for a more complete description of changes.
 
           In addition to several fixes, some of the noteworthy changes
@@ -119,12 +119,12 @@ Logger.set("+Category*,-Category.Sub");
             and finally clauses, modeled after the syntax of
             try-blocks.
 <pre>
-function testTimeOut(var duration)
+function testTimeOut(var d)
 {
-  timeout (1s)  { echo("computation"); sleep(duration); "body-value" }
-  catch         { echo("interrupted!");                "catch-value" }
-  else          { echo("completed");                    "else-value" }
-  finally       { echo("finally");                   "finally-value" }
+  timeout (1s) { echo("computation"); sleep(d); "body-value" }
+  catch        { echo("interrupted!");         "catch-value" }
+  else         { echo("completed");             "else-value" }
+  finally      { echo("finally");            "finally-value" }
 }|;
 
 // Run till completion.

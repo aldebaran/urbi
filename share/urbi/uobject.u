@@ -130,7 +130,7 @@ do (Global.UObject)
   /// Set a timer to call update at specified interval in seconds.
   function setUpdate(interval)
   {
-    if (0 < interval && interval < minimumInterval)
+    if (0 < interval < minimumInterval)
       interval = minimumInterval|
     // Stop current update task.
     updateTask.stop|
@@ -169,7 +169,7 @@ do (Global.UObject)
   /// Call hub update function \b for hub \b hubname
   function setHubUpdate(hubname, interval, func)
   {
-    if (0 < interval && interval < minimumInterval)
+    if (0 < interval < minimumInterval)
       interval = minimumInterval |
     // Ensure only one instance is running using a tag in slot hub<hubname>.
     var slotName = "hub"+hubname |

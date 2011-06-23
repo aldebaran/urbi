@@ -79,15 +79,14 @@ characters.
 \subsection{Synclines}
 \label{sec:specs:synclines}
 
-While the interaction with an \us kernel is usually performed via a
-network connection, programmers are used to work with files which have
-names, line numbers and so forth.  This is most important in error
-messages.  Since even loading a file actually means sending its
-content as if it were typed in the network session, in order to
-provide the user with meaningful locations in error messages, \us
-features \dfn[syncline]{synclines}, a means to change the ``current
-location'', similarly to \lstinline[language=C]|#line| in \C-like
-languages.  This is achieved using special \lstinline|//#| comments.
+While the interaction with an \us kernel is usually performed via a network
+connection, programmers are used to work with files which have names, line
+numbers and so forth.  This is most important in error messages.  Since even
+loading a file actually means sending its content as if it were typed in the
+network session, in order to provide the user with meaningful locations in
+error messages, \us features \dfn[syncline]{synclines}, a means to change
+the ``current location'', similarly to \lstinline[language=C]|#line| in
+\C-like languages.  This is achieved using special \lstinline|//#| comments.
 
 The following special comments are recognized only as a whole line.
 If some component does not match exactly the expected syntax, or if
@@ -104,7 +103,7 @@ there are trailing items, the whole line is treated as a comment.
   was used.
 
 \item \lstinline|//#pop|\\
-  Restore the current location.  \lstinline|//#push| and
+  Restore the previous saved location.  \lstinline|//#push| and
   \lstinline|//#pop| must match.
 \end{itemize}
 
@@ -384,8 +383,8 @@ _0__2;
 
 Literal \dfn{lists} are represented with a comma-separated, potentially
 empty list of arbitrary expressions enclosed in square brackets
-(\lstinline|[]|), as shown in the listing below.  See
-\refObject{List} for more details.
+(\lstinline|[]|), as shown in the listing below.  See \refObject{List} for
+more details.
 
 \begin{urbiscript}
 []; // The empty list
@@ -397,10 +396,10 @@ empty list of arbitrary expressions enclosed in square brackets
 \subsubsection{Strings}
 \label{sec:us-syn-lit-string}
 
-\dfn{String} literals are enclosed in double quotes (\lstinline|"|)
-and can contain arbitrary characters, which stand for themselves, with
-the exception of the escape character, backslash (\lstinline|\|), see
-below.  The escapes sequences are defined in \autoref{tab:escapes}.
+\dfn{String} literals are enclosed in double quotes (\lstinline|"|) and can
+contain arbitrary characters, which stand for themselves, with the exception
+of the escape character, backslash (\lstinline|\|), see below.  The escapes
+sequences are defined in \autoref{tab:escapes}.
 
 \begin{table}[\floatposh]
   \centering
@@ -1103,8 +1102,7 @@ operators, however, are not supported.  Rather than \lstinline|++\var{a}|,
 write \lstinline|\var{a} += 1|.
 
 \begin{operatorTable}{tab:postop}{Postfix operators}
-  \operatorinc\\
-  \operatordec
+  \operatorinc\\\operatordec
 \end{operatorTable}
 
 These operators \emph{modify} the variable/slot they are applied to, and
@@ -1210,8 +1208,8 @@ true || (1 / 0);
 \subsubsection{Comparison operators}
 \label{sec:lang:operators:comparison}
 
-\us supports classical \dfn{comparison operators}. See
-\autoref{tab:comparison} and the listing below.
+\us supports classical \dfn{comparison operators}, plus a few of its
+own. See \autoref{tab:comparison} and the listing below.
 
 \begin{operatorTable}{tab:comparison}{Comparison operators}
   \operatoreq\\
@@ -1225,6 +1223,9 @@ true || (1 / 0);
   \operatorsup\\
   \operatorsupeq
 \end{operatorTable}
+
+For a description of the semantics of these operators, see their definition
+as slots of \refObject{Object}.
 
 \begin{urbiassert}
  ! (0 < 0);

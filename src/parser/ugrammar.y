@@ -427,7 +427,7 @@ stmt:
 
 block:
   "{" stmts "}"       { $$ = MAKE(strip, $2); }
-| "{" error "}"       { $$ = new ast::Noop(@$, 0); }
+| "{" error "}"       { $$ = MAKE(noop, @$); }
 ;
 
 /*----------.
@@ -1221,7 +1221,7 @@ bitor-exp:
 | "!" bitor-exp                 { $$ = MAKE(call, @$, $2, $1); }
 | "compl" bitor-exp             { $$ = MAKE(call, @$, $2, $1); }
 | "(" exp ")"                   { std::swap($$, $2); }
-| "(" error ")"                 { $$ = new ast::Noop(@$, 0); }
+| "(" error ")"                 { $$ = MAKE(noop, @$); }
 ;
 
 /*--------.
