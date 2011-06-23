@@ -439,15 +439,15 @@ do (System)
       loc = Location.here(-1);
 
     var beg = System.status.stat("VmData") |
-    clog << "before inotify thread: %d kB" % [beg] |
+    clog << "before thread: %d kB" % [beg] |
 
     memCheck(f, loc) |
 
     var end = System.status.stat("VmData") |
-    clog << "after inotify thread: %d kB" % [end] |
+    clog << "after thread: %d kB" % [end] |
 
     // Ensure that the thread does not ask for more than 32 KB.
-    assert { end - beg < expectedMem; } |
+    assert { end - beg <= expectedMem; } |
   };
 
 }|;
