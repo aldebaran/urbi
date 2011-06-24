@@ -295,7 +295,7 @@
 %left  "||"
 %left  "&&"
 %nonassoc "in"
-%nonassoc "==" "===" "~=" "=~=" "!=" "!==" "<" "<=" ">" ">="
+%left "==" "===" "~=" "=~=" "!=" "!==" "<" "<=" ">" ">="
 %left  "bitor"
 %left  "^"
 %left  "bitand"
@@ -1225,9 +1225,14 @@ bitor-exp:
 | "(" error ")"                 { $$ = MAKE(noop, @$); }
 ;
 
-/*--------.
-| Tests.  |
-`--------*/
+
+/*--------------.
+| Comparisons.  |
+`--------------*/
+
+// We could return them all as "TOK_REL_OP", but then the error
+// messages from Bison are less nice.  Until we can tune yyerror to
+// use the semantic value.
 %token <libport::Symbol>
         EQ_TILDA_EQ   "=~="
         EQ_EQ         "=="
@@ -1239,9 +1244,20 @@ bitor-exp:
         BANG_EQ       "!="
         BANG_EQ_EQ    "!=="
         TILDA_EQ      "~="
+;
 
-        AMPERSAND_AMPERSAND  "&&"
-        PIPE_PIPE            "||"
+%type <libport::Symbol> rel-op;
+rel-op:
+  "!="  { std::swap($$, $1); }
+| "!==" { std::swap($$, $1); }
+| "<"   { std::swap($$, $1); }
+| "<="  { std::swap($$, $1); }
+| "=="  { std::swap($$, $1); }
+| "===" { std::swap($$, $1); }
+| "=~=" { std::swap($$, $1); }
+| ">"   { std::swap($$, $1); }
+| ">="  { std::swap($$, $1); }
+| "~="  { std::swap($$, $1); }
 ;
 
 rel-exp:
@@ -1250,17 +1266,18 @@ rel-exp:
 
 %type <::ast::Factory::relations_type> rel-ops;
 rel-ops:
-  /* empty */             { /* empty */ }
-| rel-ops "!="  bitor-exp { std::swap($$, MAKE(relation, $1, $2, $3)); }
-| rel-ops "!==" bitor-exp { std::swap($$, MAKE(relation, $1, $2, $3)); }
-| rel-ops "<"   bitor-exp { std::swap($$, MAKE(relation, $1, $2, $3)); }
-| rel-ops "<="  bitor-exp { std::swap($$, MAKE(relation, $1, $2, $3)); }
-| rel-ops "=="  bitor-exp { std::swap($$, MAKE(relation, $1, $2, $3)); }
-| rel-ops "===" bitor-exp { std::swap($$, MAKE(relation, $1, $2, $3)); }
-| rel-ops "=~=" bitor-exp { std::swap($$, MAKE(relation, $1, $2, $3)); }
-| rel-ops ">"   bitor-exp { std::swap($$, MAKE(relation, $1, $2, $3)); }
-| rel-ops ">="  bitor-exp { std::swap($$, MAKE(relation, $1, $2, $3)); }
-| rel-ops "~="  bitor-exp { std::swap($$, MAKE(relation, $1, $2, $3)); }
+  /* empty */              { /* empty */ }
+| rel-ops rel-op bitor-exp { std::swap($$, MAKE(relation, $1, $2, $3)); }
+;
+
+
+/*-------------.
+| Conditions.  |
+`-------------*/
+
+%token <libport::Symbol>
+        AMPERSAND_AMPERSAND  "&&"
+        PIPE_PIPE            "||"
 ;
 
 exp:
