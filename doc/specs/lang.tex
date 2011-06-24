@@ -819,16 +819,16 @@ provide them.
 \newcommand{\operatorminus}  {\boperator {-}    {Left} {Difference}             }
 \newcommand{\operatorlshift} {\boperator {<<}   {Left} {Left bit shift}         }
 \newcommand{\operatorrshift} {\boperator {>>}   {Left} {Right bit shift}        }
-\newcommand{\operatoreq}     {\boperator {==}   {None} {Equality}               }
-\newcommand{\operatorneq}    {\boperator {!=}   {None} {Inequality}             }
-\newcommand{\operatorpeq}    {\boperator {===}  {None} {Physical equality}      }
-\newcommand{\operatorpneq}   {\boperator {!==}  {None} {Physical inequality}    }
-\newcommand{\operatoraeq}    {\boperator {\~=}  {None} {Relative approximate equality} }
-\newcommand{\operatoreqaeq}  {\boperator {=~=}  {None} {Absolute approximate equality} }
-\newcommand{\operatorinf}    {\boperator {<}    {None} {Less than}              }
-\newcommand{\operatorinfeq}  {\boperator {<=}   {None} {Less than or equal to}  }
-\newcommand{\operatorsup}    {\boperator {>}    {None} {Greater than}           }
-\newcommand{\operatorsupeq}  {\boperator {>=}   {None} {Greater than or equal to}}
+\newcommand{\operatoreq}     {\boperator {==}   {Left} {Equality}               }
+\newcommand{\operatorneq}    {\boperator {!=}   {Left} {Inequality}             }
+\newcommand{\operatorpeq}    {\boperator {===}  {Left} {Physical equality}      }
+\newcommand{\operatorpneq}   {\boperator {!==}  {Left} {Physical inequality}    }
+\newcommand{\operatoraeq}    {\boperator {\~=}  {Left} {Relative approximate equality} }
+\newcommand{\operatoreqaeq}  {\boperator {=~=}  {Left} {Absolute approximate equality} }
+\newcommand{\operatorinf}    {\boperator {<}    {Left} {Less than}              }
+\newcommand{\operatorinfeq}  {\boperator {<=}   {Left} {Less than or equal to}  }
+\newcommand{\operatorsup}    {\boperator {>}    {Left} {Greater than}           }
+\newcommand{\operatorsupeq}  {\boperator {>=}   {Left} {Greater than or equal to}}
 % Need a space bw compl and a, cannot use \poperator.
 %\newcommand{\operatorbcompl} {\poperator {compl}    {-} {Bitwise complement}   }
 \newcommand{\operatorbcompl} {\operator{compl}{compl a}{-}{Bitwise complement}{a.'compl'()}}
@@ -1237,6 +1237,51 @@ var z = 0;
      z === z;
   ! (z !== z);
 \end{urbiassert}
+
+The comparisons can be chained, e.g.,
+\lstinline|var{a} < \var{b} <= \var{c}|, in which case:
+\begin{itemize}
+\item the sub-expression are evaluated left-to-right (i.e., the order of
+  evaluation is \var{a}, then \var{b}, then \var{c});
+\item the sub-evaluations are evaluated at most once;
+\item expressions that are not needed are not evaluated (i.e., if
+  \lstinline|!(var{a} < \var{b})|, then \var{c} is not evaluated).
+\end{itemize}
+
+In other words, \lstinline|var{a} < \var{b} <= \var{c}| is equivalent to
+\lstinline|var{a} < \var{b} && \var{b} <= \var{c}| with the guaranty that
+\var{b} is not evaluated twice.  Any sequence of comparison is valid, even
+those that mathematicians would not write (e.g.,
+\lstinline|\var{a} < \var{b} > \var{c} == \var{d}|).
+
+\begin{urbiscript}
+function v(x) { echo(x) | x }|;
+
+v(1) < v(2) <= v(3) != v(4) == v(4) > v(0) >= v(0) !== v(&v) === v(&v);
+[00000010] *** 1
+[00000010] *** 2
+[00000010] *** 3
+[00000010] *** 4
+[00000010] *** 4
+[00000010] *** 0
+[00000010] *** 0
+[00000010] *** function (var x) { echo(x) | x }
+[00000010] *** function (var x) { echo(x) | x }
+[00000010] true
+
+v(1) == v(2) < v(3) < v(4);
+[00033927] *** 1
+[00033927] *** 2
+[00033927] false
+
+v(1) == v(2) < v(3) < v(4) || v(10) < v(11) < v(12);
+[00033933] *** 1
+[00033933] *** 2
+[00033933] *** 10
+[00033933] *** 11
+[00033933] *** 12
+[00033933] true
+\end{urbiscript}
 
 \subsubsection{Container operators}
 \label{sec:lang:operators:containers}

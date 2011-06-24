@@ -313,7 +313,7 @@ class Range : Global.Container
 
   function has(var e)
   {
-    first <= e && e <= last
+    first <= e <= last
   };
 }|;
 

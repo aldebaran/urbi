@@ -80,6 +80,23 @@ assert
           </li>
 
           <li>
+            Comparisons can be chained, with guaranties over the order
+            and number of evaluations of the operands:
+<pre>
+function v(x) { echo(x) | x }|;
+
+v(1) == v(2) < v(3) < v(4) || v(10) < v(11) != v(12) <= v(13);
+[00033933] *** 1
+[00033933] *** 2
+[00033933] *** 10
+[00033933] *** 11
+[00033933] *** 12
+[00033933] *** 13
+[00033933] true
+</pre>
+          </li>
+
+          <li>
             Logger provides runtime control over the debug traces:
             <ul>
               <li>

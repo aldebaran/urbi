@@ -1010,6 +1010,41 @@ namespace ast
                % make_float(loc, loc.begin.column));
   }
 
+
+  Factory::relations_type&
+  Factory::make_relation(relations_type& rels, libport::Symbol op, rExp exp)
+  {
+    return rels << std::make_pair(op, exp);
+  }
+
+  rExp
+  Factory::make_relation(const location& loc,
+                         const rExp lhs, const relations_type& rels)
+  {
+    switch (rels.size())
+    {
+    case 0:
+      return lhs;
+    case 1:
+      return make_call(loc, lhs, rels[0].first, rels[0].second);
+    default:
+    PARAMETRIC_AST(decl, "{ var '$t' | %exp:1 }");
+    PARAMETRIC_AST(first,  "          %exp:1 . %id:2 ('$t' = %exp:3)");
+    PARAMETRIC_AST(middle, "%exp:1 &&   '$t' . %id:2 ('$t' = %exp:3)");
+    PARAMETRIC_AST(last,   "%exp:1 &&   '$t' . %id:2 (%exp:3)");
+
+    rExp res = 0;
+    for (size_t i = 0; i < rels.size(); ++i)
+      if (i == 0)
+        res = exp(first % lhs % rels[i].first % rels[i].second);
+      else if (i == rels.size() - 1)
+        res = exp(last % res % rels[i].first % rels[i].second);
+      else
+        res = exp(middle % res % rels[i].first % rels[i].second);
+    return exp(decl % res);
+    }
+  }
+
   rRoutine
   Factory::make_routine(const location& loc, bool closure,
                         const location& floc, Formals* f,

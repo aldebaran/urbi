@@ -1244,17 +1244,22 @@ bitor-exp:
 ;
 
 rel-exp:
-  bitor-exp             { std::swap($$, $1); }
-| rel-exp "!="  rel-exp { $$ = MAKE(call, @$, $1, $2, $3); }
-| rel-exp "!==" rel-exp { $$ = MAKE(call, @$, $1, $2, $3); }
-| rel-exp "<"   rel-exp { $$ = MAKE(call, @$, $1, $2, $3); }
-| rel-exp "<="  rel-exp { $$ = MAKE(call, @$, $1, $2, $3); }
-| rel-exp "=="  rel-exp { $$ = MAKE(call, @$, $1, $2, $3); }
-| rel-exp "===" rel-exp { $$ = MAKE(call, @$, $1, $2, $3); }
-| rel-exp "=~=" rel-exp { $$ = MAKE(call, @$, $1, $2, $3); }
-| rel-exp ">"   rel-exp { $$ = MAKE(call, @$, $1, $2, $3); }
-| rel-exp ">="  rel-exp { $$ = MAKE(call, @$, $1, $2, $3); }
-| rel-exp "~="  rel-exp { $$ = MAKE(call, @$, $1, $2, $3); }
+  bitor-exp rel-ops  { $$ = MAKE(relation, @$, $1, $2); }
+;
+
+%type <::ast::Factory::relations_type> rel-ops;
+rel-ops:
+  /* empty */             { /* empty */ }
+| rel-ops "!="  bitor-exp { std::swap($$, MAKE(relation, $1, $2, $3)); }
+| rel-ops "!==" bitor-exp { std::swap($$, MAKE(relation, $1, $2, $3)); }
+| rel-ops "<"   bitor-exp { std::swap($$, MAKE(relation, $1, $2, $3)); }
+| rel-ops "<="  bitor-exp { std::swap($$, MAKE(relation, $1, $2, $3)); }
+| rel-ops "=="  bitor-exp { std::swap($$, MAKE(relation, $1, $2, $3)); }
+| rel-ops "===" bitor-exp { std::swap($$, MAKE(relation, $1, $2, $3)); }
+| rel-ops "=~=" bitor-exp { std::swap($$, MAKE(relation, $1, $2, $3)); }
+| rel-ops ">"   bitor-exp { std::swap($$, MAKE(relation, $1, $2, $3)); }
+| rel-ops ">="  bitor-exp { std::swap($$, MAKE(relation, $1, $2, $3)); }
+| rel-ops "~="  bitor-exp { std::swap($$, MAKE(relation, $1, $2, $3)); }
 ;
 
 exp:

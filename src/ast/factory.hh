@@ -362,6 +362,27 @@ namespace ast
     /// Create a Position.
     rExp make_position(const location& loc) /* const */;
 
+    /// (relation name, rhs), e.g., ("!=", 2).
+    typedef std::pair<libport::Symbol, rExp> relation_type;
+    /// List of relations, e.g., [(!=, 2), (<, 3)].
+    /// To be used with an initial lhs to mean "lhs != 2 < 3".
+    typedef std::vector<relation_type> relations_type;
+
+    /// Convert "lhs, [(!=, 2), (<, 3)]" into an expression that
+    /// computes the result so that:
+    /// - expressions are evaluated once
+    /// - order of evaluation is preserved left to right.
+    /// - short-circuit the unneeded evaluations.
+    static
+    rExp make_relation(const location& loc,
+                       const rExp lhs, const relations_type& relations);
+
+    /// Append a relation.
+    /// \return   rels
+    static
+    relations_type&
+    make_relation(relations_type& rels, libport::Symbol op, rExp exp);
+
     /// Create a closure or a function.
     /// \param closure  whether building a closure.
     /// \param loc      location for the whole declaration.

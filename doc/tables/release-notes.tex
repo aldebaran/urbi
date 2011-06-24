@@ -139,6 +139,21 @@ i.close;
          1e1_0 == 1e10;
 \end{urbiassert}
 
+\item Comparisons can be chained, with guaranties over the order and number
+  of evaluations of the operands (\autoref{sec:lang:operators:comparison}):
+\begin{urbiscript}
+function v(x) { echo(x) | x }|;
+
+v(1) == v(2) < v(3) < v(4) || v(10) < v(11) != v(12) <= v(13);
+[00033933] *** 1
+[00033933] *** 2
+[00033933] *** 10
+[00033933] *** 11
+[00033933] *** 12
+[00033933] *** 13
+[00033933] true
+\end{urbiscript}
+
 \item The \lstinline|timeout| construct now features optional
   \lstinline|catch|, \lstinline|else|, and \lstinline|finally| clauses,
   modeled after the syntax of \lstinline|try|-blocks.  See
