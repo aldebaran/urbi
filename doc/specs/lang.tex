@@ -896,17 +896,13 @@ on numeric values. See \autoref{tab:arith} and the listing below.
 }
 
 \begin{operatorTable}{tab:arith}{Arithmetic operators}
-  \operatoruplus\\
-  \operatorumin
-  \\\hline
   \operatorexp
   \\\hline
-  \operatormult\\
-  \operatordiv\\
-  \operatormod
+  \operatoruplus\\\operatorumin
   \\\hline
-  \operatorplus\\
-  \operatorminus
+  \operatormult\\\operatordiv\\\operatormod
+  \\\hline
+  \operatorplus\\\operatorminus
 \end{operatorTable}
 
 \begin{urbiassert}
@@ -1368,7 +1364,9 @@ precedence. Groups of rows represent operators with the same precedence.
   \\\hline
   \operatorsub\\\operatorsubass
   \\\hline
-  \operatorexp\\\operatorbcompl\\\operatoruplus\\\operatorumin\\\operatorneg
+  \operatorexp
+  \\\hline
+  \operatorbcompl\\\operatoruplus\\\operatorumin\\\operatorneg
   \\\hline
   \operatormult\\\operatordiv\\\operatormod
   \\\hline
