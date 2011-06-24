@@ -1229,18 +1229,30 @@ Unary:
         type: rLValue
         desc: Operand
         access: rw
+    - post:
+        type: bool
+        desc: Whether post- (vs. pre-) operator
+        access: rw
 
 Incrementation:
   super: Unary
   printer:
-    - ~exp
-    - '"++"'
+    -  '{
+          if (n->post_get())
+            ostr_ << n->exp_get() << "++";
+          else
+            ostr_ << "++" << n->exp_get();
+        }'
 
 Decrementation:
   super: Unary
   printer:
-    - ~exp
-    - '"--"'
+    -  '{
+          if (n->post_get())
+            ostr_ << n->exp_get() << "--";
+          else
+            ostr_ << "--" << n->exp_get();
+        }'
 
 PropertyAction:
   super: LValue

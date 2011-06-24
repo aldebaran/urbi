@@ -154,6 +154,14 @@ v(1) == v(2) < v(3) < v(4) || v(10) < v(11) != v(12) <= v(13);
 [00033933] true
 \end{urbiscript}
 
+\item In addition to postfix increment/decrement operators, prefix operators
+  are supported and redefinable (\autoref{sec:lang:incdecop}).
+\begin{urbiassert}
+var x = 0;
+++x == 1; x++ == 1; x == 2;
+--x == 1; x-- == 1; x == 0;
+\end{urbiassert}
+
 \item The \lstinline|timeout| construct now features optional
   \lstinline|catch|, \lstinline|else|, and \lstinline|finally| clauses,
   modeled after the syntax of \lstinline|try|-blocks.  See

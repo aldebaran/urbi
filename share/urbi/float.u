@@ -63,7 +63,7 @@ do (Float)
   var '$fresh' = 0;
   function fresh()
   {
-    Float.'$fresh' += 1;
+    ++Float.'$fresh';
   };
 
   function hex()

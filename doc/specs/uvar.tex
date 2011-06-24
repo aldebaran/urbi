@@ -67,7 +67,7 @@ at (headTouch.val->changed? if headTouch.val)
 var Global.counter = 0|
 UVar.new(Global, "access")|
 var accessHandle = &access.notifyAccess(closure() {
-  Global.access = Global.counter += 1
+  Global.access = ++Global.counter
 })|
 assert
 {

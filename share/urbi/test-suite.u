@@ -279,7 +279,7 @@ do (Location)
     var drop = true|
     var loc = nil|
     var i = 0|
-    for| (i = 0; i < list.size && loc.isNil; i += 1)
+    for| (i = 0; i < list.size && loc.isNil; ++i)
     {
       if (drop)
         drop = drop && list[i].name != "here"|
@@ -500,7 +500,7 @@ if (System.Platform.isWindows)
       // to mark the end of the command.  This also provides a means
       // to get the real exit status with Wine.
       var stamp = Path.new("%s.stamp" % count) |
-      count += 1 |
+      ++count |
       // As a subshell, not a subcommand ({ %s; }) so that if the
       // command includes an "exit", then the stamp file is really
       // created anyway with the right value.

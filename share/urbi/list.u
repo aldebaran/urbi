@@ -57,7 +57,7 @@ do (List)
     var i;
     try
     {
-      for| (i = 1; i < size; i += 1)
+      for| (i = 1; i < size; ++i)
         if (comp(this[i], this[res]))
           res = i |
     }

@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1449 utf-8
+personal_ws-1.1 en 1451 utf-8
 aaa
 abc
 abcd
@@ -283,7 +283,9 @@ DCM
 dcon
 Debian
 decompile
+decrement
 Decrementation
+decrementation
 deepclean
 defaultPitchSpeed
 defaultRollSpeed
@@ -534,6 +536,7 @@ imagemagick
 ImmutableCounter
 ImplicitTagComponent
 inBounds
+incdecop
 incrementation
 indices
 ing

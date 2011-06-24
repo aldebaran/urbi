@@ -806,8 +806,10 @@ provide them.
   \operatoriass{\^}%
   % \operatoriass{\~}
 }
-\newcommand{\operatorinc}    {\operator  {++}   {a++}  {-}     {Incrementation}           {\{var '$a' = a | a = a.'++' | '$a'\}       }}
-\newcommand{\operatordec}    {\operator  {--}   {a--}  {-}     {Decrementation}           {\{var '$a' = a | a = a.'--' | '$a'\}       }}
+\newcommand{\operatorinca}   {\operator  {++}   {++a}  {-}     {Pre-incrementation}        {a = a.'++'}}
+\newcommand{\operatordeca}   {\operator  {--}   {--a}  {-}     {Pre-decrementation}        {a = a.'--'}}
+\newcommand{\operatorainc}   {\operator  {++}   {a++}  {-}     {Post-incrementation}       {\{var '$a' = a | ++a | '$a'\}  }}
+\newcommand{\operatoradec}   {\operator  {--}   {a--}  {-}     {Post-decrementation}       {\{var '$a' = a | --a | '$a'\}  }}
 
 \newcommand{\operatoruplus}  {\poperator {+}    {-}    {Identity}               }
 \newcommand{\operatorumin}   {\poperator {-}    {-}    {Opposite}               }
@@ -1093,51 +1095,48 @@ mc2;
 \end{urbiscript}
 \end{multicols}
 
-\subsubsection{Postfix Operators}
-\label{sec:lang:postop}
+\subsubsection{Increment/decrement Operators}
+\label{sec:lang:incdecop}
 
-In the tradition of \C, \us provides postfix operators (see
-\autoref{tab:postop}), e.g., \lstinline|\var{b} = \var{a}++|.  Prefix
-operators, however, are not supported.  Rather than \lstinline|++\var{a}|,
-write \lstinline|\var{a} += 1|.
+In the tradition of \C, \us provides pre- and postfix increment and
+decrement operators (\autoref{tab:incdecop}): \lstinline|++\var{a}| and
+\lstinline|\var{a}++|.
 
-\begin{operatorTable}{tab:postop}{Postfix operators}
-  \operatorinc\\\operatordec
+\begin{operatorTable}{tab:incdecop}{Pre-/postfix operators}
+  \operatorinca\\\operatordeca\\\operatorainc\\\operatoradec
 \end{operatorTable}
 
-These operators \emph{modify} the variable/slot they are applied to, and
-return the \emph{former} value of the variable/slot.
+Prefix operators modify their operand and evaluate to the new value, whereas
+postfix operators evaluate to the \emph{former} value.
+
+These operators \emph{modify} the variable/slot they are applied to
 
 \begin{urbiassert}
-var count = 0;
-var countAlias = count;
+var count = 5;
+var alias = count;
 
-count++    == 0;
-count      == 1;
-countAlias == 0;
-count++    == 1;
-count      == 2;
-countAlias == 0;
-count--    == 2;
-count      == 1;
+alias = count; count++ == 5; count == 6; alias == 5; count !== alias;
+alias = count; count++ == 6; count == 7; alias == 6; count !== alias;
+alias = count; count-- == 7; count == 6; alias == 7; count !== alias;
+alias = count; --count == 5; count == 5; alias == 6; count !== alias;
+alias = count; ++count == 6; count == 6; alias == 5; count !== alias;
 \end{urbiassert}
 
-Similarly to assignment operators, these operators are redefinable.
-Indeed, \lstinline|\var{a}++| is actually processed like
-% beware of wrapping.
-\lstinline-{ var '$save' = \var{a} | \var{a} = \var{a}.'++' | '$save' }-.
+Similarly to assignment operators, these operators are redefinable.  Indeed,
+\lstinline|++\var{a}| is actually processed like
+\lstinline-\var{a} = \var{a}.'++'-, and \lstinline|\var{a}++| is actually
+processed like \lstinline-{ var '$save' = \var{a} | ++\var{a} | '$save' }-
+(which, in turn, is like
+\lstinline-{ var '$save' = \var{a} | \var{a} = \var{a}.'++' | '$save' }-).
 In other words, you are entitled to redefine the operator \lstinline|'++'|
 whose semantics is ``return the successor of \this''.
 
-Beware that the operator \lstinline|'++'| should \emph{not} modify its
+Beware that the function \lstinline|'++'| should \emph{not} modify its
 target, but rather return a fresh value.  Indeed, if it alters \this, the
-copy made in \lstinline|'$save'| will also have its value updated.
-In % $ Pacify emacs
-other words, the value of \lstinline|\var{a}++| would be its new one, not
-its former one.
+copy made in \lstinline|'$save'| will also have its value updated.  In other
+words, the value of \lstinline|\var{a}++| would be its new one, not its
+former one.
 
-Redefining \lstinline|'++'| is still an experimental feature which might be
-changed in future releases of \usdk, do not rely on it.
 
 \subsubsection{Bitwise operators}
 \label{sec:lang:bitwise}
@@ -1394,7 +1393,7 @@ precedence. Groups of rows represent operators with the same precedence.
   \\\hline
   \operatorass\\\operatorsiass
   \\\hline
-  \operatorinc\\\operatordec
+  \operatorinca\\\operatordeca\\\operatorainc\\\operatoradec
 \end{operatorTable}
 
 
@@ -2381,7 +2380,7 @@ When encountered within a loop (\lstinline|for| or a \lstinline|while|),
   {
     if (i > 8)
       break;
-    i += 1;
+    ++i;
   };
 };
 [00000000] *** 6
@@ -2399,7 +2398,7 @@ function breakInWhile ()
     echo(i);
     if (i == 2)
       break;
-    i += 1;
+    ++i;
   };
   echo(i);
 }|;
@@ -2455,7 +2454,7 @@ function continueInWhile ()
   var i = 0|;
   while (i < 6)
   {
-    i += 1;
+    ++i;
     if (i % 2 != 0)
       continue;
     echo(i);
@@ -2521,7 +2520,7 @@ do (1024)
 There are several kinds of \lstinline|for| loops:
 \begin{description}
 \item[C-like for] such as
-  \lstinline|for (var i = 0; i < n; i += 1) echo(i);|, see
+  \lstinline|for (var i = 0; i < n; ++i) echo(i);|, see
   \autoref{sec:lang:for:c}.
 \item[Range-for] also known as \dfn{foreach}-loops,
   \lstinline|for (var i : [0, 1, 2, 4]) echo(i);|, see
@@ -2643,8 +2642,8 @@ foreach-style loops, the argument needs not being an integer, any iterable
 value can be used.
 
 \begin{urbiassert}
-3 == { var r = 0; for ([1, 2, 3]) r += 1; r};
-3 == { var r = 0; for ("123")     r += 1; r};
+3 == { var r = 0; for ([1, 2, 3]) ++r; r};
+3 == { var r = 0; for ("123")     ++r; r};
 \end{urbiassert}
 
 
@@ -2874,7 +2873,7 @@ is skipped, and the next iteration is started.
   var i = 4|
   while (true)
   {
-    i -= 1;
+    --i;
     echo ("in: " + i);
     if (i == 1)
       break
@@ -2914,7 +2913,7 @@ The execution is can be controlled by \lstinline|break| and
   var i = 4|
   while| (true)
   {
-    i -= 1;
+    --i;
     echo ("in: " + i);
     if (i == 1)
       break
@@ -3417,7 +3416,7 @@ expected, at the given period.
   echo("before");
   every| (1s)
   {
-    count -= 1;
+    --count;
     echo("begin: %s @ %1.0fs" % [count, time - start]);
     if (count == 2)
       continue;
@@ -3484,7 +3483,7 @@ are supported.
   var count = 0;
   every| (250ms)
   {
-    count += 1;
+    ++count;
     if (count == 2)
       continue;
     if (count == 4)
@@ -3533,7 +3532,7 @@ actual kind of \lstinline|for| loop.
 \autoref{sec:lang:while:comma}.
 
 \begin{urbiscript}
-for, (var i = 3; 0 < i; i -= 1)
+for, (var i = 3; 0 < i; --i)
 {
   var j = i |
   echo ("in: i = %s, j = %s" % [i, j]);
@@ -3551,7 +3550,7 @@ echo ("done");
 \end{urbiscript}
 
 \begin{urbiscript}
-for, (var i = 9; 0 < i; i -= 1)
+for, (var i = 9; 0 < i; --i)
 {
   var j = i;
   if (j % 2)
@@ -3803,7 +3802,7 @@ variable inside the loop body:
   var i = 4|
   while, (i)
   {
-    var j = i -= 1;
+    var j = --i;
     echo ("in: i = %s, j = %s" % [i, j]);
     sleep(j/10);
     echo ("out: i = %s, j = %s" % [i, j]);
@@ -3836,7 +3835,7 @@ are done.
   var i = 10|
   while, (i)
   {
-    var j = i -= 1;
+    var j = --i;
     if (j % 2)
       continue
     else if (j == 4)

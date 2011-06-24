@@ -687,8 +687,8 @@ exp:
 ;
 
 bitor-exp:
-  lvalue "--"      { $$ = new ast::Decrementation(@$, $1); }
-| lvalue "++"      { $$ = new ast::Incrementation(@$, $1); }
+  lvalue "--"    { $$ = new ast::Decrementation(@$, $lvalue, true); }
+| lvalue "++"    { $$ = new ast::Incrementation(@$, $lvalue, true); }
 ;
 
 
@@ -1202,11 +1202,13 @@ primary-exp:
 
 unary-exp:
   primary-exp        { std::swap($$, $1); }
+| "--" lvalue        { $$ = new ast::Decrementation(@$, $2, false); }
+| "++" lvalue        { $$ = new ast::Incrementation(@$, $2, false); }
 | "+" unary-exp      { $$ = MAKE(call, @$, $2, $1); }
 | "-" unary-exp      { $$ = MAKE(call, @$, $2, $1); }
 | "!" unary-exp      { $$ = MAKE(call, @$, $2, $1); }
 | "compl" unary-exp  { $$ = MAKE(call, @$, $2, $1); }
-
+;
 
 /*---------------------.
 | Numeric operations.  |

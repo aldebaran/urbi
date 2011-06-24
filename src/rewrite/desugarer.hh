@@ -67,7 +67,11 @@ namespace rewrite
       (Try)
       (While)
       );
-    void visit_dincrementation(ast::rLValue what, libport::Symbol meth);
+    /// \param what  the lvalue
+    /// \param meth  ++ or --
+    /// \param post  whether post-operator (vs. pre-).
+    void
+    visit_dincrementation(ast::rLValue what, libport::Symbol meth, bool post);
 
   private:
     /// Report error
