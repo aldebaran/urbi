@@ -2,11 +2,19 @@
 <html lang="en-US" xml:lang="en-US" xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <title>Urbi 2.8</title>
-    <link rel="stylesheet" type="text/css" href="style.css"></link>
+    <link rel="stylesheet" type="text/css" href="/downloads/urbi/style.css"></link>
   </head>
 
   <body>
-    <h1><img src="../img/2.8/cube-and-disc.png" class="title" alt="Urbi 2.8" /></h1>
+    <h1><img src="/downloads/urbi/img/2.8/cube-and-disc.png" class="title" alt="Urbi 2.8" /></h1>
+
+    <div class="section">
+      <p class="abstract">
+	All the versions of Urbi packages are
+	available <a href="/downloads/urbi/">here</a>.  <br/> An
+	introduction about Urbi, including a video, can be
+	found <a href="/products/urbi">here</a>.
+      </p>
 
     <h2>Urbi 2.8 is an ongoing effort!</h2>
     <div class="section">
@@ -22,6 +30,234 @@
         please <a href="http://www.gostai.com/news_events/newsletters/">subscribe
         to our Urbi news letter</a>.
       </p>
+    </div>
+
+      <h2>What's new?</h2>
+      <div class="section">
+
+        <p>
+          This release brings too many exciting new features to Urbi
+          and urbiscript for us to list them all here.  Please see
+          the <a href="doc/urbi-sdk.htmldir/release-notes.html">release
+          notes</a> for a more complete description of changes.
+
+          In addition to several fixes, some of the noteworthy changes
+          include:
+        </p>
+        <ul>
+          <li>
+            Support for Vector and Matrix to provide efficient linear
+            algebra and input/output operations.
+          </li>
+
+          <li>
+            The stack traces now include information about event
+            handling (both sending and receiving parts).
+<pre>
+var e = Event.new|;
+function watchEvent()
+{
+  at (e?)
+    lobby.echoEach(currentRunner.backtrace);
+}|;
+function sendEvent()
+{
+  e!;
+}|;
+watchEvent;
+sendEvent;
+[00008208] *** file.u:5.20-42: backtrace
+[00008208] *** file.u:9.3: emit
+[00008208] *** file.u:12.1-9: sendEvent
+[00008208] *** ---- event handler backtrace:
+[00008208] *** file.u:4.3-5.43: onEvent
+[00008208] *** file.u:11.1-10: watchEvent
+</pre>
+On the same example, Urbi 2.7.1 displays:
+<pre>
+[00000030] *** file.u:5.20-42: backtrace
+</pre>
+          </li>
+
+          <li>
+            To augment legibility, underscores can be used to separate
+            groups of digits in numbers.
+<pre>
+assert
+{
+     123_456_789 == 123456789;
+  12_34_56_78_90 == 1234567890;
+     1_2__3___45 == 12345;
+        1_2.3__4 == 12.34;
+     0xFFFF_FFFF == 0xFFFFFFFF;
+           1e1_0 == 1e10;
+};
+</pre>
+          </li>
+
+          <li>
+            Comparisons can be chained, with guaranties over the order
+            and number of evaluations of the operands:
+<pre>
+function v(x) { echo(x) | x }|;
+
+v(1) == v(2) < v(3) < v(4) || v(10) < v(11) != v(12) <= v(13);
+[00033933] *** 1
+[00033933] *** 2
+[00033933] *** 10
+[00033933] *** 11
+[00033933] *** 12
+[00033933] *** 13
+[00033933] true
+</pre>
+          </li>
+
+          <li>
+            Logger provides runtime control over the debug traces:
+            <ul>
+              <li>
+                Logger.level provides read/write access to the current
+                verbosity level,
+              </li>
+              <li>
+                Logger.categories gives the set of existing
+                categories,
+              </li>
+              <li>
+                categories that match a given pattern can be
+                enabled/disabled (Logger.enable, Logger.disable),
+<pre>
+Logger.enable("Category*");
+Logger.disable("Category.Sub");
+</pre>
+              </li>
+              <li>
+                the status of all the categories can be changed
+                according to a given specification string similar to
+                GD_CATEGORY.
+<pre>
+Logger.set("+Category*,-Category.Sub");
+</pre>
+              </li>
+            </ul>
+          </li>
+
+          <li>
+            System.getLocale and System.setLocale allow to change the
+            locale settings.
+          </li>
+
+          <li>
+            The timeout construct now features optional catch, else,
+            and finally clauses, modeled after the syntax of
+            try-blocks.
+<pre>
+function testTimeOut(var d)
+{
+  timeout (1s) { echo("computation"); sleep(d); "body-value" }
+  catch        { echo("interrupted!");         "catch-value" }
+  else         { echo("completed");             "else-value" }
+  finally      { echo("finally");            "finally-value" }
+}|;
+
+// Run till completion.
+testTimeOut(0s);
+[00000264] *** computation
+[00000265] *** completed
+[00000265] *** finally
+[00000265] "else-value"
+
+// Interrupted before completion.
+testTimeOut(2s);
+[00000266] *** computation
+[00001267] *** interrupted!
+[00001270] *** finally
+[00001271] "catch-value"
+</pre>
+          </li>
+
+          <li>
+            InputStream.get, InputStream.getChar, and
+            InputStream.getLine now return nil instead of void when
+            end of file is reached.
+          </li>
+
+          <li>
+            The C++ classes USound and UImage now properly initialize
+            their instances to empty sound/image.
+          </li>
+        </ul>
+
+	<p>
+	  See
+	  the <a href="doc/urbi-sdk.htmldir/release-notes.html">release
+	  notes</a> for a more complete description of the changes.
+	</p>
+      </div>
+
+      <h2>Package Types</h2>
+      <div class="section">
+	<p>
+	  There are three kinds of packages:
+	  <dl>
+	    <dt>Urbi SDK (urbi-sdk-*)</dt>
+	    <dd>The full Software Development Kit, including the full
+	      documentation in HTML and PDF.  These packages are made
+	      for computers on which applications are developed.</dd>
+	    <dt>Urbi Runtime (urbi-runtime-*)</dt>
+	    <dd>Only what is needed to run Urbi programs.  These
+	      packages are made for robots running these applications.
+	      They do not contain the documentation.</dd>
+	    <dt>Urbi documentation (urbi-doc-*)</dt>
+	    <dd>The whole documentation, in HTML and PDF.</dd>
+	  </dl>
+	</p>
+      </div>
+
+      <h2>Architectures</h2>
+      <div class="section">
+	<h3>Source</h3>
+	<div class="section">
+	  <p>
+	    The files with no architecture specified are BZip2 source
+	    tarballs
+	    (<a href="urbi-sdk-2.8.tar.bz2">urbi-sdk-2.8.tar.bz2</a>).
+	    Use them only if you are ready to compile Urbi SDK
+	    yourself.
+	  </p>
+	</div>
+	<h3>Unix</h3>
+	<div class="section">
+	  <p>
+	    GNU/Linux and Mac OS X packages are regular BZip2
+	    tarballs.
+	  </p>
+	</div>
+
+	<h3>Windows</h3>
+	<div class="section">
+	  <p>
+	    The packages depend on the version of Visual C++ you use:
+	    2005 or 2008.
+	  </p>
+
+	  <p>
+	    Windows packages in "*.exe" contain an installer that
+	    installs both debug and release libraries, an UObject
+	    wizard for Visual C++, Gostai Editor and Gostai Console.
+	    Using the installers is strongly recommended.
+	  </p>
+
+	  <p>
+	    If you know what you are doing, you might want to use the
+	    "*.zip" files.  They come in two flavors: debug or
+	    release.  They require that you have MS Visual C++
+	    installed, or that you run "vcredist.exe" that can be
+	    found <a href="http://www.gostai.com/downloads/urbi/windows/">
+	    here</a>.
+	  </p>
+	</div>
+      </div>
     </div>
   </body>
 </html>
