@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1448 utf-8
+personal_ws-1.1 en 1449 utf-8
 aaa
 abc
 abcd
@@ -196,6 +196,7 @@ ceil
 cerr
 cflags
 changeConnections
+ChangeLog
 channelName
 chargeStop
 chatTag
@@ -262,7 +263,6 @@ cvf
 cvs
 cwd
 cwLimit
-CXX
 cxx
 CXXFLAGS
 Cyberbotics
@@ -713,6 +713,7 @@ MCPAN
 mealReady
 meanCallTime
 Meccano
+Meccano's
 memoization
 memoryName
 meq
