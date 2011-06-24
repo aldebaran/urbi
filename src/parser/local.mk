@@ -1,4 +1,4 @@
-## Copyright (C) 2005-2010, Gostai S.A.S.
+## Copyright (C) 2005-2011, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -120,12 +120,11 @@ endif
 # This code comes from "Handling Tools that Produce Many Outputs",
 # from the Automake documentation.
 parser/ugrammar.stamp: parser/ugrammar.y $(ugrammar_deps)
-	$(AM_V_GEN)
-	$(AM_V_at)rm -f $@ $@.tmp parser/ugrammar-pruned.y
+	$(AM_V_GEN)rm -f $@ $@.tmp parser/ugrammar-pruned.y
 	$(AM_V_at)echo '$@ rebuilt because of: $?' >$@.tmp
 	$(AM_V_at)$(MAKE) $(BISONXX)
 	$(AM_V_at)$(MAKE) -C $(top_builddir)/bison MAKEFLAGS=
-	$(AM_V_at)$(PRUNE_FOR_SPACE) - <$< >parser/ugrammar-pruned.y
+	$(AM_V_at){ echo "#line 1 \"$<\""; $(PRUNE_FOR_SPACE) - <$<; } >parser/ugrammar-pruned.y
 	$(AM_V_at)chmod a-w parser/ugrammar-pruned.y
 	$(AM_V_at)$(BISONXX) parser/ugrammar-pruned.y parser/ugrammar.cc \
 	  $(AM_BISONFLAGS) $(BISONFLAGS)
