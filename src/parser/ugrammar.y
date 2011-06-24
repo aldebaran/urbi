@@ -698,7 +698,7 @@ primary-exp:
 `-------------*/
 
 %token MINUS_GT     "->";
-bitor-exp:
+primary-exp:
   lvalue "->" id
   {
     $$ = new ast::Property(@$, $1->call(), $3);
