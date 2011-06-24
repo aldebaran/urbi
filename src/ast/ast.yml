@@ -1239,9 +1239,9 @@ Incrementation:
   printer:
     -  '{
           if (n->post_get())
-            ostr_ << n->exp_get() << "++";
+            ostr_ << *n->exp_get() << "++";
           else
-            ostr_ << "++" << n->exp_get();
+            ostr_ << "++" << *n->exp_get();
         }'
 
 Decrementation:
@@ -1249,9 +1249,9 @@ Decrementation:
   printer:
     -  '{
           if (n->post_get())
-            ostr_ << n->exp_get() << "--";
+            ostr_ << *n->exp_get() << "--";
           else
-            ostr_ << "--" << n->exp_get();
+            ostr_ << "--" << *n->exp_get();
         }'
 
 PropertyAction:
