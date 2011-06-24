@@ -950,6 +950,8 @@ primary-exp:
 | "assert" "{" claims "}"   { $$ = MAKE(assert, @$, $3); }
 | detach "(" exp[block] ")" { $$ = MAKE(detach, @$, $detach, $block); }
 | detach block              { $$ = MAKE(detach, @$, $detach, $block); }
+| "isdef" "(" k1_id ")"     { $$ = MAKE(isdef, @$, $3); }
+| "watch" "(" exp ")"       { $$ = MAKE(watch, @$, $3); }
 ;
 
 
@@ -1317,16 +1319,7 @@ exp.opt:
 | exp                           { std::swap($$, $1); }
 ;
 
-/*--------.
-| Isdef.  |
-`--------*/
 
-primary-exp:
-  "isdef" "(" k1_id ")"
-  {
-    $$ = MAKE(isdef, @$, $3);
-  }
-;
 
 /*-----------------------.
 | Desugaring internals.  |
@@ -1390,16 +1383,6 @@ primary-exp:
   }
 ;
 
-/*--------.
-| Watch.  |
-`--------*/
-
-primary-exp:
-  "watch" "(" exp ")"
-  {
-    $$ = MAKE(watch, @$, $3);
-  }
-;
 
 /*--------------.
 | Expressions.  |
