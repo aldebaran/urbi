@@ -686,7 +686,7 @@ exp:
         PLUS_PLUS   "++"
 ;
 
-bitor-exp:
+primary-exp:
   lvalue "--"    { $$ = new ast::Decrementation(@$, $lvalue, true); }
 | lvalue "++"    { $$ = new ast::Incrementation(@$, $lvalue, true); }
 ;
