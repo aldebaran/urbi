@@ -682,25 +682,6 @@ The following sections assume that gdb is recent enough.
 
 \subsection{GDB commands}
 
-% TeX4HT is having troubles with this...
-%% hackery to get only (gdb) #% printed as comments as if the % were not
-%% there.
-\ifx\ifHtml\undefined
-  \lstdefinelanguage[]{gdb}{
-    otherkeywords={(gdb)},
-    keywords={(gdb)},
-    literate={\%}{}0,
-    morecomment=[l]{\#\%}
-  }[keywords]
-\else
-  \lstdefinelanguage[]{gdb}{
-    alsoletter={(,)},
-    keywords={(gdb)},
-    literate={\%}{}0,
-    morecomment=[l]{\#\%}
-  }[keywords]
-\fi
-
 \begin{description}
 \item[urbi stack] Print the backtrace of the current coroutine.  The
   backtrace is indexed by the \Cxx frame numbers and includes frame which
@@ -756,7 +737,7 @@ for(var i: [1, 2, 3]) foo([i.asString => i]);
 [00219506:backtrace] each (input.u:2.12-44)
 UBreakpoint 1: [input.u:2.23-45] Lobby_0x7ffff7f03208.foo(["2" => 2])
 Inside Job 0x6a2f70
-(gdb) 
+(gdb)
 \end{verbatim}
 
 

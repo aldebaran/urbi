@@ -58,25 +58,6 @@ for (var i: 10)
   echo(i);
 \end{verbatim}
 
-% TeX4HT is having troubles with this...
-%% hackery to get only (gdb) #% printed as comments as if the % were not
-%% there.
-\ifx\ifHtml\undefined
-  \lstdefinelanguage[]{gdb}{
-    otherkeywords={(gdb)},
-    keywords={(gdb)},
-    literate={\%}{}0,
-    morecomment=[l]{\#\%}
-  }[keywords]
-\else
-  \lstdefinelanguage[]{gdb}{
-    alsoletter={(,)},
-    keywords={(gdb)},
-    literate={\%}{}0,
-    morecomment=[l]{\#\%}
-  }[keywords]
-\fi
-
 \begin{verbatim}[language=gdb]
 (gdb) urbi break input.u:2 Lobby_0x7ffff7f03208.foo(["2" => 2])
 UBreakpoint 1:
