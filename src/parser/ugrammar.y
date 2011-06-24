@@ -242,7 +242,7 @@
 | Expressions.  |
 `--------------*/
 
-%type <ast::rExp> bitor-exp block exp exp.opt rel-exp stmt;
+%type <ast::rExp> bitor-exp block exp exp.opt literal-exp rel-exp stmt;
 
 
 /*----------------------.
@@ -1107,7 +1107,7 @@ tuple:
 | Literals.  |
 `-----------*/
 
-bitor-exp:
+literal-exp:
   exp_float      { std::swap($$, $1);  }
 | "angle"        { $$ = MAKE(float, @$, $1);  }
 | duration       { $$ = MAKE(float, @$, $1);  }
@@ -1128,7 +1128,7 @@ string:
 | Locations.  |
 `------------*/
 
-bitor-exp:
+literal-exp:
   "__HERE__"  { $$ = MAKE(position, @$); }
 ;
 
@@ -1178,7 +1178,7 @@ lvalue:
         THIS         "this"
 ;
 
-bitor-exp:
+literal-exp:
   "this"         { $$ = new ast::This(@$); }
 | "call"         { $$ = new ast::CallMsg(@$); }
 ;
@@ -1205,7 +1205,8 @@ bitor-exp:
 ;
 
 bitor-exp:
-  bitor-exp "+"      bitor-exp  { $$ = MAKE(call, @$, $1, $2, $3); }
+  literal-exp                   { std::swap($$, $1); }
+| bitor-exp "+"      bitor-exp  { $$ = MAKE(call, @$, $1, $2, $3); }
 | bitor-exp "-"      bitor-exp  { $$ = MAKE(call, @$, $1, $2, $3); }
 | bitor-exp "*"      bitor-exp  { $$ = MAKE(call, @$, $1, $2, $3); }
 | bitor-exp "**"     bitor-exp  { $$ = MAKE(call, @$, $1, $2, $3); }
