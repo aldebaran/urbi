@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -45,11 +45,13 @@ class Global.Lazy : Global.Comparable
 
   function asString ()
   {
-    var c = &code |
-    if (c.hasSlot("bodyString"))
-      c.bodyString
+    // FIXME: These braces are a nuisance.
+    if (&code.isVoid)
+      type
+    else if (&code.hasSlot("bodyString"))
+      { &code.bodyString }
     else
-      c.asString
+      { &code.asString }
   };
 };
 

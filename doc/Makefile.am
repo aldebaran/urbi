@@ -257,6 +257,11 @@ spell-check: $(urbi_sdk_tex) $(dist_doc_DATA)
 	$(AM_V_GEN) $(RUN_SPELL_CHECK) $(if $(V:0=),-v,-q) $^
 
 
+# A program whose output is FILE:SECTIONING COMMANDS.
+# To make easy via grep to control the structure.
+latex_subsections =							\
+  perl -ne '/(.*?):\\subsection({.*})/ && { $$secs{$$1} .= $$2 };'	\
+       -e  'END { print "$$_:$$secs{$$_}\n" foreach sort keys %secs; }'
 # This is not spell-checking, but that's easier for the BF.
 .PHONY spell-check: style-check
 style-check: $(urbi_sdk_sources)
@@ -265,6 +270,12 @@ style-check: $(urbi_sdk_sources)
 ## Never indent verbatim environments, it leaves empty lines.
 	$(AM_V_at) ! grep -E \
 	  '^  *\\(begin|end){(cxx|java|urbi(comment|script|unchecked)|verbatim)}' $^
+## The stdlib sections must follow a strict pattern.
+	$(AM_V_at) ! grep -E '^\\subsection\{' $^ |		\
+	  grep '/specs/' |					\
+	  grep -Ev '(lang|naming-standard|ros|tools).tex' |	\
+	  $(latex_subsections) |				\
+	  grep -Ev '^.*:({Examples?})?.*{Prototypes}({Construction})?{Slots}$$'
 
 ## --------- ##
 ## install.  ##

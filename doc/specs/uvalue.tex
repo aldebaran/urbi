@@ -1,4 +1,4 @@
-%% Copyright (C) 2010, Gostai S.A.S.
+%% Copyright (C) 2010, 2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -10,21 +10,30 @@
 
 
 The UValue object is used internally by the UObject API and is mostly
-hidden from the user.
+hidden from the user.  Do not depend on it.
 
 %% FIXME:
-%%
-%% \subsection{Prototypes}
-%%
-%% \begin{refObjects}
-%% \item[Object]
-%% \end{refObjects}
-%%
-%% \subsection{Slots}
-%%
-%% \begin{urbiscriptapi}
-%%
-%% \end{urbiscriptapi}
+
+\subsection{Prototypes}
+
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
+
+\subsection{Slots}
+
+\begin{urbiscriptapi}
+\item[asPrintable]
+\item[asString]
+\item[asTopLevelPrintable]
+\item[asUValue]
+\item[extract]
+\item[extractAsToplevelPrintable]
+\item[invalidate]
+\item[put]
+\item[transparent]
+\end{urbiscriptapi}
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../urbi-sdk"

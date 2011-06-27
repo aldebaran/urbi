@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2009-2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -11,12 +11,13 @@
 Objects that have a concept of ``less than''.  See also
 \refObject{Comparable}.
 
+\subsection{Example}
 This object, made to serve as prototype, provides a definition of
-\lstinline{<} based on \lstinline{>}, and vice versa; and definition
-of \lstinline{<=}/\lstinline{>=} based on
-\lstinline{<}/\lstinline{>}\lstinline{==}.  You \strong{must} define
-either \lstinline{<} or \lstinline{>}, otherwise invoking either
-method will result in endless recursions.
+\lstinline{<} based on \lstinline{>}, and vice versa; and definition of
+\lstinline{<=}/\lstinline{>=} based on
+\lstinline{<}/\lstinline{>}\lstinline{==}.  You \strong{must} define either
+\lstinline{<} or \lstinline{>}, otherwise invoking either method will result
+in endless recursions.
 
 \begin{urbiscript}[firstnumber=1]
 class Foo : Orderable
@@ -37,6 +38,25 @@ assert
 };
 \end{urbiscript}
 
+\subsection{Prototypes}
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
+
+\subsection{Slots}
+\begin{urbiscriptapi}
+\item['<'](<that>)%
+  Whether \lstinline{this <= that && this != that}.
+
+\item['<='](<that>)%
+  Whether \lstinline{that > this || this == that}.
+
+\item['>'](<that>)%
+  Whether \lstinline{this >= that && this != that}.
+
+\item['<'](<that>)%
+  Whether \lstinline{that < this || this != that}.
+\end{urbiscriptapi}
 
 %%% Local Variables:
 %%% mode: latex

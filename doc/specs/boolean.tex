@@ -13,29 +13,6 @@ objects \lstindex{true} and \lstindex{false}.  They are the result of
 all the comparison statements.
 
 
-\subsection{Prototypes}
-
-The objects \lstinline|true| and \lstinline|false| have the following
-prototype.
-
-\begin{refObjects}
-\item[Singleton]
-\end{refObjects}
-
-\subsection{Construction}
-
-There are no constructors, use \lstinline|true| and \lstinline|false|.
-Since they are singletons, \lstinline|clone| will return themselves,
-not new copies.
-
-\begin{urbiassert}[firstnumber=1]
-true;
-!false;
-(2 < 6) === true;
-true.new === true;
-(6 < 2) === false;
-\end{urbiassert}
-
 \subsection{Truth Values}
 \label{sec:truth}
 
@@ -67,6 +44,28 @@ void.asBool;
 [00000421:error] !!! unexpected void
 \end{urbiscript}
 
+\subsection{Prototypes}
+
+The objects \lstinline|true| and \lstinline|false| have the following
+prototype.
+
+\begin{refObjects}
+\item[Singleton]
+\end{refObjects}
+
+\subsection{Construction}
+
+There are no constructors, use \lstinline|true| and \lstinline|false|.
+Since they are singletons, \lstinline|clone| will return themselves,
+not new copies.
+
+\begin{urbiassert}[firstnumber=1]
+true;
+!false;
+(2 < 6) === true;
+true.new === true;
+(6 < 2) === false;
+\end{urbiassert}
 
 \subsection{Slots}
 

@@ -44,6 +44,7 @@ Exception.Arity.new("myRoutine", 1, 10, 23);
 Exception has many slots which are specific exceptions.  See
 \autoref{sec:specs:except:sub} for their documentation.
 
+\subsubsection{General Features}
 \begin{urbiscriptapi}
 \item[backtrace] The call stack at the moment the exception was thrown (not
   created), as a \refObject{List} of \refObject[s]{StackFrame}, from the
@@ -101,7 +102,7 @@ Exception.new("Ouch").message == "Ouch";
 \end{urbiassert}
 \end{urbiscriptapi}
 
-\subsection{Specific Exceptions}
+\subsubsection{Specific Exceptions}
 \label{sec:specs:except:sub}
 
 In the following, since these slots are actually Objects, what is presented

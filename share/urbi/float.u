@@ -71,6 +71,8 @@ do (Float)
     format(FormatInfo.new("%x"))
   };
 
+  limits.setProtos([Singleton]);
+
   function map(f)
   {
     asList.map(f)
