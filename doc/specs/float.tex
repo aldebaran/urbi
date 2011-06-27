@@ -21,8 +21,8 @@ version of \us, to represent integers.
 \item[Orderable]
 \begin{urbiassert}
   0 <= 0;    0 <= 1;  !(1 <= 0);
-!(0 >  0); !(0 >  1);   1 > 0;
-  0 >= 0;  !(0 >= 1); !(1 >= 0);
+!(0 >  0); !(0 >  1);   1 >  0;
+  0 >= 0;  !(0 >= 1);   1 >= 0;
 \end{urbiassert}
 \item[RangeIterable]
 \end{refObjects}
@@ -327,7 +327,7 @@ compl 0 == 0xFFFF_FFFF;    compl 0xFFFF_FFFF == 0;
 inf != -inf;
 inf == - -inf;
 inf * inf == inf;
-inf * -int == -inf;
+inf * -inf == -inf;
 inf * -2 == -inf;
 \end{urbiassert}
 
