@@ -12,17 +12,18 @@
 This section presents object programming in \us: the prototype-based
 object model of \us, and how to define and use classes.
 
-\section{Prototype-based programming in \us}
+\section{Prototype-Based Programming in \us}
 
 You're probably already familiar with class-based object programming, since
-this is the \Cxx model.  Classes and objects are very different entities.
-Types are static entities that do not exist at run-time, while objects are
-dynamic entities that do not exist at compile time.
+this is the \Cxx, \Java, \Cs model.  Classes and objects are very different
+entities.  Classes and types are static entities that do not exist at
+run-time, while objects are dynamic entities that do not exist at compile
+time.
 
 Prototype-based object programming is different: the difference between
 classes and objects, between types and values, is blurred. Instead, you have
 an object, that is already an instance, and that you might clone to obtain a
-new one that you can modify afterward. Prototype-based programming was
+new one that you can modify afterward.  Prototype-based programming was
 introduced by the Self language, and is used in several popular script
 languages such as \Io or \Js.
 
@@ -77,7 +78,7 @@ assert(Pair.first === before.first);
 assert(Pair.first === after.first);
 \end{urbiscript}
 
-\section{Prototypes and slot lookup}
+\section{Prototypes and Slot Lookup}
 
 In prototype-based language, \emph{is-a} relations (being an instance of
 some type) and inheritance relations (extending another type) are simplified
@@ -161,9 +162,8 @@ c.slot;
 [00000000:error] !!! lookup failed: slot
 \end{urbiscript}
 
-The slot lookup algorithm in \us in a depth-first traversal of the
-object prototypes tree. Formally, when the \var{s} slot is requested
-from \var{x}:
+The slot lookup algorithm in \us in a depth-first traversal of the object
+prototypes tree. Formally, when the \var{s} slot is requested from \var{x}:
 
 \begin{itemize}
 \item If \var{x} itself has the slot, the requested value is found.
@@ -224,7 +224,7 @@ Moreover, you can add behavior to an object at any time with a simple
 \lstinline{addProto}: you can make any object a fully functional
 \lstinline|Pair| with a simple \lstinline|myObj.addProto(Pair)|.
 
-\section{Copy on write}
+\section{Copy on Write}
 
 One point might be bothering you though: what if you want to update a slot
 value in a clone of your prototype?
@@ -258,8 +258,8 @@ o1.x;
 [00000000] 1
 \end{urbiscript}
 
-This work thanks to copy-on-write: slots are first duplicated to the local
-object when they're updated, as we can check below.
+This work thanks to \dfn{copy-on-write}: slots are first duplicated to the
+local object when they're updated, as we can check below.
 
 \begin{urbiscript}
 // This is the continuation of previous example.
@@ -278,7 +278,7 @@ o1.locateSlot("x") === o1;
 This is why, when we cloned Pair earlier, and modified the ``first'' slot of
 our fresh Pair, we didn't alter Pair one all its other clones.
 
-\section{Defining pseudo-classes}
+\section{Defining Pseudo-Classes}
 \label{sec:tut:class}
 
 Now that we know the internals of \us's object model, we can start defining
@@ -286,7 +286,7 @@ our own classes.
 
 But wait, we just said there are no classes in prototype-based
 object-oriented languages!  That is true: there are no classes in the sense
-of \Cxx: compile-time entities that are not objects.  Instead,
+of \Cxx, i.e., compile-time entities that are not objects.  Instead,
 prototype-based languages rely on the existence of a canonical object (the
 \dfn{prototype}) from which (pseudo) \emph{instances} are derived.  Yet,
 since the syntactic inspiration for \us comes from languages such as \Java,
@@ -404,12 +404,12 @@ MyPair.new(0, 1);
 \section{Operators}
 \label{sec:tut:operators}
 
-In \us, operators such as \lstinline|+|, \lstinline|&&| and others,
-are regular function that benefit from a bit of syntactic sugar.  To
-be more precise, \lstinline|\var{a}+\var{b}| is exactly the same as
-\lstinline|\var{a}.'+'(\var{b})|.  The rules to resolve slot names
-apply too, i.e., the \lstinline|'+'| slot is looked for in \var{a},
-then in its prototypes.
+In \us, operators such as \lstinline|+|, \lstinline|&&| and others, are
+regular functions that benefit from a bit of syntactic sugar.  To be more
+precise, \lstinline|\var{a}+\var{b}| is exactly the same as
+\lstinline|\var{a}.'+'(\var{b})|.  The rules to resolve slot names apply
+too, i.e., the \lstinline|'+'| slot is looked for in \var{a}, then in its
+prototypes.
 
 The following example provides arithmetic between pairs.
 
@@ -482,8 +482,8 @@ y.foo;
 \subsection{Features of Slots}
 
 If, on the contrary you want to attach a feature to the slot-as-a-name,
-rather than to the value it contains, use the properties.  The syntax is
-\lstinline|\var{slotName}->\var{propertyName}|.
+rather than to the value it contains, use the \dfn{properties}.  The syntax
+is \lstinline|\var{slotName}->\var{propertyName}|.
 
 \begin{urbiscript}
 x = 123;
@@ -494,8 +494,8 @@ x->foo;
 [00000000] 42
 \end{urbiscript}
 
-Copying the value contained by a slot does not propagate the properties of
-the slot:
+Copying the value contained by a slot does \emph{not} propagate the
+properties of the slot:
 
 \begin{urbiscript}
 y = x;
