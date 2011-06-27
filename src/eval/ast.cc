@@ -818,9 +818,10 @@ namespace eval
       tag_chain_type chain = decompose_tag_chain(e);
       rforeach (libport::Symbol elt, chain)
       {
-        // Check whether the concerned level in the chain already
-        // exists.
-        if (rObject owner = where->slot_locate(elt).first)
+        // Check whether the concerned level in the chain already exists.
+        // We do not use the fallback slot to lookup for 'elt' because
+        // fallback does not return a slot to an undefined location.
+        if (rObject owner = where->slot_locate(elt, false).first)
         {
           GD_FINFO_DUMP("Component %s exists.", elt);
           where = owner->local_slot_get(elt)->value();
@@ -835,8 +836,9 @@ namespace eval
           // We have to create a new tag, which will be attached
           // to the upper level (hierarchical tags, implicitly
           // rooted by Tags).
-          where = parent->call(SYMBOL(new), new object::String(elt));
-          parent->slot_set(elt, where);
+          rObject tag = parent->call(SYMBOL(new), new object::String(elt));
+          where->slot_set(elt, tag);
+          where = tag;
           parent = where;
         }
       }
