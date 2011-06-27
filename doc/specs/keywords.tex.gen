@@ -18,7 +18,7 @@ case: \autoref{sec:lang:switch}
 catch: \autoref{sec:lang:catch}, \autoref{sec:lang:timeout}
 char: Reserved
 class: \autoref{sec:lang:class}
-closure:  \autoref{sec:us-fun-closures}
+closure:  \autoref{sec:lang:closure}
 compl: \autoref{sec:lang:op:bitwise}
 const: \autoref{sec:lang:prop:std}
 const_cast: Reserved
@@ -40,7 +40,7 @@ for: \lstinline|for&| and \lstinline-for|- flavors
 foreach: Deprecated, use \lstinline|for|
 freezeif:
 friend: Reserved
-function: \autoref{sec:lang:function}, \autoref{sec:us-fun-closures}
+function: \autoref{sec:lang:function}, \autoref{sec:lang:closure}
 goto: Reserved
 if: \autoref{sec:lang:if}
 in: \autoref{sec:lang:for:each}

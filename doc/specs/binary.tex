@@ -70,7 +70,7 @@ assert(b == Binary.new("header", "content"));
 This syntax (\lstinline|BIN \var{size} \var{header}; \var{content}|)
 is \emph{partially} supported in \us, but it is strongly discouraged.
 Rather, use the \lstinline|\B(\var{size})(\var{data})| special escape
-(see \autoref{sec:us-syn-lit-string}):
+(see \autoref{sec:lang:string}):
 
 \begin{urbiassert}
 Binary.new("head", "\B(7)(content)").asString
