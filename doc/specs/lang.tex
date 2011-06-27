@@ -841,10 +841,6 @@ provide them.
 \newcommand{\operatorand}    {\boperator {\&\&} {Left} {Logical and}            }
 \newcommand{\operatoror}     {\boperator {||}   {Left} {Logical or}             }
 
-\subsubsection{Arithmetic operators}
-
-\us supports classic \dfn{arithmetic operators}, with the classic semantics
-on numeric values. See \autoref{tab:arith} and the listing below.
 
 % \whetherHtml{HTML OUTPUT}{NOT-HTML OUTPUT}
 % ------------------------------------------
@@ -895,6 +891,18 @@ on numeric values. See \autoref{tab:arith} and the listing below.
   \end{table}
 }
 
+\subsubsection{Arithmetic operators}
+\label{sec:lang:op:arith}
+
+\begin{bnf}
+<arithmetic-expression>
+   ::= <unary-expression>
+     | <arithmetic-expression> <arithmetic-operator> <arithmetic-operator>
+<arithmetic-operator> ::= "+" | "-" | "*" | "/" | "%"
+\end{bnf}
+
+\us supports classic \dfn{arithmetic operators}, with the classic semantics
+on numeric values. See \autoref{tab:arith} and the listing below.
 \begin{operatorTable}{tab:arith}{Arithmetic operators}
   \operatorexp
   \\\hline
@@ -907,14 +915,14 @@ on numeric values. See \autoref{tab:arith} and the listing below.
 
 \begin{urbiassert}
        1 + 1 ==    2;
-       1 - 2 ==   -1;
+       1 - 2 ==   -1;  1 - 2 - 3 == (1 - 2) - 3 != 1 - (2 - 3);
        2 * 3 ==    6;
-      10 / 2 ==    5;
-     2 ** 10 == 1024;
+      10 / 2 ==    5;  6 / 3 / 2 == (6 / 3) / 2 != 6 / (3 / 2);
+     2 ** 10 == 1024;  2 ** 3 ** 2 == 2 ** (3 ** 2) != (2 ** 3) ** 2;
     -(1 + 2) ==   -3;
    1 + 2 * 3 ==    7;
  (1 + 2) * 3 ==    9;
-     -2 ** 2 ==   -4;
+     -2 ** 2 ==   -4 == -(2 ** 2) != (-2) ** 2;
    - - - - 1 ==    1;
 \end{urbiassert}
 

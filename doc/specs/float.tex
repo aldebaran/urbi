@@ -15,7 +15,15 @@ version of \us, to represent integers.
 
 \begin{refObjects}
 \item[Comparable]
+\begin{urbiassert}
+!(0 != 0) ; 0 != 1; 1 != 0;
+\end{urbiassert}
 \item[Orderable]
+\begin{urbiassert}
+  0 <= 0;    0 <= 1;  !(1 <= 0);
+!(0 >  0); !(0 >  1);   1 > 0;
+  0 >= 0;  !(0 >= 1); !(1 >= 0);
+\end{urbiassert}
 \item[RangeIterable]
 \end{refObjects}
 
@@ -52,8 +60,7 @@ Actually, underscores can be inserted between digits to improve legibility.
 123_456.78_90 == 1234567890 / 10_000;
 \end{urbiassert}
 
-There are also some special numbers, \refSlot[Float]{nan},
-\refSlot[Float]{inf}.
+There are also some special numbers, \refSlot{nan}, \refSlot{inf}.
 
 \begin{urbiassert}
 Math.log(0) == -inf;
@@ -73,9 +80,7 @@ Float.new == 0;
 \item[abs]
   Absolute value of the target.
 \begin{urbiassert}
-(-5).abs == 5;
-  0 .abs == 0;
-  5 .abs == 5;
+(-5).abs == 5;  0 .abs == 0;  5 .abs == 5;
 \end{urbiassert}
 
 \item[acos]
@@ -96,16 +101,14 @@ nan.asBool == true;
 \end{urbiassert}
 
 \item[asFloat]
-  Return the target.
+  \this.
 \begin{urbiassert}
 51.asFloat == 51;
 \end{urbiassert}
 
-\item[asList]
-  Bounces to \lstinline|seq|.
+\item[asList] Bounces to \refSlot{seq}.
 \begin{urbiassert}
-3.asList == [0, 1, 2];
-0.asList == [];
+0.asList == [];  3.asList == [0, 1, 2];
 \end{urbiassert}
 
 \item[asin]
@@ -158,22 +161,19 @@ nan.asBool == true;
 \begin{urbiassert}
 var x = 0;
 var y = x.clone;
-x == y;
-x !== y;
+x == y;  x !== y;
 \end{urbiassert}
 
 \item[compl]
   The complement to 1 of the target interpreted as a 32 bits integer.
 \begin{urbiassert}
-compl 0 == 4_294_967_295;
-compl 4_294_967_295 == 0;
+compl 0 == 0xFFFF_FFFF;    compl 0xFFFF_FFFF == 0;
 \end{urbiassert}
 
 \item[cos]
   Cosine of the target.
 \begin{urbiassert}
-0.cos == 1;
-Float.pi.cos == -1;
+0.cos == 1;   Float.pi.cos == -1;
 \end{urbiassert}
 
 \item[each](<fun>)%
@@ -301,8 +301,7 @@ Float.pi.cos == -1;
 
 \begin{urbiassert}
 0.hash.isA(Hash);
-0.hash == 0.hash;
-0.hash != 1.hash;
+0.hash == 0.hash != 1.hash;
 \end{urbiassert}
 
 %%% FIXME: This message is not right, it should be:
@@ -323,10 +322,14 @@ Float.pi.cos == -1;
 
 \item[inf]
   Return the infinity.
-\begin{urbiscript}
-Float.inf;
-[00000000] inf
-\end{urbiscript}
+\begin{urbiassert}
+2**2**2**2**2 == inf;
+inf != -inf;
+inf == - -inf;
+inf * inf == inf;
+inf * -int == -inf;
+inf * -2 == -inf;
+\end{urbiassert}
 
 \item[isInf]
   Whether is infinite.
@@ -378,7 +381,7 @@ Float.inf;
 \begin{urbiscript}
 Float.nan;
 [00000000] nan
-(Float.nan + Float.nan) / (Float.nan - Float.nan);
+inf / inf;
 [00000000] nan
 \end{urbiscript}
 
@@ -386,8 +389,16 @@ Float.nan;
   no other float, not even itself.  This behavior is mandated by the
   \wref[IEEE_754-2008]{IEEE 754-2008} standard.
 \begin{urbiassert}
-{ var n = Float.nan; n === n};
-{ var n = Float.nan; n  != n};
+!(nan === nan); !(nan == nan); nan != nan;
+var n = Float.nan;
+n === n;  n != nan;
+\end{urbiassert}
+
+  Use \refSlot{isNan} to check if a Float is NaN.
+\begin{urbiassert}
+(inf/inf).isNan;   (inf/-inf).isNan;
+(nan / nan).isNan;
+(0 * nan).isNan;   (0 * nan).isNan;
 \end{urbiassert}
 
 \item[pi]
@@ -417,8 +428,7 @@ Float.pi.cos ** 2 + Float.pi.sin ** 2 == 1;
   The sequence of integers from 0 to \this - 1 as a list.
   The number must be non-negative.
 \begin{urbiassert}
-3.seq == [0, 1, 2];
-0.seq == [];
+0.seq == [];  3.seq == [0, 1, 2];
 
 (-1).seq;
 [00004586:error] !!! seq: expected non-negative integer: -1
@@ -429,8 +439,8 @@ Float.pi.cos ** 2 + Float.pi.sin ** 2 == 1;
   otherwise.
 \begin{urbiassert}
 (-1164).sign == -1;
-0.sign       == 0;
-(1164).sign  == 1;
+      0.sign ==  0;
+   1164.sign ==  1;
 \end{urbiassert}
 
 \item[sin]
@@ -442,15 +452,13 @@ Float.pi.cos ** 2 + Float.pi.sin ** 2 == 1;
 \item[sqr]
   Square of the target.
 \begin{urbiassert}
-32.sqr == 1024;
-32.sqr == 32 ** 2;
+32.sqr == 1024 == 32 ** 2;
 \end{urbiassert}
 
 \item[sqrt]
   The square root of the target.
 \begin{urbiassert}
-1024.sqrt == 32;
-1024.sqrt == 1024 ** 0.5;
+1024.sqrt == 32 == 1024 ** 0.5;
 \end{urbiassert}
 
 \item[srandom]
@@ -492,8 +500,7 @@ assert(0.tan == 0);
 \item[trunc]
   Return the target truncated.
 \begin{urbiassert}
-1.9.trunc == 1;
-(-1.9).trunc == -1;
+1.9.trunc == 1;  (-1.9).trunc == -1;
 \end{urbiassert}
 
 \item['^'](<that>)%
@@ -513,9 +520,7 @@ assert(0.tan == 0);
   (\lstinline|<=|, \lstinline|>|, \ldots) can thus also be applied on floats
   since Float inherits \refObject{Orderable}.
 \begin{urbiassert}
-  0 < 1;
-!(1 < 0);
-!(0 < 0);
+  0 < 1;  !(1 < 0);  !(0 < 0);
 \end{urbiassert}
 
 \item['<<'](<that>)%
@@ -539,8 +544,7 @@ assert(0.tan == 0);
 \item['/'](<that>)%
   The quotient of \this divided by \var{that}.
 \begin{urbiassert}
-50 / 10 == 5;
-10 / 50 == 0.2;
+50 / 10 == 5;  10 / 50 == 0.2;
 \end{urbiassert}
 
 \item \lstinline|'%'(\var{that})|\\
@@ -556,20 +560,22 @@ assert(0.tan == 0);
 \end{urbiassert}
 
 \item['**'](<that>)%
-  \this to the \var{that} power (${this}^{that}$).
+  \this to the \var{that} power (${this}^{that}$).  The infix exponential
+  operator is right-associative (\autoref{sec:lang:op:arith}).
 \begin{urbiassert}
+ 2 ** 3 ** 2 == 2 ** (3 ** 2) != (2 ** 3) ** 2;
  2 ** 10 ==  1024;
  2 ** 31 ==  2_147_483_648;
--2 ** 31 == -2_147_483_648; // This is -(2**31).
+-2 ** 31 == -2_147_483_648 == -(2**31);
  2 ** 32 ==  4_294_967_296;
--2 ** 32 == -4_294_967_296; // This is -(2**32).
+-2 ** 32 == -4_294_967_296 == -(2**32);
 \end{urbiassert}
 
 \item['=='](<that>)%
   Whether \this equals \var{that}.
 \begin{urbiassert}
   1 == 1;
-!(1 == 2);
+!(1 == 2); !(2 == 1);
 \end{urbiassert}
 \end{urbiscriptapi}
 
