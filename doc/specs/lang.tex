@@ -919,7 +919,7 @@ on numeric values. See \autoref{tab:arith} and the listing below.
 \end{urbiassert}
 
 \subsubsection{Assignment operators}
-\label{sec:lang:iass}
+\label{sec:lang:op:ass}
 \dfn{Assignment} in \us can be performed with the \lstinline|=| operator.
 Assignment operators, such as \lstinline|+=|, are supported too, see
 \autoref{tab:assignment} and the examples below.
@@ -1092,13 +1092,13 @@ mc2;
 \end{multicols}
 
 \subsubsection{Increment/decrement Operators}
-\label{sec:lang:incdecop}
+\label{sec:lang:op:incdec}
 
 In the tradition of \C, \us provides pre- and postfix increment and
-decrement operators (\autoref{tab:incdecop}): \lstinline|++\var{a}| and
+decrement operators (\autoref{tab:op:incdec}): \lstinline|++\var{a}| and
 \lstinline|\var{a}++|.
 
-\begin{operatorTable}{tab:incdecop}{Pre-/postfix operators}
+\begin{operatorTable}{tab:op:incdec}{Pre-/postfix operators}
   \operatorinca\\\operatordeca\\\operatorainc\\\operatoradec
 \end{operatorTable}
 
@@ -1135,13 +1135,13 @@ former one.
 
 
 \subsubsection{Bitwise operators}
-\label{sec:lang:bitwise}
+\label{sec:lang:op:bitwise}
 
 \us features \dfn{bitwise operators}.  They are also used for other
-purpose than bit-related operations. See \autoref{tab:bitwise} and the
+purpose than bit-related operations. See \autoref{tab:op:bitwise} and the
 listing below.
 
-\begin{operatorTable}{tab:bitwise}{Bitwise operators}
+\begin{operatorTable}{tab:op:bitwise}{Bitwise operators}
   \operatorbcompl
   \\\hline
   \operatorlshift\\\operatorrshift
@@ -1201,7 +1201,7 @@ true || (1 / 0);
 \end{urbiassert}
 
 \subsubsection{Comparison operators}
-\label{sec:lang:operators:comparison}
+\label{sec:lang:op:comparison}
 
 \us supports classical \dfn{comparison operators}, plus a few of its
 own. See \autoref{tab:comparison} and the listing below.
@@ -1279,7 +1279,7 @@ v(1) == v(2) < v(3) < v(4) || v(10) < v(11) < v(12);
 \end{urbiscript}
 
 \subsubsection{Container operators}
-\label{sec:lang:operators:containers}
+\label{sec:lang:op:containers}
 
 These operators work on containers and their members. See
 \autoref{tab:operators:containers}.

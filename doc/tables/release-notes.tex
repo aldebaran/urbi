@@ -140,7 +140,7 @@ i.close;
 \end{urbiassert}
 
 \item Comparisons can be chained, with guaranties over the order and number
-  of evaluations of the operands (\autoref{sec:lang:operators:comparison}):
+  of evaluations of the operands (\autoref{sec:lang:op:comparison}):
 \begin{urbiscript}
 function v(x) { echo(x) | x }|;
 
@@ -155,7 +155,7 @@ v(1) == v(2) < v(3) < v(4) || v(10) < v(11) != v(12) <= v(13);
 \end{urbiscript}
 
 \item In addition to postfix increment/decrement operators, prefix operators
-  are supported and redefinable (\autoref{sec:lang:incdecop}).
+  are supported and redefinable (\autoref{sec:lang:op:incdec}).
 \begin{urbiassert}
 var x = 0;
 ++x == 1; x++ == 1; x == 2;
@@ -243,7 +243,7 @@ Logger.set("+Category*,-Category.Sub");
 \subsection{Documentation}
 \begin{itemize}
 \item Extended description of bitwise operators
-  (\autoref{sec:lang:bitwise}).
+  (\autoref{sec:lang:op:bitwise}).
 \item Extended description of \refObject{Event}.
 \item The logging categories used by \usdk
   (\autoref{sec:logger:categories}).
@@ -740,7 +740,7 @@ since \usdk 2.5.
   \option{-P}/\option{--port} were given), the interpreter is interactive.
 
 \item Assignment operators such as \lstinline|'+='| are redefinable.  See
-  \autoref{sec:lang:iass}.
+  \autoref{sec:lang:op:ass}.
 
 \item \refSlot[Date]{'-'} accepts a \refObject{Duration} or a
   \refObject{Float} in addition to accepting a \refObject{Date}.

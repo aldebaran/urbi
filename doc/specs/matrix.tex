@@ -537,7 +537,7 @@ Matrix.new([1, 2], [3, 4]) * 3 == Matrix.new([3, 6], [9, 12]);
 \end{urbiassert}
 
 \item['*='](<that>)%
-  In place (\autoref{sec:lang:iass}) product (\refSlot{'*'}).  The same
+  In place (\autoref{sec:lang:op:ass}) product (\refSlot{'*'}).  The same
   constraints apply.
 \begin{urbiassert}
 var lhs1 = Matrix.new([1, 2], [3, 4]);
@@ -579,7 +579,7 @@ Matrix.new([1, 2], [3, 4]) + 3 == Matrix.new([4, 5], [6, 7]);
 
 
 \item['+='](<that>)%
-  In place (\autoref{sec:lang:iass}) sum (\refSlot{'+'}).  The same
+  In place (\autoref{sec:lang:op:ass}) sum (\refSlot{'+'}).  The same
   constraints apply.
 \begin{urbiassert}
 var lhs1 = Matrix.new([ 1 , 2], [ 3,  4]);
@@ -622,7 +622,7 @@ Matrix.new([1, 2], [3, 4]) - 3 == Matrix.new([-2, -1], [0, 1]);
 
 
 \item['-='](<that>)%
-  In place (\autoref{sec:lang:iass}) difference (\refSlot{'-'}).  The same
+  In place (\autoref{sec:lang:op:ass}) difference (\refSlot{'-'}).  The same
   constraints apply.
 \begin{urbiassert}
 var lhs1 = Matrix.new([ 1 , 2], [ 3,  4]);
@@ -667,7 +667,7 @@ Matrix.new([3, 6], [9, 12]) / 3 == Matrix.new([1, 2], [3, 4]);
 
 
 \item['/='](<that>)%
-  In place (\autoref{sec:lang:iass}) division (\refSlot{'/'}).  The same
+  In place (\autoref{sec:lang:op:ass}) division (\refSlot{'/'}).  The same
   constraints apply.
 \begin{urbiassert}
 var lhs1 = Matrix.new([20, 0], [0, 200]);

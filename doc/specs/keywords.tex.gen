@@ -9,8 +9,8 @@ asm: Reserved
 assert: \autoref{sec:lang:assert}
 at: \autoref{sec:lang:at}
 auto: Reserved
-bitand: \autoref{sec:lang:bitwise}
-bitor: \autoref{sec:lang:bitwise}
+bitand: \autoref{sec:lang:op:bitwise}
+bitor: \autoref{sec:lang:op:bitwise}
 bool: Reserved
 break: \autoref{sec:lang:break}
 call: \autoref{sec:lang:rv}
@@ -19,7 +19,7 @@ catch: \autoref{sec:lang:catch}, \autoref{sec:lang:timeout}
 char: Reserved
 class: \autoref{sec:lang:class}
 closure:
-compl: \autoref{sec:lang:bitwise}
+compl: \autoref{sec:lang:op:bitwise}
 const: \autoref{sec:lang:prop:std}
 const_cast: Reserved
 continue: \autoref{sec:lang:continue}
