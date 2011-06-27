@@ -1,0 +1,6 @@
+#!/bin/sh
+
+set -x
+env
+cd "$DIR_BUILD"
+make installcheck-buildfarm DESTDIR="$DIR_INSTALL"

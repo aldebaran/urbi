@@ -1,0 +1,3 @@
+#!/bin/sh
+
+cd "$DIR_BUILD" && make -j ${JOBS}
