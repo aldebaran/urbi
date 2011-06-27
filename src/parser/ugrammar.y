@@ -537,8 +537,7 @@ stmt:
   {
     $$ = MAKE(external_var, @$, $obj, $slot, $id);
   }
-| "external" event_or_function[kind]
-             "(" "float"[arity] ")"
+| "external" event_or_function[kind] "(" unsigned[arity] ")"
              "identifier"[obj] "." "identifier"[slot]
              from "identifier"[id]
   {

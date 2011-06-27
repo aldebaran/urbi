@@ -626,7 +626,7 @@ namespace ast
   rExp
   Factory::make_external_event_or_function(const location& l,
                                            libport::Symbol kind,
-                                           float arity,
+                                           unsigned int arity,
                                            libport::Symbol obj,
                                            libport::Symbol slot,
                                            libport::Symbol id) /* const */

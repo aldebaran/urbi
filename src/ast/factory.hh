@@ -221,7 +221,7 @@ namespace ast
     rExp
     make_external_event_or_function(const location& loc,
                                     libport::Symbol kind,
-                                    float arity,
+                                    unsigned int arity,
                                     libport::Symbol obj,
                                     libport::Symbol slot,
                                     libport::Symbol id) /* const */;
