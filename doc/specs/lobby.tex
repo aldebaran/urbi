@@ -11,6 +11,18 @@
 A \dfn{lobby} is the local environment for each (remote or local)
 connection to an \urbi server.
 
+\subsection{Examples}
+
+Since every lobby is-a \refObject{Channel}, one can use the methods of
+Channel.
+
+\begin{urbiscript}
+lobby << 123;
+[00478679] 123
+lobby << "foo";
+[00478679] "foo"
+\end{urbiscript}
+
 \subsection{Prototypes}
 \begin{itemize}
 \item \refSlot[Channel]{topLevel}, an instance of \refObject{Channel}
@@ -38,18 +50,6 @@ Lobby.create;
 [00000174] Lobby_0x126450
 \end{urbiscript}
 
-
-\subsection{Examples}
-
-Since every lobby is-a \refObject{Channel}, one can use the methods of
-Channel.
-
-\begin{urbiscript}
-lobby << 123;
-[00478679] 123
-lobby << "foo";
-[00478679] "foo"
-\end{urbiscript}
 
 \subsection{Slots}
 \begin{urbiscriptapi}

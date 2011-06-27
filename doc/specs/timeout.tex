@@ -12,23 +12,6 @@ Timeout objects can be used as \refObject[s]{Tag} to execute some code in
 limited time.  See also the \lstinline|timeout| construct
 (\autoref{sec:lang:timeout}).
 
-\subsection{Prototypes}
-\begin{refObjects}
-\item[Tag]
-\end{refObjects}
-
-\subsection{Construction}
-At construction, a Timeout takes a duration, and a \refObject{Boolean}
-stating whether an exception should be thrown on timeout (by default,
-it does).
-
-\begin{urbiscript}
-Timeout.new(300ms);
-[00000000] Timeout_0x953c1e0
-Timeout.new(300ms, false);
-[00000000] Timeout_0x953c1e0
-\end{urbiscript}
-
 \subsection{Examples}
 
 Use it as a tag:
@@ -79,6 +62,23 @@ t:sleep(500ms);
 if (t.timedOut)
   echo("The Timeout expired.");
 [00000000] *** The Timeout expired.
+\end{urbiscript}
+
+\subsection{Prototypes}
+\begin{refObjects}
+\item[Tag]
+\end{refObjects}
+
+\subsection{Construction}
+At construction, a Timeout takes a duration, and a \refObject{Boolean}
+stating whether an exception should be thrown on timeout (by default,
+it does).
+
+\begin{urbiscript}
+Timeout.new(300ms);
+[00000000] Timeout_0x953c1e0
+Timeout.new(300ms, false);
+[00000000] Timeout_0x953c1e0
 \end{urbiscript}
 
 \subsection{Slots}
