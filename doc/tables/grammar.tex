@@ -1,0 +1,109 @@
+%% Copyright (C) 2011, Gostai S.A.S.
+%%
+%% This software is provided "as is" without warranty of any kind,
+%% either expressed or implied, including but not limited to the
+%% implied warranties of fitness for a particular purpose.
+%%
+%% See the LICENSE file for more information.
+
+\chapter{Grammar}
+\label{sec:grammar}
+
+This chapter is work-in-progress.  We intend to describe the grammar fully
+in the forthcoming releases.  Please, be patient!
+
+\begin{bnf}
+<class-statement>
+  ::= "class" <lvalue> (":" <prototypes>)? <block>
+
+<lvalue>
+  ::= (<expression> ".")* "identifier"
+
+<prototypes>
+  ::= (<expression> ",")* expression
+
+<block>
+  ::= "{" <statement>* "}"
+
+
+<arithmetic-expression>
+   ::= <unary-expression>
+     | <arithmetic-expression> <arithmetic-operator> <arithmetic-operator>
+<arithmetic-operator> ::= "+" | "-" | "*" | "/" | "%"
+
+
+<function-declaration>
+  ::= <closure-or-function> <compound-name> <formals>? <block>
+
+<function-expression>
+  ::= <closure-or-function> <formals>? <block>
+
+<closure-or-function> ::= "closure" | "function"
+
+<formals> ::= "(" (<formal> ("," <formal>)* ",")? ")"
+
+<formal> ::= "var"? <identifier> ("=" <expression>)?
+           | "var"? <identifier> "[" "]"
+
+
+<do-statement> ::= "do" "(" <expression ")" <block>
+
+
+<for-statement>
+   ::= "for" "(" <expression ")" <block>
+     | "for;" "(" <expression ")" <block>
+     | "for|" "(" <expression ")" <block>
+
+
+<statement-if>
+  ::= "if" "(" <statements> ")" <statement>
+    | "if" "(" <statements> ")" <statement> "else" <statement>
+
+
+<loop-statement>
+  ::= "loop" <statement>
+    | "loop;" <statement>
+    | "loop|" <statement>
+
+
+<try-statement>
+  ::= "try" "{" <statement>* "}" <catch-clause>+ <else-clause>? <finally-clause>?
+    | "try" "{" <statement>* "}" <finally-clause>
+
+<catch-clause>
+  ::= "catch" "(" <pattern> ")" "{" <statement>* "}"
+    | "catch" "{" <statement>* "}"
+
+<else-clause>
+  ::= "else" "{" <statement>* "}"
+
+<finally-clause>
+  ::= "finally" "{" <statement>* "}"
+
+
+<every-statement>
+  ::= "every"  "(" <expression> ")" <statement>
+    | "every|" "(" <expression> ")" <statement>
+    | "every," "(" <expression> ")" <statement>
+
+
+<timeout-statement>
+::= "timeout" "(" <float> ")" <statement> <catch-all-clause>? <else-clause>? <finally-clause>?
+
+<catch-all-clause>
+::= "catch" "{" <statement>* "}"
+
+<else-clause>
+::= "else" "{" <statement>* "}"
+
+<finally-clause>
+::= "finally" "{" <statement>* "}"
+\end{bnf}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "urbi-sdk"
+%%% ispell-dictionary: "american"
+%%% ispell-personal-dictionary: "../urbi.dict"
+%%% fill-column: 76
+%%% End:
