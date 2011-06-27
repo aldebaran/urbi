@@ -740,7 +740,7 @@ as a means to fire a set of tasks concurrently.
 
 
 \subsection{Operators}
-
+\label{sec:lang:op}
 \us supports many \dfn{operators}, most of which are inspired from
 \Cxx. Their syntax is presented here, and they are sorted and described with
 their original semantics --- that is, \lstinline|+| is an arithmetic
@@ -1510,19 +1510,36 @@ case references refer to the innermost variable, as shown below.
 \label{sec:lang:function}
 \dfn{Functions} in \us are first class citizens: a function is a value, like
 floats and strings, and can be handled as such.  This is different from most
-\C-like languages.  One can create a functional value thanks to the
-\lstindex{function} keyword, followed by the list of formal arguments and a
-compound statement representing the body of the function. Formal arguments
-are a possibly-empty comma-separated list of identifiers.  Non-empty lists
-of formal arguments may optionally end with a trailing comma. The listing
-below illustrates this.
+\C-like languages.  The syntax to declare named or \dfn{anonymous functions}
+is a follows:
+
+\begin{bnf}
+<function-declaration>
+  ::= <closure-or-function> <compound-name> <formals>? <block>
+
+<function-expression>
+  ::= <closure-or-function> <formals>? <block>
+
+<closure-or-function> ::= "closure" | "function"
+
+<formals> ::= "(" (<formal> ("," <formal>)* ",")? ")"
+
+<formal> ::= "var"? <identifier> ("=" <expression>)?
+           | "var"? <identifier> "[" "]"
+\end{bnf}
+
+In words: One can create an anonymous function thanks to the
+\lstindex{function} keyword (or \lstindex{closure}, see
+\autoref{sec:us-fun-closures}), followed by the list of formal arguments and
+a block representing the body of the function.  Formal arguments are a
+possibly-empty comma-separated list of identifiers.  Non-empty lists of
+formal arguments may optionally end with a trailing comma. The listing below
+illustrates this.
 
 \begin{urbiscript}
-function () { echo(0) };
-[00000000] function () { echo(0) }
+function () { echo(0) }|;
 
-function (arg1, arg2) { echo(0) };
-[00000000] function (var arg1, var arg2) { echo(0) }
+function (arg1, arg2) { echo(0) }|;
 
 function (
            arg1, // Ignored argument.
@@ -1530,39 +1547,30 @@ function (
           )
 {
   echo(0)
-};
-[00000000] function (var arg1, var arg2) { echo(0) }
+}|;
 \end{urbiscript}
 
-Usually functions are bound to an identifier to be invoked later.  The
-listing below shows a short-hand to define a named function.
+Declaring a named function is actually strictly equivalent to binding a
+variable to the corresponding anonymous function:
 
 \begin{urbiscript}
 // Functions are often stored in variables to call them later.
-var f1 = function () {
-  echo("hello")
-}|
-f1();
-[00000000] *** hello
+const var f1 = function () { "hello" }|
 
 // This form is strictly equivalent, yet simpler.
-function f2()
-{
-  echo("hello")
-}|
-f2();
-[00000000] *** hello
+function f2() { "hello" }|
+
+assert (f1() == f2());
 \end{urbiscript}
 
 
 \subsection{Arguments}
 
-The list of formal arguments defines the number of argument the
-function requires. They are accessible by their name from within the
-body. If the list of formal arguments is omitted, the number of
-effective arguments is not checked, and arguments themselves are not
-evaluated. Arguments can then be manipulated with the call message,
-explained below.
+The list of formal arguments defines the number of argument the function
+requires. They are accessible by their name from within the body. If the
+list of formal arguments is omitted, the number of effective arguments is
+not checked, and arguments themselves are not evaluated. Arguments can then
+be manipulated with the call message, explained below.
 
 \begin{urbiscript}
 var f = function(a, b) {
@@ -1703,53 +1711,85 @@ first3({echo("Arg1"); 1},
 [00000000] *** 2
 \end{urbiscript}
 
-\subsection{Lexical closures}
+\subsection{Closures}
 \label{sec:us-fun-closures}
 
-\dfn{Lexical closures} are an additional scoping rule, with which a function
-can refer to a local variable located outside the function --- but still
-in the current context. \us supports read/write lexical closures,
-meaning that the variable is shared between the function and the outer
-environment, as shown below.
+\us features \dfn{closures} (sometimes referred to as \dfn{lexical
+  closures}, or \dfn{function closures}): function bodies can use non-local
+variables whose scope might even have be closed.
 
+There is nothing surprising at first sight in the following piece of code:
 \begin{urbiscript}
 var n = 0|
 function cl()
 {
-  // x refers to a variable outside the function
-  n++;
-  echo(n);
-}|
-cl();
-[00000000] *** 1
-n;
-[00000000] 1
-n++;
-[00000000] 1
-cl();
-[00000000] *** 3
+  // n refers to a variable outside the function.
+  ++n;
+}|;
+assert
+{
+  cl() == 1;
+     n == 1;
+   ++n == 2;
+  cl() == 3;
+};
 \end{urbiscript}
 
-The following listing illustrates that local variables can even escape their
-declaration scope by lexical closure.
+\noindent
+Actually, even \C supports this, with \lstinline|n| being in simple global
+variable.  But actually the \lstinline|cl| function has \dfn{captured} an
+access to \lstinline|n|, which will even survive the destruction of its
+enclosing scope:
 
 \begin{urbiscript}
-function wrapper()
 {
-  // Normally, x is local to 'wrapper', and is limited to this scope.
-  var x = 0;
-  at (x > 1)
-    echo("ping");
-  // Here we make it escape the scope by returning a closure on it.
-  return function() { x++ };
-} |
+  var local = 0;
+  function Global.getLocal() { local };
+  function Global.setLocal(var x) { local = x };
+}|;
+assert
+{
+  getLocal == 0;
+  setLocal(42);
+  getLocal == 42;
+};
+\end{urbiscript}
 
-var w = wrapper()|
-w();
-[00000000] 0
-w();
-[00000000] 1
-[00000000] *** ping
+As demonstrated, \us supports read/write closures, which provides true
+sharing between the function and the outer environment.
+
+
+It is sometimes needed to also capture the current value of \this (and
+actually, of the current \refObject{Lobby}).  In some languages, this is
+called a \dfn{delegate}, in \us use \lstindex{closure} instead of
+\lstinline|function|.  Contrast the following two runs which differ only by
+\lstinline|function| vs. \lstinline|closure|.
+
+\begin{urbiscript}
+{
+  var x = 0;
+  class Global.Foo
+  {
+    function fun () { (++x, lobby, type) };
+    closure  clo () { (++x, lobby, type) };
+  };
+}|;
+var aLobby = Lobby.create|;
+var aLobby.name = "A Fresh Lobby"|;
+lobby.name = "The main Lobby"|;
+
+var Global.fun = Foo.&fun|;
+var Global.clo = Foo.&clo|;
+
+// A "function" invoked in the context of a different lobby and a different
+// this refers to the "new" lobby and "this":
+aLobby.receive("Global.fun;");
+[00000012] (1, Lobby<A Fresh Lobby>, "Global")
+
+// A "closure" invoked in the context of a different lobby and a different
+// this refers to the "original" lobby and "this":
+aLobby.receive("Global.clo;");
+[00000014] (2, Lobby<The main Lobby>, "Foo")
 \end{urbiscript}
 
 
