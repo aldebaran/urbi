@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set -xe
+env
+
+DIR_STAGE="$(dirname "$DIR_INSTALL")/stage"
+
+cd "$DIR_BUILD"
+rm -rf "$DIR_INSTALL" "$DIR_STAGE"
+mkdir -p "$DIR_STAGE"
+make install DESTDIR="$DIR_STAGE"
+make relocatable DESTDIR="$DIR_STAGE"
+mv "$DIR_STAGE" "$DIR_INSTALL"
