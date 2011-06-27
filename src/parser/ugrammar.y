@@ -960,12 +960,12 @@ primary-exp:
 
 %type <ast::rLValue> lvalue;
 lvalue:
-                id   { $$ = MAKE(call, @$, $1); }
+                  id   { $$ = MAKE(call, @$, $1); }
 | primary-exp "." id   { $$ = MAKE(call, @$, $1, $3); }
 ;
 
 primary-exp:
-              "&" id   { $$ = MAKE(get_slot, @$, $2); }
+                  "&" id   { $$ = MAKE(get_slot, @$, $2); }
 | primary-exp "." "&" id   { $$ = MAKE(get_slot, @$, $1, $4); }
 ;
 
@@ -1041,8 +1041,8 @@ primary-exp:
         ANGLE     "angle"
         DURATION  "duration"
         FLOAT     "float";
-%type <ast::rExp> exp_float;
-exp_float:
+%type <ast::rExp> float-exp;
+float-exp:
   "float"  { $$ = MAKE(float, @$, $1); }
 ;
 
@@ -1118,7 +1118,7 @@ tuple:
 `-----------*/
 
 literal-exp:
-  exp_float      { std::swap($$, $1);  }
+  float-exp      { std::swap($$, $1);  }
 | "angle"        { $$ = MAKE(float, @$, $1);  }
 | duration       { $$ = MAKE(float, @$, $1);  }
 | string         { $$ = MAKE(string, @$, $1); }
