@@ -46,9 +46,9 @@ o2.close;
 \subsection{Slots}
 
 \begin{urbiscriptapi}
-\item[<<](<that>)%
-  Output \lstinline|\var{this}.asString|.  Return \this to
-  enable chains of calls.  Raise an error if the file is closed.
+\item['<<'](<that>)%
+  Output \lstinline|\var{this}.asString|.  Return \this to enable chains of
+  calls.  Raise an error if the file is closed.
 \begin{urbiscript}
 var o = OutputStream.new(File.create("fresh.txt"))|;
 o << 1 << "2" << [3, [4]]|;

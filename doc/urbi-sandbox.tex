@@ -91,8 +91,10 @@ Inside Job 0x6a2f70
 <foo>
   ::= "(" "*" ")"
 
-<prototypes>>
+<prototypes>
   ::= (<expression> ",")* expression
+
+<closure-or-function> ::= "closure" | "function"
 
 <block>
   ::= "{" <statement>* "}"
@@ -210,18 +212,6 @@ This is the second chapter.
 \item \lstinline|launch|~\\
   Fire \this.
 \end{urbiscriptapi}
-
-
-\renewcommand{\baselinestretch}{.85}
-\begin{table}[\floatpos]
-  \centering
-    \input{specs/keywords}
-  \caption{Keywords}
-  \label{tab:keywords}
-\end{table}
-\renewcommand{\baselinestretch}{1}
-
-
 
 \let\sectionOrig\section
 \renewcommand{\section}[1]{\clearpage\sectionObject{#1}}

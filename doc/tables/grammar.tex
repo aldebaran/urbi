@@ -20,7 +20,7 @@ in the forthcoming releases.  Please, be patient!
   ::= (<expression> ".")* "identifier"
 
 <prototypes>
-  ::= (<expression> ",")* expression
+  ::= (<expression> ",")* <expression>
 
 <block>
   ::= "{" <statement>* "}"
@@ -50,9 +50,9 @@ in the forthcoming releases.  Please, be patient!
 
 
 <for-statement>
-   ::= "for" "(" <expression ")" <block>
-     | "for;" "(" <expression ")" <block>
-     | "for|" "(" <expression ")" <block>
+   ::= "for" "(" <expression> ")" <block>
+     | "for;" "(" <expression> ")" <block>
+     | "for|" "(" <expression> ")" <block>
 
 
 <statement-if>

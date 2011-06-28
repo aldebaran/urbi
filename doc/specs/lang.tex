@@ -530,7 +530,7 @@ Objects meant to serve as prototypes are best defined using the
   ::= (<expression> ".")* "identifier"
 
 <prototypes>
-  ::= (<expression> ",")* expression
+  ::= (<expression> ",")* <expression>
 
 <block>
   ::= "{" <statement>* "}"
@@ -2665,9 +2665,9 @@ not available within the body, \lstinline|for (n)| is equivalent to
 
 \begin{bnf}
 <for-statement>
-   ::= "for" "(" <expression ")" <block>
-     | "for;" "(" <expression ")" <block>
-     | "for|" "(" <expression ")" <block>
+   ::= "for" "(" <expression> ")" <block>
+     | "for;" "(" <expression> ")" <block>
+     | "for|" "(" <expression> ")" <block>
 \end{bnf}
 
 The loop evaluates to \lstinline|void|.
