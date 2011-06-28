@@ -53,6 +53,31 @@
     {\urbiscriptPre}
 \fi
 
+% \grammar{RANGE}
+% ---------------
+% For instance
+%
+%   \grammar{arithmetic-exp}
+%   \grammar{class-exp, lvalue-end, block-exp}
+%   \grammar{}
+%
+% Beware that the RANGE items must be in order in the file: the file is
+% *not* read several times.
+%
+% It may seem that having a rangesuffix is useless, but actually without
+% it markups such as "catch" and "catchall" both match "catch".  Luckily,
+% we can use \^^M which, in TeX parlance, means end-of-line.
+\newcommand{\grammar}[1]{%
+  \marginNotation{sec:notations:bnf}{Grammar\\Excerpt}%
+  \lstinputlisting[style=UrbiSDKEnv,
+  language={},
+  backgroundcolor=\color{bnf},
+  alsolanguage=bnf,
+  morecomment={[is]{\#:}{\^^M}},
+  includerangemarker=false,
+  rangeprefix={\#:},rangesuffix={\^^M},
+  linerange={#1}]{tables/urbiscript.bnf}
+}
 
 %% ---------- %%
 %% Document.  %%

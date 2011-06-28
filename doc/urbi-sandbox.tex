@@ -81,39 +81,6 @@ Inside Job 0x6a2f70
 (gdb) #% comment
 \end{verbatim}
 
-\begin{bnf}
-<class-statement>
-  ::= "class" <lvalue> (: <prototypes>)? <block>
-
-<lvalue>
-  ::= (<expression> ".")* "identifier"
-
-<foo>
-  ::= "(" "*" ")"
-
-<prototypes>
-  ::= (<expression> ",")* expression
-
-<closure-or-function> ::= "closure" | "function"
-
-<block>
-  ::= "{" <statement>* "}"
-\end{bnf}
-
-Another example.
-
-\begin{shell}[style=varInString]
-$ export PATH="something:\var{urbi-root}/bin:$PATH"
-$ test/then
-\end{shell}%$
-
-\begin{urbiunchecked}[style=varInString]
-"for \var{foo}" * (1+2);
-[00048238] wrong
-\end{urbiunchecked}
-
-Last example.
-
 \begin{urbiassert}
 1+2 == 3;
 \end{urbiassert}

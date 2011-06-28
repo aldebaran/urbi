@@ -143,11 +143,11 @@ if ENABLE_DOC_HTML
 endif
 
 CLEANFILES += $(pdf_DATA)
-urbi_sdk_tex = $(call ls_files,*.tex)
+urbi_sdk_tex := $(call ls_files,*.tex)
 urbi_sdk_sources =				\
   $(urbi_sdk_tex)				\
   specs/keywords.tex				\
-  $(call ls_files,*.sty tables/*.txt)
+  $(call ls_files,*.sty tables/*.txt tables/*.bnf)
 CLEANFILES += config.sty
 
 
@@ -264,7 +264,7 @@ latex_subsections =							\
        -e  'END { print "$$_:$$secs{$$_}\n" foreach sort keys %secs; }'
 # This is not spell-checking, but that's easier for the BF.
 .PHONY spell-check: style-check
-style-check: $(urbi_sdk_sources)
+style-check: $(urbi_sdk_tex)
 ## Use the {verbatim} environment, not {lstlisting}.
 	$(AM_V_GEN) ! grep '{lstlisting}' $^
 ## Never indent verbatim environments, it leaves empty lines.

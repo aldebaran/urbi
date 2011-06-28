@@ -1,0 +1,124 @@
+#:class
+<class-expression>
+  ::= "class" <lvalue> (":" <prototypes>)? <block>
+
+<prototypes>
+  ::= (<expression> ",")* <expression>
+#:exp
+
+#:lvalue
+<lvalue>
+  ::= (<expression> ".")* "identifier"
+#:end
+
+#:block
+<block>
+  ::= "{" <statement>* "}"
+#:exp
+
+#:arithmetic
+<arithmetic-expression>
+   ::= <unary-expression>
+     | <arithmetic-expression> <arithmetic-operator> <arithmetic-operator>
+<arithmetic-operator>
+   ::= "+" | "-" | "*" | "/" | "%"
+#:exp
+
+#:comparison
+<comparison-expression>
+   ::= <arithmetic-expression> (<comparison-operator> <arithmetic-expression>)*
+<comparison-operator>
+   ::= "!=" | "!==" | "<" | "<=" | "==" | "===" | "=~=" | ">" | ">=" | "~="
+#:exp
+
+#:assign
+<assign-expression>
+   ::= <expression> "=" <expression> <modifiers>?
+     | <lvalue> <inplace-operator> <expression>
+<inplace-operator>
+   ::= "+=" | "-=" | "*=" | "/=" | "^=" | "%="
+#:exp
+
+#:function
+<function-declaration>
+  ::= <closure-or-function> <compound-name> <formals>? <block>
+
+<function-expression>
+  ::= <closure-or-function> <formals>? <block>
+
+<closure-or-function>
+  ::= "closure" | "function"
+
+<formals>
+  ::= "(" (<formal> ("," <formal>)* ","?)? ")"
+
+<formal>
+  ::= "var"? <identifier> ("=" <expression>)?
+    | "var"? <identifier> "[" "]"
+
+<return-statement>
+  ::= "return" <expression>?
+#:end
+
+#:do
+<do-statement>
+  ::= "do" "(" <expression ")" <block>
+#:stm
+
+#:forn
+<for-statement>
+   ::= "for" "(" <expression> ")" <block>
+     | "for;" "(" <expression> ")" <block>
+     | "for|" "(" <expression> ")" <block>
+#:stm
+
+#:if
+<if-statement>
+  ::= "if" "(" <statements> ")" <statement> <else-clause>?
+#:stm
+
+#:loop
+<loop-statement>
+  ::= "loop" <statement>
+    | "loop;" <statement>
+    | "loop|" <statement>
+#:end
+
+#:timeout
+<timeout-statement>
+  ::= "timeout" "(" <float> ")" <statement>
+      <catch-all-clause>? <else-clause>? <finally-clause>?
+#:stm
+
+#:try
+<try-statement>
+  ::= "try" "{" <statement>* "}" <catch-clause>+ <else-clause>? <finally-clause>?
+    | "try" "{" <statement>* "}" <finally-clause>
+#:stm
+
+#:catch
+<catch-clause>
+  ::= "catch" "(" <pattern> ")" <block>
+    | <catch-all-clause>
+
+#:catchall
+<catch-all-clause>
+  ::= "catch" <block>
+#:clause
+
+#:else
+<else-clause>
+  ::= "else" <statement>
+#:clause
+
+#:finally
+<finally-clause>
+  ::= "finally" <block>
+#:clause
+
+#:every
+<every-statement>
+  ::= "every"  "(" <expression> ")" <statement>
+    | "every|" "(" <expression> ")" <statement>
+    | "every," "(" <expression> ")" <statement>
+#:stm
