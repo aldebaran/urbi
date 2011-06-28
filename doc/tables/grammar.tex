@@ -55,10 +55,8 @@ in the forthcoming releases.  Please, be patient!
      | "for|" "(" <expression> ")" <block>
 
 
-<statement-if>
-  ::= "if" "(" <statements> ")" <statement>
-    | "if" "(" <statements> ")" <statement> "else" <statement>
-
+<if-statement>
+  ::= "if" "(" <statements> ")" <statement> <else-clause>?
 
 <loop-statement>
   ::= "loop" <statement>
@@ -71,14 +69,14 @@ in the forthcoming releases.  Please, be patient!
     | "try" "{" <statement>* "}" <finally-clause>
 
 <catch-clause>
-  ::= "catch" "(" <pattern> ")" "{" <statement>* "}"
-    | "catch" "{" <statement>* "}"
+  ::= "catch" "(" <pattern> ")" <block>
+    | "catch" <block>
 
 <else-clause>
-  ::= "else" "{" <statement>* "}"
+  ::= "else" <statement>
 
 <finally-clause>
-  ::= "finally" "{" <statement>* "}"
+  ::= "finally" <block>
 
 
 <every-statement>
@@ -91,13 +89,7 @@ in the forthcoming releases.  Please, be patient!
 ::= "timeout" "(" <float> ")" <statement> <catch-all-clause>? <else-clause>? <finally-clause>?
 
 <catch-all-clause>
-::= "catch" "{" <statement>* "}"
-
-<else-clause>
-::= "else" "{" <statement>* "}"
-
-<finally-clause>
-::= "finally" "{" <statement>* "}"
+  ::= "catch" <block>
 \end{bnf}
 
 %%% Local Variables:

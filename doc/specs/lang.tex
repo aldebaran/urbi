@@ -1526,6 +1526,8 @@ is a follows:
 
 <formal> ::= "var"? <identifier> ("=" <expression>)?
            | "var"? <identifier> "[" "]"
+
+<block> ::= "{" <statement>* "}"
 \end{bnf}
 
 In words: One can create an anonymous function thanks to the
@@ -2699,9 +2701,8 @@ As in most programming languages, conditionals are expressed with
 \lstindex{if}.
 
 \begin{bnf}
-<statement-if>
-  ::= "if" "(" <statements> ")" <statement>
-    | "if" "(" <statements> ")" <statement> "else" <statement>
+<if-statement>
+  ::= "if" "(" <statements> ")" <statement> <else-clause>?
 \end{bnf}
 
 First the condition (\var{statements}) is evaluated; if it evaluates to a
@@ -3007,18 +3008,21 @@ Exceptions are \dfn[exception!catching]{caught} with the
 
 \begin{bnf}
 <try-statement>
-  ::= "try" "{" <statement>* "}" <catch-clause>+ <else-clause>? <finally-clause>?
-    | "try" "{" <statement>* "}" <finally-clause>
+  ::= "try" <block> <catch-clause>+ <else-clause>? <finally-clause>?
+    | "try" <block> <finally-clause>
 
 <catch-clause>
-  ::= "catch" "(" <pattern> ")" "{" <statement>* "}"
-    | "catch" "{" <statement>* "}"
+  ::= "catch" "(" <pattern> ")" <block>
+    | "catch" <block>
 
 <else-clause>
-  ::= "else" "{" <statement>* "}"
+  ::= "else" <block>
 
 <finally-clause>
-  ::= "finally" "{" <statement>* "}"
+  ::= "finally" <block>
+
+<block>
+  ::= "{" <statement>* "}"
 \end{bnf}
 
 It consists of a first block of statements (the \dfn{try-block}), from which
@@ -3710,14 +3714,13 @@ took too long to run.  Its syntax is based on the
 <timeout-statement>
 ::= "timeout" "(" <float> ")" <statement> <catch-all-clause>? <else-clause>? <finally-clause>?
 
-<catch-all-clause>
-::= "catch" "{" <statement>* "}"
+<catch-all-clause> ::= "catch" <block>
 
-<else-clause>
-::= "else" "{" <statement>* "}"
+<else-clause>  ::= "else" <statement>
 
-<finally-clause>
-::= "finally" "{" <statement>* "}"
+<finally-clause> ::= "finally" <block>
+
+<block> ::= "{" <statement>* "}"
 \end{bnf}
 
 If the statement finishes its expiration before \var{duration} expires, then
