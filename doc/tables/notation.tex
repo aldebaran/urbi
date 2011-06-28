@@ -15,7 +15,19 @@ document.
 \section{Words}
 
 \begin{itemize}
-\item \var{name}\\
+\item \textkwd{keyword}\\
+  A keyword in some programming language.  For instance, \lstinline|watch|
+  is an \us keyword.
+
+\item \textcmt{comment}\\
+  A comment in some programming language.  For instance,
+  \lstinline|/* hello /* world */ ! */| is a comment in \us.
+
+\item \textstr{string}\\
+  A string in some programming language.  For instance,
+  \lstinline|"Hello, world!"| is a string in \us.
+
+\item \var{meta-variable}\\
   Depending on the context, a \dfn{variable} name (i.e., an identifier
   in \Cxx or \us), or a \dfn{meta-variable} name.  A meta-variable
   denotes a place where some syntactic construct may be entered.  For
@@ -26,11 +38,11 @@ document.
 
   \lstinline|while (!tasks.empty) { tasks.removeFront.process }|.
 
-\item \env{name}\\
+\item \env{environment-variable}\\
   An environment variable name, e.g., \env{PATH}.
 \item \lstinline|code|\\
   A piece of \us or \Cxx code.
-\item \file{name}\\
+\item \file{file-name}\\
   A file name.
 \end{itemize}
 
