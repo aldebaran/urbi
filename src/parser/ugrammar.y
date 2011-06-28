@@ -386,14 +386,6 @@ cstmt:
 ;
 
 
-/*--------------.
-| tagged stmt.  |
-`--------------*/
-
-%type <ast::rExp> tag;
-tag:
-  exp { std::swap($$, $1); }
-;
 
 // stmt: cannot be empty.
 // stmt.opt: stmt?
@@ -411,9 +403,8 @@ stmt.opt:
 ;
 
 
-
 stmt:
-  tag ":" stmt
+  exp ":" stmt
   {
     $$ = new ast::TaggedStmt(@$, $1, MAKE(scope, @$, $3));
   }
