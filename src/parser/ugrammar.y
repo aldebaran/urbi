@@ -90,14 +90,6 @@
   namespace
   {
 
-    inline ast::rNoop
-    make_implicit(parser::ParserImpl& up, const ast::loc& loc)
-    {
-      up.warn(loc,
-              "implicit empty instruction.  Use '{}' to make it explicit.");
-      return MAKE(noop, loc);
-    }
-
     static void
     modifiers_add(parser::ParserImpl& up, const ast::loc& loc,
                   ast::modifiers_type& mods,
@@ -389,14 +381,8 @@ cstmt:
 
 // stmt: cannot be empty.
 // stmt.opt: stmt?
-// nstmt: stmt? but with a warning on empty stmt.
 // non-empty-statement: A statement that triggers a warning if empty.
-%type <ast::rExp> nstmt stmt.opt;
-nstmt:
-  /* empty */   %prec CMDBLOCK  { $$ = make_implicit(up, @$); }
-| stmt                          { std::swap($$, $1); }
-;
-
+%type <ast::rExp> stmt.opt;
 stmt.opt:
   /* empty */   %prec CMDBLOCK  { $$ = MAKE(noop, @$); }
 | stmt                          { std::swap($$, $1); }
@@ -700,27 +686,27 @@ primary-exp:
 `---------------------*/
 
 stmt:
-  "at" identifiers "(" exp tilda.opt ")" nstmt onleave.opt
+  "at" identifiers "(" exp tilda.opt ")" stmt onleave.opt
     {
       $$ = MAKE(at, @$, @1, $1, $2, $4, $7, $8, $5);
     }
-| "at" identifiers "(" event_match ")" nstmt onleave.opt
+| "at" identifiers "(" event_match ")" stmt onleave.opt
     {
       $$ = MAKE(at_event, @$, @1, $1, $2, $4, $6, $7);
     }
-| "every" "(" exp ")" nstmt
+| "every" "(" exp ")" stmt
     {
       $$ = MAKE(every, @$, @1, $1, $3, $5);
     }
-| "if" "(" stmts ")" nstmt else.opt
+| "if" "(" stmts ")" stmt else.opt
     {
       $$ = MAKE(if, @$, $3, $5, $6);
     }
-| "freezeif" "(" exp ")" nstmt
+| "freezeif" "(" exp ")" stmt
     {
       $$ = MAKE(freezeif, @$, $3, $5);
     }
-| "stopif" "(" exp ")" nstmt
+| "stopif" "(" exp ")" stmt
     {
       $$ = MAKE(stopif, @$, $3, $5);
     }
@@ -728,7 +714,7 @@ stmt:
     {
       $$ = MAKE(switch, @3, $3, $6, $7);
     }
-| "timeout" "(" exp ")" nstmt[body] catch.opt else.opt finally.opt
+| "timeout" "(" exp ")" stmt[body] catch.opt else.opt finally.opt
     {
       $$ = MAKE(timeout, @$,
                 $exp, $body, $[catch.opt], $[else.opt], $[finally.opt]);
@@ -753,11 +739,11 @@ stmt:
     {
       $$ = MAKE(waituntil_event, @$, $3);
     }
-| "whenever" "(" exp tilda.opt ")" nstmt else.opt
+| "whenever" "(" exp tilda.opt ")" stmt else.opt
     {
       $$ = MAKE(whenever, @$, $3, $6, $7, $4);
     }
-| "whenever" "(" event_match ")" nstmt else.opt
+| "whenever" "(" event_match ")" stmt else.opt
     {
       $$ = MAKE(whenever_event, @$, $3, $5, $6);
     }
@@ -780,15 +766,15 @@ default.opt:
 
 %type <ast::rExp> else.opt;
 else.opt:
-  /* empty */ %prec CMDBLOCK   { $$ = 0;            }
-| "else" nstmt                 { std::swap($$, $2); }
+  /* empty */ %prec CMDBLOCK  { $$ = 0;            }
+| "else" stmt                 { std::swap($$, $2); }
 ;
 
 // An optional onleave clause.
 %type <ast::rExp> onleave.opt;
 onleave.opt:
-  /* empty */ %prec CMDBLOCK   { $$ = 0;            }
-| "onleave" nstmt              { std::swap($$, $2); }
+  /* empty */ %prec CMDBLOCK  { $$ = 0;            }
+| "onleave" stmt              { std::swap($$, $2); }
 ;
 
 /*--------.
@@ -885,26 +871,25 @@ stmt:
  *
  *  i.e. execute "42"  forever, with 42 being parenthesized.
  */
-  "loop" nstmt %prec CMDBLOCK
+  "loop" stmt
     {
       $$ = MAKE(loop, @$, @1, $1, $2);
     }
-| "for" "(" exp ")" nstmt %prec CMDBLOCK
+| "for" "(" exp ")" stmt
     {
       $$ = MAKE(for, @$, @1, $1, $3, $5);
     }
-| "for" "(" stmt.opt[init] ";" exp[cond] ";" stmt.opt[inc] ")" nstmt[body]
-  %prec CMDBLOCK
+| "for" "(" stmt.opt[init] ";" exp[cond] ";" stmt.opt[inc] ")" stmt[body]
     {
       $$ = MAKE(for, @$, @1, $1, $init, $cond, $inc, $body);
     }
-| "for" "(" "var" "identifier"[id] in_or_colon exp ")" nstmt %prec CMDBLOCK
+| "for" "(" "var" "identifier"[id] in_or_colon exp ")" stmt[body]
     {
-      $$ = MAKE(for, @$, @1, $1, @id, $id, $exp, $nstmt);
+      $$ = MAKE(for, @$, @1, $1, @id, $id, $exp, $body);
     }
-| "while" "(" exp ")" nstmt %prec CMDBLOCK
+| "while" "(" exp ")" stmt[body]
     {
-      $$ = MAKE(while, @$, @1, $1, $exp, $nstmt);
+      $$ = MAKE(while, @$, @1, $1, $exp, $body);
     }
 ;
 
