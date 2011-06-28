@@ -278,7 +278,7 @@
 %precedence "," ";"
 %left "|"
 %left "&"
-%precedence CMDBLOCK
+%precedence EMPTY
 %precedence "catch" "else" "onleave" "finally"
 
 %right "=" "+=" "-=" "*=" "/=" "^=" "%="
@@ -384,8 +384,8 @@ cstmt:
 // non-empty-statement: A statement that triggers a warning if empty.
 %type <ast::rExp> stmt.opt;
 stmt.opt:
-  /* empty */   %prec CMDBLOCK  { $$ = MAKE(noop, @$); }
-| stmt                          { std::swap($$, $1); }
+  /* empty */   %prec EMPTY  { $$ = MAKE(noop, @$); }
+| stmt                       { std::swap($$, $1); }
 ;
 
 
@@ -755,26 +755,26 @@ stmt:
 | Optional default/else/onleave clauses.  |
 `----------------------------------------*/
 
-// CMDBLOCK < "else", "finally", and "onleave" to promote shift in
+// EMPTY < "else", "finally", and "onleave" to promote shift in
 // else.opt, finally.opt and onleave.opt.
 
 %type <ast::rNary> default.opt;
 default.opt:
-  /* empty */ %prec CMDBLOCK   { $$ = 0;            }
-|  "default" ":" stmts         { std::swap($$, $3); }
+  /* empty */ %prec EMPTY   { $$ = 0;            }
+|  "default" ":" stmts      { std::swap($$, $3); }
 ;
 
 %type <ast::rExp> else.opt;
 else.opt:
-  /* empty */ %prec CMDBLOCK  { $$ = 0;            }
-| "else" stmt                 { std::swap($$, $2); }
+  /* empty */ %prec EMPTY  { $$ = 0;            }
+| "else" stmt              { std::swap($$, $2); }
 ;
 
 // An optional onleave clause.
 %type <ast::rExp> onleave.opt;
 onleave.opt:
-  /* empty */ %prec CMDBLOCK  { $$ = 0;            }
-| "onleave" stmt              { std::swap($$, $2); }
+  /* empty */ %prec EMPTY  { $$ = 0;            }
+| "onleave" stmt           { std::swap($$, $2); }
 ;
 
 /*--------.
@@ -822,15 +822,15 @@ catch:
 // BEWARE: return the body of the clause, not a Catch AST node.
 %type <ast::rExp> catch.opt;
 catch.opt:
-  /* empty */ %prec CMDBLOCK  { $$ = 0; }
-| "catch" block               { $$ = $block; }
+  /* empty */ %prec EMPTY  { $$ = 0; }
+| "catch" block            { $$ = $block; }
 ;
 
 
 %type <ast::rExp> finally.opt;
 finally.opt:
-  /* empty */ %prec CMDBLOCK  { $$ = 0;  }
-| "finally" block             { $$ = $2; }
+  /* empty */ %prec EMPTY  { $$ = 0;  }
+| "finally" block          { $$ = $2; }
 ;
 
 stmt:
@@ -1290,8 +1290,8 @@ exp:
 ;
 
 exp.opt:
-  /* empty */  %prec CMDBLOCK   { $$ = 0; }
-| exp                           { std::swap($$, $1); }
+  /* empty */  %prec EMPTY   { $$ = 0; }
+| exp                        { std::swap($$, $1); }
 ;
 
 
