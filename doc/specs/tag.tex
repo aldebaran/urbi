@@ -487,14 +487,14 @@ var t2 = Tag.new("cool name");
   specified, let stopped code return \var{result} as value.
   See \autoref{sec:specs:tag:stop}.
 
-\item[tags] All the undeclared tags are created as slots in this
-  object.  Using this feature is discouraged.
+\item[tags] All the undeclared tags are created as slots in \this object as
+  child Tag of this object.  Using this feature is discouraged.
 \begin{urbiscript}
 {
-  assert ("brandNewTag" not in Tag.tags.localSlotNames);
+  assert ("brandNewTag" not in this.localSlotNames);
   brandNewTag: 1;
-  assert ("brandNewTag" in Tag.tags.localSlotNames);
-  assert (Tag.tags.brandNewTag.isA(Tag));
+  assert ("brandNewTag" in this.localSlotNames);
+  assert (this.brandNewTag.isA(Tag));
 };
 \end{urbiscript}
 
