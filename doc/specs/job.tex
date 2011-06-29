@@ -133,6 +133,9 @@ detach(sleep(10)).name;
 [00004297] "shell_5"
 \end{urbiscript}
 
+\item[resetStats]%
+  Reinitialize the \refSlot{stats} computation.
+
 \item[setSideEffectFree](<value>)
   If value is true, mark the current job as side-effect free. It indicates
   whether the current state may influence other parts of the system. This is
@@ -146,6 +149,49 @@ var t = detach(sleep(10));
 currentRunner.status == "running (current job)";
 t.status == "sleeping" ;
 \end{urbiassert}
+
+\item[stats]%
+  Return a \refObject{Dictionary} containing information about the execution
+  cycles of \urbi.  This is an internal feature made for developers, it
+  might be changed without notice.  See also \refSlot{resetStats}.
+\begin{urbiscript}
+var j = detach({
+  // Each ';' increment the Cycles with their execution time.
+  var i = 0;
+  {
+    // Increment the Waiting time.
+    waituntil(i == 1);
+    // Increment the Sleeping time.
+    sleep(100ms);
+    i = 2;
+  }, // Will fork and join a child job.
+
+  sleep(200ms);
+  i = 1;
+  waituntil(i != 1);
+
+  // Stop breaks the workflow of each job tagged with the tag.
+  var t = Tag.new;
+  t: t.stop(21);
+})|;
+j.waitForTermination;
+var stats = j.stats|;
+
+Float.epsilonTilde = 0.01 |;
+assert
+{
+  0 < stats["Cycles"];
+  stats["CyclesMin"] <= stats["CyclesMean"] <= stats["CyclesMax"];
+  stats["WaitingMin"] <= stats["WaitingMean"] <= stats["WaitingMax"] ~= 100ms;
+  stats["SleepingMin"] <= stats["SleepingMean"] <= stats["SleepingMax"] ~= 200ms;
+  stats["Fork"] == stats["Join"] == 1;
+  stats["WorkflowBreak"] == 1;
+
+  stats["TerminatedChildrenWaitingMean"] ~= 200ms;
+  stats["TerminatedChildrenSleepingMean"] ~= 100ms;
+};
+\end{urbiscript}
+
 
 \item[tags] The list of \refObject[s]{Tag} that manage this job.
 
