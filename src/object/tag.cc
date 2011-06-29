@@ -101,7 +101,7 @@ namespace urbi
     void
     Tag::block(rObject payload)
     {
-      value_->block(::kernel::scheduler(), payload);
+      value_->block(::kernel::server().scheduler_get(), payload);
       // changed();
     }
 
@@ -110,7 +110,7 @@ namespace urbi
     {
       runner::Job& r = ::kernel::runner();
 
-      value_->freeze();
+      value_->freeze(::kernel::server().scheduler_get());
       // changed();
       if (r.frozen())
         r.yield();
@@ -157,7 +157,7 @@ namespace urbi
     Tag::priority_type
     Tag::priority_set(priority_type prio)
     {
-      return value_->prio_set(::kernel::scheduler(), prio);
+      return value_->prio_set(::kernel::server().scheduler_get(), prio);
     }
 
     void
@@ -169,21 +169,21 @@ namespace urbi
     void
     Tag::stop(rObject payload)
     {
-      value_->stop(::kernel::scheduler(), payload);
+      value_->stop(::kernel::server().scheduler_get(), payload);
       // changed();
     }
 
     void
     Tag::unblock()
     {
-      value_->unblock();
+      value_->unblock(::kernel::server().scheduler_get());
       // changed();
     }
 
     void
     Tag::unfreeze()
     {
-      value_->unfreeze();
+      value_->unfreeze(::kernel::server().scheduler_get());
       // changed();
     }
 

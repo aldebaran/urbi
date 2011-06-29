@@ -570,7 +570,7 @@ static rObject wrap_ucallback(const object::objects_type& ol,
       // Tricky: tag->freeze() yields, but we must freeze tag before calling
       // eval or there will be a race if asyncEval goes to fast and unfreeze
       // before we freeze. So go throug backend.
-      (*tag)->value_get()->freeze();
+      (*tag)->value_get()->freeze(::kernel::scheduler());
       std::string exception;
       ugc->eval(l, boost::bind(write_and_unfreeze, boost::ref(res),
                                boost::ref(exception),
