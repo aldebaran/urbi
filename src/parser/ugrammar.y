@@ -445,7 +445,7 @@ protos:
 ;
 
 %token CLASS "class";
-stmt:
+exp:
   "class" lvalue protos block
     {
       $$ = MAKE(class, @$, $2, $3, $4);
