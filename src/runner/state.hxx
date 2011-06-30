@@ -44,6 +44,11 @@ namespace runner
       priority_cache_valid_ = false;
     if (tag_stack_.empty())
       priority_cache_ = priority();
+
+    // Take advantage of this function which is called each time a tag is
+    // applied to the current job., invalidate the cache result by setting
+    // it to an out-dated step number.
+    frozen_tag_cache_step_ = sched::Tag::get_step_number() - 1;
   }
 
   LIBPORT_SPEED_INLINE void

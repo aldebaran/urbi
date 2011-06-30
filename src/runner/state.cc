@@ -84,9 +84,18 @@ namespace runner
   bool
   State::frozen() const
   {
+    unsigned long current_step = sched::Tag::get_step_number();
+    if (current_step == frozen_tag_cache_step_)
+      return frozen_tag_cache_ || frozen_;
+    frozen_tag_cache_step_ = current_step;
+
     foreach (const object::rTag& tag, tag_stack_)
       if (tag->value_get()->frozen())
+      {
+        frozen_tag_cache_ = true;
         return true;
+      }
+    frozen_tag_cache_ = false;
     return frozen_;
   }
 

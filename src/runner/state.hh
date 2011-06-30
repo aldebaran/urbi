@@ -83,6 +83,8 @@ namespace runner
     // This is supposed to be an optimization which is not one, because it
     // recompute the priority each time this is asked.
     void update_priority_cache(sched::prio_type prio);
+    mutable unsigned long frozen_tag_cache_step_;
+    mutable bool frozen_tag_cache_;
     mutable bool priority_cache_valid_;
     mutable sched::prio_type priority_cache_;
 
