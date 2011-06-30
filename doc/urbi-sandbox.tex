@@ -13,6 +13,34 @@
   \usepackage[draft]{showlabels}
   \usepackage{lipsum}  % to provide "filler" text
 
+% \grammar{RANGE}
+% ---------------
+% For instance
+%
+%   \grammar{arithmetic-exp}
+%   \grammar{class-exp, lvalue-end, block-exp}
+%   \grammar{}
+%
+% Beware that the RANGE items must be in order in the file: the file is
+% *not* read several times.
+%
+% It may seem that having a rangesuffix is useless, but actually without
+% it markups such as "catch" and "catchall" both match "catch".  Luckily,
+% we can use \^^M which, in TeX parlance, means end-of-line.
+\newcommand{\grammar}[1]{%
+  \bnfPre%
+  \lstinputlisting[style=UrbiSDKEnv,
+                   backgroundcolor=\color{bnf},
+                   language=bnf,
+                   morecomment={[is]{\#:}{\^^M}},
+                   includerangemarker=false,
+                   rangeprefix={\#:},rangesuffix={\^^M},
+                   linerange={#1}]
+          {tables/urbiscript.bnf}%
+  \bnfPost%
+}
+
+
 \title{Urbi Documentation Sandbox}
 \subtitle{Version \VcsDescription}
 \author{Gostai}
@@ -29,6 +57,8 @@ This document is meant to be used to toy with \LaTeX{}.
 \chapter{First Chapter}
 
 This is the first chapter.
+
+\grammar{class-exp, lvalue-end, block-exp}
 
 \begin{verbatim}
 for (var i: 10)
@@ -52,6 +82,8 @@ a''' "foo";
 "foo";
 [00048238] "foo"
 \end{urbiunchecked}
+
+\grammar{}
 
 \begin{verbatim}
 for (var i: 10)
@@ -80,6 +112,102 @@ Inside Job 0x6a2f70
 #55 [input.u:2.1-40] Stmt
 (gdb) #% comment
 \end{verbatim}
+
+\noindent
+\begin{minipage}[t]{.48\linewidth}
+\begin{urbiscript}[xrightmargin=0mm,xleftmargin=0mm]
+class ImmutableCounter : Counter
+{
+  function '+='(var n) { this + n };
+  function '-='(var n) { this - n };
+}|;
+
+var ic1 = ImmutableCounter.new(0);
+[00010566] 0 @ 0x100354b70
+var ic2 = ic1;
+[00010574] 0 @ 0x100354b70
+
+ic1 += 1;
+[00010588] 1 @ 0x10875bee0
+
+// ic1 points to a new object.
+ic1;
+[00010592] 1 @ 0x10875bee0
+// ic2 still points to its original value.
+ic2;
+[00010594] 0 @ 0x100354b70
+\end{urbiscript}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{.48\linewidth}
+\begin{urbiscript}[xrightmargin=0mm,xleftmargin=0mm]
+class MutableCounter : Counter
+{
+  function '+='(var n) { count += n | this };
+  function '-='(var n) { count -= n | this };
+}|;
+
+var mc1 = MutableCounter.new(0);
+[00029902] 0 @ 0x100364e00
+var mc2 = mc1;
+[00029911] 0 @ 0x100364e00
+
+mc1 += 1;
+[00029925] 1 @ 0x100364e00
+
+// mc1 points to the same, updated, object.
+mc1;
+[00029930] 1 @ 0x100364e00
+// mc2 too.
+mc2;
+[00029936] 1 @ 0x100364e00
+\end{urbiscript}
+\end{minipage}
+
+
+\begin{urbiscript}[multicols=2]
+class ImmutableCounter : Counter
+{
+  function '+='(var n) { this + n };
+  function '-='(var n) { this - n };
+}|;
+
+var ic1 = ImmutableCounter.new(0);
+[00010566] 0 @ 0x100354b70
+var ic2 = ic1;
+[00010574] 0 @ 0x100354b70
+
+ic1 += 1;
+[00010588] 1 @ 0x10875bee0
+
+// ic1 points to a new object.
+ic1;
+[00010592] 1 @ 0x10875bee0
+// ic2 still points to its original value.
+ic2;
+[00010594] 0 @ 0x100354b70
+class MutableCounter : Counter
+{
+  function '+='(var n) { count += n | this };
+  function '-='(var n) { count -= n | this };
+}|;
+
+var mc1 = MutableCounter.new(0);
+[00029902] 0 @ 0x100364e00
+var mc2 = mc1;
+[00029911] 0 @ 0x100364e00
+
+mc1 += 1;
+[00029925] 1 @ 0x100364e00
+
+// mc1 points to the same, updated, object.
+mc1;
+[00029930] 1 @ 0x100364e00
+// mc2 too.
+mc2;
+[00029936] 1 @ 0x100364e00
+\end{urbiscript}
+
 
 \begin{urbiassert}
 1+2 == 3;

@@ -68,15 +68,16 @@
 % it markups such as "catch" and "catchall" both match "catch".  Luckily,
 % we can use \^^M which, in TeX parlance, means end-of-line.
 \newcommand{\grammar}[1]{%
-  \marginNotation{sec:notations:bnf}{Grammar\\Excerpt}%
+  \bnfPre%
   \lstinputlisting[style=UrbiSDKEnv,
-  language={},
-  backgroundcolor=\color{bnf},
-  alsolanguage=bnf,
-  morecomment={[is]{\#:}{\^^M}},
-  includerangemarker=false,
-  rangeprefix={\#:},rangesuffix={\^^M},
-  linerange={#1}]{tables/urbiscript.bnf}
+                   backgroundcolor=\color{bnf},
+                   language=bnf,
+                   morecomment={[is]{\#:}{\^^M}},
+                   includerangemarker=false,
+                   rangeprefix={\#:},rangesuffix={\^^M},
+                   linerange={#1}]
+          {tables/urbiscript.bnf}%
+  \bnfPost%
 }
 
 %% ---------- %%
