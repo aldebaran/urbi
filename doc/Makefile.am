@@ -109,7 +109,18 @@ TEX4HT_POST = $(abs_top_srcdir)/build-aux/bin/tex4ht-post
 %.htmldir: %.tex $(share_tex_dependencies) urbi-style.cfg
 	$(AM_V_GEN)rm -rf $@ $@.tmp
 	$(AM_V_at)$(mkdir_p) $@.tmp || true
-	$(AM_V_at)$(TEXI2HTML) $(TEXI2HTMLFLAGS) -o $@.tmp/$(notdir $*).html $<
+	$(AM_V_at)							\
+	if $(TEXI2HTML) $(TEXI2HTMLFLAGS)				\
+	     -o $@.tmp/$(notdir $*).html $<;				\
+	then								\
+	  test ! -f $@.log ||						\
+	    $(TEXLOGANALYZER) $(TEXLOGANALYZERFLAGS) $@.log >&2;	\
+	else								\
+	  sta=$$?;							\
+	  test ! -f $@.log ||						\
+	    cat >&2 $@.log;						\
+	  exit $$sta;							\
+	fi
 	$(AM_V_at)cd $@.tmp \
 	  && $(TEX4HT_POST) --index $(notdir $*).html $(notdir $*)*.html
 	$(AM_V_at)cp $(srcdir)/$(cube_and_disc).png      $@.tmp/urbi-sdk0x.png
