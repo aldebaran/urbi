@@ -9,22 +9,21 @@
 \chapter{Notations}
 \label{sec:notations}
 
-This chapter introduces the various notations that are used in the
-document.
+This chapter defines the \dfn{notations} used in this document.
 
 \section{Words}
 
 \begin{itemize}
 \item \textkwd{keyword}\\
-  A keyword in some programming language.  For instance, \lstinline|watch|
+  A \dfn{keyword} in some programming language.  For instance, \lstinline|watch|
   is an \us keyword.
 
 \item \textcmt{comment}\\
-  A comment in some programming language.  For instance,
+  A \dfn{comment} in some programming language.  For instance,
   \lstinline|/* hello /* world */ ! */| is a comment in \us.
 
 \item \textstr{string}\\
-  A string in some programming language.  For instance,
+  A \dfn{string} in some programming language.  For instance,
   \lstinline|"Hello, world!"| is a string in \us.
 
 \item \var{meta-variable}\\
@@ -39,11 +38,11 @@ document.
   \lstinline|while (!tasks.empty) { tasks.removeFront.process }|.
 
 \item \env{environment-variable}\\
-  An environment variable name, e.g., \env{PATH}.
+  An \dfn{environment variable} name, e.g., \env{PATH}.
 \item \lstinline|code|\\
-  A piece of \us or \Cxx code.
+  A \dfn{piece of code} (\us, \Java, \Cxx\ldots).
 \item \file{file-name}\\
-  A file name.
+  A \dfn{file name}.
 \end{itemize}
 
 \section{Frames}
@@ -80,23 +79,35 @@ private:
 \subsection{Grammar Excerpts}
 \label{sec:notations:bnf}
 
-The grammar fragments are written in Extend Backus-Naur Form.  The symbol
-\lstindex{::=} separates the left-hand symbol from the right-hand side part
-of the rule.  Infix \lstinline{|} denotes alternation, postfix-\lstinline{*}
-0-or-more repetition, postfix-\lstinline{+} 1-or-more repetition, and
-postfix-\lstinline{?} denotes optional parts.  Terminal symbols are written
-in double-quotes, and non-terminals in angle-brackets.  Parentheses group.
+The \dfn{grammar fragments} are written in \dfn{EBNF} (\dfn{Extended
+  Backus-Naur Form}).  The symbol \lstindex{::=} separates the left-hand
+symbol from the right-hand side part of the rule.  Infix \lstinline{|}
+denotes alternation, postfix-\lstinline{*} 0-or-more repetition,
+postfix-\lstinline{+} 1-or-more repetition, and postfix-\lstinline{?}
+denotes optional parts.  Terminal symbols are written in double-quotes, and
+non-terminals in angle-brackets.  Parentheses group.
 
 The following frame defines the grammar syntax expressed in the same grammar
-syntax.  See \autoref{sec:grammar} for the grammar of \us.
+syntax.
+
 \begin{bnf}
 <grammar> ::= <rule>+
+
 <rule> ::= <symbol> "::=" <rhs>
-<rhs> ::= <rhs> "|" <rhs>
+
+<rhs> ::= <rhs>*
+        | <rhs> "|" <rhs>
         | <rhs> ("?" | "*" | "+")
         | "(" <rhs> ")"
         | <symbol>
+
+<symbol> ::= "<" <identifier> ">"
+           | '"' <escaped-character>* '"'
+           | "'" <escaped-character>* "'"
 \end{bnf}
+
+\ifthen{\boolean{urbisdk}}{\autoref{sec:grammar} provides the grammar of
+  \us.}
 
 \subsection{\Java Code}
 \label{sec:notations:java}
@@ -160,8 +171,7 @@ cout << "toto";
 \subsection{\us Assertions}
 \label{sec:notations:urbiassert}
 
-\us features assertions blocks, see \autoref{sec:lang:assert}.  The
-following assertion frame:
+The following \dfn{assertion frame}:
 
 \begin{urbiassert}
 true;
@@ -173,8 +183,8 @@ true;
 \end{urbiassert}
 
 \noindent
-actually denotes the following assertion-block in an \us-session
-frame (\autoref{sec:lang:assert}):
+denotes the following assertion-block\ifthen{\boolean{urbisdk}}{(see
+  \autoref{sec:lang:assert})} in an \us-session frame:
 
 \begin{urbiscript}
 assert

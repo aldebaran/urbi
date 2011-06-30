@@ -7,78 +7,8 @@
 %% See the LICENSE file for more information.
 
 \documentclass[openright,twoside,11pt,final]{book}
-  \usepackage{gostai-documentation}
-  \usepackage{nameref}
-  \usepackage{config}
-  \newcommand{\uobjectsDir}{\absTopSrcdir/sdk-remote/src/uobjects}
-
-\usepackage{grfext}
-\RemoveGraphicsExtensions{.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPEG}
-\ifx\ifHtml\undefined
-\PrependGraphicsExtensions{.pdf}
-\fi
-
-% This is not appropriate for Beamer, so not in the lst style UrbiSDK.
-\lstset{xrightmargin=5mm,xleftmargin=5mm}
-
-%% \marginNotation{Label}{Text}
-%% ----------------------------
-\newcommand{\marginNotation}[2]
-{%
-  \marginpar[{%
-    \vspace{3mm}%
-    \raggedleft%
-    \tiny \hyperref[#1]{#2}%
-  }]{%
-    \vspace{3mm}%
-    \raggedright%
-    \tiny \hyperref[#1]{#2}%
-  }%
-}
-
-\ifx\ifHtml\undefined
-  \renewcommand{\bnfPre}
-    {\marginNotation{sec:notations:bnf}{Grammar\\Excerpt}}
-  \renewcommand{\cxxPre}
-    {\marginNotation{sec:notations:cxx}{\Cxx}}
-  \renewcommand{\javaPre}
-    {\marginNotation{sec:notations:java}{\Java}}
-  \renewcommand{\shellPre}
-    {\marginNotation{sec:notations:shell}{Shell\\Session}}
-  \renewcommand{\urbiassertPre}
-    {\marginNotation{sec:notations:urbiassert}{Assertion\\Block}}
-  \renewcommand{\urbiscriptPre}
-    {\marginNotation{sec:notations:urbiassert}{\us\\Session}}
-  \renewcommand{\urbiuncheckedPre}
-    {\urbiscriptPre}
-\fi
-
-% \grammar{RANGE}
-% ---------------
-% For instance
-%
-%   \grammar{arithmetic-exp}
-%   \grammar{class-exp, lvalue-end, block-exp}
-%   \grammar{}
-%
-% Beware that the RANGE items must be in order in the file: the file is
-% *not* read several times.
-%
-% It may seem that having a rangesuffix is useless, but actually without
-% it markups such as "catch" and "catchall" both match "catch".  Luckily,
-% we can use \^^M which, in TeX parlance, means end-of-line.
-\newcommand{\grammar}[1]{%
-  \bnfPre%
-  \lstinputlisting[style=UrbiSDKEnv,
-                   backgroundcolor=\color{bnf},
-                   language=bnf,
-                   morecomment={[is]{\#:}{\^^M}},
-                   includerangemarker=false,
-                   rangeprefix={\#:},rangesuffix={\^^M},
-                   linerange={#1}]
-          {tables/urbiscript.bnf}%
-  \bnfPost%
-}
+  \usepackage{urbi-sdk}
+  \setboolean{urbisdk}{true}
 
 %% ---------- %%
 %% Document.  %%
@@ -88,57 +18,67 @@
 \subtitle{Version \packageVersion}
 \date{\VcsDay\\(Revision \VcsDescription)}
 \author{Gostai}
+\abstract
+{
+%%
+  {\Large\urbi} is an open source robotics software platform.  It is
+  cross-platform: it supports several robots (Gostai Jazz, Segway RMP,
+  Pioneer 3-DX, LEGO Mindstorms NXT, Aldebaran Robotics' Nao\ldots) and
+  simulators (Webots\ldots).  It runs on top of all the major operating
+  systems.  It features a \Cxx/\Java middleware called UObject to interface
+  components such as motors, cameras, and algorithms; and an innovative
+  scripting language, \us, with built-in support for parallel and
+  event-based programming.  It is compatible with ROS, the Robotic Operating
+  System.
+%%
+}
 
 \begin{document}
 
 \maketitle
 
-\urbi is an open source robotics software platform.  It is cross-platform:
-it supports several robots (Gostai Jazz, LEGO Mindstorms NXT, Aldebaran
-Robotics' Nao humanoid robot, Segway RMP, Pioneer 3-DX, Meccano's Spykee,
-Bioloid\ldots) and simulators (Webots, \ldots).  It runs on top of all the
-major operating systems.  It features a \Cxx/\Java middleware called UObject
-to interface components such as motors, cameras, and algorithms; and an
-innovative scripting language, \us, with built-in support for parallel and
-event-based programming.  It is compatible with ROS, the Robotic Operating
-System.
-
-\bigskip
-
-This document is updated regularly on the Gostai Web site both as a
-\href{\docurl/urbi-sdk.pdf}{PDF document}, and as a
-\href{\docurl/urbi-sdk.htmldir/}{set of HTML pages}.  You may also want to
-look at the documentation of the latest versions, and visit
-\url{http://urbiforge.org}, the \urbi community web site, and its
-\href{http://forum.urbiforge.org}{forum}.
-
-\newcommand{\docItem}[2]{\item \url{#1} \\ #2.}
-\newcommand{\versionItem}[2]
+\cleardoublepage
 {
-\item[\packageName{} #1] #2.
+  ~
 
-  \begin{itemize}
-  \docItem{\downloadUrl/urbi/#1/doc/}
-  {All the documentations for Urbi #1}
-  \docItem{\downloadUrl/urbi/#1/doc/urbi-sdk.pdf}
-  {Urbi SDK Documentation (this document) in PDF}
-  \docItem{\downloadUrl/urbi/#1/doc/urbi-sdk.htmldir/}
-  {Urbi SDK Documentation (this document) in several HTML files}
-  \docItem{\downloadUrl/urbi/#1/doc/sdk-remote.htmldir/}
-  {The Doxygen documentation of UObject/SDK Remote for \Cxx}
-  \docItem{\downloadUrl/urbi/#1/doc/sdk-remote-java.htmldir/}%
-  {The Doxygen documentation of UObject/SDK Remote for \Java}
-  \end{itemize}
+  \vfill
+  \small
+
+  This document is updated regularly on the Gostai Web site both as a
+  \href{\docurl/urbi-sdk.pdf}{PDF document}, and as a
+  \href{\docurl/urbi-sdk.htmldir/}{set of HTML pages}.  You may also want to
+  look at the documentation of the latest versions, and visit
+  \url{http://urbiforge.org}, the \urbi community web site, and its
+  \href{http://forum.urbiforge.org}{forum}.
+
+  \newcommand{\docItem}[2]{\item \url{#1} \\ #2.}
+  \newcommand{\versionItem}[2]
+  {
+  \item[\packageName{} #1] #2.
+
+    \begin{itemize}
+      \docItem{\downloadUrl/urbi/#1/doc/}
+      {All the documentations for Urbi #1}
+      \docItem{\downloadUrl/urbi/#1/doc/urbi-sdk.pdf}
+      {Urbi SDK Documentation (this document) in PDF}
+      \docItem{\downloadUrl/urbi/#1/doc/urbi-sdk.htmldir/}
+      {Urbi SDK Documentation (this document) in several HTML files}
+      \docItem{\downloadUrl/urbi/#1/doc/sdk-remote.htmldir/}
+      {The Doxygen documentation of UObject/SDK Remote for \Cxx}
+      \docItem{\downloadUrl/urbi/#1/doc/sdk-remote-java.htmldir/}%
+      {The Doxygen documentation of UObject/SDK Remote for \Java}
+    \end{itemize}
+  }
+
+  \begin{description}
+    \versionItem{\packageVersion}{This version}
+    \renewcommand{\docItem}[2]{\item \url{#1}}
+    \versionItem{\packageMajor.\packageMinor.x}{The latest version of the
+      \packageMajor.\packageMinor{} family}
+    \versionItem{\packageMajor.x}{The latest version (also available as
+      \url{\downloadUrl/urbi/doc/})}
+  \end{description}
 }
-
-\begin{description}
-\versionItem{\packageVersion}{This version}
-\renewcommand{\docItem}[2]{\item \url{#1}}
-\versionItem{\packageMajor.\packageMinor.x}{The latest version of the
-  \packageMajor.\packageMinor{} family}
-\versionItem{\packageMajor.x}{The latest version (also available as
-  \url{\downloadUrl/urbi/doc/})}
-\end{description}
 
 \input{introduction}
 

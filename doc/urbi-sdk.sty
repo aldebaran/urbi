@@ -1,0 +1,112 @@
+%% Copyright (C) 2009-2011, Gostai S.A.S.
+%%
+%% This software is provided "as is" without warranty of any kind,
+%% either expressed or implied, including but not limited to the
+%% implied warranties of fitness for a particular purpose.
+%%
+%% See the LICENSE file for more information.
+
+%% This file helps to share experiments bw urbi-naming, urbi-sandbox, and
+%% urbi-sdk documents.  Benefits of putting these guys here include the fact
+%% that the spell-checker will not complain about these macros.  So PAY
+%% ATTENTION for spellos!
+%%
+%% Once robust, most of these guys should move to document-aux.
+
+\RequirePackage{gostai-documentation}
+\RequirePackage{nameref}
+\RequirePackage{config}
+\newcommand{\uobjectsDir}{\absTopSrcdir/sdk-remote/src/uobjects}
+
+\RequirePackage{grfext}
+\RemoveGraphicsExtensions{.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPEG}
+\ifx\ifHtml\undefined
+\PrependGraphicsExtensions{.pdf}
+\fi
+
+%% Whether we are compiling the whole urbisdk doc or not.
+\newboolean[false]{urbisdk}
+
+% This is not appropriate for Beamer, so not in the lst style UrbiSDK.
+\lstset{xrightmargin=5mm,xleftmargin=5mm}
+
+%% \marginNotation{Label}{Text}
+%% ----------------------------
+\newcommand{\marginNotation}[2]
+{%
+  \marginpar[{%
+    \vspace{3mm}%
+    \raggedleft%
+    \tiny \hyperref[#1]{#2}%
+  }]{%
+    \vspace{3mm}%
+    \raggedright%
+    \tiny \hyperref[#1]{#2}%
+  }%
+}
+
+\ifx\ifHtml\undefined
+  \renewcommand{\bnfPre}
+    {\marginNotation{sec:notations:bnf}{Grammar\\Excerpt}}
+  \renewcommand{\cxxPre}
+    {\marginNotation{sec:notations:cxx}{\Cxx}}
+  \renewcommand{\javaPre}
+    {\marginNotation{sec:notations:java}{\Java}}
+  \renewcommand{\shellPre}
+    {\marginNotation{sec:notations:shell}{Shell\\Session}}
+  \renewcommand{\urbiassertPre}
+    {\marginNotation{sec:notations:urbiassert}{Assertion\\Block}}
+  \renewcommand{\urbiscriptPre}
+    {\marginNotation{sec:notations:urbiassert}{\us\\Session}}
+  \renewcommand{\urbiuncheckedPre}
+    {\urbiscriptPre}
+\fi
+
+% \grammar{RANGE}
+% ---------------
+% For instance
+%
+%   \grammar{arithmetic-exp}
+%   \grammar{class-exp, lvalue-end, block-exp}
+%   \grammar{}
+%
+% Beware that the RANGE items must be in order in the file: the file is
+% *not* read several times.
+%
+% It may seem that having a rangesuffix is useless, but actually without
+% it markups such as "catch" and "catchall" both match "catch".  Luckily,
+% we can use \^^M which, in TeX parlance, means end-of-line.
+\newcommand{\grammar}[1]{%
+  \bnfPre%
+  \lstinputlisting[style=UrbiSDKEnv,
+                   backgroundcolor=\color{bnf},
+                   language=bnf,
+                   morecomment={[is]{\#:}{\^^M}},
+                   includerangemarker=false,
+                   rangeprefix={\#:},rangesuffix={\^^M},
+                   linerange={#1}]
+          {tables/urbiscript.bnf}%
+  \bnfPost%
+}
+
+% \release{Release}{Date}
+% -----------------------
+\newcommand{\release}[2]{%
+  Released on #2.
+  \ifx\ifHtml\undefined%
+    \marginpar{%
+      \includegraphics[width=\marginparwidth]{figs/urbi-sdk/#1/cube}
+
+      #2.
+    }%
+  \fi%
+}
+
+%%% Local Variables:
+%%% mode: latex
+%%% coding: utf-8
+%%% TeX-master: t
+%%% ispell-dictionary: "american"
+%%% ispell-personal-dictionary: "urbi.dict"
+%%% fill-column: 76
+%%% End:
