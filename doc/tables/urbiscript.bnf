@@ -1,3 +1,14 @@
+#:
+#:    Be very careful: this file is used by the \grammar macro which
+#:    takes a list of intervals of snippets to include.  The file is
+#:    read only once, so the intervals must be successive: there is a
+#:    *silent* failure to include chunks that were *before*.  E.g.,
+#:    \grammar{class-expression,lvalue-end} will fail to include the
+#:    definition of <lvalue> if lvalue-end is before class-expression.
+#:
+#:    So define the dependencies after the dependant.
+#:
+#:
 #:class
 <class-expression>
   ::= "class" <lvalue> (":" <prototypes>)? <block>
@@ -8,13 +19,8 @@
 
 #:lvalue
 <lvalue>
-  ::= (<expression> ".")* "identifier"
+  ::= (<expression> ".")* <identifier>
 #:end
-
-#:block
-<block>
-  ::= "{" <statement>* "}"
-#:exp
 
 #:arithmetic
 <arithmetic-expression>
@@ -122,3 +128,31 @@
     | "every|" "(" <expression> ")" <statement>
     | "every," "(" <expression> ")" <statement>
 #:stm
+
+#:list
+<list-literal>
+  ::= "[" (<expression> ("," <expression>)* ","?)? "]"
+#:literal
+
+#:dictionary
+<dictionary-literal>
+  ::= "[" (<dictionary-entry> ("," <dictionary-entry>>)* ","?)? "]"
+<dictionary-entry>
+  ::= <expression> "=>" <expression>
+#:literal
+
+#:block
+<block>
+  ::= "{" <statement>* "}"
+#:exp
+
+#:identifier
+<identifier>
+  ::= (<letter> | "_") (<letter> | <digit> | "_")*
+
+<letter>
+  ::= [a-zA-Z]
+
+<digit>
+  ::= [0-9]
+#:end

@@ -111,11 +111,12 @@ there are trailing items, the whole line is treated as a comment.
 \subsection{Identifiers}
 \label{sec:lang:id}
 
+\grammar{identifier-end}
+
 \dfn{Identifiers} in \us are composed of one or more alphanumeric or
-underscore (\lstinline|_|) characters, not starting by a digit, i.e.,
-identifiers match the \lstinline|[a-zA-Z_][a-zA-Z0-9_]*| regular
-expression.  Additionally, identifiers must not match any of the \us
-reserved words\footnote{
+underscore (\lstinline|_|) characters, not starting by a digit.
+Additionally, identifiers must not match any of the \us reserved
+words\footnote{
 %%
   The only exception to this rule is \lstinline|new|, which can be
   used as the method identifier in a method call.
@@ -192,6 +193,8 @@ pi == 200grad;
 
 \subsubsection{Dictionaries}
 \label{sec:lang:dictionary}
+
+\grammar{dictionary-literal}
 
 Literal \dfn{dictionaries} are represented with a comma-separated,
 potentially empty list of arbitrary associations enclosed in square brackets
@@ -380,6 +383,8 @@ _0__2;
 
 \subsubsection{Lists}
 \label{sec:lang:list}
+
+\grammar{list-literal}
 
 Literal \dfn{lists} are represented with a comma-separated, potentially
 empty list of arbitrary expressions enclosed in square brackets
