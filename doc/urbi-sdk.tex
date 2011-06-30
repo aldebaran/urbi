@@ -110,26 +110,32 @@ This document is updated regularly on the Gostai Web site both as a
 \href{\docurl/urbi-sdk.htmldir/}{set of HTML pages}.  You may also want to
 look at the documentation of the latest versions, and visit
 \url{http://urbiforge.org}, the \urbi community web site, and its
-\url{http://forum.urbiforge.org}{forum}.
+\href{http://forum.urbiforge.org}{forum}.
 
+\newcommand{\docItem}[2]{\item \url{#1} \\ #2.}
 \newcommand{\versionItem}[2]
 {
 \item[\packageName{} #1] #2.
 
   \begin{itemize}
-  \item \url{\downloadUrl/urbi/#1/doc/}
-  \item \url{\downloadUrl/urbi/#1/doc/urbi-sdk.pdf}
-  \item \url{\downloadUrl/urbi/#1/doc/urbi-sdk.htmldir/}
-  \item \url{\downloadUrl/urbi/#1/doc/sdk-remote.htmldir/} \\
-    The Doxygen documentation of UObject/SDK Remote for \Cxx.
-  \item \url{\downloadUrl/urbi/#1/doc/sdk-remote-java.htmldir/} \\
-    The Doxygen documentation of UObject/SDK Remote for Java.
+  \docItem{\downloadUrl/urbi/#1/doc/}
+  {All the documentations for Urbi #1}
+  \docItem{\downloadUrl/urbi/#1/doc/urbi-sdk.pdf}
+  {Urbi SDK Documentation (this document) in PDF}
+  \docItem{\downloadUrl/urbi/#1/doc/urbi-sdk.htmldir/}
+  {Urbi SDK Documentation (this document) in several HTML files}
+  \docItem{\downloadUrl/urbi/#1/doc/sdk-remote.htmldir/}
+  {The Doxygen documentation of UObject/SDK Remote for \Cxx}
+  \docItem{\downloadUrl/urbi/#1/doc/sdk-remote-java.htmldir/}%
+  {The Doxygen documentation of UObject/SDK Remote for \Java}
   \end{itemize}
 }
+
 \begin{description}
 \versionItem{\packageVersion}{This version}
+\renewcommand{\docItem}[2]{\item \url{#1}}
 \versionItem{\packageMajor.\packageMinor.x}{The latest version of the
-  \packageMajor.\packageMinor{} family of versions}
+  \packageMajor.\packageMinor{} family}
 \versionItem{\packageMajor.x}{The latest version (also available as
   \url{\downloadUrl/urbi/doc/})}
 \end{description}
