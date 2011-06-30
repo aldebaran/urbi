@@ -9,16 +9,19 @@
 \documentclass[openright,twoside,11pt]{book}
 %  \usepackage[svgnames]{xcolor}  \usepackage{experiment}
   \usepackage{urbi-sdk}
+  \usepackage{lipsum}
 
 \title{Urbi Documentation Sandbox}
 \subtitle{Version \VcsDescription}
 \author{Gostai}
 
+\abstract{This document is not to be published, its point is to toy with
+  \LaTeX{}.  \lipsum[1]}
+
+
 \begin{document}
 
 \maketitle
-
-This document is meant to be used to toy with \LaTeX{}.
 
 \tableofcontents
 \part{First Part}
@@ -87,21 +90,6 @@ Inside Job 0x6a2f70
 1+2 == 3;
 \end{urbiassert}
 
-% \release{Release}{Date}
-% -----------------------
-\newcommand{\release}[2]{%
-  \ifx\ifHtml\undefined%
-    Released on #2.
-    \marginpar{%
-      \includegraphics[width=\marginparwidth]{figs/urbi-sdk/#1/cube}
-
-      #2.
-    }%
-  \else
-    \includegraphics[width=.2\textwidth]{figs/urbi-sdk/#1/cube},
-    released on #2.
-  \fi%
-}
 
 \section{\usdk 2.5}
 \release{2.5}{2010-11-xx}
