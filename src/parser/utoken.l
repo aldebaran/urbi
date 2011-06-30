@@ -28,6 +28,7 @@
 
 #include <parser/parser-impl.hh>
 #include <parser/utoken.hh>
+#include <parser/ugrammar.hh>
 
 GD_CATEGORY(Urbi.Scanner);
 
@@ -48,8 +49,7 @@ static long long hexadecimal(std::string t);
 
 // Safe conversion to a numeric value.
 template <typename Out>
-static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc,
-                        std::string t);
+static Out lexical_cast(const yy::location& loc, std::string t);
 
 // Skip the spaces in yytext.
 # define SKIP_SPACES()                          \
@@ -110,7 +110,7 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc,
 // LexerError, which does not seem to be possible (since it is flex
 // which generates unconditionally its definition in utoken.cc).
 #define YY_FATAL_ERROR(Msg)                     \
-  parser_impl_->error(loc, Msg)
+  SCAN_ERROR(Msg)
 
 // Each time a rule is matched.
 #define YY_USER_ACTION                          \
@@ -137,7 +137,7 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc,
 
 // Report an error.
 #define SCAN_ERROR(...)                                     \
-  parser_impl_->error(loc, libport::format(__VA_ARGS__))
+  throw yy::parser::syntax_error(loc, libport::format(__VA_ARGS__))
 
 // Report an EOF error.
 #define EOF_ERROR(Where)                                \
@@ -172,12 +172,12 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc,
   return yy::parser::make_ ## Symbol(Value, loc)
 
 // UnitLength is the number of letters used for the unit.
-#define RETURN_UNIT(Token, UnitLength, From, To)                        \
-  do {                                                                  \
-    yytext[yyleng - UnitLength] = 0;                                    \
-    RETURN_VALUE(Token,                                                 \
-                 lexical_cast<ufloat>(parser_impl_, loc, yytext)        \
-                 / (From) * (To));                                      \
+#define RETURN_UNIT(Token, UnitLength, From, To)        \
+  do {                                                  \
+    yytext[yyleng - UnitLength] = 0;                    \
+    RETURN_VALUE(Token,                                 \
+                 lexical_cast<ufloat>(loc, yytext)      \
+                 / (From) * (To));                      \
   } while (false)
 
 
@@ -360,7 +360,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   loc.initialize(!file || libport::streq(file, "-")
 		 ? 0
 		 : new libport::Symbol(file));
-  loc.lines(lexical_cast<unsigned>(parser_impl_, loc, line) - 1);
+  loc.lines(lexical_cast<unsigned>(loc, line) - 1);
   loc.step();
 }
 
@@ -408,7 +408,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 
 {HEXA}        RETURN_VALUE(FLOAT, hexadecimal(yytext + 2));
 {NATURAL}     |
-{FLOAT}       RETURN_VALUE(FLOAT, lexical_cast<ufloat>(parser_impl_, loc, yytext));
+{FLOAT}       RETURN_VALUE(FLOAT, lexical_cast<ufloat>(loc, yytext));
 
 ({NUMBER}|{HEXA}){ID} SCAN_ERROR("invalid token: `%s'", yytext);
 
@@ -812,8 +812,7 @@ hexadecimal(std::string t)
 // from out of the scanner.
 template <typename Out>
 Out
-lexical_cast(parser::ParserImpl* parser_impl_, const yy::location& loc,
-             std::string t)
+lexical_cast(const yy::location& loc, std::string t)
 {
   boost::algorithm::erase_all(t, "_");
   try

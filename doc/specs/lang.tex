@@ -129,18 +129,25 @@ character.
 var x;
 var foobar51;
 var this.a_name_with_underscores;
-// Invalid.
-// var 3x;
-// obj.3x();
 
 // Invalid because "if" is a keyword.
-// var if;
-// obj.if();
+var if;
+[00000498:error] !!! syntax error: unexpected if
+obj.if();
+[00013826:error] !!! syntax error: unexpected if, expecting & or identifier or new
+
 // However, keywords can be escaped with simple quotes.
 var 'if';
 var this.'else';
 
-// Identifiers can be escaped with simple quotes
+// Invalid identifiers: cannot start with a digit.
+var 3x;
+[00000009:error] !!! syntax error: invalid token: `3x'
+obj.3x();
+[00000009:error] !!! syntax error: invalid token: `3x'
+
+// Identifiers can be escaped with simple quotes.
+var '3x';
 var '%x';
 var '1 2 3';
 var this.'[]';

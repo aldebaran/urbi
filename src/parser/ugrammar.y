@@ -10,7 +10,7 @@
 /// \file parser/ugrammar.y
 /// \brief Definition of the parser used by the ParserImpl object.
 
-%require "2.3"
+%require "2.4"
 %language "C++"
 %defines
 
