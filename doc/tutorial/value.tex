@@ -364,7 +364,7 @@ Our objects have different uids, reflecting the fact that they are
 different objects. Note that entering the same integer twice
 (\lstinline{42} here) yields different objects. Let's introduce new
 operators before diving in this concept. First the equality operator:
-\lstinline{==}. This operator is the exact same as \C or \Cxx's one,
+\lstinline{==}. This operator is the exact same as \langC or \Cxx's one,
 it simply returns whether its two operands are \emph{semantically}
 equal. The second operator is \lstinline{===}, which is the
 \emph{physical} equality operator. It returns whether its two operands
@@ -391,7 +391,7 @@ instances of integer objects, both equal 42.
 Thanks to this operator, we can point out the fact that slots and
 local variables in \us have a reference semantic. That is, when you
 defining a local variable or a slot, you're not copying any value (as
-you would be in \C or \Cxx), you're only making it refer to an already
+you would be in \langC or \Cxx), you're only making it refer to an already
 existing value (as you would in \Ruby or \Java).
 
 \begin{urbiscript}[firstnumber=1]

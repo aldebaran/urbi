@@ -10,11 +10,11 @@
 \label{sec:tut:flow}
 
 In this section, we'll introduce some flow control structures that
-will prove handy later. Most of them are inspired by \C/\Cxx.
+will prove handy later. Most of them are inspired by \langC/\Cxx.
 
 \section{if}
 
-The \lstinline{if} construct is the same has \C/\Cxx's one. The
+The \lstinline{if} construct is the same has \langC/\Cxx's one. The
 \lstinline{if} keyword is followed by a condition between parentheses and
 an expression, and optionally the \lstinline{else} keyword and another
 expression. If the condition evaluates to true, the first expression
@@ -41,7 +41,7 @@ echo({ if (false) "a" else "b" });
 
 \section{while}
 
-The \lstinline{while} construct is, again, the same as in \C/\Cxx. The
+The \lstinline{while} construct is, again, the same as in \langC/\Cxx. The
 \lstinline{while} keyword is followed by a condition between parentheses
 and an expression. If the condition evaluation is false, the
 execution jumps after the while block; otherwise, the expression is
@@ -95,7 +95,7 @@ for (var e : [1, 2, 3]) { echo(e) };
 
 \section{switch}
 
-The syntax of the \lstinline|switch| construct is similar to \C/\Cxx's
+The syntax of the \lstinline|switch| construct is similar to \langC/\Cxx's
 one, except it works on any kind of object, not only integral
 ones. Comparison is done by semantic equality (operator
 \lstinline{==}). Execution will jump out of the
