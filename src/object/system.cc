@@ -289,7 +289,7 @@ namespace urbi
       runner::Job& r = runner();
       runner::Job* new_runner = r.spawn_child(eval::call(code));
       new_runner->name_set(
-        libport::Symbol::fresh_string(r.name_get()));
+        libport::fresh_string(r.name_get()));
 
       if (clear_tags->as_bool())
         new_runner->state.tag_stack_clear();

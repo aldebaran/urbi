@@ -108,7 +108,7 @@ namespace eval
       Job* job =
         this_.spawn_child(call(ast(this_, child.get())),
                           collector)
-        ->name_set(libport::Symbol::fresh_string(this_.name_get()));
+        ->name_set(libport::fresh_string(this_.name_get()));
 
       if (this_.is_profiling())
         job->profile_fork(this_);
@@ -601,7 +601,7 @@ namespace eval
               call(ast(this_, exp)),
               collector)
             ->name_set(
-              libport::Symbol::fresh_string(this_.name_get()));
+              libport::fresh_string(this_.name_get()));
           subrunner->start_job();
         }
         else
@@ -1043,7 +1043,7 @@ namespace eval
               call(ast(this_, e->body_get().get())),
               collector)
             ->name_set(
-              libport::Symbol::fresh_string(this_.name_get()));
+              libport::fresh_string(this_.name_get()));
           subrunner->start_job();
         }
         else

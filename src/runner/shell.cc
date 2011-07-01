@@ -158,7 +158,7 @@ namespace runner
       GD_FINFO_DUMP("%s: command: %s", name_get(), *exp);
       sched::rJob subrunner =
         spawn_child(eval::ast(stmt->expression_get().get()))
-        ->name_set(libport::Symbol::fresh_string(name_get()));
+        ->name_set(libport::fresh_string(name_get()));
       jobs_ <<  subrunner;
       subrunner->start_job();
       if (canYield && !input_.eof())

@@ -136,7 +136,7 @@ namespace urbi
     void
     Tag::init()
     {
-      init(libport::Symbol::fresh_string("tag"));
+      init(libport::fresh_string("tag"));
     }
 
     void

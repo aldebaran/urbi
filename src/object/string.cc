@@ -286,7 +286,7 @@ namespace urbi
     String::value_type
     String::fresh() const
     {
-      return libport::Symbol::fresh_string(value_get());
+      return libport::fresh_string(value_get());
     }
 
     String::value_type
