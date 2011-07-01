@@ -1910,6 +1910,9 @@ There is some syntactic sugar for slot methods:
 
 \subsection{Properties}
 \label{sec:lang:prop}
+
+\grammar{property-exp}
+
 Slots can have properties, see \autoref{sec:tut:prop} for an introduction to
 properties.
 
@@ -1942,9 +1945,10 @@ Some properties are handled by the system itself.
 
 \paragraph{The \lstinline|changed| property}
 
-It allows to monitor when a slot is bound to new values: each time a new
-value is assigned to the monitored slot, an event \lstinline|changed| is
-emitted:
+This property is used by the system to implement the
+\lstinline|watch|-expression (\autoref{sec:lang:watch}).  It allows to
+monitor when a slot is bound to new values: each time a new value is
+assigned to the monitored slot, an event \lstinline|changed| is emitted:
 
 \begin{urbiscript}[firstnumber=1]
 var x = []|;
@@ -1966,15 +1970,19 @@ x = x|;
 [00092856] *** x->changed
 \end{urbiscript}
 
-This is different from checking updates to the value a slot is bound to:
+This is different from checking value \emph{updates}.  In the following
+example, \lstinline|x| is not rebound to another list, it is the content of
+the list that changes, therefore the \lstinline|changed| event is \emph{not}
+fired:
 
 \begin{urbiscript}
 x << 3;
 [00092866] [1, 2, 3]
 \end{urbiscript}
 
-One can monitor updates using the \lstinline|changed| \emph{slot} (not
-property).
+To monitor changes of value, use the \lstinline|watch|-construct
+(\autoref{sec:lang:watch}).
+
 
 
 \paragraph{The \lstinline|constant| property}
@@ -3254,6 +3262,8 @@ finally { throw "finally" };
 \section{Assertions}
 \label{sec:lang:assert}
 
+\grammar{assert-exp}
+
 \dfn[assertion]{Assertions} allow to embed consistency checks in the code.
 They are particularly useful when developing a program since they allow
 early catching of errors.  Yet, they can be costly in production mode: the
@@ -4133,6 +4143,8 @@ to \lstinline'waituntil'.
 
 \subsection{watch}
 \label{sec:lang:watch}
+
+\grammar{watch-exp}
 
 The \lstindex{watch} construct is similar in spirit to using the
 \lstinline|at| construct to monitor expressions, except it enables you to be

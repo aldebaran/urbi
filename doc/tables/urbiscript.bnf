@@ -22,27 +22,52 @@
   ::= (<expression> ".")* <identifier>
 #:end
 
-#:arithmetic
-<arithmetic-expression>
-   ::= <unary-expression>
-     | <arithmetic-expression> <arithmetic-operator> <arithmetic-operator>
-<arithmetic-operator>
-   ::= "+" | "-" | "*" | "/" | "%"
+#:primary
+<primary-expression>
+  ::= <assert-expression>
+    | <function-expression>
+    | <literal-expression>
+    | <property-expression>
+    | <watch-expression>
 #:exp
 
 #:comparison
 <comparison-expression>
-   ::= <arithmetic-expression> (<comparison-operator> <arithmetic-expression>)*
+  ::= <arithmetic-expression> (<comparison-operator> <arithmetic-expression>)*
 <comparison-operator>
-   ::= "!=" | "!==" | "<" | "<=" | "==" | "===" | "=~=" | ">" | ">=" | "~="
+  ::= "!=" | "!==" | "<" | "<=" | "==" | "===" | "=~=" | ">" | ">=" | "~="
+#:exp
+
+#:arithmetic
+<arithmetic-expression>
+  ::= <unary-expression>
+    | <arithmetic-expression> <arithmetic-operator> <arithmetic-operator>
+<arithmetic-operator>
+   ::= "+" | "-" | "*" | "/" | "%"
 #:exp
 
 #:assign
 <assign-expression>
-   ::= <expression> "=" <expression> <modifiers>?
-     | <lvalue> <inplace-operator> <expression>
+  ::= <expression> "=" <expression> <modifiers>?
+    | <lvalue> <inplace-operator> <expression>
 <inplace-operator>
    ::= "+=" | "-=" | "*=" | "/=" | "^=" | "%="
+#:exp
+
+#:assert
+<assert-expression>
+  ::= "assert" "(" <expression> ")"
+    | "assert" "{" (<expression> (";" <expression>)* ";"?)? "}"
+#:exp
+
+#:property
+<property-expression>
+  ::= <lvalue> "->" <identifier>
+#:exp
+
+#:watch
+<watch-expression>
+  ::= "watch" "(" <expression> ")"
 #:exp
 
 #:function
