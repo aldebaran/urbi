@@ -136,12 +136,6 @@ detach(sleep(10)).name;
 \item[resetStats]%
   Reinitialize the \refSlot{stats} computation.
 
-\item[setSideEffectFree](<value>)
-  If value is true, mark the current job as side-effect free. It indicates
-  whether the current state may influence other parts of the system. This is
-  used by the scheduler to choose whether other jobs need scheduling or not.
-  The default value is false.
-
 \item[status] A \refObject{String} that describes the current status of the
   job (starting, running, \ldots), and its properties (frozen, \ldots).
 \begin{urbiassert}
