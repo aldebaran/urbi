@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2009-2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -71,9 +71,17 @@ Group.new(1, "two");
 \begin{urbiscriptapi}
 \item[add](<member>, ...)%
   Add members to \this group, and return \this.
+\begin{urbiassert}
+var g = Group.new(1, 2);
+g.add(3, 4) === g;
+g.members == [1, 2, 3, 4];
+\end{urbiassert}
 
 \item[asString]
-  Report the members.
+  Report the \lstinline|asString| of the members.
+\begin{urbiassert}
+Group.new(1, 2).asString == "Group [1, 2]";
+\end{urbiassert}
 
 \item[each](<action>)%
   Apply \var{action} to all the members, in sequence, then return the
@@ -117,8 +125,14 @@ g + 1;
 \end{urbiscript}
 
 \item[remove](<member>, ...)%
-  Remove members from \this group, and return
-  \this.
+  Remove members from \this group, and return \this.  Non-existent members
+  are siliently ignored.
+\begin{urbiassert}
+var g = Group.new(1, 2, 1);
+g.remove(1) === g;   g.members == [2];
+g.remove(12) === g;  g.members == [2];
+\end{urbiassert}
+
 
 \item[setProperty](<slot>, <prop>, <value>)%
   Bounced to the members so that

@@ -556,9 +556,9 @@ setLocale("LC_ALL", "klingon");
 \end{urbiscript}
 
 
-\item[shiftedTime] Return the number of seconds elapsed since the
-  \urbi server was launched.  Contrary to \refSlot{time},
-  time spent in frozen code is not counted.
+\item[shiftedTime] The number of seconds elapsed since the \urbi server was
+  launched.  Contrary to \refSlot{time}, time spent in frozen code is not
+  counted.
 \begin{urbiassert}
 { var t0 = shiftedTime | sleep(1s) | shiftedTime - t0 }.round ~= 1;
 
@@ -634,29 +634,31 @@ assert (res == [0, 1, 0]);
   Return a \refObject{Dictionary} containing information about the execution
   cycles of \urbi.  This is an internal feature made for developers, it
   might be changed without notice.  See also \refSlot{resetStats}.
-\begin{urbiscript}
-var stats = System.stats|;
-assert
-{
-  stats.isA(Dictionary);
-  stats.keys.sort == ["cycles",
-                      "cyclesMin", "cyclesMean", "cyclesMax",
-                      "cyclesVariance", "cyclesStdDev"].sort;
-  0 < stats["cycles"];
-  stats["cyclesMin"]  <= stats["cyclesMean"];
-  stats["cyclesMean"] <= stats["cyclesMax"];
-};
-\end{urbiscript}
+\begin{urbiassert}
+var stats = System.stats;
+
+stats.isA(Dictionary);
+stats.keys.sort == ["cycles",
+                    "cyclesMin", "cyclesMean", "cyclesMax",
+                    "cyclesVariance", "cyclesStdDev"].sort;
+// Number of cycles.
+0 < stats["cycles"];
+// Cycles duration.
+0 < stats["cyclesMin"] <= stats["cyclesMean"] <= stats["cyclesMax"];
+
+stats["cyclesVariance"].isA(Float);
+stats["cyclesStdDev"].isA(Float);
+\end{urbiassert}
 
 
 %% \item[stopall]
 
 
 \item[system](<command>)%
-  Ask the operating system to run the \var{command}.  This is
-  typically used to start new processes.  The exact syntax of
-  \var{command} depends on your system.  On Unix systems, this is
-  typically \file{/bin/sh}, while Windows uses \file{command.exe}.
+  Ask the operating system to run the \var{command}.  This is typically used
+  to start new processes.  The exact syntax of \var{command} depends on your
+  system.  On Unix systems, this is typically \file{/bin/sh}, while Windows
+  uses \file{command.exe}.
 
   Return the exit status.
 
@@ -671,9 +673,9 @@ System.system("exit 23") >> 8
 \end{urbiassert}
 
 
-\item[time] Return the number of seconds elapsed since the \urbi
-  server was launched.  In presence of a frozen \refObject{Tag}, see
-  also \refSlot{shiftedTime}.
+\item[time] The number of seconds elapsed since the \urbi server was
+  launched.  See also \refObject{Date}.  In presence of a frozen
+  \refObject{Tag}, see also \refSlot{shiftedTime}.
 \begin{urbiassert}
 { var t0 = time | sleep(1s) | time - t0 }.round ~= 1;
 
