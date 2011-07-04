@@ -207,6 +207,18 @@ Logger.set("+Category*,-Category.Sub");
 "foobar"[-1] == "r";    "foobar"[-6, -3] == "foo";
 \end{urbiassert}
 
+\item \refSlot[String]{find} and  \refSlot[String]{rfind} can search a
+  pattern forward or backward inside a \refObject{String}.
+\begin{urbiassert}
+"Hello, World!".find("o") == 4;
+"Hello, World!".find("o", 5) == 8;
+"Hello, World!".find("o", 9) == -1;
+
+"Hello, World!".rfind("o") == 8;
+"Hello, World!".rfind("o", 7) == 4;
+"Hello, World!".rfind("o", 3) == -1;
+\end{urbiassert}
+
 \item \refSlot[System]{getLocale} and \refSlot[System]{setLocale} allow to
   change the locale settings.
 

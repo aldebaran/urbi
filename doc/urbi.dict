@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1458 utf-8
+personal_ws-1.1 en 1474 utf-8
 aaa
 abc
 abcd
@@ -287,7 +287,6 @@ dcon
 Debian
 decompile
 decrement
-Decrementation
 decrementation
 deepclean
 defaultPitchSpeed
@@ -346,6 +345,7 @@ eachBg
 eachi
 eae
 eba
+EBNF
 ec
 echoEach
 eE
@@ -368,6 +368,8 @@ enum
 enums
 env
 EOF
+epsilonTilde
+epsilontilde
 eq
 eration
 et
@@ -422,6 +424,7 @@ formatDetail
 FormatInfo
 formatter
 Formatters
+forn
 fortyTwo
 forwardCoeff
 forwardSpeed
@@ -978,6 +981,7 @@ resize
 resized
 resStruct
 rf
+rfind
 rgb
 RGBLed
 rhs
@@ -1095,6 +1099,9 @@ SimulationController
 sinusoid
 sizeof
 sizeOut
+SleepingMax
+SleepingMean
+SleepingMin
 slotName
 slotNames
 slowMachine
@@ -1187,6 +1194,8 @@ Technic
 teleop
 teleport
 TemperatureSensor
+TerminatedChildrenSleepingMean
+TerminatedChildrenWaitingMean
 TerminateException
 testPi
 testSkip
@@ -1330,6 +1339,7 @@ urbijava
 urbiscript
 urbiscript's
 UrbiSDK
+urbisdk
 UrbiSDKEnv
 urbisend
 urbistarter
@@ -1383,6 +1393,10 @@ voicexml
 VPATH
 waitForChanges
 waitForTermination
+WaitingMax
+WaitingMean
+WaitingMin
+waitingmin
 waituntil
 waituntilWalkIsFinished
 walkTo
@@ -1408,6 +1422,8 @@ WIPO
 withGas
 Wl
 woot
+workflow
+WorkflowBreak
 workspace
 writePoint
 writeToVar

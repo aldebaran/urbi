@@ -71,6 +71,10 @@ namespace urbi
       bool empty() const;
       value_type plus(rObject rhs) const;
       value_type fresh() const;
+      /// Find next occurence of \a pattern starting at position \a pos.
+      long find(const value_type& pattern, long pos = 0) const;
+      /// Find previous occurence of \a pattern starting at position \a pos.
+      long rfind(const value_type& pattern, long pos = -1) const;
       /// Convert every occurrence of \a from to \a to.
       value_type replace(const value_type& from, const value_type& to) const;
       const value_type& set(const value_type& rhs);
@@ -151,6 +155,9 @@ namespace urbi
       size_type index(ufloat idx, bool large = false) const;
 
       void check_bounds(ufloat from, ufloat to) const;
+
+      long find_default(const value_type& pattern) const;
+      long rfind_default(const value_type& pattern) const;
 
       URBI_CXX_OBJECT(String, CxxObject);
     };

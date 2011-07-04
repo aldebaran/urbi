@@ -118,6 +118,19 @@ for (var v : "123")
 !"x".empty;
 \end{urbiassert}
 
+
+\item[find](<pattern>, <position>)%
+  Search for the \var{pattern} string in \this starting from the
+  \var{position}.  By default the \var{position} is \lstinline|0|.  When the
+  \var{pattern} is not found \lstinline|-1| is returned.
+\begin{urbiassert}
+"Hello, World!".find("o") == 4;
+"Hello, World!".find("o", 4) == 4;
+"Hello, World!".find("o", 5) == 8;
+"Hello, World!".find("o", 9) == -1;
+\end{urbiassert}
+
+
 \item[fresh] Return a String that has never been used as an identifier,
   prefixed by \this.  It can safely be used with
   \refSlot[Object]{setSlot} and so forth.
@@ -229,6 +242,21 @@ String.fromAscii(0xFF) == "\xff";
                       .replace("World!", "Monde !") ==
        "Bonjour, Monde !";
 \end{urbiassert}
+
+
+\item[rfind](<pattern>, <position>)%
+  Search backward for the \var{pattern} string in \this starting from the
+  \var{position}.  By default the \var{position} is \lstinline|-1| which
+  stands for the end of the string.  When the \var{pattern} is not found
+  \lstinline|-1| is returned.
+\begin{urbiassert}
+"Hello, World!".rfind("o") == 8;
+"Hello, World!".rfind("o", 8) == 8;
+"Hello, World!".rfind("o", 7) == 4;
+"Hello, World!".rfind("o", 3) == -1;
+"Hello, World!".rfind("o", -1) == 8;
+\end{urbiassert}
+
 
 \item[size]
   The size of the string.

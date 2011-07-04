@@ -156,6 +156,11 @@ namespace urbi
       BIND(toLower, to_lower);
       BIND(toUpper, to_upper);
 
+      BIND(find);
+      BIND(find, find_default);
+      BIND(rfind);
+      BIND(rfind, rfind_default);
+
       setSlot(SYMBOL(SBL_SBR), new Primitive(string_sub_bouncer));
       setSlot(SYMBOL(SBL_SBR_EQ), new Primitive(string_sub_eq_bouncer));
     }
@@ -287,6 +292,34 @@ namespace urbi
     String::fresh() const
     {
       return libport::fresh_string(value_get());
+    }
+
+    long
+    String::find(const value_type& pattern, long pos) const
+    {
+      size_t res = value_get()
+        .find(pattern, pos == -1 ? value_type::npos : size_t(pos));
+      return res == value_type::npos ? -1 : long(res);
+    }
+
+    long
+    String::rfind(const value_type& pattern, long pos) const
+    {
+      size_t res = value_get()
+        .rfind(pattern, pos == -1 ? value_type::npos : size_t(pos));
+      return res == value_type::npos ? -1 : long(res);
+    }
+
+    long
+    String::find_default(const value_type& pattern) const
+    {
+      return find(pattern);
+    }
+
+    long
+    String::rfind_default(const value_type& pattern) const
+    {
+      return rfind(pattern);
     }
 
     String::value_type
