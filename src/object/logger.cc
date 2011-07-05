@@ -111,14 +111,14 @@ namespace urbi
     URBI_CXX_OBJECT_INIT(Logger)
     {
       proto_add(Tag::proto);
-      bind(SYMBOL(debug),   &Logger::debug);
-      bind(SYMBOL(dump),    &Logger::dump);
-      bind(SYMBOL(err),     &Logger::err);
-      bind(SYMBOL(log),     &Logger::log);
-      bind(SYMBOL(onEnter), &Logger::onEnter);
-      bind(SYMBOL(onLeave), &Logger::onLeave);
-      bind(SYMBOL(trace),   &Logger::trace);
-      bind(SYMBOL(warn),    &Logger::warn);
+      BIND(debug);
+      BIND(dump);
+      BIND(err);
+      BIND(log);
+      BIND(onEnter);
+      BIND(onLeave);
+      BIND(trace);
+      BIND(warn);
     }
   }
 }

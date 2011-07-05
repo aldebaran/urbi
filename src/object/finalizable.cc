@@ -37,14 +37,9 @@ namespace urbi
 
     URBI_CXX_OBJECT_INIT(Finalizable)
     {
-#define DECLARE(Name)                        \
-      bind(SYMBOL_(Name), &Finalizable::Name)
-
-      DECLARE(__dec);
-      DECLARE(__inc);
-      DECLARE(__get);
-
-#undef DECLARE
+      BIND(__dec);
+      BIND(__inc);
+      BIND(__get);
     }
 
     Finalizable::~Finalizable()

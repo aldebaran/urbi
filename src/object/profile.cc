@@ -16,6 +16,12 @@ namespace urbi
 {
   namespace object
   {
+
+
+    /*----------.
+    | Profile.  |
+    `----------*/
+
     Profile::Profile()
       : yields_(0)
       , wall_clock_time_(0)
@@ -69,12 +75,17 @@ namespace urbi
       proto_add(Object::proto);
 
       bind(SYMBOL(calls), function_profiles);
-      bind(SYMBOL(maxFunctionCallDepth), &Profile::function_call_depth_max_get);
-      bind(SYMBOL(totalCalls), &Profile::function_calls_get);
-      bind(SYMBOL(totalTime), &Profile::totalTime);
-      bind(SYMBOL(wallClockTime), &Profile::wallClockTime);
-      bind(SYMBOL(yields), &Profile::yields_get);
+      BIND(maxFunctionCallDepth, function_call_depth_max_get);
+      BIND(totalCalls, function_calls_get);
+      BIND(totalTime);
+      BIND(wallClockTime);
+      BIND(yields, yields_get);
     }
+
+
+    /*------------------.
+    | FunctionProfile.  |
+    `------------------*/
 
     FunctionProfile::FunctionProfile()
       : calls_(0)
@@ -99,11 +110,11 @@ namespace urbi
     {
       proto_add(Object::proto);
 
-      bind(SYMBOL(name),     &FunctionProfile::name_get);
-      bind(SYMBOL(calls),    &FunctionProfile::calls_get);
-      bind(SYMBOL(selfTime), &FunctionProfile::selfTime);
-      bind(SYMBOL(selfTimePer), &FunctionProfile::selfTimePer);
-      bind(SYMBOL(time),     &FunctionProfile::time);
+      BIND(calls, calls_get);
+      BIND(name, name_get);
+      BIND(selfTime);
+      BIND(selfTimePer);
+      BIND(time);
     }
 
     FunctionProfile&

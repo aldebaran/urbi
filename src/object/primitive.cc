@@ -63,7 +63,7 @@ namespace urbi
       // Hack to avoid proto = 0,
       // proto will redefined after.
       proto = this;
-      bind(SYMBOL(apply), &Primitive::apply);
+      BIND(apply);
     }
 
     const Primitive::values_type&

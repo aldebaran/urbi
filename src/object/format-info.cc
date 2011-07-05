@@ -65,9 +65,9 @@ namespace urbi
       , uppercase_(Case::UNDEFINED)
       , width_(0)
     {
-      bind(SYMBOL(init),     &FormatInfo::init);
-      bind(SYMBOL(asString), &FormatInfo::as_string);
-      bind(SYMBOL(pattern),  &FormatInfo::pattern_get);
+      BIND(init);
+      BIND(asString, as_string);
+      BIND(pattern, pattern_get);
 
 # define DECLARE(Name)                                  \
       bind(SYMBOL_(Name), &FormatInfo::Name ##_get);    \
