@@ -92,7 +92,7 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER(Hash);
     URBI_CXX_OBJECT_REGISTER(UConnection);
     URBI_CXX_OBJECT_REGISTER(Profile);
-    URBI_CXX_OBJECT_REGISTER(FunctionProfile);
+    URBI_CXX_OBJECT_REGISTER(FunctionProfile, Profile);
     URBI_CXX_OBJECT_REGISTER(Matrix);
     URBI_CXX_OBJECT_REGISTER(Vector);
   } // namespace object

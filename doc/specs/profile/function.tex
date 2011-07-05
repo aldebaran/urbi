@@ -19,9 +19,9 @@ given function during a profiling operation.
 
 \subsection{Construction}
 
-\lstinline|Function| objects are not meant to be cloned as they are
-created by \refSlot[System]{profile} internal machinery.  As an example, let
-us profile the traditional factorial function.
+\lstinline|Function| objects are not meant to be cloned as they are created
+by \refSlot[System]{profile} internal machinery.  As an example, let us
+profile the traditional factorial function.
 
 \begin{urbiscript}
 function Float.fact()
@@ -62,6 +62,8 @@ var profile = System.profile(function() { 20.fact });
 [:])
 profile.calls[0];
 [00123833] Function('fact', 20, 0.000120, 0.000006)
+profile.calls[0].isA(Profile.Function);
+[00123933] true
 \end{urbiscript}
 
 \subsection{Slots}

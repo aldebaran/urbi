@@ -15,20 +15,14 @@ requireFile("urbi/global.u");
 requireFile("urbi/exception.u");
 requireFile("urbi/control.u");
 
-/*-----------------------.
-| Profiling operations.  |
-`-----------------------*/
+/*----------.
+| Profile.  |
+`----------*/
 
 do (Profile)
 {
-  class Function
-  {
-    function asString()
-    {
-      "%s('%s', %s, %.6f, %.6f)"
-      % [type, name, calls, selfTime, selfTimePer]
-    };
-  };
+  var Function = FunctionProfile;
+  Global.removeSlot("FunctionProfile");
 
   /// Compute the optimal unit for given values.
   /// \param values   in seconds.
@@ -102,10 +96,20 @@ do (Profile)
   };
 };
 
-do (FunctionProfile)
+
+/*-------------------.
+| Profile.Function.  |
+`-------------------*/
+
+do (Profile.Function)
 {
+  type->constant = false;
+  type = "Function";
+  type->constant = true;
+
   function asString()
   {
-    "Function('%s', %s, %6s, %6s)" % [name, calls, selfTimePer, selfTime]
-  }
+    "%s('%s', %s, %.6f, %.6f)"
+      % [type, name, calls, selfTime, selfTimePer]
+  };
 };
