@@ -19,7 +19,8 @@ namespace urbi
   {
     class URBI_SDK_API Finalizable: public CxxObject
     {
-      public:
+      URBI_CXX_OBJECT(Finalizable, CxxObject);
+    public:
       Finalizable();
       Finalizable(rFinalizable model);
       virtual ~Finalizable();
@@ -27,8 +28,6 @@ namespace urbi
       void __inc();
       void __dec();
       int __get() const;
-      private:
-      URBI_CXX_OBJECT(Finalizable, CxxObject);
     };
   }
 }

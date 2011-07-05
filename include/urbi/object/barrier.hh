@@ -26,8 +26,8 @@ namespace urbi
   {
     class URBI_SDK_API Barrier: public CxxObject
     {
+      URBI_CXX_OBJECT(Barrier, CxxObject);
     public:
-      typedef Barrier self_type;
       typedef std::list<std::pair<runner::rJob, rObject> > value_type;
 
       Barrier(rBarrier model);
@@ -43,8 +43,6 @@ namespace urbi
     private:
       value_type value_;
       value_type::iterator rest_;
-
-      URBI_CXX_OBJECT(Barrier, CxxObject);
     };
 
   }; // namespace object

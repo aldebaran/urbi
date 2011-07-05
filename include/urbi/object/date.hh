@@ -28,14 +28,13 @@ namespace urbi
   {
     class URBI_SDK_API Date: public CxxObject
     {
+      URBI_CXX_OBJECT(Date, CxxObject);
 
     /*---------------.
     | Construction.  |
     `---------------*/
 
     public:
-      typedef Date self_type;
-
       typedef boost::posix_time::ptime value_type;
       typedef boost::posix_time::time_duration duration_type;
       typedef boost::posix_time::time_duration::hour_type hour_type;
@@ -110,8 +109,6 @@ namespace urbi
 
     private:
       value_type time_;
-
-      URBI_CXX_OBJECT(Date, CxxObject);
     };
   }
 }

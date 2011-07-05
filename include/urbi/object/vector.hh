@@ -52,10 +52,10 @@ namespace urbi
       : public CxxObject
       , public EqualityComparable<Vector, vector_type>
     {
+      URBI_CXX_OBJECT(Vector, CxxObject);
       friend class Matrix;
 
     public:
-      typedef Vector self_type;
       typedef ::urbi::object::matrix_type matrix_type;
       typedef ::urbi::object::vector_type vector_type;
       typedef vector_type value_type;
@@ -122,7 +122,6 @@ namespace urbi
       rObject uvalueSerialize() const;
     private:
       value_type value_;
-      URBI_CXX_OBJECT(Vector, CxxObject);
     };
 
 

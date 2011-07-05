@@ -26,9 +26,8 @@ namespace urbi
      */
     class UConnection: public CxxObject
     {
+      URBI_CXX_OBJECT(UConnection, CxxObject);
     public:
-      typedef UConnection self_type;
-
       UConnection();
       UConnection(libport::intrusive_ptr<UConnection> model);
 
@@ -58,7 +57,6 @@ namespace urbi
       bool processing;
       void init_();
       friend class UVar;
-      URBI_CXX_OBJECT(UConnection, CxxObject);
     };
   }
 }

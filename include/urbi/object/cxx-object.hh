@@ -27,6 +27,8 @@
     Name(const ::urbi::object::FirstPrototypeFlag&);                    \
     friend class CxxObject;                                             \
   public:                                                               \
+    typedef Name self_type;                                             \
+    typedef Parent super_type;                                          \
     static const ::std::string& type_name();                            \
     virtual ::std::string type_name_get() const;                        \
     static ::libport::intrusive_ptr<Name> proto;                        \
@@ -37,7 +39,7 @@
     as_check_(const std::type_info* req)                                \
     {                                                                   \
       return typeid(Name) == *req || Parent::as_check_(req);            \
-    }                                                                   \
+    }
 
 #define URBI_CXX_OBJECT_REGISTER(Name, ...)                   \
   URBI_CXX_OBJECT_REGISTER_(Name, LIBPORT_LIST(__VA_ARGS__,))

@@ -24,8 +24,14 @@ namespace urbi
 {
   namespace object
   {
+
+    /*------------------.
+    | FunctionProfile.  |
+    `------------------*/
+
     class FunctionProfile: public CxxObject
     {
+      URBI_CXX_OBJECT(FunctionProfile, CxxObject);
     public:
       FunctionProfile();
       FunctionProfile(libport::intrusive_ptr<FunctionProfile> model);
@@ -42,13 +48,18 @@ namespace urbi
     private:
       friend class ::runner::Job;
       friend class Profile;
-
-      URBI_CXX_OBJECT(FunctionProfile, CxxObject);
     };
+
+
+    /*----------.
+    | Profile.  |
+    `----------*/
 
     typedef boost::unordered_map<void*, rFunctionProfile> FunctionProfiles;
     class Profile: public CxxObject
     {
+      URBI_CXX_OBJECT(Profile, CxxObject);
+
     public:
       Profile();
       Profile(libport::intrusive_ptr<Profile> model);
@@ -88,8 +99,6 @@ namespace urbi
     private:
       void step(libport::utime_t& checkpoint, void* function_current);
       friend class ::runner::Job;
-
-      URBI_CXX_OBJECT(Profile, CxxObject);
     };
   }
 }

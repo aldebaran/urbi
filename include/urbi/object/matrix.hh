@@ -24,8 +24,8 @@ namespace urbi
       : public CxxObject
       , public EqualityComparable<Matrix, matrix_type >
     {
+      URBI_CXX_OBJECT(Matrix, CxxObject);
     public:
-      typedef Matrix self_type;
       typedef ::urbi::object::matrix_type matrix_type;
       typedef ::urbi::object::vector_type vector_type;
       typedef matrix_type value_type;
@@ -113,7 +113,6 @@ namespace urbi
                               const std::string row_lsep,
                               const std::string row_rsep) const;
       value_type value_;
-      URBI_CXX_OBJECT(Matrix, CxxObject);
     };
 
 

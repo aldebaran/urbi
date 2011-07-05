@@ -22,6 +22,7 @@ namespace urbi
   {
     class URBI_SDK_API EventHandler: public CxxObject
     {
+      URBI_CXX_OBJECT(EventHandler, CxxObject);
       friend class Event;
 
     public:
@@ -58,8 +59,6 @@ namespace urbi
       /// Copy of boolean given to trigger, used for stop synchronicity.
       bool   detach_;
       stop_jobs_type stop_jobs_;
-
-      URBI_CXX_OBJECT(EventHandler, CxxObject);
     };
   }
 }

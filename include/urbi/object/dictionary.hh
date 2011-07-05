@@ -41,9 +41,9 @@ namespace urbi
 
     class URBI_SDK_API Dictionary: public CxxObject
     {
+      URBI_CXX_OBJECT(Dictionary, CxxObject);
     public:
       typedef unordered_map value_type;
-      typedef Dictionary self_type;
 
       Dictionary();
       Dictionary(rDictionary model);
@@ -66,7 +66,6 @@ namespace urbi
 
     private:
       value_type content_;
-      URBI_CXX_OBJECT(Dictionary, CxxObject);
       URBI_ATTRIBUTE_ON_DEMAND_DECLARE(Event, elementAdded);
       URBI_ATTRIBUTE_ON_DEMAND_DECLARE(Event, elementChanged);
       URBI_ATTRIBUTE_ON_DEMAND_DECLARE(Event, elementRemoved);

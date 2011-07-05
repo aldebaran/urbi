@@ -32,13 +32,13 @@ namespace urbi
       , public EqualityComparable<Float, libport::ufloat>
     {
 
+      URBI_CXX_OBJECT(Float, CxxObject);
+
     /*--------------.
     | C++ methods.  |
     `--------------*/
 
     public:
-
-      typedef Float self_type;
       typedef libport::ufloat value_type;
 
       /// The preferred targets for conversions.
@@ -205,8 +205,6 @@ namespace urbi
     private:
 
       value_type value_;
-
-      URBI_CXX_OBJECT(Float, CxxObject);
     };
 
   } // namespace object

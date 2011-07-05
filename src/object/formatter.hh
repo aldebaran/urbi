@@ -29,8 +29,8 @@ namespace urbi
 
     class Formatter: public CxxObject
     {
+      URBI_CXX_OBJECT(Formatter, CxxObject);
     public:
-      typedef Formatter self_type;
       Formatter();
       Formatter(rFormatter model);
 
@@ -46,8 +46,6 @@ namespace urbi
     private:
       /// The FormatInfos and Strings.
       ATTRIBUTE_R(rList, data);
-
-      URBI_CXX_OBJECT(Formatter, CxxObject);
     };
 
   } // namespace object

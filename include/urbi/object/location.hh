@@ -23,13 +23,13 @@ namespace urbi
 
     class URBI_SDK_API Location: public CxxObject
     {
+      URBI_CXX_OBJECT(Location, CxxObject);
 
     /*---------------.
     | Construction.  |
     `---------------*/
 
     public:
-      typedef Location self_type;
       typedef ::ast::loc value_type;
       Location();
       Location(const value_type& loc);
@@ -61,8 +61,6 @@ namespace urbi
 
     private:
       value_type loc_;
-
-      URBI_CXX_OBJECT(Location, CxxObject);
     };
 
     bool

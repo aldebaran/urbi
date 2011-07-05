@@ -28,9 +28,9 @@ namespace urbi
      */
     class UValue: public CxxObject
     {
-    public:
-      typedef UValue self_type;
+      URBI_CXX_OBJECT(UValue, CxxObject);
 
+    public:
       UValue();
       UValue(libport::intrusive_ptr<UValue> model);
       // Keep a reference to v.
@@ -52,7 +52,6 @@ namespace urbi
       rObject cache_;
       bool bypassMode_;
       friend class ::urbi::object::UVar;
-      URBI_CXX_OBJECT(UValue, CxxObject);
     };
 
   }

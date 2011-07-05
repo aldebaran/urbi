@@ -21,14 +21,13 @@ namespace urbi
   {
     class URBI_SDK_API Directory: public CxxObject
     {
+      URBI_CXX_OBJECT(Directory, CxxObject);
 
     /*--------------.
     | C++ methods.  |
     `--------------*/
 
     public:
-
-      typedef Directory self_type;
       typedef rPath value_type;
       value_type value_get();
 
@@ -95,8 +94,6 @@ namespace urbi
 
     private:
       value_type path_;
-
-      URBI_CXX_OBJECT(Directory, CxxObject);
     };
 
     rObject

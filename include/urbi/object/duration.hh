@@ -21,13 +21,13 @@ namespace urbi
   {
     class URBI_SDK_API Duration: public Float
     {
+      URBI_CXX_OBJECT(Duration, Float);
+
     /*---------------.
     | Construction.  |
     `---------------*/
 
     public:
-      typedef Duration self_type;
-
       Duration(value_type seconds = 0);
       Duration(const boost::posix_time::time_duration& val);
       Duration(rDuration model);
@@ -49,13 +49,6 @@ namespace urbi
     public:
       value_type seconds() const;
       boost::posix_time::time_duration boost_duration() const;
-
-    /*----------.
-    | Details.  |
-    `----------*/
-
-    private:
-      URBI_CXX_OBJECT(Duration, Float);
     };
   }
 }

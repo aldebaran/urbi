@@ -19,6 +19,7 @@ namespace urbi
   {
     class URBI_SDK_API Hash: public CxxObject
     {
+      URBI_CXX_OBJECT(Hash, CxxObject);
     public:
       typedef std::size_t value_type;
       Hash(value_type val);
@@ -31,7 +32,6 @@ namespace urbi
 
     private:
       value_type val_;
-      URBI_CXX_OBJECT(Hash, CxxObject);
     };
 
     std::size_t hash_value(const Object& o);

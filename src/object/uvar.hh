@@ -27,9 +27,8 @@ namespace urbi
      */
     class UVar: public Primitive
     {
+      URBI_CXX_OBJECT(UVar, Primitive);
     public:
-      typedef UVar self_type;
-
       typedef std::pair<unsigned int, rObject> Callback;
       typedef std::vector<Callback> Callbacks;
 
@@ -75,9 +74,13 @@ namespace urbi
       /// Set of runners currently in a notifyChange.
       std::vector<void*> inChange_;
       bool inAccess_;
-      URBI_CXX_OBJECT(UVar, Primitive);
       int waiterCount_;
+
+    public:
+      /// FIXME: Should not be public.
       libport::Symbol initialName;
+
+    private:
       bool owned;
       static unsigned int uid_; // Unique id for callbacks
       friend class UConnection;

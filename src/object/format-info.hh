@@ -30,8 +30,8 @@ namespace urbi
   {
     class FormatInfo: public CxxObject
     {
+      URBI_CXX_OBJECT(FormatInfo, CxxObject);
     public:
-      typedef FormatInfo self_type;
       FormatInfo();
       FormatInfo(rFormatInfo model);
 
@@ -78,8 +78,6 @@ namespace urbi
 
       void compute_pattern() const;
       rObject update_hook(const std::string& slot, rObject val);
-
-      URBI_CXX_OBJECT(FormatInfo, CxxObject);
     };
 
   } // namaspace object

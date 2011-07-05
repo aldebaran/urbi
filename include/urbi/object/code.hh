@@ -30,8 +30,8 @@ namespace urbi
   {
     class URBI_SDK_API Code: public Executable
     {
+      URBI_CXX_OBJECT(Code, Executable);
     public:
-      typedef Code self_type;
       typedef ast::rConstRoutine ast_type;
       typedef std::vector<rSlot> captures_type;
 
@@ -80,8 +80,6 @@ namespace urbi
       rLobby lobby_;
       /// Captured 'this'. Only for closures.
       rObject this_;
-
-      URBI_CXX_OBJECT(Code, Executable);
     };
 
   } // namespace object

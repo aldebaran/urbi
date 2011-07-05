@@ -24,13 +24,13 @@ namespace urbi
   {
     class URBI_MODULE_API Stream: public CxxObject
     {
+      URBI_CXX_OBJECT(Stream, CxxObject);
 
       /*-----------------------------.
       | Construction / Destruction.  |
       `-----------------------------*/
 
     public:
-      typedef Stream self_type;
       Stream();
       Stream(int fd, bool own);
       Stream(rStream stream);
@@ -49,8 +49,6 @@ namespace urbi
       // (re)initialize socket to a new Socket.
       void newSocket();
       rSocket socket_;
-
-      URBI_CXX_OBJECT(Stream, CxxObject);
     };
   }
 }

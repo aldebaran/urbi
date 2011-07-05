@@ -26,8 +26,8 @@ namespace urbi
   {
     class URBI_SDK_API Tag : public object::CxxObject
     {
+      URBI_CXX_OBJECT(Tag, CxxObject);
     public:
-      typedef Tag self_type;
       typedef sched::rTag value_type;
 
       Tag();
@@ -76,8 +76,6 @@ namespace urbi
     private:
       value_type value_;
       rTag parent_;
-
-      URBI_CXX_OBJECT(Tag, CxxObject);
     };
 
   } // namespace object

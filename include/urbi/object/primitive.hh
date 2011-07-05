@@ -28,7 +28,8 @@ namespace urbi
   {
     class URBI_SDK_API Primitive: public Executable
     {
-      public:
+      URBI_CXX_OBJECT(Primitive, Executable);
+    public:
       typedef boost::function1<rObject, const objects_type&> value_type;
       typedef boost::unordered_map<size_t, value_type> values_type;
 
@@ -45,11 +46,9 @@ namespace urbi
       // Urbi methods
       rObject apply(rList args);
 
-      private:
+    private:
       values_type content_;
       value_type default_;
-
-      URBI_CXX_OBJECT(Primitive, Executable);
     };
   }; // namespace object
 }

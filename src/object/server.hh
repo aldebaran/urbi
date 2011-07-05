@@ -22,8 +22,8 @@ namespace urbi
       : public CxxObject
       , public libport::Socket
     {
+      URBI_CXX_OBJECT(Server, CxxObject);
     public:
-      typedef Server self_type;
 
       Server();
       Server(rServer model);
@@ -43,7 +43,6 @@ namespace urbi
       void initialize();
       sockets_type sockets_;
       rIoService io_service_;
-      URBI_CXX_OBJECT(Server, CxxObject);
     };
   }
 }

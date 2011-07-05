@@ -21,8 +21,7 @@ namespace urbi
   {
     class URBI_SDK_API File: public CxxObject
     {
-    public:
-      typedef File self_type;
+      URBI_CXX_OBJECT(File, CxxObject);
 
     /*--------------.
     | C++ methods.  |
@@ -72,8 +71,6 @@ namespace urbi
 
     private:
       value_type path_;
-
-      URBI_CXX_OBJECT(File, CxxObject);
     };
   }
 }

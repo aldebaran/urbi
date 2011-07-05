@@ -31,8 +31,8 @@ namespace urbi
     class URBI_SDK_API Lobby
       : public CxxObject, public libport::InstanceTracker<Lobby>
     {
+      URBI_CXX_OBJECT(Lobby, CxxObject);
     public:
-      typedef Lobby self_type;
       typedef kernel::UConnection connection_type;
 
       /// Convenience constructor.
@@ -79,8 +79,6 @@ namespace urbi
       /// The Lobby prototype uses an empty connection_.
       /// The actual lobbies must have a non-empty one.
       connection_type* connection_;
-
-      URBI_CXX_OBJECT(Lobby, CxxObject);
     };
   }; // namespace object
 }

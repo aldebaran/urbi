@@ -26,10 +26,11 @@ namespace urbi
   {
     class URBI_SDK_API List: public object::CxxObject
     {
+      URBI_CXX_OBJECT(List, CxxObject);
+
     public:
       typedef objects_type value_type;
       typedef value_type::size_type size_type;
-      typedef List self_type;
 
       List();
       List(const value_type& value);
@@ -83,7 +84,6 @@ namespace urbi
 
       URBI_ATTRIBUTE_ON_DEMAND_DECLARE(Event, sizeChanged);
       URBI_ATTRIBUTE_ON_DEMAND_DECLARE(Event, contentChanged);
-      URBI_CXX_OBJECT(List, CxxObject);
 
     public:
       static bool list_added;

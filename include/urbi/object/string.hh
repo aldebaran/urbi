@@ -31,8 +31,8 @@ namespace urbi
       : public CxxObject
       , public EqualityComparable<String, std::string>
     {
+      URBI_CXX_OBJECT(String, CxxObject);
     public:
-      typedef String self_type;
       typedef std::string value_type;
       typedef std::vector<value_type> strings_type;
 
@@ -158,8 +158,6 @@ namespace urbi
 
       long find_default(const value_type& pattern) const;
       long rfind_default(const value_type& pattern) const;
-
-      URBI_CXX_OBJECT(String, CxxObject);
     };
 
     // Urbi functions

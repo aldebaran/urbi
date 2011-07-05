@@ -23,17 +23,16 @@ namespace urbi
       : public CxxObject
       , public boost::asio::io_service
     {
+      URBI_CXX_OBJECT(IoService, CxxObject);
     public:
-      typedef IoService self_type;
       IoService();
       IoService(rIoService model);
+
       void pollFor(double duration);
       void pollOneFor(double duration);
       void poll();
       rSocket makeSocket();
       rServer makeServer();
-    private:
-      URBI_CXX_OBJECT(IoService, CxxObject);
     };
   }
 }

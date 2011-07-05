@@ -22,13 +22,13 @@ namespace urbi
 
     class URBI_SDK_API Position: public CxxObject
     {
+      URBI_CXX_OBJECT(Position, CxxObject);
 
     /*---------------.
     | Construction.  |
     `---------------*/
 
     public:
-      typedef Position self_type;
       typedef ::yy::position value_type;
       Position();
       Position(const value_type& pos);
@@ -81,8 +81,6 @@ namespace urbi
 
     private:
       value_type pos_;
-
-      URBI_CXX_OBJECT(Position, CxxObject);
     };
 
     bool

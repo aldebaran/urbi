@@ -27,13 +27,12 @@ namespace urbi
       : public CxxObject
       , public EqualityComparable<Path, libport::path>
     {
-
+      URBI_CXX_OBJECT(Path, CxxObject);
     /*--------------.
     | C++ methods.  |
     `--------------*/
 
     public:
-      typedef Path self_type;
       typedef libport::path value_type;
       ATTRIBUTE_CONST
       const value_type& value_get() const;
@@ -95,8 +94,6 @@ namespace urbi
 
       // Stat the file and handle all errors
       struct stat stat() const;
-
-      URBI_CXX_OBJECT(Path, CxxObject);
     };
 
 

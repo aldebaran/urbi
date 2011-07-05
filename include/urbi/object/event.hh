@@ -28,16 +28,14 @@ namespace urbi
   {
     class URBI_SDK_API Event: public CxxObject
     {
+      URBI_CXX_OBJECT(Event, CxxObject);
       friend class EventHandler;
 
     public:
-      typedef Event self_type;
-
       Event();
       Event(rEvent model);
       Event(rEvent model, rList payload);
       virtual ~Event();
-      URBI_CXX_OBJECT(Event, CxxObject);
 
     public:
       typedef boost::signal0<void> signal_type;

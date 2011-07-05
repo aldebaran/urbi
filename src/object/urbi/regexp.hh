@@ -22,8 +22,8 @@ namespace urbi
   {
     class URBI_MODULE_API Regexp : public CxxObject
     {
+      URBI_CXX_OBJECT(Regexp, CxxObject);
     public:
-      typedef Regexp self_type;
       Regexp(const std::string& rg);
       Regexp(rRegexp model);
 
@@ -44,7 +44,6 @@ namespace urbi
     private:
       boost::regex re_;
       matches_type matches_;
-      URBI_CXX_OBJECT(Regexp, CxxObject);
     };
   }
 }

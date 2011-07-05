@@ -19,13 +19,13 @@ namespace urbi
   {
     class URBI_MODULE_API OutputStream: public Stream
     {
+      URBI_CXX_OBJECT(OutputStream, Stream);
 
       /*-----------------------------.
       | Construction / Destruction.  |
       `-----------------------------*/
 
     public:
-      typedef OutputStream self_type;
       OutputStream(int fd, bool own);
       OutputStream(rOutputStream stream);
       ~OutputStream();
@@ -39,13 +39,6 @@ namespace urbi
       rOutputStream putByte(unsigned char);
       void flush();
       rOutputStream put(rObject o);
-
-      /*----------.
-      | Details.  |
-      `----------*/
-
-    private:
-      URBI_CXX_OBJECT(OutputStream, Stream);
     };
   }
 }

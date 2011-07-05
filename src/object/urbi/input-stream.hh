@@ -25,13 +25,13 @@ namespace urbi
   {
     class URBI_MODULE_API InputStream: public Stream
     {
+      URBI_CXX_OBJECT(InputStream, Stream);
 
       /*-----------------------------.
       | Construction / Destruction.  |
       `-----------------------------*/
 
     public:
-      typedef InputStream self_type;
       InputStream(int fd, bool own);
       InputStream(rInputStream stream);
       ~InputStream();
@@ -73,7 +73,6 @@ namespace urbi
       `----------*/
 
     private:
-      URBI_CXX_OBJECT(InputStream, Stream);
       Event::Subscription on_error_subscription_;
     };
   }

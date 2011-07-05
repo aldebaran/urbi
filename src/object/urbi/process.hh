@@ -23,13 +23,13 @@ namespace urbi
   {
     class URBI_MODULE_API Process: public CxxObject
     {
+      URBI_CXX_OBJECT(Process, CxxObject);
 
       /*-----------------------------.
       | Construction / Destruction.  |
       `-----------------------------*/
 
     public:
-      typedef Process self_type;
       typedef std::vector<std::string> arguments_type;
       Process(const std::string& binary,
               const arguments_type& argv);
@@ -71,7 +71,6 @@ namespace urbi
       std::string binary_;
       arguments_type argv_;
       int status_;
-      URBI_CXX_OBJECT(Process, CxxObject);
     };
   }
 }

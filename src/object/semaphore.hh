@@ -26,6 +26,7 @@ namespace urbi
   {
     class URBI_SDK_API Semaphore: public CxxObject
     {
+      URBI_CXX_OBJECT(Semaphore, CxxObject);
     public:
       typedef std::pair< int, std::list<runner::rJob> > value_type;
 
@@ -43,8 +44,6 @@ namespace urbi
 
     private:
       value_type value_;
-
-      URBI_CXX_OBJECT(Semaphore, CxxObject);
     };
 
   }; // namespace object
