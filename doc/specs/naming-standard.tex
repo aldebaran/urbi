@@ -295,9 +295,9 @@ This interface is used to describe a generic motor controller.
   type of motor. It is mandatory in the Urbi Ready standard as a universal
   proxy to control an actuator. The more specific slot is described in a
   subclass of \code{Motor}.
-\item[PGain?] Controls the P gain of the PID controller.
-\item[IGain?] Controls the I gain of the PID controller.
-\item[DGain?] Controls the D gain of the PID controller.
+\item[PGain] (Optional.) Controls the P gain of the PID controller.
+\item[IGain] (Optional.) Controls the I gain of the PID controller.
+\item[DGain] (Optional.) Controls the D gain of the PID controller.
 \end{urbiscriptapi}
 
 \interface[Motor]{LinearMotor}
@@ -432,7 +432,7 @@ Interface for a scanning laser rangefinder, or other similar technologies.
 
 \item[distanceMax] Maximum measurable distance.
 
-\item[rate?] Number of scans per second.
+\item[rate] (Optional.) Number of scans per second.
 \end{urbiscriptapi}
 
 Depending on the implementation, some of the parameters can be read-only, or
@@ -468,8 +468,8 @@ as a subset of the six values x, y, z, rho, theta, phi.
 \item[goTo](<position>) Try to reach the given coordinates in the robot
   frame of reference.
 
-\item[goToChargingStation]() Try to reach the charging station. If the
-  feature is not available, return immediately.
+\item[goToChargingStation] Try to reach the charging station. If the feature
+  is not available, return immediately.
 
 \item[goToAbsolute](<position>) Try to reach given coordinates in an
   absolute frame of reference. This frame of reference is maintained using
@@ -478,7 +478,7 @@ as a subset of the six values x, y, z, rho, theta, phi.
 \item[position] The current robot position in the absolute frame of
   reference.
 
-\item[stop]() Stop current movement.
+\item[stop] Stop current movement.
 
 \item[setAbsolutePosition](<position>) Force absolute position to the given
   value.
@@ -517,11 +517,11 @@ slots \lstinline{defaultXSpeed}, \lstinline{defaultYSpeed},
 \begin{urbiscriptapi}
 \item[moving] True if the robot is currently moving for any reason, false
   otherwise.
-\item[aborted?] Emitted each time a function in the blocking API is aborted
+\item[aborted] (Optional.) Emitted each time a function in the blocking API is aborted
   because it was preempted by an other movement.
-\item[unreachable?] Emitted when a function in the blocking API is aborted
+\item[unreachable] (Optional.) Emitted when a function in the blocking API is aborted
   because the target cannot be reached.
-\item[finished?] Emitted each time a function in the blocking API finished
+\item[finished] (Optional.) Emitted each time a function in the blocking API finished
   normally.
 
 \end{urbiscriptapi}
@@ -557,25 +557,25 @@ image sensor.
 \item[width] Width of the image in the current resolution, expressed in
   pixels
 
-\item[format?]  Format of the image, expressed as an integer in the enum
+\item[format] (Optional.)  Format of the image, expressed as an integer in the enum
   urbi::UImageFormat.  See below for more information.
 
-\item[exposure?] Exposure duration, expressed in seconds. 0 if non
+\item[exposure] (Optional.) Exposure duration, expressed in seconds. 0 if non
   applicable.
 
-\item[wb?]  White balance (expressed with an integer value depending on the
+\item[wb] (Optional.)  White balance (expressed with an integer value depending on the
   camera documentation). 0 if non applicable.
 
-\item[gain?]  Camera gain amplification (expressed as a coefficient between
+\item[gain] (Optional.)  Camera gain amplification (expressed as a coefficient between
   0 and infinity). 1 if non applicable.
 
-\item[resolution?]  Image resolution, expressed as an integer. 0 corresponds
+\item[resolution] (Optional.)  Image resolution, expressed as an integer. 0 corresponds
   to the maximal resolution of the camera. Successive values correspond to
   all the supported image sizes in decreasing order.  Once modified, the
   effective resolution in X/Y can be checked with the width and height
   slots.
 
-\item[quality?]  If the image is in the jpeg format, this slot sets the
+\item[quality] (Optional.)  If the image is in the jpeg format, this slot sets the
   compression quality, from 0 (best compression, worst quality) to 100 (best
   quality, bigger image).
 \end{urbiscriptapi}
@@ -617,7 +617,7 @@ The AudioOut interface groups every information relative to speakers.
 \item[playing] This is a Boolean value which is true when there is a sound
   currently playing (the buffer is not empty)%
 
-\item[volume?] Volume of the play back, in decibels.
+\item[volume] (Optional.) Volume of the play back, in decibels.
 \end{urbiscriptapi}
 
 
@@ -635,7 +635,7 @@ The AudioIn interface groups every information relative to microphones.
   event.
 \item[duration] Amount of sound in the val attribute, expressed in
   \textit{ms}.
-\item[gain?] Microphone gain amplification (expressed between 0 and 1).
+\item[gain] (Optional.) Microphone gain amplification (expressed between 0 and 1).
 \end{urbiscriptapi}
 
 
@@ -660,10 +660,10 @@ the typical slots expected:
 \item[threshold] The minimum value of ratio to decide that the blob is
   visible.
 
-\item[orientation?]  Angle of the main ellipsoid axis of the blob (0 =
+\item[orientation] (Optional.)  Angle of the main ellipsoid axis of the blob (0 =
   horizontal), expressed in radians.
 
-\item[elongation?]  Ratio between the main and the second diameter of the
+\item[elongation] (Optional.)  Ratio between the main and the second diameter of the
   blob enveloping ellipse.
 \end{urbiscriptapi}
 
@@ -673,28 +673,30 @@ implementations should use the \code{speaker} component (or alias) as
 their default sound output.
 
 \begin{urbiscriptapi}
-\item[lang?] The language used, in international notation ISO 639 (fr, en,
-  it\ldots).
+\item[lang] (Optional.) The language used, in international notation ISO 639
+  (fr, en, it\ldots).
 
-\item[speed?] How fast the voice should go.  A positive number, with 1
-  standing for ``regular speed''.
+\item[speed] (Optional.) How fast the voice should go.  A positive number,
+  with 1 standing for ``regular speed''.
 
-\item[pitch?] Voice pitch.  A positive number, with 1 standing the regular
-  pitch.
+\item[pitch] (Optional.) Voice pitch.  A positive number, with 1 standing
+  the regular pitch.
 
-\item[gender?] Gender of the speaker (0:male/1:female).
+\item[gender] (Optional.) Gender of the speaker (0:male/1:female).
 
-\item[age?] Age of the speaker, if applicable.
+\item[age] (Optional.) Age of the speaker, if applicable.
 
-\item[voice?] Most TTS engines propose several voices, this attribute allows
-  picking one. It's a string identifier specific to the TTS developer.
+\item[voice] (Optional.) Most TTS engines propose several voices, this
+  attribute allows picking one. It's a string identifier specific to the TTS
+  developer.
 
-\item[say](s) Speak the sentence given in parameter \var{s}.
+\item[say](<s>) Speak the sentence given in parameter \var{s}.
 
-\item[voicexml?](s) Speak the text \var{s} expressed as a VoiceXML string.
+\item[voicexml](<s>) (Optional.) Speak the text \var{s} expressed as a
+  VoiceXML string.
 
-\item[script?](s) Speak the text \var{s} augmented by script markups (see
-  specific Gostai documentation) to generate \urbi events.
+\item[script](<s>) (Optional.) Speak the text \var{s} augmented by script
+  markups (see specific Gostai documentation) to generate \urbi events.
 \end{urbiscriptapi}
 
 
@@ -705,9 +707,9 @@ using various speech recognition algorithms. Implementations
 should use the \code{micro} component as their default sound input.
 
 \begin{urbiscriptapi}
-\item[lang?]  The language used, in international notation (fr, en, it…):
-  ISO 639.
-\item[hear](s) This event has one parameter which is the string describing
+\item[lang] (Optional.)  The language used, in international notation (fr,
+  en, it…): ISO 639.
+\item[hear](<s>) This event has one parameter which is the string describing
   what the speech engine has recognized (can be a word or a sentence).
 \end{urbiscriptapi}
 
@@ -1233,10 +1235,9 @@ hierarchy. It provides the following methods:
   device must inherit from at least one Interface.
 
 \item[makeCompactNames]%
-  This function must be called once on the root node (\code{robot})
-  after the hierarchy is completed.  It automatically computes the
-  short name of all the devices, and insert them as slots of the
-  \code{Global} object.
+  This function must be called once on the root node (\code{robot}) after
+  the hierarchy is completed.  It automatically computes the short name of
+  all the devices, and insert them as slots of the \code{Global} object.
 
 \item[dump]%
   Display a hierarchical view of the component hierarchy.
