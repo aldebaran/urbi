@@ -1,17 +1,5 @@
 #!/bin/sh
 
-BOOST=$(pkg-config boost-1.38 --variable=prefix)
-CC='ccache gcc'
-CXX='ccache g++'
-CPPFLAGS='-I "$HOME/local/include"'
-LDFLAGS='-I "$HOME/lib/"'
-
-if test $(uname -n) = bf-4; then
-    DOC=
-else
-    DOC='--disable-doc'
-fi
-
 run ()
 {
     echo "$@"
@@ -24,18 +12,36 @@ fatal ()
     exit 1
 }
 
-case "$BUILDFARM_MODE" in
-    (release*)
-        COMPILATION_MODE="speed";;
-    (debug*)
-        COMPILATION_MODE="debug";;
-    (*)
-        fatal "Cannot understand buildfarm mode: $BUILDFARM_MODE"
+older ()
+{
+  test ! -e "$1" || test -ot "$1" "$2"
+}
+
+set -ex
+
+BOOST=$(pkg-config --print-errors boost-1.38 --variable=prefix)
+CC='ccache gcc'
+CXX='ccache g++'
+CPPFLAGS='-I "$HOME/local/include"'
+LDFLAGS='-I "$HOME/local/lib"'
+
+case $(uname -n) in
+  (bf-4) DOC=;;
+  (*)    DOC='--disable-doc';;
 esac
 
-if ! test -e "$DIR_SOURCE/configure"; then
-    cd "$DIR_SOURCE" && ./bootstrap
+case "$BUILDFARM_MODE" in
+  (release*) COMPILATION_MODE="speed";;
+  (debug*)   COMPILATION_MODE="debug";;
+  (*)   fatal "invalid buildfarm mode: $BUILDFARM_MODE"
+esac
+
+if $(older "$DIR_SOURCE/configure" "$0"); then
+    cd "$DIR_SOURCE"
+    ./bootstrap
 fi
-if ! test -e "$DIR_BUILD/Makefile"; then
-    cd "$DIR_BUILD" && run "$DIR_SOURCE/configure" --with-boost="$BOOST" "$DOC" --enable-headers-install CPPFLAGS=-I/home/build/local/include LDFLAGS=-L/home/build/local/lib --prefix=/prefix
+
+if $(older "$DIR_BUILD/Makefile" "$0"); then
+    cd "$DIR_BUILD"
+    run "$DIR_SOURCE/configure" --with-boost="$BOOST" "$DOC" --enable-headers-install CPPFLAGS="$CPPFLAGS" LDFLAGS="$LDFLAGS" --prefix=/prefix
 fi
