@@ -22,7 +22,7 @@ requireFile("urbi/control.u");
 do (Profile)
 {
   var Function = FunctionProfile;
-  Global.removeSlot("FunctionProfile");
+  removeSlot("FunctionProfile");
 
   /// Compute the optimal unit for given values.
   /// \param values   in seconds.
