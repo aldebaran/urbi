@@ -1,0 +1,99 @@
+(:comment The master of this page is in the repository of Urbi SDK.:)
+
+! Urbi SDK Documentation
+
+!!Documentation for Urbi 2.x (latest release)
+
+The main document, the Urbi SDK Manual, comes in two flavors.  Either
+a single PDF file, or a set of HTML files.
+
+* [[http://www.gostai.com/downloads/urbi/2.x/doc/urbi-sdk.pdf | Documentation in PDF]]
+
+  The full, self-contained, documentation about Urbi SDK.
+
+* [[http://www.gostai.com/downloads/urbi/doc/| Documentation as set of HTML pages]]
+
+::[[http://www.gostai.com/downloads/urbi/doc/introduction.html|Introduction]]:Introduces Urbi SDK, the UObject middleware and the urbiscript language.
+
+  Provides the table of contents of the whole documentation.
+  See also the [[http://www.gostai.com/downloads/urbi/doc/index.html|index]].
+
+::[[http://www.gostai.com/downloads/urbi/doc/urbiscript-user-manual.html|urbiscript User Manual]]:
+  The "urbiscript tutorial": how to program in urbiscript.  It goes
+  from the basis to concurrent and event-based programming.  No
+  specific knowledge is expected.  There is no need for a C++
+  compiler, as UObject will not be covered here.  The
+  [[http://www.gostai.com/downloads/urbi/doc/urbi-sdk-reference-manual.html|Urbi Reference Manual]] contains a terse and complete definition of the Urbi
+  environment.
+
+::[[http://www.gostai.com/downloads/urbi/doc/uobjects.html|UObjects Manual]]:
+  The Urbi architecture: its core components (client/server
+  architecture), how its middleware works, how to include extensions
+  as UObjects (C++ components) and so forth.
+  No knowledge of the urbiscript language is needed.  As a matter of
+  fact, Urbi can be used as a standalone middleware architecture to
+  orchestrate the execution of existing components.
+  Yet urbiscript is a feature that "comes for free": it is easy
+  using it to experiment, prototype, and even program fully-featured
+  applications that orchestrate native components.  The interested
+  reader should read either the
+  [[http://www.gostai.com/downloads/urbi/doc/urbiscript-user-manual.html|urbiscript user Manual]], or the
+  [[http://www.gostai.com/downloads/urbi/doc/urbiscript-language-reference-manual.html|urbiscript reference manual]].
+
+::[[http://www.gostai.com/downloads/urbi/doc/faq.html|Frequently Asked Questions]]:
+  Answers to common questions about Urbi, UObjects, and urbiscript.
+
+::[[http://www.gostai.com/downloads/urbi/doc/urbi-sdk-reference-manual.html|Urbi Reference Manual]]:
+  The specifications of urbiscript.  Its syntax, semantics, standard
+  library, and SDK.  Refer to this section to check whether some code
+  is valid, or simply browse the urbiscript or C++ APIs for a desired
+  feature.  Random reading can also provide you with advanced
+  knowledge or subtleties about some urbiscript aspects.
+
+  This part is not a tutorial; it is not structured in a progressive
+  manner and is too detailed.  Think of it as a dictionary: one does
+  not learn a foreign language by reading a dictionary.  For a
+  tutorial, see the
+  [[http://www.gostai.com/downloads/urbi/doc/urbiscript-user-manual.html|urbiscript User Manual]].
+
+  This part does not aim at giving advanced programming techniques. Its
+  only goal is to define the language and its libraries.
+
+::[[http://www.gostai.com/downloads/urbi/doc/release-notes.html|Release Notes]]:
+  This document (also known as the Urbi ChangeLog, or Urbi
+  NEWS) lists the user-visible changes in Urbi SDK releases.
+
+::[[http://www.gostai.com/downloads/urbi/doc/urbi-platforms.html|Platforms]]:
+  This part covers the specific features of Urbi for some of the
+  platforms it was ported to:
+  [[http://www.gostai.com/downloads/urbi/doc/bioloid.html|Bioloid]],
+  [[http://www.gostai.com/downloads/urbi/doc/nxt.html|Mindstorm NXT]],
+  [[http://www.gostai.com/downloads/urbi/doc/nao.html|Nao]],
+  [[http://www.gostai.com/downloads/urbi/doc/p3dx.html|Pioneer 3-DX]],
+  [[http://www.gostai.com/downloads/urbi/doc/ros-tutorial.html|ROS]],
+  [[http://www.gostai.com/downloads/urbi/doc/segway-rmp.html|Segway RMP]],
+  [[http://www.gostai.com/downloads/urbi/doc/spykee.html|Spykee]],
+  [[http://www.gostai.com/downloads/urbi/doc/webots.html|Webots]].
+
+  See also [[Robots]] for information about other environments on
+  which Urbi was ported.
+
+::[[http://www.gostai.com/downloads/urbi/doc/index-of-terms.html|Index]]:
+  The index of the document.  A useful starting point.
+
+
+
+!!Documentation of previous releases
+
+The documentation for the previous releases are still available.  Just
+browse the corresponding doc/ directory of the following releases, or
+go directly to the documentation you are interested in.
+
+* '''[[http://www.gostai.com/downloads/urbi/2.7|Urbi 2.7]]''' [[http://www.gostai.com/downloads/urbi/2.7/doc/urbi-sdk.pdf | PDF]], [[http://www.gostai.com/downloads/urbi/2.7/doc/urbi-sdk.htmldir/| HTML]]
+* '''[[http://www.gostai.com/downloads/urbi/2.6|Urbi 2.6]]''' [[http://www.gostai.com/downloads/urbi/2.6/doc/urbi-sdk.pdf | PDF]], [[http://www.gostai.com/downloads/urbi/2.6/doc/urbi-sdk.htmldir/| HTML]]
+* '''[[http://www.gostai.com/downloads/urbi/2.5|Urbi 2.5]]''' [[http://www.gostai.com/downloads/urbi/2.5/doc/urbi-sdk.pdf | PDF]], [[http://www.gostai.com/downloads/urbi/2.5/doc/urbi-sdk.htmldir/| HTML]]
+* '''[[http://www.gostai.com/downloads/urbi/2.4|Urbi 2.4]]''' [[http://www.gostai.com/downloads/urbi/2.4/doc/urbi-sdk.pdf | PDF]], [[http://www.gostai.com/downloads/urbi/2.4/doc/urbi-sdk.htmldir/| HTML]]
+* '''[[http://www.gostai.com/downloads/urbi/2.3|Urbi 2.3]]''' [[http://www.gostai.com/downloads/urbi/2.3/doc/urbi-sdk.pdf | PDF]], [[http://www.gostai.com/downloads/urbi/2.3/doc/urbi-sdk.htmldir/| HTML]]
+* '''[[http://www.gostai.com/downloads/urbi/2.2|Urbi 2.2]]''' [[http://www.gostai.com/downloads/urbi/2.2/doc/urbi-sdk.pdf | PDF]], [[http://www.gostai.com/downloads/urbi/2.2/doc/urbi-sdk.htmldir/| HTML]]
+* '''[[http://www.gostai.com/downloads/urbi/2.1|Urbi 2.1]]''' [[http://www.gostai.com/downloads/urbi/2.1/doc/urbi-sdk.pdf | PDF]], [[http://www.gostai.com/downloads/urbi/2.1/doc/urbi-sdk.htmldir/| HTML]]
+* '''[[http://www.gostai.com/downloads/urbi/2.0|Urbi 2.0]]''' [[http://www.gostai.com/downloads/urbi/2.0/doc/urbi-sdk.pdf | PDF]], [[http://www.gostai.com/downloads/urbi/2.0/doc/urbi-sdk.htmldir/| HTML]]
