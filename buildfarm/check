@@ -1,6 +1,23 @@
 #!/bin/sh
 
-set -x
-env
+set -xe
+
 cd "$DIR_BUILD"
-make installcheck-buildfarm DESTDIR="$DIR_INSTALL"
+
+check_()
+{
+  make installcheck DESTDIR="$DIR_INSTALL" "$@"
+}
+
+check ()
+{
+  check_ -j$JOBS "$@" || check_ VERBOSE=1 "$@"
+}
+
+check -C tests TESTS_DIRS=0.x
+check -C doc
+check -C tests TESTS_DIRS=2.x
+check -C tests TESTS_DIRS=1.x
+check -C tests TESTS_DIRS=uob/plug
+check -C tests TESTS_DIRS=uob/remote
+check -C tests TESTS_DIRS=uob/java
