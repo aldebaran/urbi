@@ -94,14 +94,12 @@ Date.new("2010-08-17 12:00") != Date.new("2010-08-17 12:01");
 \end{urbiassert}
 
 \item[asFloat] The duration since the \refSlot{epoch}, as a Float.
-\begin{urbiscript}
-var d = Date.new("2002-01-20 23:59:59")|;
-assert
-{
-  d.asFloat == d - d.epoch;
-  d.asFloat.isA(Float);
-};
-\end{urbiscript}
+\begin{urbiassert}
+var d = Date.new("2002-01-20 23:59:59");
+
+d.asFloat == d - d.epoch;
+d.asFloat.isA(Float);
+\end{urbiassert}
 
 \item[asString] Present as \samp{\var{yyyy}-\var{mm}-\var{dd}
     \var{hh}:\var{mn}:\var{ss}.\var{us}} where \var{yyyy} is the four-digit
@@ -116,14 +114,12 @@ Date.new("2009-02-14 00:31:30").asString == "2009-02-14 00:31:30";
 
 \item[day]
   The day as a \refObject{Float}.
-\begin{urbiscript}
-{
-  var d = Date.new("2010-09-29 17:32:53");
-  assert(d.day == 29);
-  d.day = 1;
-  assert(d == Date.new("2010-09-01 17:32:53"));
-};
-\end{urbiscript}
+\begin{urbiassert}
+var d = Date.new("2010-09-29 17:32:53");
+d.day == 29;
+d.day = 1;
+d == Date.new("2010-09-01 17:32:53");
+\end{urbiassert}
 \begin{urbiscript}
 Date.new("2010-02-01 17:32:53").day = 29;
 [00000001:error] !!! updateSlot: Day of month is not valid for year
@@ -138,36 +134,30 @@ Date.epoch == Date.new("1970-01-01 00:00");
 
 \item[hour]
   The hour as a \refObject{Float}.
-\begin{urbiscript}
-{
-  var d = Date.new("2010-09-29 17:32:53");
-  assert(d.hour == 17);
-  d.hour = 8;
-  assert(d == Date.new("2010-09-29 08:32:53"));
-};
-\end{urbiscript}
+\begin{urbiassert}
+var d = Date.new("2010-09-29 17:32:53");
+d.hour == 17;
+d.hour = 8;
+d == Date.new("2010-09-29 08:32:53");
+\end{urbiassert}
 
 \item[minute]
   The minute as a \refObject{Float}.
-\begin{urbiscript}
-{
-  var d = Date.new("2010-09-29 17:32:53");
-  assert(d.minute == 32);
-  d.minute = 12;
-  assert(d == Date.new("2010-09-29 17:12:53"));
-};
-\end{urbiscript}
+\begin{urbiassert}
+var d = Date.new("2010-09-29 17:32:53");
+d.minute == 32;
+d.minute = 12;
+d == Date.new("2010-09-29 17:12:53");
+\end{urbiassert}
 
 \item[month]
   The month as a \refObject{Float}.
-\begin{urbiscript}
-{
-  var d = Date.new("2010-09-29 17:32:53");
-  assert(d.month == 9);
-  d.month = 3;
-  assert(d == Date.new("2010-03-29 17:32:53"));
-};
-\end{urbiscript}
+\begin{urbiassert}
+var d = Date.new("2010-09-29 17:32:53");
+d.month == 9;
+d.month = 3;
+d == Date.new("2010-03-29 17:32:53");
+\end{urbiassert}
 
 \item[now] The current date. Equivalent to Date.new.
 \begin{urbiunchecked}
@@ -177,27 +167,23 @@ Date.now;
 
 \item[second]
   The second as a \refObject{Float}.
-\begin{urbiscript}
-{
-  var d = Date.new("2010-09-29 17:32:53");
-  assert(d.second == 53);
-  d.second = 37;
-  assert(d == Date.new("2010-09-29 17:32:37"));
-};
-\end{urbiscript}
+\begin{urbiassert}
+var d = Date.new("2010-09-29 17:32:53");
+d.second == 53;
+d.second = 37;
+d == Date.new("2010-09-29 17:32:37");
+\end{urbiassert}
 
 \item[timestamp] Synonym for \refSlot{asFloat}.
 
 \item[year]
   The year as a \refObject{Float}.
-\begin{urbiscript}
-{
-  var d = Date.new("2010-09-29 17:32:53");
-  assert(d.year == 2010);
-  d.year = 2000;
-  assert(d == Date.new("2000-09-29 17:32:53"));
-};
-\end{urbiscript}
+\begin{urbiassert}
+var d = Date.new("2010-09-29 17:32:53");
+d.year == 2010;
+d.year = 2000;
+d == Date.new("2000-09-29 17:32:53");
+\end{urbiassert}
 
 \end{urbiscriptapi}
 
