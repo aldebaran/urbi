@@ -14,7 +14,7 @@ fatal ()
 
 older ()
 {
-  test ! -e "$1" || test -ot "$1" "$2"
+  test ! -e "$1" || test "$1" -ot "$2"
 }
 
 set -ex
@@ -35,6 +35,13 @@ case "$BUILDFARM_MODE" in
   (debug*)   COMPILATION_MODE="debug";;
   (*)   fatal "invalid buildfarm mode: $BUILDFARM_MODE"
 esac
+
+# Dead links are troublesome.  There can be some for instance with
+# gnulib's configure when a module is obsoleted: its symlink remains.
+#
+# --no-run-if-empty, -r
+# --verbose, -t
+find . -type l -print | perl -nle '-e || print' | xargs -r -t rm -f
 
 if $(older "$DIR_SOURCE/configure" "$0"); then
     cd "$DIR_SOURCE"
