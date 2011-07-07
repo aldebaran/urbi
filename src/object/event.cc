@@ -18,6 +18,7 @@
 #include <urbi/object/lobby.hh>
 #include <urbi/sdk.hh>
 
+#include <eval/call.hh>
 #include <eval/exec.hh>
 #include <eval/send-message.hh>
 
@@ -29,26 +30,6 @@ namespace urbi
 {
   namespace object
   {
-
-    /*----------.
-    | Actions.  |
-    `----------*/
-
-    inline
-    Event::Actions::Actions(rExecutable g, rExecutable e, rExecutable l, bool s)
-      : guard(g), enter(e), leave(l), frozen(0), sync(s)
-      , call_stack()
-    {}
-
-    inline
-    bool
-    Event::Actions::operator==(const Actions& other) const
-    {
-      return (guard == other.guard
-              && enter == other.enter
-              && leave == other.leave);
-    }
-
 
     /*---------.
     | Waiter.  |
@@ -64,16 +45,14 @@ namespace urbi
     `--------*/
 
     Event::Event()
-      : listeners_()
-      , waiters_()
     {
       proto_add(proto);
       slot_set_value(SYMBOL(active), to_urbi(false));
     }
 
     Event::Event(rEvent model)
-      : listeners_(model->listeners_)
-      , waiters_()
+      : waiters_()
+      , callbacks_(model->callbacks_)
     {
       proto_add(model);
       slot_set_value(SYMBOL(active), to_urbi(false));
@@ -82,6 +61,8 @@ namespace urbi
     URBI_CXX_OBJECT_INIT(Event)
     {
       BIND(hasSubscribers);
+      BIND(subscribe);
+      BIND(subscribers, callbacks_);
       BIND(onEvent, onEvent, on_event_type);
       BIND(waituntil);
       BIND_VARIADIC(emit);
@@ -118,46 +99,25 @@ namespace urbi
     }
 
     void
-    Event::unregister(Actions* a)
+    Event::subscribe(rSubscription s)
     {
-      GD_FINFO_TRACE("%s: Unregister registration %s.", this, a);
-
-      // The erase might make us loose the last counted ref on a.
-      rActions ra(a);
-      listeners_type::iterator it = libport::find(listeners_, a);
-      if (it != listeners_.end())
-        listeners_.erase(it);
-      foreach(boost::signals::connection& c, a->connections)
-        c.disconnect();
-      a->connections.clear();
-      if (listeners_.empty())
-        unsubscribed_();
+      aver(s);
+      GD_FINFO_TRACE("%s: New subscription %s", this, s);
+      callbacks_ << s;
+      if (slot_has(SYMBOL(onSubscribe)))
+        slot_get_value(SYMBOL(onSubscribe))->call(SYMBOL(syncEmit));
     }
 
-    void
-    Event::freeze(Actions* a)
-    {
-      GD_FINFO_TRACE("%s: Freeze registration %s.", this, a);
-      a->frozen++;
-    }
-
-    void
-    Event::unfreeze(Actions* a)
-    {
-      GD_FINFO_TRACE("%s: Unfreeze registration %s.", this, a);
-      aver(a->frozen);
-      a->frozen--;
-    }
-
-    Event::Subscription
+    rSubscription
     Event::onEvent(const callback_type& cb)
     {
       aver(!cb.empty());
-      callback_type* res = new callback_type(cb);
+      rSubscription res = new Subscription(new callback_type(cb));
+      res->asynchronous_ = false;
       callbacks_ << res;
       if (slot_has(SYMBOL(onSubscribe)))
         slot_get_value(SYMBOL(onSubscribe))->call(SYMBOL(syncEmit));
-      return Subscription(this, res);
+      return res;
     }
 
     /*-----------------.
@@ -168,7 +128,7 @@ namespace urbi
     Event::onEvent(rExecutable guard, rExecutable enter, rExecutable leave,
                    bool sync)
     {
-      rActions actions(new Actions(guard, enter, leave, sync));
+      rSubscription actions(new Subscription(this, guard, enter, leave, sync));
       GD_FPUSH_TRACE("%s: New registration %s.", this, actions);
       runner::Job& r = ::kernel::runner();
       actions->call_stack = r.state.call_stack_get();
@@ -185,15 +145,15 @@ namespace urbi
         sched::rTag t = tag->value_get();
         using boost::bind;
         actions->connections
-          << (t->stop_hook_get()
-              .connect(bind(&Event::unregister, this, actions.get())))
-          << (t->freeze_hook_get()
-              .connect(bind(&Event::freeze, this, actions.get())))
-          << (t->unfreeze_hook_get()
-              .connect(bind(&Event::unfreeze, this, actions.get())));
+          << t->stop_hook_get().connect(
+            bind(&Subscription::unregister, actions))
+          << t->freeze_hook_get().connect(
+            bind(&Subscription::freeze, actions))
+          << t->unfreeze_hook_get().connect(
+            bind(&Subscription::unfreeze, actions));
       }
 
-      listeners_ << actions;
+      callbacks_ << actions;
       foreach (const actives_type::value_type& active, active_)
         active->trigger_job(actions, true);
       if (slot_has(SYMBOL(onSubscribe)))
@@ -267,88 +227,90 @@ namespace urbi
     }
 
     void
-    Event::emit_backend(const objects_type& pl, bool detach)
+    Event::emit_backend(const objects_type& pl, bool detach, EventHandler* h)
     {
-      GD_FPUSH_TRACE("%s: Emit.", this);
+      GD_FPUSH_TRACE("%s: Emit, %s subscribers.", this, callbacks_.size());
       sched::rJob enter, leave;
       rList payload = new List(pl);
-      slot_update(SYMBOL(active), to_urbi(false));
+      if (!h)
+        slot_update(SYMBOL(active), to_urbi(false));
       waituntil_release(payload);
-      // Copy the callback list in case it's modified.
-      std::vector<callback_type> callbacks;
-      callbacks.reserve(callbacks_.size());
-      foreach (callback_type* cb, callbacks_)
-        callbacks << *cb;
-      // Trigger all callbacks.
-      foreach (const callback_type& cb, callbacks)
-        cb(pl);
-      // Copy container to avoid in-place modification problems.
-      foreach (const Event::rActions& actions, listeners_type(listeners_))
+      bool empty = callbacks_.empty();
+      objects_type apl;
+      callbacks_type cbcopy;
+      // Copy active subscriptions, cleanup list
+      for(unsigned i= 0; i<callbacks_.size(); ++i)
       {
-        try
+        rSubscription& s = callbacks_[i];
+        if (s->disconnected_get())
         {
-          if (actions->frozen)
+          callbacks_[i] = callbacks_[callbacks_.size()-1];
+          callbacks_.pop_back();
+          --i;
+        }
+        else
+          cbcopy << s;
+      }
+      // List was empty and we didn't notice.
+      if (!empty && callbacks_.empty())
+      {
+        GD_INFO_TRACE("No more subscribers, calling unsubscribed");
+        unsubscribed_();
+      }
+      GD_FINFO_TRACE("%s subscribers after cleanup", callbacks_.size());
+      for(unsigned i= 0; i<cbcopy.size(); ++i)
+      {
+        rSubscription s = cbcopy[i];
+        libport::utime_t now = kernel::server().getTime();
+        aver(s);
+        GD_FPUSH_TRACE(
+                       "Considering %s, mi %s(%s), lc %s(%s), now %s, enabl %s, async %s",
+                       s,
+                       s->minInterval_,
+                       libport::seconds_to_utime(s->minInterval_),
+                       s->lastCall_,
+                       libport::seconds_to_utime(s->lastCall_),
+                       now,
+                       s->enabled_,
+                         s->asynchronous_);
+        if (s->disconnected_get())
+        {
+          GD_INFO_TRACE("Subscriber is disconnected");
+          // For removal we just swap with the last for better performances.
+          cbcopy[i] = cbcopy[cbcopy.size()-1];
+          cbcopy.pop_back();
+            --i;
+        }
+        else if (s->enabled_
+                 && now - libport::seconds_to_utime(s->lastCall_) >=
+                 libport::seconds_to_utime(s->minInterval_)
+                 && (!s->maxParallelEvents_ || s->maxParallelEvents_ > s->processing_))
+        {
+          // FIXME CRAP if we honor the event emit sync/at sync rule, no way
+          // to catch changed asynchronously
+          bool async =  (s->event_ && (detach && s->asynchronous_get())) ||
+              (!s->event_ && (detach || s->asynchronous_get()));
+          GD_FINFO_TRACE("Subscriber is live for notification (cb: %s e: %s), async: %s", s->cb_, s->event_, async);
+          if (async)
           {
-            GD_FINFO_TRACE("%s: Skip frozen registration %s.", this, actions);
-            continue;
+            // If we create a job, it can die before executing a single line
+            // of code.
+            // To avoid any race condition, we just create the job without
+            // touching any stat or holding any lock.
+            eval::Action a = eval::exec(
+                                        boost::bind(&Subscription::run_sync, s, this, pl, h, detach, false), this);
+            runner::rJob j(new runner::Job(
+              s->lobby?s->lobby.get():kernel::runner().state.lobby_get(),
+                                           kernel::runner().scheduler_get()));
+            j->set_action(a);
+            j->state.tag_stack_set(s->tag_stack);
+            GD_FINFO_DUMP("Subscriber will run in job %s", j);
+            j->start_job();
           }
-          GD_FPUSH_TRACE("%s: Trigger registration %s.", this, actions);
-          objects_type args;
-          args << this << this << payload;
-          rObject pattern = nil_class;
-          if (actions->guard)
-            pattern = (*actions->guard)(args);
-          if (pattern != void_class)
-          {
-            args << pattern;
-
-            // FIXME: Start all the sync job in parallel, I think.
-            // FIXME: But leave the one-child case optimized!
-            if (detach && !actions->sync)
-            {
-              if (actions->enter)
-              enter = spawn_actions_job(actions->lobby, actions->call_stack,
-                                        actions->enter,
-                                        actions->profile, args);
-              if (actions->leave)
-              leave = spawn_actions_job(actions->lobby, actions->call_stack,
-                                        actions->leave,
-                                        actions->profile, args);
-
-              // Start jobs simultaneously.
-              if (actions->enter)
-                enter->start_job();
-              if (actions->leave)
-                leave->start_job();
-            }
-            else
-            {
-              if (actions->enter)
-                (*actions->enter)(args);
-              if (actions->leave)
-                (*actions->leave)(args);
-            }
-          }
-        }
-        catch (const UrbiException& e)
-        {
-          kernel::runner().state.lobby_get()->call(SYMBOL(send),
-            new String("!!! exception caught while processing Event:"),
-            new String("error"));
-          eval::show_exception(kernel::runner(), e);
-        }
-        catch (const sched::exception&)
-        {
-          throw;
-        }
-        catch (...)
-        {
-          kernel::runner().state.lobby_get()->call(SYMBOL(send),
-           new String("!!! unknown exception caught while processing Event"),
-           new String("error"));
+          else
+            s->run_sync(this, pl, h, detach, true);
         }
       }
-
     }
 
     void
@@ -433,38 +395,8 @@ namespace urbi
     bool
     Event::hasSubscribers() const
     {
-      return !listeners_.empty() || !waiters_.empty() || !callbacks_.empty();
+      return !waiters_.empty() || !callbacks_.empty();
     }
 
-    Event::Actions::~Actions()
-    {
-      foreach(boost::signals::connection& c, connections)
-        c.disconnect();
-    }
-
-    /*---------------.
-    | Subscription.  |
-    `---------------*/
-    Event::Subscription::Subscription()
-      : event_(0)
-      , cb_(0)
-    {}
-
-    Event::Subscription::Subscription(rEvent event, callback_type* cb)
-      : event_(event)
-      , cb_(cb)
-    {}
-
-    void
-    Event::Subscription::stop()
-    {
-      assert(event_);
-      assert(cb_);
-      Event::callbacks_type::iterator it =
-        libport::find(event_->callbacks_, cb_);
-      assert(it != event_->callbacks_.end());
-      delete *it;
-      event_->callbacks_.erase(it);
-    }
   }
 }

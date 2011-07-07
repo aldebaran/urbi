@@ -173,7 +173,6 @@ namespace eval
   }
 
 
-  typedef std::pair<object::Event*, object::Event::Subscription> Subscription;
   struct Visitor::WatchEventData
   {
     WatchEventData(urbi::object::rEvent ev, object::rCode e)
@@ -184,10 +183,11 @@ namespace eval
       {}
 
     object::Event* event;
+    // Same value as event, used when watching to keep it alive
     object::rEvent event_ward;
     object::rCode exp;
     object::EventHandler* current;
-    std::vector<Subscription> subscriptions;
+    std::vector<object::rSubscription> subscriptions;
     object::rProfile profile;
   };
 
@@ -236,11 +236,12 @@ namespace eval
         throw;
       }
       unsigned hooks_removed = 0;
-      std::vector<Subscription>::iterator it = data->subscriptions.begin();
+      std::vector<object::rSubscription>::iterator it
+        = data->subscriptions.begin();
       while (it != data->subscriptions.end())
       {
         Job::dependencies_type::iterator find =
-          r.dependencies().find(it->first);
+          r.dependencies().find((*it)->event_);
         if (find != r.dependencies().end())
         {
           r.dependencies().erase(find);
@@ -249,7 +250,7 @@ namespace eval
         else
         {
           ++hooks_removed;
-          it->second.stop();
+          (*it)->stop();
           it = data->subscriptions.erase(it);
         }
       }
@@ -271,7 +272,7 @@ namespace eval
     rObject v = watch_eval(data);
     foreach (object::Event* evt, r.dependencies())
       data->subscriptions <<
-      Subscription(evt, evt->onEvent(boost::bind(watch_run, data, _1)));
+      evt->onEvent(boost::bind(watch_run, data, _1));
     r.dependencies().clear();
     object::objects_type args;
     args << v;
@@ -284,8 +285,8 @@ namespace eval
     GD_CATEGORY(Urbi.At);
     GD_FPUSH_TRACE("Stopping watch event: %s", data->exp->body_string());
 
-    foreach (Subscription& s, data->subscriptions)
-      s.second.stop();
+    foreach (object::rSubscription& s, data->subscriptions)
+      s->stop();
     delete data;
   }
 
@@ -304,7 +305,11 @@ namespace eval
     GD_FPUSH_TRACE("Unsubscribed watch event: %s, %s",
                    data->exp->body_string(), data->event->counter_get());
     // If this event is alive only because it's up, terminate it.
-    if (data->current && data->event->counter_get() == 2)
+    /* That is to say, detect the case where there is a reference loop
+     * between an event and a trigger on that event (which generates a
+     * child event and a cross-reference between them).
+     */
+    if (data->current && data->event->counter_get() <= 3)
     {
       GD_FINFO_TRACE("KILL %s", data->current->counter_get());
       data->current->stop();
@@ -335,7 +340,7 @@ namespace eval
     bool v = object::from_urbi<bool>(res);
     foreach (object::Event* evt, r.dependencies())
       data->subscriptions <<
-      Subscription(evt, evt->onEvent(boost::bind(at_run, data, _1)));
+      evt->onEvent(boost::bind(at_run, data, _1));
     r.dependencies_clear();
 
     // Check for different evaluation of the condition.
@@ -360,10 +365,9 @@ namespace eval
     object::rCode code =                                                \
       dynamic_cast<object::Code*>(ast(this_, e->exp_get().get()).get()); \
                                                                         \
-    GD_CATEGORY(Urbi.At);                                               \
-    GD_FPUSH_TRACE("Create watch event: %s", code->body_string());      \
-                                                                        \
     object::rEvent res = new object::Event;                             \
+    GD_CATEGORY(Urbi.At);                                               \
+    GD_FPUSH_TRACE("Create watch event: %s : %s", code->body_string(), res); \
     WatchEventData* data = new WatchEventData(res, code);               \
     data->profile = this_.profile_get();                                \
     res->destructed_get().connect(boost::bind(&watch_stop, data));      \

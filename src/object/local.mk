@@ -114,6 +114,7 @@ dist_libuobject@LIBSFX@_la_SOURCES +=		\
   object/sorted-vector-slots.hh			\
   object/sorted-vector-slots.hxx		\
   object/string.cc				\
+  object/subscription.cc                        \
   object/symbols.cc				\
   object/symbols.hh				\
   object/system.cc				\

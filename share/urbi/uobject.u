@@ -126,7 +126,6 @@ do (Global.UObject)
       getLocalSlot(sn).isVoid|
       var s = getLocalSlot(sn)|
       s.dead = true|
-      s.connections = []|
       if (ir)
       { // Cleanup unnotify to avoid leaking dictionary entries
         // The remote will try to do it but it will be too late, slots will
@@ -375,7 +374,16 @@ do (Slot)
 
   // If this is true, callbacks that throw will be removed from callback lists.
   var eraseThrowingCallbacks = true;
-
+  eraseThrowingCallbacks->oset = function(val, slot)
+  {
+    warn("eraseThrowingCallbacks is deprecated, use unsubscribeFaultySubscriber"
+          " on evennt")|
+    if (this === Slot) // Set default
+      Event.unsubscribeFaultySubscriber = val
+    else
+      changed.unsubscribeFaultySubscriber = val|
+    setOutputValue(val)
+  };
   /// Copy this UVar under slot \b slotName of \b targetObj
   function copy(targetObj, slotName)
   {
@@ -459,9 +467,11 @@ do (Slot)
   function notifyChange(f, compatF = nil)
   {
     var cb = backwards("notifyChange", f, compatF)|
-    var h = Tag.new|
-    disown({h: at(changed?) cb()})|
-    h
+    var s = Subscription.new|
+    s.asynchronous = false|
+    s.onEvent = closure() {cb()}|
+    changed.subscribe(s)|
+    s
   };
   function removeNotifyChange(h)
   {
@@ -545,7 +555,7 @@ do (UConnection)
     /// We cannot take a reference on those uvars.
     source = from |
     target = to |
-    from.connections << this |
+    from.changed.subscribe(this) |
     from.pushPullCheck(false) |
     var this.start = time
   };
@@ -573,7 +583,7 @@ do (UConnection)
   {
     try
     {
-      source.connections.remove(this)
+      stop()
     }
     catch(var e)
     {
@@ -619,7 +629,7 @@ do (UConnection)
         if (o.isA(UObject))
           for|(var j: o.localSlotNames)
             if (!o.getSlot(j).isVoid && o.getSlot(j).isA(UVar))
-              res += o.getSlot(j).connections
+              res += o.getSlot(j).List.new
       }
     }|
     res
@@ -673,7 +683,7 @@ Global.addProto(uobjects);
 Slot.new(Global, "evaluate");
 Global.&evaluate.copyOnWrite = false;
 Global.&evaluate.split = true;
-Global.&evaluate.eraseThrowingCallbacks = false;
+Global.&evaluate.changed.unsubscribeFaultySubscriber = false;
 Global.&evaluate.set = function(v) {
   var res = eval(v).acceptVoid|
   if (!res.isVoid)
@@ -784,6 +794,7 @@ class Global.'external'
       ret
     }|
     uobjects.getSlotValue(objname).setSlotValue("clone", cloner)|
+    'var'(objname, "load", objname)|
     void
   };
 
@@ -971,7 +982,7 @@ class Global.'external'
     var fullName = uob.getSlot(varname).fullName|
     var slotId = uob.getSlot(varname).uid|
     var chan.source = fullname +" " + uob.protos[0].asString|
-    // Construct the setter function
+    // Construct the setter function. Expects this=slot
     function f(args[])
     {
       var v|
@@ -1159,6 +1170,17 @@ class Global.'external'
       l.hookPoint.destroy|
       //l.removeSlot("hookPoint")
     }|
+    if (l.hasLocalSlot("__bindingFunc"))
+    {
+      for|( var p: l.__bindingFunc)
+      {
+        if (p.second.isA(Subscription))
+        { // loop: slot.changed.subscriptions[x].onEvent is a closure on slot.
+          p.second.onEvent = nil
+        }
+      }|
+      l.removeSlot("__bindingFunc")|
+    }
   };
 };
 

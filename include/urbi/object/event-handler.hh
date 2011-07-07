@@ -38,18 +38,15 @@ namespace urbi
       rList payload();
 
     private:
-      typedef Event::Actions Actions;
-      typedef Event::rActions rActions;
       typedef Event::callback_type callback_type;
       typedef Event::callbacks_type callbacks_type;
-      typedef Event::listeners_type listeners_type;
 
       /// Leave callbacks to trigger on stop.
-      typedef boost::tuple<rActions, objects_type, bool> stop_job_type;
+      typedef boost::tuple<rSubscription, objects_type, bool> stop_job_type;
       typedef std::vector<stop_job_type> stop_jobs_type;
 
       /// Listener jobs execution function.
-      void trigger_job(const Event::rActions& actions, bool detach);
+      void trigger_job(const rSubscription& actions, bool detach);
       /// Register the stop job.
       void register_stop_job(const stop_job_type& stop_job);
       /// The parent Event of this handler.
@@ -59,6 +56,7 @@ namespace urbi
       /// Copy of boolean given to trigger, used for stop synchronicity.
       bool   detach_;
       stop_jobs_type stop_jobs_;
+      friend class Subscription;
     };
   }
 }

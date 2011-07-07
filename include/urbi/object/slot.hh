@@ -154,9 +154,6 @@ namespace urbi
       // Owner object setter hook: obj.set(val, slot)
       ATTRIBUTE_Rw(rObject, oset);
       ATTRIBUTE_RW(rObject, updateHook);
-      // UConnection list
-      ATTRIBUTE_W(rList, connections);
-      rList& connections_get(); // on-demand creation
       /************
       *   Value   *
       *************/

@@ -38,6 +38,7 @@ do (Timeout)
     var this.thrower = thrower_|
     var this.time = time_|
     var this.e = Event.new|
+    leave.blockSubscriberException = false|
     at (enter?)
       launch|
     at (leave?)

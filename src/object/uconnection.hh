@@ -12,6 +12,7 @@
 # define OBJECT_UCONNECTION_HH
 
 # include <urbi/object/cxx-object.hh>
+# include <urbi/object/event.hh>
 # include <runner/job.hh>
 
 # include <urbi/uvalue.hh>
@@ -24,42 +25,19 @@ namespace urbi
      *
      *  See uobject.u for the urbi part.
      */
-    class UConnection: public CxxObject
+    class UConnection: public Subscription
     {
-      URBI_CXX_OBJECT(UConnection, CxxObject);
+      URBI_CXX_OBJECT(UConnection, Subscription);
     public:
       UConnection();
       UConnection(libport::intrusive_ptr<UConnection> model);
 
-      /// Call the connection, returns false if it must be unregistered.
-      bool call(runner::Job& r, rObject self);
+      void call(const objects_type&);
       /// Source UVar
       rObject source;
       /// Target UVar
       rObject target;
-      /// Trigger only if enabled.
-      bool enabled;
-      /// Do not call faster than this period in seconds.
-      double minInterval;
-      /// Time of last call.
-      double lastCall;
-      /// Number of calls made.
-      long callCount;
-      /// Total callback processing time.
-      double totalCallTime;
-      /// Min and max call time.
-      double minCallTime, maxCallTime;
-      /// Call asynchronously.
-      bool asynchronous;
     private:
-      /** Synchronous call
-       * @param r current job
-       * @param self the source slot, can be !=source in case of InputPort chain
-       * @param target the resolved target
-       */
-      rObject doCall(runner::Job& r, rObject self, rObject target);
-      /// True if we are currently processing this connection.
-      bool processing;
       void init_();
     };
   }

@@ -73,7 +73,7 @@ namespace urbi
       `----------*/
 
     private:
-      Event::Subscription on_error_subscription_;
+      rSubscription on_error_subscription_;
     };
   }
 }

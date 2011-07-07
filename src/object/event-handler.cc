@@ -76,7 +76,7 @@ namespace urbi
         // Copy container to avoid in-place modification problems.
         foreach (const stop_job_type& stop_job, stop_jobs_type(stop_jobs_))
         {
-          rActions actions = stop_job.get<0>();
+          rSubscription actions = stop_job.get<0>();
           rLobby l = actions->lobby;
           if (!l)
             l = r.state.lobby_get();
@@ -111,23 +111,13 @@ namespace urbi
     {
       detach_ = detach;
       source()->active_.insert(this);
-      // Copy the callback list in case it's modified.
-      std::vector<callback_type> callbacks;
-      callbacks.reserve(source()->callbacks_.size());
-      foreach (callback_type* cb, source()->callbacks_)
-        callbacks << *cb;
-      // Trigger all callbacks.
-      foreach (callback_type& cb, callbacks)
-        cb(payload_->value_get());
-      // Copy container to avoid in-place modification problems.
-      foreach (Event::rActions actions, listeners_type(source()->listeners_))
-        trigger_job(actions, detach_);
+      source()->emit_backend(payload()->value_get(), detach_, this);
     }
 
     void
-    EventHandler::trigger_job(const rActions& actions, bool detach)
+    EventHandler::trigger_job(const rSubscription& actions, bool detach)
     {
-      detach = detach && !actions->sync;
+      detach = detach && actions->asynchronous_get();
       runner::Job& r = ::kernel::runner();
       if (actions->frozen)
         return;

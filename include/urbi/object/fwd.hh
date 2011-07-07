@@ -81,6 +81,7 @@ namespace urbi
     Macro(Slot);                                \
     Macro(Stream);                              \
     Macro(String);                              \
+    Macro(Subscription);                        \
     Macro(Tag);                                 \
     Macro(UConnection);                         \
     Macro(UValue);                              \

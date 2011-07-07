@@ -80,7 +80,7 @@ namespace urbi
       // the event will call back our onError_ method, which will
       // access our already destroyed members and make the whole thing
       // die painfully.
-      on_error_subscription_.stop();
+      on_error_subscription_->stop();
     }
 
     /*--------------.

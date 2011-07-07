@@ -48,7 +48,6 @@ namespace urbi
       bind("oset", &Slot::oset_get, &Slot::oset_set);
       bind("oget", &Slot::oget_get, &Slot::oget_set);
       BIND(constant, constant_);
-      bind("connections", &Slot::connections_get, &Slot::connections_set);
       bind("rtp", &Slot::rtp_get, &Slot::rtp_set);
       BIND(get_get); // debug
       BIND(set_get);
@@ -77,14 +76,6 @@ namespace urbi
     Slot::property_has(libport::Symbol k) const
     {
       return slot_has(k);
-    }
-
-    rList&
-    Slot::connections_get()
-    {
-      if (!connections_)
-        connections_ = new List();
-      return connections_;
     }
 
     bool
@@ -195,23 +186,6 @@ namespace urbi
         set_output_value(value);
     }
 
-    static void
-    callConnections(runner::Job& r, rObject self, rList l)
-    {
-
-      // We must copy the list as callbacks might remove themselve
-      List::value_type callbacks = l->value_get();
-      for (List::value_type::iterator i = callbacks.begin();
-           i != callbacks.end(); )
-      {
-        rUConnection c = (*i)->as<UConnection>();
-        if (c->call(r, self))
-          ++i;
-        else
-          i = callbacks.erase(i);
-      }
-    }
-
     void
     Slot::set_output_value(rObject v)
     {
@@ -220,7 +194,7 @@ namespace urbi
       output_value_ = v;
       check_waiters();
       // Both optim and let us run the init phase with no runner.
-      if (!changed_ && !connections_)
+      if (!changed_)
         return;
       runner::Job& r = ::kernel::runner();
       bool isIn = libport::has(in_setter_, &r);
@@ -241,10 +215,6 @@ namespace urbi
         objects_type nothing;
         if (changed_)
           changed_->as<object::Event>()->syncEmit(nothing);
-        GD_FINFO_DUMP("  %s connections",
-                      connections_?connections_->value_get().size():0);
-        if (connections_ && !connections_->empty())
-          callConnections(r, rObject(this), connections_);
       }
     }
 
@@ -493,8 +463,7 @@ namespace urbi
       bool need_loop =
        !push_pull_loop_ &&
        (get_ || oget_) &&
-       ((connections_ && !connections_->value_get().empty())
-        || (changed_ && changed_->as<Event>()->hasSubscribers()));
+       (changed_ && changed_->as<Event>()->hasSubscribers());
       if (need_loop)
       {
         push_pull_loop_ = true;
@@ -524,8 +493,8 @@ namespace urbi
       CAPTURE_GLOBAL(Event);
       if (!changed_)
       {
-        GD_FPUSH_TRACE("Creating changed for %s", this);
         changed_ = Event->call(SYMBOL(new));
+        GD_FPUSH_TRACE("Creating changed for %s: %s", this, changed_);
         push_pull_check(get_ || oget_);
       }
       return changed_;
