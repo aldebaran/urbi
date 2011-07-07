@@ -336,6 +336,10 @@ namespace kernel
 #endif
     // Setup the handler for Ctrl+C.
     signal(SIGINT, sigint_handler);
+    boost::posix_time::ptime now
+    (boost::posix_time::microsec_clock::local_time());
+    libport::utime_reference_set(libport::utime());
+
     // Set the initial time to a valid value.
     updateTime();
 
@@ -389,9 +393,6 @@ namespace kernel
       ref->proto_add(urbi::object::Object::proto);
       urbi::object::system_class->setSlot(SYMBOL(timeReference), ref);
 
-      boost::posix_time::ptime now
-        (boost::posix_time::microsec_clock::local_time());
-      libport::utime_reference_set(libport::utime());
 # define DECLARE(Name, Value)                                   \
       ref->setSlot(SYMBOL_(Name), urbi::object::to_urbi(Value))
 
