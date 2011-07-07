@@ -43,10 +43,10 @@ namespace urbi
       BIND(outputValue, output_value_);
       BIND(rangemax, rangemax_);
       BIND(rangemin, rangemin_);
-      BIND(set, set_);
-      BIND(get, get_);
-      BIND(oset, oset_);
-      BIND(oget, oget_);
+      bind("set", &Slot::set_get, &Slot::set_set);
+      bind("get", &Slot::get_get, &Slot::get_set);
+      bind("oset", &Slot::oset_get, &Slot::oset_set);
+      bind("oget", &Slot::oget_get, &Slot::oget_set);
       BIND(constant, constant_);
       bind("connections", &Slot::connections_get, &Slot::connections_set);
       bind("rtp", &Slot::rtp_get, &Slot::rtp_set);
