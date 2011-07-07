@@ -485,11 +485,11 @@ do (Slot)
   {
     var cb = backwards("notifyAccess", f, compatF)|
     get = function() { cb() | if (split) output_value else value}|
-    getSlotValue("get")
+    getSlotValue("get").uid
   };
   function removeNotifyAccess(h)
   {
-    if (get == h)
+    if (getSlotValue("get").uid == h)
       get = nil
   };
 
