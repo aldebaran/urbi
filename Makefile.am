@@ -218,7 +218,7 @@ BUILT_SOURCES += 				\
   scripts/install-boost				\
   scripts/install-java				\
   scripts/package
-relocatable: scripts/bf-post-install | install
+relocatable: scripts/bf-post-install
 	$<
 
 # Used by make-relocatable.
