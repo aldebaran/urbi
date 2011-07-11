@@ -1260,7 +1260,7 @@ those that mathematicians would not write (e.g.,
 \begin{urbiscript}
 function v(x) { echo(x) | x }|;
 
-v(1) < v(2) <= v(3) != v(4) == v(4) > v(0) >= v(0) !== v(&v) === v(&v);
+v(1) < v(2) <= v(3) != v(4) == v(4) > v(0) >= v(0) !== v(Global) === v(Global);
 [00000010] *** 1
 [00000010] *** 2
 [00000010] *** 3
@@ -1268,8 +1268,8 @@ v(1) < v(2) <= v(3) != v(4) == v(4) > v(0) >= v(0) !== v(&v) === v(&v);
 [00000010] *** 4
 [00000010] *** 0
 [00000010] *** 0
-[00000010] *** function (var x) { echo(x) | x }
-[00000010] *** function (var x) { echo(x) | x }
+[00000010] *** Global
+[00000010] *** Global
 [00000010] true
 
 v(1) == v(2) < v(3) < v(4);
@@ -1765,8 +1765,8 @@ var aLobby = Lobby.create|;
 var aLobby.name = "A Fresh Lobby"|;
 lobby.name = "The main Lobby"|;
 
-var Global.fun = Foo.&fun|;
-var Global.clo = Foo.&clo|;
+var Global.fun = Foo.getSlotValue("fun")|;
+var Global.clo = Foo.getSlotValue("clo")|;
 
 // A "function" invoked in the context of a different lobby and a different
 // this refers to the "new" lobby and "this":
