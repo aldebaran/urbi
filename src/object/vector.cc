@@ -8,6 +8,7 @@
  * See the LICENSE file for more information.
  */
 
+#include <urbi/object/global.hh>
 #include <urbi/object/vector.hh>
 #include <urbi/object/matrix.hh>
 #include <kernel/uvalue-cast.hh>

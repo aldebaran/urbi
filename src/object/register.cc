@@ -22,7 +22,6 @@
 #include <urbi/object/dictionary.hh>
 #include <urbi/object/directory.hh>
 #include <urbi/object/duration.hh>
-#include <urbi/object/enumeration.hh>
 #include <urbi/object/equality-comparable.hh>
 #include <urbi/object/event.hh>
 #include <urbi/object/event-handler.hh>

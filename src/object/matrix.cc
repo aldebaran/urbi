@@ -8,6 +8,7 @@
  * See the LICENSE file for more information.
  */
 
+#include <urbi/object/global.hh>
 #include <urbi/object/matrix.hh>
 #include <boost/numeric/ublas/lu.hpp> // boost::numeric::ublas::row
 #include <kernel/uvalue-cast.hh>

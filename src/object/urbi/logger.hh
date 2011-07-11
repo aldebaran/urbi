@@ -17,6 +17,7 @@
 # include <libport/symbol.hh>
 
 # include <object/urbi/export.hh>
+# include <urbi/object/enumeration.hh>
 # include <urbi/object/tag.hh>
 
 namespace urbi

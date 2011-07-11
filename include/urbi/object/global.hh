@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2011, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -38,11 +38,11 @@ namespace urbi
   }; // namespace object
 }
 
-# define CAPTURE_(Name, From)                                           \
-  static ::urbi::object::rObject Name =                                 \
+# define CAPTURE_(Name, From)                                   \
+  static ::urbi::object::rObject Name =                         \
     ::urbi::object::capture(libport::Symbol(#Name), From)
 
-# define CAPTURE_GLOBAL(Name)                           \
+# define CAPTURE_GLOBAL(Name)                   \
   CAPTURE_(Name, ::urbi::object::global_class)
 
 # define CAPTURE_GLOBAL2(Name, Member)          \

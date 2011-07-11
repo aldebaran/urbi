@@ -17,7 +17,6 @@
 
 # include <libport/preproc.hh>
 
-# include <urbi/object/enumeration.hh>
 # include <urbi/object/object.hh>
 # include <urbi/version-check.hh>
 

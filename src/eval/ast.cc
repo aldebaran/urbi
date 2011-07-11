@@ -23,6 +23,7 @@
 #include <urbi/object/event.hh>
 #include <urbi/object/event-handler.hh>
 #include <urbi/object/float.hh>
+#include <urbi/object/global.hh>
 #include <urbi/object/list.hh>
 #include <urbi/object/tag.hh>
 
