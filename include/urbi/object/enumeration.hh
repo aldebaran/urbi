@@ -74,11 +74,11 @@
 
 # define URBI_ENUM_REG(R, Name, Elt)                                    \
   ::urbi::object::CxxConvert< Name >::urbi_enum_u2c()                   \
-  [e->getSlot(BOOST_PP_STRINGIZE(LIBPORT_SECOND(Elt)))] =               \
+  [e->getSlotValue(BOOST_PP_STRINGIZE(LIBPORT_SECOND(Elt)))] =          \
             LIBPORT_FIRST(Elt);                                         \
   ::urbi::object::CxxConvert< Name >::urbi_enum_c2u()                   \
   [LIBPORT_FIRST(Elt)] =                                                \
-            e->getSlot(BOOST_PP_STRINGIZE(LIBPORT_SECOND(Elt)));
+            e->getSlotValue(BOOST_PP_STRINGIZE(LIBPORT_SECOND(Elt)));
 
 # define URBI_ENUM_REGISTER(Name, UName, ...)                   \
                                                                 \
