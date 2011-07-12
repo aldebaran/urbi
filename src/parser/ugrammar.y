@@ -35,7 +35,6 @@
 #include <ast/factory.hh>
 #include <ast/formal.hh>
 #include <ast/fwd.hh>
-#include <ast/nary.hh>
 #include <ast/symbols-type.hh>
 #include <kernel/fwd.hh>
 #include <libport/hash.hh>

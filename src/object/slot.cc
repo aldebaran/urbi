@@ -12,14 +12,13 @@
 #include <urbi/object/slot.hh>
 #include <urbi/object/slot.hxx>
 #include <urbi/object/event.hh>
+#include <urbi/object/job.hh>
 #include <object/symbols.hh>
 #include <object/uconnection.hh>
 #include <object/uvalue.hh>
 #include <runner/job.hh>
 #include <kernel/uconnection.hh>
 
-// Help symbol generation script.
-/* SYMBOL(value) */
 GD_CATEGORY(Urbi.Slot);
 namespace urbi
 {
@@ -111,7 +110,7 @@ namespace urbi
     void
     Slot::uobject_set(rObject val, Object* sender, libport::utime_t timestamp)
     {
-      rObject r = kernel::urbiserver->getCurrentRunner().as_job();
+      rJob r = kernel::runner().as_job();
       // Prevent loopback notification on the remote who called us.
       ufloat f = (long)(void*)this;
       if (!r->slot_has(SYMBOL(DOLLAR_uobjectInUpdate)))

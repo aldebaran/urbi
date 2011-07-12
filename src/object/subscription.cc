@@ -70,8 +70,7 @@ namespace urbi
       leave = l;
     }
 
-    Subscription::Subscription(
-      libport::intrusive_ptr<Subscription> model)
+    Subscription::Subscription(libport::intrusive_ptr<Subscription> model)
     {
       init_();
       cb_ = model->cb_;
