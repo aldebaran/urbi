@@ -51,6 +51,25 @@ user-visible changes in \usdk releases.
 \item Drop support for the obsolete \lstindex{loopn} keyword, replaced by
   \lstinline{for} since \usdk 2.0 (\autoref{sec:k1:loopn}).
 
+\item The implicit empty statement, which was warned about:
+\begin{urbiunchecked}
+if (true) else 12;
+[00011780:warning] !!! implicit empty instruction.  Use '{}' to make it explicit.
+\end{urbiunchecked}
+\noindent
+is now an error:
+\begin{urbiscript}
+if (true) else 12;
+[00003258:error] !!! syntax error: unexpected else
+\end{urbiscript}
+Write \lstinline|if (true) {} else 12;|.  As a consequence
+\lstinline|if (x) &y;| is no longer ambiguous: its unique interpretation is
+\lstinline|if (x) { &y };| and no longer \lstinline| { if (x) {} } & y;|:
+\begin{urbiassert}
+{ if (true)  &true else &false } === &true;
+{ if (false) &true else &false } === &false;
+\end{urbiassert}
+
 \item \refSlot[Job]{backtrace} now includes information about event handling
   (both sending and receiving parts).
 
