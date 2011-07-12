@@ -51,6 +51,7 @@ namespace urbi
     {
       BIND(DOLLAR_backtrace, backtrace);
       BIND(current);
+      BIND(jobs);
       BIND(resetStats);
       BIND(stats);
       BIND(status);
@@ -73,6 +74,15 @@ namespace urbi
       return ::kernel::runner().as_job();
     }
 
+    List::value_type
+    Job::jobs()
+    {
+      List::value_type res;
+      foreach (sched::rJob job, ::kernel::scheduler().jobs_get())
+        if (rJob o = static_cast<runner::Job*>(job.get())->as_job())
+          res << o;
+      return res;
+    }
 
     const runner::State::tag_stack_type
     Job::tags() const

@@ -39,6 +39,8 @@ namespace urbi
 
       /// The runner.
       static object::rJob current();
+      /// All the running jobs.
+      static object::List::value_type jobs();
 
       rList backtrace() const;
       const std::string& name() const;

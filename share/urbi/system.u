@@ -182,7 +182,7 @@ do (System)
   function ps()
   {
     nonInterruptible |
-    for| (var t : jobs)
+    for| (var t : Job.jobs)
       t.dumpState
   };
 

@@ -346,16 +346,6 @@ namespace urbi
                           *i->getSlotValue(SYMBOL(location))));
     }
 
-    static List::value_type
-    system_jobs()
-    {
-      List::value_type res;
-      foreach (sched::rJob job, ::kernel::scheduler().jobs_get())
-        if (rJob o = static_cast<runner::Job*>(job.get())->as_job())
-          res << o;
-      return res;
-    }
-
     static int
     system_aliveJobs()
     {
@@ -744,7 +734,6 @@ namespace urbi
       DECLARE(getenv);
       DECLARE(hostName);
       DECLARE(interactive);
-      DECLARE(jobs);
       DECLARE(loadLibrary);
       DECLARE(loadModule);
       DECLARE(noVoidError);
