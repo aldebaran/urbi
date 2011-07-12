@@ -48,17 +48,18 @@ namespace urbi
     | Stop.  |
     `-------*/
 
-    static sched::rJob
-    spawn_actions_job(rLobby lobby, rExecutable e,
-                      rProfile profile, const objects_type& args)
+    static
+    void
+    spawn_actions_job(rSubscription sub,
+                      rExecutable action, const objects_type& args)
     {
-      typedef rObject(Executable::*fun_type)(objects_type);
-      runner::Job& r = ::kernel::runner();
-      runner::Job* res =
-        e->make_job(lobby, r.scheduler_get(), args, SYMBOL(event));
-      if (profile)
-        res->profile_start(profile, SYMBOL(event), e.get());
-      return res;
+      rLobby l = sub->lobby;
+      if (!l)
+        l = ::kernel::runner().state.lobby_get();
+      sched::rJob job =
+        Event::spawn_actions_job(l, sub->call_stack,
+                                 action, sub->profile, args);
+      job->start_job();
     }
 
     void
@@ -73,12 +74,8 @@ namespace urbi
         foreach (const stop_job_type& stop_job, stop_jobs_type(stop_jobs_))
         {
           rSubscription actions = stop_job.get<0>();
-          rLobby l = actions->lobby;
-          if (!l)
-            l = r.state.lobby_get();
-          sched::rJob job = spawn_actions_job
-            (l, actions->leave, actions->profile, stop_job.get<1>());
-          job->start_job();
+          spawn_actions_job(actions,
+                            actions->leave, stop_job.get<1>());
         }
         r.yield_until_terminated(children);
       }
@@ -131,14 +128,7 @@ namespace urbi
         if (actions->enter)
         {
           if (detach)
-          {
-            rLobby l = actions->lobby;
-            if (!l)
-              l = ::kernel::runner().state.lobby_get();
-            sched::rJob job = spawn_actions_job
-              (l, actions->enter, actions->profile, args);
-            job->start_job();
-          }
+            spawn_actions_job(actions, actions->enter, args);
           else
             (*actions->enter)(args);
         }

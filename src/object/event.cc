@@ -209,7 +209,6 @@ namespace urbi
                              rExecutable e,
                              rProfile profile, const objects_type& args)
     {
-      typedef rObject(Executable::*fun_type)(objects_type);
       runner::Job& r = ::kernel::runner();
       if (!lobby)
         lobby = r.state.lobby_get();

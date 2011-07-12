@@ -76,6 +76,12 @@ namespace urbi
       void waituntil(rObject pattern);
       bool hasSubscribers() const;
 
+      static
+      sched::rJob
+      spawn_actions_job(rLobby lobby, const call_stack_type& stack,
+                        rExecutable e,
+                        rProfile profile, const objects_type& args);
+
     private:
       /** Handle synchronous/asynchronous invokation of subscribers for
        * emit and trigger
@@ -86,9 +92,7 @@ namespace urbi
        */
       void emit_backend(const objects_type& pl, bool detach,
                         EventHandler*h = 0);
-      sched::rJob spawn_actions_job(rLobby lobby, const call_stack_type& stack,
-                                    rExecutable e,
-                                    rProfile profile, const objects_type& args);
+
       rEventHandler trigger_backend(const objects_type& pl, bool detach);
 
       void waituntil_release(rObject payload);
