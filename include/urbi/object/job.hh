@@ -37,14 +37,17 @@ namespace urbi
       Job(rJob model);
       const value_type& value_get() const;
 
-      rList backtrace();
-      const std::string& name();
-      std::string status();
-      rObject stats();
+      /// The runner.
+      static object::rJob current();
+
+      rList backtrace() const;
+      const std::string& name() const;
+      std::string status() const;
+      rObject stats() const;
       void resetStats();
-      const runner::State::tag_stack_type tags();
+      const runner::State::tag_stack_type tags() const;
       void terminate();
-      rFloat timeShift();
+      libport::ufloat timeShift() const;
       void waitForChanges();
       void waitForTermination();
 

@@ -114,7 +114,7 @@ class Global.TrajectoryGenerator
   // Override system time to take shift induced by freeze into account.
   function time()
   {
-    System.time - currentRunner.timeShift
+    System.time - Job.current.timeShift
   };
 
   /// Use this tag to end a trajectory.

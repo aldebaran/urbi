@@ -37,8 +37,6 @@ namespace runner
   }
 
 
-  /// Urbiscript evaluation
-  /// \{
 
   void Job::work()
   {
@@ -112,10 +110,6 @@ namespace runner
     }
   }
 
-  /// \}
-
-  /// Job status defined by Tags
-  /// \{
 
   bool Job::frozen() const
   {
@@ -132,7 +126,6 @@ namespace runner
     return state.priority();
   }
 
-  /// \}
 
   Job* Job::name_set(const std::string& name)
   {
@@ -154,8 +147,6 @@ namespace runner
     return "Job";
   }
 
-  /// \name Profiling
-  /// \{
 
   /*------------.
   | Profiling.  |
@@ -225,11 +216,6 @@ namespace runner
       profile_->resumed(profile_info_);
   }
 
-  /// \}
-
-  /// \name rest
-  /// \{
-
   bool
   Job::non_interruptible_get() const
   {
@@ -241,7 +227,5 @@ namespace runner
   {
     super_type::non_interruptible_set(i);
   }
-
-  /// \}
 
 } // namespace runner

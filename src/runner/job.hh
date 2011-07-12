@@ -127,7 +127,7 @@ namespace runner
 
     /// Get the current runner as an Urbi Job or nil if the job is
     /// terminated.
-    rObject as_job();
+    object::rJob as_job();
 
     /// Signal a scheduling error exception.
     /// Implementation for abstract class sched::Job.
@@ -170,10 +170,10 @@ namespace runner
     /// Job processing
     /// \{
 
-    /// Create a new Job which inherits the current lobby and clone
-    /// necessary stacks parts.  Define an action which would be executed by
-    /// the child, and if a collector is specified, then the child is
-    /// registered in the collector.
+    /// Create a new Job that inherits the current lobby and clone
+    /// necessary stacks parts.  Define an action which would be
+    /// executed by the child, and if a collector is specified, then
+    /// the child is registered in the collector.
     ///
     /// This command return a child job which has to be started with
     /// 'start_job()' to execute the action asynchronously.
@@ -242,7 +242,6 @@ namespace runner
 
     /// \name sched::Job accessors
     /// \{
-
   public:
     // FIXME: should ensure that one job release the non-interruptible flag.
     bool non_interruptible_get() const;
@@ -256,7 +255,7 @@ namespace runner
   private:
     eval::Action worker_;
     rObject result_cache_;
-    rObject job_cache_;
+    object::rJob job_cache_;
   };
 
 } // namespace runner

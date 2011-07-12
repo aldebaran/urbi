@@ -66,9 +66,14 @@ do (System)
     }
   };
 
-
   /// assert_op(Operator: String | Lazy, Lhs, Rhs).
   var assert_op = getSlotValue("assertCall");
+
+  function currentRunner()
+  {
+    Kernel1.deprecated("Job.current") |
+    Job.current
+  };
 
   var period = 20ms;
 

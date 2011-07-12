@@ -58,7 +58,7 @@ var e = Event.new|;
 function watchEvent()
 {
   at (e?)
-    lobby.echoEach(currentRunner.backtrace);
+    lobby.echoEach(Job.current.backtrace);
 }|;
 function sendEvent()
 {

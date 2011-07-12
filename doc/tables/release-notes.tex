@@ -79,7 +79,7 @@ var f = Event.new|;
 function watchEvent()
 {
   at (f?)
-    lobby.echoEach(currentRunner.backtrace);
+    lobby.echoEach(Job.current.backtrace);
 }|;
 function sendEvent()
 {
@@ -87,7 +87,7 @@ function sendEvent()
 }|;
 watchEvent;
 sendEvent;
-[00008208] *** file.u:5.20-42: backtrace
+[00008208] *** file.u:5.20-40: backtrace
 [00008208] *** file.u:9.3: emit
 [00008208] *** file.u:12.1-9: sendEvent
 [00008208] *** ---- event handler backtrace:
@@ -99,6 +99,8 @@ sendEvent;
 \begin{urbiunchecked}
 [00000030] *** file.u:5.20-42: backtrace
 \end{urbiunchecked}
+
+\item \refSlot[System]{currentRunner} renamed as \refSlot[Job]{current}.
 
 \item \refSlot[System]{shutdown} now accepts the exit status as argument.
 

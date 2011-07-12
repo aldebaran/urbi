@@ -27,9 +27,9 @@ do (Mutex)
   {
     var this.sem = Semaphore.new(1) |
     var this.onEnter = function () {
-      if (!currentRunner.hasSlot("$mutexRelease"))
-        var currentRunner.'$mutexRelease' = [] |
-      var l = currentRunner.'$mutexRelease' |
+      if (!Job.current.hasSlot("$mutexRelease"))
+        var Job.current.'$mutexRelease' = [] |
+      var l = Job.current.'$mutexRelease' |
       l.insertBack(false) |
       this.lock |
       // This will not be executed if the semaphore is not acquired, but we
@@ -39,7 +39,7 @@ do (Mutex)
       l.insertBack(true) |
     } |
     var this.onLeave = function () {
-      var l = currentRunner.'$mutexRelease' |
+      var l = Job.current.'$mutexRelease' |
       if (l.back)
         this.unlock |
       l.removeBack() |

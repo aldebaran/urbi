@@ -263,12 +263,6 @@ namespace urbi
       return system_loadFile(self, filename, 0);
     }
 
-    static rObject
-    system_currentRunner()
-    {
-      return runner().as_job();
-    }
-
     static float
     system_cycle()
     {
@@ -281,7 +275,7 @@ namespace urbi
       runner().non_interruptible_set(true);
     }
 
-    static rObject
+    static rJob
     system_spawn(const rObject&,
                  const rCode& code,
                  const rObject& clear_tags)
@@ -357,11 +351,8 @@ namespace urbi
     {
       List::value_type res;
       foreach (sched::rJob job, ::kernel::scheduler().jobs_get())
-      {
-        rObject o = static_cast<runner::Job*>(job.get())->as_job();
-        if (o != nil_class)
+        if (rJob o = static_cast<runner::Job*>(job.get())->as_job())
           res << o;
-      }
       return res;
     }
 
@@ -706,11 +697,11 @@ namespace urbi
     static void
     system_pollLoop()
     {
-      while(true)
+      while (true)
       {
         system_poll();
         // We just waited the appropriate time, simply yield
-        ::kernel::urbiserver->getCurrentRunner().yield();
+        ::kernel::runner().yield();
       }
     }
 
@@ -748,7 +739,6 @@ namespace urbi
       DECLARE(arguments);
       DECLARE(backtrace);
       DECLARE(breakpoint);
-      DECLARE(currentRunner);
       DECLARE(cycle);
       DECLARE(getLocale);
       DECLARE(getenv);

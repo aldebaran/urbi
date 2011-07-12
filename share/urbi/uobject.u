@@ -318,9 +318,9 @@ do (Slot)
   function uvalueSerialize()
   {
     var n = fullName|
-    if (currentRunner.hasLocalSlot("targetLobby"))
+    if (Job.current.hasLocalSlot("targetLobby"))
     {
-      var l = currentRunner.targetLobby|
+      var l = Job.current.targetLobby|
       var bc = l.__bindingCount.getWithDefault(n, nil)|
       if (bc.isNil)
       {
@@ -705,7 +705,7 @@ Global.getSlot("currentLobbyId").notifyAccess(function()
 Slot.new(Global, "currentRunnerInUObjectUpdate");
 Global.&currentRunnerInUObjectUpdate.get = function()
 {
-  currentRunner.hasLocalSlot("$uobjectInUpdate")
+  Job.current.hasLocalSlot("$uobjectInUpdate")
 };
 
 // UObject remote API.
@@ -928,9 +928,9 @@ class Global.'external'
       // UObjects, they persist so local variables are fine.
       (var lrtp, var rrtp) = makeRTPPair(lobby)|
       rrtp.localDeliver = objname + "." + varname|
-      var currentRunner.targetLobby = lobby |
+      var Job.current.targetLobby = lobby |
       lrtp.sendVar(obj.getSlot(varname).uvalueSerialize)|
-      currentRunner.removeSlot("targetLobby")|
+      Job.current.removeSlot("targetLobby")|
       lobby.__bindingFunc[fullname] = [rrtp, lrtp]|
       // Fallback to old TCP method if RTP fails.
       disown(monitorRTP(lrtp, rrtp,
@@ -965,9 +965,9 @@ class Global.'external'
         }|
       }|
       lobby.__bindingFunc[fullname] = lobby.sharedRTP|
-      var currentRunner.targetLobby = lobby |
+      var Job.current.targetLobby = lobby |
       lobby.sharedRTP.groupedSendVar(obj.getSlot(varname).uvalueSerialize)|
-      currentRunner.removeSlot("targetLobby")
+      Job.current.removeSlot("targetLobby")
     }
   };
 
@@ -992,10 +992,10 @@ class Global.'external'
         v = this.value|
       // If source is the current lobby, loopback took care of notification
       if (lobby == chan.lobby
-          && currentRunner.hasLocalSlot("$uobjectInUpdate"))
+          && Job.current.hasLocalSlot("$uobjectInUpdate"))
       if (lobby == chan.lobby
-          && currentRunner.hasLocalSlot("$uobjectInUpdate")
-          && currentRunner.'$uobjectInUpdate' == slotId.asFloat)
+          && Job.current.hasLocalSlot("$uobjectInUpdate")
+          && Job.current.'$uobjectInUpdate' == slotId.asFloat)
         return|
         /*
       var uvar =
@@ -1005,9 +1005,9 @@ class Global.'external'
         else
           args[0]
       }|*/
-      var currentRunner.targetLobby = chan.lobby|
+      var Job.current.targetLobby = chan.lobby|
       v = v.uvalueSerialize  |
-      currentRunner.removeSlot("targetLobby")|
+      Job.current.removeSlot("targetLobby")|
       if (!v.isNil && !v.isVoid)
         chan << ['external'.UEM_ASSIGNVALUE,
                  fullName,
@@ -1075,9 +1075,9 @@ class Global.'external'
     var ownerLobby = lobby|
     function f(var args[])
     {
-      var currentRunner.targetLobby = chan.lobby|
+      var Job.current.targetLobby = chan.lobby|
       args = args.uvalueSerialize|
-      currentRunner.removeSlot("targetLobby")|
+      Job.current.removeSlot("targetLobby")|
       if (args.size != nargs)
         throw Exception.Arity.new("Remote bound function", args.size, nargs)|
       var u = String.fresh |

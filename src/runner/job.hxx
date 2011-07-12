@@ -63,10 +63,11 @@ namespace runner
   }
 
   LIBPORT_SPEED_INLINE
-  Job::rObject Job::as_job()
+  object::rJob
+  Job::as_job()
   {
     if (terminated())
-      return object::nil_class;
+      return 0;
     if (!job_cache_)
       // The following line increment the reference counter of this job,
       // thus we have to overload terminate_cleanup to remove this cycle.

@@ -50,9 +50,10 @@ namespace urbi
     URBI_CXX_OBJECT_INIT(Job)
     {
       BIND(DOLLAR_backtrace, backtrace);
+      BIND(current);
       BIND(resetStats);
-      BIND(status);
       BIND(stats);
+      BIND(status);
       BIND(tags);
       BIND(terminate);
       BIND(timeShift);
@@ -66,8 +67,15 @@ namespace urbi
       return value_;
     }
 
+    rJob
+    Job::current()
+    {
+      return ::kernel::runner().as_job();
+    }
+
+
     const runner::State::tag_stack_type
-    Job::tags()
+    Job::tags() const
     {
       return value_
         ? dynamic_cast<runner::Job*>(value_.get())->state.tag_stack_get()
@@ -75,7 +83,7 @@ namespace urbi
     }
 
     std::string
-    Job::status()
+    Job::status() const
     {
       if (!value_)
         return "";
@@ -116,7 +124,7 @@ namespace urbi
     }
 
     rObject
-    Job::stats()
+    Job::stats() const
     {
       const sched::Job::stats_type& stats =
         value_->stats_get();
@@ -163,17 +171,15 @@ namespace urbi
     }
 
     rList
-    Job::backtrace()
+    Job::backtrace() const
     {
       if (!value_)
         return new List();
 
       List::value_type res;
       if (const runner::Job* r = dynamic_cast<runner::Job*>(value_.get()))
-      {
         foreach(runner::State::call_frame_type frame, r->state.backtrace_get())
           res.push_front(frame);
-      }
       return new List(res);
     }
 
@@ -203,12 +209,10 @@ namespace urbi
       value_->terminate_now();
     }
 
-    rFloat
-    Job::timeShift()
+    libport::ufloat
+    Job::timeShift() const
     {
-      if (!value_)
-        return new Float(0);
-      return new Float(value_->time_shift_get() / 1000000.0);
+      return value_ ? value_->time_shift_get() / 1000000.0 : 0;
     }
   }; // namespace object
 }

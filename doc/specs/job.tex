@@ -40,14 +40,14 @@ spawn (function () { sleep(10) }, false);
 \item[asJob]
   Return \lstinline|this|.
 \begin{urbiassert}
-currentRunner.asJob === currentRunner;
+Job.current.asJob === Job.current;
 \end{urbiassert}
 
 
 \item[asString] The string \lstinline|Job<\var{name}>| where \var{name} is
   the name of the job.
 \begin{urbiassert}
-currentRunner.asString == "Job<shell>";
+Job.current.asString == "Job<shell>";
 spawn (function () { sleep(10) }, false).asString == "Job<shell_11>";
 \end{urbiassert}
 
@@ -77,9 +77,9 @@ assert
 //#push 1 "file.u"
 var e = Event.new|;
 at (e?)
-  lobby.echoEach(currentRunner.backtrace);
+  lobby.echoEach(Job.current.backtrace);
 e!;
-[00000149] *** file.u:3.18-40: backtrace
+[00000149] *** file.u:3.18-38: backtrace
 [00000149] *** file.u:4.1: emit
 [00000149] *** ---- event handler backtrace:
 [00000149] *** file.u:2.1-3.41: onEvent
@@ -89,7 +89,7 @@ var f = Event.new|;
 function watchEvent()
 {
   at (f?)
-    lobby.echoEach(currentRunner.backtrace);
+    lobby.echoEach(Job.current.backtrace);
 }|;
 function sendEvent()
 {
@@ -97,7 +97,7 @@ function sendEvent()
 }|;
 watchEvent;
 sendEvent;
-[00008208] *** file.u:5.20-42: backtrace
+[00008208] *** file.u:5.20-40: backtrace
 [00008208] *** file.u:9.3: emit
 [00008208] *** file.u:12.1-9: sendEvent
 [00008208] *** ---- event handler backtrace:
@@ -107,6 +107,32 @@ sendEvent;
 
 \item[clone]
   Cloning a job is forbidden.
+
+\item[current]%
+  The \refObject{Job} in charge of executing this ``thread'' of code.
+\begin{urbiscript}
+var j = Job.current|;
+assert { j.isA(Job) };
+
+var j1; var j2;
+
+// Both sequential compositions use the same job: the current one.
+{ j1 = Job.current; j2 = Job.current }|;
+assert { j1 == j2; j1 == j };
+
+{ j1 = Job.current | j2 = Job.current }|;
+assert { j1 == j2; j1 == j };
+
+// Concurrency requires several jobs: j1 and j2 are different.
+//
+// As an optimization, the current job is used for one of these
+// jobs.  This is an implementation detail, do not rely on it.
+{ j1 = Job.current & j2 = Job.current }|;
+assert { j1 != j2; j1 == j; j2 != j };
+
+{ j1 = Job.current, j2 = Job.current }|;
+assert { j1 != j2; j1 != j; j2 == j };
+\end{urbiscript}
 
 \item[dumpState]
   Pretty-print the state of the job.
@@ -140,7 +166,7 @@ detach(sleep(10)).name;
   job (starting, running, \ldots), and its properties (frozen, \ldots).
 \begin{urbiassert}
 var t = detach(sleep(10));
-currentRunner.status == "running (current job)";
+Job.current.status == "running (current job)";
 t.status == "sleeping" ;
 \end{urbiassert}
 
@@ -148,6 +174,9 @@ t.status == "sleeping" ;
   Return a \refObject{Dictionary} containing information about the execution
   cycles of \urbi.  This is an internal feature made for developers, it
   might be changed without notice.  See also \refSlot{resetStats}.
+\begin{urbicomment}
+removeSlots("j");
+\end{urbicomment}
 \begin{urbiscript}
 var j = detach({
   // Each ';' increment the Cycles with their execution time.
