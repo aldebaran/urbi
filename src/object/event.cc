@@ -370,22 +370,18 @@ namespace urbi
           // Check if any tag is frozen beside the first one.
           bool frozen = false;
           foreach (const rTag& t, waiter.runner->state.tag_stack_get_all())
-          {
             if (t != waiter.controlTag && t->frozen())
             {
               frozen = true;
               break;
             }
-          }
-          if (frozen) // Do not trigger a frozen at.
+          if (!frozen) // Do not trigger a frozen at.
           {
-            ++i;
-            continue;
+            waiter.controlTag->unfreeze();
+            // Yes this is also valid for the last element.
+            waiters_[i] = waiters_[waiters_.size()-1];
+            waiters_.pop_back();
           }
-	  waiter.controlTag->unfreeze();
-	  // Yes this is also valid for the last element.
-	  waiters_[i] = waiters_[waiters_.size()-1];
-	  waiters_.pop_back();
 	}
 	else
 	  ++i;

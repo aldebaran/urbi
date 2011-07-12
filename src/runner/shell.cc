@@ -143,7 +143,7 @@ namespace runner
     }
 
     if (exception_to_show.get())
-      eval::show_exception(*this, *exception_to_show);
+      eval::show_exception(*exception_to_show, *this);
   }
 
   void
@@ -296,9 +296,9 @@ namespace runner
       // Catch and print unhandled exceptions
       catch (object::UrbiException& e)
       {
-        eval::show_exception(
-          *this,
-          object::UrbiException(e.value_get(), e.backtrace_get()));
+        eval::show_exception(object::UrbiException(e.value_get(),
+                                                   e.backtrace_get()),
+                             *this);
       }
       catch (const Exception& e)
       {

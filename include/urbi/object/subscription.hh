@@ -35,14 +35,19 @@ namespace urbi
     URBI_CXX_OBJECT(Subscription, CxxObject);
   public:
     typedef boost::function1<void, const objects_type&> callback_type;
-    void stop();
     Subscription();
     Subscription(libport::intrusive_ptr<Subscription> model);
-    Subscription(rEvent source, rExecutable g, rExecutable e, rExecutable l, bool s);
+    Subscription(rEvent source,
+                 rExecutable g, rExecutable e, rExecutable l, bool s);
     Subscription(callback_type* cb);
-    // Factor initialization code
+
+    // Factor initialization code.
     void init_();
+
     ~Subscription();
+
+    void stop();
+
     /** Run the subscription in this job.
      * @param src source event
      * @param payload event payload
@@ -94,7 +99,7 @@ namespace urbi
     void unregister();
     void freeze();
     void unfreeze();
-    // Event is only set for mode-two. We need it to call unsubscribed_
+    // Event is only set for mode-two. We need it to call unsubscribed_.
     rEvent event_;
     rExecutable guard, enter, leave;
     rProfile profile;

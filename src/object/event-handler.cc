@@ -39,13 +39,9 @@ namespace urbi
 
     URBI_CXX_OBJECT_INIT(EventHandler)
     {
-#define DECLARE(Name, Cxx)            \
-      bind(SYMBOL_(Name), &EventHandler::Cxx)
-
-      DECLARE(stop,    stop);
-      DECLARE(source,  source);
-      DECLARE(payload, payload);
-#undef DECLARE
+      BIND(payload);
+      BIND(source);
+      BIND(stop);
     }
 
     /*-------.
@@ -117,8 +113,6 @@ namespace urbi
     void
     EventHandler::trigger_job(const rSubscription& actions, bool detach)
     {
-      detach = detach && actions->asynchronous_get();
-      runner::Job& r = ::kernel::runner();
       if (actions->frozen)
         return;
       objects_type args;
@@ -129,15 +123,18 @@ namespace urbi
       if (pattern != void_class)
       {
         args << pattern;
+        detach = detach && actions->asynchronous_get();
         if (actions->leave)
+        {
           register_stop_job(stop_job_type(actions, args, detach));
+        }
         if (actions->enter)
         {
           if (detach)
           {
             rLobby l = actions->lobby;
             if (!l)
-              l = r.state.lobby_get();
+              l = ::kernel::runner().state.lobby_get();
             sched::rJob job = spawn_actions_job
               (l, actions->enter, actions->profile, args);
             job->start_job();

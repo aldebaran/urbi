@@ -9,7 +9,7 @@
  */
 
 /**
- ** \file runner/eval/send-msg.hh
+ ** \file eval/send-msg.hh
  ** \brief Definition of eval::send_message.
  */
 
@@ -30,6 +30,12 @@ namespace eval
                        const std::string& tag,
                        const std::string& msg);
 
+  /// Send an error message to the current lobby.
+  ///
+  /// \param msg The message to be printed. "!!! " will be prepended.
+  /// \param job The job in which this function is executed.
+  rObject send_error(const std::string& msg, Job& job = ::kernel::runner());
+
   Action  send_message(const std::string& tag,
                        const std::string& msg);
 
@@ -46,8 +52,8 @@ namespace eval
   void show_backtrace(Job& job,
                       const std::string& chan);
 
-  void show_exception(Job& job,
-                      const object::UrbiException& ue,
+  void show_exception(const object::UrbiException& ue,
+                      Job& job = ::kernel::runner(),
                       const std::string& tag = "error");
 
 

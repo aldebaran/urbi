@@ -12,6 +12,7 @@
 #include <libport/finally.hh>
 
 #include <object/profile.hh>
+#include <urbi/object/global.hh>
 #include <urbi/object/slot.hh>
 #include <urbi/object/string.hh>
 #include <urbi/object/fwd.hh>
@@ -59,7 +60,7 @@ namespace runner
         libport::Finally finally(boost::bind(&Job::non_interruptible_set,
                                              this, non_interruptible_get()));
         non_interruptible_set(true);
-        eval::show_exception(*this, exn);
+        eval::show_exception(exn, *this);
       }
     }
   }

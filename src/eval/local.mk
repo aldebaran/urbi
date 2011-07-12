@@ -8,15 +8,16 @@
 
 dist_libuobject@LIBSFX@_la_SOURCES +=		\
   eval/action.hh				\
+  eval/ast.cc					\
   eval/ast.hh					\
   eval/ast.hxx					\
-  eval/ast.cc					\
+  eval/call.cc					\
   eval/call.hh					\
   eval/call.hxx					\
-  eval/call.cc					\
   eval/exec.hh					\
   eval/exec.hxx					\
-  eval/raise.hh					\
   eval/raise.cc					\
+  eval/raise.hh					\
+  eval/send-message.cc				\
   eval/send-message.hh				\
   eval/send-message.hxx

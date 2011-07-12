@@ -115,38 +115,38 @@ removeSlots("e");
 \end{urbicomment}
 \begin{urbiscript}[xrightmargin=0mm,xleftmargin=0mm]
 var e = Event.new|;
-at (e?)
-  { echo("a"); sleep(20ms); echo("b") }
+at (e?(var v))
+  { echo("a"+v); sleep(20ms); echo("b"+v) }
 onleave
-  { echo("c"); sleep(20ms); echo("d") };
+  { echo("c"+v); sleep(20ms); echo("d"+v) };
 
-var handler = e.trigger | echo("?");
+var handler = e.trigger("1") | echo("?");
 [00000001] *** ?
-[00000002] *** a
-[00000102] *** b
+[00000002] *** a1
+[00000102] *** b1
 sleep(200ms);
 handler.stop | echo("?");
 [00000301] *** ?
 sleep(25ms);
-[00000302] *** c
-[00000402] *** d
+[00000302] *** c1
+[00000402] *** d1
 
 // at and onleave clauses may overlap.
-handler = e.trigger | handler.stop;
+handler = e.trigger("2") | handler.stop;
 sleep(25ms);
-[00000001] *** a
-[00000002] *** c
+[00000001] *** a2
+[00000002] *** c2
 sleep(25ms);
-[00000201] *** b
-[00000202] *** d
+[00000201] *** b2
+[00000202] *** d2
 
-handler = e.syncTrigger | echo("?");
-[00000002] *** a
-[00000102] *** b
+handler = e.syncTrigger("3") | echo("?");
+[00000002] *** a3
+[00000102] *** b3
 [00000001] *** ?
 handler.stop | echo("?");
-[00000302] *** c
-[00000402] *** d
+[00000302] *** c3
+[00000402] *** d3
 [00000301] *** ?
 \end{urbiscript}
 \columnbreak
@@ -158,37 +158,37 @@ removeSlots("e", "handler");
 \end{urbicomment}
 \begin{urbiscript}[xrightmargin=0mm,xleftmargin=0mm]
 var e = Event.new|;
-at sync (e?)
-  { echo("a"); sleep(20ms); echo("b") }
+at sync (e?(var v))
+  { echo("a"+v); sleep(20ms); echo("b"+v) }
 onleave
-  { echo("c"); sleep(20ms); echo("d") };
+  { echo("c"+v); sleep(20ms); echo("d"+v) };
 
-var handler = e.trigger | echo("?");
+var handler = e.trigger("1") | echo("?");
 // No need to sleep.
-[00000002] *** a
-[00000102] *** b
+[00000002] *** a1
+[00000102] *** b1
 [00000001] *** ?
 handler.stop | echo("?");
 [00000301] *** ?
 sleep(25ms);
-[00000302] *** c
-[00000402] *** d
+[00000302] *** c1
+[00000402] *** d1
 
 // at and onleave clauses don't overlap.
-handler = e.trigger | handler.stop;
+handler = e.trigger("2") | handler.stop;
 sleep(25ms);
-[00000001] *** a
-[00000201] *** b
-[00000002] *** c
-[00000202] *** d
+[00000001] *** a2
+[00000201] *** b2
+[00000002] *** c2
+[00000202] *** d2
 
-handler = e.syncTrigger | echo("?");
-[00000002] *** a
-[00000102] *** b
+handler = e.syncTrigger("3") | echo("?");
+[00000002] *** a3
+[00000102] *** b3
 [00000001] *** ?
 handler.stop | echo("?");
-[00000302] *** c
-[00000402] *** d
+[00000302] *** c3
+[00000402] *** d3
 [00000301] *** ?
 \end{urbiscript}
 \end{multicols}
@@ -215,7 +215,7 @@ var e = Event.new;
 \item[asEvent]
   Return \this.
 
-\item[emit](...)%
+\item[emit](<args>[])%
   Fire an ``instantaneous'' and ``asynchronous'' \refObject{Event}. This
   function is called by the \lstinline|!| operator.  It takes any number of
   arguments, passed to the receiver when the event is caught.
@@ -260,6 +260,59 @@ and \refSlot{syncEmit} for details about the synchronicity of the handling.
   %% \lstinline|emit| call before all the watchers have finished their
   %% execution.
 
+\item[onEvent](<guard>, <enter>, <leave>, <sync>)%
+  This is the low-level routine used to implement the \lstindex|at|
+  construct.  Indeed,
+  \lstinline|at (\var{e}? if \var{cond}) \var{enter} onleave \var{leave}|
+  is (roughly) translated into
+\begin{urbiunchecked}
+\var{e}
+  .onEvent(
+    closure (var '$evt', var '$payload')                 { \var{cond}  },
+    closure (var '$evt', var '$payload', var '$pattern') { \var{enter} },
+    closure (var '$evt', var '$payload', var '$pattern') { \var{leave} },
+    false)
+\end{urbiunchecked}
+
+\noindent
+where the \lstinline|false| would be \lstinline|true| in case of an
+\lstinline|at sync| construct.  The \var{cond} discards the event iff it
+returns \lstinline{void}.
+
+\begin{urbicomment}
+removeSlots("e");
+\end{urbicomment}
+\begin{urbiscript}
+var e = Event.new|;
+e.onEvent(
+  function (var args[]) { echo("cond 1") | true },
+  function (var args[]) { echo("enter 1") },
+  function (var args[]) { echo("leave 1") },
+  true);
+
+e.onEvent(
+  function (var args[]) { echo("cond 2") },
+  function (var args[]) { echo("enter 2") },
+  function (var args[]) { echo("leave 2") },
+  true);
+
+e.emit(12);
+[00001619] *** cond 1
+[00001619] *** enter 1
+[00001619] *** leave 1
+[00001619] *** cond 2
+
+var h = e.trigger|;
+[00001620] *** cond 1
+[00001620] *** enter 1
+[00001620] *** cond 2
+
+h.stop;
+[00001621] *** leave 1
+\end{urbiscript}
+
+This function is internal and it might change in the future.
+
 \item[onSubscribe]%
   This slot is not set by default. You can optionally assign an event to
   it. In this case, it is triggered each time some code starts watching this
@@ -270,16 +323,17 @@ and \refSlot{syncEmit} for details about the synchronicity of the handling.
   to react to this event have returned.  This function can have the same
   arguments as \refSlot{emit}.
 
-\item[trigger]%
+\item[trigger](<args>[])%
   Fire a sustained event (for an unknown amount of time) and return a
   handler object whose \lstinline|stop| method stops the event. This method
   is asynchronous and the \lstinline|stop| call will be asynchronous as
   well.  See \autoref{sec:event:sustain} for examples.
 
-\item[syncEmit] Same as \refSlot{emit} but require a synchronous handling.
+\item[syncEmit](<args>[])%
+  Same as \refSlot{emit} but require a synchronous handling.
   See \autoref{sec:event:sync} for details.
 
-\item[syncTrigger]%
+\item[syncTrigger](<args>[])%
   Same as \refSlot{trigger} but the call will be synchronous (see
   \autoref{sec:event:sync}). The \lstinline|stop| method of the handler
   object will be synchronous as well.  See \autoref{sec:event:sustain} for

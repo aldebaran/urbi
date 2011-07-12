@@ -46,6 +46,7 @@ namespace urbi
       BIND(minCallTime, minCallTime_);
       BIND(maxCallTime, maxCallTime_);
     }
+
     Subscription::Subscription()
     {
       init_();
@@ -58,8 +59,8 @@ namespace urbi
     }
 
     Subscription::Subscription(rEvent source, rExecutable g,
-                                      rExecutable e,
-                                      rExecutable l, bool s)
+                               rExecutable e,
+                               rExecutable l, bool s)
     {
       init_();
       event_ = source;
@@ -106,8 +107,8 @@ namespace urbi
 
     Subscription::~Subscription()
     {
-      foreach(boost::signals::connection& c, connections)
-      c.disconnect();
+      foreach (boost::signals::connection& c, connections)
+        c.disconnect();
     }
 
     void
@@ -115,6 +116,7 @@ namespace urbi
     {
       disconnected_set(true);
     }
+
     void
     Subscription::unregister()
     {
@@ -134,11 +136,13 @@ namespace urbi
       lobby = 0;
       // We must handle unsubscribed_ now or watch condition will be evaluated
       foreach(rSubscription& s, e->callbacks_)
-      if (!s->disconnected_get())
-        return;
+        if (!s->disconnected_get())
+          return;
       if (!e->callbacks_.empty())
-      { // No more subscribers now, but the event is not yet aware of that.
-        // Clear and call unsubscribed_ now instead of wating for next emit.
+      {
+        // No more subscribers now, but the event is not yet aware of
+        // that.  Clear and call unsubscribed_ now instead of waiting
+        // for next emit.
         GD_INFO_TRACE("No more subscribers, calling unsubscribed");
         e->callbacks_.clear();
         e->unsubscribed_();
@@ -160,129 +164,129 @@ namespace urbi
       frozen--;
     }
 
-    void Subscription::run_sync(rEvent src, const objects_type& pl, EventHandler*h,
-                            bool detach, bool sync)
-{
-  GD_FPUSH_TRACE("Subscriber %s running synchronously in %s", this,
-                kernel::runner());
-  bool threw = false;
-  libport::utime_t now = kernel::server().getTime();
-  try
-  {
-    processing_++;
-    if (cb_)
+    void
+    Subscription::run_sync(rEvent src,
+                           const objects_type& pl, EventHandler* h,
+                           bool detach, bool sync)
     {
-      (*cb_)(pl);
-    }
-    if (onEvent_)
-    {
-      runner::Job& j = kernel::runner();
-      rObject jthis = j.state.this_get();
-      FINALLY(((rObject, jthis))((runner::Job&, j)), j.state.this_set(jthis));
-      j.state.this_set(this);
-      eval::call(kernel::runner(), onEvent_, pl);
-    }
-    if (event_)
-    {
-      if (!h)
-      { // Dirac emit case (not trigger)
-        if (frozen)
+      GD_FPUSH_TRACE("Subscriber %s running synchronously in %s", this,
+                     kernel::runner());
+      bool threw = false;
+      libport::utime_t now = kernel::server().getTime();
+      try
+      {
+        processing_++;
+        if (cb_)
+          (*cb_)(pl);
+        if (onEvent_)
         {
-          GD_FINFO_TRACE("%s: Skip frozen registration %s.", src, this);
-          return;
+          runner::Job& j = kernel::runner();
+          rObject jthis = j.state.this_get();
+          FINALLY(((rObject, jthis))((runner::Job&, j)),
+                  j.state.this_set(jthis));
+          j.state.this_set(this);
+          eval::call(kernel::runner(), onEvent_, pl);
         }
-        GD_FPUSH_TRACE("%s: Trigger registration %s.", src, this);
-        objects_type args;
-        args << src << src << new List(pl);
-        rObject pattern = nil_class;
-        if (guard)
-          pattern = (*guard)(args);
-        if (pattern != void_class)
+        if (event_)
         {
-          args << pattern;
-          if (detach && asynchronous_)
-          {
-            sched::rJob leaveJob;
-            // We are already in a child job, so just spawn for one of the
-            // two tasks.
-            if (leave)
-              leaveJob = src->spawn_actions_job(lobby, call_stack,
-                                                leave, profile, args);
-
-            // Start jobs simultaneously.
-            if (leave)
-              leaveJob->start_job();
-            if (enter)
-              (*enter)(args);
-          }
+          if (h)
+            // emit with duration case (trigger).
+            h->trigger_job(this, detach);
           else
           {
-            if (enter)
-              (*enter)(args);
-            if (leave)
-              (*leave)(args);
+            // Dirac emit case (not trigger)
+            if (frozen)
+            {
+              GD_FINFO_TRACE("%s: Skip frozen registration %s.", src, this);
+              return;
+            }
+            GD_FPUSH_TRACE("%s: Trigger registration %s.", src, this);
+            objects_type args;
+            args << src << src << new List(pl);
+            rObject pattern = nil_class;
+            if (guard)
+              pattern = (*guard)(args);
+            if (pattern != void_class)
+            {
+              args << pattern;
+              if (detach && asynchronous_)
+              {
+                sched::rJob leaveJob;
+                // We are already in a child job, so just spawn for one of the
+                // two tasks.  Start jobs simultaneously.
+                if (leave)
+                {
+                  leaveJob = src->spawn_actions_job(lobby, call_stack,
+                                                    leave, profile, args);
+                  leaveJob->start_job();
+                }
+                if (enter)
+                  (*enter)(args);
+              }
+              else
+              {
+                if (enter)
+                  (*enter)(args);
+                if (leave)
+                  (*leave)(args);
+              }
+            }
           }
+        } // (event)
+
+      } // try
+
+      catch (const UrbiException& e)
+      {
+        if (!sync
+            ||
+            !src->slot_get_value(SYMBOL(blockSubscriberException))->as_bool())
+        {
+          // Do not intercept the exception in async mode or if asked to
+          --processing_;
+          throw;
         }
+        threw = true;
+        eval::send_error("exception caught while processing Event:");
+        eval::show_exception(e);
       }
-      else // !h
-      { // emit with duration case (trigger)
-        h->trigger_job(this, detach);
+      catch (const sched::exception&)
+      {
+        // Never intercept sched::exception.
+        GD_FINFO_TRACE("Subscriber %s interrupted", this);
+        --processing_;
+        throw;
       }
-    } // (event)
-
-  } // try
-
-  catch (const UrbiException& e)
-  {
-    if (!sync
-        || !src->slot_get_value(SYMBOL(blockSubscriberException))->as_bool())
-    { // Do not intercept the exception in async mode or if asked to
-      --processing_;
-      throw;
+      catch (...)
+      {
+        if (!sync
+            ||
+            !src->slot_get_value(SYMBOL(blockSubscriberException))->as_bool())
+        {
+          --processing_;
+          throw;
+        }
+        threw = true;
+        eval::send_error("unknown exception caught while processing Event");
+      }
+      if (threw)
+      {
+        bool b =
+          src->slot_get_value(SYMBOL(unsubscribeFaultySubscriber))->as_bool();
+        GD_FINFO_DUMP("Subscriber threw, removing if %s", b);
+        if (b)
+          stop();
+      }
+      GD_FINFO_TRACE("Subscriber %s terminating in %s", this,
+                     kernel::runner());
+      processing_--;
+      libport::utime_t end = kernel::server().getTime();
+      lastCall_ = (double)end / 1.0e6;
+      double ct = (double)(end-now) / 1.0e6;
+      minCallTime_ = callCount_ ? std::min(ct, minCallTime_) : ct;
+      maxCallTime_ = std::max(ct, maxCallTime_);
+      callCount_++;
+      totalCallTime_ += ct;
     }
-    threw = true;
-    kernel::runner().state.lobby_get()->call(SYMBOL(send),
-                                             new String("!!! exception caught while processing Event:"),
-                                             new String("error"));
-    eval::show_exception(kernel::runner(), e);
-  }
-  catch (const sched::exception&)
-  { // Never intercept sched::exception
-    GD_FINFO_TRACE("Subscriber %s interrupted", this);
-    --processing_;
-    throw;
-  }
-  catch (...)
-  {
-    if (!sync
-        || !src->slot_get_value(SYMBOL(blockSubscriberException))->as_bool())
-    {
-      --processing_;
-      throw;
-    }
-    threw = true;
-    kernel::runner().state.lobby_get()->call(SYMBOL(send),
-                                             new String("!!! unknown exception caught while processing Event"),
-                                             new String("error"));
-  }
-  if (threw)
-  {
-    bool b =
-    src->slot_get_value(SYMBOL(unsubscribeFaultySubscriber))->as_bool();
-    GD_FINFO_DUMP("Subscriber threw, removing if %s", b);
-    if (b)
-      stop();
-  }
-  GD_FINFO_TRACE("Subscriber %s terminating in %s", this,
-                kernel::runner());
-  processing_--;
-  libport::utime_t end = kernel::server().getTime();
-  lastCall_ = (double)end / 1.0e6;
-  double ct = (double)(end-now) / 1.0e6;
-  minCallTime_ = callCount_ ? std::min(ct, minCallTime_) : ct;
-  maxCallTime_ = std::max(ct, maxCallTime_);
-  callCount_++;
-  totalCallTime_ += ct;
-}
   }
 }
