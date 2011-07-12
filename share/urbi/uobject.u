@@ -681,13 +681,17 @@ Global.addProto(uobjects);
 // UObjects can use evaluate at initialization-time.
 
 Slot.new(Global, "evaluate");
-Global.&evaluate.copyOnWrite = false;
-Global.&evaluate.split = true;
-Global.&evaluate.changed.unsubscribeFaultySubscriber = false;
-Global.&evaluate.set = function(v) {
-  var res = eval(v).acceptVoid|
-  if (!res.isVoid)
-    setOutputValue(res)
+do (Global.&evaluate)
+{
+  copyOnWrite = false;
+  split = true;
+  changed.unsubscribeFaultySubscriber = false;
+  set = function(v)
+  {
+    var res = eval(v).acceptVoid|
+    if (!res.isVoid)
+      setOutputValue(res)
+  };
 };
 
 var Global.currentLobbyId;
