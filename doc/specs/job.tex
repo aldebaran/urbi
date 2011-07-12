@@ -21,7 +21,7 @@ They can also be managed using \refObject[s]{Tag}.
 \subsection{Construction}
 
 A Job is typically constructed via \refSlot[Control]{detach},
-\refSlot[Control]{disown}, or \refSlot[System]{spawn}.
+\refSlot[Control]{disown}, or \refSlot[Code]{spawn}.
 
 \begin{urbiscript}
 detach(sleep(10));
@@ -30,7 +30,7 @@ detach(sleep(10));
 disown(sleep(10));
 [00204195] Job<shell_5>
 
-spawn (function () { sleep(10) }, false);
+function () { sleep(10) }.spawn(false);
 [00274160] Job<shell_6>
 \end{urbiscript}
 
@@ -48,7 +48,7 @@ Job.current.asJob === Job.current;
   the name of the job.
 \begin{urbiassert}
 Job.current.asString == "Job<shell>";
-var a = spawn (function () { sleep(1) }, false);
+var a = function () { sleep(1) }.spawn(false);
 a.asString == "Job<" + a.name + ">";
 \end{urbiassert}
 
@@ -192,6 +192,7 @@ detach(sleep(1)).name;
 
 \item[resetStats]%
   Reinitialize the \refSlot{stats} computation.
+
 
 \item[status] A \refObject{String} that describes the current status of the
   job (starting, running, \ldots), and its properties (frozen, \ldots).

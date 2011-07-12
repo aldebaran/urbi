@@ -71,7 +71,7 @@ do (System)
 
   function currentRunner()
   {
-    Kernel1.deprecated("Job.current") |
+    Kernel1.deprecated("System.currentRunner", "Job.current") |
     Job.current
   };
 
@@ -202,6 +202,12 @@ do (System)
   // Do not make a wrapper function here, as you would get a tag for
   // the scope of that function, instead of the caller.
   setSlotValue("scopeTag", Tag.getSlotValue("scope"));
+
+  function spawn(var fun, var clear)
+  {
+    Kernel1.deprecated("System.spawn", "Code.spawn") |
+    Control.spawn(fun, clear)
+  };
 
   function version()
   {

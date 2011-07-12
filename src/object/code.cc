@@ -21,12 +21,14 @@
 #include <kernel/userver.hh>
 
 #include <urbi/object/code.hh>
+#include <urbi/object/job.hh>
 #include <urbi/object/list.hh>
 #include <urbi/object/string.hh>
 #include <urbi/object/object.hh>
 #include <object/symbols.hh>
 
 #include <urbi/runner/raise.hh>
+#include <runner/job.hh>
 #include <eval/call.hh>
 
 DECLARE_LOCATION_FILE;
@@ -71,6 +73,7 @@ namespace urbi
       BIND(EQ_EQ, operator==, bool, (const rObject&) const);
       BIND(asString,   as_string);
       BIND(bodyString, body_string);
+      BIND(spawn);
     }
 
 
@@ -168,6 +171,23 @@ namespace urbi
         DISP(lobby)
         DISP(captures);
 #undef DISP
+    }
+
+    rJob
+    Code::spawn(bool clear_tags)
+    {
+      runner::Job& r = runner();
+      runner::Job* new_runner = r.spawn_child(eval::call(this));
+      new_runner->name_set(libport::fresh_string(r.name_get()));
+
+      if (clear_tags)
+        new_runner->state.tag_stack_clear();
+
+      new_runner->time_shift_set(r.time_shift_get());
+      new_runner->start_job();
+      if (r.profile_get())
+        new_runner->profile_start(r.profile_get(), SYMBOL(detach), this);
+      return new_runner->as_job();
     }
 
     bool

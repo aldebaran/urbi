@@ -14,7 +14,7 @@
 # include <vector>
 
 # include <ast/loc.hh>
-# include <runner/job.hh>
+# include <runner/fwd.hh>
 
 namespace runner
 {

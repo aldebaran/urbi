@@ -275,26 +275,6 @@ namespace urbi
       runner().non_interruptible_set(true);
     }
 
-    static rJob
-    system_spawn(const rObject&,
-                 const rCode& code,
-                 const rObject& clear_tags)
-    {
-      runner::Job& r = runner();
-      runner::Job* new_runner = r.spawn_child(eval::call(code));
-      new_runner->name_set(
-        libport::fresh_string(r.name_get()));
-
-      if (clear_tags->as_bool())
-        new_runner->state.tag_stack_clear();
-
-      new_runner->time_shift_set(r.time_shift_get());
-      new_runner->start_job();
-      if (r.profile_get())
-        new_runner->profile_start(r.profile_get(), SYMBOL(detach), code.get());
-      return new_runner->as_job();
-    }
-
     static boost::optional<Dictionary::value_type>
     system_stats()
     {
@@ -693,12 +673,6 @@ namespace urbi
 #define DECLARE(Name)                                           \
       system_class->bind(SYMBOL_(Name), &system_##Name)
 
-#ifdef WIN32
-# define DECLARE_UNIX(Name)
-#else
-# define DECLARE_UNIX(Name) DECLARE(Name)
-#endif
-
       DECLARE(_exit);
       DECLARE(addSystemFile);
       DECLARE(arguments);
@@ -727,7 +701,6 @@ namespace urbi
                          static_cast<void (*)(Object*)>(&system_shutdown));
       system_class->bind(SYMBOL(shutdown),
                          static_cast<void (*)(Object*, int)>(&system_shutdown));
-      DECLARE(spawn);
       DECLARE(stats);
       DECLARE(stopall);
       DECLARE(system);

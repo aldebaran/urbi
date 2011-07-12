@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -13,14 +13,21 @@ requireFile("urbi/boolean.u");
 
 class Global.Control
 {
-  function 'detach'(var c)
+  function spawn(var fun, var clearTags)
   {
-    System.spawn(c, false)
+    if (!fun.isA(getSlotValue("Code")))
+      throw Exception.Type.new(fun.type, getSlotValue("Code"));
+    fun.spawn(clearTags)
   };
 
-  function 'disown'(var c)
+  function 'detach'(var fun)
   {
-    System.spawn(c, true)
+    spawn(fun, false)
+  };
+
+  function 'disown'(var fun)
+  {
+    spawn(fun, true)
   };
 
   // 'every,sleep'(deadline, delay)

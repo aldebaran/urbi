@@ -62,6 +62,7 @@ namespace urbi
       rObject apply(const object::objects_type& args);
       virtual std::string as_string() const;
       std::string body_string() const;
+      rJob spawn(bool clear_tags);
 
       /// Whether same members.
       bool operator==(const Code& that) const;
