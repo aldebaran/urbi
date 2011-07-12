@@ -328,13 +328,6 @@ namespace urbi
       ::kernel::scheduler().stats_reset();
     }
 
-
-    static int
-    system_aliveJobs()
-    {
-      return sched::Job::alive_jobs();
-    }
-
     static void
     system_breakpoint()
     {
@@ -708,7 +701,6 @@ namespace urbi
 
       DECLARE(_exit);
       DECLARE(addSystemFile);
-      DECLARE(aliveJobs);
       DECLARE(arguments);
       DECLARE(breakpoint);
       DECLARE(cycle);
