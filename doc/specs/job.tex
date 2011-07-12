@@ -48,7 +48,8 @@ Job.current.asJob === Job.current;
   the name of the job.
 \begin{urbiassert}
 Job.current.asString == "Job<shell>";
-spawn (function () { sleep(10) }, false).asString == "Job<shell_11>";
+var a = spawn (function () { sleep(1) }, false);
+a.asString == "Job<" + a.name + ">";
 \end{urbiassert}
 
 \item[backtrace] The current backtrace of the job as a list of
