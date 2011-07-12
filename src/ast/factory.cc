@@ -506,12 +506,14 @@ namespace ast
   }
 
   rExp
-  Factory::make_detach(const location&,
+  Factory::make_detach(const location& loc,
                        bool is_detach, rExp body) /* const */
   {
     PARAMETRIC_AST(detach, "Control.'detach'(%exp:1)");
     PARAMETRIC_AST(disown, "Control.'disown'(%exp:1)");
-    return exp((is_detach ? detach : disown) % make_closure(body));
+    rExp res = exp((is_detach ? detach : disown) % make_closure(body));
+    res->location_set(loc);
+    return res;
   }
 
 

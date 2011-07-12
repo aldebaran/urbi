@@ -328,23 +328,6 @@ namespace urbi
       ::kernel::scheduler().stats_reset();
     }
 
-    // This should give a backtrace as an urbi object.
-    static void
-    system_backtrace()
-    {
-      // FIXME: This method sucks a bit, because show_backtrace sucks a
-      // bit, because our channeling/message-sending system sucks a lot.
-      runner::Job& r = runner();
-      runner::State::backtrace_type bt = r.state.backtrace_get();
-      bt.pop_back();
-      rforeach (runner::State::call_frame_type& i, bt)
-        eval::send_message(
-          r,
-          "backtrace",
-          libport::format("%s (%s)",
-                          *i->getSlotValue(SYMBOL(name)),
-                          *i->getSlotValue(SYMBOL(location))));
-    }
 
     static int
     system_aliveJobs()
@@ -727,7 +710,6 @@ namespace urbi
       DECLARE(addSystemFile);
       DECLARE(aliveJobs);
       DECLARE(arguments);
-      DECLARE(backtrace);
       DECLARE(breakpoint);
       DECLARE(cycle);
       DECLARE(getLocale);

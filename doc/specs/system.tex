@@ -23,24 +23,6 @@ Details on the architecture the \urbi server runs on.
   Architecture dependent.
 
 
-\item[aliveJobs] The number of detached routines currently running.
-\begin{urbiscript}
-{
-  var nJobs = aliveJobs;
-  for (var i: [1s, 2s, 3s])
-    detach({sleep(i)});
-  sleep(0.5s);
-  assert(aliveJobs - nJobs == 3);
-  sleep(1s);
-  assert(aliveJobs - nJobs == 2);
-  sleep(1s);
-  assert(aliveJobs - nJobs == 1);
-  sleep(1s);
-  assert(aliveJobs - nJobs == 0);
-};
-\end{urbiscript}
-
-
 \item[arguments] The list of the command line arguments passed to the user
   script.  This is especially useful in scripts.
 \begin{shell}[alsolanguage={[Interactive]urbiscript}]
@@ -82,23 +64,6 @@ assert_(1 == 1 + 1, "one is not two");
 
 \item[assert_op](<operator>, <lhs>, <rhs>)%
   Deprecated, use \lstinline|assert| instead, see \autoref{sec:lang:assert}.
-
-
-\item[backtrace]%
-  Display the call stack on the channel \code{backtrace}. \experimental
-\begin{urbiscript}
-//#push 100 "foo.u"
-function innermost () { backtrace }|;
-function inner ()     { innermost }|;
-function outer ()     { inner }|;
-function outermost () { outer }|;
-outermost;
-[00000013:backtrace] innermost (foo.u:101.25-33)
-[00000014:backtrace] inner (foo.u:102.25-29)
-[00000015:backtrace] outer (foo.u:103.25-29)
-[00000016:backtrace] outermost (foo.u:104.1-9)
-//#pop
-\end{urbiscript}
 
 
 %% \item[breakpoint]

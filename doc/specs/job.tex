@@ -52,18 +52,39 @@ var a = spawn (function () { sleep(1) }, false);
 a.asString == "Job<" + a.name + ">";
 \end{urbiassert}
 
-\item[backtrace] The current backtrace of the job as a list of
-  \refObject[s]{StackFrame}.  Uses \refSlot[Traceable]{backtrace}.
+\item[backtrace] The current backtrace of the job as a \refObject{List} of
+  \refObject[s]{StackFrame} starting from innermost, to outermost.  Uses
+  \refSlot[Traceable]{backtrace}.
 
 \begin{urbiscript}
+//#push 100 "foo.u"
+function innermost () { Job.current.backtrace }|;
+function inner ()     { innermost }|;
+function outer ()     { inner }|;
+function outermost () { outer }|;
+echoEach(outermost);
+[00001732] *** foo.u:100.25-45: backtrace
+[00001732] *** foo.u:101.25-33: innermost
+[00001732] *** foo.u:102.25-29: inner
+[00001732] *** foo.u:103.25-29: outer
+[00001732] *** foo.u:104.10-18: outermost
+//#pop
+
 //#push 1 "file.u"
-var s = detach(sleep(10))|;
+var s = detach(sleep(1))|;
 // Leave some time for s to be started.
+sleep(100ms);
+assert
+{
+  s.backtrace[0].asString == "file.u:1.16-23: sleep";
+  s.backtrace[1].asString == "file.u:1.9-24: detach";
+};
+// Leave some time for sleep to return.
 sleep(1);
 assert
 {
-  s.backtrace[0].asString == "file.u:1.16-24: sleep";
-  s.backtrace[1].asString == "file.u:1.16-24: detach";
+  s.backtrace.size == 1;
+  s.backtrace[0].asString == "file.u:1.9-24: detach";
 };
 //#pop
 \end{urbiscript}
@@ -140,17 +161,17 @@ assert { j1 != j2; j1 != j; j2 == j };
 
 \begin{urbiscript}
 //#push 1 "file.u"
-var t = detach(sleep(10))|;
+var t = detach(sleep(1))|;
 // Leave some time for s to be started.
-sleep(1);
+sleep(100ms);
 t.dumpState;
 [00004295] *** Job: shell_10
 [00004295] ***   State: sleeping
 [00004295] ***   Tags:
 [00004295] ***     Tag<Lobby_1>
 [00004297] ***   Backtrace:
-[00004297] ***     file.u:1.16-24: sleep
-[00004297] ***     file.u:1.16-24: detach
+[00004297] ***     file.u:1.16-23: sleep
+[00004297] ***     file.u:1.9-24: detach
 //#pop
 \end{urbiscript}
 
@@ -163,7 +184,9 @@ Job.current in Job.jobs;
 
 \item[name] The name of the job as a \refObject{String}.
 \begin{urbiscript}
-detach(sleep(10)).name;
+Job.current.name;
+[00004293] "shell"
+detach(sleep(1)).name;
 [00004297] "shell_5"
 \end{urbiscript}
 
