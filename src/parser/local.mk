@@ -122,9 +122,9 @@ endif
 parser/ugrammar.stamp: parser/ugrammar.y $(ugrammar_deps)
 	$(AM_V_GEN)rm -f $@ $@.tmp parser/ugrammar-pruned.y
 	$(AM_V_at)echo '$@ rebuilt because of: $?' >$@.tmp
-	$(AM_V_at)$(MAKE) $(BISONXX)
+	$(AM_V_at)$(MAKE) $(AM_MAKEFLAGS) $(BISONXX)
 	$(AM_V_at)$(MAKE) -C $(top_builddir)/bison MAKEFLAGS=
-	$(AM_V_at){ echo "#line 1 \"$<\""; $(PRUNE_FOR_SPACE) - <$<; } >parser/ugrammar-pruned.y
+	$(AM_V_at)$(PRUNE_FOR_SPACE) -o parser/ugrammar-pruned.y $<
 	$(AM_V_at)chmod a-w parser/ugrammar-pruned.y
 	$(AM_V_at)$(BISONXX) parser/ugrammar-pruned.y parser/ugrammar.cc \
 	  $(AM_BISONFLAGS) $(BISONFLAGS)
@@ -206,11 +206,11 @@ nodist_libuobject@LIBSFX@_la_SOURCES += $(FROM_UTOKEN_L)
 EXTRA_DIST += parser/utoken.l
 utoken_deps = $(FLEXXX_IN) parser/local.mk
 parser/utoken.stamp: parser/utoken.l $(utoken_deps)
-	$(AM_V_GEN)
+	$(AM_V_GEN)rm -f $@ $@.tmp parser/utoken-pruned.l
+	$(AM_V_at)echo '$@ rebuilt because of: $?' >$@.tmp
 	$(AM_V_at)$(MAKE) $(AM_MAKEFLAGS) $(FLEXXX)
-	$(AM_V_at)rm -f $@.tmp
-	$(AM_V_at)touch $@.tmp
-	$(AM_V_at)$(PRUNE_FOR_SPACE) - <$< >parser/utoken-pruned.l
+	$(AM_V_at)$(PRUNE_FOR_SPACE) -o parser/utoken-pruned.l $<
+	$(AM_V_at)chmod a-w parser/utoken-pruned.l
 	$(AM_V_at)$(FLEXXX) parser/utoken-pruned.l parser/utoken.cc \
 	  $(FLEXXXFLAGS)
 	$(AM_V_at)mv -f $@.tmp $@
