@@ -49,12 +49,13 @@ static long long hexadecimal(std::string t);
 
 // Safe conversion to a numeric value.
 template <typename Out>
-static Out lexical_cast(const yy::location& loc, std::string t);
+static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc,
+                        std::string t);
 
 // Skip the spaces in yytext.
 # define SKIP_SPACES()                          \
   while (isspace(*yytext))                      \
-    ++yytext;
+    ++yytext
 
 # define YY_INPUT(Buf, Result, MaxSize)                 \
   do                                                    \
@@ -106,11 +107,21 @@ static Out lexical_cast(const yy::location& loc, std::string t);
       GD_INFO("URBI_CHECK_MODE enabled.");                      \
   }
 
+// Report an error and make a parse error.
+// E.g.: bad tokens (such as "2x").
+#define SCAN_FATAL(...)                                                 \
+  throw yy::parser::syntax_error(loc, libport::format(__VA_ARGS__))
+
+// Report an error in a token, but we can continue scanning.
+// E.g.: bad escapes in strings.
+#define SCAN_ERROR(...)                                         \
+  parser_impl_->error(loc, libport::format(__VA_ARGS__))
+
 // Stupidly enough the Flex documentation recommends redefining
 // LexerError, which does not seem to be possible (since it is flex
 // which generates unconditionally its definition in utoken.cc).
 #define YY_FATAL_ERROR(Msg)                     \
-  SCAN_ERROR(Msg)
+  SCAN_FATAL(Msg)
 
 // Each time a rule is matched.
 #define YY_USER_ACTION                          \
@@ -135,17 +146,13 @@ static Out lexical_cast(const yy::location& loc, std::string t);
     loc.end.column = 1;                             \
   } while (false)
 
-// Report an error.
-#define SCAN_ERROR(...)                                     \
-  throw yy::parser::syntax_error(loc, libport::format(__VA_ARGS__))
-
 // Report an EOF error.
 #define EOF_ERROR(Where)                                \
   SCAN_ERROR("unexpected end of file in %s", Where)
 
 // Report the use of a reserved word.
 #define RESERVED_ERROR                          \
-  SCAN_ERROR("reserved symbol: `%s'", yytext)
+  SCAN_FATAL("reserved symbol: `%s'", yytext)
 
 // Otherwise Flex returns an int instead of an enum.
 #define yyterminate()                                   \
@@ -172,12 +179,12 @@ static Out lexical_cast(const yy::location& loc, std::string t);
   return yy::parser::make_ ## Symbol(Value, loc)
 
 // UnitLength is the number of letters used for the unit.
-#define RETURN_UNIT(Token, UnitLength, From, To)        \
-  do {                                                  \
-    yytext[yyleng - UnitLength] = 0;                    \
-    RETURN_VALUE(Token,                                 \
-                 lexical_cast<ufloat>(loc, yytext)      \
-                 / (From) * (To));                      \
+#define RETURN_UNIT(Token, UnitLength, From, To)                        \
+  do {                                                                  \
+    yytext[yyleng - UnitLength] = 0;                                    \
+    RETURN_VALUE(Token,                                                 \
+                 lexical_cast<ufloat>(parser_impl_, loc, yytext)        \
+                 / (From) * (To));                                      \
   } while (false)
 
 
@@ -360,7 +367,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   loc.initialize(!file || libport::streq(file, "-")
 		 ? 0
 		 : new libport::Symbol(file));
-  loc.lines(lexical_cast<unsigned>(loc, line) - 1);
+  loc.lines(lexical_cast<unsigned>(parser_impl_, loc, line) - 1);
   loc.step();
 }
 
@@ -408,9 +415,9 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 
 {HEXA}        RETURN_VALUE(FLOAT, hexadecimal(yytext + 2));
 {NATURAL}     |
-{FLOAT}       RETURN_VALUE(FLOAT, lexical_cast<ufloat>(loc, yytext));
+{FLOAT}       RETURN_VALUE(FLOAT, lexical_cast<ufloat>(parser_impl_, loc, yytext));
 
-({NUMBER}|{HEXA}){ID} SCAN_ERROR("invalid token: `%s'", yytext);
+({NUMBER}|{HEXA}){ID} SCAN_FATAL("invalid token: `%s'", yytext);
 
 [\"\']        {
                 grown_string.clear();
@@ -634,6 +641,9 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   s += quote[1] == '\'' ? "quote" : quote + 1;
   DEPRECATED(s);
 }
+{ID}{SUFFIX}({ID}|{NUMBER}) {
+  SCAN_FATAL("invalid quote: `%s'", strchr(yytext, '\''));
+}
   /*>no-space>*/
 
 
@@ -686,6 +696,15 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
      \\.        {
                   SCAN_ERROR("invalid character after \\-escape: `%s'",
                              libport::escape(yytext + 1));
+     }
+
+
+     "\\B"[^(]           |
+     "\\B("[^0-9]        |
+     "\\B("[0-9]+[^)]    |
+     "\\B("[0-9]+")"[^(] {
+           SCAN_ERROR("invalid \\B(SIZE)(CONTENTS) escape: `\\%s'",
+                      libport::escape(yytext + 1));
      }
 
      "\\B("[0-9]+")("    {
@@ -744,6 +763,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
        default:
          SCAN_ERROR("unexpected '%s' for closing \\B, expected ')'",
                     libport::escape((char)c));
+         COLUMNS(1);
          break;
        }
      }
@@ -784,18 +804,15 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   "/*"          ++comment_level;
   "*/"          {
                   if (!--comment_level)
-                    {
-                      STEP();
-                      BEGIN sc_default;
-                    }
+                  {
+                    STEP();
+                    BEGIN sc_default;
+                  }
                 }
 }
 
 <*>{
-   .      {
-             SCAN_ERROR("invalid character: `%s'", libport::escape(yytext));
-             STEP();
-          }
+   .      SCAN_FATAL("invalid character: `%s'", libport::escape(yytext));
 }
 
 %%
@@ -812,7 +829,8 @@ hexadecimal(std::string t)
 // from out of the scanner.
 template <typename Out>
 Out
-lexical_cast(const yy::location& loc, std::string t)
+lexical_cast(parser::ParserImpl* parser_impl_, const yy::location& loc,
+             std::string t)
 {
   boost::algorithm::erase_all(t, "_");
   try

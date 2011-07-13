@@ -477,18 +477,27 @@ sequences are defined in \autoref{tab:escapes}.
 "\B(3)("\")" == "\"\\\"";
 \end{urbiassert}
 
-Consecutive string literals are glued together into a single string.
-This is useful to split large strings into chunks that fit usual
-programming widths.
+Invalid escapes are errors.
+
+\begin{urbiscript}
+"\h\777\ ";
+[00000002:error] !!! syntax error: invalid character after \-escape: `h'
+[00000005:error] !!! syntax error: invalid number after \-escape: `777'
+[00000004:error] !!! syntax error: invalid character after \-escape: ` '
+\end{urbiscript}
+
+Consecutive string literals are glued together into a single string.  This
+is useful to split large strings into chunks that fit usual programming
+widths.
 
 \begin{urbiassert}
 "foo" "bar" "baz" == "foobarbaz";
 \end{urbiassert}
 
-The interpreter prints the strings escaped; for instance, line feed
-will be printed out as \lstinline|\n| when a string result is dumped
-and so forth. An actual line feed will of course be output if a string
-content is printed with echo for instance.
+The interpreter prints the strings escaped; for instance, line feed will be
+printed out as \lstinline|\n| when a string result is dumped and so
+forth. An actual line feed will of course be output if a string content is
+printed with echo for instance.
 
 \begin{urbiscript}
 "";
