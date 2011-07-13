@@ -119,7 +119,7 @@ TEX4HT_POST = $(abs_top_srcdir)/build-aux/bin/tex4ht-post
 	$(AM_V_at)$(mkdir_p) $@.tmp || true
 	$(AM_V_at)							\
 	if $(TEXI2HTML) $(TEXI2HTMLFLAGS)				\
-	     -o $@.tmp/$(notdir $*).html $<;				\
+	     -o $@.tmp/$(*F).html $<;					\
 	then								\
 	  test ! -f $@.log ||						\
 	    $(TEXLOGANALYZER) $(TEXLOGANALYZERFLAGS) $@.log >&2;	\
@@ -130,10 +130,13 @@ TEX4HT_POST = $(abs_top_srcdir)/build-aux/bin/tex4ht-post
 	  exit $$sta;							\
 	fi
 	$(AM_V_at)cd $@.tmp \
-	  && $(TEX4HT_POST) --index $(notdir $*).html $(notdir $*)*.html
-	$(AM_V_at)cp $(srcdir)/$(cube_and_disc).png      $@.tmp/urbi-sdk0x.png
-	$(AM_V_at)cp $(share_dir)/figs/gostai.png        $@.tmp/urbi-sdk1x.png
-	$(AM_V_at)cp $(srcdir)/img/urbi-architecture.png $@.tmp/urbi-sdk2x.png
+	  && $(TEX4HT_POST) --index $(*F).html $(*F)*.html
+	$(AM_V_at)cp $(srcdir)/$(cube_and_disc).png      $@.tmp/$(*F)0x.png
+	$(AM_V_at)cp $(share_dir)/figs/gostai.png        $@.tmp/$(*F)1x.png
+	$(AM_V_at)case "$(*F)" in					\
+	  (urbi-sdk) 							\
+	    cp $(srcdir)/img/urbi-architecture.png $@.tmp/$(*F)2x.png;;	\
+	esac
 	$(AM_V_at)cp $(addprefix $(srcdir)/, $(CSS_IMAGES)) $@.tmp
 	$(AM_V_at)mv $@.tmp $@
 
@@ -219,7 +222,7 @@ BUILT_SOURCES += $(FROM_GEN)
 EXTRA_DIST += $(FROM_GEN:=.gen)
 
 $(FROM_GEN): %: %.gen
-	$(AM_V_GEN)mkdir -p $(dir $@)
+	$(AM_V_GEN)mkdir -p $(@D)
 	$(AM_V_at)$< > $@.tmp
 	$(AM_V_at)chmod a-w $@.tmp
 	$(AM_V_at)$(move_if_change) --verbose --color $@.tmp $@
