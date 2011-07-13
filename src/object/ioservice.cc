@@ -35,11 +35,11 @@ namespace urbi
 
     URBI_CXX_OBJECT_INIT(IoService)
     {
-      BIND(pollFor);
-      BIND(pollOneFor);
-      BIND(poll);
       BIND(makeServer);
       BIND(makeSocket);
+      BIND(poll);
+      BIND(pollFor);
+      BIND(pollOneFor);
     }
 
     void IoService::pollFor(double d)

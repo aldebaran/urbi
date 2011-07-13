@@ -35,7 +35,7 @@
 # include <libport/pthread.h>
 # include <libport/synchronizer.hh>
 
-# include <sched/scheduler.hh>
+# include <sched/fwd.hh>
 
 # include <kernel/fwd.hh>
 # include <kernel/utypes.hh>
