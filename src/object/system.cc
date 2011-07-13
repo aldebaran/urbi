@@ -96,14 +96,17 @@ namespace urbi
     | System primitives.  |
     `--------------------*/
 
-
-#define SERVER_FUNCTION(Function)                       \
-    static void                                         \
-    system_ ## Function()                               \
-    {                                                   \
-      ::kernel::urbiserver->Function();                 \
+    static void
+    system_breakpoint()
+    {
+      return;
     }
-    SERVER_FUNCTION(reboot)
+
+    static void
+    system_reboot()
+    {
+      ::kernel::urbiserver->reboot();
+    }
 
     static void
     system_shutdown(Object* /*self*/)
@@ -231,7 +234,7 @@ namespace urbi
     system_searchPathSet(const rObject&, List::value_type list)
     {
       ::kernel::urbiserver->search_path.search_path().clear();
-      BOOST_FOREACH (rObject p, list)
+      foreach (rObject p, list)
       {
         rPath path = p->as<Path>();
         ::kernel::urbiserver->search_path.search_path()
@@ -309,21 +312,10 @@ namespace urbi
     }
 
     static void
-    system_breakpoint()
+    system_stopall ()
     {
-      return;
+      ::kernel::urbiserver->stopall = true;
     }
-
-#define SERVER_SET_VAR(Function, Variable, Value)       \
-    static void                                         \
-    system_ ## Function ()                              \
-    {                                                   \
-      ::kernel::urbiserver->Variable = Value;           \
-    }
-
-    SERVER_SET_VAR(stopall, stopall, true)
-
-#undef SERVER_SET_VAR
 
     static boost::optional<std::string>
     system_getenv(const rObject&, const std::string& name)
