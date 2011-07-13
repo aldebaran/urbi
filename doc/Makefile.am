@@ -44,6 +44,14 @@ EXTRA_DIST +=					\
 ## Images.  ##
 ## -------- ##
 
+# Images that simply used by the CSS of the HTML generated documents.
+# So don't convert, just copy into the htmldir directories.
+CSS_IMAGES = 					\
+  img/doc-footer.jpg				\
+  img/doc-header.jpg				\
+  img/doc-menubarbg.jpg				\
+  img/doc-menubarhoverbg.jpg
+
 # Images whose original is in DOT.
 DOT_IMAGES := $(call ls_files,img/*.dot)
 # Images whose original is in PNG.
@@ -126,6 +134,7 @@ TEX4HT_POST = $(abs_top_srcdir)/build-aux/bin/tex4ht-post
 	$(AM_V_at)cp $(srcdir)/$(cube_and_disc).png      $@.tmp/urbi-sdk0x.png
 	$(AM_V_at)cp $(share_dir)/figs/gostai.png        $@.tmp/urbi-sdk1x.png
 	$(AM_V_at)cp $(srcdir)/img/urbi-architecture.png $@.tmp/urbi-sdk2x.png
+	$(AM_V_at)cp $(addprefix $(srcdir)/, $(CSS_IMAGES)) $@.tmp
 	$(AM_V_at)mv $@.tmp $@
 
 
