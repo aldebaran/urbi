@@ -59,6 +59,7 @@ namespace urbi
                   bool detach, bool sync);
   private:
     friend class Event;
+    friend class EventHandler;
 
     // Configuration
     /// Do not call if not enabled
@@ -99,14 +100,25 @@ namespace urbi
     void unregister();
     void freeze();
     void unfreeze();
+    /// Run the enter_ hook if defined.
+    void enter(objects_type& args);
+    /// Run the leave_ hook if defined.
+    void leave(objects_type& args);
     // Event is only set for mode-two. We need it to call unsubscribed_.
     rEvent event_;
-    rExecutable guard, enter, leave;
+
+  private:
+    /// Factor the execution of enter_ or leave_.
+    void run_(rExecutable e, objects_type& args);
+    rExecutable guard, enter_, leave_;
+
+  public:
     rProfile profile;
     std::vector<boost::signals::connection> connections;
     /// Number of frozen tags this Subscription is marked with.
     unsigned int frozen;
     runner::State::tag_stack_type tag_stack;
+
     /// Create job with this lobby when executing actions if set.
     rLobby lobby;
     /// Call stack from the event handler.

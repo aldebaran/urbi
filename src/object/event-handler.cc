@@ -75,13 +75,13 @@ namespace urbi
         {
           rSubscription actions = stop_job.get<0>();
           spawn_actions_job(actions,
-                            actions->leave, stop_job.get<1>());
+                            actions->leave_, stop_job.get<1>());
         }
         r.yield_until_terminated(children);
       }
       else
         foreach (const stop_job_type& stop_job, stop_jobs_type(stop_jobs_))
-          (*stop_job.get<0>()->leave)(stop_job.get<1>());
+          (*stop_job.get<0>()->leave_)(stop_job.get<1>());
 
       stop_jobs_.clear();
       source()->active_.erase(this);
@@ -121,16 +121,14 @@ namespace urbi
       {
         args << pattern;
         detach = detach && actions->asynchronous_get();
-        if (actions->leave)
-        {
+        if (actions->leave_)
           register_stop_job(stop_job_type(actions, args, detach));
-        }
-        if (actions->enter)
+        if (actions->enter_)
         {
           if (detach)
-            spawn_actions_job(actions, actions->enter, args);
+            spawn_actions_job(actions, actions->enter_, args);
           else
-            (*actions->enter)(args);
+            actions->enter(args);
         }
       }
     }

@@ -66,8 +66,8 @@ namespace urbi
       event_ = source;
       asynchronous_ = !s;
       guard = g;
-      enter = e;
-      leave = l;
+      enter_ = e;
+      leave_ = l;
     }
 
     Subscription::Subscription(libport::intrusive_ptr<Subscription> model)
@@ -164,6 +164,32 @@ namespace urbi
     }
 
     void
+    Subscription::run_(rExecutable e, objects_type& args)
+    {
+      aver(e);
+      runner::Job& r = kernel::runner();
+      call_stack_type cs = r.state.call_stack_get();
+      FINALLY(((call_stack_type, cs))((runner::Job&, r)),
+              r.state.call_stack_get() = cs);
+      r.state.call_stack_get() = call_stack;
+      (*e)(args);
+    }
+
+    void
+    Subscription::enter(objects_type& args)
+    {
+      if (enter_)
+        run_(enter_, args);
+    }
+
+    void
+    Subscription::leave(objects_type& args)
+    {
+      if (leave_)
+        run_(leave_, args);
+    }
+
+    void
     Subscription::run_sync(rEvent src,
                            const objects_type& pl, EventHandler* h,
                            bool detach, bool sync)
@@ -213,21 +239,18 @@ namespace urbi
                 sched::rJob leaveJob;
                 // We are already in a child job, so just spawn for one of the
                 // two tasks.  Start jobs simultaneously.
-                if (leave)
+                if (leave_)
                 {
                   leaveJob = src->spawn_actions_job(lobby, call_stack,
-                                                    leave, profile, args);
+                                                    leave_, profile, args);
                   leaveJob->start_job();
                 }
-                if (enter)
-                  (*enter)(args);
+                enter(args);
               }
               else
               {
-                if (enter)
-                  (*enter)(args);
-                if (leave)
-                  (*leave)(args);
+                enter(args);
+                leave(args);
               }
             }
           }
