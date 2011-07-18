@@ -30,25 +30,31 @@ case $(uname -n) in
   (*)    DOC='--disable-doc';;
 esac
 
-case "$BUILDFARM_MODE" in
-  (release*) COMPILATION_MODE="speed";;
-  (debug*)   COMPILATION_MODE="debug";;
+case $BUILDFARM_MODE in
+  (release) COMPILATION_MODE=speed;;
+  (debug)   COMPILATION_MODE=debug;;
   (*)   fatal "invalid buildfarm mode: $BUILDFARM_MODE"
 esac
 
 # Dead links are troublesome.  There can be some for instance with
-# gnulib's configure when a module is obsoleted: its symlink remains.
+# gnulib's configure when a module is obsoleted: its symlinks remain.
 #
 # --no-run-if-empty, -r
 # --verbose, -t
 find . -type l -print | perl -nle '-e || print' | xargs -r -t rm -f
 
 if $(older "$DIR_SOURCE/configure" "$0"); then
-    cd "$DIR_SOURCE"
-    ./bootstrap
+  cd "$DIR_SOURCE"
+  ./bootstrap
 fi
 
 if $(older "$DIR_BUILD/Makefile" "$0"); then
-    cd "$DIR_BUILD"
-    run "$DIR_SOURCE/configure" --with-boost="$BOOST" "$DOC" --enable-headers-install CPPFLAGS="$CPPFLAGS" LDFLAGS="$LDFLAGS" --prefix=/prefix
+  cd "$DIR_BUILD"
+  run "$DIR_SOURCE/configure"                   \
+    --prefix=/prefix                            \
+    --enable-compilation-mode=$COMPILATION_MODE \
+    --with-boost="$BOOST"                       \
+    "$DOC"                                      \
+    --enable-headers-install                    \
+    CPPFLAGS="$CPPFLAGS" LDFLAGS="$LDFLAGS"
 fi
