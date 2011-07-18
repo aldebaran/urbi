@@ -229,7 +229,6 @@ namespace urbi
     Event::emit_backend(const objects_type& pl, bool detach, EventHandler* h)
     {
       GD_FPUSH_TRACE("%s: Emit, %s subscribers.", this, callbacks_.size());
-      sched::rJob enter, leave;
       rList payload = new List(pl);
       if (!h)
         slot_update(SYMBOL(active), to_urbi(false));
@@ -238,7 +237,7 @@ namespace urbi
       objects_type apl;
       callbacks_type cbcopy;
       // Copy active subscriptions, cleanup list
-      for(unsigned i= 0; i<callbacks_.size(); ++i)
+      for (unsigned i= 0; i<callbacks_.size(); ++i)
       {
         rSubscription& s = callbacks_[i];
         if (s->disconnected_get())
@@ -257,21 +256,19 @@ namespace urbi
         unsubscribed_();
       }
       GD_FINFO_TRACE("%s subscribers after cleanup", callbacks_.size());
-      for(unsigned i= 0; i<cbcopy.size(); ++i)
+      for (unsigned i = 0; i < cbcopy.size(); ++i)
       {
         rSubscription s = cbcopy[i];
-        libport::utime_t now = kernel::server().getTime();
         aver(s);
-        GD_FPUSH_TRACE(
-                       "Considering %s, mi %s(%s), lc %s(%s), now %s, enabl %s, async %s",
-                       s,
-                       s->minInterval_,
-                       libport::seconds_to_utime(s->minInterval_),
-                       s->lastCall_,
-                       libport::seconds_to_utime(s->lastCall_),
-                       now,
-                       s->enabled_,
-                         s->asynchronous_);
+        libport::utime_t now = kernel::server().getTime();
+        GD_FPUSH_TRACE
+          ("Considering %s, mi %s(%s), lc %s(%s), now %s, enabl %s, async %s",
+           s,
+           s->minInterval_, libport::seconds_to_utime(s->minInterval_),
+           s->lastCall_, libport::seconds_to_utime(s->lastCall_),
+           now,
+           s->enabled_,
+           s->asynchronous_);
         if (s->disconnected_get())
         {
           GD_INFO_TRACE("Subscriber is disconnected");
@@ -283,24 +280,32 @@ namespace urbi
         else if (s->enabled_
                  && now - libport::seconds_to_utime(s->lastCall_) >=
                  libport::seconds_to_utime(s->minInterval_)
-                 && (!s->maxParallelEvents_ || s->maxParallelEvents_ > s->processing_))
+                 && (!s->maxParallelEvents_
+                     || s->maxParallelEvents_ > s->processing_))
         {
           // FIXME CRAP if we honor the event emit sync/at sync rule, no way
           // to catch changed asynchronously
-          bool async =  (s->event_ && (detach && s->asynchronous_get())) ||
-              (!s->event_ && (detach || s->asynchronous_get()));
-          GD_FINFO_TRACE("Subscriber is live for notification (cb: %s e: %s), async: %s", s->cb_, s->event_, async);
+          bool async =
+            (s->event_ && (detach && s->asynchronous_get()))
+            || (!s->event_ && (detach || s->asynchronous_get()));
+          GD_FINFO_TRACE("Subscriber is live for notification"
+                         " (cb: %s e: %s), async: %s",
+                         s->cb_, s->event_, async);
           if (async)
           {
             // If we create a job, it can die before executing a single line
             // of code.
             // To avoid any race condition, we just create the job without
             // touching any stat or holding any lock.
-            eval::Action a = eval::exec(
-                                        boost::bind(&Subscription::run_sync, s, this, pl, h, detach, false), this);
-            runner::rJob j(new runner::Job(
-              s->lobby?s->lobby.get():kernel::runner().state.lobby_get(),
-                                           kernel::runner().scheduler_get()));
+            eval::Action a =
+              eval::exec(boost::bind(&Subscription::run_sync,
+                                     s, this, pl, h, detach, false),
+                         this);
+            rLobby l =
+              s->lobby ? s->lobby.get()
+              : kernel::runner().state.lobby_get();
+            runner::rJob j =
+              new runner::Job(l, kernel::runner().scheduler_get());
             j->set_action(a);
             j->state.tag_stack_set(s->tag_stack);
             GD_FINFO_DUMP("Subscriber will run in job %s", j);

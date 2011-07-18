@@ -232,9 +232,7 @@ namespace urbi
             }
           }
         } // (event)
-
       } // try
-
       catch (const UrbiException& e)
       {
         if (!sync
@@ -268,6 +266,7 @@ namespace urbi
         threw = true;
         eval::send_error("unknown exception caught while processing Event");
       }
+
       if (threw)
       {
         bool b =
