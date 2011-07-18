@@ -98,20 +98,38 @@ assert
 \begin{urbiscript}
 //#push 1 "file.u"
 var e = Event.new|;
+function showBacktrace(var where)
+{
+  echo("==================== " + where)|
+  echoEach(Job.current.backtrace);
+}|;
 at (e?)
-  lobby.echoEach(Job.current.backtrace);
+  showBacktrace("at-enter")
+onleave
+  showBacktrace("at-leave");
 e!;
-[00000149] *** file.u:3.18-38: backtrace
-[00000149] *** file.u:4.1: emit
-[00000149] *** ---- event handler backtrace:
-[00000149] *** file.u:2.1-3.41: onEvent
+[00000647] *** ==================== at-enter
+[00000647] *** file.u:5.12-32: backtrace
+[00000647] *** file.u:8.3-27: showBacktrace
+[00000647] *** file.u:11.1: emit
+[00000647] *** ---- event handler backtrace:
+[00000647] *** file.u:7.1-10.27: onEvent
+[00000647] *** ==================== at-leave
+[00000647] *** file.u:5.12-32: backtrace
+[00000647] *** file.u:10.3-27: showBacktrace
+[00000647] *** file.u:11.1: emit
+[00000647] *** ---- event handler backtrace:
+[00000647] *** file.u:7.1-10.27: onEvent
+
 
 //#push 1 "file.u"
 var f = Event.new|;
 function watchEvent()
 {
   at (f?)
-    lobby.echoEach(Job.current.backtrace);
+    showBacktrace("at-enter")
+  onleave
+    showBacktrace("at-leave");
 }|;
 function sendEvent()
 {
@@ -119,12 +137,22 @@ function sendEvent()
 }|;
 watchEvent;
 sendEvent;
-[00008208] *** file.u:5.20-40: backtrace
-[00008208] *** file.u:9.3: emit
-[00008208] *** file.u:12.1-9: sendEvent
-[00008208] *** ---- event handler backtrace:
-[00008208] *** file.u:4.3-5.43: onEvent
-[00008208] *** file.u:11.1-10: watchEvent
+[00000654] *** ==================== at-enter
+[00000654] *** file.u:5.12-32: backtrace
+[00000654] *** file.u:5.5-29: showBacktrace
+[00000654] *** file.u:11.3: emit
+[00000654] *** file.u:14.1-9: sendEvent
+[00000654] *** ---- event handler backtrace:
+[00000654] *** file.u:4.3-7.29: onEvent
+[00000654] *** file.u:13.1-10: watchEvent
+[00000654] *** ==================== at-leave
+[00000654] *** file.u:5.12-32: backtrace
+[00000654] *** file.u:7.5-29: showBacktrace
+[00000654] *** file.u:11.3: emit
+[00000654] *** file.u:14.1-9: sendEvent
+[00000654] *** ---- event handler backtrace:
+[00000654] *** file.u:4.3-7.29: onEvent
+[00000654] *** file.u:13.1-10: watchEvent
 \end{urbiscript}
 
 \item[clone]

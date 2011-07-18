@@ -171,7 +171,10 @@ namespace urbi
       call_stack_type cs = r.state.call_stack_get();
       FINALLY(((call_stack_type, cs))((runner::Job&, r)),
               r.state.call_stack_get() = cs);
-      r.state.call_stack_get() = call_stack;
+      r.state
+        .call_stack_get()
+        .insert(r.state.call_stack_get().begin(),
+                call_stack.begin(), call_stack.end());
       (*e)(args);
     }
 
