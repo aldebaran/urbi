@@ -204,7 +204,7 @@ namespace urbi
     | Emit.  |
     `-------*/
 
-    sched::rJob
+    runner::rJob
     Event::spawn_actions_job(rLobby lobby, const call_stack_type& stack,
                              rExecutable e,
                              rProfile profile, const objects_type& args)

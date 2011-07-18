@@ -18,10 +18,9 @@
 
 # include <urbi/object/cxx-object.hh>
 # include <urbi/object/fwd.hh>
-# include <sched/job.hh>
 
 // FIXME: This link to headers which are not installed.
-# include <runner/state.hh>
+# include <runner/job.hh>
 
 namespace urbi
 {
@@ -31,7 +30,7 @@ namespace urbi
     {
       URBI_CXX_OBJECT(Job, CxxObject);
     public:
-      typedef sched::rJob value_type;
+      typedef runner::rJob value_type;
 
       Job(const value_type& value);
       Job(rJob model);

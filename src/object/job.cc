@@ -88,7 +88,7 @@ namespace urbi
     Job::tags() const
     {
       return value_
-        ? dynamic_cast<runner::Job*>(value_.get())->state.tag_stack_get()
+        ? value_.get()->state.tag_stack_get()
         : runner::State::tag_stack_type();
     }
 
@@ -183,11 +183,8 @@ namespace urbi
     rList
     Job::backtrace() const
     {
-      if (!value_)
-        return new List();
-
       List::value_type res;
-      if (const runner::Job* r = dynamic_cast<runner::Job*>(value_.get()))
+      if (const runner::Job* r = value_ ? value_.get() : 0)
         foreach(runner::State::call_frame_type frame, r->state.backtrace_get())
           res.push_front(frame);
       return new List(res);
@@ -196,27 +193,22 @@ namespace urbi
     void
     Job::waitForTermination()
     {
-      if (!value_)
-        return;
-      runner::Job& r = ::kernel::runner();
-      r.yield_until_terminated(*value_);
+      if (value_)
+        ::kernel::runner().yield_until_terminated(*value_);
     }
 
     void
     Job::waitForChanges()
     {
-      if (!value_)
-        return;
-      runner::Job& r = ::kernel::runner();
-      r.yield_until_things_changed();
+      if (value_)
+        ::kernel::runner().yield_until_things_changed();
     }
 
     void
     Job::terminate()
     {
-      if (!value_)
-        return;
-      value_->terminate_now();
+      if (value_)
+        value_->terminate_now();
     }
 
     libport::ufloat

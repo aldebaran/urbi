@@ -44,9 +44,6 @@ namespace urbi
       BIND(stop);
     }
 
-    /*-------.
-    | Stop.  |
-    `-------*/
 
     static
     void
@@ -56,12 +53,15 @@ namespace urbi
       rLobby l = sub->lobby;
       if (!l)
         l = ::kernel::runner().state.lobby_get();
-      sched::rJob job =
+      runner::rJob job =
         Event::spawn_actions_job(l, sub->call_stack,
                                  action, sub->profile, args);
       job->start_job();
     }
 
+    /*-------.
+    | Stop.  |
+    `-------*/
     void
     EventHandler::stop()
     {
