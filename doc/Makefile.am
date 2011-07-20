@@ -224,7 +224,7 @@ urbi_sdk_deps = 				\
 
 $(MASTERS:.tex=.pdf): $(urbi_sdk_deps) $(PDF_IMAGES)	\
                     | $(REVISION_FILE)
-urbi-sdk.pdf: $(DOT_IMAGES:.dot=.pdf)
+urbi-naming.pdf urbi-sdk.pdf: $(DOT_IMAGES:.dot=.pdf)
 $(MASTERS:.tex=.dvi) $(MASTERS:.tex=.htmldir): $(urbi_sdk_deps) $(EPS_IMAGES) \
                                              | $(REVISION_FILE)
 
