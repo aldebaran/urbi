@@ -6,9 +6,11 @@
 %%
 %% See the LICENSE file for more information.
 
-\newcommand{\refFacet}[2][]%
+\newcommand{\refFacet}[2][\empty]%
   {\refObject[#1]{Interface.#2}}
 
+%% \interface [SuperInterface] {InterfaceName}
+%% -------------------------------------------
 \newcommand{\interface}[2][]{%
   \ifthenelse{\equal{#1}{}}{%
     \subsection{\lstinline{#2}}%
@@ -49,13 +51,13 @@ agreement from Gostai.
 
 \section{The Structure Tree}
 
-The robot will be described as a set of \dfn[component]{components}
-organized in a hierarchical structure called the \dfn{structure tree}. The
-relationship between a component and a sub-component in the tree is a
-`part-of' inclusion relationship. From the point of view of \urbi, each
-component in the tree is an object, and it contains attributes pointing to
-its sub-components. Here is an example illustrating a part of a hierarchy
-that could be found with a wheeled robot with a gripper:
+The robot will be described as a set of \dfn{components} organized in a
+hierarchical structure called the \dfn{structure tree}. The relationship
+between a component and a sub-component in the tree is a `part-of' inclusion
+relationship. From the point of view of \urbi, each component in the tree is
+an object, and it contains attributes pointing to its sub-components. Here
+is an example illustrating a part of a hierarchy that could be found with a
+wheeled robot with a gripper:
 
 \begin{center}
   \includegraphics[width=.8\linewidth]{img/structure-tree-wheeled}
@@ -67,11 +69,11 @@ And here is another example for an humanoid robot:
   \includegraphics[width=.8\linewidth]{img/structure-tree-humanoid}
 \end{center}
 
-The leaves of the tree are called \textit{devices}, and they usually
-match physical devices in the robot: motors, sensors, lights, camera,
-etc. Inside \urbi, the various objects corresponding to the tree
-components are accessed by following the path of objects inclusions,
-like in the example below (shortcuts will be described later):
+The leaves of the tree are called \dfn{devices}, and they usually match
+physical devices in the robot: motors, sensors, lights, camera, etc. Inside
+\urbi, the various objects corresponding to the tree components are accessed
+by following the path of objects inclusions, like in the example below
+(shortcuts will be described later):
 
 \begin{urbiunchecked}
 body.leg[right].hip.tilt;

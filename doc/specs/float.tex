@@ -106,15 +106,15 @@ nan.asBool == true;
 51.asFloat == 51;
 \end{urbiassert}
 
-\item[asList] Bounces to \refSlot{seq}.
-\begin{urbiassert}
-0.asList == [];  3.asList == [0, 1, 2];
-\end{urbiassert}
-
 \item[asin]
   Arcsine of the target.
 \begin{urbiassert}
 0.asin == 0;
+\end{urbiassert}
+
+\item[asList] Bounces to \refSlot{seq}.
+\begin{urbiassert}
+0.asList == [];  3.asList == [0, 1, 2];
 \end{urbiassert}
 
 \item[asString]
@@ -164,7 +164,7 @@ var y = x.clone;
 x == y;  x !== y;
 \end{urbiassert}
 
-\item[compl]
+\item['compl']
   The complement to 1 of the target interpreted as a 32 bits integer.
 \begin{urbiassert}
 compl 0 == 0xFFFF_FFFF;    compl 0xFFFF_FFFF == 0;
