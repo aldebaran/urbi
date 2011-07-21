@@ -13,7 +13,7 @@
 %% -------------------------------------------
 \newcommand{\interface}[2][]{%
   \ifthenelse{\equal{#1}{}}{%
-    \subsection{\lstinline{#2}}%
+    \subsection{\lstindex{#2}}%
   }{%
     \subsection[\lstinline{#2} (subclass of #1)]%
                {\lstindex{#2} (subclass of \refFacet{#1})}%
