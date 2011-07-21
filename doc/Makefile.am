@@ -22,7 +22,8 @@ include document-aux/make/pdf-figs.mk
 EXTRA_DIST +=					\
   document-aux/bin/texi2dvi			\
   $(call ls_files,@{document-aux}/figs/* 	\
-	          @{document-aux}/styles/ldf/*)	\
+	          @{document-aux}/styles/ldf/*	\
+	          @{document-aux}/overlib/*)	\
   document-aux/styles/fixme.sty			\
   document-aux/styles/gostai-documentation.sty	\
   document-aux/styles/gostai.sty		\
@@ -111,15 +112,19 @@ TEXI2DVIFLAGS +=				\
 pdf_DATA =
 
 # Use tex4ht.
-TEX4HTFLAGS = urbi-style,2,sections+
-TEXI2HTMLFLAGS += --tex4ht --tex4ht-options=$(TEX4HTFLAGS)
+# 2: split at chapter level.
+# sections+: clicking on the titles (sections etc.) goes to TOC.
+# next: linear crosslinks of pages
+# mouseover: \footnote, \cite etc.
+TEX4HTFLAGS = urbi-style,sections+,mouseover,next,2
+TEXI2HTMLFLAGS += --tex4ht --tex4ht-options=$(TEX4HTFLAGS) --verbose --debug
 TEX4HT_POST = $(abs_top_srcdir)/build-aux/bin/tex4ht-post
 %.htmldir: %.tex $(share_tex_dependencies) urbi-style.cfg
-	$(AM_V_GEN)rm -rf $@ $@.tmp
+	$(AM_V_GEN)rm -rf $@ $@.tmp $@.log
 	$(AM_V_at)$(mkdir_p) $@.tmp || true
 	$(AM_V_at)							\
-	if $(TEXI2HTML) $(TEXI2HTMLFLAGS)				\
-	     -o $@.tmp/$(*F).html $<;					\
+	export PATH=$$PATH:$(abspath $(share_bin_dir));			\
+	if $(TEXI2HTML) $(TEXI2HTMLFLAGS) -o $@.tmp/$(*F).html $<;	\
 	then								\
 	  test ! -f $@.log ||						\
 	    $(TEXLOGANALYZER) $(TEXLOGANALYZERFLAGS) $@.log >&2;	\
@@ -136,6 +141,9 @@ TEX4HT_POST = $(abs_top_srcdir)/build-aux/bin/tex4ht-post
 	$(AM_V_at)case "$(*F)" in					\
 	  (urbi-sdk) 							\
 	    cp $(srcdir)/img/urbi-architecture.png $@.tmp/$(*F)2x.png;;	\
+	esac
+	$(AM_V_at)case ',$(TEX4HTFLAGS),' in			\
+	  (*,mouseover,*) cp $(share_dir)/overlib/* $@.tmp;;	\
 	esac
 	$(AM_V_at)cp $(addprefix $(srcdir)/, $(CSS_IMAGES)) $@.tmp
 	$(AM_V_at)mv $@.tmp $@
