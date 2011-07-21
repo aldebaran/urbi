@@ -18,7 +18,9 @@ complete documentation; they should be ignored during the first reading.
 \newcommand{\machineDir}{\uobjectsDir/test/machine.uob}
 % firstline to skip the license header.
 \newcommand{\machineFile}[1]
-{\lstinputlisting[language=C++,firstline=11,basicstyle=\ttfamily\footnotesize]{\machineDir/#1}}
+{\cxxPre%
+\lstinputlisting[language=C++,style=UrbiSDKEnv,firstline=11]{\machineDir/#1}%
+\cxxPost}
 
 \section{UObject Basics}
 \label{sec:uob:quick:basics}
