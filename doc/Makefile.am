@@ -116,7 +116,8 @@ pdf_DATA =
 # sections+: clicking on the titles (sections etc.) goes to TOC.
 # next: linear crosslinks of pages
 # mouseover: \footnote, \cite etc.
-TEX4HTFLAGS = urbi-style,sections+,mouseover,next,2
+TEX4HTFLAGS = urbi-style,2,next,sections+,mouseover
+urbi-sdk-single.htmldir : TEX4HTFLAGS = urbi-style,next,sections+,mouseover
 TEXI2HTMLFLAGS += --tex4ht --tex4ht-options=$(TEX4HTFLAGS) --verbose --debug
 TEX4HT_POST = $(abs_top_srcdir)/build-aux/bin/tex4ht-post
 %.htmldir: %.tex $(share_tex_dependencies) urbi-style.cfg
@@ -139,7 +140,7 @@ TEX4HT_POST = $(abs_top_srcdir)/build-aux/bin/tex4ht-post
 	$(AM_V_at)cp $(srcdir)/$(cube_and_disc).png      $@.tmp/$(*F)0x.png
 	$(AM_V_at)cp $(share_dir)/figs/gostai.png        $@.tmp/$(*F)1x.png
 	$(AM_V_at)case "$(*F)" in					\
-	  (urbi-sdk) 							\
+	  (urbi-sdk*) 							\
 	    cp $(srcdir)/img/urbi-architecture.png $@.tmp/$(*F)2x.png;;	\
 	esac
 	$(AM_V_at)case ',$(TEX4HTFLAGS),' in			\
@@ -158,6 +159,7 @@ CLEANFILES += $(MASTERS:.tex=.htmldir.log)
 MASTERS =					\
   urbi-naming.tex				\
   urbi-sandbox.tex				\
+  urbi-sdk-single.tex				\
   urbi-sdk.tex
 
 PDFS =						\
@@ -337,7 +339,9 @@ install-data-hook:
 ## ------------- ##
 .PHONY: install-doc
 doc_files =					\
-  $(pdf_DATA) urbi-sdk.htmldir images 		\
+  $(pdf_DATA)					\
+  urbi-sdk.htmldir urbi-sdk-single.htmldir	\
+  images					\
   $(top_srcdir)/scripts/www/doc/HEADER.html
 images: $(nodist_image_DATA)
 	$(AM_V_GEN)rm -rf $@ $@.tmp
