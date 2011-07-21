@@ -139,6 +139,7 @@ TEX4HT_POST = $(abs_top_srcdir)/build-aux/bin/tex4ht-post
 	esac
 	$(AM_V_at)cp $(addprefix $(srcdir)/, $(CSS_IMAGES)) $@.tmp
 	$(AM_V_at)mv $@.tmp $@
+CLEANFILES += $(MASTERS:.tex=.htmldir.log)
 
 
 ## -------------- ##
@@ -161,6 +162,7 @@ endif
 
 # We cannot simply use html_DATA here, since Automake does not
 # support installing directories.
+CLEANDIRS += $(MASTERS:.tex=.htmldir)
 if ENABLE_DOC_HTML
   html_DIR += urbi-sdk.htmldir
 endif
@@ -258,12 +260,9 @@ include trajectories/local.mk
 
 # Always install these guys.  At least because our build and package
 # process uses them (especially COMPONENTS.txt).
-dist_doc_DATA =					\
-  AUTHORS.txt					\
-  COMPONENTS.txt				\
-  LICENSE.txt					\
-  README.txt					\
-  THANKS.txt
+dist_doc_DATA   = AUTHORS.txt LICENSE.txt THANKS.txt
+nodist_doc_DATA = COMPONENTS.txt README.txt
+CLEANFILES += $(nodist_doc_DATA)
 
 ## ---------------- ##
 ## Spell-checking.  ##
@@ -276,7 +275,7 @@ EXTRA_DIST += $(build_aux_dir)/bin/spell-check
 RUN_SPELL_CHECK = $(SPELL_CHECK) $(AM_SPELL_CHECKFLAGS) $(SPELL_CHECKFLAGS)
 # Rely on Make to resolve the location (src or build) of the files to
 # spell-check.
-spell-check: $(urbi_sdk_tex) $(dist_doc_DATA)
+spell-check: $(urbi_sdk_tex) $(dist_doc_DATA) $(nodist_doc_DATA)
 	$(AM_V_GEN) $(RUN_SPELL_CHECK) $(if $(V:0=),-v,-q) $^
 
 
