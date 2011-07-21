@@ -1,15 +1,25 @@
 #!/bin/sh
 
+me=$(basename $0)
+stderr ()
+{
+  local i
+  for i
+  do
+    echo "$i"
+  done | sed -e "s/^/$me: /"
+}
+
 run ()
 {
-    echo "$@"
-    eval "$@"
+  stderr "running: $*"
+  "$@"
 }
 
 fatal ()
 {
-    echo 1>&2 "$@"
-    exit 1
+  stderr "$@"
+  exit 1
 }
 
 older ()
@@ -22,8 +32,8 @@ set -ex
 BOOST=$(pkg-config --print-errors boost-1.38 --variable=prefix)
 CC='ccache gcc'
 CXX='ccache g++'
-CPPFLAGS='-I "$HOME/local/include"'
-LDFLAGS='-I "$HOME/local/lib"'
+CPPFLAGS="-I'$HOME/local/include'"
+LDFLAGS="-I'$HOME/local/lib'"
 
 case $(uname -n) in
   (bf-4) DOC=;;
@@ -43,9 +53,11 @@ esac
 # --verbose, -t
 find . -type l -print | perl -nle '-e || print' | xargs -r -t rm -f
 
+here=$(pwd)
 if $(older "$DIR_SOURCE/configure" "$0"); then
   cd "$DIR_SOURCE"
   ./bootstrap
+  cd $here
 fi
 
 if $(older "$DIR_BUILD/Makefile" "$0"); then
@@ -56,5 +68,7 @@ if $(older "$DIR_BUILD/Makefile" "$0"); then
     --with-boost="$BOOST"                       \
     "$DOC"                                      \
     --enable-headers-install                    \
-    CPPFLAGS="$CPPFLAGS" LDFLAGS="$LDFLAGS"
+    CPPFLAGS="$CPPFLAGS" LDFLAGS="$LDFLAGS" ||
+  cat >&2 config.log
+  cd $here
 fi
