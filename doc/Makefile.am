@@ -328,7 +328,9 @@ install-data-hook:
 ## install-doc.  ##
 ## ------------- ##
 .PHONY: install-doc
-doc_files = $(pdf_DATA) urbi-sdk.htmldir images
+doc_files =					\
+  $(pdf_DATA) urbi-sdk.htmldir images 		\
+  $(top_srcdir)/scripts/www/doc/HEADER.html
 images: $(nodist_image_DATA)
 	$(AM_V_GEN)rm -rf $@ $@.tmp
 	$(AM_V_at)mkdir -p $@.tmp
