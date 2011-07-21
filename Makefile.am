@@ -98,16 +98,20 @@ libs:
 doc_host = downloads@www.gostai.com
 doc_upload_dir = gostai.com-downloads
 doc_dir = $(doc_upload_dir)/urbi/$(PACKAGE_VERSION)
+install-doc/%:
+	$(MAKE) $(AM_MAKEFLAGS)			\
+	  doc_host='$(doc_host)'		\
+	  doc_dir='$(doc_dir)'			\
+	  -C $* install-doc
 install-doc:
-	ssh $(doc_host) 'rm -rf $(doc_dir)/doc.new $(doc_dir)/doc.old && \
-			 mkdir -p $(doc_dir)/doc.new'
-	for i in doc sdk-remote;		\
-	do					\
-	  $(MAKE) $(AM_MAKEFLAGS)		\
-	    doc_host='$(doc_host)'		\
-	    doc_dir='$(doc_dir)'		\
-	    -C $$i $@;				\
-	done
+	ssh $(doc_host)						\
+	 'rm -rf $(doc_dir)/doc.new $(doc_dir)/doc.old &&	\
+	  if test -d $(doc_dir)/doc; then			\
+	    cp -r $(doc_dir)/doc $(doc_dir)/doc.new;		\
+	  else							\
+	    mkdir -p $(doc_dir)/doc.new;			\
+	  fi'
+	$(MAKE) $(AM_MAKEFLAGS) install-doc/doc install-doc/sdk-remote
 	ssh $(doc_host)					\
 	  'cd $(doc_dir) &&				\
 	   { test ! -e doc || mv doc doc.old; } &&	\
