@@ -121,13 +121,36 @@ sendEvent;
 [00000030] *** file.u:5.20-42: backtrace
 \end{urbiunchecked}
 
-\item When destroyed, \refObject[s]{Stream} (including
-  \refObject[s]{InputStream} and \refObject[s]{OutputStream}), are closed if
-  not already closed.
+\item \refSlot[InputStream]{get} (and \refSlot[InputStream]{getChar},
+  \refSlot[InputStream]{getLine}) now returns \refObject{nil} instead of
+  \refObject{void} when it reaches the end of file.  To provide backward
+  compatibility with previous code such as:
+\begin{urbiunchecked}
+var i = InputStream.new(File.new("file.txt"))|;
+var x;
+while (!(x = i.get.acceptVoid).isVoid)
+  cout << x;
+i.close;
+\end{urbiunchecked}
+  \refSlot[nil]{isVoid} now returns \lstinline|true| and issues a warning:
+  eventually it will return again \lstinline|false|.  Rewrite your code as:
+\begin{urbiunchecked}
+var i = InputStream.new(File.new("file.txt"))|;
+var x;
+while (!(x = i.get).isNil)
+  cout << x;
+i.close;
+\end{urbiunchecked}
+
+\item When destroyed, \refObject[Stream]{Streams} (including
+  \refObject[InputStream]{InputStreams} and
+  \refObject[OutputStream]{OutputStreams}), are closed if not already
+  closed.
 
 \item The internal functions \slot[System]{backtrace}, \slot[System]{jobs},
   and \slot[System]{aliveJobs} are removed in favor of
-  \refSlot[Job]{backtrace}, \refSlot[Job]{jobs} and \lstinline|Job.jobs.size|.
+  \refSlot[Job]{backtrace}, \refSlot[Job]{jobs} and
+  \lstinline|Job.jobs.size|.
 
 \item \refSlot[System]{currentRunner} is deprecated in favor of
   \refSlot[Job]{current}.
@@ -229,6 +252,17 @@ Logger.disable("Category.Sub");
 Logger.set("+Category*,-Category.Sub");
 \end{urbiscript}
   \end{itemize}
+
+\item The functions \refSlot[Math]{ceil} and \refSlot[Math]{floor} were
+  added, consistently with \refSlot[Math]{round} and \refSlot[Math]{trunc}.
+  Yet users are encouraged to prefer the ``method-like'' versions, i.e.,
+  \refSlot[Float]{ceil} and so forth.
+\begin{urbiassert}
+Math.ceil (1.2) == 1.2.ceil;
+Math.floor(1.2) == 1.2.floor;
+Math.trunc(1.2) == 1.2.trunc;
+Math.round(1.2) == 1.2.round;
+\end{urbiassert}
 
 \item \refSlot[String]{'[]'} accepts negative indexes, as
   \refSlot[List]{'[]'} did.

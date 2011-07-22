@@ -51,7 +51,8 @@ endif BINDING_JAVA
 ## install-doc.  ##
 ## ------------- ##
 .PHONY: install-doc
-doc_files = doc/sdk-remote.htmldir
-doc_files += doc/sdk-remote-java.htmldir
+doc_files =					\
+  doc/sdk-remote.htmldir			\
+  doc/sdk-remote-java.htmldir
 install-doc: $(doc_files)
-	scp -r $(doc_files) $(doc_host):$(doc_dir)/doc.new
+	rsync -vcrz $(doc_files) $(doc_host):$(doc_dir)/doc.new

@@ -23,7 +23,7 @@ escaping sequences (the traditional ones and \us specific ones) allow to
 insert special characters.  Consecutive string literals are merged together.
 See \autoref{sec:lang:string} for details and examples.
 
-A null String can also be obtained with \refSlot[String]{new}.
+A null String can also be obtained with \slot[String]{new}.
 
 \begin{urbiassert}
 String.new == "";
@@ -150,8 +150,9 @@ String.fromAscii(0xFF) == "\xff";
 \end{urbiassert}
 
 \item[hash]%
-  A \refObject{Hash} object corresponding to this string value. Two string
-  hashes are equal if the string are equal. See \refSlot[Object]{hash}.
+  A \refObject{Hash} object corresponding to this string value.  Equal
+  strings (in the sense of \refSlot{'=='}) have equal hashes.  See
+  \refSlot[Object]{hash}.
 
 \begin{urbiassert}
 "".hash.isA(Hash);

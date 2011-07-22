@@ -47,8 +47,9 @@ Exception has many slots which are specific exceptions.  See
 \subsubsection{General Features}
 \begin{urbiscriptapi}
 \item[backtrace] The call stack at the moment the exception was thrown (not
-  created), as a \refObject{List} of \refObject[s]{StackFrame}, from the
-  innermost to the outermost call.  Uses \refSlot[Traceable]{backtrace}.
+  created), as a \refObject{List} of \refObject[StackFrame]{StackFrames},
+  from the innermost to the outermost call.  Uses
+  \refSlot[Traceable]{backtrace}.
 \begin{urbiscript}
 //#push 1 "file.u"
 try
@@ -119,10 +120,10 @@ Exception.Argument
 == "myRoutine: argument 3: unexpected \"19/11/2010\", expected a Date";
 \end{urbiassert}
 
-\item[ArgumentType](<routine>, <index>, <effective>, <expected>)
-  Deprecated exception that derives from \refSlot{Type}.  The \var{routine} was
-  called with a \var{index}-nth argument of type \var{effective}
-  instead of \var{expected}.
+\item[ArgumentType](<routine>, <index>, <effective>, <expected>)%
+  Deprecated exception that derives from \refSlot{Type}.  The \var{routine}
+  was called with a \var{index}-nth argument of type \var{effective} instead
+  of \var{expected}.
 \begin{urbiassert}
 Exception.ArgumentType
   .new("myRoutine", 1, "hisResult", "Expectation")
@@ -131,7 +132,7 @@ Exception.ArgumentType
 [00000003:warning] !!! `Exception.ArgumentType' is deprecated
 \end{urbiassert}
 
-\item[Arity](<routine>, <effective>, <min>, <max> = void)
+\item[Arity](<routine>, <effective>, <min>, <max> = void)%
   The \var{routine} was called with an incorrect number of arguments
   (\var{effective}).  It requires at least \var{min} arguments, and,
   if specified, at most \var{max}.
@@ -148,7 +149,7 @@ Exception.Arity.new("myRoutine", 1, 10, 23).asString
 %%   assert(e == Exception.Arity.new("cos", 2, 1));
 %% };
 
-\item[BadInteger](<routine>, <fmt>, <effective>)
+\item[BadInteger](<routine>, <fmt>, <effective>)%
   The \var{routine} was called with an inappropriate integer
   (\var{effective}).  Use the format \var{fmt} to create an error
   message from \var{effective}.  Derives from
@@ -243,15 +244,14 @@ Exception.Scheduling.new("cannot schedule").asString
   == "cannot schedule";
 \end{urbiassert}
 
-\item[Syntax](<loc>, <message>, <input>)
-  Declare a syntax error in \var{input}, at location \var{loc},
-  described by \var{message}.  \var{loc} is the location of the syntax
-  error, \var{location} is the place the error was thrown.  They are
-  usually equal, except when the errors are caught while using
-  \refSlot[System]{eval} or \refSlot[System]{load}.  In that case
-  \var{loc} is really the position of the syntax error, while
-  \var{location} refers to the location of the \refSlot[System]{eval}
-  or \refSlot[System]{load} invocation.
+\item[Syntax](<loc>, <message>, <input>)%
+  Declare a syntax error in \var{input}, at location \var{loc}, described by
+  \var{message}.  \var{loc} is the location of the syntax error,
+  \var{location} is the place the error was thrown.  They are usually equal,
+  except when the errors are caught while using \refSlot[System]{eval} or
+  \refSlot[System]{load}.  In that case \var{loc} is really the position of
+  the syntax error, while \var{location} refers to the location of the
+  \refSlot[System]{eval} or \refSlot[System]{load} invocation.
 \begin{urbiassert}
 Exception.Syntax
   .new(Location.new(Position.new("file.u", 14, 25)),
@@ -285,7 +285,7 @@ Exception.TimeOut.new.asString
   == "timeout expired";
 \end{urbiassert}
 
-\item[Type](<effective>, <expected>)
+\item[Type](<effective>, <expected>)%
   A value of type \var{effective} was received, while a value of type
   \var{expected} was expected.
 \begin{urbiassert}
@@ -293,8 +293,8 @@ Exception.Type.new("hisResult", "Expectation").asString
   == "unexpected \"hisResult\", expected a String";
 \end{urbiassert}
 
-\item[UnexpectedVoid] An attempt was made to read the value of
-  \lstinline|void|.
+\item[UnexpectedVoid]%
+  An attempt was made to read the value of \lstinline|void|.
 \begin{urbiassert}
 Exception.UnexpectedVoid.new.asString
   == "unexpected void";

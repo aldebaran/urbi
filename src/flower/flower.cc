@@ -199,7 +199,7 @@ namespace flower
     if (ast::rExp e = ret->value_get())
     {
       PARAMETRIC_AST(a, "'$returnTag'.stop(%exp:1)");
-      result_ = exp(a % e);
+      result_ = exp(a % recurse(e));
     }
     else
     {

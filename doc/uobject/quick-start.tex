@@ -18,7 +18,9 @@ complete documentation; they should be ignored during the first reading.
 \newcommand{\machineDir}{\uobjectsDir/test/machine.uob}
 % firstline to skip the license header.
 \newcommand{\machineFile}[1]
-{\lstinputlisting[language=C++,firstline=11,basicstyle=\ttfamily\footnotesize]{\machineDir/#1}}
+{\cxxPre%
+\lstinputlisting[language=C++,style=UrbiSDKEnv,firstline=11]{\machineDir/#1}%
+\cxxPost}
 
 \section{UObject Basics}
 \label{sec:uob:quick:basics}
@@ -426,7 +428,7 @@ interactive shell only displays the result of synchronous expressions (i.e.,
 those ending with a \samp{;}): asynchronous answers are confusing (see the
 inversion here).
 
-\refObject[s]{Channel} are useful to ``send'' asynchronous answers.
+\refObject[Channel]{Channels} are useful to ``send'' asynchronous answers.
 
 \begin{urbiscript}
 var c1 = Channel.new("c1")|;

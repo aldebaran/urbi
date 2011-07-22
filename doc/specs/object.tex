@@ -740,7 +740,7 @@ assert
 \end{urbiassert}
 
 \item['+='](<that>)%
-  Bounce to \lstinline|this '+' \var{that}|.  Be sure to understand how
+  Bounce to \lstinline|this + \var{that}|.  Be sure to understand how
   in-place operators are handled in \us: \autoref{sec:lang:op:ass}.
 \begin{urbiassert}
 var x = 1;
@@ -749,7 +749,7 @@ x.'+='(1) == 3; x == 2;
 \end{urbiassert}
 
 \item['-='](<that>)%
-  Bounce to \lstinline|this '-' \var{that}| (\autoref{sec:lang:op:ass}).
+  Bounce to \lstinline|this - \var{that}| (\autoref{sec:lang:op:ass}).
 \begin{urbiassert}
 var x = 10;
 (x -= 3)  == 7;  x == 7;
@@ -758,7 +758,7 @@ x.'-='(3) == 4;  x == 7;
 
 
 \item['*='](<that>)%
-  Bounce to \lstinline|this '*' \var{that}| (\autoref{sec:lang:op:ass}).
+  Bounce to \lstinline|this * \var{that}| (\autoref{sec:lang:op:ass}).
 \begin{urbiassert}
 var x = 2;
 (x *= 5)  == 10;  x == 10;
@@ -767,7 +767,7 @@ x.'*='(2) == 20;  x == 10;
 
 
 \item['/='](<that>)%
-  Bounce to \lstinline|this '/' \var{that}| (\autoref{sec:lang:op:ass}).
+  Bounce to \lstinline|this / \var{that}| (\autoref{sec:lang:op:ass}).
 \begin{urbiassert}
 var x = 200;
 (x /= 10) == 20;  x == 20;
@@ -776,7 +776,7 @@ x.'/='(2) == 10;  x == 20;
 
 
 \item['^='](<that>)%
-  Bounce to \lstinline|this '^' \var{that}| (\autoref{sec:lang:op:ass}).
+  Bounce to \lstinline|this ^ \var{that}| (\autoref{sec:lang:op:ass}).
 \begin{urbiassert}
 var x = 0xff00;
 (x ^= 0xffff)  == 0x00ff;  x == 0x00ff;

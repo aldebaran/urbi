@@ -22,7 +22,8 @@ include document-aux/make/pdf-figs.mk
 EXTRA_DIST +=					\
   document-aux/bin/texi2dvi			\
   $(call ls_files,@{document-aux}/figs/* 	\
-	          @{document-aux}/styles/ldf/*)	\
+	          @{document-aux}/styles/ldf/*	\
+	          @{document-aux}/overlib/*)	\
   document-aux/styles/fixme.sty			\
   document-aux/styles/gostai-documentation.sty	\
   document-aux/styles/gostai.sty		\
@@ -111,15 +112,20 @@ TEXI2DVIFLAGS +=				\
 pdf_DATA =
 
 # Use tex4ht.
-TEX4HTFLAGS = urbi-style,2,sections+
-TEXI2HTMLFLAGS += --tex4ht --tex4ht-options=$(TEX4HTFLAGS)
+# 2: split at chapter level.
+# sections+: clicking on the titles (sections etc.) goes to TOC.
+# next: linear crosslinks of pages
+# mouseover: \footnote, \cite etc.
+TEX4HTFLAGS = urbi-style,2,next,sections+,mouseover
+urbi-sdk-single.htmldir : TEX4HTFLAGS = urbi-style,next,sections+,mouseover
+TEXI2HTMLFLAGS += --tex4ht --tex4ht-options=$(TEX4HTFLAGS) --verbose --debug
 TEX4HT_POST = $(abs_top_srcdir)/build-aux/bin/tex4ht-post
 %.htmldir: %.tex $(share_tex_dependencies) urbi-style.cfg
-	$(AM_V_GEN)rm -rf $@ $@.tmp
+	$(AM_V_GEN)rm -rf $@ $@.tmp $@.log
 	$(AM_V_at)$(mkdir_p) $@.tmp || true
 	$(AM_V_at)							\
-	if $(TEXI2HTML) $(TEXI2HTMLFLAGS)				\
-	     -o $@.tmp/$(*F).html $<;					\
+	export PATH=$$PATH:$(abspath $(share_bin_dir));			\
+	if $(TEXI2HTML) $(TEXI2HTMLFLAGS) -o $@.tmp/$(*F).html $<;	\
 	then								\
 	  test ! -f $@.log ||						\
 	    $(TEXLOGANALYZER) $(TEXLOGANALYZERFLAGS) $@.log >&2;	\
@@ -134,11 +140,15 @@ TEX4HT_POST = $(abs_top_srcdir)/build-aux/bin/tex4ht-post
 	$(AM_V_at)cp $(srcdir)/$(cube_and_disc).png      $@.tmp/$(*F)0x.png
 	$(AM_V_at)cp $(share_dir)/figs/gostai.png        $@.tmp/$(*F)1x.png
 	$(AM_V_at)case "$(*F)" in					\
-	  (urbi-sdk) 							\
+	  (urbi-sdk*) 							\
 	    cp $(srcdir)/img/urbi-architecture.png $@.tmp/$(*F)2x.png;;	\
+	esac
+	$(AM_V_at)case ',$(TEX4HTFLAGS),' in			\
+	  (*,mouseover,*) cp $(share_dir)/overlib/* $@.tmp;;	\
 	esac
 	$(AM_V_at)cp $(addprefix $(srcdir)/, $(CSS_IMAGES)) $@.tmp
 	$(AM_V_at)mv $@.tmp $@
+CLEANFILES += $(MASTERS:.tex=.htmldir.log)
 
 
 ## -------------- ##
@@ -149,6 +159,7 @@ TEX4HT_POST = $(abs_top_srcdir)/build-aux/bin/tex4ht-post
 MASTERS =					\
   urbi-naming.tex				\
   urbi-sandbox.tex				\
+  urbi-sdk-single.tex				\
   urbi-sdk.tex
 
 PDFS =						\
@@ -161,6 +172,7 @@ endif
 
 # We cannot simply use html_DATA here, since Automake does not
 # support installing directories.
+CLEANDIRS += $(MASTERS:.tex=.htmldir)
 if ENABLE_DOC_HTML
   html_DIR += urbi-sdk.htmldir
 endif
@@ -236,7 +248,7 @@ urbi_sdk_deps = 				\
 
 $(MASTERS:.tex=.pdf): $(urbi_sdk_deps) $(PDF_IMAGES)	\
                     | $(REVISION_FILE)
-urbi-sdk.pdf: $(DOT_IMAGES:.dot=.pdf)
+urbi-naming.pdf urbi-sdk.pdf: $(DOT_IMAGES:.dot=.pdf)
 $(MASTERS:.tex=.dvi) $(MASTERS:.tex=.htmldir): $(urbi_sdk_deps) $(EPS_IMAGES) \
                                              | $(REVISION_FILE)
 
@@ -258,12 +270,9 @@ include trajectories/local.mk
 
 # Always install these guys.  At least because our build and package
 # process uses them (especially COMPONENTS.txt).
-dist_doc_DATA =					\
-  AUTHORS.txt					\
-  COMPONENTS.txt				\
-  LICENSE.txt					\
-  README.txt					\
-  THANKS.txt
+dist_doc_DATA   = AUTHORS.txt LICENSE.txt THANKS.txt
+nodist_doc_DATA = COMPONENTS.txt README.txt
+CLEANFILES += $(nodist_doc_DATA)
 
 ## ---------------- ##
 ## Spell-checking.  ##
@@ -276,7 +285,7 @@ EXTRA_DIST += $(build_aux_dir)/bin/spell-check
 RUN_SPELL_CHECK = $(SPELL_CHECK) $(AM_SPELL_CHECKFLAGS) $(SPELL_CHECKFLAGS)
 # Rely on Make to resolve the location (src or build) of the files to
 # spell-check.
-spell-check: $(urbi_sdk_tex) $(dist_doc_DATA)
+spell-check: $(urbi_sdk_tex) $(dist_doc_DATA) $(nodist_doc_DATA)
 	$(AM_V_GEN) $(RUN_SPELL_CHECK) $(if $(V:0=),-v,-q) $^
 
 
@@ -329,11 +338,15 @@ install-data-hook:
 ## install-doc.  ##
 ## ------------- ##
 .PHONY: install-doc
-doc_files = $(pdf_DATA) urbi-sdk.htmldir images
+doc_files =					\
+  $(pdf_DATA)					\
+  urbi-sdk.htmldir urbi-sdk-single.htmldir	\
+  images					\
+  $(top_srcdir)/scripts/www/doc/HEADER.html
 images: $(nodist_image_DATA)
 	$(AM_V_GEN)rm -rf $@ $@.tmp
 	$(AM_V_at)mkdir -p $@.tmp
 	$(AM_V_at)cp $^ $@.tmp
 	$(AM_V_at)mv $@.tmp $@
 install-doc: $(doc_files)
-	$(AM_V_GEN)scp -r $(doc_files) $(doc_host):$(doc_dir)/doc.new
+	$(AM_V_GEN)rsync -vcrz $(doc_files) $(doc_host):$(doc_dir)/doc.new

@@ -16,16 +16,16 @@ tailored to write orchestration programs.
 
 \section{\urbi and UObjects}
 
-\urbi makes the orchestration of independent, concurrent, components easier.
-It was first designed for robotics: it provides all the needed features to
-coordinate the execution of various components (actuators, sensors, software
-devices that provide features such as text-to-speech, face recognition and
-so forth).  Languages such as \Cxx are well suited to program the local,
-low-level, handling of these hardware or software devices; indeed one needs
-efficiency, small memory footprint, and access to low-level hardware
-details.  Yet, when it comes to component orchestration and coordination, in
-a word, when it comes to addressing concurrency, it can be tedious to use
-such languages.
+\urbi makes the orchestration of independent and concurrent components
+easier.  It was first designed for robotics: it provides all the needed
+features to coordinate the execution of various components (actuators,
+sensors, software devices that provide features such as text-to-speech, face
+recognition and so forth).  Languages such as \Cxx are well suited to
+program the local, low-level, handling of these hardware or software
+devices; indeed one needs efficiency, small memory footprint, and access to
+low-level hardware details.  Yet, when it comes to component orchestration
+and coordination, in a word, when it comes to addressing concurrency, it can
+be tedious to use such languages.
 
 Middleware infrastructures make possible to use remote components as if they
 were local, to allow concurrent execution, to make synchronous or
@@ -72,10 +72,10 @@ The \dfn{Urbi Runtime}, which is the actual core of the system, also known
 as the \dfn{engine} or the \dfn{kernel}, is interfacing the OS with the rest
 of the \urbi world, \us and UObjects.
 
-UObjects are used to bind hardware or software components, such as
-actuators and sensors on the one hand, and voice synthesis or face
-recognition on the other hand.  They can be run locally on the robot, or on
-a remote, more powerful, computer.
+UObjects are used to bind hardware or software components, such as actuators
+and sensors on the one hand, and voice synthesis or face recognition on the
+other hand.  They can be run locally on the robot, or on a remote, more
+powerful, computer.
 
 To orchestrate all the components, \us is a programming language of choice
 (see below).
@@ -137,15 +137,52 @@ Hocquet, Matthieu Nottale, and Benoît Sigoure.  Samuel Tardieu provided an
 immense help during the year 2008, in particular for the concurrency and
 event support.
 
-The maintenance is currently carried out by Akim Demaille, Quentin
-Hocquet, and Matthieu Nottale.  Jean-Christophe Baillie is still
-deeply involved in the development of \us, he regularly submits ideas,
-and occasionally even code!
+The maintenance is currently carried out by Akim Demaille, Quentin Hocquet,
+and Matthieu Nottale.  Jean-Christophe Baillie is still deeply involved in
+the development of \us, he regularly submits ideas, and occasionally even
+code!
 
 \paragraph{Contributors}
 
 A number of people contributed significantly to \urbi, including Romain
 Bezut, Thomas Moulard, Clément Moussu, Nicolas Pierron.
+
+\section{Documentation}
+
+This document is updated regularly on the Gostai Web site both as a
+\href{\docurl/urbi-sdk.pdf}{PDF document}, and as a
+\href{\docurl/urbi-sdk.htmldir/}{set of HTML pages}.  You may also want to
+look at the documentation of the latest versions, and visit
+\url{http://urbiforge.org}, the \urbi community web site, and its
+\href{http://forum.urbiforge.org}{forum}.
+
+\newcommand{\docItem}[2]{\item \url{#1} \\ #2.}
+\newcommand{\versionItem}[2]
+{
+\item[\packageName{} #1] #2.
+
+  \begin{itemize}
+    \docItem{\downloadUrl/urbi/#1/doc/}
+    {All the documentations for Urbi #1}
+    \docItem{\downloadUrl/urbi/#1/doc/urbi-sdk.pdf}
+    {Urbi SDK Documentation (this document) in PDF}
+    \docItem{\downloadUrl/urbi/#1/doc/urbi-sdk.htmldir/}
+    {Urbi SDK Documentation (this document) in several HTML files}
+    \docItem{\downloadUrl/urbi/#1/doc/sdk-remote.htmldir/}
+    {The Doxygen documentation of UObject/SDK Remote for \Cxx}
+    \docItem{\downloadUrl/urbi/#1/doc/sdk-remote-java.htmldir/}%
+    {The Doxygen documentation of UObject/SDK Remote for \Java}
+  \end{itemize}
+}
+
+\begin{description}
+  \versionItem{\packageVersion}{This version}
+  \renewcommand{\docItem}[2]{\item \url{#1}}
+  \versionItem{\packageMajor.\packageMinor.x}{The latest version of the
+    \packageMajor.\packageMinor{} family}
+  \versionItem{\packageMajor.x}{The latest version (also available as
+    \url{\downloadUrl/urbi/doc/})}
+\end{description}
 
 \section{Outline}
 
