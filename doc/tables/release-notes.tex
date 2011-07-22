@@ -14,43 +14,12 @@
 This chapter (also known as the \urbi ChangeLog, or \urbi NEWS) lists the
 user-visible changes in \usdk releases.
 
-\section{\usdk 2.8}
+\section{\usdk 3.0}
 \release{2.8}{2011-XX-YY}
 
-\subsection{Fixes}
-\begin{itemize}
-\item Don't execute the body of a \lstinline|finally| a second time when an
-  exception is raised inside the \lstinline|finally| clause.
-\item Do not emit \refSlot[Tag]{leave} events when a frozen tag waiting to
-  execute statements is stopped.
-\item Avoid unexpected execution of code caused by semaphore release and a
-  stop of the code acquiring the semaphore.  This change implies that
-  \refSlot[Semaphore]{acquire} either returns when it holds the semaphore
-  or jumps to the end of the stopped tag.
-\item Avoid unexpected execution of code caused by \refSlot[Barrier]{signal}
-  (or \refSlot[Barrier]{signalAll}) and a stop of the code waiting on the
-  barrier.
-\item Be independent of changes of locale settings (such as input/output
-  format for floats) in \Cxx user code.
-\item Restore proper behavior on closed standard input.
-\item When setting a property on an inherited slot, really duplicate the
-  slot instead of making an alias (\refSlot[Object]{setProperty}).
-\item Declaring constant variables (or slots) without an initial value is a
-  syntax error (see the constant property, \autoref{sec:lang:prop:std}).
-\item Copy-on-write does not apply to slots declared constant
-  (\refSlot[Object]{updateSlot}).
-\end{itemize}
 
 \subsection{Changes}
 \begin{itemize}
-\item Drop support for the obsolete \usdk 1 syntax for events:
-  \lstinline{at (?e)} and \lstinline{emit e} instead of \lstinline{at (e?)}
-  and \lstinline{e!}  (\autoref{sec:k1:emit}).  As a consequence,
-  \lstinline|emit| is now a regular identifier.
-
-\item Drop support for the obsolete \lstindex{loopn} keyword, replaced by
-  \lstinline{for} since \usdk 2.0 (\autoref{sec:k1:loopn}).
-
 \item The implicit empty statement, which was warned about:
 \begin{urbiunchecked}
 if (true) else 12;
@@ -90,6 +59,57 @@ while (!(x = i.get).isNil)
   cout << x;
 i.close;
 \end{urbiunchecked}
+
+\item The internal functions \slot[System]{backtrace}, \slot[System]{jobs},
+  and \slot[System]{aliveJobs} are removed in favor of
+  \refSlot[Job]{backtrace}, \refSlot[Job]{jobs} and
+  \lstinline|Job.jobs.size|.
+
+\item \refSlot[System]{currentRunner} is deprecated in favor of
+  \refSlot[Job]{current}.
+
+\item \refSlot[System]{spawn} is deprecated in favor of
+  \refSlot[Job]{spawn}.
+\end{itemize}
+
+
+
+\section{\usdk 2.8}
+\release{2.8}{2011-XX-YY}
+
+\subsection{Fixes}
+\begin{itemize}
+\item Don't execute the body of a \lstinline|finally| a second time when an
+  exception is raised inside the \lstinline|finally| clause.
+\item Do not emit \refSlot[Tag]{leave} events when a frozen tag waiting to
+  execute statements is stopped.
+\item Avoid unexpected execution of code caused by semaphore release and a
+  stop of the code acquiring the semaphore.  This change implies that
+  \refSlot[Semaphore]{acquire} either returns when it holds the semaphore
+  or jumps to the end of the stopped tag.
+\item Avoid unexpected execution of code caused by \refSlot[Barrier]{signal}
+  (or \refSlot[Barrier]{signalAll}) and a stop of the code waiting on the
+  barrier.
+\item Be independent of changes of locale settings (such as input/output
+  format for floats) in \Cxx user code.
+\item Restore proper behavior on closed standard input.
+\item When setting a property on an inherited slot, really duplicate the
+  slot instead of making an alias (\refSlot[Object]{setProperty}).
+\item Declaring constant variables (or slots) without an initial value is a
+  syntax error (see the constant property, \autoref{sec:lang:prop:std}).
+\item Copy-on-write does not apply to slots declared constant
+  (\refSlot[Object]{updateSlot}).
+\end{itemize}
+
+\subsection{Changes}
+\begin{itemize}
+\item Drop support for the obsolete \usdk 1 syntax for events:
+  \lstinline{at (?e)} and \lstinline{emit e} instead of \lstinline{at (e?)}
+  and \lstinline{e!}  (\autoref{sec:k1:emit}).  As a consequence,
+  \lstinline|emit| is now a regular identifier.
+
+\item Drop support for the obsolete \lstindex{loopn} keyword, replaced by
+  \lstinline{for} since \usdk 2.0 (\autoref{sec:k1:loopn}).
 
 \item \refSlot[Job]{backtrace} now includes information about event handling
   (both sending and receiving parts).
@@ -147,18 +167,7 @@ i.close;
   \refObject[OutputStream]{OutputStreams}), are closed if not already
   closed.
 
-\item The internal functions \slot[System]{backtrace}, \slot[System]{jobs},
-  and \slot[System]{aliveJobs} are removed in favor of
-  \refSlot[Job]{backtrace}, \refSlot[Job]{jobs} and
-  \lstinline|Job.jobs.size|.
-
-\item \refSlot[System]{currentRunner} is deprecated in favor of
-  \refSlot[Job]{current}.
-
 \item \refSlot[System]{shutdown} now accepts the exit status as argument.
-
-\item \refSlot[System]{spawn} is deprecated in favor of
-  \refSlot[Job]{spawn}.
 
 \item The \Cxx classes \lstinline|USound| and \lstinline|UImage| now
   properly initialize their instances to empty sound/image.
