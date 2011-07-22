@@ -54,7 +54,7 @@ user-visible changes in \usdk releases.
 \item The implicit empty statement, which was warned about:
 \begin{urbiunchecked}
 if (true) else 12;
-[00011780:warning] !!! implicit empty instruction.  Use '{}' to make it explicit.
+[00011780:warning] !!! implicit empty statement.  Use '{}' to make it explicit.
 \end{urbiunchecked}
 \noindent
 is now an error:
@@ -2734,7 +2734,7 @@ and as many files as provided on the command line.
 %%
 %%
 %% === Changes ===
-%%  * {{{def f(x) instruction;}}} is now valid if instruction is alone (no
+%%  * {{{def f(x) statement;}}} is now valid if statement is alone (no
 %%  brackets needed). Otherwise, brackets must be used to enclose several
 %%  commands, like: {{{def f(x) {x;x+1};}}}
 %%  * array indexes are now "auto-static". There is no need to use the tab[:i]

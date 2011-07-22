@@ -863,7 +863,7 @@ stmt:
  *      for (42)
  *        ;
  *
- *  i.e, while 42 is true execute the empty instruction, either:
+ *  i.e, while 42 is true execute the empty statement, either:
  *
  *      for
  *        42;
