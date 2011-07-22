@@ -150,8 +150,9 @@ String.fromAscii(0xFF) == "\xff";
 \end{urbiassert}
 
 \item[hash]%
-  A \refObject{Hash} object corresponding to this string value. Two string
-  hashes are equal if the string are equal. See \refSlot[Object]{hash}.
+  A \refObject{Hash} object corresponding to this string value.  Equal
+  strings (in the sense of \refSlot{'=='}) have equal hashes.  See
+  \refSlot[Object]{hash}.
 
 \begin{urbiassert}
 "".hash.isA(Hash);

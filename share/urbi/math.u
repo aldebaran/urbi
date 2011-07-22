@@ -24,8 +24,10 @@ class Global.Math
   function acos(var x)    { x.acos };
   function asin(var x)    { x.asin };
   function atan(var x)    { x.atan };
+  function ceil(var x)    { x.ceil };
   function cos(var x)     { x.cos };
   function exp(var x)     { x.exp };
+  function floor(var x)   { x.floor };
   function log(var x)     { x.log };
   function random(var x)  { x.random };
   function srandom(var x) { x.srandom };
@@ -45,4 +47,5 @@ class Global.Math
   for (var v: ["inf", "nan", "pi"])
     setSlot(v, Float.getSlot(v));
 };
+
 Global.addProto(Global.Math);

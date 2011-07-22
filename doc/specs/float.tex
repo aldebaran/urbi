@@ -80,7 +80,7 @@ Float.new == 0;
 \item[abs]
   Absolute value of the target.
 \begin{urbiassert}
-(-5).abs == 5;  0.abs == 0;  5.abs == 5;
+(-5).abs == 5 == 5.abs;  0.abs == 0;
 \end{urbiassert}
 
 \item[acos]
@@ -93,17 +93,18 @@ Float.new == 0;
 \item[asBool]
   Whether non null.
 \begin{urbiassert}
-0.asBool == false;
-0.1.asBool == true;
-(-0.1).asBool == true;
-inf.asBool == true;
-nan.asBool == true;
+     0.asBool === false;
+   0.1.asBool === true;
+(-0.1).asBool === true;
+   inf.asBool === true;
+   nan.asBool === true;
 \end{urbiassert}
 
 \item[asFloat]
   \this.
 \begin{urbiassert}
-51.asFloat == 51;
+var x = 51;
+x.asFloat === x;
 \end{urbiassert}
 
 \item[asin]
@@ -112,13 +113,12 @@ nan.asBool == true;
 0.asin == 0;
 \end{urbiassert}
 
-\item[asList] Bounces to \refSlot{seq}.
+\item[asList] Bounce to \refSlot{seq}.
 \begin{urbiassert}
 0.asList == [];  3.asList == [0, 1, 2];
 \end{urbiassert}
 
-\item[asString]
-  Return a string representing the target.
+\item[asString] A \refObject{String} denoting \this.
 \begin{urbiassert}
                           42.asString == "42";
                        42.51.asString == "42.51";
@@ -127,8 +127,7 @@ nan.asBool == true;
 (-4_611_686_018_427_387_904).asString == "-4611686018427387904";
 \end{urbiassert}
 
-\item[atan]
-  Return the arctangent of the target.
+\item[atan] Arctangent of \this.
 \begin{urbiassert}
 0.atan == 0;
 1.atan == Float.pi/4;
@@ -146,8 +145,8 @@ nan.asBool == true;
 3 bitor 6 == 7;
 \end{urbiassert}
 
-\item[ceil] The smallest integral value greater than or equal to.  See also
-  \refSlot{floor} and \refSlot{round}.
+\item[ceil] The smallest integral value greater than or equal to \this.  See
+  also \refSlot{floor}, \refSlot{round}, and \refSlot{trunc}.
 \begin{urbiassert}
      0.ceil ==  0;
    1.4.ceil ==  2;     1.5.ceil ==  2;    1.6.ceil ==  2;
@@ -157,7 +156,7 @@ nan.asBool == true;
 \end{urbiassert}
 
 \item[clone]
-  Return a fresh Float with the same value as the target.
+  Return a fresh \refSlot{Float} with the same value as the target.
 \begin{urbiassert}
 var x = 0;
 var y = x.clone;
@@ -171,7 +170,7 @@ compl 0 == 0xFFFF_FFFF;    compl 0xFFFF_FFFF == 0;
 \end{urbiassert}
 
 \item[cos]
-  Cosine of the target.
+  Cosine of \this.
 \begin{urbiassert}
 0.cos == 1;   Float.pi.cos == -1;
 \end{urbiassert}
@@ -236,14 +235,14 @@ compl 0 == 0xFFFF_FFFF;    compl 0xFFFF_FFFF == 0;
 
 \item[exp]
   Exponential of the target.
-\begin{urbiscript}
-1.exp;
-[00000000] 2.71828
-\end{urbiscript}
+\begin{urbiassert}
+0.exp == 1;
+1.exp ~= 2.71828;
+\end{urbiassert}
 
 
-\item[floor] the largest integral value less than or equal to \this.  See
-  also \refSlot{ceil} and \refSlot{round}.
+\item[floor] The largest integral value less than or equal to \this.  See
+  also \refSlot{ceil}, \refSlot{round}, and \refSlot{trunc}.
 \begin{urbiassert}
      0.floor ==  0;
    1.4.floor ==  1;     1.5.floor ==  1;    1.6.floor ==  1;
@@ -295,8 +294,8 @@ compl 0 == 0xFFFF_FFFF;    compl 0xFFFF_FFFF == 0;
 };
 \end{urbiscript}
 
-\item[hash] Return a \refObject{Hash} object corresponding to this float
-  value. Two float hashes are equal if the float are equal. See
+\item[hash] A \refObject{Hash} object corresponding to this float value.
+  Equal floats (in the sense of \refSlot{'=='}) have equal hashes.  See
   \refSlot[Object]{hash}.
 
 \begin{urbiassert}
@@ -306,9 +305,8 @@ compl 0 == 0xFFFF_FFFF;    compl 0xFFFF_FFFF == 0;
 
 %%% FIXME: This message is not right, it should be:
 %%% [00000005:error] !!! hex: expected integer: 0.5
-\item[hex]
-  A String with the conversion of \this in hexadecimal.  Requires \this to
-  be integral.
+\item[hex] A \refObject{String} with the conversion of \this in hexadecimal.
+  Requires \this to be integral.
 \begin{urbiassert}
           0.hex == "0";
        0xFF.hex == "ff";
@@ -321,7 +319,7 @@ compl 0 == 0xFFFF_FFFF;    compl 0xFFFF_FFFF == 0;
 \end{urbiassert}
 
 \item[inf]
-  Return the infinity.
+  The infinity.
 \begin{urbiassert}
 2**2**2**2**2 == inf;
 inf != -inf;
@@ -331,15 +329,15 @@ inf * -inf == -inf;
 inf * -2 == -inf;
 \end{urbiassert}
 
-\item[isInf]
-  Whether is infinite.
+\item[isInf]%
+  Whether \this is infinite.
 \begin{urbiassert}
     !0.isInf; !1.isInf; !(-1).isInf;
   !nan.isInf;
    inf.isInf;  (-inf).isInf;
 \end{urbiassert}
 
-\item[isNan]
+\item[isNan]%
   Whether is NaN.
 \begin{urbiassert}
      !0.isNan; !1.isNan; !(-1).isNan;
@@ -350,7 +348,7 @@ inf * -2 == -inf;
 \item[limits]
   See \refObject{Float.limits}.
 
-\item[log]
+\item[log]%
   The logarithm of the target.
 \begin{urbiassert}
 0.log == -inf;
@@ -374,7 +372,7 @@ inf * -2 == -inf;
 3.min(1, 2) == 1;
 \end{urbiassert}
 
-\item[nan]
+\item[nan]%
   The ``not a number'' special float value.  More precisely, this
   returns the ``quiet NaN'', i.e., it is propagated in the various
   computations, it does not raise exceptions.
@@ -415,7 +413,8 @@ Float.pi.cos ** 2 + Float.pi.sin ** 2 == 1;
 \end{urbiscript}
 
 \item[round] The integral value nearest to \this rounding half-way cases
-  away from zero.  See also \refSlot{ceil} and \refSlot{floor}.
+  away from zero.  See also \refSlot{ceil}, \refSlot{floor}, and
+  \refSlot{trunc}.
 \begin{urbiassert}
      0.round ==  0;
    1.4.round ==  1;     1.5.round ==  2;    1.6.round ==  2;
@@ -424,9 +423,9 @@ Float.pi.cos ** 2 + Float.pi.sin ** 2 == 1;
    nan.round.isNan;
 \end{urbiassert}
 
-\item[seq]
-  The sequence of integers from 0 to \this - 1 as a list.
-  The number must be non-negative.
+\item[seq]%
+  The sequence of integers from 0 to \this - 1 as a list.  \this must be
+  non-negative.
 \begin{urbiassert}
 0.seq == [];  3.seq == [0, 1, 2];
 
@@ -438,9 +437,7 @@ Float.pi.cos ** 2 + Float.pi.sin ** 2 == 1;
   Return 1 if \this is positive, 0 if it is null, -1
   otherwise.
 \begin{urbiassert}
-(-1164).sign == -1;
-      0.sign ==  0;
-   1164.sign ==  1;
+(-1664).sign == -1;    0.sign ==  0;   1664.sign ==  1;
 \end{urbiassert}
 
 \item[sin]
@@ -452,7 +449,8 @@ Float.pi.cos ** 2 + Float.pi.sin ** 2 == 1;
 \item[sqr]
   Square of the target.
 \begin{urbiassert}
-32.sqr == 1024 == 32 ** 2;
+1.5.sqr == 2.25 == 1.5 ** 2;
+ 32.sqr == 1024 ==  32 ** 2;
 \end{urbiassert}
 
 \item[sqrt]
@@ -478,13 +476,12 @@ Float.pi.cos ** 2 + Float.pi.sin ** 2 == 1;
 };
 \end{urbiunchecked}
 
-\item[tan]
-  Tangent of the target.
-\begin{urbiscript}
-assert(0.tan == 0);
-(Float.pi/4).tan;
-[00000000] 1
-\end{urbiscript}
+\item[tan]%
+  Tangent of \this.
+\begin{urbiassert}
+0.tan == 0;
+(Float.pi/4).tan ~= 1;
+\end{urbiassert}
 
 \item[times](<fun>)%
   Call the functional argument \var{fun} \this times.
@@ -497,10 +494,15 @@ assert(0.tan == 0);
 \end{urbiscript}
 
 
-\item[trunc]
-  Return the target truncated.
+\item[trunc]%
+  The integral value nearest to but no larger in magnitude than \this.  See
+  also \refSlot{ceil}, \refSlot{floor}, \refSlot{round}.
 \begin{urbiassert}
-1.9.trunc == 1;  (-1.9).trunc == -1;
+     0.trunc ==  0;
+   1.4.trunc ==  1;     1.5.trunc ==  1;    1.6.trunc ==  1;
+(-1.4).trunc == -1;  (-1.5).trunc == -1; (-1.6).trunc == -1;
+   inf.trunc == inf; (-inf).trunc == -inf;
+   nan.trunc.isNan;
 \end{urbiassert}
 
 \item['^'](<that>)%

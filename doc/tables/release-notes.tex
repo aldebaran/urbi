@@ -201,6 +201,17 @@ Logger.set("+Category*,-Category.Sub");
 \end{urbiscript}
   \end{itemize}
 
+\item The functions \refSlot[Math]{ceil} and \refSlot[Math]{floor} were
+  added, consistently with \refSlot[Math]{round} and \refSlot[Math]{trunc}.
+  Yet users are encouraged to prefer the ``method-like'' versions, i.e.,
+  \refSlot[Float]{ceil} and so forth.
+\begin{urbiassert}
+Math.ceil (1.2) == 1.2.ceil;
+Math.floor(1.2) == 1.2.floor;
+Math.trunc(1.2) == 1.2.trunc;
+Math.round(1.2) == 1.2.round;
+\end{urbiassert}
+
 \item \refSlot[String]{'[]'} accepts negative indexes, as
   \refSlot[List]{'[]'} did.
 \begin{urbiassert}
