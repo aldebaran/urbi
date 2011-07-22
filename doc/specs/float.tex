@@ -80,7 +80,7 @@ Float.new == 0;
 \item[abs]
   Absolute value of the target.
 \begin{urbiassert}
-(-5).abs == 5;  0 .abs == 0;  5 .abs == 5;
+(-5).abs == 5;  0.abs == 0;  5.abs == 5;
 \end{urbiassert}
 
 \item[acos]
@@ -137,13 +137,13 @@ nan.asBool == true;
 \item['bitand'](<that>)%
   The bitwise-and between \this and \var{that}.
 \begin{urbiassert}
-(3 bitand 6) == 2;
+3 bitand 6 == 2;
 \end{urbiassert}
 
 \item['bitor'](<that>)%
   Bitwise-or between \this and \var{that}.
 \begin{urbiassert}
-(3 bitor 6) == 7;
+3 bitor 6 == 7;
 \end{urbiassert}
 
 \item[ceil] The smallest integral value greater than or equal to.  See also
@@ -506,7 +506,7 @@ assert(0.tan == 0);
 \item['^'](<that>)%
   Bitwise exclusive or between \this and \var{that}.
 \begin{urbiassert}
-(3 ^ 6) == 5;
+3 ^ 6 == 5;
 \end{urbiassert}
 
 \item['>>'](<that>)%%>>

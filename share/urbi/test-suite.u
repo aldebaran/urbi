@@ -205,7 +205,11 @@ do (Object)
 do (Dictionary)
 {
   overrideSlot("keys",
-               function () { 'keys$old'.sort })|;
+    function ()
+    {
+      'keys$old'.sort (function (a, b) { a.asString < b.asString } )
+    }
+  )|;
 }|;
 
 

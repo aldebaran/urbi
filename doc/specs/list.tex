@@ -439,8 +439,8 @@ assert
 [00005865:error] !!! pattern did not match
 \end{urbiscript}
 
-\item \labelSlot{max}\lstinline|(\var{fun} = function(a, b) { a < b })|\\%
-  Return the ``largest'' member based on the comparison function \var{fun}.
+\item \labelSlot{max}\lstinline|(\var{comp} = function(a, b) { a < b })|\\%
+  Return the ``largest'' member based on the comparison function \var{comp}.
 \begin{urbiassert}
            [1].max == 1;
         [1, 2].max == 2;
@@ -463,8 +463,8 @@ The members must be comparable.
 [00000002:error] !!! max: argument 2: unexpected "a", expected a Float
 \end{urbiscript}
 
-\item \labelSlot{min}\lstinline|(\var{fun} = function(a, b) { a < b })|\\%
-  Return the ``smallest'' member based on the comparison function \var{fun}.
+\item \labelSlot{min}\lstinline|(\var{co;p} = function(a, b) { a < b })|\\%
+  Return the ``smallest'' member based on the comparison function \var{comp}.
 \begin{urbiassert}
            [1].min == 1;
         [1, 2].min == 1;
@@ -569,7 +569,7 @@ g == [1, 2];
 [].size == 0;
 \end{urbiassert}
 
-\item \labelSlot{sort}\lstinline|(\var{fun} = function(a, b) { a < b })|\\%
+\item \labelSlot{sort}\lstinline|(\var{comp} = function(a, b) { a < b })|\\%
   A new List with the contents of \this, sorted with respect to the
   \var{comp} comparison function.
 \begin{urbiassert}
