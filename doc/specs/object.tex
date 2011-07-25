@@ -117,6 +117,94 @@ void.asBool;
 [00000421:error] !!! unexpected void
 \end{urbiscript}
 
+\item[asPrintable]%
+  A \refObject{String} that can be used to display faithfully \this using
+  \refSlot[Lobby]{echo}.  Defaults to \refSlot{asString}.
+
+  For instance, \refSlot[String]{asString} returns the string itself, but
+  \lstinline{"foo".asPrintable} is the string \lstinline{"\"foo\""}, so that
+  using \lstinline{echo}, you would see \lstinline{"foo"}.
+\begin{urbiassert}
+Object.asPrintable.isA(String);
+Object.asPrintable == Object.asString;
+
+"foo".asString == "foo";
+"foo".asPrintable == "\"foo\"";
+\end{urbiassert}
+
+  See also \refSlot{asString} and \refSlot{asTopLevelPrintable}.
+
+\item[asString]%
+  A conversion of \this into a \refObject{String}.  In general:
+  \begin{itemize}
+  \item if \this is a value for which there is a literal syntax (e.g.,
+    \refObject{Float}, \refObject{String}, \refObject{List}, etc.), then use
+    that syntax:
+\begin{urbiassert}
+         3.1415.asString == "3.1415";
+"Hello, World!".asString == "Hello, World!";
+  [1, "2", [3]].asString == "[1, \"2\", [3]]";
+\end{urbiassert}
+
+\item if \this a ``class'', then the name of the class, otherwise a
+  \refObject{String} composed of the name of the ``class'' the object is an
+  instance of, and some integral value that depends on \this.
+\begin{urbiscript}
+class Class {}|;
+Class.asString;
+[00002106] "Class"
+var c1 = Class.new|; var c2 = Class.new|;
+c1.asString;
+[00002112] "Class_0x1040e0108"
+c2.asString;
+[00002115] "Class_0x1040c17a8"
+assert
+{
+  c1.asString == c1.asString != c2.asString == c2.asString;
+  c1.asString == c1.type + "_" + c1.uid;
+  c2.asString == c2.type + "_" + c2.uid;
+};
+\end{urbiscript}
+\end{itemize}
+  See also \refSlot{asTopLevelPrintable} and \refSlot{asPrintable}.
+
+\item[asTopLevelPrintable]%
+  A \refObject{String} used to display \this in interactive sessions, or
+  \refObject{nil} if \this should be not be printed.
+\begin{urbiscript}
+class Test
+{
+  function init(v) { var this.value = v };
+  function asTopLevelPrintable() { value };
+}|;
+
+Test.new("12");
+[00004345] 12
+
+// Nothing to display here.
+Test.new(nil);
+
+// This is an error, asTopLevelPrintable must return a string or nil.
+Test.new(1);
+[00004370:error] !!! send: argument 1: unexpected 1, expected a String
+\end{urbiscript}
+
+  Defaults to \refSlot{asPrintable}.  For instance, since \refObject{nil}
+  and \refObject{void} are not reported in interactive sessions, their
+  \refSlot{asTopLevelPrintable} is \refObject{nil}, but not their
+  \refSlot{asPrintable}.
+\begin{urbiassert}
+Object.asTopLevelPrintable.isA(String);
+Object.asTopLevelPrintable == Object.asPrintable;
+
+// A version of void on which we can call methods.
+var Void = void.acceptVoid;
+ nil.asPrintable == "nil";   nil.asTopLevelPrintable == nil;
+Void.asPrintable == "void"; Void.asTopLevelPrintable == nil;
+\end{urbiassert}
+
+  See also \refSlot{asString} and \refSlot{asPrintable}.
+
 \item[bounce](<name>)%
   Return \lstinline|this.\var{name}| transformed from a method into a
   function that takes its target (its ``\this'') as first

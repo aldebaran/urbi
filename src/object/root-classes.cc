@@ -280,7 +280,8 @@ namespace urbi
         void_class->slot_set_value(SYMBOL(asString), new String(SYMBOL(void)));
         void_class->slot_set_value(SYMBOL(DOLLAR_id), new String(SYMBOL(void)));
         // void prints nothing in the toplevel
-        void_class->slot_set_value(SYMBOL(asTopLevelPrintable), new String(""));
+        passert("void must be initialized after nil", nil_class);
+        void_class->slot_set_value(SYMBOL(asTopLevelPrintable), nil_class);
         passert("void must be initialized after true", true_class);
         void_class->slot_set_value(SYMBOL(isVoid), true_class);
         void_class->slot_set_value
