@@ -13,12 +13,6 @@ do (Object)
   // Syntactic sugar for setProtos.
   protos->updateHook = function(slot, value) { setProtos(value); };
 
-  function asToplevelPrintable()
-  {
-    Kernel1.deprecated("asToplevelPrintable", "asTopLevelPrintable") |
-    asTopLevelPrintable
-  };
-
   function 'class'(var name, var protos = [])
   {
     var res = Object.clone |

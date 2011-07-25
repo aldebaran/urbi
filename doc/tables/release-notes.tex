@@ -162,6 +162,12 @@ while (!(x = i.get).isNil)
 i.close;
 \end{urbiunchecked}
 
+\item \slot{Object}{asToplevelPrintable} was deprecated in favor of
+  \refSlot[Object]{asTopLevelPrintable}, for consistency (with
+  \refSlot[Channel]{topLevel} for instance).  Because this backward
+  compatibility function may also hide failures (e.g., if you refine it
+  using its former name), it is removed.
+
 \item When destroyed, \refObject[Stream]{Streams} (including
   \refObject[InputStream]{InputStreams} and
   \refObject[OutputStream]{OutputStreams}), are closed if not already
