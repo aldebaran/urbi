@@ -80,6 +80,7 @@ true.new === true;
 \end{urbiassert}
 
 \item \lstinline+'||'(\var{that})+\\
+  %\index{Boolean@\lstinline[]{Boolean}!"|"|@\lstinline[]{||}}%
   Short-circuiting logical or. If \this is \lstinline|false| evaluate and
   return \var{that}.  If \this is \lstinline|true|, return itself without
   evaluating \var{that}.
@@ -88,7 +89,7 @@ true.new === true;
 (false || 2)  == 2;
 \end{urbiassert}
 
-\item \lstinline|'!'|\\
+\item['!']%
   Logical negation. If \this is \lstinline|false| return \lstinline|true|
   and vice-versa.
 \begin{urbiassert}

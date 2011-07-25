@@ -323,15 +323,9 @@ This function is internal and it might change in the future.
   to react to this event have returned.  This function can have the same
   arguments as \refSlot{emit}.
 
-\item[trigger](<args>[])%
-  Fire a sustained event (for an unknown amount of time) and return a
-  handler object whose \lstinline|stop| method stops the event. This method
-  is asynchronous and the \lstinline|stop| call will be asynchronous as
-  well.  See \autoref{sec:event:sustain} for examples.
-
 \item[syncEmit](<args>[])%
-  Same as \refSlot{emit} but require a synchronous handling.
-  See \autoref{sec:event:sync} for details.
+  Same as \refSlot{emit} but require a synchronous handling.  See
+  \autoref{sec:event:sync} for details.
 
 \item[syncTrigger](<args>[])%
   Same as \refSlot{trigger} but the call will be synchronous (see
@@ -339,7 +333,13 @@ This function is internal and it might change in the future.
   object will be synchronous as well.  See \autoref{sec:event:sustain} for
   examples.
 
-\item['||'](<that>)%
+\item[trigger](<args>[])%
+  Fire a sustained event (for an unknown amount of time) and return a
+  handler object whose \lstinline|stop| method stops the event. This method
+  is asynchronous and the \lstinline|stop| call will be asynchronous as
+  well.  See \autoref{sec:event:sustain} for examples.
+
+\item \lstinline+'||'(\var{that})+%
   Logical ``or'' on events: a new Event that triggers whenever \this or
   \that triggers.
 

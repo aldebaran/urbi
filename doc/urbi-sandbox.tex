@@ -125,8 +125,15 @@ Inside Job 0x6a2f70
 \sectionObject{Bar}
 
 \begin{urbiscriptapi}
+\item[!] A test about bang.
+\item['!'](<arg>) Another test about bang.
+\item['!='](<arg>) Another test about bang.
+\item['!=='](<arg>) Another test about bang.
+  Short-circuiting logical or. If \this is \lstinline|false| evaluate and
+%\item['\%'](<arg>) Another test about bang.
 \item[bar] This is Bar.bar.
 \item[foo](<x>) This is Bar.foo with arguments.
+\item['&&'](<arg>) Another test about bang.
 \item[set](<key>, <value>) Map \var{key} to \var{value} and return \this so
   that invocations to \lstinline|set| can be chained.  The possibly existing
   previous mapping is overridden.

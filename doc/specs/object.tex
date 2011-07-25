@@ -717,7 +717,7 @@ assert
 ("foo" && "bar") == "bar";
 \end{urbiassert}
 
-\item['||'](<that>)%
+\item \lstinline+'||'(\var{that})+%
   Short-circuiting logical or. If \this evaluates to false evaluate and
   return \var{that}, otherwise return \this without evaluating \var{that}.
 \begin{urbiassert}
@@ -728,7 +728,7 @@ assert
 ("foo" || 1/0)   == "foo";
 \end{urbiassert}
 
-\item \lstinline|'!'|\\
+\item['!']%
   Logical negation.  If \this evaluates to false return \lstinline|true| and
   vice-versa.
 \begin{urbiassert}
@@ -828,7 +828,7 @@ var o2 = Object.new;
     !([1] === [1]);
 \end{urbiassert}
 
-\item \lstinline|'!=='(\var{that})|\\%
+\item['!=='](<that>)
   The negation of \lstinline|\this === \that|, see \refSlot{'==='}.
 \begin{urbiassert}
 var o1 = Object.new;
