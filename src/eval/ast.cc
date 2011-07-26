@@ -74,7 +74,7 @@ namespace eval
 
     typedef std::vector<libport::Symbol> tag_chain_type;
 
-    object::rObject eval_tag(ast::rConstExp e);
+    object::rTag eval_tag(ast::rConstExp e);
 
 
 # define VISIT(Macro, Data, Node)               \
@@ -775,13 +775,14 @@ namespace eval
   }
 
   LIBPORT_SPEED_ALWAYS_INLINE
-  object::rObject
+  object::rTag
   Visitor::eval_tag(ast::rConstExp e)
   {
+    rObject res;
     try
     {
       // Try to evaluate e as a normal expression.
-      return ast(this_, e.get());
+      res = ast(this_, e.get());
     }
     catch (object::UrbiException&)
     {
@@ -806,8 +807,9 @@ namespace eval
       CAPTURE_GLOBAL2(Tag, tags);
       // Create a new tag as a slot of Tag.tags.  It also stores it
       // into Tag.tags.
-      return tags->call(SYMBOL(new), new object::String(c->name_get()));
+      res = tags->call(SYMBOL(new), new object::String(c->name_get()));
     }
+    return object::type_check<object::Tag>(res);
   }
 
 
@@ -824,12 +826,7 @@ namespace eval
   LIBPORT_SPEED_ALWAYS_INLINE rObject
   Visitor::visit(const ast::TaggedStmt* t)
   {
-    // FIXME: might be simplified after type checking code is moved
-    // to Object.
-    object::rObject unchecked_tag = eval_tag(t->tag_get());
-    object::from_urbi<object::Tag>(unchecked_tag);
-    object::rTag urbi_tag = unchecked_tag->as<object::Tag>();
-
+    object::rTag tag = eval_tag(t->tag_get());
     size_t result_depth = this_.state.tag_stack_size();
     std::vector<object::rTag> applied;
     try
@@ -839,21 +836,20 @@ namespace eval
       // Apply tag as well as its ancestors to the current runner.
       do
       {
-        // If tag is blocked, do not start and ignore the
-        // statement completely but use the provided payload.
-        // Since the list of parents starts from the specific tag
-        // and goes up to the root tag, the most specific payload
-        // will be retrieved.
-        if (urbi_tag->value_get()->blocked())
+        // If tag is blocked, do not start and ignore the statement
+        // completely but use the provided payload.  Since the list of
+        // parents starts from the specific tag and goes up to the
+        // root tag, the most specific payload will be retrieved.
+        if (tag->value_get()->blocked())
         {
           return boost::any_cast<rObject>(
-            urbi_tag->value_get()->payload_get());
+            tag->value_get()->payload_get());
         }
         // If tag is frozen, remember it.
-        some_frozen = some_frozen || urbi_tag->value_get()->frozen();
-        applied << urbi_tag;
-        urbi_tag = urbi_tag->parent_get();
-      } while (urbi_tag);
+        some_frozen = some_frozen || tag->value_get()->frozen();
+        applied << tag;
+        tag = tag->parent_get();
+      } while (tag);
       // Apply the tags, starting with the uppermost one in the ancestry
       // chain so that a "stop" on a parent removes the corresponding
       // children.

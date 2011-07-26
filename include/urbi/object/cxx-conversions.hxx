@@ -66,8 +66,7 @@ namespace urbi
     typename CxxConvert<T>::target_type
     CxxConvert<T>::to(rObject o)
     {
-      type_check<T>(o);
-      return *o->as<T>();
+      return *type_check<T>(o);
     }
 
     template <typename T>
@@ -109,8 +108,7 @@ namespace urbi
       static target_type
       to(const rObject& o)
       {
-        type_check<Urbi>(o);
-        return o->as<Urbi>();
+        return type_check<Urbi>(o);
       }
 
       static rObject
@@ -221,8 +219,7 @@ namespace urbi
       static target_type
       to(const rObject& o)
       {
-        type_check(o, Float::proto);
-        return o->as<Float>()->value_get();
+        return type_check<Float>(o)->value_get();
       }
 
       static rObject
@@ -244,8 +241,7 @@ namespace urbi
       static target_type
       to(const rObject& o)
       {
-        type_check<Float>(o);
-        return o->as<Float>()->to_unsigned_type();
+	return type_check<Float>(o)->to_unsigned_type();
       }
 
       static rObject
@@ -267,8 +263,7 @@ namespace urbi
       static target_type
       to(const rObject& o)
       {
-        type_check<Float>(o);
-        return o->as<Float>()->value_get();
+        return type_check<Float>(o)->value_get();
       }
 
       static rObject
@@ -287,8 +282,7 @@ namespace urbi
       static target_type
       to(const rObject& o)
       {
-        type_check<Float>(o);
-        return o->as<Float>()->value_get();
+        return type_check<Float>(o)->value_get();
       }
 
       static rObject
@@ -313,8 +307,7 @@ namespace urbi
       {
         if (rPath p = o->as<Path>())
           return p->value_get();
-        type_check<String>(o);
-        return o->as<String>()->value_get();
+        return type_check<String>(o)->value_get();
       }
 
       static rObject
@@ -336,8 +329,7 @@ namespace urbi
       static target_type
       to(const rObject& o)
       {
-        type_check<String>(o);
-        std::string str = o->as<String>()->value_get();
+        std::string str = type_check<String>(o)->value_get();
         if (str.size() != 1)
           runner::raise_primitive_error("expected one character string");
           //FIXME: Primitive error or custom type error?
@@ -389,8 +381,7 @@ namespace urbi
       static target_type
       to(const rObject& o)
       {
-        type_check<String>(o);
-        return libport::Symbol(o->as<String>()->value_get());
+        return libport::Symbol(type_check<String>(o)->value_get());
       }
 
       static rObject
@@ -436,9 +427,8 @@ namespace urbi
       static target_type                                                \
         to(const rObject& o)                                            \
       {                                                                 \
-        type_check<List>(o);                                            \
         Name<T ExtraT> res;                                             \
-        foreach (const rObject& elt, o->as<List>()->value_get())        \
+        foreach (const rObject& elt, type_check<List>(o)->value_get())	\
           res.Method(CxxConvert<T>::to(elt));                           \
         return res;                                                     \
       }                                                                 \
@@ -469,9 +459,8 @@ namespace urbi
       static target_type
       to(const rObject& o)
       {
-        type_check<List>(o);
         objects_type res;
-        foreach (Object* elt, o->as<List>()->value_get())
+        foreach (Object* elt, type_check<List>(o)->value_get())
           res.push_back(elt);
         return res;
       }
@@ -524,8 +513,7 @@ namespace urbi
       static target_type
       to(const rObject& o)
       {
-        type_check<List>(o);
-        const List::value_type& list = o->as<List>()->value_get();
+        const List::value_type& list = type_check<List>(o)->value_get();
         if (list.size() != 2)
           runner::raise_primitive_error("expected a list of size 2");
         return std::make_pair(CxxConvert<T1>::to(list[0]),
@@ -559,8 +547,7 @@ namespace urbi
       static target_type                                \
       to(const rObject& o)                              \
       {                                                 \
-        type_check<Type>(o);                            \
-        return o->as<Type>()->value_get();              \
+        return type_check<Type>(o)->value_get();	\
       }                                                 \
                                                         \
       static rObject                                    \
