@@ -11,6 +11,6 @@
     ("\|" . 'font-lock-warning-face) ;; "OR" symbol
     ("\{:\\|:\}" . 'font-lock-keyword-face) ;; special pybnf delimiters
    )
-  '("\\.bnf\\'" "\\.pybnf\\'") ;; filename suffixes
+  '("\\.bnf\\'") ;; filename suffixes
   nil ;; extra function hooks
   "Major mode for BNF highlighting.")

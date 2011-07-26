@@ -20,7 +20,7 @@
 ;; MISC CONF
 
 (defvar urbiscript-mode-hook nil)
-(add-to-list 'auto-mode-alist '("\\.u$" . urbiscript-mode))
+(add-to-list 'auto-mode-alist '("\\.\\(chk\\|u\\)\\'" . urbiscript-mode))
 
 ;; KEYMAP
 
