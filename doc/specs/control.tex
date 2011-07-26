@@ -8,10 +8,9 @@
 
 \section{Control}
 
-\lstinline|Control| is a namespace for control sequences.  Some of these
-entities are used by the \urbi engine to execute some \us features.  It is
-considered internal; in other words, users are not expected to use it, much
-less change it.
+\refSlot{Control} is a namespace for control sequences used by the \urbi
+engine to execute some \us features.  It is internal; in other words, users
+are not expected to use it, much less change it.
 
 \subsection{Prototypes}
 
@@ -34,14 +33,15 @@ less change it.
 {
   var jobs = [];
   var res = [];
-  for (var i : [0, 1, 2])
+  for (var i : [1, 2, 3])
   {
-    jobs << detach({ res << i; sleep(100ms); res << i }) |
-    if (i == 2)
+    jobs << detach({ res << i; sleep(i * 100ms); res << i }) |
+    if (i == 3)
       // break interrupts all the jobs that are launched by the for.
       break
   };
-  assert (res == [0, 1]);
+  // The third job did not even have enough time to start.
+  assert (res == [1, 2]);
   jobs
 };
 [00009120] [Job<shell_11>, Job<shell_12>, Job<shell_13>]
@@ -58,16 +58,16 @@ less change it.
 {
   var jobs = [];
   var res = [];
-  for (var i : [0, 1, 2])
+  for (var i : [1, 2, 3])
   {
-    jobs << disown({ res << i; sleep(100ms); res << i }) |
-    if (i == 2)
+    jobs << disown({ res << i; sleep(i * 100ms); res << i }) |
+    if (i == 3)
       // Contrary to the previous case, the jobs are not controlled
       // by this break.
       break
   };
   jobs.each (function (var j) { j.waitForTermination });
-  assert (res == [0, 1, 2, 0, 1, 2]);
+  assert (res == [1, 2, 3, 1, 2, 3]);
   jobs
 };
 [00009120] [Job<shell_14>, Job<shell_15>, Job<shell_16>]
