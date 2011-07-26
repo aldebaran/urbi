@@ -49,7 +49,7 @@ do (Global.Tag)
   {
     function 'new'(name)
     {
-      Tag.new(name)
+      Tag.tags.setSlotValue(name, Tag.new(name))
     };
   };
 

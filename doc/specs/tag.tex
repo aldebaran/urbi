@@ -233,8 +233,8 @@ t: {echo("inside"); 42};
 [00000000] 42
 \end{urbiscript}
 
-This feature is fundamental; it is a concise and safe way to ensure code
-will be executed upon exiting a chunk of code (like \acro{raii} in \Cxx or
+This feature provides a concise and safe way to ensure code will be executed
+upon exiting a chunk of code (like \acro{raii} in \Cxx or
 \lstinline|finally| in Java). The exit code will be run no matter what the
 reason for leaving the block was: natural exit, exceptions, flow control
 statements like \lstinline|return| or \lstinline|break|, \ldots
@@ -487,14 +487,15 @@ var t2 = Tag.new("cool name");
   specified, let stopped code return \var{result} as value.
   See \autoref{sec:specs:tag:stop}.
 
-\item[tags] All the undeclared tags are created as slots in \this object as
-  child Tag of this object.  Using this feature is discouraged.
+\item[tags] An object in which implicit tags stored as slots.  See
+  \autoref{sec:lang:tag}.
 \begin{urbiscript}
+assert (!hasSlot("brandNewTag"));
+brandNewTag: {};
+assert
 {
-  assert ("brandNewTag" not in this.localSlotNames);
-  brandNewTag: 1;
-  assert ("brandNewTag" in this.localSlotNames);
-  assert (this.brandNewTag.isA(Tag));
+  locateSlot("brandNewTag") === Tag.tags;
+  brandNewTag.isA(Tag);
 };
 \end{urbiscript}
 

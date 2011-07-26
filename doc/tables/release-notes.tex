@@ -39,6 +39,29 @@ Write \lstinline|if (true) {} else 12;|.  As a consequence
 { if (false) &true else &false } === &false;
 \end{urbiassert}
 
+\item Implicit tags are restricted to single identifiers in interactive
+  sessions.  In other words, in the \urbi shell you may expect tags to be
+  automatically created:
+\begin{urbiscript}
+assert (!hasSlot("foo"));
+foo: 123;
+[00003258] 123
+assert (hasSlot("foo") && foo.isA(Tag));
+\end{urbiscript}
+\noindent
+This is no longer valid for complex tags, nor when used deeper in the code:
+\begin{urbiscript}
+bar.baz: echo(2);
+[00015621:error] !!! lookup failed: bar
+
+class Foo { function f() { t1: echo (12) } }|;
+Foo.f;
+[00015631:error] !!! lookup failed: t1
+[00015631:error] !!!    called from: f
+\end{urbiscript}
+\noindent
+See \autoref{sec:lang:tag} for details.
+
 \item \refSlot[InputStream]{get} (and \refSlot[InputStream]{getChar},
   \refSlot[InputStream]{getLine}) now returns \refObject{nil} instead of
   \refObject{void} when it reaches the end of file.  To provide backward

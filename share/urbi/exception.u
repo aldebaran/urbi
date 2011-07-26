@@ -226,11 +226,6 @@ makeFmtException(
 );
 
 makeMsgException(
-  "ImplicitTagComponent", Exception, [],
-  "invalid component in implicit tag"
-);
-
-makeMsgException(
   "MatchFailure", Exception, [],
   "pattern did not match"
 );

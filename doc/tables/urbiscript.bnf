@@ -115,6 +115,11 @@
     | "loop|" <statement>
 #:end
 
+#:tag
+<tag-statement>
+  ::= <expression> ":" <statement>
+#:stm
+
 #:timeout
 <timeout-statement>
   ::= "timeout" "(" <float> ")" <statement>

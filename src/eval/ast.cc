@@ -9,7 +9,7 @@
  */
 
 /**
- ** \file runner/eval/ast.cc
+ ** \file eval/ast.cc
  ** \brief Definition of eval::ast.
  */
 
@@ -73,8 +73,6 @@ namespace eval
     tags_trigger_leave(const std::vector<object::rTag>& tags);
 
     typedef std::vector<libport::Symbol> tag_chain_type;
-
-    static tag_chain_type decompose_tag_chain(ast::rConstExp e);
 
     object::rObject eval_tag(ast::rConstExp e);
 
@@ -776,25 +774,6 @@ namespace eval
       tag->triggerLeave();
   }
 
-  // This function takes an expression and attempts to decompose it
-  // into a list of identifiers. The resulting chain is stored in
-  // reverse order, that is the most specific tag first.
-  LIBPORT_SPEED_ALWAYS_INLINE
-  Visitor::tag_chain_type
-  Visitor::decompose_tag_chain(ast::rConstExp e)
-  {
-    tag_chain_type res;
-    while (!e->implicit())
-    {
-      ast::rConstCall c = e.unsafe_cast<const ast::Call>();
-      if (!c || c->arguments_get())
-        runner::raise_urbi(SYMBOL(ImplicitTagComponent));
-      res << c->name_get();
-      e = c->target_get();
-    }
-    return res;
-  }
-
   LIBPORT_SPEED_ALWAYS_INLINE
   object::rObject
   Visitor::eval_tag(ast::rConstExp e)
@@ -807,8 +786,8 @@ namespace eval
     catch (object::UrbiException&)
     {
       // We got a lookup error. It means that we have to automatically
-      // create the tag. In this case, we only accept k1 style tags,
-      // i.e. chains of identifiers, excluding function calls.
+      // create the tag. In this case, we only accept simple style tags,
+      // i.e. an identifier, excluding function calls.
       // The reason to do that is:
       //   - we do not want to mix k1 non-declared syntax with k2
       //     clean syntax for tags
@@ -816,41 +795,19 @@ namespace eval
       //     in a function call or during the direct resolution of
       //     the name.
 
+      // Make sure that the expression is a single identifier.
+      ast::rConstCall c = e.unsafe_cast<const ast::Call>();
+      if (!c || c->arguments_get() || !c->target_implicit()
+	  // And only in a shell session.
+	  || !this_.state.this_get()->as<object::Lobby>())
+	throw;
+
       // `Tag.tags' represents the top level tag.
       CAPTURE_GLOBAL2(Tag, tags);
-      rObject parent = tags;
-      rObject where = this_.state.this_get();
-      tag_chain_type chain = decompose_tag_chain(e);
-      rforeach (libport::Symbol elt, chain)
-      {
-        // Check whether the concerned level in the chain already exists.
-        // We do not use the fallback slot to lookup for 'elt' because
-        // fallback does not return a slot to an undefined location.
-        if (rObject owner = where->slot_locate(elt, false).first)
-        {
-          GD_FINFO_DUMP("Component %s exists.", elt);
-          where = owner->local_slot_get_value(elt);
-          if (object::Tag* parent_ = dynamic_cast<object::Tag*>(where.get()))
-          {
-            GD_INFO_DUMP("It is a tag, so use it as the new parent.");
-            parent = parent_;
-          }
-        }
-        else
-        {
-          // We have to create a new tag, which will be attached
-          // to the upper level (hierarchical tags, implicitly
-          // rooted by Tags).
-          rObject tag = parent->call(SYMBOL(new), new object::String(elt));
-          where->slot_set_value(elt, tag);
-          where = tag;
-          parent = where;
-        }
-      }
-
-      return where;
+      // Create a new tag as a slot of Tag.tags.  It also stores it
+      // into Tag.tags.
+      return tags->call(SYMBOL(new), new object::String(c->name_get()));
     }
-    pabort("Unreachable");
   }
 
 

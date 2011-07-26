@@ -9,7 +9,7 @@
  */
 
 /**
- ** \file runner/eval/action.hh
+ ** \file eval/ast.hh
  ** \brief Definition of eval::ast.
  */
 

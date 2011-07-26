@@ -182,14 +182,6 @@ Exception.FileNotFound.new("foo").asString
   == "file not found: foo";
 \end{urbiassert}
 
-\item[ImplicitTagComponent](<msg>)%
-  An attempt was made to create an implicit tag, a component of which
-  being undefined.
-\begin{urbiassert}
-Exception.ImplicitTagComponent.new.asString
-  == "invalid component in implicit tag";
-\end{urbiassert}
-
 \item[Lookup](<object>, <name>)%
   A failed name lookup was performed on \var{object} to find a slot named
   \var{name}.  Suggest what the user might have meant if

@@ -1793,9 +1793,9 @@ aLobby.receive("Global.clo;");
 \label{sec:lang:fun-variadic}
 
 \dfn{Variadic} functions are functions that take a variable number of
-arguments. They are created by using the \lstinline|[]| tag after a
-formal argument: the function will accept any number of arguments, and
-they will be assigned to the variadic formal argument as a list.
+arguments. They are created by appending \lstinline|[]| to a formal
+argument: the function will accept any number of arguments, and they will be
+assigned to the variadic formal argument as a list.
 
 \begin{urbiscript}
 function variadic(var args[])
@@ -3396,6 +3396,63 @@ true;
 This section defines the syntactic constructs that allows concurrent
 executions.  Some of these constructs, loop-like, are concurrent alternative
 of traditional imperative constructs.
+
+\subsection{Tagging}
+\label{sec:lang:tag}
+to provide control over concurrent jobs, \us uses \refObject[Tag]{Tags}.  To
+put some statement under the control of a tag, the syntax is as follows:
+
+\grammar{tag-stm}
+
+The \var{expression} that controls the \var{statement} must evaluate to a
+\refObject{Tag}.
+
+\begin{urbiscript}
+function id(var i) { echo(i) | i }|;
+id(1):id(2);
+[00002029] *** 1
+[00002029:error] !!! unexpected 1, expected a Tag
+\end{urbiscript}
+
+It is always evaluated before the \var{statement} itself.  The value of a
+tagged statement is that of the \var{statement}.
+\begin{urbiscript}
+id(Tag.new):id(2);
+[00015631] *** Tag<tag_3>
+[00015631] *** 2
+[00015631] 2
+\end{urbiscript}
+
+Since job control is especially useful in interactive sessions, \us provides
+\dfn{implicit tags}: unknown single identifiers auto-instantiate a fresh
+\refObject{Tag} that will be stored as a slot of \refSlot[Tag]{tags}.
+
+\begin{urbiscript}
+// t does not exist.
+assert (!hasSlot("t"));
+t: 1;
+[00015631] 1
+// t is created.  It is part of Tag.tags.
+assert
+{
+  hasSlot("t");
+  locateSlot("t") === Tag.tags;
+};
+
+// Composite Tags cannot be created this way.
+t.t2: echo(2);
+[00015631:error] !!! lookup failed: t2
+
+// If "this" is not a Lobby, then implicit tags are not supported.
+class Foo { function f() { t1: echo (12) } }|;
+Foo.f;
+[00015631:error] !!! lookup failed: t1
+[00015631:error] !!!    called from: f
+\end{urbiscript}
+
+
+See the documentation of \refObject{Tag} for more information about the job
+control.  See \autoref{sec:tut:tags} for a tutorial on tags.
 
 \subsection{\lstinline'every'}
 \label{sec:lang:every}
