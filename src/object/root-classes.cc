@@ -200,8 +200,8 @@ namespace urbi
       EXISTING_CLASS_SETUP(true_class, true);
       EXISTING_CLASS_SETUP(false_class, false);
 
-      EXISTING_CLASS_SETUP(void_class, void);
       CLASS_SETUP(nil_class, nil);
+      EXISTING_CLASS_SETUP(void_class, void);
       CLASS_SETUP(system_class, System);
 
       ANONYMOUS_CLASS_SETUP(accepted_void_class, acceptedVoid);
