@@ -38,6 +38,39 @@ sub symbol ($)
   $res;
 }
 
+=item symbols($pattern, @file)
+
+Return the literal identifiers that follow the C<$pattern> in the
+C<@file>.  C<$pattern> is a macro/function name, not couting the
+opening paren.
+
+=cut
+
+sub symbols ($@)
+{
+  my ($symbol_tag, @file) = @_;
+
+  # The lines that declare a symbol.
+  #
+  # Skip the definition of macros.  Don't anchor at beginning of line,
+  # since we have the file:line: prefix.
+  my $symbols = `grep -E '($symbol_tag) *\\(' @file |
+		   grep -Ev '# *define  *($symbol_tag)'`;
+
+  # print STDERR "$symbols\n";
+
+  die "grep failed"
+      unless $symbols;
+
+  # The set of symbols used.
+  # Accept only identifiers followed by ')', or ','.
+  my %symbol =
+    map { $_ => 1 }
+	($symbols =~ /\b(?:$symbol_tag) *\((\w+)\s*[,)]/gm);
+
+  sort keys %symbol
+}
+
 # Check that no symbol::Symbol are called directly with literals.
 my $literals = `grep -E -n 'libport::Symbol *\\("[^"]*"\\)' @ARGV`;
 die "use SYMBOL instead of direct calls to libport::Symbol:\n$literals\n"
@@ -56,25 +89,15 @@ die "use SYMBOL instead of direct calls to libport::Symbol:\n$literals\n"
 # RETURN_OP(EQ) is used in the scanner to return tokens whose
 # semantical value is the string itself.
 my $symbol_tag =
-  'BIND|BIND_VARIADIC|BOUNCE|CAPTURE_GLOBAL|DECLARE|DECLARE_UNIX|SYMBOL|RETURN_OP';
+  'BIND|BIND_VARIADIC|BOUNCE|CAPTURE_GLOBAL|DECLARE|SYMBOL|RETURN_OP';
+my @symbol =
+  (symbols ($symbol_tag, @ARGV),
+   # For each Class, add "Class" and "asClass".
+   map { ($_, "as$_") } symbols ('URBI_CXX_OBJECT_REGISTER', @ARGV));
 
-# The lines that declare a symbol.
-#
-# Skip the definition of macros.  Don't anchor at beginning of line,
-# since we have the file:line: prefix.
-my $symbols = `grep -E '($symbol_tag) *\\(' @ARGV |
-                 grep -Ev '# *define  *($symbol_tag)'`;
-
-# print STDERR "$symbols\n";
-
-die "grep failed"
-    unless $symbols;
-
-# The set of symbols used.
-# Accept only identifiers followed by ')', or ','.
 my %symbol =
   map { $_ => symbol($_) }
-      ($symbols =~ /\b(?:$symbol_tag) *\((\w+)\s*[,)]/gm);
+  (@symbol);
 
 print <<'EOF';
 /**

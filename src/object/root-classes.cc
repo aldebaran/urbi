@@ -56,23 +56,13 @@ namespace urbi
 
     /* Help the generation of symbols.
 
-       SYMBOL(Dictionary);
        SYMBOL(Global);
        SYMBOL(System);
-       SYMBOL(Tag);
        SYMBOL(acceptedVoid);
-       SYMBOL(asCode);
-       SYMBOL(asDictionary);
-       SYMBOL(asFloat);
        SYMBOL(asGlobal);
        SYMBOL(asInteger);
-       SYMBOL(asJob);
-       SYMBOL(asList);
-       SYMBOL(asLobby);
        SYMBOL(asObject);
-       SYMBOL(asPrimitive);
        SYMBOL(asSystem);
-       SYMBOL(asTag);
        SYMBOL(asfalse);
        SYMBOL(asnil);
        SYMBOL(astrue);
@@ -138,11 +128,9 @@ namespace urbi
 #define CLASS_CREATE(What, Name)                \
       What = Object::proto->clone()
 
-#define CLASS_INIT(What, Name)                          \
-      What->slot_set_value(SYMBOL(type),                      \
-                     new String(SYMBOL_(Name)));        \
-      What->slot_set_value(SYMBOL(as ## Name),                \
-                     new Primitive(id))
+#define CLASS_INIT(What, Name)						\
+      What->slot_set_value(SYMBOL(type), new String(SYMBOL_(Name)));	\
+      What->slot_set_value(SYMBOL(as ## Name), new Primitive(id))
 
 #define CLASS_REGISTER(What, Name)                      \
       What ## _initialize();                            \
