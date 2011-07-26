@@ -27,8 +27,9 @@ namespace urbi
   template<typename T>
   inline
   UAutoValue::UAutoValue(T v)
-    : UValue(v)
-  {}
+  {
+    *this, v;
+  }
 
   inline
   UAutoValue::UAutoValue(const UValue& v)
