@@ -158,7 +158,7 @@ public:
        transmitD, transmitS, transmitL, transmitM, transmitB,
        transmitI, transmitSnd, transmitO,
        transmitVector, transmitMatrix);
-
+    UBindFunction(all, emitO);
     UBindFunction(all, loop_yield);
     UBindFunction(urbi::UContext, side_effect_free_get);
     UBindFunction(urbi::UContext, side_effect_free_set);
@@ -800,6 +800,11 @@ public:
   urbi::UObject* transmitO(UObject* o) const
   {
     return o;
+  }
+
+  void emitO(UObject* o)
+  {
+    ev.emit(o);
   }
 
   libport::vector_type
