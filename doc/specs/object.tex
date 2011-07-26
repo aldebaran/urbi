@@ -795,8 +795,8 @@ assert
 \end{urbiscript}
 
 \item['&&'](<that>)%
-  Short-circuiting logical and. If \this evaluates to true evaluate and
-  return \var{that}, otherwise return \this without evaluating \var{that}.
+  Short-circuiting logical \dfn{and}. If \this evaluates to true evaluate
+  and return \var{that}, otherwise return \this without evaluating
 \begin{urbiassert}
 (0 && "foo") == 0;
 (2 && "foo") == "foo";
@@ -806,8 +806,9 @@ assert
 \end{urbiassert}
 
 \item \lstinline+'||'(\var{that})+%
-  Short-circuiting logical or. If \this evaluates to false evaluate and
-  return \var{that}, otherwise return \this without evaluating \var{that}.
+  Short-circuiting logical \dfn{or}. If \this evaluates to false evaluate
+  and return \var{that}, otherwise return \this without evaluating
+  \var{that}.
 \begin{urbiassert}
 (0 || "foo") == "foo";
 (2 ||  1/0)  == 2;
