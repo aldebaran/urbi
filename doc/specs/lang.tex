@@ -1346,6 +1346,8 @@ var s = "abcdef";
 These core operators provide access to slots and their properties. See
 \autoref{tab:operators:object}.
 
+\grammar{getslot-exp,property-exp}
+
 \begin{operatorTable}{tab:operators:object}{Object operators}
   \operatordot\\\operatordota
   \\\hline
@@ -2544,7 +2546,7 @@ expression.  In some programming languages it is also named
 \lstinline|with|.  It is a convenient means to avoid repeating the same
 target several times.
 
-\grammar{do-stm}
+\grammar{do-exp}
 
 It evaluates the \var{block}, with \this denoting the value of the
 \var{expression}, as shown below.  The whole construct evaluates to the

@@ -19,16 +19,25 @@
 
 #:lvalue
 <lvalue>
-  ::= (<expression> ".")* <identifier>
+  ::= (<primary-expression> ".")* <identifier>
 #:end
 
 #:primary
 <primary-expression>
   ::= <assert-expression>
+    | <block>
+    | <do-expression>
     | <function-expression>
+    | <getslot-expression>
     | <literal-expression>
+    | <postfix-expression>
     | <property-expression>
     | <watch-expression>
+#:exp
+
+#:getslot
+<getslot-expression>
+  ::= (<primary-expression> ".")? "&" <identifier>
 #:exp
 
 #:comparison
@@ -58,6 +67,12 @@
 <assert-expression>
   ::= "assert" "(" <expression> ")"
     | "assert" "{" (<expression> (";" <expression>)* ";"?)? "}"
+#:exp
+
+#:postfix
+<postfix-expression>
+  ::= <lvalue> "++"
+    | <lvalue> "--"
 #:exp
 
 #:property
@@ -92,9 +107,9 @@
 #:end
 
 #:do
-<do-statement>
+<do-expression>
   ::= "do" "(" <expression ")" <block>
-#:stm
+#:exp
 
 #:forn
 <for-statement>
