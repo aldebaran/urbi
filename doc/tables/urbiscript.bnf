@@ -117,7 +117,7 @@
 
 #:tag
 <tag-statement>
-  ::= <expression> ":" <statement>
+  ::= <primary-expression> ":" <statement>
 #:stm
 
 #:timeout

@@ -389,7 +389,7 @@ stmt.opt:
 
 
 stmt:
-  exp ":" stmt
+  primary-exp ":" stmt
   {
     $$ = new ast::TaggedStmt(@$, $1, MAKE(scope, @$, $3));
   }

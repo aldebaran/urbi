@@ -58,28 +58,6 @@ t.stop("result");
 assert(res == "result");
 \end{urbiscript}
 
-Be extremely cautious, the precedence rules can be misleading:
-\lstinline|\var{var} = \var{tag}: \var{exp}| is read as
-\lstinline|(\var{var} = \var{tag}): \var{exp}| (i.e., defining \var{var} as
-an alias to \var{tag} and using it to tag \var{exp}), not as
-\lstinline|\var{var} = { \var{tag}: \var{exp} }|.  Contrast the following
-example, which is most probably an error from the user, with the previous,
-correct, one.
-
-\begin{urbiscript}[firstnumber=1]
-var t = Tag.new("t")|;
-var res;
-res = t: every(1s) echo("computing"),
-sleep(2.2s);
-[00000001] *** computing
-[00000002] *** computing
-[00000003] *** computing
-
-t.stop("result");
-assert(res == "result");
-[00000004:error] !!! failed assertion: res == "result" (Tag<t> != "result")
-\end{urbiscript}
-
 
 \subsubsection{Block/unblock}
 \label{sec:specs:tag:block}
