@@ -163,11 +163,11 @@ override the default behavior.
 
 \section{\command{urbi} --- Running an Urbi Server}
 \label{sec:tools:urbi}
+\index{urbi@\command{urbi}}
 
 The \command{urbi} program launches an \urbi server, for either batch,
-interactive, or network-based executions.  It is subsumed by, but
-simpler to use than, \command{urbi-launch}
-(\autoref{sec:tools:urbi-launch}).
+interactive, or network-based executions.  It is subsumed by, but simpler to
+use than, \command{urbi-launch} (\autoref{sec:tools:urbi-launch}).
 
 \subsection{Options}
 
@@ -340,6 +340,7 @@ the second one triggers the default behavior.
 
 \section{\command{urbi-image} --- Querying Images from a Server}
 \label{sec:tools:urbi-image}
+\index{urbi-image@\command{urbi-image}}
 
 \begin{shell}
 urbi-image \var{option}...
@@ -382,6 +383,7 @@ from its camera.
 
 \section{\command{urbi-launch} --- Running a UObject}
 \label{sec:tools:urbi-launch}
+\index{urbi-launch@\command{urbi-launch}}
 
 The \command{urbi-launch} program launches an \urbi system.  It is
 more general than \command{urbi} (\autoref{sec:tools:urbi}):
@@ -500,6 +502,7 @@ are supported.
 
 \section{\command{urbi-ping} --- Checking the Delays with a Server}
 \label{sec:tools:urbi-ping}
+\index{urbi-ping@\command{urbi-ping}}
 
 \begin{shell}
 urbi-ping \var{option}... [\var{host}] [\var{interval}] [\var{count}]
@@ -531,6 +534,7 @@ to come back.
 
 \section{\command{urbi-send} --- Sending \us Commands to a Server}
 \label{sec:tools:urbi-send}
+\index{urbi-send@\command{urbi-send}}
 
 \begin{shell}
 urbi-send \var{option}...
@@ -565,6 +569,7 @@ as \key{C-c} under a Unix terminal).
 
 \section{\command{urbi-sound} --- Querying Sounds from a Server}
 \label{sec:tools:urbi-sound}
+\index{urbi-sound@\command{urbi-sound}}
 
 \begin{shell}
 urbi-sound \var{option}...
@@ -602,6 +607,7 @@ played.
 
 \section{\command{umake} --- Compiling UObject Components}
 \label{sec:tools:umake}
+\index{umake@\command{umake}}
 
 The \command{umake} programs builds loadable modules, UObjects, to be
 later run using \command{urbi-launch}
@@ -698,6 +704,8 @@ Otherwise, the argument is passed as is to \command{make}.
 
 \subsection{\command{umake} Wrappers}
 \label{sec:tools:umake:wrappers}
+\index{umake-deepclean@\command{umake-deepclean@}}
+\index{umake-shared@\command{umake-shared@@}}
 
 As a convenience for common \command{umake} usages, some wrappers are
 provided:

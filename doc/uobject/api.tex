@@ -214,6 +214,7 @@ named \lstinline|init| with the appropriate number of arguments.
 \subsection{Simple binding}
 \label{sec:uobject:simple-binding}
 You can register any member function of your \UObject using the macro
+\lstindex{UBindFunction}:
 
 % Fix line wrap.
 \lstinline|UBindFunction(\var{class-name}, \var{function-name})|.
@@ -239,7 +240,7 @@ The procedure to register new types to this system is explained in
 
 \subsection{Multiple bindings}
 If you have multiple functions to bind, you can use the
-\lstinline|UBindFunctions| macro to bind multiple functions at once:
+\lstindex{UBindFunctions} macro to bind multiple functions at once:
 
 \lstinline|UBindFunctions(\var{class-name}, \var{function1}, \var{function2}...)|.
 
@@ -250,6 +251,7 @@ thus block everything until they return.
 
 If you wish to bind a function that requires a non-negligible amount of time
 to execute, you can have it execute in a separate thread by calling
+\lstindex{UBindThreadedFunction}:
 
 % Separate line since lstinline does not word-wrap and this one is quite long.
 \lstinline|UBindThreadedFunction(\var{class-name}, \var{function-name}, \var{lock-mode})|.
@@ -298,7 +300,8 @@ the \lstinline{setThreadLimit} function.
 \section{Notification of a variable change or access}
 \label{sec:uobject:uvar-notify}
 You can register a function that will be called each time a variable is
-modified by calling \lstinline|UNotifyChange(\var{var}, \var{func})|.
+modified by calling \lstindex{UNotifyChange}:
+\lstinline|UNotifyChange(\var{var}, \var{func})|.
 
 \begin{itemize}
 \item \var{var} must be either the name of an \UVar, or an \UVar itself.
@@ -307,13 +310,13 @@ will be called each time the \UVar receives a new value.
 \end{itemize}
 
 The function can take 0 or 1 argument. If the argument is of type
-\lstinline{UVar&}, then the function will receive the \UVar that was passed to
-\lstinline{UNotifyChange}. If it is of any other type, then the new value in the
-\UVar will be converted to this type and passed to the function.
+\lstinline{UVar&}, then the function will receive the \UVar that was passed
+to \lstinline{UNotifyChange}. If it is of any other type, then the new value
+in the \UVar will be converted to this type and passed to the function.
 
 In plugin mode, there is a similar mechanism to create a \dfn{getter
   function} that will be called each time an \UVar is accessed: the
-\lstinline{UNotifyAccess} function. It has the same signature as
+\lstindex{UNotifyAccess} function. It has the same signature as
 \lstinline{UNotifyChange}, and calls the given function each time someone
 tries to access the \UVar. The function can update the value in the \UVar
 before the access takes place. Usage of \lstinline{UNotifyAccess} should be
@@ -322,16 +325,16 @@ disrupts the data flow between \UObject.
 
 
 You can remove all notifies associated to any given \UVar by calling its
-\lstinline{unnotify} function.
+\lstindex{unnotify} function.
 
 
 \section{Data-flow based programming: exchanging UVars}
 
-The \lstinline{UNotifyChange} and \lstinline{UNotifyAccess} features
-can be used to link multiple UObjects together, and perform data-flow
-based programming: the \lstinline{UNotifyChange} can be called to
-monitor UVars from other UObjects.  Those UVars can be transmitted
-through bound function calls.
+The \lstinline{UNotifyChange} and \lstinline{UNotifyAccess} features can be
+used to link multiple UObjects together, and perform data-flow based
+programming: the \lstinline{UNotifyChange} can be called to monitor UVars
+from other UObjects.  Those UVars can be transmitted through bound function
+calls.
 
 One possible pattern is to have each data-processing UObject take its
 input from monitored UVars, given in its constructor, and output the
@@ -384,9 +387,9 @@ synchronously in cascade to update the state of the intermediate components.
 
 \urbi provides a second and more standard way to perform data-flow
 programming.  In this approach, inputs of a component are declared as local
-InputPort, and the binding between this InputPort and the output of another
-component is done in \us using the \lstinline|>>| operator between two
-\UVar:
+\lstindex{InputPort}, and the binding between this InputPort and the output
+of another component is done in \us using the \lstinline|>>| operator
+between two \UVar:
 
 \begin{cxx}
 class ObjectTracker: public urbi::UObject
@@ -448,15 +451,18 @@ the statistics.
 
 The API provides two methods to have a function called periodically:
 \begin{cxxapi}
-\item[void urbi::UObject::USetUpdate(ufloat period)] Set up a timer that
-  calls the virtual method \lstinline{UObject::update()} with the specified
-  period (in milliseconds).  Disable updates if \var{period} is -1.
+\item[void urbi::UObject::USetUpdate(ufloat period)]%
+  \index{USetUpdate@\lstinline{USetUpdate}!\Cxx}%
+  Set up a timer that calls the virtual method \lstinline{UObject::update()}
+  with the specified period (in milliseconds).  Disable updates if
+  \var{period} is -1.
 
-\item[urbi::TimerHandle urbi::UObject::USetTimer<T>(ufloat period, void (T::*fun)())]
+\item[urbi::TimerHandle urbi::UObject::USetTimer<T>(ufloat period, void (T::*fun)())]%
+  \index{USetTimer@\lstinline{USetTimer}!\Cxx}%
   Invoke an UObject member function \var{fun} every \var{period}
   milliseconds.  \var{fun} is a regular member-function pointer, for
-  instance \lstinline|MyUObject::my_function|.
-  The function returns a \lstinline|TimerHandle| that can be passed to the
+  instance \lstinline|MyUObject::my_function|.  The function returns a
+  \lstinline|TimerHandle| that can be passed to the
   \lstinline|UObject::removeTimer(h)| function to disable the timer.
 \end{cxxapi}
 
@@ -466,7 +472,7 @@ In \urbi, a variable can have a different meaning depending on whether you
 are reading or writing it: you can use the same variable to represent the
 target value of an actuator and the current value measured by an associated
 sensor. This special mode is activated by the \UObject defining the variable
-by calling \lstinline{UOwned} after calling \lstinline{UBindVar}. This call
+by calling \lstinline{UOwned} after calling \lstindex{UBindVar}. This call
 has the following effects:
 \begin{itemize}
 \item When \urbi code or code in other modules read the variable, they read
@@ -487,7 +493,8 @@ compatible type to it, and the new value will be visible in \us.  Similarly,
 you can cast the \UVar (or use the \lstinline{as()} method) to convert the
 current \us value held to any compatible type.
 
-Compatible types are the same as for bound functions (see \autoref{sec:uobject:simple-binding} and \autoref{sec:extend-cast-system}).
+Compatible types are the same as for bound functions (see
+\autoref{sec:uobject:simple-binding} and \autoref{sec:extend-cast-system}).
 
 \begin{cxx}
 // Set the camera format to 0 if it is 1.
@@ -501,8 +508,8 @@ Some care must be taken in remote mode: changes on the variable coming from
 \urbi code or an other module can take time to propagate to the \UVar. By
 default, all changes to the value will be sent to the remote \UObject. To
 have more control on the bandwidth used, you can disable the automatic
-update by calling \lstinline|unnotify()|. Then you can get the value on
-demand by calling \lstinline|UVar::syncValue()|.
+update by calling \lstindex{unnotify}. Then you can get the value on demand
+by calling \lstinline|UVar::syncValue()|.
 
 \begin{cxx}
 UVar v("Global", "x");
@@ -526,8 +533,8 @@ reading and writing the appropriate \lstinline{UProp} object in the
 
 The \UEvent class can be used to create and emit \us events. Instances are
 created and initialized exactly as \UVar: either by using the
-\lstinline{UBindEvent} macro, or by calling one of its constructors or the
-\lstinline{init} function.
+\lstindex{UBindEvent} macro, or by calling one of its constructors or the
+\lstindex{init} function.
 
 Once initialized, the \lstinline{emit} function will trigger the emission of
 the associated \us event. It can be called with any number of arguments, of
