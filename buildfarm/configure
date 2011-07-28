@@ -69,6 +69,10 @@ if $(older "$DIR_BUILD/Makefile" "$0"); then
     "$DOC"                                      \
     --enable-headers-install                    \
     CPPFLAGS="$CPPFLAGS" LDFLAGS="$LDFLAGS" ||
-  cat >&2 config.log
+  {
+    sta=$?
+    cat >&2 config.log
+    exit $sta
+  }
   cd $here
 fi
