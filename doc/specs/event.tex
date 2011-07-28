@@ -268,9 +268,9 @@ and \refSlot{syncEmit} for details about the synchronicity of the handling.
 \begin{urbiunchecked}
 \var{e}
   .onEvent(
-    closure (var '$evt', var '$payload')                 { \var{cond}  },
-    closure (var '$evt', var '$payload', var '$pattern') { \var{enter} },
-    closure (var '$evt', var '$payload', var '$pattern') { \var{leave} },
+    closure (var '$event', var '$payload')                 { \var{cond}  },
+    closure (var '$event', var '$payload', var '$pattern') { \var{enter} },
+    closure (var '$event', var '$payload', var '$pattern') { \var{leave} },
     false)
 \end{urbiunchecked}
 

@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1475 utf-8
+personal_ws-1.1 en 1483 utf-8
 aaa
 abc
 abcd
@@ -99,6 +99,7 @@ asString
 AST
 asTimeout
 asTopLevelPrintable
+asToplevelPrintable
 ASTs
 asuobjects
 asUValue
@@ -460,6 +461,7 @@ getLine
 getLocal
 getLocale
 getLocalSlot
+getLocalSlotValue
 getMine
 getOne
 getPeriod
@@ -467,6 +469,8 @@ getPosition
 getProperty
 getSender
 getSlot
+getslot
+getSlotValue
 getStackFrame
 getStats
 getTarget
@@ -833,6 +837,7 @@ odometry
 odometryAlpha
 odometryDelta
 ofzo
+oget
 OgreMain
 OIS
 ok
@@ -1066,6 +1071,7 @@ setAngle
 setBypass
 setConfigValue
 setConstSlot
+setConstSlotValue
 setDCMShift
 setDCMWrite
 setenv
@@ -1081,6 +1087,7 @@ setProtos
 setRow
 setSideEffectFree
 setSlot
+setSlotValue
 setThreadLimit
 setTrace
 setValue
@@ -1090,6 +1097,7 @@ shiftedTime
 shiftValue
 shoulderPitchR
 shoulderRollR
+showBacktrace
 SIGINT
 SIGKILL
 sigmoid
