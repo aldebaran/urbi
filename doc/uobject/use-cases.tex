@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2009-2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -397,25 +397,25 @@ int servohub::update()
 \end{cxx}
 
 \section{Writing a Camera Device}
+\index{camera}
 
 A camera device is an UObject whose \lstinline{val} field is a binary
-object. The \urbi kernel itself doesn't make any difference between
-all the possible binary formats and data type, but the API provides
-image-specific structures for convenience. You must be careful about
-memory management. The \lstinline{UBinary} structure handles its own
-memory: copies are deep, and the destructor frees the associated
-buffer. The \lstinline{UImage} and \lstinline{USound} structures do
-not.
+object. The \urbi kernel itself doesn't make any difference between all the
+possible binary formats and data type, but the API provides image-specific
+structures for convenience. You must be careful about memory management. The
+\lstinline{UBinary} structure handles its own memory: copies are deep, and
+the destructor frees the associated buffer. The \lstinline{UImage} and
+\lstinline{USound} structures do not.
 
 Let's suppose we have an underlying camera API with the following functions:
 \begin{cxxapi}
-\item[bool initialize (int id)]\\
+\item[bool initialize (int id)]
   Initialize the camera with given ID.
-\item[int getWidth (int id)]\\
+\item[int getWidth (int id)]
   Return image width.
-\item[int getHeight (int id)]\\
+\item[int getHeight (int id)]
   Return image height.
-\item[char* getImage (int id)]\\
+\item[char* getImage (int id)]
   Get image buffer of format RGB24.  The buffer returned is always the
   same and doesn't have to be freed.
 \end{cxxapi}
@@ -540,9 +540,12 @@ after assigning the \lstinline{UBinary} to the \lstinline{UVar}.
 
 \subsection{Optimization in Plugin Mode}
 
-In plugin mode, it is possible to access the buffer used by the kernel
-by casting the \lstinline{UVar} to a \lstinline{UImage}. You can
-modify the content of the kernel buffer but no other argument.
+In plugin mode with 0-copy enabled (see \autoref{sec:uob:api:0copy}), in
+order to avoid copying images, you can get direct access to the internal
+buffer by casting the \lstinline{UVar} to a \lstinline{const UBinary&}, from
+which you can get the \lstinline{image}.
+
+You cannot modify it directly.
 
 \section{Writing a Speaker or Microphone Device}
 

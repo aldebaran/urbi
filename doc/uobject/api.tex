@@ -539,22 +539,27 @@ The \UObject API is thread-safe in both plugin and remote mode: All API
 calls including operations on \UVar can be performed from any thread.
 
 \section{Using binary types}
+\index{sound}
+\index{image}
 
 \urbi can store binary objects of any type in a generic container, and
 provides specific structures for sound and images. The generic containers is
-called \UBinary and is defined in the \file{urbi/ubinary.hh} header. It
+called \UBinary and is defined in the \file{urbi/ubinary.hh} header.  It
 contains an enum field type giving the type of the binary
-(\lstinline{UNKNOWN}, \lstinline{SOUND} or \lstinline{IMAGE}), and an union
-of a \USound and \UImage struct containing a pointer to the data, the size
-of the data and type-specific meta-information.
+(\lstindex{UNKNOWN}, \lstindex{SOUND} or \lstindex{IMAGE}), and an union of
+a \USound and \UImage struct containing a pointer to the data, the size of
+the data and type-specific meta-information.
 
 \subsection{UVar conversion and memory management}
 The \UBinary manages its memory: when destroyed (or going out-of-scope), it
 frees all its allocated data. The \USound and \UImage do not.
 
-Reading an \UBinary from a \UVar, and writing a \UBinary, \USound or \UImage
-to an \UVar performs a deep-copy of the data (by default, see below).
+\index{deep copy}
+By default, reading an \UBinary from a \UVar, and writing a \UBinary,
+\USound or \UImage to an \UVar performs a deep-copy of the data.  See
+\autoref{sec:uob:api:0copy} to avoid this deep-copy in plugin-mode.
 
+\index{shallow copy}
 Reading a \USound or \UImage from an \UVar directly will perform a shallow
 copy from the internal data. The structure content is only guaranteed to be
 valid until the function returns, and should not be modified.
@@ -614,6 +619,8 @@ void SoundAlgorithm::onData(UVar& v)
 \end{cxx}
 
 \subsection{0-copy mode}
+\label{sec:uob:api:0copy}
+
 In plugin mode, you can setup any \UVar in 0-copy mode by calling
 \lstinline{setBypass(true)}. In this mode, binary data written to the \UVar
 is not copied, but a reference is kept.  As a consequence, the data is only
