@@ -16,20 +16,15 @@
 #ifndef RUNNER_STATE_HH
 # define RUNNER_STATE_HH
 
-// declare object::call_stack_type
-# include <object/urbi-exception.hh>
+# include <object/urbi-exception.hh> // object::call_stack_type.
 
-// declare object::rTag & object::rLobby
-# include <urbi/object/fwd.hh>
+# include <urbi/object/fwd.hh> // object::rTag & object::rLobby.
 
-// declare sched::rTag
-# include <sched/fwd.hh>
+# include <sched/fwd.hh> // sched::rTag.
+# include <sched/tag.hh> // sched::prio_type & sched::Tag.
 
-// declare sched::prio_type & sched::Tag
-# include <sched/tag.hh>
-
-// declare runner::Stacks
-# include <runner/stacks.hh>
+# include <runner/fwd.hh>
+# include <runner/stacks.hh>// runner::Stacks.
 
 namespace runner
 {
@@ -97,7 +92,7 @@ namespace runner
 
   public:
     /// Stack of Urbi tags.
-    typedef std::vector<object::rTag> tag_stack_type;
+    typedef runner::tag_stack_type tag_stack_type;
 
     /// Apply a tag to the current job tag stack.
     ///

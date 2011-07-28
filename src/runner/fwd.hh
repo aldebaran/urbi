@@ -16,7 +16,9 @@
 #ifndef RUNNER_FWD_HH
 # define RUNNER_FWD_HH
 
+# include <vector>
 # include <libport/intrusive-ptr.hh>
+# include <urbi/object/fwd.hh>
 
 namespace runner
 {
@@ -26,6 +28,9 @@ namespace runner
 
   /// Smart pointer shorthand
   typedef libport::intrusive_ptr<Job> rJob;
+
+  /// Stack of Urbi tags.
+  typedef std::vector<object::rTag> tag_stack_type;
 
 } // namespace runner
 

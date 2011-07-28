@@ -20,7 +20,7 @@
 # include <urbi/object/fwd.hh>
 
 // FIXME: This link to headers which are not installed.
-# include <runner/job.hh>
+# include <runner/fwd.hh>
 
 namespace urbi
 {
@@ -46,7 +46,7 @@ namespace urbi
       std::string status() const;
       rObject stats() const;
       void resetStats();
-      const runner::State::tag_stack_type tags() const;
+      const runner::tag_stack_type tags() const;
       void terminate();
       libport::ufloat timeShift() const;
       void waitForChanges();
