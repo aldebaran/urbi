@@ -87,22 +87,6 @@ namespace urbi
     Macro(UValue);                              \
     Macro(Vector);
 
-    /*
-      Help the generation of precompiled symbols.
-
-      SYMBOL(Call)
-      SYMBOL(Code)
-      SYMBOL(Float)
-      SYMBOL(Integer)
-      SYMBOL(Job)
-      SYMBOL(List)
-      SYMBOL(Lobby)
-      SYMBOL(Object)
-      SYMBOL(Primitive)
-      SYMBOL(String)
-
-    */
-
     class Slot;
     typedef libport::intrusive_ptr<Slot> rSlot;
 
