@@ -84,21 +84,21 @@ esac
 
 case $BUILDFARM_COMPILER in
   (vcxx2005|vcxx2008)
-  CPPFLAGS='-I/home/build/local_wine/winroot/opt/include'
-  LDFLAGS='-L/home/build/local_wine/winroot/opt/lib'
-  CONFIGUREFLAGS="
-  'AR=lib.exe'                                                    \
-  CC='ccache cl.exe'                                            \
-  CC_FOR_BUILD=gcc                                              \
-  CXX='ccache cl.exe'                                           \
-  LD=link.exe                                                   \
-  DUMPBIN='/cygdrive/c/$BUILDFARM_COMPILER/VC/bin/link.exe -dump -symbols'    \
-  RANLIB=:                                                      \
-  --enable-shared                                               \
-  --disable-static                                              \
-  --enable-dependency-tracking                                  \
-  --with-boost=/home/build/local/boost/boost_1_39               \
-  host_alias=mingw32                                            \
+  CPPFLAGS= #'-I/home/build/local_wine/winroot/opt/include'
+  LDFLAGS= #'-L/home/build/local_wine/winroot/opt/lib'
+  CONFIGUREFLAGS="                                      \
+  AR='lib.exe'                                          \
+  CC='ccache cl.exe'                                    \
+  CC_FOR_BUILD=gcc                                      \
+  CXX='ccache cl.exe'                                   \
+  LD=link.exe                                           \
+  DUMPBIN=dumpbin.exe                                   \
+  RANLIB=:                                              \
+  --enable-shared                                       \
+  --disable-static                                      \
+  --enable-dependency-tracking                          \
+  --with-boost=/home/build/local/boost/boost_1_39       \
+  host_alias=mingw32                                    \
   --host=mingw32"
 esac
 
