@@ -13,7 +13,7 @@ stderr ()
 run ()
 {
   stderr "running: $*"
-  "$@"
+  eval "$@"
 }
 
 fatal ()
@@ -29,14 +29,17 @@ older ()
 
 set -ex
 
+local=$HOME/local
+export PKG_CONFIG_PATH=$local/pkgconfig/$BUILDFARM_MODE:$local/pkgconfig
+
 BOOST=$(pkg-config --print-errors boost-1.38 --variable=prefix)
 CC='ccache gcc'
 CXX='ccache g++'
-CPPFLAGS="-I'$HOME/local/include'"
-LDFLAGS="-I'$HOME/local/lib'"
+CPPFLAGS="-I'$local/include'"
+LDFLAGS="-I'$local/lib'"
 
 case $(uname -n) in
-  (bf-4) DOC=;;
+  (bf-3) DOC=;;
   (*)    DOC='--disable-doc';;
 esac
 
@@ -44,6 +47,26 @@ case $BUILDFARM_MODE in
   (release) COMPILATION_MODE=speed;;
   (debug)   COMPILATION_MODE=debug;;
   (*)   fatal "invalid buildfarm mode: $BUILDFARM_MODE"
+esac
+
+case $BUILDFARM_COMPILER in
+  (vcxx2005|vcxx2008)
+  CPPFLAGS='-I/home/build/local_wine/winroot/opt/include'
+  LDFLAGS='-L/home/build/local_wine/winroot/opt/lib'
+  CONFIGUREFLAGS="
+  'AR=lib.exe'                                                    \
+  CC='ccache cl.exe'                                            \
+  CC_FOR_BUILD=gcc                                              \
+  CXX='ccache cl.exe'                                           \
+  LD=link.exe                                                   \
+  DUMPBIN='/cygdrive/c/$BUILDFARM_COMPILER/VC/bin/link.exe -dump -symbols'    \
+  RANLIB=:                                                      \
+  --enable-shared                                               \
+  --disable-static                                              \
+  --enable-dependency-tracking                                  \
+  --with-boost=/home/build/local/boost/boost_1_39               \
+  host_alias=mingw32                                            \
+  --host=mingw32"
 esac
 
 # Dead links are troublesome.  There can be some for instance with
@@ -65,10 +88,13 @@ if $(older "$DIR_BUILD/Makefile" "$0"); then
   run "$DIR_SOURCE/configure"                   \
     --prefix=/prefix                            \
     --enable-compilation-mode=$COMPILATION_MODE \
-    --with-boost="$BOOST"                       \
+    --with-boost="'$BOOST'"                     \
     "$DOC"                                      \
     --enable-headers-install                    \
-    CPPFLAGS="$CPPFLAGS" LDFLAGS="$LDFLAGS" ||
+    CPPFLAGS="'$CPPFLAGS'"                      \
+    LDFLAGS="'$LDFLAGS'"                        \
+    $CONFIGUREFLAGS                             \
+  ||
   {
     sta=$?
     cat >&2 config.log
