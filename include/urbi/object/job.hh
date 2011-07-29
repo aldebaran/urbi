@@ -49,7 +49,6 @@ namespace urbi
       const runner::tag_stack_type tags() const;
       void terminate();
       libport::ufloat timeShift() const;
-      void waitForChanges();
       void waitForTermination();
 
     private:

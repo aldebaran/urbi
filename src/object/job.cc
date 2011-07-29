@@ -58,7 +58,6 @@ namespace urbi
       BIND(tags);
       BIND(terminate);
       BIND(timeShift);
-      BIND(waitForChanges);
       BIND(waitForTermination);
     }
 
@@ -195,13 +194,6 @@ namespace urbi
     {
       if (value_)
         ::kernel::runner().yield_until_terminated(*value_);
-    }
-
-    void
-    Job::waitForChanges()
-    {
-      if (value_)
-        ::kernel::runner().yield_until_things_changed();
     }
 
     void

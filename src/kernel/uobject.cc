@@ -963,11 +963,12 @@ namespace urbi
       ::kernel::runner().yield_for(delay);
     }
 
+    ATTRIBUTE_DEPRECATED
     void KernelUContextImpl::yield_until_things_changed() const
     {
       CHECK_MAINTHREAD();
       INTERRUPTIBLE;
-      ::kernel::runner().yield_until_things_changed();
+      ::kernel::runner().yield();
     }
 
 #undef INTERRUPTIBLE
