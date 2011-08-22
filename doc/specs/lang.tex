@@ -118,7 +118,7 @@ underscore (\lstinline|_|) characters, not starting by a digit.
 Additionally, identifiers must not match any of the \us reserved
 words\footnote{
 %%
-  The only exception to this rule is \lstinline|new|, which can be
+  The only exception to this rule is \lstinline{new}, which can be
   used as the method identifier in a method call.
 %%
 } documented in \autoref{sec:lang:keywords}. Identifiers can also be written
@@ -172,11 +172,11 @@ for instance.  They are listed in \autoref{tab:keywords}.
 
 \subsubsection{Angles}
 
-\dfn[angle]{Angles} are floats (see \autoref{sec:lang:float})
-followed by an angle unit. They are simply equivalent to the same
-float, expressed in radians. For instance, \lstinline|180deg| (180
-degrees) is equal to \lstinline|pi|. Available units and their
-equivalent are presented in \autoref{tab:angle}.
+\dfn[angle]{Angles} are floats (see \autoref{sec:lang:float}) followed by an
+angle unit. They are simply equivalent to the same float, expressed in
+radians. For instance, \lstinline|180deg| (180 degrees) is equal to
+\lstinline{pi}. Available units and their equivalent are presented in
+\autoref{tab:angle}.
 
 \begin{table}[\floatposh]
   \centering
@@ -521,7 +521,7 @@ See \refObject{String} for more details.
 Literal \dfn{tuples} are represented with a comma-separated, potentially
 empty list of arbitrary elements enclosed in parenthesis (\lstinline|()|),
 as shown in the listing below.  One extra comma can be added after the last
-element.  To avoid confusion between a 1 member \lstinline|Tuple| and a
+element.  To avoid confusion between a 1 member \lstinline{Tuple} and a
 parenthesized expression, the extra comma must be added.  See
 \refObject{Tuple} for more details.
 
@@ -546,16 +546,16 @@ Objects meant to serve as prototypes are best defined using the
 \grammar{class-exp, lvalue-end, block-exp}
 
 This results in the (constant) definition of the name \var{lvalue} in the
-current context (\lstinline|class| construct can be used inside a scope or
+current context (\lstinline{class} construct can be used inside a scope or
 in an object) with:
 \begin{itemize}
-\item a slot named \lstinline|type| which is a the trailing component of
+\item a slot named \lstinline{type} which is a the trailing component of
   \var{lvalue} as a \refObject{String};
 \item a slot named \lstinline|as\var{type}| that returns \this.
 \item the list of prototypes is equal to the list \var{prototypes} that
   served as parent, defaulting to \refObject{Object};
 \item the \var{block} is evaluated in the context of this object, as with a
-  \lstinline|do|-block;
+  \lstinline{do}-block;
 \item the value of the whole statement is the newly defined object.
 \end{itemize}
 
@@ -984,13 +984,13 @@ valueAlias;
 [00002301] 0
 \end{urbiscript}
 
-It would be traitorous for most users that \lstinline|valueAlias| be equal
+It would be traitorous for most users that \lstinline{valueAlias} be equal
 to 10 too.  That's why \slot[Float]{'+='} (which is actually
 \refSlot[Object]{'+='}) simply bounces to \slot[Float]{'+'}.  The ``net
 result'' of \lstinline|value += 10| is therefore
 \lstinline|value = value.'+'(10)|, i.e., a \emph{new} Float is computed from
-\lstinline|0.'+'(10)|, and \lstinline|value| is rebound to it.  The binding
-from \lstinline|valueAlias| to \lstinline|0| is left as is.
+\lstinline|0.'+'(10)|, and \lstinline{value} is rebound to it.  The binding
+from \lstinline{valueAlias} to \lstinline|0| is left as is.
 
 \paragraph{Mutable Values}
 On the contrary, large, ``updatable'' objects should provide an
@@ -1307,8 +1307,8 @@ These operators work on containers and their members. See
 \end{operatorTable}
 
 The \dfn{in} and \dfn{not in} operators test the membership of an element in
-a container.  They bounce to the container's \lstinline|has| and
-\lstinline|hasNot| methods (see \refObject{Container}.  They are
+a container.  They bounce to the container's \lstinline{has} and
+\lstinline{hasNot} methods (see \refObject{Container}.  They are
 non-associative.
 
 \begin{urbiassert}
@@ -1453,7 +1453,7 @@ expressions, nested, and so forth.
 
 \subsection{Local variables}
 
-\dfn{Local variables} are introduced with the \lstinline|var| keyword,
+\dfn{Local variables} are introduced with the \lstinline{var} keyword,
 followed by an identifier (see \autoref{sec:lang:id}) and an optional
 initialization value assignment. If the initial value is omitted, it
 defaults to \refObject{void}. Variable declarations evaluate to the
@@ -1524,7 +1524,7 @@ floats and strings, and can be handled as such.  This is different from most
 \langC-like languages.  The syntax to declare named or \dfn{anonymous functions}
 is a follows:
 
-\grammar{function-end, block-exp}
+\grammar{function-end, block-exp, return-stm}
 
 In words: One can create an anonymous function thanks to the
 \lstindex{function} keyword (or \lstindex{closure}, see
@@ -1634,26 +1634,24 @@ function g3()
 g3(); // Returns void, so nothing is printed.
 \end{urbiscript}
 
-You are encouraged no to use \lstinline{return} when the control flow needs
-not be interrupted, see \autoref{sec:guideline:return}.
+Avoid useless \lstinline{return}s, see \autoref{sec:guideline:return}.
 
 \subsection{Call messages}
 \label{sec:lang:call}
 
-Functions can access meta-information about how they were called, through a
-\lstinline|CallMessage| object. The \dfn{call message} associated with a
-function can be accessed with the \lstindex{all} keyword. It contains
+Functions can access meta-information about how they were called, via a
+\refObject{CallMessage} object. The \dfn{call message} associated with a
+function can be accessed with the \lstindex{call} keyword. It contains
 several information such as not-yet evaluated arguments, the name of the
 function, the target \ldots
 
 \subsection{Strictness}
 
-\us features two different function calls:
-\dfn[function!strict]{strict} function calls, effective arguments are
-evaluated before invoking the function, and \dfn[function!lazy]{lazy}
-function calls, arguments are passed as-is to the function.  As a
-matter of fact, the difference is rather that there are strict
-functions and lazy functions.
+\us features two different function calls: \dfn[function!strict]{strict}
+function calls, effective arguments are evaluated before invoking the
+function, and \dfn[function!lazy]{lazy} function calls, arguments are passed
+as-is to the function.  As a matter of fact, the difference is rather that
+there are strict functions and lazy functions.
 
 Functions defined with a (possibly empty) list of formal arguments in
 parentheses are strict: the effective arguments are first evaluated,
@@ -1734,9 +1732,9 @@ assert
 \end{urbiscript}
 
 \noindent
-Actually, even \langC supports this, with \lstinline|n| being in simple global
-variable.  But actually the \lstinline|cl| function has \dfn{captured} an
-access to \lstinline|n|, which will even survive the destruction of its
+Actually, even \langC supports this, with \lstinline{n} being in simple global
+variable.  But actually the \lstinline{cl} function has \dfn{captured} an
+access to \lstinline{n}, which will even survive the destruction of its
 enclosing scope:
 
 \begin{urbiscript}
@@ -1760,8 +1758,8 @@ sharing between the function and the outer environment.
 It is sometimes needed to also capture the current value of \this (and
 actually, of the current \refObject{Lobby}).  In some languages, this is
 called a \dfn{delegate}, in \us use \lstindex{closure} instead of
-\lstinline|function|.  Contrast the following two runs which differ only by
-\lstinline|function| vs. \lstinline|closure|.
+\lstinline{function}.  Contrast the following two runs which differ only by
+\lstinline{function} vs. \lstinline{closure}.
 
 \begin{urbiscript}
 {
@@ -1954,12 +1952,12 @@ There is also syntactic sugar for some of them:
 Some properties are handled by the system itself.
 
 
-\paragraph{The \lstinline|changed| property}
+\paragraph{The \lstinline{changed} property}
 
 This property is used by the system to implement the
-\lstinline|watch|-expression (\autoref{sec:lang:watch}).  It allows to
+\lstinline{watch}-expression (\autoref{sec:lang:watch}).  It allows to
 monitor when a slot is bound to new values: each time a new value is
-assigned to the monitored slot, an event \lstinline|changed| is emitted:
+assigned to the monitored slot, an event \lstinline{changed} is emitted:
 
 \begin{urbiscript}[firstnumber=1]
 var x = []|;
@@ -1982,8 +1980,8 @@ x = x|;
 \end{urbiscript}
 
 This is different from checking value \emph{updates}.  In the following
-example, \lstinline|x| is not rebound to another list, it is the content of
-the list that changes, therefore the \lstinline|changed| event is \emph{not}
+example, \lstinline{x} is not rebound to another list, it is the content of
+the list that changes, therefore the \lstinline{changed} event is \emph{not}
 fired:
 
 \begin{urbiscript}
@@ -1991,12 +1989,12 @@ x << 3;
 [00092866] [1, 2, 3]
 \end{urbiscript}
 
-To monitor changes of value, use the \lstinline|watch|-construct
+To monitor changes of value, use the \lstinline{watch}-construct
 (\autoref{sec:lang:watch}).
 
 
 
-\paragraph{The \lstinline|constant| property}
+\paragraph{The \lstinline{constant} property}
 It defines whether a slot can be assigned a new value.
 
 \begin{urbiscript}
@@ -2419,11 +2417,11 @@ statements.
 
 \section{Imperative flow control}
 
-\subsection{break}
+\subsection{\lstinline{break}}
 \label{sec:lang:break}
 
-When encountered within a loop (\lstinline|for| or a \lstinline|while|),
-\lstinline|break| makes the execution jump after the loop.
+When encountered within a loop (\lstinline{for} or a \lstinline{while}),
+\lstindex{break} makes the execution jump after the loop.
 
 \begin{urbiscript}
 {
@@ -2461,7 +2459,7 @@ breakInWhile;
 [00000007] *** 2
 \end{urbiscript}
 
-Occurrences of \lstinline|break| outside any loop is a syntax error.
+Occurrences of \lstinline{break} outside any loop is a syntax error.
 
 \begin{urbiscript}
 break;
@@ -2480,12 +2478,12 @@ for (var i : 10)
 \end{urbiscript}
 
 
-\subsection{continue}
+\subsection{\lstinline{continue}}
 \label{sec:lang:continue}
 
-When encountered within a \lstinline|for| or a \lstinline|while| loop,
-\lstinline|continue| short-circuits the rest of the loop-body, and
-runs the next iteration (if there remains one).
+When encountered within a \lstinline{for} or a \lstinline{while} loop,
+\lstindex{continue} short-circuits the rest of the loop-body, and runs the
+next iteration (if there remains one).
 
 \begin{urbiscript}
 for (var i = 0; i < 8; i++)
@@ -2520,7 +2518,7 @@ continueInWhile;
 [00000008] *** 6
 \end{urbiscript}
 
-Occurrences of \lstinline|continue| outside any loop is a syntax error.
+Occurrences of \lstinline{continue} outside any loop is a syntax error.
 
 \begin{urbiscript}
 continue;
@@ -2538,12 +2536,12 @@ for (var i : 10)
 [00000011:error] !!! syntax error: `continue' not within a loop
 \end{urbiscript}
 
-\subsection{do}
+\subsection{\lstinline{do}}
 \label{sec:lang:do}
 
-The \lstinline|do| construct changes the target (\this) when evaluating an
+The \lstindex{do} construct changes the target (\this) when evaluating an
 expression.  In some programming languages it is also named
-\lstinline|with|.  It is a convenient means to avoid repeating the same
+\lstinline{with}.  It is a convenient means to avoid repeating the same
 target several times.
 
 \grammar{do-exp}
@@ -2565,9 +2563,9 @@ do (1024)
 
 
 
-\subsection{for}
+\subsection{\lstinline{for}}
 \label{sec:lang:for}
-There are several kinds of \lstinline|for| loops:
+There are several kinds of \lstindex{for} loops:
 \begin{description}
 \item[C-like for] such as
   \lstinline|for (var i = 0; i < n; ++i) echo(i);|, see
@@ -2575,39 +2573,46 @@ There are several kinds of \lstinline|for| loops:
 \item[Range-for] also known as \dfn{foreach}-loops,
   \lstinline|for (var i : [0, 1, 2, 4]) echo(i);|, see
   \autoref{sec:lang:for:each}.
-\item[for $n$-times] for instance \lstinline|for (10) echo(10);|, see
+\item[Anonymous range-for] for instance \lstinline|for (10) echo(10);|, see
   \autoref{sec:lang:for:n}.
 \end{description}
 
-\subsubsection{C-like for}
+\subsubsection{C-like \lstinline{for}}
 \label{sec:lang:for:c}
 
-\us support the classical \langC-like \lstinline|for| construct.
+\us support the classical \langC-like \lstinline{for} construct.
+
+\grammar{forc-stm}
+
+It has the exact same behavior as \langC's \lstinline{for}.  Using the
+following names:
 
 \begin{urbiunchecked}
 for (\var{initialization}; \var{condition}; \var{increment})
   \var{body}
 \end{urbiunchecked}
 
-It has the exact same behavior as \langC's \lstinline|for|:
-
 \begin{enumerate}
 \item The \var{initialization} is evaluated.
-\item \var{condition} is evaluated. If the result is false, executions
-  jump after \lstinline|for|.
-\item \var{body} is evaluated. If \lstinline|continue| is encountered,
-  execution jumps to point 4. If \lstinline|break| is encountered,
-  executions jumps after the \lstinline|for|.
+\item \var{condition} is evaluated. If the result is false, execution
+  jumps after \lstinline{for}.
+\item \var{body} is evaluated. If \lstinline{continue} is encountered,
+  execution jumps to point 4. If \lstinline{break} is encountered,
+  execution jumps after the \lstinline{for}.
 \item The \var{increment} is evaluated.
 \item Execution jumps to point 2.
-\item The loop evaluates to \lstinline|void|.
+\item The loop evaluates to \lstinline{void}.
 \end{enumerate}
 
-\subsubsection{Range-for}
+\subsubsection{Range-\lstinline{for}}
 \label{sec:lang:for:each}
+\lstIndexTwo{in}{for}
 
 \us supports iteration over a collection with another form of the
-\lstinline|for| loop.
+\lstinline{for} loop.  This is called \dfn{foreach loops} in some
+programming languages.
+
+\grammar{foreach-stm}
 
 \begin{urbiunchecked}
 for (var \var{name} : \var{collection})
@@ -2615,9 +2620,8 @@ for (var \var{name} : \var{collection})
 \end{urbiunchecked}
 
 It evaluates \var{body} for each element in \var{collection}. The loop
-evaluates to \lstinline|void|.  Inside \var{body}, the current element
-is accessible via the \var{name} local variable. The listing below
-illustrates this.
+evaluates to \lstinline{void}.  Inside \var{body}, the current element is
+accessible via the \var{name} local variable:
 
 \begin{urbiscript}
 for (var x : [0, 1, 2, 3, 4])
@@ -2629,11 +2633,11 @@ for (var x : [0, 1, 2, 3, 4])
 [00000000] *** 16
 \end{urbiscript}
 
-This form of \lstinline|for| simply sends the \lstinline|each| message
-to \var{collection} with one argument: the function that takes the
-current element and performs \lstinline|action| over it. Thus, you can
-make any object acceptable in a \lstinline|for| by defining an
-adequate \lstinline|each| method.
+This form of \lstinline{for} simply sends the \lstinline{each} message to
+\var{collection} with one argument: the function that takes the current
+element and performs \lstinline{action} over it. Thus, you can make any
+object acceptable in a \lstinline{for} by defining an adequate
+\lstinline{each} method.
 
 \begin{urbiscript}
 var Hobbits = Object.new|
@@ -2658,18 +2662,18 @@ Hobbits.each(function (name) { echo("%s is a hobbit." % [name]) });
 [00000000] *** Sam is a hobbit.
 \end{urbiscript}
 
-\subsubsection{for \texorpdfstring{$n$}{n}-times}
+\subsubsection{Anonymous range-\lstinline{for}}
 \label{sec:lang:for:n}
 
-\us provides some support for simple replication of computations: it allows
-to repeat a loop body $n$-times.  With the exception that the loop index is
-not available within the body, \lstinline|for (n)| is equivalent to
-\lstinline|for (var i: n)|.  It supports the same flavors: \lstinline|for;|,
-\lstinline{for|}, and \lstinline|for&|.
+Iterations over a range can be performed without having to provide a
+variable name to iterate over the collection.  With the exception that the
+loop index is not available within the body, \lstinline|for (n)| is
+equivalent to \lstinline|for (var i: n)|.  It supports the same flavors:
+\lstinline|for;|, \lstinline{for|}, and \lstinline|for&|.
 
 \grammar{forn-stm}
 
-The loop evaluates to \lstinline|void|.
+The loop evaluates to \lstinline{void}.
 
 \begin{urbiassert}
 { var res = []; for (3) { res << 1; res << 2 } ; res }
@@ -2682,7 +2686,7 @@ The loop evaluates to \lstinline|void|.
         == [1, 1, 1, 2, 2, 2];
 \end{urbiassert}
 
-Note that since these \lstinline|for| loops are merely anonymous
+Note that since these \lstinline{for} loops are merely anonymous
 foreach-style loops, the argument needs not being an integer, any iterable
 value can be used.
 
@@ -2692,8 +2696,9 @@ value can be used.
 \end{urbiassert}
 
 
-\subsection{if}
+\subsection{\lstinline{if}}
 \label{sec:lang:if}
+\lstIndexTwo{else}{if}
 As in most programming languages, conditionals are expressed with
 \lstindex{if}.
 
@@ -2702,12 +2707,12 @@ As in most programming languages, conditionals are expressed with
 First the condition (\var{statements}) is evaluated; if it evaluates to a
 value which is true (\autoref{sec:truth}), evaluate the \dfn{then-clause}
 (the first \var{statements}), otherwise, if applicable, evaluate
-\dfn{else-clause} (the optional statement introduced by \lstinline|else|).
+\dfn{else-clause} (the optional statement introduced by \lstinline{else}).
 
 \begin{urbiscript}
-if (true) assert(true) else assert(false);
+if (true)  assert(true) else assert(false);
 if (false) assert(false) else assert(true);
-if (true) assert(true);
+if (true)  assert(true);
 \end{urbiscript}
 
 Beware that contrary to most programming languages \emph{there must not be a
@@ -2736,7 +2741,7 @@ assert(1 + { if (true) 3 else 4 } == 4);
 
 The condition can be any statement list.  Variables which it declares are
 visible in both the then-clause and the else-clause, but do not escape the
-\lstinline|if| construct.
+\lstinline{if} construct.
 
 \begin{urbiassert}
 {if (false) 10 else 20} == 20;
@@ -2752,15 +2757,15 @@ visible in both the then-clause and the else-clause, but do not escape the
 \end{urbiassert}
 
 
-\subsection{loop}
+\subsection{\lstinline{loop}}
 \label{sec:lang:loop}
 
 Endless loops can be created with \lstindex{loop}, which is equivalent to
 \lstinline|while (true)|.
 
-\grammar{loop-end}
+\grammar{loop-stm}
 
-The loop evaluates to \lstinline|void|.  Both sequential flavors,
+The loop evaluates to \lstinline{void}.  Both sequential flavors,
 \lstinline|loop;| and \lstinline'loop|', are supported.  The default flavor
 is \lstinline|loop;|.
 
@@ -2798,9 +2803,12 @@ is \lstinline|loop;|.
 [9, 8, 7, 6, 5, 4, 3, 2, 1, 0];
 \end{urbiassert}
 
-\subsection{switch}
+\subsection{\lstinline{switch}}
 \label{sec:lang:switch}
-The \lstinline|switch| statement in \us is similar to \langC's one.
+\lstIndexTwo{case}{switch}
+\lstIndexTwo{default}{switch}
+
+The \lstindex{switch} statement in \us is similar to \langC's one.
 
 \begin{urbiunchecked}
 switch (\var{value})
@@ -2821,14 +2829,14 @@ case. The \var{value} is evaluated first, and then the result is compared
 sequentially with the evaluation of all cases values, with the
 \lstinline|==| operator, until one comparison is true.  If such a match is
 found, the corresponding action is executed, and execution jumps after the
-\lstinline|switch|. Otherwise, the default case --- if any --- is executed,
+\lstinline{switch}. Otherwise, the default case --- if any --- is executed,
 and execution jumps after the switch. The switch itself evaluates to case
 that was evaluated, or to void if no match was found and there's no default
-case. The listing below illustrates \lstinline|switch| usage.
+case. The listing below illustrates \lstinline{switch} usage.
 
-Unlike \langC, there is no \lstinline|break| to end \lstinline|case| clauses:
+Unlike \langC, there is no \lstinline{break} to end \lstinline{case} clauses:
 execution will never span over several cases.  Since the comparisons are
-performed with the generic \lstinline|==| operator, \lstinline|switch| can
+performed with the generic \lstinline|==| operator, \lstinline{switch} can
 be performed on any comparable data type.  Actually, the comparison process
 is richer than simply using \lstinline|==|: it support pattern-matching
 (\autoref{sec:lang:pattern}).
@@ -2855,10 +2863,12 @@ sw("foobar");
 \end{urbiscript}
 % $ Pacify emacs math mode.
 
-\subsection{while}
+\subsection{\lstinline{while}}
 \label{sec:lang:while}
 
-The \lstinline|while| loop is similar to \langC's one.
+\grammar{while-stm}
+
+The \lstindex{while} loop is similar to \langC's one.
 
 \begin{urbiunchecked}
 while (\var{condition})
@@ -2866,8 +2876,8 @@ while (\var{condition})
 \end{urbiunchecked}
 
 If \var{condition} evaluation, is true, \var{body} is evaluated and
-execution jumps before the \lstinline|while|, otherwise execution
-jumps after the \lstinline|while|.
+execution jumps before the \lstinline{while}, otherwise execution
+jumps after the \lstinline{while}.
 
 \begin{urbiscript}
 var j = 3|
@@ -2881,9 +2891,9 @@ while (0 < j)
 [00000000] *** 1
 \end{urbiscript}
 
-The default flavor for \lstinline|while| is \lstinline|while;|.
+The default flavor for \lstinline{while} is \lstinline|while;|.
 
-\subsubsection{while;}
+\subsubsection{\lstinline{while;}}
 
 The semantics of
 
@@ -2900,8 +2910,8 @@ is the same as
 \end{urbiunchecked}
 
 \noindent
-as long as \var{cond} evaluates to true, or until \lstinline|break| is
-invoked.  If \lstinline|continue| is evaluated, the rest of the body
+as long as \var{cond} evaluates to true, or until \lstinline{break} is
+invoked.  If \lstinline{continue} is evaluated, the rest of the body
 is skipped, and the next iteration is started.
 
 \begin{urbiscript}
@@ -2925,7 +2935,7 @@ is skipped, and the next iteration is started.
 \end{urbiscript}
 
 
-\subsubsection{while|}
+\subsubsection{\lstinline{while|}}
 
 The semantics of
 
@@ -2941,8 +2951,8 @@ is the same as
 \var{condition} | \var{body} | \var{condition} | \var{body} | ...
 \end{urbiunchecked}
 
-The execution is can be controlled by \lstinline|break| and
-\lstinline|continue|.
+The execution is can be controlled by \lstinline{break} and
+\lstinline{continue}.
 
 \begin{urbiscript}
 {
@@ -2970,7 +2980,7 @@ The execution is can be controlled by \lstinline|break| and
 \subsection{Throwing exceptions}
 \label{sec:lang:throw}
 
-Use the \lstinline|throw| keyword to \dfn[exception!throwing]{throw
+Use the \lstindex{throw} keyword to \dfn[exception!throwing]{throw
   exceptions}, as shown below. Thrown exceptions will break the execution
 upward until they are caught, or until they reach the top-level --- as in
 \Cxx.  Contrary to \Cxx, exceptions reaching the top-level are printed, and
@@ -2991,9 +3001,10 @@ outer();
 
 \subsection{Catching exceptions}
 \label{sec:lang:catch}
+\lstIndexTwo{catch}{try}
 
 Exceptions are \dfn[exception!catching]{caught} with the
-\lstinline|try|/\lstinline|catch| construct. Its syntax is as follows:
+\lstinline{try}/\lstinline{catch} construct. Its syntax is as follows:
 
 \grammar{try-stm,catch-clause,else-clause,finally-clause,block-exp}
 
@@ -3001,7 +3012,7 @@ It consists of a first block of statements (the \dfn{try-block}), from which
 we want to catch exceptions, and one or more catch clauses to stop the
 exception (\dfn{catch-blocks}).
 
-Each \lstinline|catch| clause defines a pattern against which the thrown
+Each \lstinline{catch} clause defines a pattern against which the thrown
 exception is matched. If no pattern is specified, the catch clause matches
 systematically (equivalent to \lstinline|catch (...)| in \Cxx).  It is a
 syntax error if this catch-all clause is followed by a catch-clause with a
@@ -3019,7 +3030,7 @@ The catch-all clause, if present, must be last:
 try {} catch (var e) {} catch {};
 \end{urbiscript}
 
-Exceptions thrown from the \lstinline|try| block are matched sequentially
+Exceptions thrown from the \lstinline{try} block are matched sequentially
 against all catch clauses. The first matching clause is executed, and
 control jumps after the whole try/catch block. If no catch clause matches,
 the exceptions isn't stopped and continues upward.
@@ -3043,8 +3054,9 @@ test(51);
 [00002143:error] !!!    called from: test
 \end{urbiscript}
 
-If an \lstinline|else|-clause is specified, it is executed if the
-\lstinline|try| block did not raise an exception.
+\lstIndexTwo{else}{try}%
+If an \lstinline{else}-clause is specified, it is executed if the
+\lstinline{try} block did not raise an exception.
 
 \begin{urbiscript}
 try   { echo("try") }
@@ -3063,7 +3075,7 @@ else  { echo("else")};
 
 The value of the whole construct is:
 \begin{itemize}
-\item if the \lstinline|try| block raised an exception
+\item if the \lstinline{try} block raised an exception
   \begin{itemize}
   \item if the exception is not caught (or an exception is thrown from the
     catch-clause), then there is no value, as the control flow is broken;
@@ -3074,14 +3086,14 @@ try { throw 0; "try" } catch (0) { "catch" } else { "else" };
 [00467080] "catch"
 \end{urbiscript}
   \end{itemize}
-\item if the \lstinline|try| block finish properly, then
+\item if the \lstinline{try} block finish properly, then
   \begin{itemize}
-  \item if there is an \lstinline|else|-clause, its value.
+  \item if there is an \lstinline{else}-clause, its value.
 \begin{urbiscript}
 try { "try" } catch (0) { "catch" } else { "else" };
 [00467080] "else"
 \end{urbiscript}
-  \item otherwise the value of the \lstinline|try|-block.
+  \item otherwise the value of the \lstinline{try}-block.
 \begin{urbiscript}
 try { "try" } catch (0) { "catch" };
 [00467080] "try"
@@ -3116,10 +3128,10 @@ catch (var e)
 
 \subsection{Finally}
 \label{sec:lang:except:finally}
-
+\lstIndexTwo{finally}{try}
 Using the finally-clause construct, you can ensure some code is executed
 upon exiting a try-clause, be it naturally or through an exception,
-\lstinline|return|, \lstinline|continue|, \ldots
+\lstinline{return}, \lstinline{continue}, \ldots
 
 \subsubsection{Regular execution}
 
@@ -3151,7 +3163,7 @@ try { throw "throw" } catch { "catch" } else { "else" } finally { "finally" };
 
 \subsubsection{Control-flow}
 
-The finally clause is executed even if \lstinline|return| is run.
+The finally clause is executed even if \lstinline{return} is run.
 
 \begin{urbiscript}
 function with_return(var enable)
@@ -3182,7 +3194,7 @@ with_return(true);
 \end{urbiscript}
 
 It is also the case when the control flow is disrupted by
-\lstinline|continue| or \lstinline|break|.
+\lstinline{continue} or \lstinline{break}.
 
 \begin{urbiscript}
 for (var i : ["1", "continue", "2", "break", "3"])
@@ -3217,7 +3229,7 @@ for (var i : ["1", "continue", "2", "break", "3"])
 
 Exceptions caught in the try-catch clause are much like a regular execution
 flow.  In particular, the value of the construct is that of the try-catch
-clause regardless of the execution of the \lstinline|finally| clause.
+clause regardless of the execution of the \lstinline{finally} clause.
 
 \begin{urbiscript}
 try           { echo("try");     "try" }
@@ -3282,9 +3294,9 @@ run-time cost of verifying every single assertion might be prohibitive.
 Therefore, as in \langC-like languages, assertions are disabled when
 \refSlot[System]{ndebug} is true, see \refObject{System}.
 
-\us supports assertions in two different ways: with a function-like
-syntax, which is adequate for single claims, and a block-like syntax,
-to group claims together.
+The \lstindex{assert} features two constructs: with a function-like syntax,
+which is adequate for single claims, and a block-like syntax, to group
+claims together.
 
 \subsection{Asserting an Expression}
 
@@ -3401,7 +3413,7 @@ of traditional imperative constructs.
 
 \subsection{Tagging}
 \label{sec:lang:tag}
-to provide control over concurrent jobs, \us uses \refObject[Tag]{Tags}.  To
+To provide control over concurrent jobs, \us uses \refObject[Tag]{Tags}.  To
 put some statement under the control of a tag, the syntax is as follows:
 
 \grammar{tag-stm}
@@ -3456,7 +3468,7 @@ Foo.f;
 See the documentation of \refObject{Tag} for more information about the job
 control.  See \autoref{sec:tut:tags} for a tutorial on tags.
 
-\subsection{\lstinline'every'}
+\subsection{\lstinline{every}}
 \label{sec:lang:every}
 The \lstindex{every} statement enables to execute a block of code
 repeatedly, with the given period.
@@ -3475,11 +3487,11 @@ It exists in several flavors, with the same syntax:
 
 \grammar{every-stm}
 
-\subsubsection{\lstinline'every|'}
+\subsubsection{\lstinline{every|}}
 The whole \lstinline'every|' statement itself remains in foreground:
 statements attached after it with \lstinline';' or \lstinline'|' will
-not be reached unless you \lstinline'break' out of it.  You may use
-\lstinline|continue| to finish one iteration.  In that case, the
+not be reached unless you \lstinline{break} out of it.  You may use
+\lstinline{continue} to finish one iteration.  In that case, the
 following iteration is not immediately started, it will be launched as
 expected, at the given period.
 
@@ -3551,7 +3563,7 @@ current one, and next iterations will occur normally from this point.
 [00004000] *** Short
 \end{urbiscript}
 
-The flow-control constructs \lstinline|break| and \lstinline|continue|
+The flow-control constructs \lstinline{break} and \lstinline{continue}
 are supported.
 
 \begin{urbiscript}
@@ -3574,7 +3586,7 @@ are supported.
 
 
 
-\subsubsection{\lstinline'every,'}
+\subsubsection{\lstinline{every,}}
 The default flavor, \lstinline|every,|, launches the execution of the
 block in the background every given period. Iterations may overlap.
 
@@ -3596,12 +3608,12 @@ timeout (2.8s)
 [00002500] *** Out
 \end{urbiscript}
 
-\subsection{for}
+\subsection{\lstinline{for}}
 
-The \lstinline|for| loops come into several flavors, depending one the
-actual kind of \lstinline|for| loop.
+The \lstinline{for} loops come into several flavors, depending one the
+actual kind of \lstinline{for} loop.
 
-\subsubsection{C-for,}
+\subsubsection{C-\lstinline{for,}}
 \experimentalremoved{}
 
 \lstinline|for,| is syntactic sugar for \lstinline|while,|, see
@@ -3643,7 +3655,7 @@ echo("done");
 \end{urbiscript}
 
 
-\subsubsection{range-for\&}
+\subsubsection{range-\lstinline{for&}}
 \label{sec:lang:for:each:and}
 
 One can iterate concurrently over the members of a collection.
@@ -3662,7 +3674,7 @@ for& (var i: [0, 1, 2])
 [00000000] *** 4
 \end{urbiscript}
 
-If an iteration executes \lstinline|continue|, it is stopped; the
+If an iteration executes \lstinline{continue}, it is stopped; the
 other iterations are not affected.
 
 \begin{urbiscript}
@@ -3677,7 +3689,7 @@ for& (var i: [0, 1, 2])
 [00021054] *** 2
 \end{urbiscript}
 
-If an iteration executes \lstinline|break|, all the iterations
+If an iteration executes \lstinline{break}, all the iterations
 including this one, are stopped.
 
 \begin{urbiscript}
@@ -3697,20 +3709,20 @@ for& (var i: [0, 1, 2])
 [00000002] *** break
 \end{urbiscript}
 
-\subsubsection{for\& (n)}
+\subsubsection{\lstinline{for& (n)}}
 
 Since \lstinline|for& (\var{n}) \var{body}| is processed as
 \lstinline|for& (var \var{tmp}: \var{n}) \var{body}|, which \var{tmp}
 a hidden variable, see \autoref{sec:lang:for:each:and} for details.
 
 
-\subsection{loop,}
+\subsection{\lstinline{loop,}}
 \experimentalremoved{}
 
-This is syntactic sugar for \lstinline|while,(true)|.  In the
-following example, care must be taken that concurrent executions don't
-modify \lstinline|n| simultaneously.  This would happen had
-\lstinline|;| been used instead of \lstinline'|'.
+This is syntactic sugar for \lstinline|while,(true)|.  In the following
+example, care must be taken that concurrent executions don't modify
+\lstinline{n} simultaneously.  This would happen had \lstinline|;| been used
+instead of \lstinline'|'.
 
 \begin{urbiassert}
 {
@@ -3729,23 +3741,26 @@ modify \lstinline|n| simultaneously.  This would happen had
 [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 \end{urbiassert}
 
-\subsection{timeout}
+\subsection{\lstinline{timeout}}
 \label{sec:lang:timeout}
+\lstIndexTwo{catch}{timeout}
+\lstIndexTwo{else}{timeout}
+\lstIndexTwo{finally}{timeout}
 
-The \lstinline|timeout| construct allows to interrupt a piece of code that
+The \lstinline{timeout} construct allows to interrupt a piece of code that
 took too long to run.  Its syntax is based on the
-\lstinline|try|/\lstinline|catch| construct (\autoref{sec:lang:catch}).
+\lstinline{try}/\lstinline{catch} construct (\autoref{sec:lang:catch}).
 
 \grammar{timeout-stm,catchall-clause,else-clause,finally-clause,block-exp}
 
 If the statement finishes its expiration before \var{duration} expires, then
-the optional \lstinline|else|-clause is run.  Otherwise, if \var{duration}
-expires, the optional \lstinline|catch|-clause is run.  In both cases, then
-the optional \lstinline|finally|-clause is executed.
+the optional \lstinline{else}-clause is run.  Otherwise, if \var{duration}
+expires, the optional \lstinline{catch}-clause is run.  In both cases, then
+the optional \lstinline{finally}-clause is executed.
 
-The value of the \lstinline|timeout|-statement is that of the last
-completed non-\lstinline|finally| block that was run; \lstinline|void| if
-no block was completed.  The value of the \lstinline|finally| is always
+The value of the \lstinline{timeout}-statement is that of the last
+completed non-\lstinline{finally} block that was run; \lstinline{void} if
+no block was completed.  The value of the \lstinline{finally} is always
 ignored, because this clause is meant to release resources, and in typical
 uses it does not contribute to the computation.
 
@@ -3818,9 +3833,9 @@ finally       { echo("finally"); "finally-value" };
 [00000002] "catch-value"
 \end{urbiscript}
 
-If an exception is thrown from the \lstinline|timeout|-clause, it is
-\emph{not} caught by the \lstinline|catch|-clause (nor the
-\lstinline|else|-clause), rather it continues its propagation to the outer
+If an exception is thrown from the \lstinline{timeout}-clause, it is
+\emph{not} caught by the \lstinline{catch}-clause (nor the
+\lstinline{else}-clause), rather it continues its propagation to the outer
 statements.
 
 \begin{urbiscript}
@@ -3835,8 +3850,8 @@ finally       { echo("finally"); "finally-value" };
 
 Alternatively, you may use the \refObject{Timeout} object.
 
-\subsection{While}
-\subsubsection{\lstinline|while,|}
+\subsection{\lstinline{While}}
+\subsubsection{\lstinline{while,}}
 \label{sec:lang:while:comma}
 \experimentalremoved{}
 
@@ -3884,10 +3899,10 @@ variable inside the loop body:
 [00000446] *** done
 \end{urbiscript}
 
-As for the other flavors, \lstinline|continue| skips the current iteration,
-and \lstinline|break| ends the loop.  Note that \lstinline|break| stops all
+As for the other flavors, \lstinline{continue} skips the current iteration,
+and \lstinline{break} ends the loop.  Note that \lstinline{break} stops all
 the running iterations.  This semantics is likely to be changed to
-``\lstinline|break| ends the current iteration and stops the generation of
+``\lstinline{break} ends the current iteration and stops the generation of
 others, but lets the other concurrent iterations finish'', so do not rely on
 this feature.
 
@@ -3917,12 +3932,13 @@ are done.
 
 \section{Event Handling}
 
-\subsection{\lstinline'at'}
+\subsection{\lstinline{at}}
 \label{sec:lang:at}
+\lstIndexTwo{onleave}{at}
 Using the \lstindex{at} construct, one can arm code that will be
 triggered each time some condition is true.
 
-The \lstinline'at' construct is as follows:
+The \lstinline{at} construct is as follows:
 
 \begin{urbiunchecked}
 at (\var{condition})
@@ -3935,13 +3951,13 @@ The \var{condition} can be of two different kinds:
 \lstinline|\var{e}?(\var{args})| to catch when events are sent, or
 \lstinline|\var{exp}| to catch each time a Boolean \var{exp} becomes true.
 
-The \lstindex{onleave}-clause is optional.  Note that, as is the case for
-the \lstinline|if| statement, there must \emph{not} be a semicolon after
-\var{statement1} if there is an \lstinline|onleave| clause.
+The \lstinline{onleave}-clause is optional.  Note that, as is the case for
+the \lstinline{if} statement, there must \emph{not} be a semicolon after
+\var{statement1} if there is an \lstinline{onleave} clause.
 
-\subsubsection{\lstinline'at' on Events}
+\subsubsection{\lstinline{at} on Events}
 %% FIXME: More details are needed.  Don't bounce elsewhere.
-See \autoref{sec:tut:events} for an example of using \lstinline|at|
+See \autoref{sec:tut:events} for an example of using \lstinline{at}
 statements to watch events.
 
 \paragraph{Durations}
@@ -3971,9 +3987,9 @@ e!(time) ~ 2s;
 \end{urbiscript}
 
 
-\subsubsection{\lstinline'at' on Boolean Expressions}
+\subsubsection{\lstinline{at} on Boolean Expressions}
 
-The \lstinline|at| construct can be used to watch a given Boolean
+The \lstinline{at} construct can be used to watch a given Boolean
 expression.
 
 \begin{urbiscript}[firstnumber=1]
@@ -4013,7 +4029,7 @@ sleep(1.5s) | assert(!x_was_two_for_two_seconds);
 x = 3|; x = 2|; sleep (1s) | assert(!x_was_two_for_two_seconds);
 \end{urbiscript}
 
-\subsubsection{Synchronous and asynchronous \lstinline'at'}
+\subsubsection{Synchronous and asynchronous \lstinline{at}}
 \label{sec:lang:at:sync-async}
 
 By default, \lstinline{at} is asynchronous: the enter and leave actions are
@@ -4080,12 +4096,12 @@ echo("Blocked");
 Alternatively, the event emission may request a synchronous handling, see
 \autoref{sec:event:sync}.
 
-\subsubsection{Scoping at \lstinline'at'}
+\subsubsection{Scoping at \lstinline{at}}
 
-\lstinline'at' statements are not scoped.  But, using a \refObject{Tag}
+\lstinline{at} statements are not scoped.  But, using a \refObject{Tag}
 object, one can control them.  In the following example,
-\refSlot[Tag]{scope} is used to label the \lstinline|at| statement.  When
-the function ends, the \lstinline|at| is no longer active.
+\refSlot[Tag]{scope} is used to label the \lstinline{at} statement.  When
+the function ends, the \lstinline{at} is no longer active.
 
 \begin{urbiscript}[firstnumber=1]
 var x = 0 |
@@ -4105,19 +4121,19 @@ sleep(3s);
 x = 2 | assert(!x_is_two);
 \end{urbiscript}
 
-\subsection{\lstinline|waituntil|}
+\subsection{\lstinline{waituntil}}
 \label{sec:lang:waituntil}
 
-The \lstinline|waituntil| construct is used to hold the execution
-until some condition is verified.  Similarly to \lstinline|at|
-(\autoref{sec:lang:at}) and the other event-based constructs,
-\lstinline|waituntil| may work on events, or on Boolean expressions.
+The \lstindex{waituntil} construct is used to hold the execution until some
+condition is verified.  Similarly to \lstinline{at} (\autoref{sec:lang:at})
+and the other event-based constructs, \lstinline{waituntil} may work on
+events, or on Boolean expressions.
 
-\subsubsection{\lstinline'waituntil' on Events}
+\subsubsection{\lstinline{waituntil} on Events}
 
-When the execution flow enters a \lstinline|waituntil|, the execution
+When the execution flow enters a \lstinline{waituntil}, the execution
 flow is held until the event is fired.  Once caught, the event is
-consumed, another \lstinline|waituntil| will require another event
+consumed, another \lstinline{waituntil} will require another event
 emission.
 
 \begin{urbiscript}
@@ -4192,10 +4208,10 @@ Events sent before do not release the construct.
 };
 \end{urbiscript}
 
-\subsubsection{\lstinline'waituntil' on Boolean Expressions}
+\subsubsection{\lstinline{waituntil} on Boolean Expressions}
 
 You may use any expression that evaluates to a truth value as argument
-to \lstinline'waituntil'.
+to \lstinline{waituntil}.
 
 \begin{urbiscript}
 {
@@ -4209,17 +4225,17 @@ to \lstinline'waituntil'.
 [00021054] *** 123
 \end{urbiscript}
 
-\subsection{watch}
+\subsection{\lstinline{watch}}
 \label{sec:lang:watch}
 
 \grammar{watch-exp}
 
 The \lstindex{watch} construct is similar in spirit to using the
-\lstinline|at| construct to monitor expressions, except it enables you to be
+\lstinline{at} construct to monitor expressions, except it enables you to be
 notified when an arbitrary expression changed, not only when it becomes true
-or false. This makes \lstinline|watch| a more primitive tool than
-\lstinline|at| on expressions.  Actually, \lstinline|at| on expressions uses
-\lstinline|watch| to determine when to reevaluate its condition.
+or false. This makes \lstinline{watch} a more primitive tool than
+\lstinline{at} on expressions.  Actually, \lstinline{at} on expressions uses
+\lstinline{watch} to determine when to reevaluate its condition.
 
 \lstinline|watch(\var{expression})| evaluates to an \refObject{Event} that
 triggers every time \var{expression} changes, with its new value as payload.
@@ -4275,7 +4291,7 @@ x = 3;
 \end{urbiscript}
 
 
-\subsection{\lstinline|whenever|}
+\subsection{\lstinline{whenever}}
 \label{sec:lang:whenever}
 
 The \lstindex{whenever} construct really behaves like a never-ending
@@ -4287,7 +4303,8 @@ whenever (\var{condition})
   \var{statement1}
 \end{urbiunchecked}
 
-It supports an optional \lstinline|else| clause, which is run whenever
+\lstIndexTwo{else}{whenever}
+It supports an optional \lstinline{else} clause, which is run whenever
 the condition changes ``from true to false''.
 
 \begin{urbiunchecked}
@@ -4297,14 +4314,14 @@ else
   \var{statement2}
 \end{urbiunchecked}
 
-The execution of a \lstinline|whenever| clause is ``instantaneous'',
+The execution of a \lstinline{whenever} clause is ``instantaneous'',
 there is no mean to use \samp{,} to put it in background.  It is also
 asynchronous with respect to the condition: the emission of an event
 is not held until all its watchers have completed their job.
 
-\subsubsection{\lstinline'whenever' on Events}
+\subsubsection{\lstinline{whenever} on Events}
 
-A \lstinline'whenever' clause can be used to catch events with or
+A \lstinline{whenever} clause can be used to catch events with or
 without payloads.
 
 \begin{urbiunchecked}[firstnumber=1]
@@ -4353,7 +4370,7 @@ e!("arg", 17);
 \end{urbiunchecked}
 
 
-If the body of the \lstinline|whenever| lasts for a long time, it is
+If the body of the \lstinline{whenever} lasts for a long time, it is
 possible that two executions be run concurrently.
 
 \begin{urbiscript}[firstnumber=1]
@@ -4373,7 +4390,7 @@ sleep(3s);
 [00001208] *** e (1) on end
 \end{urbiscript}
 
-\subsubsection{\lstinline'whenever' on Boolean Expressions}
+\subsubsection{\lstinline{whenever} on Boolean Expressions}
 
 A \lstindex{whenever} construct will repeatedly evaluate its body as long as
 its condition holds.  The number of evaluation of the bodies is typically
@@ -4421,13 +4438,13 @@ t.stop;
 In robotics, \dfn[trajectory]{trajectories} are often used: they are a
 means to change the value of a variable (actually, a slot) over time.
 This can be done using detached executions, for instance using a
-combination of \lstinline|every| and \lstinline|detach|, but \us
+combination of \lstinline{every} and \lstinline{detach}, but \us
 provides syntactic sugar to this end.
 
-For instance the following drawing shows how the \lstinline|y|
-variable is moved smoothly from its \dfn{initial value}
-(\lstinline|0|) to its \dfn{target value} (\lstinline|100|) in 3
-seconds (the value given to the \lstinline|smooth| \dfn{attribute}.
+For instance the following drawing shows how the \lstinline{y} variable is
+moved smoothly from its \dfn{initial value} (\lstinline|0|) to its
+\dfn{target value} (\lstinline|100|) in 3 seconds (the value given to the
+\lstinline{smooth} \dfn{attribute}.
 
 \urbitrajectory{smooth}
 

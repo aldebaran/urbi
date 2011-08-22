@@ -26,18 +26,48 @@
 <primary-expression>
   ::= <assert-expression>
     | <block>
+    | "call"
     | <do-expression>
     | <function-expression>
     | <getslot-expression>
     | <literal-expression>
     | <postfix-expression>
     | <property-expression>
+    | "this"
     | <watch-expression>
+    | "(" <expression> ")"
+#:exp
+
+#:assert
+<assert-expression>
+  ::= "assert" "(" <expression> ")"
+    | "assert" "{" (<expression> (";" <expression>)* ";"?)? "}"
+#:exp
+
+#:do
+<do-expression>
+  ::= "do" "(" <expression> ")" <block>
 #:exp
 
 #:getslot
 <getslot-expression>
   ::= (<primary-expression> ".")? "&" <identifier>
+#:exp
+
+#:postfix
+<postfix-expression>
+  ::= <lvalue> "++"
+    | <lvalue> "--"
+#:exp
+
+#:property
+<property-expression>
+  ::= <lvalue> "->" <identifier>
+#:exp
+
+#:watch
+<watch-expression>
+  ::= "watch" "(" <expression> ")"
 #:exp
 
 #:comparison
@@ -63,28 +93,6 @@
    ::= "+=" | "-=" | "*=" | "/=" | "^=" | "%="
 #:exp
 
-#:assert
-<assert-expression>
-  ::= "assert" "(" <expression> ")"
-    | "assert" "{" (<expression> (";" <expression>)* ";"?)? "}"
-#:exp
-
-#:postfix
-<postfix-expression>
-  ::= <lvalue> "++"
-    | <lvalue> "--"
-#:exp
-
-#:property
-<property-expression>
-  ::= <lvalue> "->" <identifier>
-#:exp
-
-#:watch
-<watch-expression>
-  ::= "watch" "(" <expression> ")"
-#:exp
-
 #:function
 <function-declaration>
   ::= <closure-or-function> <compound-name> <formals>? <block>
@@ -101,21 +109,40 @@
 <formal>
   ::= "var"? <identifier> ("=" <expression>)?
     | "var"? <identifier> "[" "]"
-
-<return-statement>
-  ::= "return" <expression>?
 #:end
 
-#:do
-<do-expression>
-  ::= "do" "(" <expression ")" <block>
-#:exp
+#:stm
+<statement>
+  ::= <every-statement>
+    | <for-statement>
+    | <loop-statement>
+    | <tag-statement>
+    | <timeout-statement>
+    | <try-statement>
+    | <while-statement>
+#:end
+
+#:forc
+<for-statement>
+   ::= "for"  "(" <statement>? ";" <expression> ";" <statement>? ")" <statement>
+     | "for;" "(" <statement>? ";" <expression> ";" <statement>? ")" <statement>
+     | "for|" "(" <statement>? ";" <expression> ";" <statement>? ")" <statement>
+#:stm
+
+#:foreach
+<for-statement>
+   ::= "for"  "(" "var" <identifier> ("in" | ":") <expression> ")" <statement>
+     | "for;" "(" "var" <identifier> ("in" | ":") <expression> ")" <statement>
+     | "for|" "(" "var" <identifier> ("in" | ":") <expression> ")" <statement>
+     | "for&" "(" "var" <identifier> ("in" | ":") <expression> ")" <statement>
+#:stm
 
 #:forn
 <for-statement>
-   ::= "for" "(" <expression> ")" <block>
-     | "for;" "(" <expression> ")" <block>
-     | "for|" "(" <expression> ")" <block>
+   ::= "for"  "(" <expression> ")" <statement>
+     | "for;" "(" <expression> ")" <statement>
+     | "for|" "(" <expression> ")" <statement>
+     | "for&" "(" <expression> ")" <statement>
 #:stm
 
 #:if
@@ -125,10 +152,15 @@
 
 #:loop
 <loop-statement>
-  ::= "loop" <statement>
+  ::= "loop"  <statement>
     | "loop;" <statement>
     | "loop|" <statement>
-#:end
+#:stm
+
+#:return
+<return-statement>
+  ::= "return" <expression>?
+#:stm
 
 #:tag
 <tag-statement>
@@ -145,6 +177,13 @@
 <try-statement>
   ::= "try" "{" <statement>* "}" <catch-clause>+ <else-clause>? <finally-clause>?
     | "try" "{" <statement>* "}" <finally-clause>
+#:stm
+
+#:while
+<while-statement>
+  ::= "while"  "(" <expression> ")" <statement>
+    | "while;" "(" <expression> ")" <statement>
+    | "while|" "(" <expression> ")" <statement>
 #:stm
 
 #:catch
@@ -174,10 +213,13 @@
     | "every," "(" <expression> ")" <statement>
 #:stm
 
-#:list
-<list-literal>
-  ::= "[" (<expression> ("," <expression>)* ","?)? "]"
 #:literal
+<literal-expression>
+  ::= <dictionary-literal>
+    | <list-literal>
+    | <number-literal>
+    | <string-literal>
+#:exp
 
 #:dictionary
 <dictionary-literal>
@@ -186,10 +228,10 @@
   ::= <expression> "=>" <expression>
 #:literal
 
-#:block
-<block>
-  ::= "{" <statement>* "}"
-#:exp
+#:list
+<list-literal>
+  ::= "[" (<expression> ("," <expression>)* ","?)? "]"
+#:literal
 
 #:identifier
 <identifier>
@@ -201,3 +243,8 @@
 <digit>
   ::= [0-9]
 #:end
+
+#:block
+<block>
+  ::= "{" <statement>* "}"
+#:exp
