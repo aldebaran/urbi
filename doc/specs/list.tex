@@ -123,12 +123,10 @@ The list cannot be empty.
 \item[asList]
   Return the target.
 
-\begin{urbiscript}
-{
-  var l = [0, 1, 2];
-  assert (l.asList === l);
-};
-\end{urbiscript}
+\begin{urbiassert}
+var l = [0, 1, 2];
+l.asList === l;
+\end{urbiassert}
 
 \item[asString]
   A string describing the list.  Uses \lstinline|asPrintable| on its
@@ -148,17 +146,16 @@ assert([0, 1, 2].back == 2);
 \end{urbiscript}
 
 \item[clear]
-  Empty the target.
+  Empty the target, return it.
 
-\begin{urbiscript}
-var x = [0, 1, 2];
-[00000000] [0, 1, 2]
-assert(x.clear == []);
-\end{urbiscript}
+\begin{urbiassert}
+var l = [0, 1, 2];
+l.clear === l == [];
+l.clear === l == [];
+\end{urbiassert}
 
 \item[each](<fun>)%
-  Apply the given functional value \var{fun} on all members,
-  sequentially.
+  Apply the given functional value \var{fun} on all members, sequentially.
 
 \begin{urbiscript}
 [0, 1, 2].each(function (v) {echo (v * v); echo (v * v)});
@@ -265,27 +262,25 @@ assert([0, 1, 2].front == 0);
 \end{urbiassert}
 
 \item[hash] Return a \refObject{Hash} object corresponding to this list
-  value. Two list hashes are equal if the list have the same size, and
-  elements hashes are equal two by two. See \refSlot[Object]{hash}.
+  value. Equal lists (in the sense of \refSlot{'=='}) have equal hashes, see
+  \refSlot[Object]{hash}.
 
 \begin{urbiassert}
 [].hash.isA(Hash);
-[].hash == [].hash;
+
+        [].hash == [].hash;
 [1, "foo"].hash == [1, "foo"].hash;
-[0, 1].hash != [1, 0].hash;
+    [0, 1].hash != [1, 0].hash;
 \end{urbiassert}
 
 \item[hasSame](<that>)%
-  Whether one of the members of the target is physically equal to
-  \var{that}.
-\begin{urbiscript}
-var y = 1|;
-assert
-{
-   [0, y, 2].hasSame(y);
-  ![0, y, 2].hasSame(1);
-};
-\end{urbiscript}
+  Whether \that is is physically equal to one of the members.
+\begin{urbiassert}
+var x = 1;
+
+ [0, x, 2].hasSame(x);
+![0, x, 2].hasSame(1);
+\end{urbiassert}
 
 \item[head]
   Synonym for \refSlot{front}.
@@ -298,18 +293,12 @@ assert([0, 1, 2].head == 0);
 \item[insert](<where>, <what>)%
   Insert \var{what} before the value at index \var{where}, return
   \this.
-\begin{urbiscript}
-{
-  var l = [0, 1];
-  assert
-  {
-    l.insert(0, 10) === l;
-    l == [10, 0, 1];
-    l.insert(2, 20) === l;
-    l == [10, 0, 20, 1];
-  };
-}|;
-\end{urbiscript}
+\begin{urbiassert}
+var l = [0, 1];
+
+l.insert(0, 10) === l == [10, 0, 1];
+l.insert(2, 20) === l == [10, 0, 20, 1];
+\end{urbiassert}
 
   The index must be valid, to insert past the end, use \refSlot{insertBack}.
 \begin{urbiscript}
@@ -321,48 +310,33 @@ assert([0, 1, 2].head == 0);
 
 
 \item[insertBack](<that>)%
-  Insert the given element at the end of the target, return \this.
+  Insert \that at the end of the target, return \this.
 
-\begin{urbiscript}
-{
-  var l = [0, 1];
-  assert
-  {
-    l.insertBack(2) === l;
-    l == [0, 1, 2];
-  };
-}|;
-\end{urbiscript}
+\begin{urbiassert}
+var l = [0, 1];
+
+l.insertBack(2) === l;
+l == [0, 1, 2];
+\end{urbiassert}
 
 \item[insertFront](<that>)%
   Insert the given element at the beginning of the target.  Return \this.
 
-\begin{urbiscript}
-{
-  var l = [0, 1];
-  assert
-  {
-    l.insertFront(0) === l;
-    l == [0, 0, 1];
-  };
-}|;
-\end{urbiscript}
+\begin{urbiassert}
+var l = [0, 1];
+l.insertFront(0) === l;
+l == [0, 0, 1];
+\end{urbiassert}
 
 \item[insertUnique](<that>)%
-  If \var{that} is not in \this, append it. Return \this.
+  If \that is not in \this, append it. Return \this.
 
-\begin{urbiscript}
-{
-  var l = [0, 1];
-  assert
-  {
-    l.insertUnique(0) === l;
-    l == [0, 1];
-    l.insertUnique(2) === l;
-    l == [0, 1, 2];
-  };
-};
-\end{urbiscript}
+\begin{urbiassert}
+var l = [0, 1];
+
+l.insertUnique(0) === l == [0, 1];
+l.insertUnique(2) === l == [0, 1, 2];
+\end{urbiassert}
 
 \item[join](<sep> = "", <prefix> = "", <suffix> = "")%
   Bounce to \refSlot[String]{join}.
@@ -374,25 +348,25 @@ assert([0, 1, 2].head == 0);
 \end{urbiassert}
 
 \item[keys]()%
-  The list of valid indexes.  This allows uniform iteration over a
-  \refObject{Dictionary} or a \refObject{List}.
+  The list of valid indexes.
+\begin{urbiassert}
+[].keys == [];
+["a", "b", "c"].keys == [0, 1, 2];
+\end{urbiassert}
+
+This allows uniform iteration over a \refObject{Dictionary} or a
+\refObject{List}.
 
 \begin{urbiscript}
-{
-  var l = ["a", "b", "c"];
-  assert
-  {
-    l.keys == [0, 1, 2];
-    {
-      var res = [];
-      for (var k: l.keys)
-        res << l[k];
-      res
-    }
-    == l;
-  };
-};
+var l = ["a", "b", "c"]|;
+var res = []|;
+for (var k: l.keys)
+  res << l[k];
+assert (res == l);
 \end{urbiscript}
+\begin{urbicomment}
+removeSlots("l", "res");
+\end{urbicomment}
 
 \item[map](<fun>)%
   Apply the given functional value on every member, and return the list of
@@ -516,8 +490,8 @@ do ([0, 1, 2, 3])
 
 \begin{urbiassert}
 var c = [0, 1, 0, 2, 0, 3];
-c.remove(0) === c;   c ==  [1, 2, 3];
-c.remove(42) === c;  c ==  [1, 2, 3];
+c.remove(0)  === c ==  [1, 2, 3];
+c.remove(42) === c ==  [1, 2, 3];
 \end{urbiassert}
 
 \item[removeBack]
@@ -543,9 +517,8 @@ e.removeById(d) == [0, 1, 1, 2];
 e == [0, 1, 1, 2];
 \end{urbiassert}
 
-\item[removeFront]
-Remove and return the first element from the target. An error if the
-target is empty.
+\item[removeFront] Remove and return the first element from the target. An
+  error if the target is empty.
 
 \begin{urbiassert}
 var g = [0, 1, 2];
@@ -670,8 +643,7 @@ assert
   \var{index}.
 
 \begin{urbiscript}
-var f = [0, 1, 2];
-[00000000] [0, 1, 2]
+var f = [0, 1, 2]|;
 assert
 {
   (f[1] = 42) == 42;
