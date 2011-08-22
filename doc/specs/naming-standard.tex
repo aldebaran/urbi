@@ -823,20 +823,20 @@ robot.
 \begin{supertabular}{|p{.115\linewidth}|p{.45\linewidth}|*{4}{p{.12\linewidth}|}}
   \component{robot}{}{body}{Identity Network Mobile Tracker}{
     %%
-    This is the main component that represents an abstraction of the
-    robot, and the root node of the whole component hierarchy.
+    The main component that represents an abstraction of the robot, and the
+    root node of the whole component hierarchy.
     %%
   }
 
   \component{body}{robot}{wheel arm leg neck head wheel tail skin torso
     \ldots}{}{
     %%
-    This is the main component that contains every piece of hardware
-    in the robot. This includes all primary kinematics sub-chains
-    (arms, legs, neck, head, etc) and non-localized sensor arrays,
-    typically body skin or heat detectors.  Localized sensors, like
-    fingertips touch sensors, will typically be found attached to the
-    finger component they belong and not directly to the body.
+    The main component that contains every piece of hardware in the
+    robot. This includes all primary kinematics sub-chains (arms, legs,
+    neck, head, etc) and non-localized sensor arrays, typically body skin or
+    heat detectors.  Localized sensors, like fingertips touch sensors, will
+    typically be found attached to the finger component they belong and not
+    directly to the body.
     %%
   }
 
@@ -883,24 +883,23 @@ robot.
 
   \component{wrist}{arm}{yaw pitch roll}{}{
     %%
-    Connects the hand and the lower part of the arm. Usually three
-    degrees of freedom axis.
+    Connects the hand and the lower part of the arm. Usually three degrees
+    of freedom axis.
     %%
   }
 
   \component{hand}{arm}{finger}{}{
     %%
-    The hand is an extension of the arm that usually holds
-    fingers. It's not the wrist, which is articulated and between the
-    arm and the hand.
+    The hand is an extension of the arm that usually holds fingers. It's not
+    the wrist, which is articulated and between the arm and the hand.
     %%
   }
 
   \component{finger}{hand}{touch}{Motor}{
     %%
-    Fingers are a series of articulated motors at the extremity of the
-    arm, and connected to the hand. They are usually localized with
-    arrays and/or lateral localization respective to the hand.
+    A series of articulated motors at the extremity of the arm, and
+    connected to the hand.  Fingers are usually localized with arrays and/or
+    lateral localization respective to the hand.
     %%
   }
 
@@ -942,21 +941,20 @@ robot.
 
   \component{toe}{foot}{touch}{Motor}{
     %%
-    Like fingers, but attached to the foot.
+    Like fingers, but attached to a foot.
     %%
   }
 
   \component{neck}{body}{yaw pitch roll}{}{
     %%
-    The neck corresponds to a degree of freedom not part of the head,
-    but relative to the rigid connection between the head and the main
-    body.
+    The neck corresponds to a degree of freedom not part of the head, but
+    relative to the rigid connection between the head and the main body.
     %%
   }
 
   \component{tail}{body}{joint}{}{
     %%
-    A tail is a series of articulated motors at the back of the robot.
+    A series of articulated motors at the back of the robot.
     %%
   }
 
@@ -968,7 +966,7 @@ robot.
 
   \component{mouth}{head}{lip}{Motor}{
     %%
-    The robot mouth (open/close)
+    The robot mouth (open/close).
     %%
   }
 
@@ -1161,7 +1159,7 @@ several component names have to be kept, they should be separated by
 using upper case letters for the first character instead of a dot, like
 in Java-style notation.
 
-\begin{example}[\code{robot.body.armL.hand.fingerR}]~\\
+\begin{example}[\code{robot.body.armL.hand.fingerR}]
   \begin{enumerate}
   \item Move all localization at the end:
     \code{robot.body.arm.hand.fingerLR}
@@ -1251,19 +1249,18 @@ hierarchy. It provides the following methods:
 \subsection{Localizer}
 
 The \code{Localizer} class is a special type of \code{Component} that stores
-other components based on their localization. It provides a \code{[]} operator
-that takes a \code{Localization}, such as \lstinline|top,left,front|, and that
-can be used to set and get the \code{Component} or device associated with
-that \code{Localization}.
+other components based on their localization. It provides a \code{[]}
+operator that takes a \code{Localization}, such as
+\lstinline|top,left,front|, and that can be used to set and get the
+\code{Component} or device associated with that \code{Localization}.
 
-Note that the \code{[]} function is using a mechanisms to automatically look
+Note that the \code{[]} function is using a mechanism to automatically look
 for its argument as a slot of \code{Localizer}. As a consequence, you cannot
 pass a variable to this function, but only one of the constant
-\code{Localization}.
-To pass a variable, use the \code{get(loc)} or the \code{set(loc, value)}
-function.
+\code{Localization}.  To pass a variable, use the \lstinline|get(\var{loc})|
+or the \lstinline|set(\var{loc}, \var{value})| function.
 
-The following example illustrates a typical instantiation sequence:
+The following example illustrates a typical instantiation sequence.
 
 \begin{urbiunchecked}
 // Create the top-level node.
@@ -1272,16 +1269,18 @@ robot.addComponent("head");
 var cam = MyCamera.new;
 cam.addProto(Interface.VideoIn);
 robot.head.addDevice("camera", cam);
-// Add two wheels
+
+// Add two wheels.
 robot.addComponent(Localizer.new("wheel"));
 robot.wheel[left] = MyWheel.new(0).addProto(Interface.RotationalMotor);
 robot.wheel[right] = MyWheel.new(1).addProto(Interface.RotationalMotor);
-// Implement the Mobile facet in urbiscript:
-var robot.go = function(d)
+
+// Implement the Mobile facet in urbiscript.
+function robot.go (d)
 {
   robot.wheel.val = robot.wheel.val + d / wheelRadius adaptive:1
 };
-var robot.turn = function(r)
+function robot.turn(r)
 {
   var v = r * wheelDistance / wheelRadius;
   robot.wheel[left].val = robot.wheel[left].val + v adaptive:1 &
@@ -1289,7 +1288,8 @@ var robot.turn = function(r)
 };
 robot.addProto(Interface.Mobile);
 robot.makeCompactNames;
-// Let us see the result:
+
+// Let us see the result.
 robot.flatDump;
 [00010130] *** Mobile: robot
 [00010130] *** RotationalMotor: wheelL wheelR
