@@ -15,7 +15,7 @@
   \ifthenelse{\equal{#1}{}}{%
     \subsection{\lstindex{#2}}%
   }{%
-    \subsection[\lstinline{#2} (subclass of #1)]%
+    \subsection[\lstinline{#2} (subclass of \lstinline{#1})]%
                {\lstindex{#2} (subclass of \refFacet{#1})}%
   }%
   \labelObject{Interface.#2}%
@@ -84,13 +84,12 @@ body.laser;
 
 
 The structure tree should not be mistaken for a representation of the
-kinematics chain of the robot. The kinematics chain is built from a
-subset of the devices corresponding to motor devices, and it
-represents spatial connections between them. Except for these motor
-devices, the structure tree components do not have a direct
-counterpart in the kinematics chain, or, if they do, it is as a subset
-of the kinematics chain (for example, \code{leg[right]} is a subset of the
-whole kinematics chain).
+kinematics chain of the robot. The kinematics chain is built from a subset
+of the devices corresponding to motor devices, and it represents spatial
+connections between them. Except for these motor devices, the structure tree
+components do not have a direct counterpart in the kinematics chain, or, if
+they do, it is as a subset of the kinematics chain (for example,
+\lstinline{leg[right]} is a subset of the whole kinematics chain).
 
 
 The goal of this standard is to provide guidelines on how to define
@@ -109,24 +108,22 @@ standard frame of reference will have the following definition:
 
 \begin{description}
 \item[Origin] the center of mass of the robot
-\item[X axis] oriented towards the front of the robot. If there is a
-  camera, the front is defined by the default direction of the camera,
-  otherwise the front will be seen as the natural frontal orientation
-  for a mobile robot (the direction of ``forward'' movement). If the
-  robot is not naturally oriented, the X axis will be chosen to match
-  the main axis of symmetry of the robot body and it will be oriented
-  towards the smallest side, typically the top of a cone for
-  example. In case of a perfectly symmetrical body, the X axis can be
-  chosen arbitrarily but a clear mark should be made visible on the
-  robot body to indicate it.
-\item[Z axis] oriented in the opposite direction from the gravity. If
-  there is no gravity or natural up/down orientation in the
-  environment or normal operation mode of the robot, the Z axis should
-  be chosen in the direction of the main axis of symmetry in the
-  orthogonal plane defined by the X axis, oriented towards the
-  smallest side. In case of a perfectly symmetrical plane, the Z axis
-  can be chosen arbitrarily but a clear mark should be made visible on
-  the robot body to indicate it.
+\item[X axis] oriented towards the front of the robot. If there is a camera,
+  the front is defined by the default direction of the camera, otherwise the
+  front will be seen as the natural frontal orientation for a mobile robot
+  (the direction of ``forward'' movement). If the robot is not naturally
+  oriented, the X axis will be chosen to match the main axis of symmetry of
+  the robot body and it will be oriented towards the smallest side,
+  typically the top of a cone for example. In case of a perfectly
+  symmetrical body, the X axis can be chosen arbitrarily but a clear mark
+  should be made visible on the robot body to indicate it.
+\item[Z axis] oriented in the opposite direction from the gravity. If there
+  is no gravity or natural up/down orientation in the environment or normal
+  operation mode of the robot, the Z axis should be chosen in the direction
+  of the main axis of symmetry in the orthogonal plane defined by the X
+  axis, oriented towards the smallest side. In case of a perfectly
+  symmetrical plane, the Z axis can be chosen arbitrarily but a clear mark
+  should be made visible on the robot body to indicate it.
 \item[Y axis] oriented to make a right-handed coordinate system.
 \end{description}
 
@@ -149,19 +146,18 @@ the name that fits the most the description of their component.
 
 \section{Localization}
 When two identical components A1 and A2, such as the two legs of an humanoid
-robots, are present in the same sub-component B, an extra node is inserted in
-the hierarchy to differentiate them. This node is of the \code{Localizer} type,
-and provides a \code{[]} operator, taking a \code{Localization} argument, used
-to access each of the identical sub-components.
-The \usdk provides an implementation for the \code{Localizer} and
-\code{Localization} classes.
-When possible, localization should be simple geometrical qualifier like
+robots, are present in the same sub-component B, an extra node is inserted
+in the hierarchy to differentiate them. This node is of the
+\refObject{Localizer} type, and provides a \lstinline{[]} operator, taking a
+\refObject{Localization} argument, used to access each of the identical
+sub-components.  The \usdk provides an implementation for the
+\refObject{Localizer} and \refObject{Localization} classes.  When possible,
+localization should be simple geometrical qualifier like
 \textit{right}/\textit{center}/\textit{left},
 \textit{front}/\textit{middle}/\textit{back} or
-\textit{up}/\textit{in-between}/\textit{down}.
-Note that ``right'' or ``front'' are
-understood here from the point of view of a man standing and looking
-in the direction of the X-axis of the robot, and \textit{up/pown}
+\textit{up}/\textit{in-between}/\textit{down}.  Note that ``right'' or
+``front'' are understood here from the point of view of a man standing and
+looking in the direction of the X-axis of the robot, and \textit{up/pown}
 matches the Z-axis, as depicted in the figure below:
 
 \begin{center}
@@ -199,7 +195,7 @@ side+height or height+depth information.
 Layouts with a sequence of three or more identical components can use
 numbers as their Localization, starting from 0.  The smaller the number, the
 closer to the front, up, or left. For instance, an insectoid robot with 3
-legs on each side will use \code{robot.body.leg[left][0]} to address the
+legs on each side will use \lstinline{robot.body.leg[left][0]} to address the
 frontleft leg.
 
 Layouts with identical components arranged in a circle can also use numeric
@@ -291,10 +287,10 @@ This interface is used to describe a generic motor controller.
 
 \begin{urbiscriptapi}
 \item[val] This slot is a generic pointer to a more specific slot describing
-  the motor position, like \code{position} or \code{angle}, depending on the
-  type of motor. It is mandatory in the Urbi Ready standard as a universal
-  proxy to control an actuator. The more specific slot is described in a
-  subclass of \code{Motor}.
+  the motor position, like \lstinline{position} or \lstinline{angle},
+  depending on the type of motor. It is mandatory in the Urbi Ready standard
+  as a universal proxy to control an actuator. The more specific slot is
+  described in a subclass of \lstinline{Motor}.
 \item[PGain] (Optional.) Controls the P gain of the PID controller.
 \item[IGain] (Optional.) Controls the I gain of the PID controller.
 \item[DGain] (Optional.) Controls the D gain of the PID controller.
@@ -310,7 +306,7 @@ traveled by a point at the surface of the wheel.
 
 \begin{urbiscriptapi}
 \item[position] Position of the motor in meters.  Pointed to by the
-  \code{val} slot.
+  \lstinline{val} slot.
 
 \item[force] Intensity of the measured or estimated force applied on a
   linear motor.
@@ -318,11 +314,12 @@ traveled by a point at the surface of the wheel.
 
 \interface[Motor]{LinearSpeedMotor}
 
-Motor similar to \code{LinearMotor}, but controlled by its translation speed.
+Motor similar to \refFacet{LinearMotor}, but controlled by its translation
+speed.
 
 \begin{urbiscriptapi}
 \item[speed] Translation speed in meters per second. Pointed to by the
-  \code{val} slot.
+  \lstinline{val} slot.
 \end{urbiscriptapi}
 
 
@@ -334,7 +331,7 @@ controller.
 
 \begin{urbiscriptapi}
 \item[angle] Angle of the motor in radian, modulo $2\pi$. Pointed to by the
-  \code{val} slot.
+  \lstinline{val} slot.
 
 \item[turn] Absolute angular position of the motor, expressed in number of
   turns.
@@ -345,8 +342,8 @@ controller.
 
 \interface[Motor]{RotationalSpeedMotor}
 
-Interface describing a motor similar to \code{RotationalMotor} controlled
-by its rotation speed.
+Interface describing a motor similar to \lstinline{RotationalMotor}
+controlled by its rotation speed.
 
 \begin{urbiscriptapi}
 \item[speed] Rotation speed in radians per second.
@@ -358,10 +355,10 @@ This interface is used to describe a generic sensor.
 
 \begin{urbiscriptapi}
 \item[val] This slot is a generic pointer to a more specific slot describing
-  the sensor value, like \code{distance} or \code{temperature}, depending on
-  the type of sensor. It is mandatory in the Urbi Ready standard as a
-  universal proxy to read a sensor. The more specific slot is described in a
-  subclass of \code{Sensor}.
+  the sensor value, like \lstinline{distance} or \lstinline{temperature},
+  depending on the type of sensor. It is mandatory in the Urbi Ready
+  standard as a universal proxy to read a sensor. The more specific slot is
+  described in a subclass of \refFacet{Sensor}.
 \end{urbiscriptapi}
 
 
@@ -372,7 +369,7 @@ ultrasonic...).
 
 \begin{urbiscriptapi}
 \item[distance] Measured distance expressed in meters.  Pointed to by the
-  \code{val} slot.
+  \lstinline{val} slot.
 \end{urbiscriptapi}
 
 
@@ -384,7 +381,7 @@ induction,...).
 \begin{urbiscriptapi}
 \item[pressure] Intensity of the pressure put on the touch sensor. Can be
   0/1 for simple buttons or expressed in Pascal units. Pointed to by the
-  \code{val} slot.
+  \lstinline{val} slot.
 \end{urbiscriptapi}
 
 
@@ -394,7 +391,7 @@ This interface is used to describe an accelerometer.
 
 \begin{urbiscriptapi}
 \item[acceleration] Acceleration expressed in $m/s^2$.  Pointed to by the
-  \code{val} slot.
+  \lstinline{val} slot.
 \end{urbiscriptapi}
 
 \interface[Sensor]{GyroSensor}
@@ -402,7 +399,7 @@ This interface is used to describe an gyrometer.
 
 \begin{urbiscriptapi}
 \item[speed] Rotational speed in $\mathrm{rad}/s$.  Pointed to by the
-  \code{val} slot.
+  \lstinline{val} slot.
 \end{urbiscriptapi}
 
 \interface[Sensor]{TemperatureSensor}
@@ -410,7 +407,7 @@ This interface is used to describe a temperature sensor.
 
 \begin{urbiscriptapi}
 \item[temperature] Measured temperature in Celsius degrees.  Pointed to by
-  the \code{val} slot.
+  the \lstinline{val} slot.
 \end{urbiscriptapi}
 
 \interface[Sensor]{Laser}
@@ -449,13 +446,13 @@ level motion control capabilities.
 
 \subsubsection{Blocking API}
 
-The following set of functions will block until associated movement is finished.
-If a function of this set is called while an other is already running, the
-first call will be canceled: the movement will be interrupted and the
-call will return.
+The following set of functions will block until associated movement is
+finished.  If a function of this set is called while an other is already
+running, the first call will be canceled: the movement will be interrupted
+and the call will return.
 
-Many of the functions below take a position argument. This position is expressed
-as a subset of the six values x, y, z, rho, theta, phi.
+Many of the functions below take a position argument. This position is
+expressed as a subset of the six values x, y, z, rho, theta, phi.
 
 \begin{urbiscriptapi}
 \item[go](<x>) Move approximately \var{x} meters forward (along the X axis)
@@ -509,7 +506,6 @@ slots \lstinline{defaultXSpeed}, \lstinline{defaultYSpeed},
   stop() function will be called.
 \item{watchdog} Writing any value to \lstinline|watchdog| will reset the
   watchdog timer.
-
 \end{urbiscriptapi}
 
 \subsubsection{State}
@@ -517,12 +513,12 @@ slots \lstinline{defaultXSpeed}, \lstinline{defaultYSpeed},
 \begin{urbiscriptapi}
 \item[moving] True if the robot is currently moving for any reason, false
   otherwise.
-\item[aborted] (Optional.) Emitted each time a function in the blocking API is aborted
-  because it was preempted by an other movement.
-\item[unreachable] (Optional.) Emitted when a function in the blocking API is aborted
-  because the target cannot be reached.
-\item[finished] (Optional.) Emitted each time a function in the blocking API finished
-  normally.
+\item[aborted] (Optional.) Emitted each time a function in the blocking API
+  is aborted because it was preempted by an other movement.
+\item[unreachable] (Optional.) Emitted when a function in the blocking API
+  is aborted because the target cannot be reached.
+\item[finished] (Optional.) Emitted each time a function in the blocking API
+  finished normally.
 
 \end{urbiscriptapi}
 
@@ -547,7 +543,7 @@ The VideoIn interface groups every information relative to cameras or any
 image sensor.
 
 \begin{urbiscriptapi}
-\item[val] Image represented as a \code{Binary} value.
+\item[val] Image represented as a \refObject{Binary} value.
 \item[xfov] The x field of view of the camera expressed in radians.
 \item[yfov] The y field of view of the camera expressed in radians.
 
@@ -557,27 +553,27 @@ image sensor.
 \item[width] Width of the image in the current resolution, expressed in
   pixels
 
-\item[format] (Optional.)  Format of the image, expressed as an integer in the enum
-  urbi::UImageFormat.  See below for more information.
+\item[format] (Optional.)  Format of the image, expressed as an integer in
+  the enum urbi::UImageFormat.  See below for more information.
 
-\item[exposure] (Optional.) Exposure duration, expressed in seconds. 0 if non
-  applicable.
+\item[exposure] (Optional.) Exposure duration, expressed in seconds. 0 if
+  non applicable.
 
-\item[wb] (Optional.)  White balance (expressed with an integer value depending on the
-  camera documentation). 0 if non applicable.
+\item[wb] (Optional.)  White balance (expressed with an integer value
+  depending on the camera documentation). 0 if non applicable.
 
-\item[gain] (Optional.)  Camera gain amplification (expressed as a coefficient between
-  0 and infinity). 1 if non applicable.
+\item[gain] (Optional.)  Camera gain amplification (expressed as a
+  coefficient between 0 and infinity). 1 if non applicable.
 
-\item[resolution] (Optional.)  Image resolution, expressed as an integer. 0 corresponds
-  to the maximal resolution of the camera. Successive values correspond to
-  all the supported image sizes in decreasing order.  Once modified, the
-  effective resolution in X/Y can be checked with the width and height
-  slots.
+\item[resolution] (Optional.)  Image resolution, expressed as an integer. 0
+  corresponds to the maximal resolution of the camera. Successive values
+  correspond to all the supported image sizes in decreasing order.  Once
+  modified, the effective resolution in X/Y can be checked with the width
+  and height slots.
 
-\item[quality] (Optional.)  If the image is in the jpeg format, this slot sets the
-  compression quality, from 0 (best compression, worst quality) to 100 (best
-  quality, bigger image).
+\item[quality] (Optional.)  If the image is in the jpeg format, this slot
+  sets the compression quality, from 0 (best compression, worst quality) to
+  100 (best quality, bigger image).
 \end{urbiscriptapi}
 
 The image sensor is expected to use the cheapest way in term of CPU and/or
@@ -635,7 +631,8 @@ The AudioIn interface groups every information relative to microphones.
   event.
 \item[duration] Amount of sound in the val attribute, expressed in
   \textit{ms}.
-\item[gain] (Optional.) Microphone gain amplification (expressed between 0 and 1).
+\item[gain] (Optional.) Microphone gain amplification (expressed between 0
+  and 1).
 \end{urbiscriptapi}
 
 
@@ -660,16 +657,16 @@ the typical slots expected:
 \item[threshold] The minimum value of ratio to decide that the blob is
   visible.
 
-\item[orientation] (Optional.)  Angle of the main ellipsoid axis of the blob (0 =
-  horizontal), expressed in radians.
+\item[orientation] (Optional.)  Angle of the main ellipsoid axis of the blob
+  (0 = horizontal), expressed in radians.
 
-\item[elongation] (Optional.)  Ratio between the main and the second diameter of the
-  blob enveloping ellipse.
+\item[elongation] (Optional.)  Ratio between the main and the second
+  diameter of the blob enveloping ellipse.
 \end{urbiscriptapi}
 
 \interface{TextToSpeech}
 Text to speech allows to read text using a speech synthesizer. Default
-implementations should use the \code{speaker} component (or alias) as
+implementations should use the \lstinline{speaker} component (or alias) as
 their default sound output.
 
 \begin{urbiscriptapi}
@@ -704,7 +701,7 @@ their default sound output.
 
 Speech recognition allows to transform a stream of sound into a text
 using various speech recognition algorithms. Implementations
-should use the \code{micro} component as their default sound input.
+should use the \lstinline{micro} component as their default sound input.
 
 \begin{urbiscriptapi}
 \item[lang] (Optional.)  The language used, in international notation (fr,
@@ -754,10 +751,10 @@ the \gsrapi should name all the components in the hierarchy using this list.
 \subsection{Yaw/Pitch/Roll orientation}
 \label{sec:naming:ypr}
 
-Note that \gsrapi considers the orientation to be a component name, and
-not a localizer. So one would write \lstinline|head.yaw| and not
-\lstinline|head.joint[yaw]| to refer to a rotational articulation of the head
-around the Z axis.
+Note that \gsrapi considers the orientation to be a component name, and not
+a localizer. So one would write \lstinline|head.yaw| and not
+\lstinline|head.joint[yaw]| to refer to a rotational articulation of the
+head around the Z axis.
 
 It is not always clear which rotational direction corresponds to the
 yaw, pitch or roll components (listed in the table below). This is a
@@ -1060,9 +1057,9 @@ robot.
 
   \component{clavicle}{body}{}{Motor}{
     %%
-    This is not to be mixed up with the ``top of the arm'' body part. It
-    is an independent degree of freedom that can be used to bring the
-    two arms closer in a sort of ``shoulder raising'' movement.
+    This is not to be mixed up with the ``top of the arm'' body part. It is
+    an independent degree of freedom that can be used to bring the two arms
+    closer in a sort of ``shoulder raising'' movement.
     %%
     }
 
@@ -1086,10 +1083,10 @@ robot.
 
   \component{camera}{head body}{}{VideoIn}{
     %%
-    Camera sensor. If several cameras are available, localization
-    shall apply; however there must always be an alias from
-    \code{camera} to one of the effective cameras (like \code{cameraR}
-    or \code{cameraL}).
+    Camera sensor. If several cameras are available, localization shall
+    apply; however there must always be an alias from \lstinline{camera} to
+    one of the effective cameras (like \lstinline{cameraR} or
+    \lstinline{cameraL}).
     %%
     }
 
@@ -1097,8 +1094,8 @@ robot.
     %%
     Speaker device. If several speakers are available, localization
     shall apply; however there must always be an alias from
-    \code{speaker} to one of the effective speakers (like
-    \code{speakerR} or \code{speakerL}).
+    \lstinline{speaker} to one of the effective speakers (like
+    \lstinline{speakerR} or \lstinline{speakerL}).
     %%
     }
 
@@ -1106,8 +1103,8 @@ robot.
     %%
     Microphone devices. If several microphones are available,
     localization shall apply; however there must always be an alias
-    from \code{micro} to one of the effective microphones (like
-    \code{microR} or \code{microL}).
+    from \lstinline{micro} to one of the effective microphones (like
+    \lstinline{microR} or \lstinline{microL}).
     %%
   }
 
@@ -1140,8 +1137,8 @@ notation starting from the full name and the structure tree.
     \hline
     \textbf{Full name} & \textbf{Compact name}\\
     \hline%
-    \code{robot.body.armR.elbow} & \code{elbowR} \\
-    \code{robot.body.head.yaw} & \code{headYaw} \\
+    \code{robot.body.armR.elbow}      & \code{elbowR} \\
+    \code{robot.body.head.yaw}        & \code{headYaw} \\
     \code{robot.body.legL.knee.pitch} & \code{kneeL} \\
     \code{robot.body.armR.hand.finger[3][2]} & \code{fingerR[3][2]} \\
     \code{robot.body.armL.hand.fingerR} & \code{fingerLR} \\
@@ -1149,50 +1146,50 @@ notation starting from the full name and the structure tree.
   \end{tabular}
 \end{center}
 
-The rule is to move every localization qualifier at the end of the
-compact notation, in the order where they appear in the full-length
-name. The remaining component names should then be considered one by
-one to see if they are needed to remove ambiguities. If they are not,
-like typically the robot or body components which are shared with
-almost every other full-length name, they can be ignored. If finally
-several component names have to be kept, they should be separated by
-using upper case letters for the first character instead of a dot, like
-in Java-style notation.
+The rule is to move every localization qualifier at the end of the compact
+notation, in the order where they appear in the full-length name. The
+remaining component names should then be considered one by one to see if
+they are needed to remove ambiguities. If they are not, like typically the
+robot or body components which are shared with almost every other
+full-length name, they can be ignored. If finally several component names
+have to be kept, they should be separated by using upper case letters for
+the first character instead of a dot, like in Java-style notation.
 
-\begin{example}[\code{robot.body.armL.hand.fingerR}]
+Some detailed examples:
+
+\begin{itemize}
+
+\item \lstinline{robot.body.armL.hand.fingerR} gives \lstinline{fingerLR}.
   \begin{enumerate}
   \item Move all localization at the end:
-    \code{robot.body.arm.hand.fingerLR}
-  \item The full name remaining is: \code{robot.body.arm.hand.finger}
-  \item \code{finger} should be kept, \code{hand}, \code{arm},
-    \code{body} and \code{robot} are not necessary since every
-    finger component will always be attached only to a hand, itself
-    attached to an arm and a body and a robot.
-  \item The result is \code{fingerLR}
+    \lstinline{robot.body.arm.hand.fingerLR}
+  \item The full name remaining is: \lstinline{robot.body.arm.hand.finger}
+  \item \lstinline{finger} should be kept, \lstinline{hand},
+    \lstinline{arm}, \lstinline{body} and \lstinline{robot} are not
+    necessary since every finger component will always be attached only to a
+    hand, itself attached to an arm and a body and a robot.
+  \item The result is \lstinline{fingerLR}
   \end{enumerate}
-\end{example}
 
-
-\begin{example}[\code{robot.body.head.yaw}]~\\
+\item \lstinline{robot.body.head.yaw} gives \lstinline{headYaw}.
   \begin{enumerate}
   \item No localization to move
-  \item \code{yaw} must be kept because \code{head} also have a
-    \code{pitch} sub-component and
-  \item \code{head} must also be kept to avoid ambiguity with other
-    components having a \code{yaw} sub-component.
-  \item The result is \code{headYaw}
+  \item \lstinline{yaw} must be kept because \lstinline{head} also have a
+    \lstinline{pitch} sub-component and
+  \item \lstinline{head} must also be kept to avoid ambiguity with other
+    components having a \lstinline{yaw} sub-component.
+  \item The result is \lstinline{headYaw}
   \end{enumerate}
-\end{example}
 
-\begin{example}[\code{robot.body.legL.knee.pitch}]~\\
+\item \lstinline{robot.body.legL.knee.pitch} gives \lstinline{kneeL}.
   \begin{enumerate}
   \item Move all localization at the end:
-    \code{robot.body.leg.knee.pitchL}
-  \item \code{pitch} is not necessary because \code{knee} has only a
-    \code{pitch}, so \code{knee} will be kept only
-  \item The result is \code{kneeL}
+    \lstinline{robot.body.leg.knee.pitchL}
+  \item \lstinline{pitch} is not necessary because \lstinline{knee} has only
+    a \lstinline{pitch}, so \lstinline{knee} will be kept only
+  \item The result is \lstinline{kneeL}
   \end{enumerate}
-\end{example}
+\end{itemize}
 
 \section{Support classes}
 The \usdk provides a few support \us classes to help you build the component
@@ -1204,8 +1201,9 @@ hierarchy.  You can access to those classes by including the files
 
 \subsection{Interface}
 
-The \code{Interface} class contains \us objects for all the interfaces defined
-in this document. Implementations must inherit from the correct interface.
+The \lstinline{Interface} class contains \us objects for all the interfaces
+defined in this document. Implementations must inherit from the correct
+interface.
 
 \begin{urbiunchecked}
 // Instantiate a camera.
@@ -1214,29 +1212,30 @@ var cam = myCamera.new();
 cam.addProto(Interface.VideoIn);
 \end{urbiunchecked}
 
-The \code{Interface.interfaces} method can be called to get a list of all
-the interfaces an object implements.
+The \lstinline{Interface.interfaces} method can be called to get a list of
+all the interfaces an object implements.
 
 \subsection{Component}
 
-The \code{Component} class can be used to create intermediate nodes of the
-hierarchy. It provides the following methods:
+This class can be used to create intermediate nodes of the hierarchy. It
+provides the following methods:
 
 \begin{urbiscriptapi}
 
 \item[addComponent](<name>)%
   Add a new sub-component to the current component. \var{name} can
   be the name of the new component to create, or an instance of
-  \code{Component}.
+  \lstinline{Component}.
 
 \item[addDevice](<name>, <value>)%
   Add device \var{value} as sub-component, under the name \var{name}. The
   device must inherit from at least one Interface.
 
 \item[makeCompactNames]%
-  This function must be called once on the root node (\code{robot}) after
-  the hierarchy is completed.  It automatically computes the short name of
-  all the devices, and insert them as slots of the \code{Global} object.
+  This function must be called once on the root node (\lstinline{robot})
+  after the hierarchy is completed.  It automatically computes the short
+  name of all the devices, and insert them as slots of the
+  \refObject{Global} object.
 
 \item[dump]%
   Display a hierarchical view of the component hierarchy.
@@ -1248,17 +1247,19 @@ hierarchy. It provides the following methods:
 
 \subsection{Localizer}
 
-The \code{Localizer} class is a special type of \code{Component} that stores
-other components based on their localization. It provides a \code{[]}
-operator that takes a \code{Localization}, such as
+The \lstinline{Localizer} class is a special type of \refObject{Component}
+that stores other components based on their localization. It provides a
+\lstinline{'[]'} operator that takes a \refObject{Localization}, such as
 \lstinline|top,left,front|, and that can be used to set and get the
-\code{Component} or device associated with that \code{Localization}.
+\refObject{Component} or device associated with that
+\refObject{Localization}.
 
-Note that the \code{[]} function is using a mechanism to automatically look
-for its argument as a slot of \code{Localizer}. As a consequence, you cannot
-pass a variable to this function, but only one of the constant
-\code{Localization}.  To pass a variable, use the \lstinline|get(\var{loc})|
-or the \lstinline|set(\var{loc}, \var{value})| function.
+Note that the \lstinline{'[]'} function is using a mechanism to
+automatically look for its argument as a slot of \lstinline{Localizer}. As a
+consequence, you cannot pass a variable to this function, but only one of
+the constant \refObject{Localization}.  To pass a variable, use the
+\lstinline|get(\var{loc})| or the \lstinline|set(\var{loc}, \var{value})|
+function.
 
 The following example illustrates a typical instantiation sequence.
 
