@@ -82,8 +82,8 @@ do (List)
   function foldl(action, value)
   {
     var res = value|
-    for (var i : size)
-      res = action(res, this[i])|
+    for| (var e : this)
+      res = action(res, e)|
     res
   };
 
