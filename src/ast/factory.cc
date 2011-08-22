@@ -685,31 +685,12 @@ namespace ast
 
   // Build a for(iterable) loop.
   rExp
-  Factory::make_for(const location&,
+  Factory::make_for(const location& loc,
                     const location& flavor_loc, flavor_type flavor,
                     rExp iterable, rExp body) // const
   {
-    FLAVOR_DEFAULT(semicolon);
-    PARAMETRIC_AST
-      (ampersand,
-       "for&(var '$for': %exp:1)\n"
-       "  %exp:2\n"
-        );
-    PARAMETRIC_AST
-      (pipe,
-       "for|(var '$for': %exp:1)\n"
-       "  %exp:2\n"
-        );
-    PARAMETRIC_AST
-      (semi,
-       "for (var '$for': %exp:1)\n"
-       "  %exp:2\n"
-        );
-    return exp((FLAVOR_IS(and) ? ampersand
-                : FLAVOR_IS(pipe) ? pipe
-                : FLAVOR_IS(semicolon) ? semi
-                : FLAVOR_ERROR("for"))
-               % iterable % body);
+    return make_for(loc, flavor_loc, flavor,
+                    loc, SYMBOL(DOLLAR_for), iterable, body);
   }
 
 
