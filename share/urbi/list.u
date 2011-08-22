@@ -90,7 +90,7 @@ do (List)
   // Whether e is in the list.
   function has(e)
   {
-    any (function (i) { i == e })
+    any (function (i) { e == i })
   };
 
   // FIXME: We need to use a single convention for physical-equality
@@ -99,7 +99,7 @@ do (List)
   // memHas, or choose another convention.
   function hasSame(e)
   {
-    any (function (i) { i === e })
+    any (function (i) { e === i })
   };
 
   copySlot ("front", "head");
