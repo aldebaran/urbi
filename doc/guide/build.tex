@@ -221,11 +221,10 @@ deb: liblinphone-dev
 \end{package}
 
 \item[PDFLaTeX] TeX Live is the most common \TeX{} distribution nowadays.
-  We use \command{pdfcrop} from \file{texlive-bin-extra}.  We also use
-  TeX4HT, which is part of \file{texlive-htmlxml} on MacPorts.
+  We use \command{pdfcrop} from \file{texlive-bin-extra}.
 \begin{package}
 deb: texlive-base texlive-latex-extra texlive-binaries
-MacPorts: texlive texlive-latex-extra texlive-bin-extra texlive-htmlxml
+MacPorts: texlive texlive-latex-extra texlive-bin-extra
 \end{package}
 
 \item[pkg-config] To find some libraries (such as oRTP), we use
@@ -253,7 +252,7 @@ MacPorts: swig-java
 \item[TeX4HT] Used to generate the HTML documentation.
 \begin{package}
 deb: tex4ht
-MacPorts: texlive_texmf-full
+MacPorts: texlive-htmlxml
 \end{package}
 
 \item[Transfig] Needed to convert some figures for documentation
