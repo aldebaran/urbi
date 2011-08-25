@@ -32,7 +32,7 @@ namespace urbi
   namespace object
   {
 
-    class Slot: public CxxObject
+    class URBI_SDK_API Slot: public CxxObject
     {
     private:
       URBI_CXX_OBJECT(Slot, CxxObject);
@@ -52,9 +52,9 @@ namespace urbi
       ~Slot();
 
 
-      /*-------------.
-      |   Setters.   |
-      `-------------*/
+      /*----------.
+      | Setters.  |
+      `----------*/
       template <typename T>
       void set(const T& value, Object* sender=0);
 
@@ -68,9 +68,9 @@ namespace urbi
       template <typename T>
       const T& operator=(const T& value);
 
-      /*-------------.
-      |   Getters.   |
-      `-------------*/
+      /*----------.
+      | Getters.  |
+      `----------*/
       Object* operator->();
       const Object* operator->() const;
       /** Get current value, calling getters if present.
@@ -126,9 +126,10 @@ namespace urbi
     protected:
       // Changed event, created on demand.
       ATTRIBUTE_RW(rObject, changed);
-      /********************
-      *  Configuration    *
-      *********************/
+
+      /*----------------.
+      | Configuration.  |
+      `----------------*/
       ATTRIBUTE_RW(bool, constant);
       // Disable copy on write for this slot if false.
       ATTRIBUTE_RW(bool, copyOnWrite);
@@ -142,9 +143,9 @@ namespace urbi
       ATTRIBUTE_R(bool, rtp);
       void rtp_set(bool v);
 
-      /****************
-      *  Callbacks    *
-      ****************/
+      /*------------.
+      | Callbacks.  |
+      `------------*/
       // Slot getter hook: val slot.get()
       ATTRIBUTE_Rw(rObject, get);
       // Slot setter hook: slot.set(val)
@@ -154,9 +155,10 @@ namespace urbi
       // Owner object setter hook: obj.set(val, slot)
       ATTRIBUTE_Rw(rObject, oset);
       ATTRIBUTE_RW(rObject, updateHook);
-      /************
-      *   Value   *
-      *************/
+
+      /*--------.
+      | Value.  |
+      `--------*/
       // Only value, or if split, inputValue, aka the command we receive.
       ATTRIBUTE_RW(rObject, value);
       // aka 'sensor' value, what we expose to the external world
@@ -171,9 +173,10 @@ namespace urbi
        */
       ATTRIBUTE_RW(bool, dead);
 
-      /******************
-      *  Push-pull loop *
-      ******************/
+      /*-----------------.
+      | Push-pull loop.  |
+      `-----------------*/
+
       /* Set to true if a push-pull loop is running.
        * It gets activated when a getter is present, and someone registers
        * to one of the change notification mechanisms.
@@ -188,9 +191,10 @@ namespace urbi
       bool push_pull_loop_check();
       /// Run the push-pull loop
       rObject push_pull_loop_run(runner::Job& r);
-      /****************
-      *  Bypass mode *
-      ****************/
+
+      /*--------------.
+      | Bypass mode.  |
+      `--------------*/
       // Tag used to notify tasks blocked in a read on a slot in bypass mode
       ATTRIBUTE_RW(rObject, waiter_tag, , , , mutable);
       // on-demand creation of waiter_tag_

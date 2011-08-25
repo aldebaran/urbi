@@ -30,7 +30,7 @@ namespace urbi
   * to perform some actions synchronously.
   * Other kinds are unregistered asynchronously when the event triggers.
   */
-  class Subscription: public CxxObject
+  class URBI_SDK_API Subscription: public CxxObject
   {
     URBI_CXX_OBJECT(Subscription, CxxObject);
   public:

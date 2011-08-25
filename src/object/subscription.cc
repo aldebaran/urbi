@@ -32,19 +32,19 @@ namespace urbi
     URBI_CXX_OBJECT_INIT(Subscription)
     {
       init_();
-      BIND(stop);
-      BIND(onEvent, onEvent_);
-      BIND(enabled, enabled_);
       BIND(asynchronous, asynchronous_);
-      BIND(maxParallelEvents, maxParallelEvents_);
-      BIND(minInterval, minInterval_);
-      BIND(processing, processing_);
-      BIND(lastCall, lastCall_);
-      BIND(disconnected, disconnected_);
       BIND(callCount, callCount_);
-      BIND(totalCallTime, totalCallTime_);
-      BIND(minCallTime, minCallTime_);
+      BIND(disconnected, disconnected_);
+      BIND(enabled, enabled_);
+      BIND(lastCall, lastCall_);
       BIND(maxCallTime, maxCallTime_);
+      BIND(maxParallelEvents, maxParallelEvents_);
+      BIND(minCallTime, minCallTime_);
+      BIND(minInterval, minInterval_);
+      BIND(onEvent, onEvent_);
+      BIND(processing, processing_);
+      BIND(stop);
+      BIND(totalCallTime, totalCallTime_);
     }
 
     Subscription::Subscription()
