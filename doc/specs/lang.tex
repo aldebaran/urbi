@@ -6,6 +6,8 @@
 %%
 %% See the LICENSE file for more information.
 
+\newcommand{\forAnd}{\texorpdfstring{\lstinline{for&}}{for\&}}
+
 \chapter{\us Language Reference Manual}
 \label{sec:lang}
 
@@ -1521,15 +1523,15 @@ case references refer to the innermost variable, as shown below.
 \label{sec:lang:function}
 \dfn{Functions} in \us are first class citizens: a function is a value, like
 floats and strings, and can be handled as such.  This is different from most
-\langC-like languages.  The syntax to declare named or \dfn{anonymous functions}
-is a follows:
+\langC-like languages.  The syntax to declare named or \dfn{anonymous
+  functions} is a follows:
 
 \grammar{function-end, block-exp, return-stm}
 
 In words: One can create an anonymous function thanks to the
 \lstindex{function} keyword (or \lstindex{closure}, see
-\autoref{sec:lang:closure}), followed by the list of formal arguments and
-a block representing the body of the function.  Formal arguments are a
+\autoref{sec:lang:closure}), followed by the list of formal arguments and a
+block representing the body of the function.  Formal arguments are a
 possibly-empty comma-separated list of identifiers.  Non-empty lists of
 formal arguments may optionally end with a trailing comma. The listing below
 illustrates this.
@@ -2920,12 +2922,12 @@ is skipped, and the next iteration is started.
   while (true)
   {
     --i;
-    echo ("in: " + i);
+    echo("in: " + i);
     if (i == 1)
       break
     else if (i == 2)
       continue;
-    echo ("out: " + i);
+    echo("out: " + i);
   };
 };
 [00000000] *** in: 3
@@ -2960,12 +2962,12 @@ The execution is can be controlled by \lstinline{break} and
   while| (true)
   {
     --i;
-    echo ("in: " + i);
+    echo("in: " + i);
     if (i == 1)
       break
     else if (i == 2)
       continue;
-    echo ("out: " + i);
+    echo("out: " + i);
   };
 };
 [00000000] *** in: 3
@@ -3114,7 +3116,7 @@ try
 }
 catch (var e)
 {
-  echo ("Exception type: %s" % e.type);
+  echo("Exception type: %s" % e.type);
   if (e.isA(Exception.Arity))
   {
     echo("Routine: %s" % e.routine);
@@ -3458,7 +3460,7 @@ t.t2: echo(2);
 [00015631:error] !!! lookup failed: t2
 
 // If "this" is not a Lobby, then implicit tags are not supported.
-class Foo { function f() { t1: echo (12) } }|;
+class Foo { function f() { t1: echo(12) } }|;
 Foo.f;
 [00015631:error] !!! lookup failed: t1
 [00015631:error] !!!    called from: f
@@ -3468,9 +3470,9 @@ Foo.f;
 See the documentation of \refObject{Tag} for more information about the job
 control.  See \autoref{sec:tut:tags} for a tutorial on tags.
 
-\subsection{\lstinline{every}}
+\subsection{\lstindex{every}}
 \label{sec:lang:every}
-The \lstindex{every} statement enables to execute a block of code
+The \lstinline{every} statement enables to execute a block of code
 repeatedly, with the given period.
 
 \begin{urbiscript}
@@ -3623,11 +3625,11 @@ actual kind of \lstinline{for} loop.
 for, (var i = 3; 0 < i; --i)
 {
   var j = i |
-  echo ("in: i = %s, j = %s" % [i, j]);
+  echo("in: i = %s, j = %s" % [i, j]);
   sleep(j/10);
-  echo ("out: i = %s, j = %s" % [i, j]);
+  echo("out: i = %s, j = %s" % [i, j]);
 };
-echo ("done");
+echo("done");
 [00000144] *** in: i = 3, j = 3
 [00000145] *** in: i = 2, j = 2
 [00000145] *** in: i = 1, j = 1
@@ -3655,7 +3657,7 @@ echo("done");
 \end{urbiscript}
 
 
-\subsubsection{range-\lstinline{for&}}
+\subsubsection{range-\forAnd}
 \label{sec:lang:for:each:and}
 
 One can iterate concurrently over the members of a collection.
@@ -3663,8 +3665,8 @@ One can iterate concurrently over the members of a collection.
 \begin{urbiscript}
 for& (var i: [0, 1, 2])
 {
-  echo (i * i);
-  echo (i * i);
+  echo(i * i);
+  echo(i * i);
 };
 [00000000] *** 0
 [00000000] *** 1
@@ -3683,7 +3685,7 @@ for& (var i: [0, 1, 2])
   var j = i;
   if (j == 1)
     continue;
-  echo (j);
+  echo(j);
 };
 [00020653] *** 0
 [00021054] *** 2
@@ -3696,12 +3698,14 @@ including this one, are stopped.
 for& (var i: [0, 1, 2])
 {
   var j = i;
-  echo (j);
+  echo(j);
   if (j == 1)
-   { echo ("break");
-    break;};
+  { 
+    echo("break");
+    break;
+  };
   sleep(1s);
-  echo (j);
+  echo(j);
 };
 [00000001] *** 0
 [00000001] *** 1
@@ -3709,11 +3713,11 @@ for& (var i: [0, 1, 2])
 [00000002] *** break
 \end{urbiscript}
 
-\subsubsection{\lstinline{for& (n)}}
+\subsubsection{Anonymous range-\forAnd}
 
 Since \lstinline|for& (\var{n}) \var{body}| is processed as
-\lstinline|for& (var \var{tmp}: \var{n}) \var{body}|, which \var{tmp}
-a hidden variable, see \autoref{sec:lang:for:each:and} for details.
+\lstinline|for& (var \var{tmp}: \var{n}) \var{body}|, with \var{tmp} being a
+hidden variable, see \autoref{sec:lang:for:each:and} for details.
 
 
 \subsection{\lstinline{loop,}}
@@ -3850,8 +3854,9 @@ finally       { echo("finally"); "finally-value" };
 
 Alternatively, you may use the \refObject{Timeout} object.
 
-\subsection{\lstinline{While}}
+\subsection{\lstinline{while}}
 \subsubsection{\lstinline{while,}}
+\lstIndexTwo{while,}{while}
 \label{sec:lang:while:comma}
 \experimentalremoved{}
 
@@ -3882,11 +3887,11 @@ variable inside the loop body:
   while, (i)
   {
     var j = --i;
-    echo ("in: i = %s, j = %s" % [i, j]);
+    echo("in: i = %s, j = %s" % [i, j]);
     sleep(j/10);
-    echo ("out: i = %s, j = %s" % [i, j]);
+    echo("out: i = %s, j = %s" % [i, j]);
   }|
-  echo ("done");
+  echo("done");
 }|
 [00000144] *** in: i = 2, j = 3
 [00000145] *** in: i = 1, j = 2
@@ -4141,7 +4146,7 @@ emission.
   var e = Event.new;
   {
     waituntil (e?);
-    echo ("caught e");
+    echo("caught e");
   },
   e!;
 [00021054] *** caught e
@@ -4158,17 +4163,17 @@ condition remains verified as long as the event is ``on''.
   e.trigger;
   {
     waituntil (e?);
-    echo ("caught e");
+    echo("caught e");
   };
 [00021054] *** caught e
   {
     waituntil (e?);
-    echo ("caught e");
+    echo("caught e");
   };
 [00021054] *** caught e
   {
     waituntil (e?);
-    echo ("caught e");
+    echo("caught e");
   };
 [00021054] *** caught e
 };
@@ -4182,7 +4187,7 @@ accepted events.
   var e = Event.new;
   {
     waituntil (e?(1, var b));
-    echo ("caught e(1, %s)" % b);
+    echo("caught e(1, %s)" % b);
   },
   e!;
   e!(1);
@@ -4201,7 +4206,7 @@ Events sent before do not release the construct.
   e!;
   {
     waituntil (e?);
-    echo ("caught e");
+    echo("caught e");
   },
   e!;
 [00021054] *** caught e
