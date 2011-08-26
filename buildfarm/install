@@ -1,7 +1,9 @@
 #!/bin/sh
 
-set -xe
-env
+set -e
+. $(dirname "$0")/common
+
+set -x
 
 DIR_STAGE="$(dirname "$DIR_INSTALL")/stage"
 
