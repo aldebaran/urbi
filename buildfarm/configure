@@ -29,8 +29,41 @@ older ()
 
 set -ex
 
+## --------------------- ##
+## Basic sanity checks.  ##
+## --------------------- ##
+
+# We really want ps to work.
+#
+# When it does not, ld cannot work properly, so check-lib-deps does not
+# work.  And configure fails to run "javac Test" failing this way:
+#
+# bf-2-ubuntu$ /usr/bin/javac Test
+# /usr/bin/javac: error while loading shared libraries: libjli.so: cannot open shared object file: No such file or directory
+#
+# or
+#
+# bf-1-chroot$ javac Test.java
+# Java HotSpot(TM) Client VM warning: Can't detect initial thread stack location - find_vma failed
+if ! ps; then
+  fatal "ps does not work, is procfs properly mounted?"
+fi
+
+# We need share.
+sharedir=$HOME/share
+readme=$sharedir/README-share.txt
+if test ! -f $readme; then
+  fatal "share/ does not seem to be mounted properly: there is no $readme"
+fi
+
+
+## ----------- ##
+## Configure.  ##
+## ----------- ##
+
+
 local=$HOME/local
-export PKG_CONFIG_PATH=$local/pkgconfig/$BUILDFARM_MODE:$local/pkgconfig
+export PKG_CONFIG_PATH=$local/pkgconfig/$BUILDFARM_MODE:$local/pkgconfig:$PKG_CONFIG_PATH
 
 BOOST=$(pkg-config --print-errors boost-1.38 --variable=prefix)
 CC='ccache gcc'
