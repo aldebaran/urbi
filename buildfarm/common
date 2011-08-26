@@ -1,0 +1,88 @@
+#! /bin/sh
+
+me=$(basename $0)
+
+env=$(set +o)
+
+stderr ()
+{
+  set +xv
+  local i
+  for i
+  do
+    echo "$i"
+  done | sed -e "s,^,$0: ,g" >&2
+  eval "$env"
+}
+
+error ()
+{
+  set +xv
+  local status=$1
+  shift
+  stderr "$@"
+  exit $status
+}
+
+fatal ()
+{
+  set +xv
+  error 1 "$@"
+}
+
+run ()
+{
+  stderr "running: $*"
+  eval "$@"
+}
+
+find_prog ()
+{
+  find_prog_res=
+  local i
+  for i in "$@"
+  do
+    if $i --version >/dev/null 2>&1; then
+      find_prog_res=$i
+      break
+    fi
+  done
+}
+
+stderr "$me: this is $(hostname): $BUILDFARM_PROJECT-$BUILDFARM_NAME-$BUILDFARM_MODE"
+
+## --------------------- ##
+## Basic sanity checks.  ##
+## --------------------- ##
+
+# We really want ps to work.
+#
+# When it does not, ld cannot work properly, so check-lib-deps does not
+# work.  And configure fails to run "javac Test" failing this way:
+#
+# bf-2-ubuntu$ /usr/bin/javac Test
+# /usr/bin/javac: error while loading shared libraries: libjli.so: cannot open shared object file: No such file or directory
+#
+# or
+#
+# bf-1-chroot$ javac Test.java
+# Java HotSpot(TM) Client VM warning: Can't detect initial thread stack location - find_vma failed
+#
+# Beware that on OS X, if "ps" sees no process, it fails.  "ps x"
+# should help.
+if ! ps x; then
+  fatal "ps does not work, is procfs properly mounted?"
+fi
+
+# We need share.
+sharedir=$HOME/share
+readme=$sharedir/README-share.txt
+if test ! -f $readme; then
+  fatal "share/ does not seem to be mounted properly: there is no $readme"
+fi
+
+# colordiff sometimes does not tell different files apart (e.g., on
+# Debian Etch).
+if colordiff /dev/null $readme >/dev/null 2>&1; then
+  fatal "colordiff exits successfully on different files"
+fi

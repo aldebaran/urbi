@@ -1,26 +1,7 @@
 #!/bin/sh
 
-me=$(basename $0)
-stderr ()
-{
-  local i
-  for i
-  do
-    echo "$i"
-  done | sed -e "s/^/$me: /"
-}
-
-run ()
-{
-  stderr "running: $*"
-  eval "$@"
-}
-
-fatal ()
-{
-  stderr "$@"
-  exit 1
-}
+set -e
+. $(dirname "$0")/common
 
 # older REFERENCE FILE...
 # -----------------------
@@ -54,45 +35,6 @@ pkg_config_prefix ()
   test -n "$pkg_config_prefix_res" ||
     fatal "cannot get prefix from pkg-config for $*"
 }
-
-set -ex
-
-## --------------------- ##
-## Basic sanity checks.  ##
-## --------------------- ##
-
-# We really want ps to work.
-#
-# When it does not, ld cannot work properly, so check-lib-deps does not
-# work.  And configure fails to run "javac Test" failing this way:
-#
-# bf-2-ubuntu$ /usr/bin/javac Test
-# /usr/bin/javac: error while loading shared libraries: libjli.so: cannot open shared object file: No such file or directory
-#
-# or
-#
-# bf-1-chroot$ javac Test.java
-# Java HotSpot(TM) Client VM warning: Can't detect initial thread stack location - find_vma failed
-#
-# Beware that on OS X, if "ps" sees no process, it fails.  "ps x"
-# should help.
-if ! ps x; then
-  fatal "ps does not work, is procfs properly mounted?"
-fi
-
-# We need share.
-sharedir=$HOME/share
-readme=$sharedir/README-share.txt
-if test ! -f $readme; then
-  fatal "share/ does not seem to be mounted properly: there is no $readme"
-fi
-
-# colordiff sometimes does not tell different files apart (e.g., on
-# Debian Etch).
-if colordiff /dev/null $readme >/dev/null 2>&1; then
-  fatal "colordiff exits successfully on different files"
-fi
-
 
 ## ----------- ##
 ## Bootstrap.  ##

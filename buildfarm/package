@@ -1,48 +1,10 @@
 #!/bin/sh
 
 set -e
-set -x
-env=$(set +o)
+. $(dirname "$0")/common
 
-stderr ()
-{
-  set +xv
-  local i
-  for i
-  do
-    echo "$i"
-  done | sed -e "s,^,$0: ,g" >&2
-  eval "$env"
-}
-
-error ()
-{
-  set +xv
-  local status=$1
-  shift
-  stderr "$@"
-  exit $status
-}
-
-fatal ()
-{
-  set +xv
-  error 1 "$@"
-}
-
-find_prog ()
-{
-  find_prog_res=
-  local i
-  for i in "$@"
-  do
-    if $i --version >/dev/null 2>&1; then
-      find_prog_res=$i
-      break
-    fi
-  done
-}
-
+# xmv ARG...
+# ----------
 # Wrapper around "mv" that tries to do things three times, then forget
 # about it.  This is because sometimes we get "Input/output error"
 # with WebDAV, which is a huge loss of time on the BF.
@@ -170,18 +132,16 @@ check_md5 ()
   cd $here
 }
 
+## ------ ##
+## Main.  ##
+## ------ ##
+
 find_prog $MD5SUM gmd5sum md5sum
 MD5SUM=$find_prog_res
 test -n "$MD5SUM" ||
   fatal "cannot find md5sum"
 
 : ${TMPDIR=/tmp}
-
-# Sanity check: make sure that we are going to install in the right
-# shared "share" directory.
-sharedir=$HOME/share
-test -f $sharedir/README-share.txt ||
-  fatal "$sharedir does not contain README-share.txt" "mount:" "$(mount)"
 
 PROJECT=$BUILDFARM_PROJECT    # name of the project
 source=$DIR_SOURCE            # source directory
