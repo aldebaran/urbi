@@ -20,7 +20,7 @@ makes a group of such object, and uses that group.
 class Sample
 {
   var value = 0;
-  function init(v) { value = v; };
+  function init(v)    { value = v; };
   function asString() { "<" + value.asString + ">"; };
   function timesTen() { new(value * 10); };
   function plusTwo()  { new(value + 2); };
@@ -51,13 +51,14 @@ sum;
 \subsection{Prototypes}
 
 \begin{refObjects}
-\item[Object]
+\item[RangeIterable]
+\item[Comparable]
 \end{refObjects}
 
 \subsection{Construction}
 
-Groups are created like any other object. The constructor can
-take members to add to the group.
+Groups are created like any other object. The constructor can take members
+to add to the group.
 
 \begin{urbiscript}
 Group.new;
@@ -102,43 +103,108 @@ Group.new(1, 2).asString == "Group [1, 2]";
   of \lstinline|void|''.
 
 \item[getProperty](<slot>, <prop>)%
-  Bounced to the members so that
-  \lstinline|this.\var{slot}->\var{prop}| actually collects the values
-  of the property \var{prop} of the slots \var{slot} of the group
-  members.
+  Bounced to the members so that \lstinline|this.\var{slot}->\var{prop}|
+  actually collects the values of the property \var{prop} of the slots
+  \var{slot} of the group members.  See \refSlot[Object]{getProperty}.
+\begin{urbiscript}
+class C
+{
+  var val = 0;
+}|;
 
-\item[hasProperty](<name>)%
-  Bounced to the members.
+var a = C.new|; var b = C.new|;
+var g = Group.new << a << b|;
+
+g.val->prop;
+[00010640:error] !!! property lookup failed: val->prop
+
+a.val->prop = 42|;
+g.val->prop;
+[00010640:error] !!! property lookup failed: val->prop
+
+b.val->prop = 51|;
+assert
+{
+  g.val->prop == Group.new(42, 51);
+};
+\end{urbiscript}
+\begin{urbicomment}
+  removeSlots("C", "a", "b", "g");
+\end{urbicomment}
+
+
+\item[hasProperty](<slot>, <prop>)%
+  Bounce to the members and return a group for the results.  See
+  \refSlot[Object]{hasProperty}.
+\begin{urbiscript}
+class C
+{
+  var val = 0;
+}|;
+
+var a = C.new|; var b = C.new|;
+var g = Group.new << a << b|;
+
+assert
+{
+  g.hasProperty("val", "prop") == Group.new(false, false);
+  a.val->prop = 21;
+  g.hasProperty("val", "prop") == Group.new(true, false);
+  b.val->prop = 42;
+  g.hasProperty("val", "prop") == Group.new(true, true);
+};
+\end{urbiscript}
+\begin{urbicomment}
+  removeSlots("C", "a", "b", "g");
+\end{urbicomment}
+
+
 
 \item[hasSlot](<name>)%
   True if and only if all the members have the slot.
 
-\begin{urbiscript}
+\begin{urbiassert}
 var g = Group.new(1, 2);
-[00000000] Group [1, 2]
-g.hasSlot("foo");
-[00000000] false
-g.hasSlot("+");
-[00000000] true
-g + 1;
-[00000000] Group [2, 3]
-\end{urbiscript}
+
+!g.hasSlot("foo");
+ g.hasSlot("+");
+ g + 1 == Group.new(2, 3);
+\end{urbiassert}
+
 
 \item[remove](<member>, ...)%
   Remove members from \this group, and return \this.  Non-existing members
   are silently ignored.
 \begin{urbiassert}
 var g = Group.new(1, 2, 1);
-g.remove(1) === g;   g.members == [2];
-g.remove(12) === g;  g.members == [2];
+g.remove(1, 3) === g == Group.new(2);
+g.remove(2)    === g == Group.new;
 \end{urbiassert}
 
 
 \item[setProperty](<slot>, <prop>, <value>)%
   Bounced to the members so that
-  \lstinline|this.\var{slot}->\var{prop} = \var{value}|
-  actually updates the value of the property \var{prop}
-  in the slots \var{slot} of the group members.
+  \lstinline|this.\var{slot}->\var{prop} = \var{value}| actually updates the
+  value of the property \var{prop} in the slots \var{slot} of the group
+  members, and return a group for the collected result.  See
+  \refSlot[Object]{setProperty}.
+
+\begin{urbiscript}
+class C
+{
+  var val = 0;
+}|;
+
+var g = Group.new << C.new << C.new|;
+
+assert
+{
+  (g.val->prop = 31) == Group.new(31, 31);
+};
+\end{urbiscript}
+\begin{urbicomment}
+  removeSlots("C", "g");
+\end{urbicomment}
 
 \item[updateSlot](<name>, <value>)%
   Bounced to the members so that
@@ -147,7 +213,16 @@ g.remove(12) === g;  g.members == [2];
   the group members.
 
 \item['<<'](<member>)%
-  Syntactic sugar for \lstinline|add|.
+  Syntactic sugar for \refSlot{add}.
+
+\item['=='](<that>)%
+  Whether \lstinline|this.members == \var{that}.members|.
+\begin{urbiassert}
+               Group.new == Group.new;
+Group.new(1, [2], "foo") == Group.new(1, [2], "foo");
+         Group.new(1, 2) != Group.new(2, 1);
+            Group.new(1) != Group.new(2);
+\end{urbiassert}
 \end{urbiscriptapi}
 
 %%% Local Variables:

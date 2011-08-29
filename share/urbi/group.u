@@ -18,7 +18,7 @@ requireFile("urbi/list.u");
 requireFile("urbi/nil.u");
 requireFile("urbi/range-iterable.u");
 
-class Global.Group : RangeIterable
+class Global.Group : RangeIterable, Comparable
 {
   function init(var args[])
   {
@@ -82,5 +82,8 @@ class Global.Group : RangeIterable
   function hasSlot(var name)
   {
     members.all(function (var o) { o.hasSlot(name) })
-  }
+  };
+
+  // Simple forwarding of List features.
+  function '=='(var that) { members == that.members };
 };
