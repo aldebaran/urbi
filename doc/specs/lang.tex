@@ -2419,47 +2419,88 @@ statements.
 
 \section{Imperative flow control}
 
+This section specifies the traditional constructs that control the control
+flow for typical imperative features (loops, scopes etc.).  More specific
+constructs at described elsewhere:
+\begin{itemize}
+\item \autoref{sec:lang:conc} defines the control flow constructs for
+  concurrency, including the concurrency-based alternates of loop
+  constructs;
+\item \autoref{sec:lang:event} specifies the event-handling constructs.
+\end{itemize}
+
+See \autoref{tab:keywords:flavors}.
+
+\newcommand{\flavor}[6]
+{
+  \lstinline|#2| &
+  \ifthen{\equal{#3}{Y}}{\autoref{sec:lang:#1:semi}} &
+  \ifthen{\equal{#4}{Y}}{\autoref{sec:lang:#1:pipe}} &
+  \ifthen{\equal{#5}{Y}}{\autoref{sec:lang:#1:comma}} &
+  \ifthen{\equal{#6}{Y}}{\autoref{sec:lang:#1:pipe}}
+}
+
+\begin{table}[\floatpos]
+  \centering
+  \begin{tabular}{|l|cccc|}
+    \hline
+    & \textkwd{;} & \textkwd{|} & \textkwd{,} & \textkwd{\&}\\
+    \hline
+    \flavor{every}{every}           {Y}{Y}{Y}{N} \\
+    \flavor{forc}{for (i; t; c)}    {Y}{Y}{Y}{N} \\
+    \flavor{foreach}{for (var i: c)}{Y}{Y}{N}{Y} \\
+    \flavor{forn}{for (c)}          {Y}{Y}{N}{Y} \\
+    \flavor{loop}{loop}             {Y}{Y}{Y}{N} \\
+    \flavor{while}{while}           {Y}{Y}{Y}{N} \\
+    \hline
+  \end{tabular}
+  \caption{Keywords with flavors}
+  \label{tab:keywords:flavors}
+\end{table}
+
+
 \subsection{\lstinline{break}}
 \label{sec:lang:break}
 
-When encountered within a loop (\lstinline{for} or a \lstinline{while}),
-\lstindex{break} makes the execution jump after the loop.
+When encountered within a loop (\lstinline{for}, \lstinline{loop},
+\lstinline{while}), \lstindex{break} makes the execution jump after the
+loop.
 
 \begin{urbiscript}
+var i = 5|;
+for (; true; echo(i))
 {
-  var i = 5;
-  for (; true; echo(i))
-  {
-    if (i > 8)
-      break;
-    ++i;
-  };
+  if (i > 8)
+    break;
+  ++i;
 };
 [00000000] *** 6
 [00000000] *** 7
 [00000000] *** 8
 [00000000] *** 9
 \end{urbiscript}
+\begin{urbicomment}
+removeSlots("i");
+\end{urbicomment}
 
 \begin{urbiscript}
-function breakInWhile ()
+var i = 0|;
+while (i < 10)
 {
-  var i = 0;
-  while (i < 10)
-  {
-    echo(i);
-    if (i == 2)
-      break;
-    ++i;
-  };
   echo(i);
-}|;
-breakInWhile;
+  if (i == 2)
+    break;
+  ++i;
+};
+echo(i);
 [00000004] *** 0
 [00000005] *** 1
 [00000006] *** 2
 [00000007] *** 2
 \end{urbiscript}
+\begin{urbicomment}
+removeSlots("i");
+\end{urbicomment}
 
 Occurrences of \lstinline{break} outside any loop is a syntax error.
 
@@ -2483,9 +2524,9 @@ for (var i : 10)
 \subsection{\lstinline{continue}}
 \label{sec:lang:continue}
 
-When encountered within a \lstinline{for} or a \lstinline{while} loop,
-\lstindex{continue} short-circuits the rest of the loop-body, and runs the
-next iteration (if there remains one).
+When encountered in a loop (\lstinline{for}, \lstinline{loop},
+\lstinline{while}), \lstindex{continue} short-circuits the remainder of the
+body of the loop, and runs the next iteration (if there remains one).
 
 \begin{urbiscript}
 for (var i = 0; i < 8; i++)
@@ -2501,24 +2542,23 @@ for (var i = 0; i < 8; i++)
 \end{urbiscript}
 
 \begin{urbiscript}
-function continueInWhile ()
+var i = 0|;
+while (i < 6)
 {
-  var i = 0|;
-  while (i < 6)
-  {
-    ++i;
-    if (i % 2 != 0)
-      continue;
-    echo(i);
-  };
+  ++i;
+  if (i % 2 != 0)
+    continue;
   echo(i);
-}|;
-continueInWhile;
+};
+echo(i);
 [00000002] *** 2
 [00000004] *** 4
 [00000006] *** 6
 [00000008] *** 6
 \end{urbiscript}
+\begin{urbicomment}
+removeSlots("i");
+\end{urbicomment}
 
 Occurrences of \lstinline{continue} outside any loop is a syntax error.
 
@@ -2563,24 +2603,27 @@ do (1024)
 \end{urbiscript}
 
 
-
-
 \subsection{\lstinline{for}}
 \label{sec:lang:for}
+\grammar{forc-stm,foreach-stm,forn-stm}
+
 There are several kinds of \lstindex{for} loops:
 \begin{description}
 \item[C-like for] such as
   \lstinline|for (var i = 0; i < n; ++i) echo(i);|, see
-  \autoref{sec:lang:for:c}.
+  \autoref{sec:lang:forc}.
 \item[Range-for] also known as \dfn{foreach}-loops,
   \lstinline|for (var i : [0, 1, 2, 4]) echo(i);|, see
-  \autoref{sec:lang:for:each}.
+  \autoref{sec:lang:foreach}.
 \item[Anonymous range-for] for instance \lstinline|for (10) echo(10);|, see
-  \autoref{sec:lang:for:n}.
+  \autoref{sec:lang:forn}.
 \end{description}
 
-\subsubsection{C-like \lstinline{for}}
-\label{sec:lang:for:c}
+Besides each kind of \lstinline{for} support several flavors; see
+\autoref{tab:keywords:flavors}.
+
+\subsection{C-like \lstinline{for}}
+\label{sec:lang:forc}
 
 \us support the classical \langC-like \lstinline{for} construct.
 
@@ -2606,8 +2649,81 @@ for (\var{initialization}; \var{condition}; \var{increment})
 \item The loop evaluates to \lstinline{void}.
 \end{enumerate}
 
-\subsubsection{Range-\lstinline{for}}
-\label{sec:lang:for:each}
+There are two (sequential) flavors: \lstinline{for;} (the default) and
+\lstinline{for|}.
+
+\subsubsection{\lstinline{for;}}
+\label{sec:lang:forc:semi}
+\lstIndexTwo{for}{for; (;;)}
+This is the default flavor.  Basically its semantics is that of:
+
+\begin{urbiunchecked}
+\var{initialization}|
+\var{condition}|      // break if done
+\var{body};
+
+\var{increment}|
+\var{condition}|      // break if done
+\var{body};
+
+\var{increment}|
+// etc.
+\end{urbiunchecked}
+
+\begin{urbiscript}
+var i = 42|;
+for; (i = 0; i < 3; i += 1)
+  echo (i);
+echo(i);
+[00000001] *** 0
+[00000002] *** 1
+[00000003] *** 2
+[00000004] *** 3
+\end{urbiscript}
+\begin{urbicomment}
+removeSlots("i");
+\end{urbicomment}
+
+
+If the \var{initialization} declares a variable, then this variable is
+scoped to the loop itself.
+\begin{urbiscript}
+var i = 42|;
+for; (var i = 0; i < 3; i += 1)
+  echo (i);
+echo(i);
+[00000005] *** 0
+[00000006] *** 1
+[00000007] *** 2
+[00000008] *** 42
+\end{urbiscript}
+\begin{urbicomment}
+removeSlots("i");
+\end{urbicomment}
+
+
+\subsubsection{\lstinline{for|}}
+\label{sec:lang:forc:pipe}
+\lstIndexTwo{for}{forPipe (;;)}
+Compared to the \samp{;} flavor, the statements are executed as if they were
+separated with \samp{|}.  This flavor is therefore more efficient, at the
+expense of being selfish: no other piece of code may interleave.
+
+\begin{urbiunchecked}
+\var{initialization}|
+\var{condition}|      // break if done
+\var{body}|
+
+\var{increment}|
+\var{condition}|      // break if done
+\var{body}|
+
+\var{increment}|
+// etc.
+\end{urbiunchecked}
+
+\subsection{Range-\lstinline{for}}
+\label{sec:lang:foreach}
 \lstIndexTwo{in}{for}
 
 \us supports iteration over a collection with another form of the
@@ -2616,8 +2732,15 @@ programming languages.
 
 \grammar{foreach-stm}
 
+There are two (sequential) flavors: \lstinline{for;} (the default) and
+\lstinline{for|}.
+
+\subsubsection{Range-\lstinline{for;}}
+\label{sec:lang:foreach:semi}
+\lstIndexTwo{for}{for; (var i: c)}
+
 \begin{urbiunchecked}
-for (var \var{name} : \var{collection})
+for; (var \var{name} : \var{collection})
    \var{body};
 \end{urbiunchecked}
 
@@ -2626,7 +2749,7 @@ evaluates to \lstinline{void}.  Inside \var{body}, the current element is
 accessible via the \var{name} local variable:
 
 \begin{urbiscript}
-for (var x : [0, 1, 2, 3, 4])
+for; (var x : [0, 1, 2, 3, 4])
   echo(x.sqr);
 [00000000] *** 0
 [00000000] *** 1
@@ -2650,7 +2773,7 @@ function Hobbits.each (action)
   action("Pippin");
   action("Sam");
 }|
-for (var name in Hobbits)
+for; (var name in Hobbits)
   echo("%s is a hobbit." % [name]);
 [00000000] *** Frodo is a hobbit.
 [00000000] *** Merry is a hobbit.
@@ -2664,39 +2787,60 @@ Hobbits.each(function (name) { echo("%s is a hobbit." % [name]) });
 [00000000] *** Sam is a hobbit.
 \end{urbiscript}
 
-\subsubsection{Anonymous range-\lstinline{for}}
-\label{sec:lang:for:n}
+\subsubsection{Range-\lstinline{for|}}
+\label{sec:lang:foreach:pipe}
+\lstIndexTwo{for}{forPipe (var i: c)}
+
+Using this flavor, no other part of the system is allowed to run while the
+loop is executed.  It is more efficient, but selfish.
+
+\subsection{Anonymous range-\lstinline{for}}
+\label{sec:lang:forn}
 
 Iterations over a range can be performed without having to provide a
 variable name to iterate over the collection.  With the exception that the
 loop index is not available within the body, \lstinline|for (n)| is
 equivalent to \lstinline|for (var i: n)|.  It supports the same flavors:
-\lstinline|for;|, \lstinline{for|}, and \lstinline|for&|.
+\lstinline|for;| (default), \lstinline{for|}, and \lstinline|for&|.
 
 \grammar{forn-stm}
 
 The loop evaluates to \lstinline{void}.
 
-\begin{urbiassert}
-{ var res = []; for (3) { res << 1; res << 2 } ; res }
-        == [1, 2, 1, 2, 1, 2];
-
-{ var res = []; for|(3) { res << 1; res << 2 } ; res }
-        == [1, 2, 1, 2, 1, 2];
-
-{ var res = []; for&(3) { res << 1; res << 2 } ; res }
-        == [1, 1, 1, 2, 2, 2];
-\end{urbiassert}
-
-Note that since these \lstinline{for} loops are merely anonymous
-foreach-style loops, the argument needs not being an integer, any iterable
-value can be used.
+Since these \lstinline{for} loops are merely anonymous foreach-style loops,
+the argument needs not being an integer, any iterable value can be used.
 
 \begin{urbiassert}
 3 == { var r = 0; for ([1, 2, 3]) ++r; r};
 3 == { var r = 0; for ("123")     ++r; r};
 \end{urbiassert}
 
+
+\subsubsection{Anonymous Range-\lstinline{for;}}
+\label{sec:lang:forn:semi}
+\lstIndexTwo{for}{for; (c)}
+
+\begin{urbiassert}
+{
+  var res = [];
+  for; (3) res << 1, for; (3) res << 2 ;
+  res
+}
+  == [1, 2, 1, 2, 1, 2];
+\end{urbiassert}
+
+\subsubsection{Anonymous Range-\lstinline{for;}}
+\label{sec:lang:forn:pipe}
+\lstIndexTwo{for}{forPipe (c)}
+
+\begin{urbiassert}
+{
+  var res = [];
+  for| (3) res << 1, for| (3) res << 2 ;
+  res
+}
+  == [1, 1, 1, 2, 2, 2];
+\end{urbiassert}
 
 \subsection{\lstinline{if}}
 \label{sec:lang:if}
@@ -2763,13 +2907,15 @@ visible in both the then-clause and the else-clause, but do not escape the
 \label{sec:lang:loop}
 
 Endless loops can be created with \lstindex{loop}, which is equivalent to
-\lstinline|while (true)|.
+\lstinline|while (true)|.  The loop evaluates to \lstinline{void}.
 
 \grammar{loop-stm}
 
-The loop evaluates to \lstinline{void}.  Both sequential flavors,
-\lstinline|loop;| and \lstinline'loop|', are supported.  The default flavor
-is \lstinline|loop;|.
+There are two flavors: \lstinline{loop;} (default) and \lstinline{loop|}.
+
+\subsubsection{\lstinline{loop;}}
+\label{sec:lang:loop:semi}
+\lstIndexTwo{loop}{loop;}
 
 \begin{urbiassert}
 {
@@ -2787,6 +2933,10 @@ is \lstinline|loop;|.
 ==
 [9, 8, 7, 6, 5, 4, 3, 2, 1, 0];
 \end{urbiassert}
+
+\subsubsection{\lstinline{loop|}}
+\label{sec:lang:loop:pipe}
+\lstIndexTwo{loop}{loopPipe}
 
 \begin{urbiassert}
 {
@@ -2896,8 +3046,9 @@ while (0 < j)
 The default flavor for \lstinline{while} is \lstinline|while;|.
 
 \subsubsection{\lstinline{while;}}
-
-The semantics of
+\label{sec:lang:while:semi}
+\lstIndexTwo{while}{while;}
+The semantics of:
 
 \begin{urbiunchecked}
 while; (\var{condition})
@@ -2917,29 +3068,32 @@ invoked.  If \lstinline{continue} is evaluated, the rest of the body
 is skipped, and the next iteration is started.
 
 \begin{urbiscript}
+var i = 4|;
+while (true)
 {
-  var i = 4|
-  while (true)
-  {
-    --i;
-    echo("in: " + i);
-    if (i == 1)
-      break
-    else if (i == 2)
-      continue;
-    echo("out: " + i);
-  };
+  --i;
+  echo("in: " + i);
+  if (i == 1)
+    break
+  else if (i == 2)
+    continue;
+  echo("out: " + i);
 };
 [00000000] *** in: 3
 [00000000] *** out: 3
 [00000000] *** in: 2
 [00000000] *** in: 1
 \end{urbiscript}
+\begin{urbicomment}
+removeSlots("i");
+\end{urbicomment}
 
 
 \subsubsection{\lstinline{while|}}
+\label{sec:lang:while:pipe}
+\lstIndexTwo{while}{whilePipe}
 
-The semantics of
+The semantics of:
 
 \begin{urbiunchecked}
 while| (\var{condition})
@@ -2957,24 +3111,25 @@ The execution is can be controlled by \lstinline{break} and
 \lstinline{continue}.
 
 \begin{urbiscript}
+var i = 4|;
+while| (true)
 {
-  var i = 4|
-  while| (true)
-  {
-    --i;
-    echo("in: " + i);
-    if (i == 1)
-      break
-    else if (i == 2)
-      continue;
-    echo("out: " + i);
-  };
+  --i;
+  echo("in: " + i);
+  if (i == 1)
+    break
+  else if (i == 2)
+    continue;
+  echo("out: " + i);
 };
 [00000000] *** in: 3
 [00000000] *** out: 3
 [00000000] *** in: 2
 [00000000] *** in: 1
 \end{urbiscript}
+\begin{urbicomment}
+removeSlots("i");
+\end{urbicomment}
 
 
 \section{Exceptions}
@@ -3408,7 +3563,7 @@ true;
 
 
 \section{Parallel Flow Control}
-
+\label{sec:lang:conc}
 This section defines the syntactic constructs that allows concurrent
 executions.  Some of these constructs, loop-like, are concurrent alternative
 of traditional imperative constructs.
@@ -3489,13 +3644,21 @@ It exists in several flavors, with the same syntax:
 
 \grammar{every-stm}
 
+\subsubsection{\lstinline{every;}}
+\label{sec:lang:every:semi}
+\lstIndexTwo{every}{every;}
+
 \subsubsection{\lstinline{every|}}
+\label{sec:lang:every:pipe}
+\lstIndexTwo{every}{everyPipe}
+
+
 The whole \lstinline'every|' statement itself remains in foreground:
-statements attached after it with \lstinline';' or \lstinline'|' will
-not be reached unless you \lstinline{break} out of it.  You may use
-\lstinline{continue} to finish one iteration.  In that case, the
-following iteration is not immediately started, it will be launched as
-expected, at the given period.
+statements attached after it with \lstinline';' or \lstinline'|' will not be
+reached unless you \lstinline{break} out of it.  You may use
+\lstinline{continue} to finish one iteration.  In that case, the following
+iteration is not immediately started, it will be launched as expected, at
+the given period.
 
 % We used to use 100ms instead of 1s, but severely loaded machines
 % (the Mac Mini) fail way too often.
@@ -3527,9 +3690,9 @@ expected, at the given period.
 \end{urbiscript}
 
 The \lstinline{every|} flavor does not let iterations overlap. If an
-iteration takes too long, the following iterations are delayed. That
-is, the next iterations will start immediately after the end of the
-current one, and next iterations will occur normally from this point.
+iteration takes too long, the following iterations are delayed. That is, the
+next iterations will start immediately after the end of the current one, and
+next iterations will occur normally from this point.
 
 \begin{urbiscript}
 {
@@ -3589,6 +3752,8 @@ are supported.
 
 
 \subsubsection{\lstinline{every,}}
+\label{sec:lang:every:comma}
+\lstIndexTwo{every}{every,}
 The default flavor, \lstinline|every,|, launches the execution of the
 block in the background every given period. Iterations may overlap.
 
@@ -3610,12 +3775,9 @@ timeout (2.8s)
 [00002500] *** Out
 \end{urbiscript}
 
-\subsection{\lstinline{for}}
-
-The \lstinline{for} loops come into several flavors, depending one the
-actual kind of \lstinline{for} loop.
-
-\subsubsection{C-\lstinline{for,}}
+\subsection{C-\lstinline{for,}}
+\label{sec:lang:forc:comma}
+\lstIndexTwo{for}{for, (;;)}
 \experimentalremoved{}
 
 \lstinline|for,| is syntactic sugar for \lstinline|while,|, see
@@ -3657,8 +3819,9 @@ echo("done");
 \end{urbiscript}
 
 
-\subsubsection{range-\forAnd}
-\label{sec:lang:for:each:and}
+\subsection{Range-\forAnd}
+\label{sec:lang:foreach:and}
+\lstIndexTwo{for}{for& (var i: c)}
 
 One can iterate concurrently over the members of a collection.
 
@@ -3675,6 +3838,8 @@ for& (var i: [0, 1, 2])
 [00000000] *** 1
 [00000000] *** 4
 \end{urbiscript}
+
+As all the loops, the loop's value is \lstinline|void|.
 
 If an iteration executes \lstinline{continue}, it is stopped; the
 other iterations are not affected.
@@ -3700,7 +3865,7 @@ for& (var i: [0, 1, 2])
   var j = i;
   echo(j);
   if (j == 1)
-  { 
+  {
     echo("break");
     break;
   };
@@ -3713,14 +3878,18 @@ for& (var i: [0, 1, 2])
 [00000002] *** break
 \end{urbiscript}
 
-\subsubsection{Anonymous range-\forAnd}
+\subsection{Anonymous range-\forAnd}
+\label{sec:lang:forn:and}
+\lstIndexTwo{for}{for& (c)}
 
 Since \lstinline|for& (\var{n}) \var{body}| is processed as
 \lstinline|for& (var \var{tmp}: \var{n}) \var{body}|, with \var{tmp} being a
-hidden variable, see \autoref{sec:lang:for:each:and} for details.
+hidden variable, see \autoref{sec:lang:foreach:and} for details.
 
 
 \subsection{\lstinline{loop,}}
+\label{sec:lang:loop:comma}
+\lstIndexTwo{loop}{loop,}
 \experimentalremoved{}
 
 This is syntactic sugar for \lstinline|while,(true)|.  In the following
@@ -3854,9 +4023,8 @@ finally       { echo("finally"); "finally-value" };
 
 Alternatively, you may use the \refObject{Timeout} object.
 
-\subsection{\lstinline{while}}
-\subsubsection{\lstinline{while,}}
-\lstIndexTwo{while,}{while}
+\subsection{\lstinline{while,}}
+\lstIndexTwo{while}{while,}
 \label{sec:lang:while:comma}
 \experimentalremoved{}
 
@@ -3882,17 +4050,15 @@ variable inside the loop body:
 
 % Cut the previous every, no
 \begin{urbiscript}[firstnumber=1]
+var i = 4|;
+while, (i)
 {
-  var i = 4|
-  while, (i)
-  {
-    var j = --i;
-    echo("in: i = %s, j = %s" % [i, j]);
-    sleep(j/10);
-    echo("out: i = %s, j = %s" % [i, j]);
-  }|
-  echo("done");
-}|
+  var j = --i;
+  echo("in: i = %s, j = %s" % [i, j]);
+  sleep(j/10);
+  echo("out: i = %s, j = %s" % [i, j]);
+};
+echo("done");
 [00000144] *** in: i = 2, j = 3
 [00000145] *** in: i = 1, j = 2
 [00000145] *** in: i = 0, j = 1
@@ -3903,6 +4069,9 @@ variable inside the loop body:
 [00000445] *** out: i = 0, j = 3
 [00000446] *** done
 \end{urbiscript}
+\begin{urbicomment}
+removeSlots("i");
+\end{urbicomment}
 
 As for the other flavors, \lstinline{continue} skips the current iteration,
 and \lstinline{break} ends the loop.  Note that \lstinline{break} stops all
@@ -3915,28 +4084,29 @@ Control flow is passed to the following statement when all the iterations
 are done.
 
 \begin{urbiscript}
+var i = 10|;
+while, (i)
 {
-  var i = 10|
-  while, (i)
-  {
-    var j = --i;
-    if (j % 2)
-      continue
-    else if (j == 4)
-      break
-    else
-      echo("%s: done" % j)
-  }|
-  echo("done");
+  var j = --i;
+  if (j % 2)
+    continue
+  else if (j == 4)
+    break
+  else
+    echo("%s: done" % j)
 };
+echo("done");
 [00000146] *** 8: done
 [00000148] *** 6: done
 [00000150] *** done
 \end{urbiscript}
+\begin{urbicomment}
+removeSlots("i");
+\end{urbicomment}
 
 
 \section{Event Handling}
-
+\label{sec:lang:event}
 \subsection{\lstinline{at}}
 \label{sec:lang:at}
 \lstIndexTwo{onleave}{at}

@@ -43,7 +43,7 @@ friend: Reserved
 function: \autoref{sec:lang:function}, \autoref{sec:lang:closure}
 goto: Reserved
 if: \autoref{sec:lang:if}
-in: \autoref{sec:lang:for:each}
+in: \autoref{sec:lang:foreach}
 inline: Reserved
 int: Reserved
 internal: Deprecated

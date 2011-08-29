@@ -138,9 +138,9 @@ function consume (var num)
 consume (512);
 \end{urbiunchecked}
 
-But if you use \lstinline{&} instead of \lstinline{|}, then each
-recursive call to \lstinline{consume} will be spawn with a fresh
-stack, and therefore none will run out of stack space:
+But if you use \lstinline{&} instead of \lstinline{|}, then each recursive
+call to \lstinline{consume} will be spawn with a fresh stack, and therefore
+none will run out of stack space:
 
 \begin{urbiunchecked}
 function consume (var num)
@@ -431,11 +431,10 @@ Object.get;
 \end{urbiscript}
 
 \paragraph{Local variables, slots and targets}
-The first point is to understand the difference between local
-variables and slots. Slots are simply object fields: a name in an
-object referring to another object, like members in \Cxx. They can be
-defined with the \lstinline|setSlot| method, or with the
-\lstinline|var| keyword.
+The first point is to understand the difference between local variables and
+slots. Slots are simply object fields: a name in an object referring to
+another object, like members in \Cxx. They can be defined with the
+\refObject[Object]{setSlot} method, or with the \lstinline|var| keyword.
 
 \begin{urbiscript}
 // Add an `x' slot in Object, with value 51.
@@ -468,10 +467,10 @@ function foo()
 
 You probably noticed that in the last two code snippets, we used the
 \lstinline|var| keyword to declare both a slot in Object and a local
-variable. The rule is simple: \lstinline|var| declares a slot if an
-owning object is specified with the dot notation, as in %
-\lstinline|var owner.slot|, and a local variable if only an
-unqualified name is given, as in \lstinline|var name|.
+variable. The rule is simple: \lstinline|var| declares a slot if an owning
+object is specified with the dot notation, as in %
+\lstinline|var owner.slot|, and a local variable if only an unqualified name
+is given, as in \lstinline|var name|.
 
 \begin{urbiscript}
 {
@@ -518,22 +517,22 @@ echo(chocolate);
 [00000000] *** 64
 \end{urbiscript}
 
-Last tricky rule you must keep in mind: the top level of your
-connection --- your interactive session --- is a %
+Last tricky rule you must keep in mind: the top level of your connection ---
+your interactive session --- is a %
 \lstinline|do (lobby)| scope. That is, when you type \lstinline|var x|
 directly in your connection, it stores an \lstinline|x| slot in the
-\lstinline|lobby| object. So, what is this \dfn{lobby}? It's precisely
-the object designed to store your top-level variables. Every \urbi
-server has an unique \refObject{Lobby} (note the capital), and every
-connection has its \lstinline|lobby| that inherits the
-\lstinline|Lobby|. Thus, variables stored in \lstinline|Lobby| are
-accessible from any connection, while variables stored in a
-connection's \lstinline|lobby| are local to this connection.
+\lstinline|lobby| object. So, what is this \dfn{lobby}? It's precisely the
+object designed to store your top-level variables. Every \urbi server has an
+unique \refObject{Lobby} (note the capital), and every connection has its
+\lstinline|lobby| that inherits the \lstinline|Lobby|. Thus, variables
+stored in \lstinline|Lobby| are accessible from any connection, while
+variables stored in a connection's \lstinline|lobby| are local to this
+connection.
 
 To fully understand how lobbies and the top-level work, we must
 understand how calls --- message passing --- work in \us.  In \us,
 every call has a target. For instance, in \lstinline|Object.x|,
-\lstinline|Object| is the target of the \lstinline|x| call. If no
+\refObject{Object} is the target of the \lstinline|x| call. If no
 target is specified, as in \lstinline|x| alone, the target defaults to
 \this, yielding \lstinline|this.x|. Knowing this rules,
 plus the fact that at the top-level \this is
@@ -607,13 +606,12 @@ Step by step:
 \begin{itemize}
 \item We create a \lstinline|hisMind| slot in \lstinline|lobby|, with
   value 42, like before.
-\item We create a \lstinline|getHis| function in \lstinline|Object|.
+\item We create a \lstinline|getHis| function in \refObject{Object}.
 \item We call Object's \lstinline|getHis| method.
 \end{itemize}
 
-In the method, \this is \lstinline|Object|. Thus
-\lstinline|hisMind|, which is \lstinline|this.hisMind|, fails because
-Object has no such slot.
+In the method, \this is \refObject{Object}. Thus \lstinline|hisMind|, which
+is \lstinline|this.hisMind|, fails because Object has no such slot.
 
 The key to understanding this behavior is that any unqualified call
 --- unless it refers to a local variable --- is destined to
@@ -622,11 +620,10 @@ accessible from the top-level, or from functions that are targeted on
 the lobby.
 
 \paragraph{So, where to store global variables?}
-From these rules, we can deduce a simple statement: since unqualified
-slots are searched in \this, for a slot to be global, it
-must always be accessible through \this. One way to achieve
-this is to store the slot in \lstinline|Object|, the ancestor of any
-object:
+From these rules, we can deduce a simple statement: since unqualified slots
+are searched in \this, for a slot to be global, it must always be accessible
+through \this. One way to achieve this is to store the slot in
+\refObject{Object}, the ancestor of any object:
 
 \begin{urbiscript}
 var Object.global = 1664;
@@ -640,26 +637,25 @@ function any_object()
 \end{urbiscript}
 
 In the previous example, typing \lstinline|global| will look for the
-\lstinline|global| slot in \this. Since \this
-necessarily inherits \lstinline|Object|, it will necessarily be found.
+\lstinline|global| slot in \this. Since \this necessarily inherits
+\refObject{Object}, it will necessarily be found.
 
 This solution would work; however, storing all global variables in
-\lstinline|Object| wouldn't be very clean. \lstinline|Object| is
-rather designed to hold methods shared by all objects. Instead, a
-\lstinline|Global| object exists. This object is a prototype of
-Object, so all his slots are accessible from Object, and thus from
-anywhere. So, creating a genuine global variable is as simple as
-storing it in \lstinline|Global|:
+\refObject{Object} wouldn't be very clean. \refObject{Object} is rather
+designed to hold methods shared by all objects. Instead, a
+\lstinline|Global| object exists. This object is a prototype of Object, so
+all his slots are accessible from Object, and thus from anywhere. So,
+creating a genuine global variable is as simple as storing it in
+\lstinline|Global|:
 
 \begin{urbiscript}
 var Global.g = "I'm global!";
 [00000000] "I'm global!"
 \end{urbiscript}
 
-Note that you might want to reproduce the \lstinline|Global| system
-and create your own object to store your related variables in a more
-tidy fashion. This is for instance what is done for mathematical
-constants:
+Note that you might want to reproduce the \refObject{Global} system and
+create your own object to store your related variables in a more tidy
+fashion. This is for instance what is done for mathematical constants:
 
 \begin{urbiscript}
 // Store all constants here
@@ -722,7 +718,7 @@ bar;
 
 \subsubsection{How do I modify a slot of my object?}
 Use the \lstinline|=| operator, which is syntactic sugar for the
-\lstinline|updateSlot| method.
+\refSlot[Object]{updateSlot} method.
 
 \begin{urbiscript}
 class O
@@ -781,9 +777,9 @@ myObject.protos;
 \end{urbiunchecked}
 
 \subsubsection{How can I know the slots available for a given object?}
-The \lstindex{localSlotNames} and \lstindex{allSlotNames} methods
-return respectively the local slot names and the local+inherited slot
-names.
+The \refSlot[Object]{localSlotNames} and \refSlot[Object]{allSlotNames}
+methods return respectively the local slot names and the local+inherited
+slot names.
 
 \subsubsection{How do I create a new function?}
 Functions are first class objects. That means that you can add them as
@@ -883,19 +879,19 @@ at(ev?(1, var msg))
   echo ("Received event with 1 and message " + msg);
 \end{urbiunchecked}
 
-The \lstinline{?} marker indicates that we are looking for an event
-instead of a Boolean condition. The construct \lstinline{var msg}
-indicates that the \lstinline{msg} variable will be bound (as a local
-variable) in the body part of the \lstinline{at} construct, with
-whatever value is present in the event that triggered the
-\lstinline{at}.
+The \lstinline{?} marker indicates that we are looking for an event instead
+of a Boolean condition. The construct \lstinline{var msg} indicates that the
+\lstinline{msg} variable will be bound (as a local variable) in the body
+part of the \lstinline{at} construct, with whatever value is present in the
+event that triggered the \lstinline{at}.
 
 \subsection{Standard Library}
 
 \subsubsection{How can I iterate over a list?}
 \index{list}
-Use the \lstinline{for} construct (\autoref{sec:lang:for:each}), or
-the \lstinline|each| method (\refObject{List}):
+
+Use the \lstinline{for} construct (\autoref{sec:lang:foreach}), or the
+\refSlot[List]{each} method:
 
 \begin{urbiscript}
 for (var i: [10, 11, 12]) echo (i);
@@ -907,22 +903,20 @@ for (var i: [10, 11, 12]) echo (i);
 \section{UObjects}
 \index{UObject}
 \subsection{Is the UObject API Thread-Safe?}
-\index{thread-safety}
-We are receiving a lot of questions on thread-safety issues in UObject
-code. So here comes a quick explanation on how things work in plugin
-and remote mode, with a focus on those questions.
+\index{thread-safety} We are receiving a lot of questions on thread-safety
+issues in UObject code. So here comes a quick explanation on how things work
+in plugin and remote mode, with a focus on those questions.
 
 \subsubsection{Plugin mode}
 
-In \dfn{plugin mode}, all the UObject callbacks (timer, bound
-functions, notifyChange and notifyAccess targets) are called
-synchronously in the same thread that executes \us code. All reads and
-writes to \urbi variables, through \dfn{UVar}, are done
-synchronously. Access to the UObject API (reading/writing UVars, using
-\lstinline|call()|...) is possible from other threads, though those
-operations are currently using one serialization lock with the main
-thread: each UObject API call from an other thread will wait until the
-main thread is ready to process it.
+In \dfn{plugin mode}, all the UObject callbacks (timer, bound functions,
+notifyChange and notifyAccess targets) are called synchronously in the same
+thread that executes \us code. All reads and writes to \urbi variables,
+through \dfn{UVar}, are done synchronously. Access to the UObject API
+(reading/writing UVars, using \lstinline|call()|...) is possible from other
+threads, though those operations are currently using one serialization lock
+with the main thread: each UObject API call from an other thread will wait
+until the main thread is ready to process it.
 
 
 \subsubsection{Remote mode}
