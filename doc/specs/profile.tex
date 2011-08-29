@@ -79,32 +79,29 @@ function profiled()
 var profile_async = System.profile(getSlotValue("profiled"));
 [00000000] Profile(
 [:]  Yields:                    0
-[:]  Total time (us):         485
-[:]  Wall-clock time (us):    485
-[:]  Function calls:            9
-[:]  Max depth:                 5
+[:]  Total time (us):         572
+[:]  Wall-clock time (us):    572
+[:]  Function calls:           11
+[:]  Max depth:                 4
 [:]
 [:]  .-------------------------------------------------------------------.
 [:]  |   function   |   %    | cumulative |  self  |  calls  |   self    |
 [:]  |              |        |    (us)    |  (us)  |         | (us/call) |
 [:]  |--------------+--------+------------+--------+---------+-----------|
-[:]  |   <profiled> |  38.14 |        185 |    185 |       1 |       185 |
-[:]  |          new |  13.20 |        249 |     64 |       1 |        64 |
-[:]  |    at: { x } |  12.37 |        309 |     60 |       1 |        60 |
-[:]  |      onEvent |  10.10 |        358 |     49 |       1 |        49 |
-[:]  |        clone |   3.30 |        446 |     16 |       1 |        16 |
-[:]  |         oget |   3.20 |        342 |     20 |       1 |        20 |
-[:]  |         init |   0.82 |        479 |      4 |       1 |         4 |
-[:]  |            x |   0.82 |        483 |      4 |       2 |         2 |
+[:]  |   <profiled> |  47.38 |        271 |    271 |       1 |       271 |
+[:]  |    at: { x } |  19.58 |        383 |    112 |       1 |       112 |
+[:]  |      onEvent |  14.51 |        466 |     83 |       1 |        83 |
+[:]  |        clone |   9.44 |        520 |     54 |       2 |        27 |
+[:]  |          new |   6.47 |        557 |     37 |       2 |    18.500 |
+[:]  |         init |   1.40 |        565 |      8 |       2 |         4 |
+[:]  |            x |   1.22 |        572 |      7 |       2 |     3.500 |
 [:]  '--------------'--------'------------'--------'---------'-----------'
 [:])
 
 // Trigger the at twice.
-Global.x = true;
-[00106213] true
+Global.x = true|;
 [00106213] *** true
-Global.x = false;
-[00172119] false
+Global.x = false|;
 [00172119] *** false
 
 // The profile now includes additional statistic about the evaluations of
