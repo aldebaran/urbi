@@ -30,7 +30,6 @@ var ps = PubSub.new;
 \subsection{Slots}
 
 \begin{urbiscriptapi}
-
 \item[publish](<ev>)%
   Queue the value \var{ev} to the queue of each subscriber.  This method
   returns the value \var{ev}.
@@ -47,6 +46,7 @@ var ps = PubSub.new;
 }|;
 \end{urbiscript}
 
+
 \item[subscribe] Create a \refSlot{Subscriber} and insert it inside the list
   of subscribers.
 
@@ -56,11 +56,14 @@ ps.subscribers == [sub];
 [00000000] true
 \end{urbiscript}
 
+
 \item[Subscriber] See \refObject{PubSub.Subscriber}.
+
 
 \item[subscribers] Field containing the list of \refSlot{Subscriber} which
   are watching published values.  This field only exists in instances of
   \lstinline|PubSub|.
+
 
 \item[unsubscribe](<sub>)%
   Remove a subscriber from the list of subscriber watching the published
@@ -71,8 +74,6 @@ ps.unsubscribe(sub) |
 ps.subscribers;
 [00000000] []
 \end{urbiscript}
-
-
 \end{urbiscriptapi}
 
 %%% Local Variables:

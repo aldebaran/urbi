@@ -106,11 +106,13 @@ do (Process.new("cat", []))
 }|;
 \end{urbiscript}
 
+
 \item[asString] \lstinline|Process| and the name of the program.
 \begin{urbiassert}
 Process.new("cat", ["--version"]).asString
   == "Process cat";
 \end{urbiassert}
+
 
 \item[done] Whether the process has completed its execution.
 \begin{urbiscript}
@@ -139,6 +141,7 @@ do (Process.new("sleep", ["2"]))
 }|;
 \end{urbiscript}
 
+
 \item[kill] If the process is not \lstinline|done|, interrupt it (with
   a \lstinline|SIGKILL| in Unix parlance).  You still have to wait for
   its termination with \lstinline|join|.
@@ -159,6 +162,7 @@ do (Process.new("sleep", ["1"]))
 Process.new("cat", ["--version"]).name == "cat";
 \end{urbiassert}
 
+
 \item[run] Launch the process.  Changes it status.  A process can only
   be run once.
 \begin{urbiscript}
@@ -174,12 +178,15 @@ do (Process.new("sleep", ["1"]))
 [00021972:error] !!! run: Process was already run
 \end{urbiscript}
 
+
 \item[runTo]
   %%% FIXME:
+
 
 \item[status] An object whose slots describe the status of the
   process.
   %%% FIXME:
+
 
 \item[stderr] An \refObject{InputStream} (the output of the Process is
   an input for \urbi) to the standard error stream of the process.
@@ -197,6 +204,7 @@ do (Process.new("urbi-send", ["--no-such-option"]))
 }|;
 \end{urbiscript}
 
+
 \item[stdin] An \refObject{OutputStream} (the input of the Process is
   an output for \urbi) to the standard input stream of the process.
 \begin{urbiscript}
@@ -210,6 +218,7 @@ do (Process.new(System.programName, ["--version"]))
   };
 }|;
 \end{urbiscript}
+
 
 \item[stdout] An \refObject{InputStream} (the output of the Process is
   an input for \urbi) to the standard output stream of the process.

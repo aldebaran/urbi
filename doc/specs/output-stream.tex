@@ -58,6 +58,7 @@ o << 1;
 [00000005:error] !!! <<: stream is closed
 \end{urbiscript}
 
+
 \item[flush]%
   To provide efficient input/output operations, \dfn[buffer]{buffers} are
   used.  As a consequence, what is put into a stream might not be
@@ -70,6 +71,7 @@ s.close;
 s.flush;
 [00039175:error] !!! flush: stream is closed
 \end{urbiscript}
+
 
 \item[put](<byte>)%
   Output the character corresponding to the numeric code \var{byte} in
@@ -96,7 +98,6 @@ os.close;
 os.put(0);
 [00039179:error] !!! put: stream is closed
 \end{urbiscript}
-
 \end{urbiscriptapi}
 
 

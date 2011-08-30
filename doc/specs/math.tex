@@ -34,6 +34,7 @@ Math.abs(0) == 0;
 Math.abs(3.5) == Math.abs(-3.5) == 3.5;
 \end{urbiassert}
 
+
 \item[acos](<float>)%
   Bounce to \refSlot[Float]{acos}.
 \begin{urbiassert}
@@ -41,17 +42,20 @@ Math.acos(0) == Float.pi/2;
 Math.acos(1) == 0;
 \end{urbiassert}
 
+
 \item[asin](<float>)%
   Bounce to \refSlot[Float]{asin}.
 \begin{urbiassert}
 Math.asin(0) == 0;
 \end{urbiassert}
 
+
 \item[atan](<float>)%
   Bounce to \refSlot[Float]{atan}.
 \begin{urbiassert}
 Math.atan(1) ~= pi/4;
 \end{urbiassert}
+
 
 \item[atan2](<x>, <y>)%
   Bounce to \lstinline|\var{x}.atan2(\var{y})|.
@@ -60,10 +64,12 @@ Math.atan2(2, 2) ~= pi/4;
 Math.atan2(-2, 2) ~= -pi/4;
 \end{urbiassert}
 
+
 \item[ceil] Bounce to \refSlot[Float]{ceil}.
 \begin{urbiassert}
 Math.ceil(1.4) == Math.ceil(1.5) ==  Math.ceil(1.6) == Math.ceil(2) == 2;
 \end{urbiassert}
+
 
 \item[cos](<float>)%
   Bounce to \refSlot[Float]{cos}.
@@ -72,25 +78,30 @@ Math.cos(0) == 1;
 Math.cos(pi) ~= -1;
 \end{urbiassert}
 
+
 \item[exp](<float>)%
   Bounce to \refSlot[Float]{exp}.
 \begin{urbiassert}
 Math.exp(1) ~= 2.71828;
 \end{urbiassert}
 
+
 \item[floor] Bounce to \refSlot[Float]{floor}.
 \begin{urbiassert}
 Math.floor(1) == Math.floor(1.4) == Math.floor(1.5) ==  Math.floor(1.6) == 1;
 \end{urbiassert}
 
+
 \item[inf]
   Bounce to \refSlot[Float]{inf}.
+
 
 \item[log](<float>)%
   Bounce to \refSlot[Float]{log}.
 \begin{urbiassert}
 Math.log(1) == 0;
 \end{urbiassert}
+
 
 \item[max](<arg1>, ...)%
   Bounce to \lstinline|[\var{arg1}, ...].max|, see \refSlot[List]{max}.
@@ -99,6 +110,7 @@ Math.max( 100,   20,   3 ) == 100;
 Math.max("100", "20", "3") == "3";
 \end{urbiassert}
 
+
 \item[min](<arg1>, ...)%
   Bounce to \lstinline|[\var{arg1}, ...].min|, see \refSlot[List]{min}.
 \begin{urbiassert}
@@ -106,11 +118,14 @@ min( 100,   20,   3 ) ==     3;
 min("100", "20", "3") == "100";
 \end{urbiassert}
 
+
 \item[nan]
   Bounce to \refSlot[Float]{nan}.
 
+
 \item[pi]
   Bounce to \refSlot[Float]{pi}.
+
 
 \item[random](<float>)%
   Bounce to \refSlot[Float]{random}.
@@ -119,6 +134,7 @@ min("100", "20", "3") == "100";
 [00000000] [1, 2, 1, 3, 2, 3, 2, 2, 4, 4, 4, 1, 0, 0, 0, 3, 2, 4, 3, 2]
 \end{urbiscript}
 
+
 \item[round](<float>)%
   Bounce to \refSlot[Float]{round}.
 \begin{urbiassert}
@@ -126,11 +142,13 @@ Math.round(1  ) == Math.round(1.1)  == Math.round(1.49) == 1;
 Math.round(1.5) == Math.round(1.51) == 2;
 \end{urbiassert}
 
+
 \item[sign](<float>)%
   Bounce to \refSlot[Float]{sign}.
 \begin{urbiassert}
 Math.sign(-2) == -1;  Math.sign(0)  == 0;  Math.sign(2)  == 1;
 \end{urbiassert}
+
 
 \item[sin](<float>)%
   Bounce to \refSlot[Float]{sin}.
@@ -139,6 +157,7 @@ Math.sin(0) == 0;
 Math.sin(pi) ~= 0;
 \end{urbiassert}
 
+
 \item[sqr](<float>)%
   Bounce to \refSlot[Float]{sqr}.
 \begin{urbiassert}
@@ -146,20 +165,24 @@ Math.sqr(1.5) == Math.sqr(-1.5) == 2.25;
 Math.sqr(16)  == Math.sqr(-16)  == 256;
 \end{urbiassert}
 
+
 \item[sqrt](<float>)%
   Bounce to \refSlot[Float]{sqrt}.
 \begin{urbiassert}
 Math.sqrt(4) == 2;
 \end{urbiassert}
 
+
 \item[srandom](<float>)%
   Bounce to \refSlot[Float]{srandom}.
+
 
 \item[tan](<float>)%
   Bounce to \refSlot[Float]{tan}.
 \begin{urbiassert}
 Math.tan(pi/4) ~= 1;
 \end{urbiassert}
+
 
 \item[trunc](<float>)%
   Bounce to \refSlot[Float]{trunc}.

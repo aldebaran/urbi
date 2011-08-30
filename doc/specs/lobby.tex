@@ -55,6 +55,7 @@ Lobby.create;
 \begin{urbiscriptapi}
 \item[authors] Credit the authors of \usdk.
 
+
 \item[banner] Internal.  Display \usdk banner.
 \begin{urbiscript}
 lobby.banner;
@@ -69,6 +70,7 @@ lobby.banner;
 [00005344] *** Check our community site: http://www.urbiforge.org.
 [00005344] *** ********************************************************
 \end{urbiscript}
+
 
 \item[bytesReceived] The number of bytes that were ``input'' to \this.  See
   also \refSlot{receive}.
@@ -88,6 +90,7 @@ assert (l.bytesReceived == 15);
 \begin{urbicomment}
 removeSlot("l")|;
 \end{urbicomment}
+
 
 \item[bytesSent] The number of bytes that were ``output'' by \this.  See
   also \refSlot{send} and \refSlot{write}.
@@ -110,11 +113,13 @@ l.write("[01234567]\n");
 assert (l.bytesSent == 53);
 \end{urbiscript}
 
+
 \item[connected]
   Whether \this is connected.
 \begin{urbiassert}
 connected;
 \end{urbiassert}
+
 
 \item[connectionTag] The tag of all code executed in the context of \this.
   This tag applies to \this, but the top-level loop is immune to
@@ -157,6 +162,7 @@ every (1s) echo(5);
 [00006008] "bye!"
 \end{urbiscript}
 
+
 \item[copyright](<deep> = true)%
   Display the copyright of \usdk.  Include copyright information
   about sub-components if \var{deep}.
@@ -173,11 +179,13 @@ lobby.copyright;
 [00088621] *** Copyright (C) 2006-2011 Gostai S.A.S.
 \end{urbiscript}
 
+
 \item[create]
   Instantiate a new Lobby.
 \begin{urbiassert}
 Lobby.create.isA(Lobby);
 \end{urbiassert}
+
 
 \item[echo](<value>, <channel> = "")%
   Send \lstinline|\var{value}.asString| to \this, prefixed
@@ -193,6 +201,7 @@ lobby.echo(333);
 [00055205] *** 333
 \end{urbiscript}
 
+
 \item[echoEach](<list>, <channel> = "")%
   Apply \lstinline|echo(\var{m}, \var{channel})| for each member \var{m} of
   \var{list}.
@@ -206,6 +215,7 @@ lobby.echoEach([1, "2"], "foo");
 
 lobby.echoEach([], "foo");
 \end{urbiscript}
+
 
 %\item \lstinline|help|\experimental\\
 %  Launch the tutorial.
@@ -237,6 +247,7 @@ lobby.license;
 [00000000] *** [...]
 \end{urbiunchecked}
 
+
 \item[lobby]
   The lobby of the current connection.  This is typically \this.
 \begin{urbiassert}
@@ -252,14 +263,17 @@ for (var l : lobbies)
   assert (l.lobby == Lobby.lobby);
 \end{urbiscript}
 
+
 \item[onDisconnect](<lobby>)%
   Event launched when \this is disconnected.  There is a single event
   instance for all the lobby, \refSlot[Lobby]{onDisconnect}, the
   disconnected lobby being passed as argument.
 
+
 \item[quit] Shut this lobby down, i.e., close the connection.  The
   server is still running, see \refSlot[System]{shutdown} to quit the
   server.
+
 
 \item[receive](<value>)%
   This is low-level routine.  Pretend the \refObject{String}
@@ -273,8 +287,10 @@ Lobby.create.receive("12;");
 [00478679] 12
 \end{urbiscript}
 
+
 \item[remoteIP]
   When \this is connected to a remote server, it's Internet address.
+
 
 \item[send](<value>, <channel> = "")%
   This is low-level routine.  Send the \refObject{String} \var{value}
@@ -289,7 +305,9 @@ lobby.send("333");
 [00055205] 333
 \end{urbiscript}
 
+
 \item[thanks] Credit the contributors of \usdk.
+
 
 \item[wall](<value>, <channel> = "")%
   Perform \lstinline|echo(\var{value}, \var{channel})| on all the
@@ -298,6 +316,7 @@ lobby.send("333");
 Lobby.wall("111", "foo");
 [00015895:foo] *** 111
 \end{urbiscript}
+
 
 \item[write](<value>)%
   This is low-level routine.  Send the \refObject{String} \var{value}

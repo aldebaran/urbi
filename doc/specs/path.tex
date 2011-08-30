@@ -37,12 +37,44 @@ Path.new("././///.//foo/");
 
 \subsection{Slots}
 \begin{urbiscriptapi}
+\item['/'](<rhs>)%
+  Create a new \dfn{Path} that is the concatenation of
+  \this and \lstinline|\var{rhs}|. \lstinline|\var{rhs}|
+  can be a \dfn{Path} or a \dfn{String} and cannot be absolute.
+\begin{urbiscript}
+assert(Path.new("/foo/bar") / Path.new("baz/qux/quux")
+       == Path.new("/foo/bar/baz/qux/quux"));
+Path.cwd / Path.new("/tmp/foo");
+[00000003:error] !!! /: Rhs of concatenation is absolute: /tmp/foo
+\end{urbiscript}
+
+
+\item['<'](<that>)%
+  Same as comparing the string versions of \this and
+  \var{that}.
+\begin{urbiassert}
+  Path.new("/a")   < Path.new("/a/b");
+!(Path.new("/a/b") < Path.new("/a")  );
+\end{urbiassert}
+
+
+\item['=='](<that>)%
+  Same as comparing the string versions of \this and
+  \var{that}.  Beware that two paths may be different and point to the
+  very same location.
+\begin{urbiassert}
+  Path.new("/a")  == Path.new("/a");
+!(Path.new("/a")  == Path.new("a")  );
+\end{urbiassert}
+
+
 \item[absolute]
   Whether \this is absolute.
 \begin{urbiassert}
 Path.new("/abs/path").absolute;
 !Path.new("rel/path").absolute;
 \end{urbiassert}
+
 
 \item[asList]
   List of names used in path (directories and possibly file), from
@@ -53,16 +85,19 @@ Path.new("/path/to/file.u").asList == ["path", "to", "file.u"];
 Path.new("/path").asList           == Path.new("path").asList;
 \end{urbiassert}
 
+
 \item[asPrintable]
 \begin{urbiassert}
 Path.new("file.txt").asPrintable == "Path(\"file.txt\")";
 \end{urbiassert}
+
 
 \item[asString]
   The name of the file.
 \begin{urbiassert}
 Path.new("file.txt").asString == "file.txt";
 \end{urbiassert}
+
 
 \item[basename]
   Base name of the path.
@@ -71,9 +106,11 @@ Path.new("/absolute/path/file.u").basename == "file.u";
 Path.new("relative/path/file.u").basename  == "file.u";
 \end{urbiassert}
 
+
 \item[cd]
   Change current working directory to \this. Return the new
   current working directory as a \lstinline|Path|.
+
 
 \item[cwd]
   The current working directory.
@@ -95,12 +132,14 @@ Path.new("relative/path/file.u").basename  == "file.u";
 };
 \end{urbiscript}
 
+
 \item[dirname]
   Directory name of the path.
 \begin{urbiassert}
 Path.new("/abs/path/file.u").dirname == Path.new("/abs/path");
 Path.new("rel/path/file.u").dirname  == Path.new("rel/path");
 \end{urbiassert}
+
 
 \item[exists]
   Whether something (a file, a directory, \ldots) exists where
@@ -111,11 +150,13 @@ Path.new("/").exists;
 !Path.new("/this/path/does/not/exists").exists;
 \end{urbiassert}
 
+
 \item[isDir]
   Whether \this is a directory.
 \begin{urbiassert}
 Path.cwd.isDir;
 \end{urbiassert}
+
 
 \item[isReg]
   Whether \this is a regular file.
@@ -123,10 +164,12 @@ Path.cwd.isDir;
 !Path.cwd.isReg;
 \end{urbiassert}
 
+
 \item[open]
   Open \this. Return either a \dfn{Directory} or a
   \dfn{File} according the type of \this. See
   \refObject{File} and \refObject{Directory}.
+
 
 \item[readable]
   Whether \this is readable.  Throw if does not even exist.
@@ -134,40 +177,12 @@ Path.cwd.isDir;
 Path.new(".").readable;
 \end{urbiassert}
 
+
 \item[writable]
   Whether \this is writable.  Throw if does not even exist.
 \begin{urbiassert}
 Path.new(".").writable;
 \end{urbiassert}
-
-\item['/'](<rhs>)%
-  Create a new \dfn{Path} that is the concatenation of
-  \this and \lstinline|\var{rhs}|. \lstinline|\var{rhs}|
-  can be a \dfn{Path} or a \dfn{String} and cannot be absolute.
-\begin{urbiscript}
-assert(Path.new("/foo/bar") / Path.new("baz/qux/quux")
-       == Path.new("/foo/bar/baz/qux/quux"));
-Path.cwd / Path.new("/tmp/foo");
-[00000003:error] !!! /: Rhs of concatenation is absolute: /tmp/foo
-\end{urbiscript}
-
-\item['=='](<that>)%
-  Same as comparing the string versions of \this and
-  \var{that}.  Beware that two paths may be different and point to the
-  very same location.
-\begin{urbiassert}
-  Path.new("/a")  == Path.new("/a");
-!(Path.new("/a")  == Path.new("a")  );
-\end{urbiassert}
-
-\item['<'](<that>)%
-  Same as comparing the string versions of \this and
-  \var{that}.
-\begin{urbiassert}
-  Path.new("/a")   < Path.new("/a/b");
-!(Path.new("/a/b") < Path.new("/a")  );
-\end{urbiassert}
-
 \end{urbiscriptapi}
 
 

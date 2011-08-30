@@ -158,18 +158,11 @@ by \refSlot[System]{profile} internal machinery.
 \subsection{Slots}
 
 \begin{urbiscriptapi}
-
 \item[calls]%
   Return a \refObject{List} of \refObject{Profile.Function} objects. Each
   element of this list describes, for a given function, statistics about how
   many times it is called and how much time is spent in it.
 
-\item[maxFunctionCallDepth]%
-  The maximum function call depth reached.
-\begin{urbiassert}
-// Example continued from Construction.
-profile.maxFunctionCallDepth == 5;
-\end{urbiassert}
 
 \item[Function]
   See \refObject{Profile.Function}.
@@ -178,6 +171,15 @@ Profile.Function;
 [00004990] Function('', 0, 0, nan)
 \end{urbiscript}
 
+
+\item[maxFunctionCallDepth]%
+  The maximum function call depth reached.
+\begin{urbiassert}
+// Example continued from Construction.
+profile.maxFunctionCallDepth == 5;
+\end{urbiassert}
+
+
 \item[totalCalls]%
   The total number of function calls made.
 \begin{urbiassert}
@@ -185,13 +187,16 @@ Profile.Function;
 profile.totalCalls == 16;
 \end{urbiassert}
 
+
 \item[totalTime]%
   The total CPU time. It can be higher than the wall clock time on
   multi-core processors for instance.
 
+
 \item[wallClockTime]%
   The time spent between the beginning and the end as if measured on a wall
   clock.
+
 
 \item[yields]%
   The scheduler has to execute many coroutines in parallel. A coroutine
