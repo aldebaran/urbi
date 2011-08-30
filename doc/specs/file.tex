@@ -41,13 +41,16 @@ File.save("file.txt", "1\n2\n");
 assert(File.new("file.txt").asList == ["1", "2"]);
 \end{urbiscript}
 
+
 \item[asPath] A \refObject{Path} being the path of the file.
+
 
 \item[asPrintable]
 \begin{urbiscript}
 File.save("file.txt", "1\n2\n");
 assert(File.new("file.txt").asPrintable == "File(\"file.txt\")");
 \end{urbiscript}
+
 
 \item[asString]
   The name of the opened file.
@@ -56,9 +59,11 @@ File.save("file.txt", "1\n2\n");
 assert(File.new("file.txt").asString == "file.txt");
 \end{urbiscript}
 
+
 \item[basename]
   Return a \refObject{String} containing the path of the file without
   its dirname.
+
 
 \item[content]
   The content of the file as a \refObject{Binary} object.
@@ -69,6 +74,7 @@ assert
   File.new("file.txt").content == Binary.new("", "1\n2\n");
 };
 \end{urbiscript}
+
 
 \item[copy](<filename>)
   Copy the file to a new file named \var{filename}.
@@ -82,6 +88,7 @@ assert(file2.content == file.content);
 file.remove;
 file2.remove;
 \end{urbiscript}
+
 
 \item[copyInto](<dirname>)
   \experimental{}
@@ -99,6 +106,7 @@ dir.content;
 dir.removeAll;
 file.remove;
 \end{urbiscript}
+
 
 \item[create](<name>)%
   If the file \var{name} does not exist, create it and a return a File to
@@ -126,10 +134,12 @@ assert
 };
 \end{urbiscript}
 
+
 \item[lastModifiedDate]
   \experimental{}
 
   Return a \refObject{Date} object stating when the file was last modified.
+
 
 \item[moveInto](<dirname>)
   \experimental{}
@@ -146,6 +156,7 @@ dir.content;
 [00000001] ["file"]
 dir.removeAll;
 \end{urbiscript}
+
 
 \item[remove]
   Remove the current file.  Returns void.
@@ -164,6 +175,7 @@ p.exists;
 [00000006] false
 \end{urbiscript}
 
+
 \item[rename](<name>)%
   Rename the file to \var{name}.  If the target exists, it is replaced by
   the opened file. Return the file renamed.
@@ -178,6 +190,7 @@ assert
 };
 \end{urbiscript}
 
+
 \item[save](<name>, <content>)
   Use \refSlot{create} to create the File named \var{name}, store the
   \var{content} in it, and close the file.  Return void.
@@ -185,6 +198,7 @@ assert
 File.save("file.txt", "1\n2\n").isVoid;
 File.new("file.txt").content.data == "1\n2\n";
 \end{urbiassert}
+
 
 \item[size]
   The size of the file.

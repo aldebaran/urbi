@@ -25,8 +25,13 @@ anywhere.
 \subsection{Slots}
 \begin{urbiscriptapi}
 \item[Barrier] See \refObject{Barrier}.
+
+
 \item[Binary] See \refObject{Binary}.
+
+
 \item[CallMessage] See \refObject{CallMessage}.
+
 
 \item[cerr] A predefined stream for error messages.  Strings sent to
   it are not escaped, contrary to regular streams (see
@@ -38,7 +43,9 @@ cerr << "\"quote\"";
 [00015895:error] "quote"
 \end{urbiscript}
 
+
 \item[Channel] See \refObject{Channel}.
+
 
 \item[clog] A predefined stream for log messages.  Strings are output
   escaped.
@@ -47,8 +54,12 @@ clog << "Message";
 [00015895:clog] "Message"
 \end{urbiscript}
 
+
 \item[Code] See \refObject{Code}.
+
+
 \item[Comparable] See \refObject{Comparable}.
+
 
 \item[cout] A predefined stream for output messages.  Strings are
   output escaped.
@@ -59,18 +70,26 @@ cout << "\"quote\"";
 [00015895:output] "\"quote\""
 \end{urbiscript}
 
+
 \item[Date] See \refObject{Date}.
+
 
 \item[detach](<exp>)%
   Bounce to \refSlot[Control]{detach}, see \refObject{Control}.
 
+
 \item[Dictionary] See \refObject{Dictionary}.
+
+
 \item[Directory] See \refObject{Directory}.
+
 
 \item[disown](<exp>)%
   Bounce to \refSlot[Control]{disown}, see \refObject{Control}.
 
+
 \item[Duration] See \refObject{Duration}.
+
 
 \item[echo](<value>, <channel> = "")%
   Bounce to \lstinline|lobby.echo|, see \refSlot[Lobby]{echo}.
@@ -82,6 +101,7 @@ echo(222, "");
 echo(333);
 [00055205] *** 333
 \end{urbiscript}
+
 
 \item[evaluate] This \refObject{UVar} provides a synchronous interface to
   the \urbi engine: write to it to ``send'' an expression to compute it, and
@@ -108,26 +128,53 @@ evaluate = "1/0;";
 [00087671:error] !!!    called from: updateSlot
 \end{urbiscript}
 
+
 \item[Event] See \refObject{Event}.
+
+
 \item[Exception] See \refObject{Exception}.
+
+
 \item[Executable] See \refObject{Executable}.
+
+
 \item[external] An system object used to implement UObject support in
   \us.
+
+
 \item[false]  See \autoref{sec:truth}.
+
+
 \item[File] See \refObject{File}.
+
+
 \item[Finalizable] See \refObject{Finalizable}.
+
+
 \item[Float] See \refObject{Float}.
+
+
 \item[FormatInfo] See \refObject{FormatInfo}.
+
+
 \item[Formatter] See \refObject{Formatter}.
+
 
 \item[getProperty](<slotName>, <propName>)%
   This wrapper around \refSlot[Object]{getProperty} is actually a by-product
   of the existence of the \refSlot{evaluate} \refObject{UVar}.
 
+
 \item[Global] See \refObject{Global}.
+
+
 \item[Group] See \refObject{Group}.
+
+
 \item[InputStream] See \refObject{InputStream}.
 %% FIXME: [00008768] ***   installUpdateHookStack : Code
+
+
 \item[isdef](<qualifiedIdentifier>)%
   Whether the \var{qualifiedIdentifier} is defined.  It features some
   (fragile) magic to support an argument passed as a literal
@@ -170,12 +217,26 @@ assert
 
 
 \item[Job] See \refObject{Job}.
+
+
 \item[Kernel1] See \refObject{Kernel1}.
+
+
 \item[Lazy] See \refObject{Lazy}.
+
+
 \item[List] See \refObject{List}.
+
+
 \item[Loadable] See \refObject{Loadable}.
+
+
 \item[Lobby] See \refObject{Lobby}.
+
+
 \item[Math] See \refObject{Math}.
+
+
 \item[methodToFunction](<name>)%
   Create a function from the method \var{name} so that calling the
   function which arguments \lstinline|(\var{a}, \var{b}, ...)| is that
@@ -196,47 +257,113 @@ assert
 };
 \end{urbiscript}
 
+
 \item[Mutex] See \refObject{Mutex}.
+
+
 \item[nil] See \refObject{nil}.
+
+
 \item[Object] See \refObject{Object}.
+
+
 \item[Orderable] See \refObject{Orderable}.
+
+
 \item[OutputStream] See \refObject{OutputStream}.
+
+
 \item[Pair] See \refObject{Pair}.
+
+
 \item[Path] See \refObject{Path}.
+
+
 \item[Pattern] See \refObject{Pattern}.
+
 
 \item[persist](<exp>)%
   Bounce to \refSlot[Control]{persist}, see \refObject{Control}.
 
+
 \item[Position] See \refObject{Position}.
+
+
 \item[Primitive] See \refObject{Primitive}.
+
+
 \item[Process] See \refObject{Process}.
+
+
 \item[Profile] See \refObject{Profile}.
+
+
 \item[PseudoLazy] See \refObject{PseudoLazy}.
+
+
 \item[PubSub] See \refObject{PubSub}.
+
+
 \item[RangeIterable] See \refObject{RangeIterable}.
+
+
 \item[Regexp] See \refObject{Regexp}.
+
+
 \item[Semaphore] See \refObject{Semaphore}.
+
+
 \item[Server] See \refObject{Server}.
+
+
 \item[Singleton] See \refObject{Singleton}.
+
+
 \item[Socket] See \refObject{Socket}.
+
+
 \item[String] See \refObject{String}.
+
+
 \item[System] See \refObject{System}.
+
+
 \item[Tag] See \refObject{Tag}.
+
+
 \item[Timeout] See \refObject{Timeout}.
+
+
 \item[TrajectoryGenerator] See \refObject{TrajectoryGenerator}.
+
+
 \item[Triplet] See \refObject{Triplet}.
+
+
 \item[true]  See \autoref{sec:truth}.
+
+
 \item[Tuple] See \refObject{Tuple}.
+
+
 \item[UObject] See \refObject{UObject}.
+
+
 \item[uobjects] An object whose slots are all the \refObject{UObject}
   bound into the system.  See \refObject{uobjects}.
 
 %% FIXME: [00008802] ***   UpdateHookStack : Code
+
+
 \item[UValue] See \refObject{UValue}.
 
+
 \item[UVar] See \refObject{UVar}.
+
+
 \item[void] See \refObject{void}.
+
+
 \item[wall](<value>, <channel> = "")%
   Bounce to \lstinline|lobby.wall|, see \refObject{Lobby}.
 \begin{urbiscript}
@@ -248,13 +375,13 @@ wall(333);
 [00055205] *** 333
 \end{urbiscript}
 
+
 \item[warn](<message>)%
   Issue \var{message} on \refSlot[Channel]{warning}.
 \begin{urbiscript}
 warn("cave canem");
 [00015895:warning] !!! cave canem
 \end{urbiscript}
-
 \end{urbiscriptapi}
 
 %%% Local Variables:

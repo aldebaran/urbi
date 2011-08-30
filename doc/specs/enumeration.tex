@@ -55,7 +55,6 @@ Direction.up.isA(Direction);
 
 \subsection{Slots}
 \begin{urbiscriptapi}
-
 \item[asList]
   Synonym for \refSlot{values}.
 \begin{urbiassert}
@@ -93,6 +92,7 @@ assert
 };
 \end{urbiscript}
 
+
 \item[asString]
   The name of the enumeration, or the name of the member if applied to a
   member.
@@ -100,6 +100,7 @@ assert
 Direction.asString    == "Direction";
 Direction.up.asString == "up";
 \end{urbiassert}
+
 
 \item[has](<v>)%
   Whether \var{v} is a member of \this.  Since \refObject{Enumeration}

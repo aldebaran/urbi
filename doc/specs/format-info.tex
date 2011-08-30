@@ -122,12 +122,14 @@ FormatInfo.new("%=s").alignment == 0;
 FormatInfo.new("%-s").alignment == -1;
 \end{urbiassert}
 
+
 \item[alt]
   Whether the ``alternative'' display is requested (\samp{\#}).
 \begin{urbiassert}
 FormatInfo.new("%s").alt == false;
 FormatInfo.new("%#s").alt == true;
 \end{urbiassert}
+
 
 \item[group]
   Separator to use for thousands.  Corresponds to the \samp{'}
@@ -137,6 +139,7 @@ FormatInfo.new("%s").group == "";
 FormatInfo.new("%'s").group == " ";
 \end{urbiassert}
 
+
 \item[pad]
   The padding character to use for alignment requests.  Defaults to space.
 \begin{urbiassert}
@@ -144,11 +147,13 @@ FormatInfo.new("%s").pad == " ";
 FormatInfo.new("%0s").pad == "0";
 \end{urbiassert}
 
+
 \item[pattern]
   The pattern given to the constructor.
 \begin{urbiassert}
 FormatInfo.new("%#'12.8s").pattern == "%#'12.8s";
 \end{urbiassert}
+
 
 \item[precision]
   When formatting a \refObject{Float}, the maximum number of digits
@@ -162,6 +167,7 @@ FormatInfo.new("%s").precision == 6;
 FormatInfo.new("%23.3s").precision == 3;
 \end{urbiassert}
 
+
 \item[prefix]
   The string to display before positive numbers.  Defaults to empty.
 \begin{urbiassert}
@@ -169,6 +175,7 @@ FormatInfo.new("%s").prefix == "";
 FormatInfo.new("% s").prefix == " ";
 FormatInfo.new("%+s").prefix == "+";
 \end{urbiassert}
+
 
 \item[spec]
   The specification character, regardless of the case conversion
@@ -178,6 +185,7 @@ FormatInfo.new("%s").spec == "s";
 FormatInfo.new("%23.3s").spec == "s";
 FormatInfo.new("%'X").spec == "x";
 \end{urbiassert}
+
 
 \item[uppercase]
   Case conversion: \lstinline|-1| for lower case, \lstinline|0| for no
@@ -193,6 +201,7 @@ FormatInfo.new("%X").uppercase == 1;
 FormatInfo.new("%|D|").uppercase ==  1;
 FormatInfo.new("%|d|").uppercase == -1;
 \end{urbiassert}
+
 
 \item[width]
   Width requested for alignment.

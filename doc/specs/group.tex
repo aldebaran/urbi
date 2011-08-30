@@ -70,6 +70,20 @@ Group.new(1, "two");
 \subsection{Slots}
 
 \begin{urbiscriptapi}
+\item['<<'](<member>)%
+  Syntactic sugar for \refSlot{add}.
+
+
+\item['=='](<that>)%
+  Whether \lstinline|this.members == \var{that}.members|.
+\begin{urbiassert}
+               Group.new == Group.new;
+Group.new(1, [2], "foo") == Group.new(1, [2], "foo");
+         Group.new(1, 2) != Group.new(2, 1);
+            Group.new(1) != Group.new(2);
+\end{urbiassert}
+
+
 \item[add](<member>, ...)%
   Add members to \this group, and return \this.
 \begin{urbiassert}
@@ -78,21 +92,25 @@ g.add(3, 4) === g;
 g.members == [1, 2, 3, 4];
 \end{urbiassert}
 
+
 \item[asString]
   Report the \lstinline|asString| of the members.
 \begin{urbiassert}
 Group.new(1, 2).asString == "Group [1, 2]";
 \end{urbiassert}
 
+
 \item[each](<action>)%
   Apply \var{action} to all the members, in sequence, then return the
   Group of the results, in the same order.  Allows to iterate over a
   Group via \lstinline|for|.
 
+
 \item['each&'](<action>)%
   Apply \var{action} to all the members, concurrently, then return the
   Group of the results.  The order is \emph{not} necessarily the same.
   Allows to iterate over a Group via \lstinline|for&|.
+
 
 \item[fallback]
   This function is called when a method call on \this
@@ -101,6 +119,7 @@ Group.new(1, 2).asString == "Group [1, 2]";
   operation in a row.  If the dispatched calls return
   \lstinline|void|, returns a single \lstinline|void|, not a ``group
   of \lstinline|void|''.
+
 
 \item[getProperty](<slot>, <prop>)%
   Bounced to the members so that \lstinline|this.\var{slot}->\var{prop}|
@@ -159,7 +178,6 @@ assert
 \end{urbicomment}
 
 
-
 \item[hasSlot](<name>)%
   True if and only if all the members have the slot.
 
@@ -206,23 +224,12 @@ assert
   removeSlots("C", "g");
 \end{urbicomment}
 
+
 \item[updateSlot](<name>, <value>)%
   Bounced to the members so that
   \lstinline|this.\var{name} = \var{value}|
   actually updates the value of the slot \var{name} in
   the group members.
-
-\item['<<'](<member>)%
-  Syntactic sugar for \refSlot{add}.
-
-\item['=='](<that>)%
-  Whether \lstinline|this.members == \var{that}.members|.
-\begin{urbiassert}
-               Group.new == Group.new;
-Group.new(1, [2], "foo") == Group.new(1, [2], "foo");
-         Group.new(1, 2) != Group.new(2, 1);
-            Group.new(1) != Group.new(2);
-\end{urbiassert}
 \end{urbiscriptapi}
 
 %%% Local Variables:
