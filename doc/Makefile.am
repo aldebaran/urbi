@@ -48,7 +48,6 @@ EXTRA_DIST +=					\
 # Images that simply used by the CSS of the HTML generated documents.
 # So don't convert, just copy into the htmldir directories.
 CSS_IMAGES = 					\
-  img/doc-footer.jpg				\
   img/doc-header.jpg				\
   img/doc-menubarbg.jpg				\
   img/doc-menubarhoverbg.jpg
