@@ -9,6 +9,7 @@ BEGIN
 use strict;
 use File::Basename;
 use BuildAux::FileUtils;
+use BuildAux::Utils;
 use BuildAux::Verbose;
 use BuildAux::XFile;
 
@@ -39,7 +40,12 @@ sub normalize($)
 
 sub slot_cmp
 {
-  (normalize $a) cmp (normalize $b)
+  my $l = normalize $a;
+  my $r = normalize $b;
+  # letters after symbols.
+  return +1 if $l =~ /\w/ && $r !~ /\w/;
+  return -1 if $l !~ /\w/ && $r =~ /\w/;
+  $l cmp $r
 }
 
 =item C<transform($file, \$contents)>
@@ -59,33 +65,44 @@ sub transform ($\$)
       (.*?)
       \\end{urbiscriptapi}
     >
-    <
+    {
       verbose 1, "Got an urbiscriptapi section";
       my $body = $1;
+      verbose 2, "<<<$body>>>";
       $body =~ s{(
                    ^[% ]*\\item
                    (?:\[(?<name>.*?)\]
-                     |\s*\\lstinline\|(?<name>.*?)\()
+                     |\|(?<name>.*?)\|
+                     |\s*\\lstinline[|+](?<name>.*?)\()
                    .*?
                  )
                  (?=^[% ]*\\item|\z)}
          {
-           verbose 1, "Key: $+{name}";
-           $slot{$+{name}} = $1;
+           my $k = $+{name};
+           (my $v = $1) =~ s/\s*\z//s;;
+           verbose 1, "Key: $k";
+           $slot{$k} = $v;
            ""
          }gexsm;
 
        # This is what was not recognized.
-       $slot{"ZZZZZ"} = $body;
+       $body = strip_spaces $body;
+       if ($body)
+       {
+         verbose 1, "Found leftover: <<$body>>";
+         $slot{"ZZZZZ"} = $body;
+       }
 
        # Trailing spaces;
        map { s/\s+\z//g } values %slot;
 
+       my @slot = sort slot_cmp keys %slot;
+       verbose 3, map { "$_: <<$slot{$_}>>" } @slot;
+
        ("\\begin{urbiscriptapi}\n"
-        . join ("\n\n\n",
-                map { $slot{$_} } (sort slot_cmp keys %slot))
+        . join ("\n\n\n", map { "$slot{$_}" } @slot)
         . "\n\\end{urbiscriptapi}");
-    >xsge;
+    }xsge;
   $$contents_ref;
 }
 
