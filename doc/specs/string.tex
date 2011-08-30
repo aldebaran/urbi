@@ -285,25 +285,19 @@ String.fromAscii(0xFF) == "\xff";
 \end{urbiassert}
 
 
-\item[iscntrl] Whether all the characters of \this are control characters
+\item[isCntrl] Whether all the characters of \this are control characters
   (see \autoref{tab:string:ischar}).
-
   \begin{table}[tp]
+    \newcommand{\is}[1]{\begin{sideways}is#1\end{sideways}}
     \centering
     \begin{tabular}{|l||l||c|c|c|c|c|c|c|c|c|c|c|}
       \hline
       &&&&&&&&&&&&\\
-      ASCII values & Characters & \begin{sideways}iscntrl\end{sideways}
-      & \begin{sideways}isspace\end{sideways}
-      & \begin{sideways}isupper\end{sideways}
-      & \begin{sideways}islower\end{sideways}
-      & \begin{sideways}isalpha\end{sideways}
-      & \begin{sideways}isdigit\end{sideways}
-      & \begin{sideways}isxdigit\end{sideways}
-      & \begin{sideways}isalnum\end{sideways}
-      & \begin{sideways}ispunct\end{sideways}
-      & \begin{sideways}isgraph\end{sideways}
-      & \begin{sideways}print \end{sideways}\\ \hline \hline
+      ASCII values & Characters
+      & \is{Cntrl} & \is{Space} & \is{Upper} & \is{Lower} & \is{Alpha}
+      & \is{Digit} & \is{Xdigit} & \is{Alnum} & \is{Punct} & \is{Graph}
+      & \is{Print}
+      \\ \hline \hline
       0x00 .. 0x08 & & \textbullet & & & & & & & & & &\\ \hline
       0x09 .. 0x0D & \textbackslash{}t, \textbackslash{}f,
       \textbackslash{}v, \textbackslash{}n, \textbackslash{}r &
@@ -332,10 +326,6 @@ String.fromAscii(0xFF) == "\xff";
   \end{table}
 
 \begin{urbiassert}
-          "".isDigit;
-"0123456789".isDigit;
-        !"a".isDigit;
-
            "".isLower;
       "lower".isLower;
 ! "Not Lower".isLower;
@@ -345,10 +335,18 @@ String.fromAscii(0xFF) == "\xff";
 ! "Not Upper".isUpper;
 \end{urbiassert}
 
-%%% FIXME: Optional arguments.
+
+\item[isDigit] Whether all the characters of \this are decimal digits (see
+  \autoref{tab:string:ischar}).
+\begin{urbiassert}
+          "".isDigit;
+"0123456789".isDigit;
+        !"a".isDigit;  !"0x10".isDigit;
+\end{urbiassert}
 
 
 \item[join](<list>, <prefix>, <suffix>)%
+  %%% FIXME: Optional arguments.
   Glue the result of \refSlot{asString} applied to the members of
   \var{list}, separated by \this, and embedded in a pair
   \var{prefix}/\var{suffix}.
