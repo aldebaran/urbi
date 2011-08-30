@@ -73,12 +73,16 @@ sub transform ($\$)
                    ^[% ]*\\item
                    (?:\[(?<name>.*?)\]
                      |\|(?<name>.*?)\|
-                     |\s*\\lstinline[|+](?<name>.*?)\()
+                     |\s*\\lstinline[|+](?<name>.*?)\(
+                     |\s*\\labelSlot\{(?<name>.*?)\}
+                   )
                    .*?
                  )
                  (?=^[% ]*\\item|\z)}
          {
            my $k = $+{name};
+           die "multiply defined slot: $k"
+             if defined $slot{$k};
            (my $v = $1) =~ s/\s*\z//s;;
            verbose 1, "Key: $k";
            $slot{$k} = $v;

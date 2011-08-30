@@ -396,46 +396,12 @@ String.fromAscii(0xFF) == "\xff";
    "".size == 0;
 \end{urbiassert}
 
-%%% FIXME: incorrect rendering: we lose the backslashes from the
-%%% separators.
-
-
-%\item[split](<sep> = [" ", "\t", "\n", "\r"], <lim> = -1, <keepSep> = false, <keepEmpty> = true)%
-
-
-\item[toAscii] Convert the first character of \this to its integer value in
-  the \acro{ASCII} coding.  See also \refSlot{fromAscii}.
-\begin{urbiassert}
-   "a".toAscii == 97;
-   "b".toAscii == 98;
-"\xff".toAscii == 0xff;
-"Hello, World!\n"
-  .asList
-  .map(function (var v) { v.toAscii })
-  .map(function (var v) { String.fromAscii(v) })
-  .join
-  == "Hello, World!\n";
-\end{urbiassert}
-
-
-\item[toLower]
-  Make lower case every upper case character in \this and
-  return the result.  \this is not modified.
-\begin{urbiassert}
-"Hello, World!".toLower == "hello, world!";
-\end{urbiassert}
-
-
-\item[toUpper]
-  Make upper case every lower case character in \this and
-  return the result.  \this is not modified.
-\begin{urbiassert}
-"Hello, World!".toUpper == "HELLO, WORLD!";
-\end{urbiassert}
-
 
 \item \labelSlot{split}%
   \lstinline|(\var{sep} = [" ", "\t", "\n", "\r"], \var{lim} = -1, \var{keepSep} = false, \var{keepEmpty} = true)|\\
+  %%% FIXME: incorrect rendering: we lose the backslashes from the
+  %%% separators: \item[split](<sep> = [" ", "\t", "\n", "\r"], <lim> = -1,
+  %%% <keepSep> = false, <keepEmpty> = true)%
   Split \this on the separator \var{sep}, in at most \var{lim}
   components, which include the separator if \var{keepSep}, and the
   empty components of \var{keepEmpty}.  Return a list of strings.
@@ -491,6 +457,37 @@ negative number corresponds to no limit:
 "foobar".split("o")                   == ["f", "", "bar"];
 "foobar".split("o", -1, false, true)  == ["f", "", "bar"];
 "foobar".split("o", -1, false, false) == ["f",     "bar"];
+\end{urbiassert}
+
+
+\item[toAscii] Convert the first character of \this to its integer value in
+  the \acro{ASCII} coding.  See also \refSlot{fromAscii}.
+\begin{urbiassert}
+   "a".toAscii == 97;
+   "b".toAscii == 98;
+"\xff".toAscii == 0xff;
+"Hello, World!\n"
+  .asList
+  .map(function (var v) { v.toAscii })
+  .map(function (var v) { String.fromAscii(v) })
+  .join
+  == "Hello, World!\n";
+\end{urbiassert}
+
+
+\item[toLower]
+  Make lower case every upper case character in \this and
+  return the result.  \this is not modified.
+\begin{urbiassert}
+"Hello, World!".toLower == "hello, world!";
+\end{urbiassert}
+
+
+\item[toUpper]
+  Make upper case every lower case character in \this and
+  return the result.  \this is not modified.
+\begin{urbiassert}
+"Hello, World!".toUpper == "HELLO, WORLD!";
 \end{urbiassert}
 \end{urbiscriptapi}
 
