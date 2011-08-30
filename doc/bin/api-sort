@@ -57,7 +57,6 @@ Sort the urbiscriptapi sections.
 sub transform ($\$)
 {
   my ($file, $contents_ref) = @_;
-  my %slot;
   $$contents_ref =~
     s
     <
@@ -66,6 +65,7 @@ sub transform ($\$)
       \\end{urbiscriptapi}
     >
     {
+      my %slot;
       verbose 1, "Got an urbiscriptapi section";
       my $body = $1;
       verbose 2, "<<<$body>>>";
