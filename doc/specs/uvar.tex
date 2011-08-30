@@ -37,11 +37,11 @@ x;
 \subsection{Slots}
 
 \begin{urbiscriptapi}
-
 \item[copy](<targetObject>, <targetName>)%
   Copy the \lstinline|UVar| to the slot \var{targetName} of object
   \var{targetObject}. Since the \lstinline|UVar| is using properties, you
   must use this method to copy it to an other location.
+
 
 \item[hookChanged]%
   A Boolean that states whether future UVar instantiations support the
@@ -58,6 +58,7 @@ at (headTouch.val->changed? if headTouch.val)
   also set it to true to re-enable the feature for UVars that will be
   instantiating afterward.  See also the environment variable
   \env{URBI\_UVAR\_HOOK\_CHANGED}, \autoref{sec:tools:env}.
+
 
 \item[notifyAccess](<onAccess>)%
   Similar to the \Cxx \lstinline|UNotifyAccess|, calls \var{onAccess} each
@@ -103,6 +104,7 @@ Global.y = 13;
 [00000003] 13
 \end{urbiscript}
 
+
 \item[notifyChangeOwned](<onChangeOwned>)%
   Similar to the \Cxx \lstinline|UNotifyChange| for an owned UVar (see
   \autoref{sec:uobject:uvar-notify}), register \var{onChange} and call it
@@ -110,20 +112,23 @@ Global.y = 13;
   can be passed to \refSlot{removeNotifyChangeOwned} to unregister the
   callback.
 
-\item[removeNotifyAccess](<id>)%
-  Disable the notification installed as \var{id} by \refSlot{notifyAccess}.
-
-\item[removeNotifyChange](<id>)%
-  Disable the notification installed as \var{id} by \refSlot{notifyChange}.
-
-\item[removeNotifyChangeOwned](<id>)%
-  Disable the notification installed as \var{id} by
-  \refSlot{notifyChangeOwned}.
 
 \item[owned]%
   True if the \lstinline|UVar| is in \dfn{owned mode}, that is if it
   contains both a sensor and a command value.
 
+
+\item[removeNotifyAccess](<id>)%
+  Disable the notification installed as \var{id} by \refSlot{notifyAccess}.
+
+
+\item[removeNotifyChange](<id>)%
+  Disable the notification installed as \var{id} by \refSlot{notifyChange}.
+
+
+\item[removeNotifyChangeOwned](<id>)%
+  Disable the notification installed as \var{id} by
+  \refSlot{notifyChangeOwned}.
 \end{urbiscriptapi}
 
 %%% Local Variables:

@@ -33,6 +33,123 @@ String == "";
 
 \subsection{Slots}
 \begin{urbiscriptapi}
+\item \lstinline|'%'(\var{args})|\\
+  It is an equivalent of \lstinline|Formatter.new(this) % \var{args}|.
+  See \refObject{Formatter}.
+%  This construct is actually more
+%  powerful than this, since it relies on
+%  \href{http://www.boost.org/doc/libs/1_39_0/libs/format/doc/format.html,
+%    Boost.Format}.  For instance:
+\begin{urbiassert}
+"%s + %s = %s" % [1, 2, 3] == "1 + 2 = 3";
+\end{urbiassert}
+
+
+\item['*'](<n>)%
+  Concatenate \this \var{n} times.
+\begin{urbiassert}
+"foo" * 0 == "";
+"foo" * 1 == "foo";
+"foo" * 3 == "foofoofoo";
+\end{urbiassert}
+
+
+\item['+'](<other>)%
+  Concatenate \this and \lstinline|\var{other}.asString|.
+\begin{urbiassert}
+"foo" + "bar" == "foobar";
+"foo" + "" == "foo";
+"foo" + 3 == "foo3";
+"foo" + [1, 2, 3] == "foo[1, 2, 3]";
+\end{urbiassert}
+
+
+\item['<'](<other>)%
+  Whether \this is lexicographically before \var{other},
+  which must be a String.
+\begin{urbiassert}
+"" < "a";
+!("a" < "");
+"a" < "b";
+!("a" < "a");
+\end{urbiassert}
+
+
+\item['=='](<that>)%
+  Whether \this and \var{that} are the same string.
+\begin{urbiassert}
+  "" == "";        !("" != "");
+!("" == "\0");       "" != "\0";
+
+  "0" == "0";      !("0" != "0");
+!("0" == "1");       "0" != "1";
+!("1" == "0");       "1" != "0";
+\end{urbiassert}
+
+
+\item|'[]'|(<from>, <to> = <from> + 1)%
+  Return the sub-string starting at \var{from}, up to and not including
+  \var{to}.
+\begin{urbiassert}
+"foobar"[0, 3] == "foo";
+"foobar"[0] == "f";
+\end{urbiassert}
+
+The indexes must be integers from -\refSlot{size} up to \refSlot{size} + 1
+(inclusive).  Independently of their order as integers, \var{from} must be
+\emph{before} or equal to \var{to}.
+
+\begin{urbiscript}
+"foobar"[1.1];
+[00051825:error] !!! []: invalid index: 1.1
+"foobar"[-7];
+[00051841:error] !!! []: invalid index: -7
+"foobar"[6];
+[00051853:error] !!! []: invalid index: 6
+
+"foobar"[3, 1];
+[00051953:error] !!! []: range starting after its end: 3, 1
+\end{urbiscript}
+
+Negative indexes means ``from the end''.
+
+\begin{urbiassert}
+"foobar"[-1] == "r";
+"foobar"[-6] == "f";
+"foobar"[-1, 0] == "r";
+"foobar"[-6, -3] == "foo";
+// Valid since position 2 is before position -1.
+"foobar"[2, -1] == "oba"
+\end{urbiassert}
+
+
+\item|'[]='|(<from>, <other>)%
+  \lstinline|'[]='(\var{from}, \var{to}, \var{other})|\\
+  Replace the sub-string starting at \var{from}, up to and not including
+  \var{to} (which defaults to \var{to} + 1), by \var{other}.  The condition
+  on \var{from} and \var{to} are the same of for \refSlot{'[]'}.  Return
+  \var{other}.
+
+  Beware that this routine is imperative: it changes the value of
+  \this.
+\begin{urbiscript}
+var s1 = "foobar" | var s2 = s1 |
+assert
+{
+  (s1[0, 3] = "quux") == "quux";
+  s1 == "quuxbar";
+  s2 == "quuxbar";
+  (s1[4, 7] = "") == "";
+  s2 == "quux";
+
+  (s1[-3, -1] = "UU") == "UU";
+  s1 == "qUUx";
+  (s1[-1] = "X") == "X";
+  s1 == "qUUX";
+};
+\end{urbiscript}
+
+
 \item[asFloat] If the whole content of \this is an number, return it as a
   \refObject{Float}, otherwise raise an error.
 \begin{urbiscript}
@@ -45,6 +162,7 @@ assert
 "123abc".asFloat;
 [00000001:error] !!! asFloat: cannot convert to float: "123abc"
 \end{urbiscript}
+
 
 \item[asList]
   Return a List of one-letter Strings that, concatenated, equal
@@ -59,12 +177,14 @@ for (var v : "123")
 [00000001] *** 3
 \end{urbiscript}
 
+
 \item[asPrintable]
   Return \this as a literal (escaped) string.
 \begin{urbiassert}
 "foo".asPrintable == "\"foo\"";
 "foo".asPrintable.asPrintable == "\"\\\"foo\\\"\"";
 \end{urbiassert}
+
 
 \item[asString]
   Return \this.
@@ -74,6 +194,7 @@ for (var v : "123")
   assert { s.asString === s; };
 };
 \end{urbiscript}
+
 
 \item[closest](<set>)%
   Return the string in \var{set} that is the closest (in the sense of
@@ -85,6 +206,7 @@ for (var v : "123")
 "FOO".closest(["foo", "bar", "baz"])         == "foo";
 "qux".closest(["foo", "bar", "baz"])         == nil;
 \end{urbiassert}
+
 
 \item[distance](<other>)%
   Return the
@@ -137,6 +259,7 @@ String.fresh == "_5";
 "foo".fresh == "foo_6";
 \end{urbiassert}
 
+
 \item[fromAscii](<v>) The character corresponding to the integer \var{v}
   according to the \acro{ASCII} coding.  See also \refSlot{toAscii}.
 \begin{urbiassert}
@@ -149,6 +272,7 @@ String.fromAscii(0xFF) == "\xff";
   == [0, 1, 2, 254, 255];
 \end{urbiassert}
 
+
 \item[hash]%
   A \refObject{Hash} object corresponding to this string value.  Equal
   strings (in the sense of \refSlot{'=='}) have equal hashes.  See
@@ -159,6 +283,7 @@ String.fromAscii(0xFF) == "\xff";
 "foo".hash == "foo".hash;
 "foo".hash != "bar".hash;
 \end{urbiassert}
+
 
 \item[iscntrl] Whether all the characters of \this are control characters
   (see \autoref{tab:string:ischar}).
@@ -221,6 +346,8 @@ String.fromAscii(0xFF) == "\xff";
 \end{urbiassert}
 
 %%% FIXME: Optional arguments.
+
+
 \item[join](<list>, <prefix>, <suffix>)%
   Glue the result of \refSlot{asString} applied to the members of
   \var{list}, separated by \this, and embedded in a pair
@@ -273,7 +400,42 @@ String.fromAscii(0xFF) == "\xff";
 
 %%% FIXME: incorrect rendering: we lose the backslashes from the
 %%% separators.
+
+
 %\item[split](<sep> = [" ", "\t", "\n", "\r"], <lim> = -1, <keepSep> = false, <keepEmpty> = true)%
+
+
+\item[toAscii] Convert the first character of \this to its integer value in
+  the \acro{ASCII} coding.  See also \refSlot{fromAscii}.
+\begin{urbiassert}
+   "a".toAscii == 97;
+   "b".toAscii == 98;
+"\xff".toAscii == 0xff;
+"Hello, World!\n"
+  .asList
+  .map(function (var v) { v.toAscii })
+  .map(function (var v) { String.fromAscii(v) })
+  .join
+  == "Hello, World!\n";
+\end{urbiassert}
+
+
+\item[toLower]
+  Make lower case every upper case character in \this and
+  return the result.  \this is not modified.
+\begin{urbiassert}
+"Hello, World!".toLower == "hello, world!";
+\end{urbiassert}
+
+
+\item[toUpper]
+  Make upper case every lower case character in \this and
+  return the result.  \this is not modified.
+\begin{urbiassert}
+"Hello, World!".toUpper == "HELLO, WORLD!";
+\end{urbiassert}
+
+
 \item \labelSlot{split}%
   \lstinline|(\var{sep} = [" ", "\t", "\n", "\r"], \var{lim} = -1, \var{keepSep} = false, \var{keepEmpty} = true)|\\
   Split \this on the separator \var{sep}, in at most \var{lim}
@@ -332,145 +494,6 @@ negative number corresponds to no limit:
 "foobar".split("o", -1, false, true)  == ["f", "", "bar"];
 "foobar".split("o", -1, false, false) == ["f",     "bar"];
 \end{urbiassert}
-
-
-\item[toAscii] Convert the first character of \this to its integer value in
-  the \acro{ASCII} coding.  See also \refSlot{fromAscii}.
-\begin{urbiassert}
-   "a".toAscii == 97;
-   "b".toAscii == 98;
-"\xff".toAscii == 0xff;
-"Hello, World!\n"
-  .asList
-  .map(function (var v) { v.toAscii })
-  .map(function (var v) { String.fromAscii(v) })
-  .join
-  == "Hello, World!\n";
-\end{urbiassert}
-
-\item[toLower]
-  Make lower case every upper case character in \this and
-  return the result.  \this is not modified.
-\begin{urbiassert}
-"Hello, World!".toLower == "hello, world!";
-\end{urbiassert}
-
-\item[toUpper]
-  Make upper case every lower case character in \this and
-  return the result.  \this is not modified.
-\begin{urbiassert}
-"Hello, World!".toUpper == "HELLO, WORLD!";
-\end{urbiassert}
-
-\item['=='](<that>)%
-  Whether \this and \var{that} are the same string.
-\begin{urbiassert}
-  "" == "";        !("" != "");
-!("" == "\0");       "" != "\0";
-
-  "0" == "0";      !("0" != "0");
-!("0" == "1");       "0" != "1";
-!("1" == "0");       "1" != "0";
-\end{urbiassert}
-
-\item \lstinline|'%'(\var{args})|\\
-  It is an equivalent of \lstinline|Formatter.new(this) % \var{args}|.
-  See \refObject{Formatter}.
-%  This construct is actually more
-%  powerful than this, since it relies on
-%  \href{http://www.boost.org/doc/libs/1_39_0/libs/format/doc/format.html,
-%    Boost.Format}.  For instance:
-\begin{urbiassert}
-"%s + %s = %s" % [1, 2, 3] == "1 + 2 = 3";
-\end{urbiassert}
-
-\item['*'](<n>)%
-  Concatenate \this \var{n} times.
-\begin{urbiassert}
-"foo" * 0 == "";
-"foo" * 1 == "foo";
-"foo" * 3 == "foofoofoo";
-\end{urbiassert}
-
-\item['+'](<other>)%
-  Concatenate \this and \lstinline|\var{other}.asString|.
-\begin{urbiassert}
-"foo" + "bar" == "foobar";
-"foo" + "" == "foo";
-"foo" + 3 == "foo3";
-"foo" + [1, 2, 3] == "foo[1, 2, 3]";
-\end{urbiassert}
-
-\item['<'](<other>)%
-  Whether \this is lexicographically before \var{other},
-  which must be a String.
-\begin{urbiassert}
-"" < "a";
-!("a" < "");
-"a" < "b";
-!("a" < "a");
-\end{urbiassert}
-
-\item|'[]'|(<from>, <to> = <from> + 1)%
-  Return the sub-string starting at \var{from}, up to and not including
-  \var{to}.
-\begin{urbiassert}
-"foobar"[0, 3] == "foo";
-"foobar"[0] == "f";
-\end{urbiassert}
-
-The indexes must be integers from -\refSlot{size} up to \refSlot{size} + 1
-(inclusive).  Independently of their order as integers, \var{from} must be
-\emph{before} or equal to \var{to}.
-
-\begin{urbiscript}
-"foobar"[1.1];
-[00051825:error] !!! []: invalid index: 1.1
-"foobar"[-7];
-[00051841:error] !!! []: invalid index: -7
-"foobar"[6];
-[00051853:error] !!! []: invalid index: 6
-
-"foobar"[3, 1];
-[00051953:error] !!! []: range starting after its end: 3, 1
-\end{urbiscript}
-
-Negative indexes means ``from the end''.
-
-\begin{urbiassert}
-"foobar"[-1] == "r";
-"foobar"[-6] == "f";
-"foobar"[-1, 0] == "r";
-"foobar"[-6, -3] == "foo";
-// Valid since position 2 is before position -1.
-"foobar"[2, -1] == "oba"
-\end{urbiassert}
-
-\item|'[]='|(<from>, <other>)%
-  \lstinline|'[]='(\var{from}, \var{to}, \var{other})|\\
-  Replace the sub-string starting at \var{from}, up to and not including
-  \var{to} (which defaults to \var{to} + 1), by \var{other}.  The condition
-  on \var{from} and \var{to} are the same of for \refSlot{'[]'}.  Return
-  \var{other}.
-
-  Beware that this routine is imperative: it changes the value of
-  \this.
-\begin{urbiscript}
-var s1 = "foobar" | var s2 = s1 |
-assert
-{
-  (s1[0, 3] = "quux") == "quux";
-  s1 == "quuxbar";
-  s2 == "quuxbar";
-  (s1[4, 7] = "") == "";
-  s2 == "quux";
-
-  (s1[-3, -1] = "UU") == "UU";
-  s1 == "qUUx";
-  (s1[-1] = "X") == "X";
-  s1 == "qUUX";
-};
-\end{urbiscript}
 \end{urbiscriptapi}
 
 %%% Local Variables:

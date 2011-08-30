@@ -61,12 +61,12 @@ StackFrame.new("inner",
 \subsection{Slots}
 
 \begin{urbiscriptapi}
-\item[name] \refObject{String}, representing the name of the called
-  function.
+\item[asString] Clean display of the call location.
 \begin{urbiscript}
-getStackFrame.name;
-[00000002] "inner"
+getStackFrame;
+[00000004] foo.u:7.5-9: inner
 \end{urbiscript}
+
 
 \item[location] \refObject{Location} of the function call.
 \begin{urbiscript}
@@ -74,12 +74,13 @@ getStackFrame.location;
 [00000003] foo.u:7.5-9
 \end{urbiscript}
 
-\item[asString] Clean display of the call location.
-\begin{urbiscript}
-getStackFrame;
-[00000004] foo.u:7.5-9: inner
-\end{urbiscript}
 
+\item[name] \refObject{String}, representing the name of the called
+  function.
+\begin{urbiscript}
+getStackFrame.name;
+[00000002] "inner"
+\end{urbiscript}
 \end{urbiscriptapi}
 
 

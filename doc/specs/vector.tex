@@ -47,285 +47,6 @@ Vector.new(["123"]);
 \subsection{Slots}
 
 \begin{urbiscriptapi}
-\item[asString]%
-\begin{urbiscript}
-do (Vector)
-{
-  assert
-  {
-    new         ().asString == "<>";
-    new        (1).asString == "<1>";
-    new     (1, 2).asString == "<1, 2>";
-    new(1, 2, 3.4).asString == "<1, 2, 3.4>";
-  };
-}|;
-\end{urbiscript}
-
-\item[asVector]%
-  Return \this.
-\begin{urbiassert}
-var v = Vector.new;
-v.asVector === v;
-\end{urbiassert}
-
-\item[combAdd](<that>)%
-  A \refObject{Matrix} \var{res} such that
-  \lstinline|\var{res}[\var{i}, \var{j}] = this[i] + \var{that}[j]|, for all
-  \lstinline|i| in the range of \this, and \lstinline|j| in the range of
-  \that.
-\begin{urbiassert}
-Vector.new(0, 1, 2).combAdd(Vector.new(0, 10, 20))
-  == Matrix.new([ 0, 10, 20],
-                [ 1, 11, 21],
-                [ 2, 12, 22]);
-\end{urbiassert}
-
-\item[combDiv](<that>)%
-  A \refObject{Matrix} \var{res} such that
-  \lstinline|\var{res}[\var{i}, \var{j}] = this[i] / \var{that}[j]|, for all
-  \lstinline|i| in the range of \this, and \lstinline|j| in the range of
-  \that.
-\begin{urbiassert}
-Vector.new(10, 20).combDiv(Vector.new(2, 5, 10))
-  == Matrix.new([  5, 2, 1],
-                [ 10, 4, 2]);
-\end{urbiassert}
-
-\item[combMul](<that>)%
-  A \refObject{Matrix} \var{res} such that
-  \lstinline|\var{res}[\var{i}, \var{j}] = this[i] * \var{that}[j]|, for all
-  \lstinline|i| in the range of \this, and \lstinline|j| in the range of
-  \that.
-\begin{urbiassert}
-Vector.new(1, 2, 3, 4).combMul(Vector.new(5, 6, 7))
-  == Matrix.new([ 5,  6,  7],
-                [10, 12, 14],
-                [15, 18, 21],
-                [20, 24, 28]);
-\end{urbiassert}
-
-\item[combSub](<that>)%
-  A \refObject{Matrix} \var{res} such that
-  \lstinline|\var{res}[\var{i}, \var{j}] = this[i] - \var{that}[j]|, for all
-  \lstinline|i| in the range of \this, and \lstinline|j| in the range of
-  \that.
-\begin{urbiassert}
-Vector.new(-1, 0, +1).combSub(Vector.new(-2, 0, +2))
-  == Matrix.new([1, -1, -3],
-                [2,  0, -2],
-                [3,  1, -1]);
-\end{urbiassert}
-
-\item[distance](<that>)%
-  The (Euclidean) distance between \this and \that: (Euclidean) norm of
-  \lstinline|this - \var{that}|.  They must have equal dimensions.
-\begin{urbiscript}
-do (Vector)
-{
-  assert
-  {
-    new.distance(new) == 0;
-
-    new(0, 0).distance(new(3, 4)) == 5;
-    new(3, 4).distance(new(0, 0)) == 5;
-  };
-}|;
-Vector.new(0).distance(Vector.new(1, 2));
-[00000319:error] !!! distance: incompatible vector sizes: 1, 2
-
-Vector.new(1, 2).distance(Vector.new(0));
-[00000334:error] !!! distance: incompatible vector sizes: 2, 1
-\end{urbiscript}
-
-\item[norm]%
-  The (Euclidean) norm of \this: square root of the sum of the square of the
-  members.
-\begin{urbiscript}
-do (Vector)
-{
-  assert
-  {
-    new.norm == 0;
-
-    new(0).norm == 0;
-    new(1).norm == 1;
-
-    new(1, 1).norm == 2.sqrt;
-
-    new(0, 0, 0, 0).norm == 0;
-    new(1, 1, 1, 1).norm == 2;
-  };
-}|;
-\end{urbiscript}
-
-\item[resize](<dim>)%
-  Change the dimensions of \this, using 0 for possibly new members.  Return
-  \this.
-\begin{urbiscript}
-// Check that <1, 2> is equal to the Vector composed of values,
-// when resized the number of values.
-function resized(var values[])
-{
-  var m = Vector.new(1, 2);
-  var res = Vector.new(values);
-  // Resize returns this...
-  m.resize(res.size) === m;
-  // ...and does resize.
-  m == res;
-}|;
-
-assert
-{
-  resized;
-  resized(1);
-  resized(1, 2);
-  resized(1, 2, 0);
-};
-\end{urbiscript}
-
-\item[scalarEQ](<that>)%
-  A Vector whose members are 0 or 1 depending on the equality of the
-  corresponding members of \this and \that.
-\begin{urbiscript}
-do (Vector)
-{
-  assert
-  {
-    new(1, 2, 3).scalarEQ(new(3, 2, 1)) == new(0, 1, 0);
-  };
-}|;
-\end{urbiscript}
-  \this and \that must have equal sizes.
-\begin{urbiscript}
-Vector.new(1, 2).scalarEQ(Vector.new(0));
-[00000601:error] !!! scalarEQ: incompatible vector sizes: 2, 1
-\end{urbiscript}
-
-\item[scalarGE](<that>)%
-  A Vector whose members are 0 or 1 if the corresponding member of \this is
-  greater than or equal to the one of \that.
-\begin{urbiscript}
-do (Vector)
-{
-  assert
-  {
-    new(1, 2, 3).scalarGE(new(3, 2, 1)) == new(0, 1, 1);
-  };
-}|;
-\end{urbiscript}
-  \this and \that must have equal sizes.
-\begin{urbiscript}
-Vector.new(1, 2).scalarEQ(Vector.new(0));
-[00000601:error] !!! scalarEQ: incompatible vector sizes: 2, 1
-\end{urbiscript}
-
-\item[scalarGT](<that>)%
-  A Vector whose members are 0 or 1 if the corresponding member of \this is
-  greater than to the one of \that.
-\begin{urbiscript}
-do (Vector)
-{
-  assert
-  {
-    new(1, 2, 3).scalarGT(new(3, 2, 1)) == new(0, 0, 1);
-  };
-}|;
-\end{urbiscript}
-  \this and \that must have equal sizes.
-\begin{urbiscript}
-Vector.new(1, 2).scalarGT(Vector.new(0));
-[00000601:error] !!! scalarGT: incompatible vector sizes: 2, 1
-\end{urbiscript}
-
-\item[scalarLE](<that>)%
-  A Vector whose members are 0 or 1 if the corresponding member of \this is
-  less than or equal to the one of \that.
-\begin{urbiscript}
-do (Vector)
-{
-  assert
-  {
-    new(1, 2, 3).scalarLE(new(3, 2, 1)) == new(1, 1, 0);
-  };
-}|;
-\end{urbiscript}
-  \this and \that must have equal sizes.
-\begin{urbiscript}
-Vector.new(1, 2).scalarLE(Vector.new(0));
-[00000601:error] !!! scalarLE: incompatible vector sizes: 2, 1
-\end{urbiscript}
-
-\item[scalarLT](<that>)%
-  A Vector whose members are 0 or 1 if the corresponding member of \this is
-  less than to the one of \that.
-\begin{urbiscript}
-do (Vector)
-{
-  assert
-  {
-    new(1, 2, 3).scalarLT(new(3, 2, 1)) == new(1, 0, 0);
-  };
-}|;
-\end{urbiscript}
-  \this and \that must have equal sizes.
-\begin{urbiscript}
-Vector.new(1, 2).scalarLT(Vector.new(0));
-[00000601:error] !!! scalarLT: incompatible vector sizes: 2, 1
-\end{urbiscript}
-
-\item[set](<list>)%
-  Change the members of \this, and return \this.
-\begin{urbiassert}
-var v = Vector.new(1, 2, 3);
-v.set([10, 20]) === v;
-v == Vector.new(10, 20);
-\end{urbiassert}
-
-\item[size]%
-  The size of the vector.
-\begin{urbiassert}
-Vector                  .size == 0;
-Vector.new(0)           .size == 1;
-Vector.new(0, 1, 2, 3)  .size == 4;
-Vector.new([0, 1, 2, 3]).size == 4;
-\end{urbiassert}
-
-\item[sum]%
-  The sum of the values stored in \this.
-\begin{urbiassert}
-Vector                  .sum == 0;
-Vector.new(1)           .sum == 1;
-Vector.new(0, 1, 2, 3)  .sum == 6;
-\end{urbiassert}
-
-\item[trueIndexes]%
-  A Vector whose values are the indexes of \this whose value is non-null.
-\begin{urbiassert}
-Vector.trueIndexes == Vector;
-Vector.new(1, 0, 1, 0, 0, 1).trueIndexes == Vector.new(0, 2, 5);
-\end{urbiassert}
-
-\item[type]%
-  \lstinline|"Vector"|.
-\begin{urbiassert}
-Vector.type == "Vector";
-\end{urbiassert}
-
-\item['=='](<that>)%
-  Whether \this and \that have the same size, and members.
-\begin{urbiscript}
-do (Vector)
-{
-  assert
-  {
-               new == new;
-      new(1, 2, 3) == new(1, 2, 3);
-    !(new(1, 2, 3) == new(1, 2));
-    !(new(1, 2, 3) == new(3, 2, 1));
-  };
-}|;
-\end{urbiscript}
-
 \item['*'](<that>)%
   A Vector whose members are member-wise products of \this and \that.  The
   argument \that must either be a Vector of same dimension, or a Float.
@@ -428,6 +149,23 @@ operators are defined.
   Vector.new(0, 1, 2) > Vector.new(0, 0, 2);
 \end{urbiassert}
 
+
+\item['=='](<that>)%
+  Whether \this and \that have the same size, and members.
+\begin{urbiscript}
+do (Vector)
+{
+  assert
+  {
+               new == new;
+      new(1, 2, 3) == new(1, 2, 3);
+    !(new(1, 2, 3) == new(1, 2));
+    !(new(1, 2, 3) == new(3, 2, 1));
+  };
+}|;
+\end{urbiscript}
+
+
 \item|'[]'|(<index>)%
   The value stored at \var{index}.
 \begin{urbiassert}
@@ -439,6 +177,7 @@ v[-3] == 1; v[-2] == 2; v[-1] == 3;
 v[4];
 [00000100:error] !!! []: invalid index: 4
 \end{urbiassert}
+
 
 \item|'[]='|(<index>, <value>)%
   Set the value stored at \var{index} to \var{value} and return it.
@@ -453,6 +192,289 @@ var v = Vector.new(0, 0, 0);
 
 v[4] = 7;
 [00000100:error] !!! []=: invalid index: 4
+\end{urbiassert}
+
+
+\item[asString]%
+\begin{urbiscript}
+do (Vector)
+{
+  assert
+  {
+    new         ().asString == "<>";
+    new        (1).asString == "<1>";
+    new     (1, 2).asString == "<1, 2>";
+    new(1, 2, 3.4).asString == "<1, 2, 3.4>";
+  };
+}|;
+\end{urbiscript}
+
+
+\item[asVector]%
+  Return \this.
+\begin{urbiassert}
+var v = Vector.new;
+v.asVector === v;
+\end{urbiassert}
+
+
+\item[combAdd](<that>)%
+  A \refObject{Matrix} \var{res} such that
+  \lstinline|\var{res}[\var{i}, \var{j}] = this[i] + \var{that}[j]|, for all
+  \lstinline|i| in the range of \this, and \lstinline|j| in the range of
+  \that.
+\begin{urbiassert}
+Vector.new(0, 1, 2).combAdd(Vector.new(0, 10, 20))
+  == Matrix.new([ 0, 10, 20],
+                [ 1, 11, 21],
+                [ 2, 12, 22]);
+\end{urbiassert}
+
+
+\item[combDiv](<that>)%
+  A \refObject{Matrix} \var{res} such that
+  \lstinline|\var{res}[\var{i}, \var{j}] = this[i] / \var{that}[j]|, for all
+  \lstinline|i| in the range of \this, and \lstinline|j| in the range of
+  \that.
+\begin{urbiassert}
+Vector.new(10, 20).combDiv(Vector.new(2, 5, 10))
+  == Matrix.new([  5, 2, 1],
+                [ 10, 4, 2]);
+\end{urbiassert}
+
+
+\item[combMul](<that>)%
+  A \refObject{Matrix} \var{res} such that
+  \lstinline|\var{res}[\var{i}, \var{j}] = this[i] * \var{that}[j]|, for all
+  \lstinline|i| in the range of \this, and \lstinline|j| in the range of
+  \that.
+\begin{urbiassert}
+Vector.new(1, 2, 3, 4).combMul(Vector.new(5, 6, 7))
+  == Matrix.new([ 5,  6,  7],
+                [10, 12, 14],
+                [15, 18, 21],
+                [20, 24, 28]);
+\end{urbiassert}
+
+
+\item[combSub](<that>)%
+  A \refObject{Matrix} \var{res} such that
+  \lstinline|\var{res}[\var{i}, \var{j}] = this[i] - \var{that}[j]|, for all
+  \lstinline|i| in the range of \this, and \lstinline|j| in the range of
+  \that.
+\begin{urbiassert}
+Vector.new(-1, 0, +1).combSub(Vector.new(-2, 0, +2))
+  == Matrix.new([1, -1, -3],
+                [2,  0, -2],
+                [3,  1, -1]);
+\end{urbiassert}
+
+
+\item[distance](<that>)%
+  The (Euclidean) distance between \this and \that: (Euclidean) norm of
+  \lstinline|this - \var{that}|.  They must have equal dimensions.
+\begin{urbiscript}
+do (Vector)
+{
+  assert
+  {
+    new.distance(new) == 0;
+
+    new(0, 0).distance(new(3, 4)) == 5;
+    new(3, 4).distance(new(0, 0)) == 5;
+  };
+}|;
+Vector.new(0).distance(Vector.new(1, 2));
+[00000319:error] !!! distance: incompatible vector sizes: 1, 2
+
+Vector.new(1, 2).distance(Vector.new(0));
+[00000334:error] !!! distance: incompatible vector sizes: 2, 1
+\end{urbiscript}
+
+
+\item[norm]%
+  The (Euclidean) norm of \this: square root of the sum of the square of the
+  members.
+\begin{urbiscript}
+do (Vector)
+{
+  assert
+  {
+    new.norm == 0;
+
+    new(0).norm == 0;
+    new(1).norm == 1;
+
+    new(1, 1).norm == 2.sqrt;
+
+    new(0, 0, 0, 0).norm == 0;
+    new(1, 1, 1, 1).norm == 2;
+  };
+}|;
+\end{urbiscript}
+
+
+\item[resize](<dim>)%
+  Change the dimensions of \this, using 0 for possibly new members.  Return
+  \this.
+\begin{urbiscript}
+// Check that <1, 2> is equal to the Vector composed of values,
+// when resized the number of values.
+function resized(var values[])
+{
+  var m = Vector.new(1, 2);
+  var res = Vector.new(values);
+  // Resize returns this...
+  m.resize(res.size) === m;
+  // ...and does resize.
+  m == res;
+}|;
+
+assert
+{
+  resized;
+  resized(1);
+  resized(1, 2);
+  resized(1, 2, 0);
+};
+\end{urbiscript}
+
+
+\item[scalarEQ](<that>)%
+  A Vector whose members are 0 or 1 depending on the equality of the
+  corresponding members of \this and \that.
+\begin{urbiscript}
+do (Vector)
+{
+  assert
+  {
+    new(1, 2, 3).scalarEQ(new(3, 2, 1)) == new(0, 1, 0);
+  };
+}|;
+\end{urbiscript}
+  \this and \that must have equal sizes.
+\begin{urbiscript}
+Vector.new(1, 2).scalarEQ(Vector.new(0));
+[00000601:error] !!! scalarEQ: incompatible vector sizes: 2, 1
+\end{urbiscript}
+
+
+\item[scalarGE](<that>)%
+  A Vector whose members are 0 or 1 if the corresponding member of \this is
+  greater than or equal to the one of \that.
+\begin{urbiscript}
+do (Vector)
+{
+  assert
+  {
+    new(1, 2, 3).scalarGE(new(3, 2, 1)) == new(0, 1, 1);
+  };
+}|;
+\end{urbiscript}
+  \this and \that must have equal sizes.
+\begin{urbiscript}
+Vector.new(1, 2).scalarEQ(Vector.new(0));
+[00000601:error] !!! scalarEQ: incompatible vector sizes: 2, 1
+\end{urbiscript}
+
+
+\item[scalarGT](<that>)%
+  A Vector whose members are 0 or 1 if the corresponding member of \this is
+  greater than to the one of \that.
+\begin{urbiscript}
+do (Vector)
+{
+  assert
+  {
+    new(1, 2, 3).scalarGT(new(3, 2, 1)) == new(0, 0, 1);
+  };
+}|;
+\end{urbiscript}
+  \this and \that must have equal sizes.
+\begin{urbiscript}
+Vector.new(1, 2).scalarGT(Vector.new(0));
+[00000601:error] !!! scalarGT: incompatible vector sizes: 2, 1
+\end{urbiscript}
+
+
+\item[scalarLE](<that>)%
+  A Vector whose members are 0 or 1 if the corresponding member of \this is
+  less than or equal to the one of \that.
+\begin{urbiscript}
+do (Vector)
+{
+  assert
+  {
+    new(1, 2, 3).scalarLE(new(3, 2, 1)) == new(1, 1, 0);
+  };
+}|;
+\end{urbiscript}
+  \this and \that must have equal sizes.
+\begin{urbiscript}
+Vector.new(1, 2).scalarLE(Vector.new(0));
+[00000601:error] !!! scalarLE: incompatible vector sizes: 2, 1
+\end{urbiscript}
+
+
+\item[scalarLT](<that>)%
+  A Vector whose members are 0 or 1 if the corresponding member of \this is
+  less than to the one of \that.
+\begin{urbiscript}
+do (Vector)
+{
+  assert
+  {
+    new(1, 2, 3).scalarLT(new(3, 2, 1)) == new(1, 0, 0);
+  };
+}|;
+\end{urbiscript}
+  \this and \that must have equal sizes.
+\begin{urbiscript}
+Vector.new(1, 2).scalarLT(Vector.new(0));
+[00000601:error] !!! scalarLT: incompatible vector sizes: 2, 1
+\end{urbiscript}
+
+
+\item[set](<list>)%
+  Change the members of \this, and return \this.
+\begin{urbiassert}
+var v = Vector.new(1, 2, 3);
+v.set([10, 20]) === v;
+v == Vector.new(10, 20);
+\end{urbiassert}
+
+
+\item[size]%
+  The size of the vector.
+\begin{urbiassert}
+Vector                  .size == 0;
+Vector.new(0)           .size == 1;
+Vector.new(0, 1, 2, 3)  .size == 4;
+Vector.new([0, 1, 2, 3]).size == 4;
+\end{urbiassert}
+
+
+\item[sum]%
+  The sum of the values stored in \this.
+\begin{urbiassert}
+Vector                  .sum == 0;
+Vector.new(1)           .sum == 1;
+Vector.new(0, 1, 2, 3)  .sum == 6;
+\end{urbiassert}
+
+
+\item[trueIndexes]%
+  A Vector whose values are the indexes of \this whose value is non-null.
+\begin{urbiassert}
+Vector.trueIndexes == Vector;
+Vector.new(1, 0, 1, 0, 0, 1).trueIndexes == Vector.new(0, 2, 5);
+\end{urbiassert}
+
+
+\item[type]%
+  \lstinline|"Vector"|.
+\begin{urbiassert}
+Vector.type == "Vector";
 \end{urbiassert}
 \end{urbiscriptapi}
 

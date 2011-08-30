@@ -42,6 +42,23 @@ Regexp.new("");
 
 \subsection{Slots}
 \begin{urbiscriptapi}
+\item|'[]'|(<n>)%
+  Same as \lstinline|this.matches[\var{n}]|.
+\begin{urbiscript}
+var d = Regexp.new("(1+)(2+)(3+)")|;
+assert
+{
+  "01223334" in d;
+  d[0] == "122333";
+  d[1] == "1";
+  d[2] == "22";
+  d[3] == "333";
+};
+d[4];
+[00000009:error] !!! []: out of bound index: 4
+\end{urbiscript}
+
+
 \item[asPrintable] A string that shows that \this is a Regexp, and its
   value.
 \begin{urbiassert}
@@ -49,11 +66,13 @@ Regexp.new("");
 Regexp.new("\\d+(\\.\\d+)?").asPrintable == "Regexp(\"\\\\d+(\\\\.\\\\d+)?\")";
 \end{urbiassert}
 
+
 \item[asString] The regular expression that was compiled.
 \begin{urbiassert}
            Regexp.new("abc").asString == "abc";
 Regexp.new("\\d+(\\.\\d+)?").asString == "\\d+(\\.\\d+)?";
 \end{urbiassert}
+
 
 \item[has](<str>)%
   An experimental alias to \refSlot{match}, so that the infix operators
@@ -63,6 +82,7 @@ Regexp.new("\\d+(\\.\\d+)?").asString == "\\d+(\\.\\d+)?";
 "23.03"     in Regexp.new("^\\d+\\.\\d+$");
 "-3.14" not in Regexp.new("^\\d+\\.\\d+$");
 \end{urbiassert}
+
 
 \item[match](<str>)%
   Whether \this matches \var{str}.
@@ -110,6 +130,7 @@ assert
 };
 \end{urbiscript}
 
+
 \item[matches]%
   If the latest \refSlot{match} was successful, the matched groups, as
   delimited by parentheses in the regular expression; the first element
@@ -127,23 +148,6 @@ assert
   re.matches == [];
 };
 \end{urbiscript}
-
-\item|'[]'|(<n>)%
-  Same as \lstinline|this.matches[\var{n}]|.
-\begin{urbiscript}
-var d = Regexp.new("(1+)(2+)(3+)")|;
-assert
-{
-  "01223334" in d;
-  d[0] == "122333";
-  d[1] == "1";
-  d[2] == "22";
-  d[3] == "333";
-};
-d[4];
-[00000009:error] !!! []: out of bound index: 4
-\end{urbiscript}
-
 \end{urbiscriptapi}
 
 %%% Local Variables:

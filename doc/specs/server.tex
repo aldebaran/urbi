@@ -42,9 +42,11 @@ at (s.connection?(var socket))
 };
 \end{urbiscript}
 
+
 \item[getIoService]
   Return the \refObject{IoService} used by this socket. Only the default
   \lstinline|IoService| is automatically polled.
+
 
 \item[host]
   The host on which \this is listening. Raise an error if
@@ -54,8 +56,10 @@ Server.host;
 [00000003:error] !!! host: server not listening
 \end{urbiscript}
 
+
 \item[listen](<host>, <port>)%
   Listen incoming connections with \var{host} and \var{port}.
+
 
 \item[port]
   The port on which \this is listening. Raise an error if
@@ -64,6 +68,7 @@ Server.host;
 Server.port;
 [00000004:error] !!! port: server not listening
 \end{urbiscript}
+
 
 \item[sockets]
   The list of the sockets created at each incoming connection.

@@ -139,30 +139,37 @@ modifiers is the recommended way to construct trajectories.  See
   (\autoref{sec:traj:Accel}).  It derives from
   \refSlot{OpenLoop}.
 
+
 \item[ClosedLoop] This class factors the implementation of the
   \dfn{closed-loop} trajectories.  It derives from
   \lstinline|TrajectoryGenerator|.
 
+
 \item[OpenLoop] This class factors the implementation of the \dfn{open-loop}
   trajectories.  It derives from \lstinline|TrajectoryGenerator|.
+
 
 \item[Sin] This class implements the \lstinline|Cos| and \lstinline|Sin|
   trajectories (\autoref{sec:traj:Cos}, \autoref{sec:traj:Sin}).  It derives
   from \refSlot{OpenLoop}.
 
+
 \item[Smooth] This class implements the \lstinline|Smooth| trajectory
   (\autoref{sec:traj:Smooth}).  It derives from
   \refSlot{OpenLoop}.
+
 
 \item[SpeedAdaptive] This class implements the \lstinline|Speed| trajectory
   when the \lstinline|adaptive| attribute is given
   (\autoref{sec:traj:Speed}).  It derives from
   \refSlot{ClosedLoop}.
 
+
 \item[Time] This class implements the non-adaptive \lstinline|Speed| and
   \lstinline|Time| trajectories (\autoref{sec:traj:Speed},
   \autoref{sec:traj:Time}).  It derives from
   \refSlot{OpenLoop}.
+
 
 \item[TimeAdaptive] This class implements the \lstinline|Time| trajectory
   when the \lstinline|adaptive| attribute is given

@@ -30,6 +30,41 @@ Semaphore.new(1);
 \subsection{Slots}
 
 \begin{urbiscriptapi}
+\item[acquire] Wait to enter a critical section delimited by the execution
+  of \refSlot{acquire} and \refSlot{release}.  Enter the critical section
+  when the number of processes inside it goes below the maximum allowed.
+
+
+\item[p] Historical synonym for \refSlot{acquire}.
+
+
+\item[release] Leave a critical section delimited by the execution of
+  \refSlot{acquire} and \refSlot{release}.
+
+\begin{urbiscript}
+{
+  var s = Semaphore.new(1);
+  for& (var i : [0, 1, 2, 3])
+  {
+    s.acquire;
+    echo("start " + i);
+    echo("end " + i);
+    s.release;
+  }
+};
+[00000000] *** start 0
+[00000000] *** end 0
+[00000000] *** start 1
+[00000000] *** end 1
+[00000000] *** start 2
+[00000000] *** end 2
+[00000000] *** start 3
+[00000000] *** end 3
+\end{urbiscript}
+
+
+\item[v] Historical synonym for \refSlot{release}.
+
 
 \item \labelSlot{criticalSection}\lstinline|(function() { \var{code} })|\\%
   Put the piece of \var{code} inside a critical section which can be
@@ -82,39 +117,6 @@ Semaphore.new(1);
 [00000000] *** end 2
 [00000000] *** end 3
 \end{urbiscript}
-
-
-\item[acquire] Wait to enter a critical section delimited by the execution
-  of \refSlot{acquire} and \refSlot{release}.  Enter the critical section
-  when the number of processes inside it goes below the maximum allowed.
-
-\item[p] Historical synonym for \refSlot{acquire}.
-
-\item[release] Leave a critical section delimited by the execution of
-  \refSlot{acquire} and \refSlot{release}.
-
-\begin{urbiscript}
-{
-  var s = Semaphore.new(1);
-  for& (var i : [0, 1, 2, 3])
-  {
-    s.acquire;
-    echo("start " + i);
-    echo("end " + i);
-    s.release;
-  }
-};
-[00000000] *** start 0
-[00000000] *** end 0
-[00000000] *** start 1
-[00000000] *** end 1
-[00000000] *** start 2
-[00000000] *** end 2
-[00000000] *** start 3
-[00000000] *** end 3
-\end{urbiscript}
-
-\item[v] Historical synonym for \refSlot{release}.
 \end{urbiscriptapi}
 
 %%% Local Variables:

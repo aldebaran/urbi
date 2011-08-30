@@ -74,23 +74,6 @@ Pattern.Binding.new("a");
   Use \var{value} to unify the current pattern with this value.
   Return the status of the match.
   \begin{itemize}
-    \item If the match is correct, then the \var{bindings} member will
-      contain the result of every matched values.
-    \item If the match is incorrect, then the \var{bindings} member should
-      not be used.
-  \end{itemize}
-  If the pattern contains multiple \refSlot{Binding} with the same name,
-  then the behavior is undefined.
-
-\begin{urbiassert}
-Pattern.new(1).match(1);
-Pattern.new([1, 2]).match([1, 2]);
-! Pattern.new([1, 2]).match([1, 3]);
-! Pattern.new([1, 2]).match([1, 2, 3]);
-Pattern.new(Pattern.Binding.new("a")).match(0);
-Pattern.new([1, Pattern.Binding.new("a")]).match([1, 2]);
-! Pattern.new([1, Pattern.Binding.new("a")]).match(0);
-\end{urbiassert}
 
 
 \item[matchPattern](<pattern>, <value>)%
@@ -111,6 +94,8 @@ Pattern.new([1, Pattern.Binding.new("a")]).match([1, 2]);
 
 %% This function is indirectly tested with the match of Pattern.Binding
 %% inside lists.
+
+
 \item[pattern]
   The pattern given at the creation.
 \begin{urbiassert}
@@ -122,6 +107,24 @@ Pattern.new([1, 2]).pattern == [1, 2];
 };
 \end{urbiassert}
 
+
+\item If the match is correct, then the \var{bindings} member will
+      contain the result of every matched values.
+    \item If the match is incorrect, then the \var{bindings} member should
+      not be used.
+  \end{itemize}
+  If the pattern contains multiple \refSlot{Binding} with the same name,
+  then the behavior is undefined.
+
+\begin{urbiassert}
+Pattern.new(1).match(1);
+Pattern.new([1, 2]).match([1, 2]);
+! Pattern.new([1, 2]).match([1, 3]);
+! Pattern.new([1, 2]).match([1, 2, 3]);
+Pattern.new(Pattern.Binding.new("a")).match(0);
+Pattern.new([1, Pattern.Binding.new("a")]).match([1, 2]);
+! Pattern.new([1, Pattern.Binding.new("a")]).match(0);
+\end{urbiassert}
 \end{urbiscriptapi}
 
 %%% Local Variables:
