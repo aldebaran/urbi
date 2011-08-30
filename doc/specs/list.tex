@@ -113,12 +113,14 @@ The list cannot be empty.
 [00000011:error] !!! argMin: list cannot be empty
 \end{urbiscript}
 
+
 \item[asBool]
   Whether not empty.
 \begin{urbiassert}
 [].asBool == false;
 [1].asBool == true;
 \end{urbiassert}
+
 
 \item[asList]
   Return the target.
@@ -128,6 +130,7 @@ var l = [0, 1, 2];
 l.asList === l;
 \end{urbiassert}
 
+
 \item[asString]
   A string describing the list.  Uses \lstinline|asPrintable| on its
   members, so that, for instance, strings are displayed with quotes.
@@ -135,6 +138,7 @@ l.asList === l;
 \begin{urbiassert}
 [0, [1], "2"].asString == "[0, [1], \"2\"]";
 \end{urbiassert}
+
 
 \item[back]
   The last element of the target. An error if the target is empty.
@@ -145,6 +149,7 @@ assert([0, 1, 2].back == 2);
 [00000017:error] !!! back: cannot be applied onto empty list
 \end{urbiscript}
 
+
 \item[clear]
   Empty the target, return it.
 
@@ -153,6 +158,7 @@ var l = [0, 1, 2];
 l.clear === l == [];
 l.clear === l == [];
 \end{urbiassert}
+
 
 \item[each](<fun>)%
   Apply the given functional value \var{fun} on all members, sequentially.
@@ -167,16 +173,6 @@ l.clear === l == [];
 [00000000] *** 4
 \end{urbiscript}
 
-\item[eachi](<fun>)%
-  Apply the given functional value \var{fun} on all members
-  sequentially, additionally passing the current element index.
-
-\begin{urbiscript}
-["a", "b", "c"].eachi(function (v, i) {echo ("%s: %s" % [i, v])});
-[00000000] *** 0: a
-[00000000] *** 1: b
-[00000000] *** 2: c
-\end{urbiscript}
 
 \item['each&'](<fun>)%
 Apply the given functional value on all members simultaneously.
@@ -191,6 +187,19 @@ Apply the given functional value on all members simultaneously.
 [00000000] *** 4
 \end{urbiscript}
 
+
+\item[eachi](<fun>)%
+  Apply the given functional value \var{fun} on all members
+  sequentially, additionally passing the current element index.
+
+\begin{urbiscript}
+["a", "b", "c"].eachi(function (v, i) {echo ("%s: %s" % [i, v])});
+[00000000] *** 0: a
+[00000000] *** 1: b
+[00000000] *** 2: c
+\end{urbiscript}
+
+
 \item[empty]
   Whether the target is empty.
 
@@ -198,6 +207,7 @@ Apply the given functional value on all members simultaneously.
    [].empty;
 ! [1].empty;
 \end{urbiassert}
+
 
 \item[filter](<fun>)%
   The list of all the members of the target that verify the predicate
@@ -218,6 +228,7 @@ do ([0, 1, 2, 3, 4, 5])
 }|;
 \end{urbiscript}
 
+
 \item[foldl](<action>, <value>)%
   \wref[Fold_(higher-order_function)]{Fold},
   also known as \dfn{reduce} or \dfn{accumulate}, computes a result
@@ -234,6 +245,7 @@ do ([0, 1, 2, 3, 4, 5])
 [1, 2, 3].foldl(function (a, b) { a - b }, 0) == -6;
 \end{urbiassert}
 
+
 \item[front]
   Return the first element of the target. An error if the target is
   empty.
@@ -242,6 +254,7 @@ assert([0, 1, 2].front == 0);
 [].front;
 [00000000:error] !!! front: cannot be applied onto empty list
 \end{urbiscript}
+
 
 \item[has](<that>)%
   Whether \that equals one of the members.
@@ -261,6 +274,7 @@ assert([0, 1, 2].front == 0);
 !(1 not in [0, 1]);
 \end{urbiassert}
 
+
 \item[hash] Return a \refObject{Hash} object corresponding to this list
   value. Equal lists (in the sense of \refSlot{'=='}) have equal hashes, see
   \refSlot[Object]{hash}.
@@ -273,6 +287,7 @@ assert([0, 1, 2].front == 0);
     [0, 1].hash != [1, 0].hash;
 \end{urbiassert}
 
+
 \item[hasSame](<that>)%
   Whether \that is is physically equal to one of the members.
 \begin{urbiassert}
@@ -282,6 +297,7 @@ var x = 1;
 ![0, x, 2].hasSame(1);
 \end{urbiassert}
 
+
 \item[head]
   Synonym for \refSlot{front}.
 \begin{urbiscript}
@@ -289,6 +305,7 @@ assert([0, 1, 2].head == 0);
 [].head;
 [00000000:error] !!! head: cannot be applied onto empty list
 \end{urbiscript}
+
 
 \item[insert](<where>, <what>)%
   Insert \var{what} before the value at index \var{where}, return
@@ -319,6 +336,7 @@ l.insertBack(2) === l;
 l == [0, 1, 2];
 \end{urbiassert}
 
+
 \item[insertFront](<that>)%
   Insert the given element at the beginning of the target.  Return \this.
 
@@ -327,6 +345,7 @@ var l = [0, 1];
 l.insertFront(0) === l;
 l == [0, 0, 1];
 \end{urbiassert}
+
 
 \item[insertUnique](<that>)%
   If \that is not in \this, append it. Return \this.
@@ -338,6 +357,7 @@ l.insertUnique(0) === l == [0, 1];
 l.insertUnique(2) === l == [0, 1, 2];
 \end{urbiassert}
 
+
 \item[join](<sep> = "", <prefix> = "", <suffix> = "")%
   Bounce to \refSlot[String]{join}.
 
@@ -346,6 +366,7 @@ l.insertUnique(2) === l == [0, 1, 2];
 ["", "ob", ""].join("a")           == "aoba";
 ["", "ob", ""].join("a", "B", "b") == "Baobab";
 \end{urbiassert}
+
 
 \item[keys]()%
   The list of valid indexes.
@@ -368,6 +389,7 @@ assert (res == l);
 removeSlots("l", "res");
 \end{urbicomment}
 
+
 \item[map](<fun>)%
   Apply the given functional value on every member, and return the list of
   results.
@@ -376,6 +398,7 @@ removeSlots("l", "res");
 [0, 1, 2, 3].map(function (v) { v % 2 == 0})
         == [true, false, true, false];
 \end{urbiassert}
+
 
 \item[matchAgainst](<handler>, <pattern>)%
   If \var{pattern} is a List of same size, use \var{handler} to match each
@@ -413,6 +436,7 @@ assert
 [00005865:error] !!! pattern did not match
 \end{urbiscript}
 
+
 \item \labelSlot{max}\lstinline|(\var{comp} = function(a, b) { a < b })|\\%
   Return the ``largest'' member based on the comparison function \var{comp}.
 \begin{urbiassert}
@@ -437,6 +461,7 @@ The members must be comparable.
 [00000002:error] !!! max: argument 2: unexpected "a", expected a Float
 \end{urbiscript}
 
+
 \item \labelSlot{min}\lstinline|(\var{co;p} = function(a, b) { a < b })|\\%
   Return the ``smallest'' member based on the comparison function \var{comp}.
 \begin{urbiassert}
@@ -454,6 +479,7 @@ The list cannot be empty.
 [].min;
 [00000001:error] !!! min: list cannot be empty
 \end{urbiscript}
+
 
 \item[range](<begin>, <end> = nil)%
   Return a sub-range of the list, from the first index included to the
@@ -484,6 +510,7 @@ do ([0, 1, 2, 3])
 [00428697:error] !!! range: invalid index: 1
 \end{urbiscript}
 
+
 \item[remove](<val>)%
   Remove all elements from the target that are equal to \var{val}, return
   \this.
@@ -493,6 +520,7 @@ var c = [0, 1, 0, 2, 0, 3];
 c.remove(0)  === c ==  [1, 2, 3];
 c.remove(42) === c ==  [1, 2, 3];
 \end{urbiassert}
+
 
 \item[removeBack]
   Remove and return the last element of the target. An error if the
@@ -506,6 +534,7 @@ t == [0, 1];
 [00000000:error] !!! removeBack: cannot be applied onto empty list
 \end{urbiassert}
 
+
 \item[removeById](<that>)%
   Remove all elements from the target that physically equals
   \var{that}.
@@ -516,6 +545,7 @@ var e = [0, 1, d, 1, 2];
 e.removeById(d) == [0, 1, 1, 2];
 e == [0, 1, 1, 2];
 \end{urbiassert}
+
 
 \item[removeFront] Remove and return the first element from the target. An
   error if the target is empty.
@@ -529,11 +559,13 @@ g == [1, 2];
 [00000000:error] !!! removeFront: cannot be applied onto empty list
 \end{urbiassert}
 
+
 \item[reverse]
   The target with the order of elements inverted.
 \begin{urbiassert}
 [0, 1, 2].reverse == [2, 1, 0];
 \end{urbiassert}
+
 
 \item[size]
   The number of elements in \this.
@@ -541,6 +573,7 @@ g == [1, 2];
 [0, 1, 2].size == 3;
 [].size == 0;
 \end{urbiassert}
+
 
 \item \labelSlot{sort}\lstinline|(\var{comp} = function(a, b) { a < b })|\\%
   A new List with the contents of \this, sorted with respect to the
@@ -558,6 +591,7 @@ l.sort(function(a, b) {a.abs < b.abs})
 [2, 1].sort(1);
 [00000001:error] !!! unexpected 1, expected a Executable
 \end{urbiscript}
+
 
 \item[subset](<that>)%
   Whether the members of \this are members of \var{that}.
