@@ -81,6 +81,7 @@ catch (var e)
 //#pop
 \end{urbiscript}
 
+
 \item[location] The location from which the exception was thrown (not
   created).
 \begin{urbiscript}
@@ -96,6 +97,7 @@ catch (var e)
   assert (e.location.asString == "1.1-3");
 };
 \end{urbiscript}
+
 
 \item[message] The error message provided at construction.
 \begin{urbiassert}
@@ -120,6 +122,7 @@ Exception.Argument
 == "myRoutine: argument 3: unexpected \"19/11/2010\", expected a Date";
 \end{urbiassert}
 
+
 \item[ArgumentType](<routine>, <index>, <effective>, <expected>)%
   Deprecated exception that derives from \refSlot{Type}.  The \var{routine}
   was called with a \var{index}-nth argument of type \var{effective} instead
@@ -131,6 +134,7 @@ Exception.ArgumentType
 == "myRoutine: argument 1: unexpected \"hisResult\", expected a String";
 [00000003:warning] !!! `Exception.ArgumentType' is deprecated
 \end{urbiassert}
+
 
 \item[Arity](<routine>, <effective>, <min>, <max> = void)%
   The \var{routine} was called with an incorrect number of arguments
@@ -149,6 +153,7 @@ Exception.Arity.new("myRoutine", 1, 10, 23).asString
 %%   assert(e == Exception.Arity.new("cos", 2, 1));
 %% };
 
+
 \item[BadInteger](<routine>, <fmt>, <effective>)%
   The \var{routine} was called with an inappropriate integer
   (\var{effective}).  Use the format \var{fmt} to create an error
@@ -159,6 +164,7 @@ Exception.BadInteger.new("myRoutine", "bad integer: %s", 12).asString
   == "myRoutine: bad integer: 12";
 \end{urbiassert}
 
+
 \item[BadNumber](<routine>, <fmt>, <effective>)%
   The \var{routine} was called with an inappropriate number
   (\var{effective}).  Use the format \var{fmt} to create an error
@@ -168,6 +174,7 @@ Exception.BadNumber.new("myRoutine", "bad number: %s", 12.34).asString
   == "myRoutine: bad number: 12.34";
 \end{urbiassert}
 
+
 \item[Constness]%
   An attempt was made to change a constant value.
 \begin{urbiassert}
@@ -175,12 +182,14 @@ Exception.Constness.new.asString
   == "cannot modify const slot";
 \end{urbiassert}
 
+
 \item[FileNotFound](<name>)%
   The file named \var{name} cannot be found.
 \begin{urbiassert}
 Exception.FileNotFound.new("foo").asString
   == "file not found: foo";
 \end{urbiassert}
+
 
 \item[Lookup](<object>, <name>)%
   A failed name lookup was performed on \var{object} to find a slot named
@@ -191,12 +200,14 @@ Exception.Lookup.new(Object, "GetSlot").asString
   == "lookup failed: Object";
 \end{urbiassert}
 
+
 \item[MatchFailure]%
   A pattern matching failed.
 \begin{urbiassert}
 Exception.MatchFailure.new.asString
   == "pattern did not match";
 \end{urbiassert}
+
 
 \item[NegativeNumber](<routine>, <effective>)%
   The \var{routine} was called with a negative number
@@ -206,6 +217,7 @@ Exception.NegativeNumber.new("myRoutine", -12).asString
 == "myRoutine: unexpected -12, expected non-negative number";
 \end{urbiassert}
 
+
 \item[NonPositiveNumber](<routine>, <effective>)
   The \var{routine} was called with a non-positive number
   (\var{effective}).  Derives from \refSlot{BadNumber}.
@@ -213,6 +225,7 @@ Exception.NegativeNumber.new("myRoutine", -12).asString
 Exception.NonPositiveNumber.new("myRoutine", -12).asString
 == "myRoutine: unexpected -12, expected positive number";
 \end{urbiassert}
+
 
 \item[Primitive](<routine>, <msg>)
   The built-in \var{routine} encountered an error described by
@@ -222,6 +235,7 @@ Exception.Primitive.new("myRoutine", "cannot do that").asString
   == "myRoutine: cannot do that";
 \end{urbiassert}
 
+
 \item[Redefinition](<name>)
   An attempt was made to refine a slot named \var{name}.
 \begin{urbiassert}
@@ -229,12 +243,14 @@ Exception.Redefinition.new("foo").asString
   == "slot redefinition: foo";
 \end{urbiassert}
 
+
 \item[Scheduling](<msg>)
   Something really bad has happened with the \urbi task scheduler.
 \begin{urbiassert}
 Exception.Scheduling.new("cannot schedule").asString
   == "cannot schedule";
 \end{urbiassert}
+
 
 \item[Syntax](<loc>, <message>, <input>)%
   Declare a syntax error in \var{input}, at location \var{loc}, described by
@@ -269,6 +285,7 @@ catch (var e)
 };
 \end{urbiscript}
 
+
 \item[TimeOut]%
   Used internally to implement the \lstinline|timeout| construct
   (\autoref{sec:lang:timeout}).
@@ -277,6 +294,7 @@ Exception.TimeOut.new.asString
   == "timeout expired";
 \end{urbiassert}
 
+
 \item[Type](<effective>, <expected>)%
   A value of type \var{effective} was received, while a value of type
   \var{expected} was expected.
@@ -284,6 +302,7 @@ Exception.TimeOut.new.asString
 Exception.Type.new("hisResult", "Expectation").asString
   == "unexpected \"hisResult\", expected a String";
 \end{urbiassert}
+
 
 \item[UnexpectedVoid]%
   An attempt was made to read the value of \lstinline|void|.
