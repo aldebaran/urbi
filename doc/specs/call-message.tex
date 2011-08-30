@@ -94,12 +94,14 @@ assert
 };
 \end{urbiscript}
 
+
 \item[code]
   The body of the called function as a \refObject{Code}.
 \begin{urbiscript}
 function code { call.getSlotValue("code") }|
 assert (code == getSlotValue("code"));
 \end{urbiscript}
+
 
 \item[eval] Evaluate \this, and return the result.
 \begin{urbiscript}
@@ -127,6 +129,7 @@ var c2 = do (CallMessage.new)
 assert { c2.eval == 7 };
 [00000454] *** 5
 \end{urbiscript}
+
 
 \item[evalArgAt](<n>)%
   Evaluate the \var{n}-th argument, and return its value.  \var{n}
@@ -161,6 +164,7 @@ sumTwice(3.14, one, one);
 [00000015:error] !!!    called from: sumTwice
 \end{urbiscript}
 
+
 \item[evalArgs]%
   Call \refSlot{evalArgAt} for each argument, return the list of values.
 \begin{urbiscript}
@@ -176,12 +180,14 @@ twice({echo(1); 1}, {echo(2); 2});
 [00000013] [1, 2, 1, 2]
 \end{urbiscript}
 
+
 \item[message]
   The name under which the function was called.
 \begin{urbiscript}
 function myself { call.message }|
 assert(myself == "myself");
 \end{urbiscript}
+
 
 \item[sender]%
   The object \emph{from which} the invocation was made (the \dfn{caller} in
@@ -203,6 +209,7 @@ assert
 };
 \end{urbiscript}
 
+
 \item[target]%
   The object \emph{on which} the invocation is made.  In other words, the
   object that will be bound to \this during the evaluation.  Not to be
@@ -223,7 +230,6 @@ assert
   Global.callGetTarget === Global;
 };
 \end{urbiscript}
-
 \end{urbiscriptapi}
 
 

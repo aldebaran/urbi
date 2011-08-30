@@ -48,6 +48,7 @@ Channel.new("") << 51;
 [00000000] 51
 \end{urbiscript}
 
+
 \item[echo](<value>)%
   Same as \lstinline|lobby.echo(\var{value}, name)|, see
   \refSlot[Lobby]{echo}.
@@ -59,6 +60,7 @@ Channel.new("label").echo(42);
 Channel.new("").echo("Foo");
 [00000000] *** Foo
 \end{urbiscript}
+
 
 \item[enabled] Whether the Channel is enabled.  Disabled Channels
   produce no output.
@@ -75,6 +77,7 @@ c.enabled = true|;
 c << "enabled";
 [00000000] "enabled"
 \end{urbiscript}
+
 
 \item[Filter] Filtering channel.
 
@@ -102,6 +105,24 @@ topLevel = Channel.topLevel|;
 [00001758] [1, function () {}]
 \end{urbiscript}
 
+
+\item[name] The name of the Channel, used to label the output.
+\begin{urbiscript}
+assert
+{
+  Channel.new("").name == "";
+  Channel.new("foo").name == "foo";
+};
+\end{urbiscript}
+
+
+\item[null] A predefined stream whose \lstinline|enabled| is
+  \lstinline|false|.
+\begin{urbiscript}
+Channel.null << "Message";
+\end{urbiscript}
+
+
 \item[quote] Whether the strings are output escaped (the default)
   instead of raw strings.
 \begin{urbiscript}
@@ -116,21 +137,6 @@ d << "A \"String\"";
 [00000000] A "String"
 \end{urbiscript}
 
-\item[name] The name of the Channel, used to label the output.
-\begin{urbiscript}
-assert
-{
-  Channel.new("").name == "";
-  Channel.new("foo").name == "foo";
-};
-\end{urbiscript}
-
-\item[null] A predefined stream whose \lstinline|enabled| is
-  \lstinline|false|.
-\begin{urbiscript}
-Channel.null << "Message";
-\end{urbiscript}
-
 
 \item[topLevel] A predefined stream for regular output.  Strings are
   output escaped.
@@ -140,6 +146,7 @@ Channel.topLevel << "Message";
 Channel.topLevel << "\"quote\"";
 [00015895] "\"quote\""
 \end{urbiscript}
+
 
 \item[warning] A predefined stream for warning messages.  Strings sent
   to it are not escaped.

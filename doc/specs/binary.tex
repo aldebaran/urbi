@@ -46,6 +46,7 @@ Binary.new("", "0") + Binary.new("1", "1")
        == Binary.new("1", "01");
 \end{urbiassert}
 
+
 \item['=='](<other>)%
   Whether \lstinline|keywords| and \lstinline|data| are equal.
 \begin{urbiassert}
@@ -53,6 +54,7 @@ Binary.new("0", "0") == Binary.new("0", "0");
 Binary.new("0", "0") != Binary.new("0", "1");
 Binary.new("0", "0") != Binary.new("1", "0");
 \end{urbiassert}
+
 
 \item[asString]
   Display using the syntactic rules of the UObject/UValue protocol.
@@ -84,12 +86,14 @@ Binary.new("head", "\B(7)(content)").asString
 Binary.new("head", "content").data == "content";
 \end{urbiassert}
 
+
 \item[empty]
   Whether the data is empty.
 \begin{urbiassert}
 Binary.new("head", "").empty;
 !Binary.new("head", "content").empty;
 \end{urbiassert}
+
 
 \item[keywords]
   The headers carried by the Binary.

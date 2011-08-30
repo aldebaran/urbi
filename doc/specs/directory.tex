@@ -47,6 +47,7 @@ dir1 / "file";
 dir1.removeAll;
 \end{urbiscript}
 
+
 \item['<<'](<entity>)
   \experimental{}
 
@@ -70,21 +71,61 @@ dir2.removeAll;
 file.remove;
 \end{urbiscript}
 
+
 \item[asList]
   The contents of the directory as a \refObject{Path} list.  The
   various paths include the name of the directory \this.
+
+
+\item[asPath] A \refObject{Path} being the path of the directory.
+
 
 \item[asString] A \refObject{String} containing the path of the directory.
 \begin{urbiassert}
 Directory.new(".").asString == ".";
 \end{urbiassert}
 
-\item[asPath] A \refObject{Path} being the path of the directory.
+
+\item[basename]
+  Return a \refObject{String} containing the path of the directory without
+  its dirname.
+\begin{urbiscript}[firstnumber=1]
+var dir1 = Directory.create("dir1");
+[00000001] Directory("dir1")
+var dir2 = Directory.create("dir1/dir2");
+[00000002] Directory("dir1/dir2")
+dir1.basename;
+[00000002] "dir1"
+dir2.basename;
+[00000003] "dir2"
+dir1.removeAll;
+\end{urbiscript}
+
+
+\item[clear]
+  Remove all children recursively but not the directory itself. After a
+  call to \refSlot{clear}, a call to \refSlot{empty} should return
+  \lstinline|true|.
+\begin{urbiscript}
+dir1 = Directory.create("dir1")|;
+dir2 = Directory.create("dir1/dir2")|;
+var file1 = File.create("dir1/file1")|;
+var file2 = File.create("dir1/dir2/file2")|;
+dir1.content;
+[00000001] ["dir2", "file1"]
+dir2.content;
+[00000002] ["file2"]
+dir1.clear;
+assert(dir1.empty);
+dir1.remove;
+\end{urbiscript}
+
 
 \item[content]
   The contents of the directory as a \refObject{String} list.  The
   strings include only the last component name; they do not contain
   the directory name of \this.
+
 
 \item[copy](<dirname>)
   Copy recursively all items of the \lstinline|this| directory
@@ -102,6 +143,7 @@ directory1.content;
 dir1.removeAll;
 directory1.removeAll;
 \end{urbiscript}
+
 
 \item[copyInto](<dirname>)
   \experimental{}
@@ -126,23 +168,6 @@ dir.removeAll;
 dir1.removeAll;
 \end{urbiscript}
 
-\item[clear]
-  Remove all children recursively but not the directory itself. After a
-  call to \refSlot{clear}, a call to \refSlot{empty} should return
-  \lstinline|true|.
-\begin{urbiscript}
-dir1 = Directory.create("dir1")|;
-dir2 = Directory.create("dir1/dir2")|;
-var file1 = File.create("dir1/file1")|;
-var file2 = File.create("dir1/dir2/file2")|;
-dir1.content;
-[00000001] ["dir2", "file1"]
-dir2.content;
-[00000002] ["file2"]
-dir1.clear;
-assert(dir1.empty);
-dir1.remove;
-\end{urbiscript}
 
 \item[create](<name>)
   Create the directory \var{name} where \var{name} is either a
@@ -160,6 +185,7 @@ dir.content;
 dir.remove;
 \end{urbiscript}
 
+
 \item[createAll](<name>)
   Create the directory \var{name} where \var{name} is either a
   \refObject{String} or a \refObject{Path}. If \var{name} is a
@@ -176,6 +202,7 @@ Directory.createAll("dir1/dir2/dir3");
 dir1.removeAll;
 \end{urbiscript}
 
+
 \item[empty]
   Whether the directory is empty.
 \begin{urbiscript}
@@ -186,6 +213,7 @@ assert(!dir.empty);
 dir.removeAll;
 \end{urbiscript}
 
+
 \item[exists]
   Whether the directory still exists.
 \begin{urbiscript}
@@ -195,6 +223,7 @@ assert(dir.exists);
 dir.remove;
 assert(!dir.exists);
 \end{urbiscript}
+
 
 \item[fileCreated](<name>)%
   Event launched when a file is created inside the directory.
@@ -221,6 +250,7 @@ if (Path.new("./dummy.txt").exists)
   }|;
 \end{urbiscript}
 
+
 \item[fileDeleted](<name>)%
   Event launched when a file is deleted from the directory.  May not exist
   if not supported by your architecture.
@@ -246,25 +276,12 @@ if (!Path.new("./dummy.txt").exists)
 \end{urbiscript}
 %% Use firstline after this test if this is not related to inotify.
 
-\item[basename]
-  Return a \refObject{String} containing the path of the directory without
-  its dirname.
-\begin{urbiscript}[firstnumber=1]
-var dir1 = Directory.create("dir1");
-[00000001] Directory("dir1")
-var dir2 = Directory.create("dir1/dir2");
-[00000002] Directory("dir1/dir2")
-dir1.basename;
-[00000002] "dir1"
-dir2.basename;
-[00000003] "dir2"
-dir1.removeAll;
-\end{urbiscript}
 
 \item[lastModifiedDate]
   \experimental{}
 
   Return a \refObject{Date} object stating when the directory was last modified.
+
 
 \item[moveInto](<dirname>)
   \experimental{}
@@ -286,6 +303,7 @@ dir.content;
 dir.removeAll;
 \end{urbiscript}
 
+
 \item[parent]
   Return the parent of the directory.
 \begin{urbiscript}
@@ -296,6 +314,7 @@ dir.parent;
 assert(dir.parent.parent.asString == Directory.current.asString);
 dir.parent.removeAll;
 \end{urbiscript}
+
 
 \item[remove]
   Remove the directory only if it is empty.
@@ -309,6 +328,7 @@ dir.remove;
 assert(!dir.exists);
 \end{urbiscript}
 
+
 \item[removeAll]
   Remove all children recursively including the directory itself.
 \begin{urbiscript}
@@ -319,6 +339,7 @@ var file2 = File.create("dir1/dir2/file2")|;
 dir1.removeAll;
 assert(!dir1.exists);
 \end{urbiscript}
+
 
 \item[rename]
   Rename or move the directory.
@@ -340,6 +361,7 @@ dir.content;
 [00000006] ["file"]
 dir2.removeAll;
 \end{urbiscript}
+
 
 \item[size]
   \experimental{}

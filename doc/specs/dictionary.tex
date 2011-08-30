@@ -178,11 +178,22 @@ d["one"] == 1;
 ["a" => 1, "b" => 2].asString == "[\"a\" => 1, \"b\" => 2]";
 \end{urbiassert}
 
+
+\item[clear]
+  Empty the dictionary.
+
+\begin{urbiassert}
+["one" => 1].clear.empty;
+\end{urbiassert}
+
+
 \item[elementAdded] An event emitted each time a new element is added to
   the Dictionary.
 
+
 \item[elementChanged] An event emitted each time the value associated to a
   key of the Dictionary is changed.
+
 
 \item[elementRemoved] An event emitted each time an element is removed from
   the Dictionary.
@@ -216,13 +227,6 @@ d.clear;
 d.clear;
 [00000003] [ => ]
 \end{urbiscript}
-
-\item[clear]
-  Empty the dictionary.
-
-\begin{urbiassert}
-["one" => 1].clear.empty;
-\end{urbiassert}
 
 
 \item[empty]
@@ -261,6 +265,8 @@ removeSlot("d")|;
 
 %% commented until a consensus is reached.
 %%
+
+
 %% \item[extend](<ext>)
 %%   Extend with the dictionary \var{ext}.
 %%   Return the value of the new dictionary.
@@ -270,6 +276,7 @@ removeSlot("d")|;
 %% d.extend(["one" => 0, "three" => 3]);
 %% [00000002] ["one" => 0, "three" => 3, "two" => 2]
 %% \end{urbiscript}
+
 
 \item[get](<key>)%
   The value associated to \var{key}.  A \lstinline|Dictionary.KeyError|
@@ -378,9 +385,6 @@ d["a"] = 10;   d.size == 1;
 d["b"] = 20;   d.size == 2;
 d["a"] = 30;   d.size == 2;
 \end{urbiassert}
-
-
-
 \end{urbiscriptapi}
 
 

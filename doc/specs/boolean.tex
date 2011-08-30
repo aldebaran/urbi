@@ -70,6 +70,15 @@ true.new === true;
 \subsection{Slots}
 
 \begin{urbiscriptapi}
+\item['!']%
+  Logical negation. If \this is \lstinline|false| return \lstinline|true|
+  and vice-versa.
+\begin{urbiassert}
+!true === false;
+!false === true;
+\end{urbiassert}
+
+
 \item['&&'](<that>)%
   Short-circuiting logical and. If \this is \lstinline|true| evaluate and
   return \var{that}.  If \this is \lstinline|false|, return itself without
@@ -78,6 +87,7 @@ true.new === true;
 (true && 2) == 2;
 (false && 1 / 0) == false;
 \end{urbiassert}
+
 
 \item \lstinline+'||'(\var{that})+\\
   %\index{Boolean@\lstinline[]{Boolean}!"|"|@\lstinline[]{||}}%
@@ -89,13 +99,6 @@ true.new === true;
 (false || 2)  == 2;
 \end{urbiassert}
 
-\item['!']%
-  Logical negation. If \this is \lstinline|false| return \lstinline|true|
-  and vice-versa.
-\begin{urbiassert}
-!true === false;
-!false === true;
-\end{urbiassert}
 
 \item[asBool]
   Identity.
