@@ -103,7 +103,6 @@ l.log("foo", "ForcedCategory") |;
 \subsection{Slots}
 
 \begin{urbiscriptapi}
-
 \item['<<'](<object>)%
   Allow to use the \lstinline|Logger| object as a \refObject{Channel}. This
   slot can only be used if both category and level have been defined when
@@ -116,6 +115,7 @@ l << "abc";
 [       Category        ] abc
 [00091939] Logger<Category>
 \end{urbiscript}
+
 
 \item[categories]%
   A \refObject{Dictionary} of known categories, mapping their name to their
@@ -131,6 +131,7 @@ c.keys.map (function (var s) { s.split(".")[0] }).unique
   == ["Libport", "Sched", "Serialize", "Urbi"];
 \end{urbiassert}
 
+
 \item[debug](<message> = "", <category> = category)%
   Report a debug \var{message} of \var{category} to the user. It will be
   shown if the debug level is \lstinline|Debug| or \lstinline|Dump|. Return
@@ -141,6 +142,7 @@ Logger.debug << "debug 1"|;
 Logger.debug("debug 2")|;
 Logger.debug("debug 3", "Category2")|;
 \end{urbiscript}
+
 
 \item[disable](<pattern>)%
   Disable the categories that match the \var{pattern}, i.e., suppress logs
@@ -163,6 +165,7 @@ c2 << "Disabled";
 !Logger.categories["Logger.Foo.Bar"];
 \end{urbiassert}
 
+
 \item[dump](<message> = "", <category> = category)%
   Report a debug \var{message} of \var{category} to the user. It will be
   shown if the debug level is \lstinline|Dump|. Return \this to allow
@@ -173,6 +176,7 @@ Logger.dump << "dump 1"|;
 Logger.dump("dump 2")|;
 Logger.dump("dump 3", "Category2")|;
 \end{urbiscript}
+
 
 \item[enable](<pattern>)%
   Enable the categories that match the \var{pattern}, i.e., suppress logs
@@ -193,14 +197,17 @@ Logger.log("enabled", "Logger.Foo.Bar.Qux");
 Logger.log("disabled", "Logger.Foo.Baz");
 \end{urbiassert}
 
+
 \item[err](<message> = "", <category> = category)%
   Report an error \var{message} of \var{category} to the user. Return \this
   to allow chained operations.
+
 
 \item[init](<category>)%
   Define the \var{category} of the new \lstinline|Logger| object. If no
   category is given the new \lstinline|Logger| will inherit the category of
   its prototype.
+
 
 \item[level]%
   The current level of verbosity (see \refSlot{Levels}).  Can be read and
@@ -224,6 +231,7 @@ Logger.log("Logger enable again");
 [        Logger         ] Logger enable again
 \end{urbiassert}
 
+
 \item[Levels]%
   An \refObject{Enumeration} of the log levels defined in
   \autoref{sec:tools:env}.
@@ -232,6 +240,7 @@ Logger.log("Logger enable again");
 Logger.Levels.values;
 [00000001] [None, Log, Trace, Debug, Dump]
 \end{urbiscript}
+
 
 \item[log](<message> = "", <category> = category)%
   Report a debug \var{message} of \var{category} to the user. It will be
@@ -247,13 +256,16 @@ Logger.log("log 3", "Category")|;
 [      Category       ] log 3
 \end{urbiscript}
 
+
 \item[onEnter]%
   The primitive called when \lstinline|Logger| is used as a \lstinline|Tag|
   and is entered. This primitive only increments the indentation level.
 
+
 \item[onLeave]%
   The primitive called when \lstinline|Logger| is used as a \lstinline|Tag|
   and is left. This primitive only decrements the indentation level.
+
 
 \item[set](<specs>)%
   Enable/disable the categories according to the \var{specs}.  The
@@ -304,6 +316,7 @@ check("+Logger*,-Logger.*,+Logger.Sub.*", true, false, true);
 Logger.enable("*");
 \end{urbicomment}
 
+
 \item[trace](<message> = "", <category> = category)%
   Report a debug \var{message} of \var{category} to the user. It will be
   shown if the debug level is \lstinline|Trace|, \lstinline|Debug| or
@@ -314,6 +327,7 @@ Logger.trace << "trace 1"|;
 Logger.trace("trace 2")|;
 Logger.trace("trace 3", "Category2")|;
 \end{urbiscript}
+
 
 \item[warn](<message> = "", <category> = category)%
   Report a warning \var{message} of \var{category} to the user. Return \this

@@ -38,20 +38,6 @@ var sub = ps.subscribe;
 \subsection{Slots}
 
 \begin{urbiscriptapi}
-
-%% \lstinline|enqueue(\var{ev})| is not documented because I assume it is an
-%% implementation detail of PubSub.
-\item[getOne]
-  Block until a value is accessible and return it.  If a value is already
-  queued, then the method returns it without blocking.
-
-\begin{urbiscript}
-echo(sub.getOne) &
-ps.publish(3);
-[00000000] *** 3
-\end{urbiscript}
-
-
 \item[getAll] Block until a value is accessible.  Return the list of
   queued values.  If the values are already queued, then return them
   without blocking.
@@ -63,6 +49,20 @@ echo(sub.getAll);
 [00000000] *** [4, 5]
 \end{urbiscript}
 
+
+\item[getOne]
+  Block until a value is accessible and return it.  If a value is already
+  queued, then the method returns it without blocking.
+
+\begin{urbiscript}
+echo(sub.getOne) &
+ps.publish(3);
+[00000000] *** 3
+\end{urbiscript}
+
+
+%% \lstinline|enqueue(\var{ev})| is not documented because I assume it is an
+%% implementation detail of PubSub.
 \end{urbiscriptapi}
 
 %%% Local Variables:

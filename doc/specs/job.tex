@@ -52,6 +52,7 @@ var a = function () { sleep(1) }.spawn(false);
 a.asString == "Job<" + a.name + ">";
 \end{urbiassert}
 
+
 \item[backtrace] The current backtrace of the job as a \refObject{List} of
   \refObject[StackFrame]{StackFrames} starting from innermost, to outermost.
   Uses \refSlot[Traceable]{backtrace}.
@@ -155,8 +156,10 @@ sendEvent;
 [00000654] *** file.u:13.1-10: watchEvent
 \end{urbiscript}
 
+
 \item[clone]
   Cloning a job is forbidden.
+
 
 \item[current]%
   The \refObject{Job} in charge of executing this ``thread'' of code.
@@ -184,6 +187,7 @@ assert { j1 != j2; j1 == j; j2 != j };
 assert { j1 != j2; j1 != j; j2 == j };
 \end{urbiscript}
 
+
 \item[dumpState]
   Pretty-print the state of the job.
 
@@ -203,12 +207,14 @@ t.dumpState;
 //#pop
 \end{urbiscript}
 
+
 \item[jobs]%
   All the existing jobs as a \refObject{List}.
 \begin{urbiassert}
 Job.jobs.isA(List);
 Job.current in Job.jobs;
 \end{urbiassert}
+
 
 \item[name] The name of the job as a \refObject{String}.
 \begin{urbiscript}
@@ -218,17 +224,10 @@ detach(sleep(1)).name;
 [00004297] "shell_5"
 \end{urbiscript}
 
+
 \item[resetStats]%
   Reinitialize the \refSlot{stats} computation.
 
-
-\item[status] A \refObject{String} that describes the current status of the
-  job (starting, running, \ldots), and its properties (frozen, \ldots).
-\begin{urbiassert}
-var t = detach(sleep(10));
-Job.current.status == "running (current job)";
-t.status == "sleeping" ;
-\end{urbiassert}
 
 \item[stats]%
   Return a \refObject{Dictionary} containing information about the execution
@@ -276,7 +275,17 @@ assert
 \end{urbiscript}
 
 
+\item[status] A \refObject{String} that describes the current status of the
+  job (starting, running, \ldots), and its properties (frozen, \ldots).
+\begin{urbiassert}
+var t = detach(sleep(10));
+Job.current.status == "running (current job)";
+t.status == "sleeping" ;
+\end{urbiassert}
+
+
 \item[tags] The list of \refObject[Tag]{Tags} that manage this job.
+
 
 \item[terminate]  Kill this job.
 \begin{urbiscript}
@@ -286,6 +295,7 @@ r.terminate;
 assert (r not in Job.jobs);
 sleep(2s);
 \end{urbiscript}
+
 
 \item[timeShift]
   Get the total amount of time during which we were frozen.
@@ -297,6 +307,7 @@ tag.unfreeze();
 Math.round(r.timeShift);
 [00000001] 2
 \end{urbiscript}
+
 
 \item[waitForTermination] Wait for the job to terminate before resuming
   execution of the current one.  If the job has already terminated, return

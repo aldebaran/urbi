@@ -155,6 +155,7 @@ Lazy.new(closure () { 1 + 2 }) != Lazy.new(closure () { 2 + 1 });
 };
 \end{urbiscript}
 
+
 \item[asString]
   The conversion to \refObject{String} of the body of a non-evaluated
   argument.
@@ -162,10 +163,12 @@ Lazy.new(closure () { 1 + 2 }) != Lazy.new(closure () { 2 + 1 });
 Lazy.new(closure () { echo(1); 1 }).asString == "echo(1);\n1";
 \end{urbiassert}
 
+
 \item[eval]%
   Force the evaluation of the held lazy value. Two calls to \refSlot{eval}
   will systematically evaluate the expression twice, which can be useful to
   duplicate its side effects.
+
 
 \item[value]%
   Return the held value, potentially evaluating it before. \refSlot{value}

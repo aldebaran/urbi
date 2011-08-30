@@ -25,6 +25,7 @@ System.Platform.host ==
                 System.Platform.hostOs];
 \end{urbiassert}
 
+
 \item[hostAlias] The name of the system \usdk runs on as the person who
   compiled it decided to name it.  Typically empty, it is fragile to depend
   on it.
@@ -32,11 +33,13 @@ System.Platform.host ==
 System.Platform.hostAlias.isA(String);
 \end{urbiassert}
 
+
 \item[hostCpu] The CPU type of system \usdk runs on.  The following values
   are those for which Gostai provides binary builds.
 \begin{urbiassert}
 System.Platform.hostCpu in ["i386", "i686", "x86_64"];
 \end{urbiassert}
+
 
 \item[hostName]%
   The name of the machine, as given by the \command{uname -n} command. Unix
@@ -46,8 +49,10 @@ if (!System.Platform.isWindows)
   assert(System.Platform.hostName == System.system("uname -n"));
 \end{urbiunchecked}
 
+
 \item[hostOs] The OS type of system \usdk runs on.  For instance
   \lstinline|darwin9.8.0| or \lstinline|linux-gnu| or \lstinline|mingw32|.
+
 
 \item[hostVendor] The vendor type of system \usdk runs on.  The following
   values are those for which Gostai provides binary builds.
@@ -55,10 +60,12 @@ if (!System.Platform.isWindows)
 System.Platform.hostVendor in ["apple", "pc", "unknown"];
 \end{urbiassert}
 
+
 \item[isWindows] Whether running under Windows.
 \begin{urbiassert}
 System.Platform.isWindows in [true, false];
 \end{urbiassert}
+
 
 \item[kind] Either \code{"POSIX"} or \code{"WIN32"}.
 \begin{urbiassert}

@@ -71,6 +71,7 @@ assert_(1 == 1 + 1, "one is not two");
 
 \item[currentRunner]  An obsolete alias for \refSlot[Job]{current}.
 
+
 \item[cycle]%
   The number of execution cycles since the beginning. \experimental
 \begin{urbiscript}
@@ -155,6 +156,7 @@ eval("eval(\"eval(\\\"/\\\")\")");
 [00001035:error] !!!    called from: 1.1-19: eval
 [00001035:error] !!!    called from: eval
 \end{urbiscript}
+
 
 \item[getenv](<name>)%
   The value of the environment variable \var{name} as a \refObject{String}
@@ -284,6 +286,7 @@ System.period == 20ms;
 
 \item[Platform] See \refObject{System.Platform}.
 
+
 \item[profile](<function>)%
   Compute some measures during the execution of \var{function} and return
   the results as a \refObject{Profile} object. A \refObject{Profile} details
@@ -355,6 +358,7 @@ load("test2.u");
 \begin{urbiscript}
 requireFile("test2.u", Global);
 \end{urbiscript}
+
 
 \item[resetStats]%
   Reinitialize the \refSlot{stats} computation.
@@ -539,6 +543,7 @@ System.spawn(closure () { echo(1) }, true).isA(Job);
 [00016657:warning] !!! `System.spawn' is deprecated, use `Code.spawn'
 [00016659] *** 1
 \end{urbiassert}
+
 
 \item[stats]%
   Return a \refObject{Dictionary} containing information about the execution

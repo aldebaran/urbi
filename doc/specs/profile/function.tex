@@ -76,12 +76,22 @@ profile.calls[0].isA(Profile.Function);
 profile.calls[0].calls == 20;
 \end{urbiassert}
 
+
 \item[name]%
   The name of the function called.
 \begin{urbiassert}
 // Example continued from Construction section.
 profile.calls[0].name == "fact";
 \end{urbiassert}
+
+
+\item[selfTime]%
+  Total CPU time spent in all calls of the function.
+\begin{urbiassert}
+// Example continued from Construction section.
+profile.calls[0].selfTime.isA(Float);
+\end{urbiassert}
+
 
 \item[selfTimePer]%
   Average CPU time spent in one function call. It is computed as the ratio
@@ -93,14 +103,6 @@ do (profile.calls[0])
   selfTimePer == selfTime / calls;
 }
 \end{urbiassert}
-
-\item[selfTime]%
-  Total CPU time spent in all calls of the function.
-\begin{urbiassert}
-// Example continued from Construction section.
-profile.calls[0].selfTime.isA(Float);
-\end{urbiassert}
-
 \end{urbiscriptapi}
 
 

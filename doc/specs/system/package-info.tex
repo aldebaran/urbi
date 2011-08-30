@@ -22,10 +22,12 @@ System.PackageInfo.components["Urbi SDK"].bugReport
   == "kernel-bugs@lists.gostai.com";
 \end{urbiassert}
 
+
 \item[components] A Dictionary of the components loaded in the package.
 \begin{urbiassert}
 System.PackageInfo.components.keys == ["Libport", "Urbi SDK"];
 \end{urbiassert}
+
 
 \item[copyrightHolder] Who owns the copyright of the package.
 \begin{urbiassert}
@@ -33,31 +35,37 @@ System.PackageInfo.components["Urbi SDK"].copyrightHolder
   == "Gostai S.A.S.";
 \end{urbiassert}
 
+
 \item[copyrightYears] The years that the copyright covers.
 \begin{urbiassert}
 System.PackageInfo.components["Urbi SDK"].copyrightYears
   == "2004-2011";
 \end{urbiassert}
 
+
 \item[date] A string corresponding to the source date (day and time).
 \begin{urbiassert}
 System.PackageInfo.components["Urbi SDK"].date.isA(String);
 \end{urbiassert}
+
 
 \item[day] The day part of the date string.
 \begin{urbiassert}
 System.PackageInfo.components["Urbi SDK"].day.isA(String);
 \end{urbiassert}
 
+
 \item[description] The complete description string, with slashes.
 \begin{urbiassert}
 System.PackageInfo.components["Urbi SDK"].description.isA(String);
 \end{urbiassert}
 
+
 \item[id] The identification string.
 \begin{urbiassert}
 System.PackageInfo.components["Urbi SDK"].id.isA(String);
 \end{urbiassert}
+
 
 \item[major] The major version component (see \refSlot{version}), for
   instance \lstinline|2|.
@@ -65,11 +73,13 @@ System.PackageInfo.components["Urbi SDK"].id.isA(String);
 System.PackageInfo.components["Urbi SDK"].major.isA(Float);
 \end{urbiassert}
 
+
 \item[minor] The minor version component (see \refSlot{version}), for
   instance \lstinline|7|.
 \begin{urbiassert}
 System.PackageInfo.components["Urbi SDK"].minor.isA(Float);
 \end{urbiassert}
+
 
 \item[name] The name of the package as a String.
 \begin{urbiassert}
@@ -77,15 +87,18 @@ System.PackageInfo.components["Urbi SDK"].name
   == "Urbi SDK";
 \end{urbiassert}
 
+
 \item[patch] The number of changes since the \refSlot{version}.
 \begin{urbiassert}
 System.PackageInfo.components["Urbi SDK"].patch.isA(Float);
 \end{urbiassert}
 
+
 \item[revision] The revision string.
 \begin{urbiassert}
 System.PackageInfo.components["Urbi SDK"].revision.isA(String);
 \end{urbiassert}
+
 
 \item[string] Name and version concatenated, for instance
   \lstinline|Urbi SDK 2.7.1|.
@@ -93,22 +106,26 @@ System.PackageInfo.components["Urbi SDK"].revision.isA(String);
 System.PackageInfo.components["Urbi SDK"].string.isA(String);
 \end{urbiassert}
 
+
 \item[subMinor] The sub-minor version component (see \refSlot{version}).
 \begin{urbiassert}
 System.PackageInfo.components["Urbi SDK"].subMinor
   == 1;
 \end{urbiassert}
 
+
 \item[tarballVersion] The complete version string, with dashes.
 \begin{urbiassert}
 System.PackageInfo.components["Urbi SDK"].tarballVersion.isA(String);
 \end{urbiassert}
+
 
 \item[tarname] Name of the tarball.
 \begin{urbiassert}
 System.PackageInfo.components["Urbi SDK"].tarname
   == "urbi-sdk";
 \end{urbiassert}
+
 
 \item[version] The version string, such as \lstinline|"2.7"| or
   \lstinline|"2.7.1"|.
@@ -128,6 +145,7 @@ do (System.PackageInfo.components["Urbi SDK"])
 }|;
 \end{urbiscript}
 
+
 \item[versionRev] Version and revision together.
 \begin{urbiscript}
 do (System.PackageInfo.components["Urbi SDK"])
@@ -140,6 +158,7 @@ do (System.PackageInfo.components["Urbi SDK"])
   };
 }|;
 \end{urbiscript}
+
 
 \item[versionValue] The version as an integer, for instance 2007001.
 \begin{urbiscript}
