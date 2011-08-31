@@ -284,9 +284,8 @@ String.fromAscii(0xFF) == "\xff";
 "foo".hash != "bar".hash;
 \end{urbiassert}
 
-
-\item[isCntrl] Whether all the characters of \this are control characters
-  (see \autoref{tab:string:ischar}).
+\item[isAlnum] Whether all the characters of \this are digits or/and characters (see
+  \autoref{tab:string:ischar}).
   \begin{table}[tp]
     \newcommand{\is}[1]{\begin{sideways}is#1\end{sideways}}
     \centering
@@ -316,34 +315,101 @@ String.fromAscii(0xFF) == "\xff";
       0x7F & (DEL) &  \textbullet & & & & & & & & & &\\
       \hline
     \end{tabular}
-    \caption{Character handling functions}
-    \label{tab:string:ischar}
     \begin{legend}
       Here is a map of how the original 127-character ASCII set is
       considered by each function (a \textbullet{} indicates that the
       function returns true if all characters of \this are on the row).
     \end{legend}
+    \caption{Character handling functions}
+    \label{tab:string:ischar}
   \end{table}
-
 \begin{urbiassert}
-           "".isLower;
-      "lower".isLower;
-! "Not Lower".isLower;
-
-           "".isUpper;
-      "UPPER".isUpper;
-! "Not Upper".isUpper;
+           "".isAlnum;
+        "123".isAlnum;
+        "abc".isAlnum; "1b".isAlnum;
 \end{urbiassert}
 
+\item[isAlpha] Whether all the characters of \this are characters (see
+  \autoref{tab:string:ischar}).
+\begin{urbiassert}
+           "".isAlpha;
+     "abcABC".isAlpha;
+       !"123".isAlpha;  "b".isAlpha;
+\end{urbiassert}
+
+\item[isCntrl] Whether all the characters of \this are control characters (non-printable) (see
+  \autoref{tab:string:ischar}).
+\begin{urbiassert}
+           "".isCntrl;
+     "\t\n\f".isCntrl;
+        "\10".isCntrl; !"abc".isCntrl;
+\end{urbiassert}
 
 \item[isDigit] Whether all the characters of \this are decimal digits (see
   \autoref{tab:string:ischar}).
 \begin{urbiassert}
-          "".isDigit;
-"0123456789".isDigit;
-        !"a".isDigit;  !"0x10".isDigit;
+           "".isDigit;
+ "0123456789".isDigit;
+         !"a".isDigit;  !"0x10".isDigit;
 \end{urbiassert}
 
+\item[isGraph] Whether all the characters of \this are printable characters (not a space) (see
+  \autoref{tab:string:ischar}).
+\begin{urbiassert}
+          "".isGraph;
+    "abc123".isGraph;
+       "{|}".isGraph;
+   !"\t\n\r".isGraph; !" ".isGraph;
+\end{urbiassert}
+
+\item[isLower] Whether all the characters of \this are lower characters (see
+  \autoref{tab:string:ischar}).
+\begin{urbiassert}
+          "".isLower;
+       "abc".isLower;
+      !"123".isLower;  !"A".isLower;
+\end{urbiassert}
+
+\item[isPrint] Whether all the characters of \this are printable characters (see
+  \autoref{tab:string:ischar}).
+\begin{urbiassert}
+          "".isPrint;
+  "abcd1234".isPrint;
+       "{|}".isPrint; !"\r".isPrint;
+\end{urbiassert}
+
+\item[isPunct] Whether all the characters of \this are punctuation marks (see
+  \autoref{tab:string:ischar}).
+\begin{urbiassert}
+         "".isPunct;
+     "!_[]".isPunct;
+     !"abc".isPunct;  !"a".isPunct;
+\end{urbiassert}
+
+\item[isSpace] Whether all the characters of \this are spaces (see
+  \autoref{tab:string:ischar}).
+\begin{urbiassert}
+          "".isSpace;
+       "   ".isSpace;
+      !" a ".isSpace;
+\end{urbiassert}
+
+\item[isUpper] Whether all the characters of \this are upper characters (see
+  \autoref{tab:string:ischar}).
+\begin{urbiassert}
+          "".isUpper;
+       "ABC".isUpper;
+      !"123".isUpper; !"a".isUpper;
+\end{urbiassert}
+
+\item[isXdigit] Whether all the characters of \this are hexadecimal digits (see
+  \autoref{tab:string:ischar}).
+\begin{urbiassert}
+          "".isXdigit;
+    "abcdef".isXdigit;
+"0123456789".isXdigit;
+        !"g".isXdigit; "123abc".isXdigit;
+\end{urbiassert}
 
 \item[join](<list>, <prefix>, <suffix>)%
   %%% FIXME: Optional arguments.
