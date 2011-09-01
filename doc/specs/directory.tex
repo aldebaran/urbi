@@ -46,6 +46,9 @@ dir1 / "file";
 [00000002] File("dir1/file")
 dir1.removeAll;
 \end{urbiscript}
+\begin{urbicomment}
+removeSlots("dir1", "dir2", "file");
+\end{urbicomment}
 
 
 \item['<<'](<entity>)
@@ -55,9 +58,9 @@ dir1.removeAll;
   \refSlot{'<<'} copies \var{entity} in the \lstinline|this| directory.
   Return \lstinline|this| to allow chained operations.
 \begin{urbiscript}
-dir1 = Directory.create("dir1")|;
-dir2 = Directory.create("dir2")|;
-file = File.create("file")|;
+var dir1 = Directory.create("dir1")|;
+var dir2 = Directory.create("dir2")|;
+var file = File.create("file")|;
 dir1 << file << dir2;
 [00000001] Directory("dir1")
 dir1.content;
@@ -70,6 +73,9 @@ dir1.removeAll;
 dir2.removeAll;
 file.remove;
 \end{urbiscript}
+\begin{urbicomment}
+removeSlots("dir1", "dir2", "file");
+\end{urbicomment}
 
 
 \item[asList]
@@ -89,36 +95,37 @@ Directory.new(".").asString == ".";
 \item[basename]
   Return a \refObject{String} containing the path of the directory without
   its dirname.
-\begin{urbiscript}[firstnumber=1]
+\begin{urbiassert}[firstnumber=1]
 var dir1 = Directory.create("dir1");
-[00000001] Directory("dir1")
 var dir2 = Directory.create("dir1/dir2");
-[00000002] Directory("dir1/dir2")
-dir1.basename;
-[00000002] "dir1"
-dir2.basename;
-[00000003] "dir2"
-dir1.removeAll;
-\end{urbiscript}
+
+dir1.basename == "dir1";
+dir2.basename == "dir2";
+\end{urbiassert}
+\begin{urbicomment}
+Directory.new("dir1").removeAll;
+\end{urbicomment}
+
 
 
 \item[clear]
   Remove all children recursively but not the directory itself. After a
   call to \refSlot{clear}, a call to \refSlot{empty} should return
   \lstinline|true|.
-\begin{urbiscript}
-dir1 = Directory.create("dir1")|;
-dir2 = Directory.create("dir1/dir2")|;
-var file1 = File.create("dir1/file1")|;
-var file2 = File.create("dir1/dir2/file2")|;
-dir1.content;
-[00000001] ["dir2", "file1"]
-dir2.content;
-[00000002] ["file2"]
-dir1.clear;
-assert(dir1.empty);
-dir1.remove;
-\end{urbiscript}
+\begin{urbiassert}
+var dir1 = Directory.create("dir1");
+var dir2 = Directory.create("dir1/dir2");
+var file1 = File.create("dir1/file1");
+var file2 = File.create("dir1/dir2/file2");
+
+dir1.content == ["dir2", "file1"];
+dir2.content == ["file2"];
+dir1.clear.isVoid;
+dir1.empty;
+\end{urbiassert}
+\begin{urbicomment}
+Directory.new("dir1").remove;
+\end{urbicomment}
 
 
 \item[content]
@@ -131,18 +138,20 @@ dir1.remove;
   Copy recursively all items of the \lstinline|this| directory
   into the directory \var{dirname} after creating it.
 \begin{urbiscript}
-dir1 = Directory.create("dir1")|;
-dir2 = Directory.create("dir1/dir2")|;
-file = File.create("dir1/file")|;
-var directory1 = dir1.copy("directory1");
-[00000001] Directory("directory1")
+var dir1 = Directory.create("dir1")|;
+var dir2 = Directory.create("dir1/dir2")|;
+var file = File.create("dir1/file")|;
+var directory1 = dir1.copy("directory1")|;
 dir1;
 [00000002] Directory("dir1")
 directory1.content;
 [00000003] ["dir2", "file"]
+\end{urbiscript}
+\begin{urbicomment}
 dir1.removeAll;
 directory1.removeAll;
-\end{urbiscript}
+removeSlots("dir1", "dir2", "file", "directory1");
+\end{urbicomment}
 
 
 \item[copyInto](<dirname>)
@@ -151,9 +160,9 @@ directory1.removeAll;
   Copy \lstinline|this| into \var{dirname} without creating it.
 \begin{urbiscript}
 var dir = Directory.create("dir")|;
-dir1 = Directory.create("dir1")|;
-dir2 = Directory.create("dir1/dir2")|;
-file = File.create("dir1/file")|;
+var dir1 = Directory.create("dir1")|;
+var dir2 = Directory.create("dir1/dir2")|;
+var file = File.create("dir1/file")|;
 dir1.copyInto(dir);
 [00000001] Directory("dir/dir1")
 dir1;
@@ -164,9 +173,12 @@ dir.content;
 [00000004] ["dir1"]
 Directory.new("dir/dir1").content;
 [00000005] ["dir2", "file"]
+\end{urbiscript}
+\begin{urbicomment}
 dir.removeAll;
 dir1.removeAll;
-\end{urbiscript}
+removeSlots("dir1", "dir2", "file", "dir");
+\end{urbicomment}
 
 
 \item[create](<name>)
@@ -174,16 +186,19 @@ dir1.removeAll;
   \refObject{String} or a \refObject{Path}. In addition to system errors that
   can occur, errors are raised if directory or file \var{name} already exists.
 \begin{urbiscript}
-dir = Directory.new("dir");
+Directory.new("dir");
 [00000001:error] !!! new: directory does not exist: "dir"
-dir = Directory.create("dir");
+var dir = Directory.create("dir");
 [00000002] Directory("dir")
 dir = Directory.create("dir");
 [00000001:error] !!! create: directory exists: "dir"
 dir.content;
 [00000003] []
-dir.remove;
 \end{urbiscript}
+\begin{urbicomment}
+dir.remove;
+removeSlots("dir");
+\end{urbicomment}
 
 
 \item[createAll](<name>)
@@ -195,34 +210,38 @@ dir.remove;
 \begin{urbiscript}
 Directory.create("dir1/dir2/dir3");
 [00000001:error] !!! create: no such file or directory: "dir1/dir2/dir3"
-dir1 = Directory.create("dir1");
+var dir1 = Directory.create("dir1");
 [00000002] Directory("dir1")
 Directory.createAll("dir1/dir2/dir3");
 [00000002] Directory("dir1/dir2/dir3")
-dir1.removeAll;
 \end{urbiscript}
+\begin{urbicomment}
+dir1.removeAll;
+removeSlots("dir1");
+\end{urbicomment}
 
 
 \item[empty]
   Whether the directory is empty.
-\begin{urbiscript}
-dir = Directory.create("dir")|;
-assert(dir.empty);
-File.create("dir/file")|;
-assert(!dir.empty);
-dir.removeAll;
-\end{urbiscript}
+\begin{urbiassert}
+var dir = Directory.create("dir");
+dir.empty;
+File.create("dir/file");
+!dir.empty;
+\end{urbiassert}
+\begin{urbicomment}
+Directory.new("dir").removeAll;
+\end{urbicomment}
 
 
 \item[exists]
   Whether the directory still exists.
-\begin{urbiscript}
-dir = Directory.create("dir");
-[00000001] Directory("dir")
-assert(dir.exists);
-dir.remove;
-assert(!dir.exists);
-\end{urbiscript}
+\begin{urbiassert}
+var dir = Directory.create("dir");
+dir.exists;
+dir.remove.isVoid;
+!dir.exists;
+\end{urbiassert}
 
 
 \item[fileCreated](<name>)%
@@ -280,16 +299,17 @@ if (!Path.new("./dummy.txt").exists)
 \item[lastModifiedDate]
   \experimental{}
 
-  Return a \refObject{Date} object stating when the directory was last modified.
+  Return a \refObject{Date} object stating when the directory was last
+  modified.
 
 
 \item[moveInto](<dirname>)
   \experimental{}
 
-  Move \lstinline|this| into \var{dirname} without creating it.
+  Move \this into \var{dirname} without creating it.
 \begin{urbiscript}
-dir1 = Directory.create("dir1")|;
-dir2 = Directory.create("dir1/dir2")|;
+var dir1 = Directory.create("dir1")|;
+var dir2 = Directory.create("dir1/dir2")|;
 var file = File.create("dir1/file")|;
 var dir = Directory.create("dir")|;
 dir1.moveInto(dir);
@@ -300,26 +320,32 @@ dir1.content;
 [00000003] ["dir2", "file"]
 dir.content;
 [00000004] ["dir1"]
-dir.removeAll;
 \end{urbiscript}
+\begin{urbicomment}
+dir1.removeAll;
+removeSlots("dir1", "dir2", "file", "dir");
+\end{urbicomment}
 
 
 \item[parent]
   Return the parent of the directory.
 \begin{urbiscript}
 Directory.create("dir")|;
-dir = Directory.create("dir/dir")|;
+var dir = Directory.create("dir/dir")|;
 dir.parent;
 [00000001] Directory("dir")
 assert(dir.parent.parent.asString == Directory.current.asString);
-dir.parent.removeAll;
 \end{urbiscript}
+\begin{urbicomment}
+dir.parent.removeAll;
+removeSlots("dir");
+\end{urbicomment}
 
 
 \item[remove]
   Remove the directory only if it is empty.
 \begin{urbiscript}
-dir = Directory.create("dir")|;
+var dir = Directory.create("dir")|;
 File.create("dir/file")|;
 dir.remove;
 [00000001:error] !!! remove: directory not empty: "dir"
@@ -327,24 +353,30 @@ dir.clear;
 dir.remove;
 assert(!dir.exists);
 \end{urbiscript}
+\begin{urbicomment}
+removeSlots("dir");
+\end{urbicomment}
 
 
 \item[removeAll]
   Remove all children recursively including the directory itself.
 \begin{urbiscript}
-dir1 = Directory.create("dir1")|;
-dir2 = Directory.create("dir1/dir2")|;
+var dir1 = Directory.create("dir1")|;
+var dir2 = Directory.create("dir1/dir2")|;
 var file1 = File.create("dir1/file1")|;
 var file2 = File.create("dir1/dir2/file2")|;
 dir1.removeAll;
 assert(!dir1.exists);
 \end{urbiscript}
+\begin{urbicomment}
+removeSlots("dir1", "dir2", "file1", "file2");
+\end{urbicomment}
 
 
 \item[rename]
   Rename or move the directory.
 \begin{urbiscript}
-dir = Directory.create("dir")|;
+var dir = Directory.create("dir")|;
 File.create("dir/file")|;
 dir.rename("other");
 [00000001] Directory("other")
@@ -359,8 +391,11 @@ dir;
 [00000005] Directory("dir2/other2")
 dir.content;
 [00000006] ["file"]
-dir2.removeAll;
 \end{urbiscript}
+\begin{urbicomment}
+dir2.removeAll;
+removeSlots("dir", "dir2");
+\end{urbicomment}
 
 
 \item[size]
@@ -368,7 +403,7 @@ dir2.removeAll;
 
   The size of all the directory content computed recursively.
 \begin{urbiscript}
-dir = Directory.create("dir")|;
+var dir = Directory.create("dir")|;
 Directory.create("dir/dir")|;
 File.save("dir/file", "content");
 file1 = File.create("dir/file")|;
@@ -376,6 +411,9 @@ File.save("dir/dir/file", "content");
 file2 = File.create("dir/dir/file")|;
 assert(dir.size() == file1.size() + file2.size());
 \end{urbiscript}
+\begin{urbicomment}
+removeSlots("dir");
+\end{urbicomment}
 \end{urbiscriptapi}
 
 %%% Local Variables:
