@@ -239,12 +239,12 @@ for (var v : "123")
 \end{urbiassert}
 
 
-\item[find](<pattern>, <position>)%
+\item[find](<pattern>, <position> = 0)%
   Search for the \var{pattern} string in \this starting from the
-  \var{position}.  By default the \var{position} is \lstinline|0|.  When the
-  \var{pattern} is not found \lstinline|-1| is returned.
+  \var{position}.  When the \var{pattern} is not found \lstinline|-1| is
+  returned.
 \begin{urbiassert}
-"Hello, World!".find("o") == 4;
+"Hello, World!".find("o")    == 4;
 "Hello, World!".find("o", 4) == 4;
 "Hello, World!".find("o", 5) == 8;
 "Hello, World!".find("o", 9) == -1;
@@ -375,16 +375,16 @@ String.fromAscii(0xFF) == "\xff";
 \end{urbiassert}
 
 
-\item[rfind](<pattern>, <position>)%
+\item[rfind](<pattern>, <position> = -1)%
   Search backward for the \var{pattern} string in \this starting from the
-  \var{position}.  By default the \var{position} is \lstinline|-1| which
-  stands for the end of the string.  When the \var{pattern} is not found
-  \lstinline|-1| is returned.
+  \var{position}.  To denote the end of the string, use -1 as
+  \var{position}.  When the \var{pattern} is not found \lstinline|-1| is
+  returned.
 \begin{urbiassert}
-"Hello, World!".rfind("o") == 8;
-"Hello, World!".rfind("o", 8) == 8;
-"Hello, World!".rfind("o", 7) == 4;
-"Hello, World!".rfind("o", 3) == -1;
+"Hello, World!".rfind("o")     == 8;
+"Hello, World!".rfind("o", 8)  == 8;
+"Hello, World!".rfind("o", 7)  == 4;
+"Hello, World!".rfind("o", 3)  == -1;
 "Hello, World!".rfind("o", -1) == 8;
 \end{urbiassert}
 
