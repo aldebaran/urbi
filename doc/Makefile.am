@@ -27,6 +27,7 @@ EXTRA_DIST +=					\
   document-aux/styles/fixme.sty			\
   document-aux/styles/gostai-documentation.sty	\
   document-aux/styles/gostai.sty		\
+  document-aux/styles/headings.ist		\
   document-aux/styles/hevea.sty			\
   document-aux/styles/misc.hva			\
   document-aux/styles/misc.sty			\
@@ -119,11 +120,16 @@ TEX4HTFLAGS = urbi-style,2,next,sections+,mouseover
 urbi-sdk-single.htmldir : TEX4HTFLAGS = urbi-style,next,sections+,mouseover
 TEXI2HTMLFLAGS += --tex4ht --tex4ht-options=$(TEX4HTFLAGS) --verbose --debug
 TEX4HT_POST = $(abs_top_srcdir)/build-aux/bin/tex4ht-post
+MAKEINDEXFLAGS = -s headings.ist
+TEX_ENVIRONMENT =				\
+  PATH=$$PATH:$(abspath $(share_bin_dir))	\
+  MAKEINDEX="makeindex $(MAKEINDEXFLAGS)"	\
+  TEXINDY="texindy $(TEXINDYFLAGS)"
+
 %.htmldir: %.tex $(share_tex_dependencies) urbi-style.cfg
 	$(AM_V_GEN)rm -rf $@ $@.tmp $@.log
 	$(AM_V_at)$(mkdir_p) $@.tmp || true
-	$(AM_V_at)							\
-	export PATH=$$PATH:$(abspath $(share_bin_dir));			\
+	$(AM_V_at) export $(TEX_ENVIRONMENT);				\
 	if $(TEXI2HTML) $(TEXI2HTMLFLAGS) -o $@.tmp/$(*F).html $<;	\
 	then								\
 	  test ! -f $@.log ||						\
@@ -134,14 +140,15 @@ TEX4HT_POST = $(abs_top_srcdir)/build-aux/bin/tex4ht-post
 	    cat >&2 $@.log;						\
 	  exit $$sta;							\
 	fi
-	$(AM_V_at)cd $@.tmp \
+	$(AM_V_at)cd $@.tmp					\
 	  && $(TEX4HT_POST) --index $(*F).html $(*F)*.html
-	$(AM_V_at)cp $(srcdir)/$(cube_and_disc).png      $@.tmp/$(*F)0x.png
-	$(AM_V_at)cp $(share_dir)/figs/gostai.png        $@.tmp/$(*F)1x.png
-	$(AM_V_at)case "$(*F)" in					\
-	  (urbi-sdk*) 							\
+	$(AM_V_at)							\
+	  cp $(srcdir)/$(cube_and_disc).png  $@.tmp/$(*F)0x.png;	\
+	  cp $(share_dir)/figs/gostai.png    $@.tmp/$(*F)1x.png;	\
+	  case "$(*F)" in						\
+	    (urbi-sdk*)							\
 	    cp $(srcdir)/img/urbi-architecture.png $@.tmp/$(*F)2x.png;;	\
-	esac
+	  esac
 	$(AM_V_at)case ',$(TEX4HTFLAGS),' in			\
 	  (*,mouseover,*) cp $(share_dir)/overlib/* $@.tmp;;	\
 	esac
