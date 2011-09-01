@@ -106,6 +106,264 @@ Matrix.new(Vector.new(0, 1), Vector.new(2));
 \subsection{Slots}
 
 \begin{urbiscriptapi}
+\item['*'](<that>)%
+  If \that is a Matrix, matrix product between \this and \that.
+\begin{urbiassert}
+Matrix.new([1, 2]) * Matrix.new([10], [20])
+  == Matrix.new([50]);
+Matrix.new([3, 4]) * Matrix.new([10], [20])
+  == Matrix.new([110]);
+Matrix.new([1, 2], [3, 4]) * Matrix.new([10], [20])
+  == Matrix.new([50], [110]);
+\end{urbiassert}
+
+The sizes must be compatible ($\texttt{\this.size.second} =
+\texttt{\that.size.first}$).
+\begin{urbiscript}
+Matrix.new([1, 2]) * Matrix.new([3, 4]);
+[00081168:error] !!! *: incompatible sizes: 1x2, 1x2
+\end{urbiscript}
+
+  If \that is a Float, the scalar product.
+\begin{urbiassert}
+Matrix.new([1, 2], [3, 4]) * 3 == Matrix.new([3, 6], [9, 12]);
+\end{urbiassert}
+
+
+\item['*='](<that>)%
+  In place (\autoref{sec:lang:op:ass}) product (\refSlot{'*'}).  The same
+  constraints apply.
+\begin{urbiassert}
+var lhs1 = Matrix.new([1, 2], [3, 4]);
+var lhs2 = Matrix.new(lhs1);
+var rhs = Matrix.new([10], [20]);
+var res = lhs1 * rhs;
+
+(lhs1.'*='(rhs)) === lhs1;  lhs1 == res;
+(lhs2  *=  rhs ) === lhs2;  lhs2 == res;
+
+rhs *= rhs;
+[00272182:error] !!! *=: incompatible sizes: 2x1, 2x1
+\end{urbiassert}
+
+\begin{urbiassert}
+var v = Matrix.new([1, 2], [3, 4]);
+var res = v * 3;
+(v *= 3) === v; v == res;
+\end{urbiassert}
+
+
+\item['+'](<that>)%
+  The sum of \this and \that.  Their sizes must be equal.
+\begin{urbiassert}
+Matrix.new([1, 2]) + Matrix.new([10, 20])
+  == Matrix.new([11, 22]);
+
+Matrix.new([1, 2], [3, 4]) + Matrix.new([10, 20], [30, 40])
+  == Matrix.new([11, 22], [33, 44]);
+
+Matrix.new([1, 2]) + Matrix.new([10, 20], [30, 40]);
+[00002056:error] !!! +: incompatible sizes: 1x2, 2x2
+\end{urbiassert}
+
+  If \that is a Float, the scalar addition.
+\begin{urbiassert}
+Matrix.new([1, 2], [3, 4]) + 3 == Matrix.new([4, 5], [6, 7]);
+\end{urbiassert}
+
+
+\item['+='](<that>)%
+  In place (\autoref{sec:lang:op:ass}) sum (\refSlot{'+'}).  The same
+  constraints apply.
+\begin{urbiassert}
+var lhs1 = Matrix.new([ 1 , 2], [ 3,  4]);
+var lhs2 = Matrix.new(lhs1);
+var rhs = Matrix.new([10, 20], [30, 40]);
+var res = lhs1 + rhs;
+
+(lhs1.'+='(rhs)) === lhs1;  lhs1 == res;
+(lhs2  +=  rhs ) === lhs2;  lhs2 == res;
+
+lhs1 += Matrix.new([1, 2]);
+[00338194:error] !!! +=: incompatible sizes: 2x2, 1x2
+\end{urbiassert}
+
+\begin{urbiassert}
+var v = Matrix.new([3, 6], [9, 12]);
+var res = v + 3;
+(v += 3) === v; v == res;
+\end{urbiassert}
+
+
+\item['-'](<that>)%
+  The difference of \this and \that.  Their sizes must be equal.
+\begin{urbiassert}
+Matrix.new([1, 2]) - Matrix.new([10, 20])
+  == Matrix.new([-9, -18]);
+
+Matrix.new([1, 2], [3, 4]) - Matrix.new([10, 20], [30, 40])
+  == Matrix.new([-9, -18], [-27, -36]);
+
+Matrix.new([1, 2]) - Matrix.new([10, 20], [30, 40]);
+[00002056:error] !!! -: incompatible sizes: 1x2, 2x2
+\end{urbiassert}
+
+  If \that is a Float, the scalar difference.
+\begin{urbiassert}
+Matrix.new([1, 2], [3, 4]) - 3 == Matrix.new([-2, -1], [0, 1]);
+\end{urbiassert}
+
+
+\item['-='](<that>)%
+  In place (\autoref{sec:lang:op:ass}) difference (\refSlot{'-'}).  The same
+  constraints apply.
+\begin{urbiassert}
+var lhs1 = Matrix.new([ 1 , 2], [ 3,  4]);
+var lhs2 = Matrix.new(lhs1);
+var rhs = Matrix.new([10, 20], [30, 40]);
+var res = lhs1 - rhs;
+
+(lhs1.'-='(rhs)) === lhs1;  lhs1 == res;
+(lhs2  -=  rhs ) === lhs2;  lhs2 == res;
+
+lhs1 -= Matrix.new([1, 2]) ;
+[00362383:error] !!! -=: incompatible sizes: 2x2, 1x2
+\end{urbiassert}
+
+\begin{urbiassert}
+var v = Matrix.new([3, 6], [9, 12]);
+var res = v - 3;
+(v -= 3) === v; v == res;
+\end{urbiassert}
+
+
+\item['/'](<that>)%
+  Same as \lstinline|this * that.inverse|.  \that must be invertible.
+\begin{urbiassert}
+var lhs = Matrix.new([20, 0], [0, 200]);
+var rhs = Matrix.new([10, 0], [0, 100]);
+var res = Matrix.new([ 2, 0], [0,   2]);
+
+lhs / rhs == res;
+(lhs / rhs) * rhs == lhs;
+rhs * (lhs / rhs) == lhs;
+
+lhs / Matrix.createZeros(2, 2);
+[00160168:error] !!! /: non-invertible matrix: <<0, 0>, <0, 0>>
+\end{urbiassert}
+
+  If \that is a Float, the scalar division.
+\begin{urbiassert}
+Matrix.new([3, 6], [9, 12]) / 3 == Matrix.new([1, 2], [3, 4]);
+\end{urbiassert}
+
+
+\item['/='](<that>)%
+  In place (\autoref{sec:lang:op:ass}) division (\refSlot{'/'}).  The same
+  constraints apply.
+\begin{urbiassert}
+var lhs1 = Matrix.new([20, 0], [0, 200]);
+var lhs2 = Matrix.new(lhs1);
+var rhs = Matrix.new([10, 0], [0, 100]);
+var res = Matrix.new([ 2, 0], [0,   2]);
+
+(lhs1.'/='(rhs)) === lhs1;  lhs1 == res;
+(lhs2  /=  rhs ) === lhs2;  lhs2 == res;
+
+lhs1 /= Matrix.createZeros(2, 2);
+[00207285:error] !!! /=: non-invertible matrix: <<0, 0>, <0, 0>>
+\end{urbiassert}
+
+\begin{urbiassert}
+var v = Matrix.new([3, 6], [9, 12]);
+var res = v / 3;
+(v /= 3) === v; v == res;
+\end{urbiassert}
+
+
+\item['=='](<that>)%
+  Whether \this and \that have the same dimensions and members.
+\begin{urbiscript}
+do (Matrix)
+{
+  assert
+  {
+      new([[1], [2], [3]]) == new([[1], [2], [3]]);
+    !(new([[1], [2], [3]]) == new([[1], [2]]));
+    !(new([[1], [2], [3]]) == new([[3], [2], [1]]));
+  };
+}|;
+\end{urbiscript}
+
+
+\item|'[]'|(<row>, <col>)%
+  The element at \lstinline|\var{row}, \var{col}|.  The index \var{row} must
+  verify $0 \le \textrm{\var{row}} < \texttt{\this.size.first}$, or
+  $-\texttt{\this.size.first} \le \texttt{\var{row}} < 0$, in which case it
+  is equivalent to using index $\textrm{\var{row}} +
+  \texttt{\this.size.first}$: it counts ``backward''.  Similarly for
+  \var{col}.
+\begin{urbiscript}
+var m = Matrix.new([1, 2, 3], [10, 20, 30])|;
+assert
+{
+  m[0, 0] == 1;   m[0, -3] == 1;
+  m[0, 1] == 2;   m[0, -2] == 2;
+  m[0, 2] == 3;   m[0, -1] == 3;
+
+  m[1, 2] == 30;  m[-1, -1] == 30;
+};
+
+m[2, 0];
+[00127812:error] !!! []: invalid row: 2
+
+m[-3, 0];
+[00127824:error] !!! []: invalid row: -3
+
+m[0, 3];
+[00127836:error] !!! []: invalid column: 3
+
+m[0, -4];
+[00127850:error] !!! []: invalid column: -4
+\end{urbiscript}
+\begin{urbicomment}
+  removeSlots("m");
+\end{urbicomment}
+
+
+\item|'[]='|(<row>, <col>, <val>)%
+  Set the element at \lstinline|\var{row}, \var{col}| to \var{val}, and
+  return \var{val}.  The index \var{row} must verify $0 \le
+  \textrm{\var{row}} < \texttt{\this.size.first}$, or
+  $-\texttt{\this.size.first} \le \texttt{\var{row}} < 0$, in which case it
+  is equivalent to using index $\textrm{\var{row}} +
+  \texttt{\this.size.first}$: it counts ``backward''.  Similarly for
+  \var{col}.
+\begin{urbiscript}
+var m = Matrix.new([1, 2], [10, 20])|;
+assert
+{
+  (m[0, 0]  = -1) == -1;   m[0, 0] == -1;
+  (m[-1, -1] = -2) == -2;  m[1, 1] == -2;
+};
+
+m[2, 0] = -1;
+[00127812:error] !!! []=: invalid row: 2
+
+m[-3, 0] = -1;
+[00127824:error] !!! []=: invalid row: -3
+
+m[0, 2] = -1;
+[00127836:error] !!! []=: invalid column: 2
+
+m[0, -3] = -1;
+[00127850:error] !!! []=: invalid column: -3
+\end{urbiscript}
+\begin{urbicomment}
+  removeSlots("m");
+\end{urbicomment}
+
+
 \item[appendRow](<vector>)%
   Append \var{vector} to \this and return \this.
 \begin{urbiassert}
@@ -480,6 +738,7 @@ Matrix.new([1, 2], [3, 4], [5, 6]).size == Pair.new(3, 2);
 Matrix.new([1, 2, 3], [4, 5, 6])  .size == Pair.new(2, 3);
 \end{urbiassert}
 
+
 \item[transpose](<arg>)%
   The transposed of \this.
 \begin{urbiassert}
@@ -496,266 +755,6 @@ Matrix.new([1, 2], [3, 4]).transpose == Matrix.new([1, 3], [2, 4]);
 Matrix.type         == "Matrix";
 Matrix.new([]).type == "Matrix";
 \end{urbiassert}
-
-
-\item['=='](<that>)%
-  Whether \this and \that have the same dimensions and members.
-\begin{urbiscript}
-do (Matrix)
-{
-  assert
-  {
-      new([[1], [2], [3]]) == new([[1], [2], [3]]);
-    !(new([[1], [2], [3]]) == new([[1], [2]]));
-    !(new([[1], [2], [3]]) == new([[3], [2], [1]]));
-  };
-}|;
-\end{urbiscript}
-
-
-\item['*'](<that>)%
-  If \that is a Matrix, matrix product between \this and \that.
-\begin{urbiassert}
-Matrix.new([1, 2]) * Matrix.new([10], [20])
-  == Matrix.new([50]);
-Matrix.new([3, 4]) * Matrix.new([10], [20])
-  == Matrix.new([110]);
-Matrix.new([1, 2], [3, 4]) * Matrix.new([10], [20])
-  == Matrix.new([50], [110]);
-\end{urbiassert}
-
-The sizes must be compatible ($\texttt{\this.size.second} =
-\texttt{\that.size.first}$).
-\begin{urbiscript}
-Matrix.new([1, 2]) * Matrix.new([3, 4]);
-[00081168:error] !!! *: incompatible sizes: 1x2, 1x2
-\end{urbiscript}
-
-  If \that is a Float, the scalar product.
-\begin{urbiassert}
-Matrix.new([1, 2], [3, 4]) * 3 == Matrix.new([3, 6], [9, 12]);
-\end{urbiassert}
-
-\item['*='](<that>)%
-  In place (\autoref{sec:lang:op:ass}) product (\refSlot{'*'}).  The same
-  constraints apply.
-\begin{urbiassert}
-var lhs1 = Matrix.new([1, 2], [3, 4]);
-var lhs2 = Matrix.new(lhs1);
-var rhs = Matrix.new([10], [20]);
-var res = lhs1 * rhs;
-
-(lhs1.'*='(rhs)) === lhs1;  lhs1 == res;
-(lhs2  *=  rhs ) === lhs2;  lhs2 == res;
-
-rhs *= rhs;
-[00272182:error] !!! *=: incompatible sizes: 2x1, 2x1
-\end{urbiassert}
-
-\begin{urbiassert}
-var v = Matrix.new([1, 2], [3, 4]);
-var res = v * 3;
-(v *= 3) === v; v == res;
-\end{urbiassert}
-
-
-\item['+'](<that>)%
-  The sum of \this and \that.  Their sizes must be equal.
-\begin{urbiassert}
-Matrix.new([1, 2]) + Matrix.new([10, 20])
-  == Matrix.new([11, 22]);
-
-Matrix.new([1, 2], [3, 4]) + Matrix.new([10, 20], [30, 40])
-  == Matrix.new([11, 22], [33, 44]);
-
-Matrix.new([1, 2]) + Matrix.new([10, 20], [30, 40]);
-[00002056:error] !!! +: incompatible sizes: 1x2, 2x2
-\end{urbiassert}
-
-  If \that is a Float, the scalar addition.
-\begin{urbiassert}
-Matrix.new([1, 2], [3, 4]) + 3 == Matrix.new([4, 5], [6, 7]);
-\end{urbiassert}
-
-
-\item['+='](<that>)%
-  In place (\autoref{sec:lang:op:ass}) sum (\refSlot{'+'}).  The same
-  constraints apply.
-\begin{urbiassert}
-var lhs1 = Matrix.new([ 1 , 2], [ 3,  4]);
-var lhs2 = Matrix.new(lhs1);
-var rhs = Matrix.new([10, 20], [30, 40]);
-var res = lhs1 + rhs;
-
-(lhs1.'+='(rhs)) === lhs1;  lhs1 == res;
-(lhs2  +=  rhs ) === lhs2;  lhs2 == res;
-
-lhs1 += Matrix.new([1, 2]);
-[00338194:error] !!! +=: incompatible sizes: 2x2, 1x2
-\end{urbiassert}
-
-\begin{urbiassert}
-var v = Matrix.new([3, 6], [9, 12]);
-var res = v + 3;
-(v += 3) === v; v == res;
-\end{urbiassert}
-
-
-\item['-'](<that>)%
-  The difference of \this and \that.  Their sizes must be equal.
-\begin{urbiassert}
-Matrix.new([1, 2]) - Matrix.new([10, 20])
-  == Matrix.new([-9, -18]);
-
-Matrix.new([1, 2], [3, 4]) - Matrix.new([10, 20], [30, 40])
-  == Matrix.new([-9, -18], [-27, -36]);
-
-Matrix.new([1, 2]) - Matrix.new([10, 20], [30, 40]);
-[00002056:error] !!! -: incompatible sizes: 1x2, 2x2
-\end{urbiassert}
-
-  If \that is a Float, the scalar difference.
-\begin{urbiassert}
-Matrix.new([1, 2], [3, 4]) - 3 == Matrix.new([-2, -1], [0, 1]);
-\end{urbiassert}
-
-
-
-\item['-='](<that>)%
-  In place (\autoref{sec:lang:op:ass}) difference (\refSlot{'-'}).  The same
-  constraints apply.
-\begin{urbiassert}
-var lhs1 = Matrix.new([ 1 , 2], [ 3,  4]);
-var lhs2 = Matrix.new(lhs1);
-var rhs = Matrix.new([10, 20], [30, 40]);
-var res = lhs1 - rhs;
-
-(lhs1.'-='(rhs)) === lhs1;  lhs1 == res;
-(lhs2  -=  rhs ) === lhs2;  lhs2 == res;
-
-lhs1 -= Matrix.new([1, 2]) ;
-[00362383:error] !!! -=: incompatible sizes: 2x2, 1x2
-\end{urbiassert}
-
-\begin{urbiassert}
-var v = Matrix.new([3, 6], [9, 12]);
-var res = v - 3;
-(v -= 3) === v; v == res;
-\end{urbiassert}
-
-
-\item['/'](<that>)%
-  Same as \lstinline|this * that.inverse|.  \that must be invertible.
-\begin{urbiassert}
-var lhs = Matrix.new([20, 0], [0, 200]);
-var rhs = Matrix.new([10, 0], [0, 100]);
-var res = Matrix.new([ 2, 0], [0,   2]);
-
-lhs / rhs == res;
-(lhs / rhs) * rhs == lhs;
-rhs * (lhs / rhs) == lhs;
-
-lhs / Matrix.createZeros(2, 2);
-[00160168:error] !!! /: non-invertible matrix: <<0, 0>, <0, 0>>
-\end{urbiassert}
-
-  If \that is a Float, the scalar division.
-\begin{urbiassert}
-Matrix.new([3, 6], [9, 12]) / 3 == Matrix.new([1, 2], [3, 4]);
-\end{urbiassert}
-
-
-
-\item['/='](<that>)%
-  In place (\autoref{sec:lang:op:ass}) division (\refSlot{'/'}).  The same
-  constraints apply.
-\begin{urbiassert}
-var lhs1 = Matrix.new([20, 0], [0, 200]);
-var lhs2 = Matrix.new(lhs1);
-var rhs = Matrix.new([10, 0], [0, 100]);
-var res = Matrix.new([ 2, 0], [0,   2]);
-
-(lhs1.'/='(rhs)) === lhs1;  lhs1 == res;
-(lhs2  /=  rhs ) === lhs2;  lhs2 == res;
-
-lhs1 /= Matrix.createZeros(2, 2);
-[00207285:error] !!! /=: non-invertible matrix: <<0, 0>, <0, 0>>
-\end{urbiassert}
-
-\begin{urbiassert}
-var v = Matrix.new([3, 6], [9, 12]);
-var res = v / 3;
-(v /= 3) === v; v == res;
-\end{urbiassert}
-
-
-\item|'[]'|(<row>, <col>)%
-  The element at \lstinline|\var{row}, \var{col}|.  The index \var{row} must
-  verify $0 \le \textrm{\var{row}} < \texttt{\this.size.first}$, or
-  $-\texttt{\this.size.first} \le \texttt{\var{row}} < 0$, in which case it
-  is equivalent to using index $\textrm{\var{row}} +
-  \texttt{\this.size.first}$: it counts ``backward''.  Similarly for
-  \var{col}.
-\begin{urbiscript}
-var m = Matrix.new([1, 2, 3], [10, 20, 30])|;
-assert
-{
-  m[0, 0] == 1;   m[0, -3] == 1;
-  m[0, 1] == 2;   m[0, -2] == 2;
-  m[0, 2] == 3;   m[0, -1] == 3;
-
-  m[1, 2] == 30;  m[-1, -1] == 30;
-};
-
-m[2, 0];
-[00127812:error] !!! []: invalid row: 2
-
-m[-3, 0];
-[00127824:error] !!! []: invalid row: -3
-
-m[0, 3];
-[00127836:error] !!! []: invalid column: 3
-
-m[0, -4];
-[00127850:error] !!! []: invalid column: -4
-\end{urbiscript}
-\begin{urbicomment}
-  removeSlots("m");
-\end{urbicomment}
-
-
-\item|'[]='|(<row>, <col>, <val>)%
-  Set the element at \lstinline|\var{row}, \var{col}| to \var{val}, and
-  return \var{val}.  The index \var{row} must verify $0 \le
-  \textrm{\var{row}} < \texttt{\this.size.first}$, or
-  $-\texttt{\this.size.first} \le \texttt{\var{row}} < 0$, in which case it
-  is equivalent to using index $\textrm{\var{row}} +
-  \texttt{\this.size.first}$: it counts ``backward''.  Similarly for
-  \var{col}.
-\begin{urbiscript}
-var m = Matrix.new([1, 2], [10, 20])|;
-assert
-{
-  (m[0, 0]  = -1) == -1;   m[0, 0] == -1;
-  (m[-1, -1] = -2) == -2;  m[1, 1] == -2;
-};
-
-m[2, 0] = -1;
-[00127812:error] !!! []=: invalid row: 2
-
-m[-3, 0] = -1;
-[00127824:error] !!! []=: invalid row: -3
-
-m[0, 2] = -1;
-[00127836:error] !!! []=: invalid column: 2
-
-m[0, -3] = -1;
-[00127850:error] !!! []=: invalid column: -3
-\end{urbiscript}
-\begin{urbicomment}
-  removeSlots("m");
-\end{urbicomment}
-
 \end{urbiscriptapi}
 
 %%% Local Variables:
