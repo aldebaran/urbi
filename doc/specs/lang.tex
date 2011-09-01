@@ -2462,9 +2462,9 @@ See \autoref{tab:keywords:flavors}.
 \subsection{\lstinline{break}}
 \label{sec:lang:break}
 
-When encountered within a loop (\lstinline{for}, \lstinline{loop},
-\lstinline{while}), \lstindex{break} makes the execution jump after the
-loop.
+When encountered within a loop (\lstinline{every}, \lstinline{for},
+\lstinline{loop}, \lstinline{while}), \lstindex{break} makes the execution
+jump after the loop.
 
 \begin{urbiscript}
 var i = 5|;
@@ -2524,9 +2524,10 @@ for (var i : 10)
 \subsection{\lstinline{continue}}
 \label{sec:lang:continue}
 
-When encountered in a loop (\lstinline{for}, \lstinline{loop},
-\lstinline{while}), \lstindex{continue} short-circuits the remainder of the
-body of the loop, and runs the next iteration (if there remains one).
+When encountered in a loop (\lstinline{every}, \lstinline{for},
+\lstinline{loop}, \lstinline{while}), \lstindex{continue} short-circuits the
+remainder of the body of the loop, and runs the next iteration (if there
+remains one).
 
 \begin{urbiscript}
 for (var i = 0; i < 8; i++)
@@ -2673,7 +2674,7 @@ This is the default flavor.  Basically its semantics is that of:
 \begin{urbiscript}
 var i = 42|;
 for; (i = 0; i < 3; i += 1)
-  echo (i);
+  echo(i);
 echo(i);
 [00000001] *** 0
 [00000002] *** 1
@@ -2690,12 +2691,11 @@ scoped to the loop itself.
 \begin{urbiscript}
 var i = 42|;
 for; (var i = 0; i < 3; i += 1)
-  echo (i);
-echo(i);
+  echo(i);
+assert (i == 42);
 [00000005] *** 0
 [00000006] *** 1
 [00000007] *** 2
-[00000008] *** 42
 \end{urbiscript}
 \begin{urbicomment}
 removeSlots("i");
@@ -3663,22 +3663,20 @@ the given period.
 % We used to use 100ms instead of 1s, but severely loaded machines
 % (the Mac Mini) fail way too often.
 \begin{urbiscript}
+var count = 4|;
+var start = time|;
+echo("before");
+every| (1s)
 {
-  var count = 4;
-  var start = time;
-  echo("before");
-  every| (1s)
-  {
-    --count;
-    echo("begin: %s @ %1.0fs" % [count, time - start]);
-    if (count == 2)
-      continue;
-    if (count == 0)
-      break;
-    echo("end:   " + count);
-  };
-  echo("after");
+  --count;
+  echo("begin: %s @ %1.0fs" % [count, time - start]);
+  if (count == 2)
+    continue;
+  if (count == 0)
+    break;
+  echo("end:   " + count);
 };
+echo("after");
 [00000597] *** before
 [00000598] *** begin: 3 @ 0s
 [00000599] *** end:   3
@@ -3688,6 +3686,9 @@ the given period.
 [00000898] *** begin: 0 @ 3s
 [00000899] *** after
 \end{urbiscript}
+\begin{urbicomment}
+removeSlots("count", "start");
+\end{urbicomment}
 
 The \lstinline{every|} flavor does not let iterations overlap. If an
 iteration takes too long, the following iterations are delayed. That is, the
@@ -3695,29 +3696,27 @@ next iterations will start immediately after the end of the current one, and
 next iterations will occur normally from this point.
 
 \begin{urbiscript}
+var tooLong = true|;
+
+var count = 5|;
+// Every other iteration exceeds the period, and will delay the
+// following one.
+every| (1s)
 {
-  var too_long = true|;
+  if (! (count -=1))
+    break;
 
-  var count = 5;
-  // Every other iteration exceeds the period, and will delay the
-  // following one.
-  every| (1s)
+  if (tooLong)
   {
-    if (! (count -=1))
-      break;
-
-    if (too_long)
-    {
-      too_long = false;
-      echo("Long in");
-      sleep(1.5s);
-      echo("Long out");
-    }
-    else
-    {
-      too_long = true;
-      echo("Short");
-    };
+    tooLong = false;
+    echo("Long in");
+    sleep(1.5s);
+    echo("Long out");
+  }
+  else
+  {
+    tooLong = true;
+    echo("Short");
   };
 };
 [00000000] *** Long in
@@ -3727,27 +3726,30 @@ next iterations will occur normally from this point.
 [00004000] *** Long out
 [00004000] *** Short
 \end{urbiscript}
+\begin{urbicomment}
+removeSlots("tooLong", "count");
+\end{urbicomment}
 
 The flow-control constructs \lstinline{break} and \lstinline{continue}
 are supported.
 
 \begin{urbiscript}
+var count = 0|;
+every| (250ms)
 {
-  var count = 0;
-  every| (250ms)
-  {
-    ++count;
-    if (count == 2)
-      continue;
-    if (count == 4)
-      break;
-    echo(count);
-  }
+  ++count;
+  if (count == 2)
+    continue;
+  if (count == 4)
+    break;
+  echo(count);
 };
-/*(*/sleep(2s);/*)*/
 [00000000] *** 1
 [00001500] *** 3
 \end{urbiscript}
+\begin{urbicomment}
+removeSlots("count");
+\end{urbicomment}
 
 
 
