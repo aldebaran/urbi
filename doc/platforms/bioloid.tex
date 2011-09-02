@@ -127,10 +127,16 @@ at (motor6.val > 0) echo("tick") onleave echo("tack");
 motor6.val = 0 sin:1s ampli:20deg,
 \end{urbiunchecked}
 
-\item[cwLimit, ccwLimit]%
-  Set min and max reachable angles. When both equal to 0, the motor is put
-  in continuous rotation mode. In this mode, writing to \refSlot{val} has no
-  effect: the motor moves at the speed given by the \refSlot{speed} slot.
+\item[cwLimit] Set min reachable angle.  See \refSlot{ccwLimit}.
+
+%% FIXME: Something horrible happens when the slot name starts with twice
+%% the same letter.  I have no idea what's going on, I need to make an small
+%% seft-contained example and ask for help.
+\item \labelSlot{ccwLimit}\\
+  Set max reachable angle. When both \refSlot{cwLimit} and
+  \refSlot{ccwLimit} equal 0, the motor is put in continuous rotation
+  mode. In this mode, writing to \refSlot{val} has no effect: the motor
+  moves at the speed given by the \refSlot{speed} slot.
 
 \item[speed] When read, gives the current rotation speed. When written to,
   set the speed at which following commands will be executed. In continuous
@@ -169,13 +175,17 @@ more information.
 
 \begin{urbiscriptapi}
 
-\item[IRLeft, IRCenter, IRRight] Amount of infrared received by the sensor
-  using the internal emitter. This sensors detect light reflected by objects
-  nearby in the direction of the sensor.
+\item[IRLeft] See \refSlot{IRRight}.
+\item[IRCenter] See \refSlot{IRRight}.
+\item[IRRight] Amount of infrared received by the sensor using the internal
+  emitter. This sensors detect light reflected by objects nearby in the
+  direction of the sensor.
 
-\item[lightLeft, lightCenter, lightRight] Amount of infrared received by the
-  sensor without the emitter. Detects infrared light sources such as
-  incandescent light, candles, ...
+\item[lightLeft] See \refSlot{lightRight}.
+\item[lightCenter] See \refSlot{lightRight}.
+\item[lightRight] Amount of infrared received by the sensor without the
+  emitter. Detects infrared light sources such as incandescent light,
+  candles, etc.
 
 \item[buzzerIndex]
   Play a note when written to.
@@ -201,7 +211,6 @@ at (sensor100.clapCount == 4)
 
 \item[soundVolumeMax] Holds maximum sound volume recorded so far. Write 0 to
   this slot to reset.
-
 \end{urbiscriptapi}
 
 

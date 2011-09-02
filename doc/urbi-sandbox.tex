@@ -25,8 +25,6 @@
 \maketitle
 
 \tableofcontents
-\part{First Part}
-
 \chapter{First Chapter}
 
 \section{\lstinline{while} \lstinline{forPipe}}
@@ -177,21 +175,26 @@ This is the second chapter.
 \item[count] Return the count.
 \item[launch]
   Fire \this.
+
+%% FIXME: Something horrible happens when the slot name starts with twice
+%% the same letter.  I have no idea what's going on, I need to make an small
+%% seft-contained example and ask for help.
+\item[ccwLimit]
+  Set max reachable angle. When both \refSlot{cwLimit} and
+  \refSlot{ccwLimit} equal 0, the motor is put in continuous rotation
+  mode. In this mode, writing to \refSlot{val} has no effect: the motor
+  moves at the speed given by the \refSlot{speed} slot.
+
 \item \lstinline|launch|~\\
   Fire \this.
 \end{urbiscriptapi}
 
 \let\sectionOrig\section
 \renewcommand{\section}[1]{\clearpage\sectionObject{#1}}
+\sectionOrig{Empty section}
 \input{specs/pair}
+\input{specs/tuple}
 \let\section\sectionOrig
-
-
-\part{Second Part}
-\label{sec:second}
-This is the second part.
-
-\chapter{Chapter II.1}
 
 You want to use \refSlot[Foo]{foo}, and possibly \refSlot[Bar]{foo}.
 \settocbibname{\label{sec:bib}The Bibliography}
