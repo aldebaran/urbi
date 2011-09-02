@@ -116,15 +116,16 @@ pdf_DATA =
 # sections+: clicking on the titles (sections etc.) goes to TOC.
 # next: linear crosslinks of pages
 # mouseover: \footnote, \cite etc.
-TEX4HTFLAGS = urbi-style,2,next,sections+,mouseover
-urbi-sdk-single.htmldir : TEX4HTFLAGS = urbi-style,next,sections+,mouseover
+TEX4HTFLAGS = urbi-style,2,next,sections+,mouseover,charset=utf8
+urbi-sdk-single.htmldir : TEX4HTFLAGS = urbi-style,next,sections+,mouseover,charset=utf8
 TEXI2HTMLFLAGS += --tex4ht --tex4ht-options=$(TEX4HTFLAGS) --verbose --debug
 TEX4HT_POST = $(abs_top_srcdir)/build-aux/bin/tex4ht-post
 MAKEINDEXFLAGS = -s headings.ist
 TEX_ENVIRONMENT =				\
   PATH=$$PATH:$(abspath $(share_bin_dir))	\
   MAKEINDEX="makeindex $(MAKEINDEXFLAGS)"	\
-  TEXINDY="texindy $(TEXINDYFLAGS)"
+  TEXINDY="texindy $(TEXINDYFLAGS)"		\
+  TEX4HT="tex4ht -utf8"
 
 %.htmldir: %.tex $(share_tex_dependencies) urbi-style.cfg
 	$(AM_V_GEN)rm -rf $@ $@.tmp $@.log
