@@ -19,11 +19,11 @@
 \begin{document}
 \maketitle
 \tableofcontents
-\savesections
-\raisesections
-\let\chapter\section
-\input{specs/naming-standard}
-\restoresections
+{
+  \raisesections
+  \let\chapter\section
+  \input{specs/naming-standard}
+}
 \input{document-aux/latex/notation}
 \chapterIndex
 \end{document}
