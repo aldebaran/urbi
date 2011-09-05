@@ -18,77 +18,6 @@
 \RequirePackage{config}
 \newcommand{\uobjectsDir}{\absTopSrcdir/sdk-remote/src/uobjects}
 
-\RequirePackage{grfext}
-\RemoveGraphicsExtensions{.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPEG}
-\ifx\ifHtml\undefined
-\PrependGraphicsExtensions{.pdf}
-\fi
-
-%% Whether we are compiling the whole urbisdk doc or not.
-\newboolean[false]{urbisdk}
-
-% This is not appropriate for Beamer, so not in the lst style UrbiSDK.
-\lstset{xrightmargin=5mm,xleftmargin=5mm}
-
-%% \marginNotation{Label}{Text}
-%% ----------------------------
-\newcommand{\marginNotation}[2]
-{%
-  \marginpar[{%
-    \vspace{3mm}%
-    \raggedleft%
-    \tiny \hyperref[#1]{#2}%
-  }]{%
-    \vspace{3mm}%
-    \raggedright%
-    \tiny \hyperref[#1]{#2}%
-  }%
-}
-
-\ifx\ifHtml\undefined
-  \renewcommand{\bnfPre}
-    {\marginNotation{sec:notations:bnf}{Grammar\\Excerpt}}
-  \renewcommand{\cxxPre}
-    {\marginNotation{sec:notations:cxx}{\Cxx}}
-  \renewcommand{\javaPre}
-    {\marginNotation{sec:notations:java}{\Java}}
-  \renewcommand{\shellPre}
-    {\marginNotation{sec:notations:shell}{Shell\\Session}}
-  \renewcommand{\urbiassertPre}
-    {\marginNotation{sec:notations:urbiassert}{Assertion\\Block}}
-  \renewcommand{\urbiscriptPre}
-    {\marginNotation{sec:notations:urbiassert}{\us\\Session}}
-  \renewcommand{\urbiuncheckedPre}
-    {\urbiscriptPre}
-\fi
-
-% \grammar{RANGE}
-% ---------------
-% For instance
-%
-%   \grammar{arithmetic-exp}
-%   \grammar{class-exp, lvalue-end, block-exp}
-%   \grammar{}
-%
-% Beware that the RANGE items must be in order in the file: the file is
-% *not* read several times.
-%
-% It may seem that having a rangesuffix is useless, but actually without
-% it markups such as "catch" and "catchall" both match "catch".  Luckily,
-% we can use \^^M which, in TeX parlance, means end-of-line.
-\newcommand{\grammar}[1]{%
-  \bnfPre%
-  \lstinputlisting[style=UrbiSDKEnv,
-                   backgroundcolor=\color{bnf},
-                   language=bnf,
-                   morecomment={[is]{\#:}{\^^M}},
-                   includerangemarker=false,
-                   rangeprefix={\#:},rangesuffix={\^^M},
-                   linerange={#1}]
-          {tables/urbiscript.bnf}%
-  \bnfPost%
-}
-
 % \release{Release}{Date}
 % -----------------------
 \newcommand{\release}[2]{%
@@ -101,8 +30,6 @@
     }%
   \fi%
 }
-
-\newenvironment{legend}{\begin{quote}\small}{\end{quote}}
 
 
 %%% Local Variables:
