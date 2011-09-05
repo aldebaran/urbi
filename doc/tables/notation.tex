@@ -14,35 +14,37 @@ This chapter defines the \dfn{notations} used in this document.
 \section{Words}
 
 \begin{itemize}
-\item \textkwd{keyword}\\
-  A \dfn{keyword} in some programming language.  For instance, \lstinline|watch|
-  is an \us keyword.
+\item \lstinline|code|\\
+  A \dfn{piece of code} (\us, \Java, \Cxx\ldots).
 
 \item \textcmt{comment}\\
   A \dfn{comment} in some programming language.  For instance,
   \lstinline|/* hello /* world */ ! */| is a comment in \us.
 
-\item \textstr{string}\\
-  A \dfn{string} in some programming language.  For instance,
-  \lstinline|"Hello, world!"| is a string in \us.
+\item \env{environment-variable}\\
+  An \dfn{environment variable} name, e.g., \env{PATH}.
+
+\item \file{file-name}\\
+  A \dfn{file name}.
+
+\item \textkwd{keyword}\\
+  A \dfn{keyword} in some programming language.  For instance,
+  \lstinline|watch| is an \us keyword.
 
 \item \var{meta-variable}\\
-  Depending on the context, a \dfn{variable} name (i.e., an identifier
-  in \Cxx or \us), or a \dfn{meta-variable} name.  A meta-variable
-  denotes a place where some syntactic construct may be entered.  For
-  instance, in \lstinline|while (\var{expression}) \var{statement}|,
-  \var{expression} and \var{statement} do not denote two variable
-  names, but two placeholders which can be filled with an arbitrary
-  expression, and an arbitrary statement.  For instance:
+  Depending on the context, a \dfn{variable} name (i.e., an identifier in
+  \Cxx or \us), or a \dfn{meta-variable} name.  A meta-variable denotes a
+  place where some syntactic construct may be entered.  For instance, in
+  \lstinline|while (\var{expression}) \var{statement}|, \var{expression} and
+  \var{statement} do not denote two variable names, but two placeholders
+  which can be filled with an arbitrary expression, and an arbitrary
+  statement.  For instance:
 
   \lstinline|while (!tasks.empty) { tasks.removeFront.process }|.
 
-\item \env{environment-variable}\\
-  An \dfn{environment variable} name, e.g., \env{PATH}.
-\item \lstinline|code|\\
-  A \dfn{piece of code} (\us, \Java, \Cxx\ldots).
-\item \file{file-name}\\
-  A \dfn{file name}.
+\item \textstr{string}\\
+  A \dfn{string} in some programming language.  For instance,
+  \lstinline|"Hello, world!"| is a string in \us.
 \end{itemize}
 
 \section{Frames}
@@ -141,9 +143,9 @@ $ echo toto
 toto
 \end{shell}
 
-The user entered \samp{echo toto}, and the system answered
-\samp{toto}.  \samp{\$} is the \dfn{prompt}: it starts the lines where
-the system invites the user to enter her commands.
+The user entered \samp{echo toto}, and the system answered \samp{toto}.
+\samp{\$} is the \dfn{prompt}: it starts the lines where the system invites
+the user to enter her commands.
 
 \subsection{\us Sessions}
 \label{sec:notations:us}
@@ -155,12 +157,11 @@ echo("toto");
 [00000001] *** toto
 \end{urbiscript}
 
-Contrary to shell interaction (see \autoref{sec:notations:shell}),
-there is no prompt that marks the user-entered lines (here
-\lstinline|echo("toto");|, but, on the contrary, answers from the \urbi
-server start with a label that includes a timestamp (here
-\samp{00000001}), and possibly a channel name, \samp{output} in the
-following example.
+Contrary to shell interaction (see \autoref{sec:notations:shell}), there is
+no prompt that marks the user-entered lines (here \lstinline|echo("toto");|,
+but, on the contrary, answers from the \urbi server start with a label that
+includes a timestamp (here \samp{00000001}), and possibly a channel name,
+\samp{output} in the following example.
 
 \begin{urbiscript}
 cout << "toto";
