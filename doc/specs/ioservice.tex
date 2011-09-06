@@ -1,4 +1,4 @@
-%% Copyright (C) 2010, Gostai S.A.S.
+%% Copyright (C) 2010, 2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -8,7 +8,7 @@
 
 \section{IoService}
 
-A \dfn{IoService} is used to manage the various operations of a set of
+An \dfn{IoService} is used to manage the various operations of a set of
 \refObject{Socket}.
 
 All \refObject{Socket} and \refObject{Server} are by default using the
@@ -32,24 +32,26 @@ You can then use this socket like any other.
 \begin{urbiscript}
 // Make a simple hello server.
 var serverPort = 0|
-do(Server.new)
+do (Server.new)
 {
   listen("127.0.0.1", "0");
   lobby.serverPort = port;
-  at(connection?(var s))
+  at (connection?(var s))
   {
     s.write("hello");
   }
 }|;
 // Connect to it using our socket.
 s.connect("0.0.0.0", serverPort);
-at(s.received?(var data))
+at (s.received?(var data))
   echo("received something");
 s.write("1;");
 \end{urbiscript}
 
-... except that nothing will be read from the socket unless you call one of the
-\lstinline|poll| functions of \lstinline|io|.
+\noindent
+\ldots except that nothing will be read from the socket unless you call one
+of the \refSlot{poll}/\refSlot{pollFor}/\refSlot{pollOneFor} functions of
+\lstinline|io|.
 
 \begin{urbiscript}
 sleep(200ms);
