@@ -39,7 +39,8 @@ EXTRA_DIST +=					\
   document-aux/styles/mylistings.hva		\
   document-aux/styles/mylistings.sty		\
   document-aux/styles/texi.hva			\
-  document-aux/styles/texi.sty
+  document-aux/styles/texi.sty			\
+  document-aux/styles/urbi-style.cfg
 
 
 ## -------- ##
@@ -48,10 +49,10 @@ EXTRA_DIST +=					\
 
 # Images that simply used by the CSS of the HTML generated documents.
 # So don't convert, just copy into the htmldir directories.
-CSS_IMAGES = 					\
-  img/doc-header.jpg				\
-  img/doc-menubarbg.jpg				\
-  img/doc-menubarhoverbg.jpg
+CSS_IMAGES =					\
+  $(share_dir)/figs/doc-header.jpg		\
+  $(share_dir)/figs/doc-menubarbg.jpg		\
+  $(share_dir)/figs/doc-menubarhoverbg.jpg
 
 # Images whose original is in DOT.
 DOT_IMAGES := $(call ls_files,img/*.dot)
@@ -112,10 +113,6 @@ TEXI2DVIFLAGS +=				\
 pdf_DATA =
 
 # Use tex4ht.
-# 2: split at chapter level.
-# sections+: clicking on the titles (sections etc.) goes to TOC.
-# next: linear crosslinks of pages
-# mouseover: \footnote, \cite etc.
 TEX4HTFLAGS = urbi-style,2
 urbi-sdk-single.htmldir : TEX4HTFLAGS = urbi-style
 TEXI2HTMLFLAGS += --tex4ht --tex4ht-options=$(TEX4HTFLAGS) --verbose --debug
@@ -127,7 +124,7 @@ TEX_ENVIRONMENT =				\
   TEXINDY="texindy $(TEXINDYFLAGS)"		\
   TEX4HT="tex4ht -cunihtf -utf8"
 
-%.htmldir: %.tex $(share_tex_dependencies) urbi-style.cfg
+%.htmldir: %.tex $(share_tex_dependencies) $(share_dir)/styles/urbi-style.cfg
 	$(AM_V_GEN)rm -rf $@ $@.tmp $@.log
 	$(AM_V_at)$(mkdir_p) $@.tmp || true
 	$(AM_V_at) export $(TEX_ENVIRONMENT);				\
@@ -150,10 +147,10 @@ TEX_ENVIRONMENT =				\
 	    (urbi-sdk*)							\
 	    cp $(srcdir)/img/urbi-architecture.png $@.tmp/$(*F)2x.png;;	\
 	  esac
-	$(AM_V_at)case ',$(TEX4HTFLAGS),' in			\
-	  (*,mouseover,*) cp $(share_dir)/overlib/* $@.tmp;;	\
-	esac
-	$(AM_V_at)cp $(addprefix $(srcdir)/, $(CSS_IMAGES)) $@.tmp
+##	$(AM_V_at)case ',$(TEX4HTFLAGS),' in
+##	  (*,mouseover,*) cp $(share_dir)/overlib/* $@.tmp;;
+##	esac
+	$(AM_V_at)cp $(CSS_IMAGES) $(share_dir)/overlib/* $@.tmp
 	$(AM_V_at)mv $@.tmp $@
 CLEANFILES += $(MASTERS:.tex=.htmldir.log)
 
