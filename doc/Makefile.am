@@ -55,7 +55,9 @@ CSS_IMAGES =					\
   $(share_dir)/figs/doc-menubarhoverbg.jpg
 
 # Images whose original is in DOT.
-DOT_IMAGES := $(call ls_files,img/*.dot)
+DOT_IMAGES :=							\
+  $(call ls_files,img/*.dot					\
+                  @{../modules/system/ros}/doc/img/*.dot)
 # Images whose original is in PNG.
 PNG_IMAGES :=							\
   $(call ls_files,img/*.png					\
