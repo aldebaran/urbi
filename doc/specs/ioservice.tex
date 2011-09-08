@@ -19,8 +19,8 @@ default \refObject{IoService} which is polled regularly by the system.
 Using a different \refObject{IoService} is required if you need to perform
 synchronous read operations.
 
-The \refObject{Socket} must be created by the \refObject{IoService} that will
-handle it using its \lstinline|makeSocket| function.
+The \refObject{Socket} must be created by the \refObject{IoService} that
+will handle it using its \refSlot{makeSocket} function.
 
 \begin{urbiscript}
 var io = IoService.new|;
@@ -69,7 +69,7 @@ sleep(200ms);
 
 \subsection{Construction}
 
-A \lstinline|IoService| is constructed with no argument.
+A \refObject{IoService} is constructed with no argument.
 
 \subsection{Slots}
 
