@@ -289,13 +289,13 @@ Contains information about the network identification of the robot.
 This interface is used to describe a generic motor controller.
 
 \begin{urbiscriptapi}
-\item[DGain] (Optional.) Controls the D gain of the PID controller.
+\item[DGain]{} (Optional.) Controls the D gain of the PID controller.
 
 
-\item[IGain] (Optional.) Controls the I gain of the PID controller.
+\item[IGain]{} (Optional.) Controls the I gain of the PID controller.
 
 
-\item[PGain] (Optional.) Controls the P gain of the PID controller.
+\item[PGain]{} (Optional.) Controls the P gain of the PID controller.
 
 
 \item[val] This slot is a generic pointer to a more specific slot describing
@@ -440,7 +440,7 @@ Interface for a scanning laser rangefinder, or other similar technologies.
 \item[distanceMin] Minimum measurable distance.
 
 
-\item[rate] (Optional.) Number of scans per second.
+\item[rate]{} (Optional.) Number of scans per second.
 
 
 \item[resolution] Angular resolution of the scan, in radians.
@@ -535,19 +535,19 @@ slots \lstinline{defaultXSpeed}, \lstinline{defaultYSpeed},
 \subsubsection{State}
 
 \begin{urbiscriptapi}
-\item[aborted] (Optional.) Emitted each time a function in the blocking API
-  is aborted because it was preempted by an other movement.
+\item[aborted]{} (Optional.) Emitted each time a function in the blocking
+  API is aborted because it was preempted by an other movement.
 
 
-\item[finished] (Optional.) Emitted each time a function in the blocking API
-  finished normally.
+\item[finished]{} (Optional.) Emitted each time a function in the blocking
+  API finished normally.
 
 
 \item[moving] True if the robot is currently moving for any reason, false
   otherwise.
 
 
-\item[unreachable] (Optional.) Emitted when a function in the blocking API
+\item[unreachable]{} (Optional.) Emitted when a function in the blocking API
   is aborted because the target cannot be reached.
 \end{urbiscriptapi}
 
@@ -574,15 +574,15 @@ The VideoIn interface groups every information relative to cameras or any
 image sensor.
 
 \begin{urbiscriptapi}
-\item[exposure] (Optional.) Exposure duration, expressed in seconds. 0 if
+\item[exposure]{} (Optional.) Exposure duration, expressed in seconds. 0 if
   non applicable.
 
 
-\item[format] (Optional.)  Format of the image, expressed as an integer in
-  the enum urbi::UImageFormat.  See below for more information.
+\item[format]{} (Optional.)  Format of the image, expressed as an integer in
+  the enum \lstinline{urbi::UImageFormat}.  See below for more information.
 
 
-\item[gain] (Optional.)  Camera gain amplification (expressed as a
+\item[gain]{} (Optional.)  Camera gain amplification (expressed as a
   coefficient between 0 and infinity). 1 if non applicable.
 
 
@@ -590,22 +590,22 @@ image sensor.
   pixels.
 
 
-\item[quality] (Optional.)  If the image is in the jpeg format, this slot
+\item[quality]{} (Optional.)  If the image is in the jpeg format, this slot
   sets the compression quality, from 0 (best compression, worst quality) to
   100 (best quality, bigger image).
 
 
-\item[resolution] (Optional.)  Image resolution, expressed as an integer. 0
-  corresponds to the maximal resolution of the camera. Successive values
-  correspond to all the supported image sizes in decreasing order.  Once
-  modified, the effective resolution in X/Y can be checked with the width
-  and height slots.
+\item[resolution]{} (Optional.)  Image resolution, expressed as an
+  integer. 0 corresponds to the maximal resolution of the camera. Successive
+  values correspond to all the supported image sizes in decreasing order.
+  Once modified, the effective resolution in X/Y can be checked with the
+  width and height slots.
 
 
 \item[val] Image represented as a \refObject{Binary} value.
 
 
-\item[wb] (Optional.)  White balance (expressed with an integer value
+\item[wb]{} (Optional.)  White balance (expressed with an integer value
   depending on the camera documentation). 0 if non applicable.
 
 
@@ -657,7 +657,7 @@ The AudioOut interface groups every information relative to speakers.
   played if it is not over yet, but this is not a requirement.
 
 
-\item[volume] (Optional.) Volume of the play back, in decibels.
+\item[volume]{} (Optional.) Volume of the play back, in decibels.
 \end{urbiscriptapi}
 
 
@@ -671,7 +671,7 @@ The AudioIn interface groups every information relative to microphones.
   \textit{ms}.
 
 
-\item[gain] (Optional.) Microphone gain amplification (expressed between 0
+\item[gain]{} (Optional.) Microphone gain amplification (expressed between 0
   and 1).
 
 
@@ -692,11 +692,11 @@ that fits some criteria and define a \dfn{blob} accordingly. Here are
 the typical slots expected:
 
 \begin{urbiscriptapi}
-\item[elongation] (Optional.)  Ratio between the main and the second
+\item[elongation]{} (Optional.)  Ratio between the main and the second
   diameter of the blob enveloping ellipse.
 
 
-\item[orientation] (Optional.)  Angle of the main ellipsoid axis of the blob
+\item[orientation]{} (Optional.)  Angle of the main ellipsoid axis of the blob
   (0 = horizontal), expressed in radians.
 
 
@@ -724,17 +724,17 @@ implementations should use the \lstinline{speaker} component (or alias) as
 their default sound output.
 
 \begin{urbiscriptapi}
-\item[age] (Optional.) Age of the speaker, if applicable.
+\item[age]{} (Optional.) Age of the speaker, if applicable.
 
 
-\item[gender] (Optional.) Gender of the speaker (0:male/1:female).
+\item[gender]{} (Optional.) Gender of the speaker (0:male/1:female).
 
 
-\item[lang] (Optional.) The language used, in international notation ISO 639
+\item[lang]{} (Optional.) The language used, in international notation ISO 639
   (fr, en, it\ldots).
 
 
-\item[pitch] (Optional.) Voice pitch.  A positive number, with 1 standing
+\item[pitch]{} (Optional.) Voice pitch.  A positive number, with 1 standing
   the regular pitch.
 
 
@@ -745,11 +745,11 @@ their default sound output.
   markups (see specific Gostai documentation) to generate \urbi events.
 
 
-\item[speed] (Optional.) How fast the voice should go.  A positive number,
+\item[speed]{} (Optional.) How fast the voice should go.  A positive number,
   with 1 standing for ``regular speed''.
 
 
-\item[voice] (Optional.) Most TTS engines propose several voices, this
+\item[voice]{} (Optional.) Most TTS engines propose several voices, this
   attribute allows picking one. It's a string identifier specific to the TTS
   developer.
 
@@ -770,7 +770,7 @@ should use the \lstinline{micro} component as their default sound input.
   what the speech engine has recognized (can be a word or a sentence).
 
 
-\item[lang] (Optional.)  The language used, in international notation (fr,
+\item[lang]{} (Optional.)  The language used, in international notation (fr,
   en, it…): ISO 639.
 \end{urbiscriptapi}
 
