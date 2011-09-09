@@ -257,10 +257,103 @@ Each interface defines slots, which can be functions, events or plain data.
 Some of those slots are optional: they are grayed and put around square
 brackets in the following table.
 
+
+\interface{AudioIn}
+
+The AudioIn interface groups every information relative to microphones.
+
+\begin{urbiscriptapi}
+\item[duration] Amount of sound in the val attribute, expressed in
+  \textit{ms}.
+
+
+\item[gain]{} (Optional.) Microphone gain amplification (expressed between 0
+  and 1).
+
+
+\item[val] Binary value corresponding to the sound heard, expressed in the
+  current unit (wav, mp3...). The unit can be changed like any other regular
+  unit in Urbi.
+
+  The content is the sound heard by the microphone since the last update
+  event.
+\end{urbiscriptapi}
+
+
+\interface{AudioOut}
+The AudioOut interface groups every information relative to speakers.
+
+\begin{urbiscriptapi}
+\item[playing] This is a Boolean value which is true when there is a sound
+  currently playing (the buffer is not empty)%
+
+
+\item[remain] The amount of time remaining to play in the speaker sound
+  buffer (expressed in \textit{ms} as a default unit).
+
+
+\item[val] The speaker value, expressed as a binary, in the format given by
+  the binary header during the assignment.
+
+  Speakers are write-only devices, so there is not much sense in reading the
+  content of this attribute. At best, it returns the remaining sound to be
+  played if it is not over yet, but this is not a requirement.
+
+
+\item[volume]{} (Optional.) Volume of the play back, in decibels.
+\end{urbiscriptapi}
+
+
+
+\interface{Battery}
+Power source of any kind.
+\begin{urbiscriptapi}
+\item[capacity] Storage capacity in Amp.Hour.
+\item[current] Current current consumption in Amp.
+\item[remain] Estimation of the remaining energy between 0 and 1.
+\item[voltage] Current voltage in Volt.
+\end{urbiscriptapi}
+
+
+\interface{BlobDetector}
+
+Ball detectors, marker detectors and various feature-based detectors
+should all share a similar interface. They extract a part of the image
+that fits some criteria and define a \dfn{blob} accordingly. Here are
+the typical slots expected:
+
+\begin{urbiscriptapi}
+\item[elongation]{} (Optional.)  Ratio between the main and the second
+  diameter of the blob enveloping ellipse.
+
+
+\item[orientation]{} (Optional.)  Angle of the main ellipsoid axis of the blob
+  (0 = horizontal), expressed in radians.
+
+
+\item[ratio] The size of the blob expressed as a normalized image size: 1 =
+  full image, 0 = nothing.
+
+
+\item[threshold] The minimum value of ratio to decide that the blob is
+  visible.
+
+
+\item[visible] A Boolean expressing whether there is a blob in the image or
+  not (see \refSlot{threshold}).
+
+
+\item[x] The x position of the center of the blob in the image
+
+
+\item[y] The y position of the center of the blob in the image
+\end{urbiscriptapi}
+
+
+
+
 \interface{Identity}
-
-Contains information about the robot identity.
-
+Information about the robot identity.
 \begin{urbiscriptapi}
 \item[kind]%
   This describes the robot category among: humanoid, four-legged, wheeled,
@@ -280,13 +373,127 @@ Contains information about the robot identity.
 \end{urbiscriptapi}
 
 
-\interface{Network}
+\interface{Led}
 
-Contains information about the network identification of the robot.
+Simple uni-color Led.
 
 \begin{urbiscriptapi}
-\item[IP] IP address of the robot.
+\item[val] Led intensity between 0 and 1.
 \end{urbiscriptapi}
+
+
+\subinterface{Led}{RGBLed}
+Tri-color led.
+
+\begin{urbiscriptapi}
+\item[b] Intensity of the blue component, between 0 and 1.
+
+
+\item[g] Intensity of the green component, between 0 and 1.
+
+
+\item[r] Intensity of the red component, between 0 and 1.
+\end{urbiscriptapi}
+
+
+
+
+\interface{Mobile}
+
+Mobile robots all share this generic interface to provide high order
+level motion control capabilities.
+
+\subsubsection{Blocking API}
+
+The following set of functions will block until associated movement is
+finished.  If a function of this set is called while an other is already
+running, the first call will be canceled: the movement will be interrupted
+and the call will return.
+
+Many of the functions below take a position argument. This position is
+expressed as a subset of the six values x, y, z, rho, theta, phi.
+
+\begin{urbiscriptapi}
+\item[go](<x>) Move approximately \var{x} meters forward (along the X axis)
+  if \var{x} is positive, backward otherwise.
+
+
+\item[goTo](<position>) Try to reach the given coordinates in the robot
+  frame of reference.
+
+
+\item[goToAbsolute](<position>) Try to reach given coordinates in an
+  absolute frame of reference. This frame of reference is maintained using
+  the robot odometry, or any other localization system available.
+
+
+\item[goToChargingStation] Try to reach the charging station. If the feature
+  is not available, return immediately.
+
+
+\item[position] The current robot position in the absolute frame of
+  reference.
+
+
+\item[setAbsolutePosition](<position>) Force absolute position to the given
+  value.
+
+
+\item[stop] Stop current movement.
+
+
+\item[turn](<theta>) Turn left (in the direction going from the positive X
+  axis to the positive Y axis) approximately \var{theta} radians.
+  \var{theta} can be a positive or negative value.
+\end{urbiscriptapi}
+
+\subsubsection{Speed-control API}
+
+In addition to the previous functions, one can directly set the target
+movement speed in all linear/angular directions using the 6 scalar variables
+\lstinline{xSpeed}, \lstinline{ySpeed}, \lstinline{zSpeed},
+\lstinline{yawSpeed}, \lstinline{pitchSpeed}, \lstinline{rollSpeed}, or the
+variable \lstinline{speed} which contains a list.  Writing to one of those
+slots will abort any function in the blocking API.
+
+Implementations should provide default reasonable values for speed in the
+slots \lstinline{defaultXSpeed}, \lstinline{defaultYSpeed},
+\lstinline{defaultZSpeed}, \lstinline{defaultYawSpeed},
+\lstinline{defaultPitchSpeed} and \lstinline{defaultRollSpeed}.
+
+\subsubsection{Safety}
+
+\begin{urbiscriptapi}
+\item[watchdogInterval] If non-zero, duration after which the robot will
+  stop if no order was received. Once activated, one has to write to
+  \refSlot{watchdog}, to one of the speed variables or call one of the
+  blocking API functions every \refSlot{watchdogInterval} at most, or the
+  \refSlot{stop} function will be called.
+
+\item[watchdog] Writing any value to \refSlot{watchdog} will reset the
+  watchdog timer.
+\end{urbiscriptapi}
+
+\subsubsection{State}
+
+\begin{urbiscriptapi}
+\item[aborted]{} (Optional.) Emitted each time a function in the blocking
+  API is aborted because it was preempted by an other movement.
+
+
+\item[finished]{} (Optional.) Emitted each time a function in the blocking
+  API finished normally.
+
+
+\item[moving] True if the robot is currently moving for any reason, false
+  otherwise.
+
+
+\item[unreachable]{} (Optional.) Emitted when a function in the blocking API
+  is aborted because the target cannot be reached.
+\end{urbiscriptapi}
+
+
 
 \interface{Motor}
 
@@ -360,6 +567,14 @@ controlled by its rotation speed.
 
 \begin{urbiscriptapi}
 \item[speed] Rotation speed in radians per second.
+\end{urbiscriptapi}
+
+\interface{Network}
+
+Contains information about the network identification of the robot.
+
+\begin{urbiscriptapi}
+\item[IP] IP address of the robot.
 \end{urbiscriptapi}
 
 \interface{Sensor}
@@ -458,100 +673,61 @@ induction,...).
 \end{urbiscriptapi}
 
 
-\interface{Mobile}
+\interface{SpeechRecognizer}
 
-Mobile robots all share this generic interface to provide high order
-level motion control capabilities.
-
-\subsubsection{Blocking API}
-
-The following set of functions will block until associated movement is
-finished.  If a function of this set is called while an other is already
-running, the first call will be canceled: the movement will be interrupted
-and the call will return.
-
-Many of the functions below take a position argument. This position is
-expressed as a subset of the six values x, y, z, rho, theta, phi.
+Speech recognition allows to transform a stream of sound into a text
+using various speech recognition algorithms. Implementations
+should use the \lstinline{micro} component as their default sound input.
 
 \begin{urbiscriptapi}
-\item[go](<x>) Move approximately \var{x} meters forward (along the X axis)
-  if \var{x} is positive, backward otherwise.
+\item[hear](<s>) This event has one parameter which is the string describing
+  what the speech engine has recognized (can be a word or a sentence).
 
 
-\item[goTo](<position>) Try to reach the given coordinates in the robot
-  frame of reference.
-
-
-\item[goToAbsolute](<position>) Try to reach given coordinates in an
-  absolute frame of reference. This frame of reference is maintained using
-  the robot odometry, or any other localization system available.
-
-
-\item[goToChargingStation] Try to reach the charging station. If the feature
-  is not available, return immediately.
-
-
-\item[position] The current robot position in the absolute frame of
-  reference.
-
-
-\item[setAbsolutePosition](<position>) Force absolute position to the given
-  value.
-
-
-\item[stop] Stop current movement.
-
-
-\item[turn](<theta>) Turn left (in the direction going from the positive X
-  axis to the positive Y axis) approximately \var{theta} radians.
-  \var{theta} can be a positive or negative value.
+\item[lang]{} (Optional.)  The language used, in international notation (fr,
+  en, it…): ISO 639.
 \end{urbiscriptapi}
 
-\subsubsection{Speed-control API}
-
-In addition to the previous functions, one can directly set the target
-movement speed in all linear/angular directions using the 6 scalar variables
-\lstinline{xSpeed}, \lstinline{ySpeed}, \lstinline{zSpeed},
-\lstinline{yawSpeed}, \lstinline{pitchSpeed}, \lstinline{rollSpeed}, or the
-variable \lstinline{speed} which contains a list.  Writing to one of those
-slots will abort any function in the blocking API.
-
-Implementations should provide default reasonable values for speed in the
-slots \lstinline{defaultXSpeed}, \lstinline{defaultYSpeed},
-\lstinline{defaultZSpeed}, \lstinline{defaultYawSpeed},
-\lstinline{defaultPitchSpeed} and \lstinline{defaultRollSpeed}.
-
-\subsubsection{Safety}
+\interface{TextToSpeech}
+Text to speech allows to read text using a speech synthesizer. Default
+implementations should use the \lstinline{speaker} component (or alias) as
+their default sound output.
 
 \begin{urbiscriptapi}
-\item[watchdogInterval] If non-zero, duration after which the robot will
-  stop if no order was received. Once activated, one has to write to
-  \refSlot{watchdog}, to one of the speed variables or call one of the
-  blocking API functions every \refSlot{watchdogInterval} at most, or the
-  \refSlot{stop} function will be called.
+\item[age]{} (Optional.) Age of the speaker, if applicable.
 
-\item[watchdog] Writing any value to \refSlot{watchdog} will reset the
-  watchdog timer.
+
+\item[gender]{} (Optional.) Gender of the speaker (0:male/1:female).
+
+
+\item[lang]{} (Optional.) The language used, in international notation ISO 639
+  (fr, en, it\ldots).
+
+
+\item[pitch]{} (Optional.) Voice pitch.  A positive number, with 1 standing
+  the regular pitch.
+
+
+\item[say](<s>) Speak the sentence given in parameter \var{s}.
+
+
+\item[script](<s>) (Optional.) Speak the text \var{s} augmented by script
+  markups (see specific Gostai documentation) to generate \urbi events.
+
+
+\item[speed]{} (Optional.) How fast the voice should go.  A positive number,
+  with 1 standing for ``regular speed''.
+
+
+\item[voice]{} (Optional.) Most TTS engines propose several voices, this
+  attribute allows picking one. It's a string identifier specific to the TTS
+  developer.
+
+
+\item[voicexml](<s>) (Optional.) Speak the text \var{s} expressed as a
+  VoiceXML string.
 \end{urbiscriptapi}
 
-\subsubsection{State}
-
-\begin{urbiscriptapi}
-\item[aborted]{} (Optional.) Emitted each time a function in the blocking
-  API is aborted because it was preempted by an other movement.
-
-
-\item[finished]{} (Optional.) Emitted each time a function in the blocking
-  API finished normally.
-
-
-\item[moving] True if the robot is currently moving for any reason, false
-  otherwise.
-
-
-\item[unreachable]{} (Optional.) Emitted when a function in the blocking API
-  is aborted because the target cannot be reached.
-\end{urbiscriptapi}
 
 \interface{Tracker}
 
@@ -639,182 +815,6 @@ if (!robot.body.head.camera.hasSlot("jpeg"))
 }
 \end{urbiunchecked}
 
-\interface{AudioOut}
-The AudioOut interface groups every information relative to speakers.
-
-\begin{urbiscriptapi}
-\item[playing] This is a Boolean value which is true when there is a sound
-  currently playing (the buffer is not empty)%
-
-
-\item[remain] The amount of time remaining to play in the speaker sound
-  buffer (expressed in \textit{ms} as a default unit).
-
-
-\item[val] The speaker value, expressed as a binary, in the format given by
-  the binary header during the assignment.
-
-  Speakers are write-only devices, so there is not much sense in reading the
-  content of this attribute. At best, it returns the remaining sound to be
-  played if it is not over yet, but this is not a requirement.
-
-
-\item[volume]{} (Optional.) Volume of the play back, in decibels.
-\end{urbiscriptapi}
-
-
-
-\interface{AudioIn}
-
-The AudioIn interface groups every information relative to microphones.
-
-\begin{urbiscriptapi}
-\item[duration] Amount of sound in the val attribute, expressed in
-  \textit{ms}.
-
-
-\item[gain]{} (Optional.) Microphone gain amplification (expressed between 0
-  and 1).
-
-
-\item[val] Binary value corresponding to the sound heard, expressed in the
-  current unit (wav, mp3...). The unit can be changed like any other regular
-  unit in Urbi.
-
-  The content is the sound heard by the microphone since the last update
-  event.
-\end{urbiscriptapi}
-
-
-\interface{BlobDetector}
-
-Ball detectors, marker detectors and various feature-based detectors
-should all share a similar interface. They extract a part of the image
-that fits some criteria and define a \dfn{blob} accordingly. Here are
-the typical slots expected:
-
-\begin{urbiscriptapi}
-\item[elongation]{} (Optional.)  Ratio between the main and the second
-  diameter of the blob enveloping ellipse.
-
-
-\item[orientation]{} (Optional.)  Angle of the main ellipsoid axis of the blob
-  (0 = horizontal), expressed in radians.
-
-
-\item[ratio] The size of the blob expressed as a normalized image size: 1 =
-  full image, 0 = nothing.
-
-
-\item[threshold] The minimum value of ratio to decide that the blob is
-  visible.
-
-
-\item[visible] A Boolean expressing whether there is a blob in the image or
-  not (see \refSlot{threshold}).
-
-
-\item[x] The x position of the center of the blob in the image
-
-
-\item[y] The y position of the center of the blob in the image
-\end{urbiscriptapi}
-
-\interface{TextToSpeech}
-Text to speech allows to read text using a speech synthesizer. Default
-implementations should use the \lstinline{speaker} component (or alias) as
-their default sound output.
-
-\begin{urbiscriptapi}
-\item[age]{} (Optional.) Age of the speaker, if applicable.
-
-
-\item[gender]{} (Optional.) Gender of the speaker (0:male/1:female).
-
-
-\item[lang]{} (Optional.) The language used, in international notation ISO 639
-  (fr, en, it\ldots).
-
-
-\item[pitch]{} (Optional.) Voice pitch.  A positive number, with 1 standing
-  the regular pitch.
-
-
-\item[say](<s>) Speak the sentence given in parameter \var{s}.
-
-
-\item[script](<s>) (Optional.) Speak the text \var{s} augmented by script
-  markups (see specific Gostai documentation) to generate \urbi events.
-
-
-\item[speed]{} (Optional.) How fast the voice should go.  A positive number,
-  with 1 standing for ``regular speed''.
-
-
-\item[voice]{} (Optional.) Most TTS engines propose several voices, this
-  attribute allows picking one. It's a string identifier specific to the TTS
-  developer.
-
-
-\item[voicexml](<s>) (Optional.) Speak the text \var{s} expressed as a
-  VoiceXML string.
-\end{urbiscriptapi}
-
-
-\interface{SpeechRecognizer}
-
-Speech recognition allows to transform a stream of sound into a text
-using various speech recognition algorithms. Implementations
-should use the \lstinline{micro} component as their default sound input.
-
-\begin{urbiscriptapi}
-\item[hear](<s>) This event has one parameter which is the string describing
-  what the speech engine has recognized (can be a word or a sentence).
-
-
-\item[lang]{} (Optional.)  The language used, in international notation (fr,
-  en, it…): ISO 639.
-\end{urbiscriptapi}
-
-\interface{Led}
-
-Simple uni-color Led.
-
-\begin{urbiscriptapi}
-\item[val] Led intensity between 0 and 1.
-\end{urbiscriptapi}
-
-
-\subinterface{Led}{RGBLed}
-Tri-color led.
-
-\begin{urbiscriptapi}
-\item[b] Intensity of the blue component, between 0 and 1.
-
-
-\item[g] Intensity of the green component, between 0 and 1.
-
-
-\item[r] Intensity of the red component, between 0 and 1.
-\end{urbiscriptapi}
-
-
-\interface{Battery}
-
-Power source of any kind.
-
-\begin{urbiscriptapi}
-\item[capacity] Storage capacity in Amp.Hour.
-
-
-\item[current] Current current consumption in Amp.
-
-
-\item[remain] Estimation of the remaining energy between 0 and 1.
-
-
-\item[voltage] Current voltage in Volt.
-\end{urbiscriptapi}
 
 
 \section{Standard Components}
