@@ -9,16 +9,20 @@
 \newcommand{\refFacet}[2][\empty]%
   {\refObject[#1]{Interface.#2}}
 
-%% \interface [SuperInterface] {InterfaceName}
-%% -------------------------------------------
-\newcommand{\interface}[2][]{%
-  \ifthenelse{\equal{#1}{}}{%
-    \subsection{\lstindex{#2}}%
-  }{%
-    \subsection[\lstinline{#2} (subclass of \lstinline{#1})]%
-               {\lstindex{#2} (subclass of \refFacet{#1})}%
-  }%
-  \labelObject{Interface.#2}%
+%% \interface {InterfaceName}
+%% --------------------------
+\newcommand{\interface}[1]{%
+  \subsection[#1]{\labelObject{Interface.#1}\lstindex{#1}}%
+  \def\currentObject{Interface.#1}%
+  %
+}
+
+%% \subinterface {SuperInterface} {InterfaceName}
+%% ----------------------------------------------
+\newcommand{\subinterface}[2]{%
+  \subsubsection[#2]{\labelObject{Interface.#2}\lstindex{#2}}%
+  \def\currentObject{Interface.#2}%
+  Subclass of \refFacet{#1}.%
 }
 
 \newcommand{\gsrapi}{Gostai Standard Robotics API\xspace}
@@ -305,9 +309,8 @@ This interface is used to describe a generic motor controller.
   described in a subclass of \lstinline{Motor}.
 \end{urbiscriptapi}
 
-\interface[Motor]{LinearMotor}
 
-
+\subinterface{Motor}{LinearMotor}
 This interface is used to describe a linear motor controller.
 
 A wheel can fall in this category, if the reported position is the distance
@@ -322,8 +325,8 @@ traveled by a point at the surface of the wheel.
   \lstinline{val} slot.
 \end{urbiscriptapi}
 
-\interface[Motor]{LinearSpeedMotor}
 
+\subinterface{Motor}{LinearSpeedMotor}
 Motor similar to \refFacet{LinearMotor}, but controlled by its translation
 speed.
 
@@ -333,9 +336,7 @@ speed.
 \end{urbiscriptapi}
 
 
-\interface[Motor]{RotationalMotor}
-
-
+\subinterface{Motor}{RotationalMotor}
 This interface is used to describe a position-controlled rotational motor
 controller.
 
@@ -352,8 +353,8 @@ controller.
   turns.
 \end{urbiscriptapi}
 
-\interface[Motor]{RotationalSpeedMotor}
 
+\subinterface{Motor}{RotationalSpeedMotor}
 Interface describing a motor similar to \lstinline{RotationalMotor}
 controlled by its rotation speed.
 
@@ -374,8 +375,16 @@ This interface is used to describe a generic sensor.
 \end{urbiscriptapi}
 
 
-\interface[Sensor]{DistanceSensor}
+\subinterface{Sensor}{AccelerationSensor}
+This interface is used to describe an accelerometer.
 
+\begin{urbiscriptapi}
+\item[acceleration] Acceleration expressed in $m/s^2$.  Pointed to by the
+  \lstinline{val} slot.
+\end{urbiscriptapi}
+
+
+\subinterface{Sensor}{DistanceSensor}
 This interface is used to describe a distance sensor (infrared, laser,
 ultrasonic...).
 
@@ -385,28 +394,7 @@ ultrasonic...).
 \end{urbiscriptapi}
 
 
-\interface[Sensor]{TouchSensor}
-
-This interface is used to describe a touch pressure sensor (contact,
-induction,...).
-
-\begin{urbiscriptapi}
-\item[pressure] Intensity of the pressure put on the touch sensor. Can be
-  0/1 for simple buttons or expressed in Pascal units. Pointed to by the
-  \lstinline{val} slot.
-\end{urbiscriptapi}
-
-
-\interface[Sensor]{AccelerationSensor}
-
-This interface is used to describe an accelerometer.
-
-\begin{urbiscriptapi}
-\item[acceleration] Acceleration expressed in $m/s^2$.  Pointed to by the
-  \lstinline{val} slot.
-\end{urbiscriptapi}
-
-\interface[Sensor]{GyroSensor}
+\subinterface{Sensor}{GyroSensor}
 This interface is used to describe an gyrometer.
 
 \begin{urbiscriptapi}
@@ -414,15 +402,8 @@ This interface is used to describe an gyrometer.
   \lstinline{val} slot.
 \end{urbiscriptapi}
 
-\interface[Sensor]{TemperatureSensor}
-This interface is used to describe a temperature sensor.
 
-\begin{urbiscriptapi}
-\item[temperature] Measured temperature in Celsius degrees.  Pointed to by
-  the \lstinline{val} slot.
-\end{urbiscriptapi}
-
-\interface[Sensor]{Laser}
+\subinterface{Sensor}{Laser}
 Interface for a scanning laser rangefinder, or other similar technologies.
 
 \begin{urbiscriptapi}
@@ -455,6 +436,26 @@ can only accept a few possible values. In that case it is up to the implementer
 to select the closest possible value to what the user entered. It is the
 responsibility of the user to read the parameter after setting it to check
 what value will actually be used by the implementation.
+
+
+\subinterface{Sensor}{TemperatureSensor}
+This interface is used to describe a temperature sensor.
+
+\begin{urbiscriptapi}
+\item[temperature] Measured temperature in Celsius degrees.  Pointed to by
+  the \lstinline{val} slot.
+\end{urbiscriptapi}
+
+
+\subinterface{Sensor}{TouchSensor}
+This interface is used to describe a touch pressure sensor (contact,
+induction,...).
+
+\begin{urbiscriptapi}
+\item[pressure] Intensity of the pressure put on the touch sensor. Can be
+  0/1 for simple buttons or expressed in Pascal units. Pointed to by the
+  \lstinline{val} slot.
+\end{urbiscriptapi}
 
 
 \interface{Mobile}
@@ -784,8 +785,7 @@ Simple uni-color Led.
 \end{urbiscriptapi}
 
 
-\interface[Led]{RGBLed}
-
+\subinterface{Led}{RGBLed}
 Tri-color led.
 
 \begin{urbiscriptapi}
@@ -797,6 +797,7 @@ Tri-color led.
 
 \item[r] Intensity of the red component, between 0 and 1.
 \end{urbiscriptapi}
+
 
 \interface{Battery}
 
