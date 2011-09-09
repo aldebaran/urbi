@@ -6,7 +6,7 @@
 %%
 %% See the LICENSE file for more information.
 
-\newcommand{\refFacet}[2][\empty]%
+\newcommand{\refInterface}[2][\empty]%
   {\refObject[#1]{Interface.#2}}
 
 %% \interface {InterfaceName}
@@ -22,7 +22,7 @@
 \newcommand{\subinterface}[2]{%
   \subsubsection[#2]{\labelObject{Interface.#2}\lstindex{#2}}%
   \def\currentObject{Interface.#2}%
-  Subclass of \refFacet{#1}.%
+  Subclass of \refInterface{#1}.%
 }
 
 \newcommand{\gsrapi}{Gostai Standard Robotics API\xspace}
@@ -237,14 +237,14 @@ gyro[x], gyro[y], gyro[z];                    // typical gyro sensor
 \section{Interface}
 \label{sec:interface}
 
-An ``interface'' describes some aspects of a type of device, by specifying
+An \dfn{interface} describes some aspects of a type of device, by specifying
 the slots and methods that implementations must provide. Each child node of
 the component hierarchy should implement at least one interface.
 
 For example, for a joint, we can have a ``Swivel'' interface, used to define
-patella joints. For the robot body itself, we have a ``Mobile'' interface
-describing mobile robots, which includes some standard way of requesting a
-move forward, a turn, etc.
+patella joints. For the robot body itself, we have a \refInterface{Mobile}
+interface describing mobile robots, which includes some standard way of
+requesting a move forward, a turn, etc.
 
 In short, interfaces are standard Urbi objects that components can inherit
 from to declare that they have some functionalities.
@@ -254,8 +254,7 @@ device in the component hierarchy which falls within the category of an
 interface should implement it.
 
 Each interface defines slots, which can be functions, events or plain data.
-Some of those slots are optional: they are grayed and put around square
-brackets in the following table.
+Some of those slots are optional.
 
 
 \interface{AudioIn}
@@ -272,7 +271,7 @@ The AudioIn interface groups every information relative to microphones.
 
 
 \item[val] Binary value corresponding to the sound heard, expressed in the
-  current unit (wav, mp3...). The unit can be changed like any other regular
+  current unit (wav, mp3\ldots). The unit can be changed like any other regular
   unit in Urbi.
 
   The content is the sound heard by the microphone since the last update
@@ -534,7 +533,7 @@ traveled by a point at the surface of the wheel.
 
 
 \subinterface{Motor}{LinearSpeedMotor}
-Motor similar to \refFacet{LinearMotor}, but controlled by its translation
+Motor similar to \refInterface{LinearMotor}, but controlled by its translation
 speed.
 
 \begin{urbiscriptapi}
@@ -586,7 +585,7 @@ This interface is used to describe a generic sensor.
   the sensor value, like \lstinline{distance} or \lstinline{temperature},
   depending on the type of sensor. It is mandatory in the Urbi Ready
   standard as a universal proxy to read a sensor. The more specific slot is
-  described in a subclass of \refFacet{Sensor}.
+  described in a subclass of \refInterface{Sensor}.
 \end{urbiscriptapi}
 
 
@@ -601,7 +600,7 @@ This interface is used to describe an accelerometer.
 
 \subinterface{Sensor}{DistanceSensor}
 This interface is used to describe a distance sensor (infrared, laser,
-ultrasonic...).
+ultrasonic\ldots).
 
 \begin{urbiscriptapi}
 \item[distance] Measured distance expressed in meters.  Pointed to by the
@@ -662,9 +661,9 @@ This interface is used to describe a temperature sensor.
 \end{urbiscriptapi}
 
 
-\subinterface{Sensor}{TouchSensor}
+\subinterface{Sensor}{TouchSensor}%
 This interface is used to describe a touch pressure sensor (contact,
-induction,...).
+induction, etc.).
 
 \begin{urbiscriptapi}
 \item[pressure] Intensity of the pressure put on the touch sensor. Can be
