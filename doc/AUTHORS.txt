@@ -1,5 +1,5 @@
 Authors of Urbi SDK:
- - Jean-Christophe Baillie (original conceptor)
+ - Jean-Christophe Baillie (original designer)
 
 Urbi 2 and subsequent versions:
  - Akim Demaille

@@ -1,6 +1,7 @@
-personal_ws-1.1 en 1483 utf-8
+personal_ws-1.1 en 1504 utf-8
 aaa
 abc
+abcABC
 abcd
 abcdef
 accel
@@ -193,6 +194,7 @@ CardinalDirection
 cb
 ccache
 ccc
+cccc
 ccwLimit
 cd
 ceil
@@ -335,6 +337,7 @@ doin
 doubleValue
 doxygen
 DUMPBIN
+dumpbin
 dumpState
 durations
 dx
@@ -378,6 +381,7 @@ ev
 eval
 evalArgAt
 evalArgs
+everyPipe
 exe
 executables
 exn
@@ -419,6 +423,7 @@ foooobar
 fooooobar
 footTouchL
 footTouchR
+forc
 ForcedCategory
 foreach
 formatDetail
@@ -426,6 +431,7 @@ FormatInfo
 formatter
 Formatters
 forn
+forPipe
 fortyTwo
 forwardCoeff
 forwardSpeed
@@ -578,31 +584,29 @@ IRCenter
 IRLeft
 IRRight
 isA
-isalnum
-isalpha
-iscntrl
+isAlnum
+isAlpha
+isCntrl
 isConnected
 isdef
 isDigit
-isdigit
 isDir
-isgraph
+isGraph
 isInf
 isLower
-islower
 isNan
 isNil
 ispell
+isPrint
 isProto
-ispunct
+isPunct
 isReg
-isspace
+isSpace
 isUpper
-isupper
 isVoid
 isvoid
 isWindows
-isxdigit
+isXdigit
 iterable
 javac
 javalibrarypath
@@ -697,6 +701,7 @@ logService
 logTopic
 lookup
 loopn
+loopPipe
 lport
 LSB
 lshift
@@ -1230,6 +1235,7 @@ timesTen
 tmp
 toAscii
 toLower
+tooLong
 topLevel
 toplevel
 totalCalls
@@ -1425,6 +1431,7 @@ wheelDistance
 wheelL
 wheelR
 wheelRadius
+whilePipe
 WiFi
 wildcards
 WIPO

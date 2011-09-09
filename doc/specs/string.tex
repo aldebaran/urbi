@@ -285,18 +285,20 @@ String.fromAscii(0xFF) == "\xff";
 \end{urbiassert}
 
 
-\item[isAlnum] Whether all the characters of \this are digits or/and characters (see
-  \autoref{tab:string:ischar}).
+\item[isAlnum] Whether all the characters of \this are digits or/and
+  characters (see \autoref{tab:string:ischar}).
   \begin{table}[tp]
-    \newcommand{\is}[1]{\begin{sideways}is#1\end{sideways}}
+    %% Not factoring the common "is" to avoid adding too many words to our
+    %% dictionary (e.g., adding Cntrl in addition to isCntrl).
+    \newcommand{\is}[1]{\begin{sideways}#1\end{sideways}}
     \centering
     \begin{tabular}{|l||l||c|c|c|c|c|c|c|c|c|c|c|}
       \hline
       &&&&&&&&&&&&\\
       ASCII values & Characters
-      & \is{Cntrl} & \is{Space} & \is{Upper} & \is{Lower} & \is{Alpha}
-      & \is{Digit} & \is{Xdigit} & \is{Alnum} & \is{Punct} & \is{Graph}
-      & \is{Print}
+      & \is{isCntrl} & \is{isSpace} & \is{isUpper} & \is{isLower}
+      & \is{isAlpha} & \is{isDigit} & \is{isXdigit} & \is{isAlnum}
+      & \is{isPunct} & \is{isGraph} & \is{isPrint}
       \\ \hline \hline
       0x00 .. 0x08 & & \textbullet & & & & & & & & & &\\ \hline
       0x09 .. 0x0D & \textbackslash{}t, \textbackslash{}f,
@@ -340,8 +342,8 @@ String.fromAscii(0xFF) == "\xff";
 \end{urbiassert}
 
 
-\item[isCntrl] Whether all the characters of \this are control characters (non-printable) (see
-  \autoref{tab:string:ischar}).
+\item[isCntrl] Whether all the characters of \this are control characters
+  (non-printable) (see \autoref{tab:string:ischar}).
 \begin{urbiassert}
            "".isCntrl;
      "\t\n\f".isCntrl;
@@ -358,8 +360,8 @@ String.fromAscii(0xFF) == "\xff";
 \end{urbiassert}
 
 
-\item[isGraph] Whether all the characters of \this are printable characters (not a space) (see
-  \autoref{tab:string:ischar}).
+\item[isGraph] Whether all the characters of \this are printable characters
+  (not a space) (see \autoref{tab:string:ischar}).
 \begin{urbiassert}
           "".isGraph;
     "abc123".isGraph;
@@ -377,8 +379,8 @@ String.fromAscii(0xFF) == "\xff";
 \end{urbiassert}
 
 
-\item[isPrint] Whether all the characters of \this are printable characters (see
-  \autoref{tab:string:ischar}).
+\item[isPrint] Whether all the characters of \this are printable characters
+  (see \autoref{tab:string:ischar}).
 \begin{urbiassert}
           "".isPrint;
   "abcd1234".isPrint;
@@ -386,8 +388,8 @@ String.fromAscii(0xFF) == "\xff";
 \end{urbiassert}
 
 
-\item[isPunct] Whether all the characters of \this are punctuation marks (see
-  \autoref{tab:string:ischar}).
+\item[isPunct] Whether all the characters of \this are punctuation marks
+  (see \autoref{tab:string:ischar}).
 \begin{urbiassert}
          "".isPunct;
      "!_[]".isPunct;
@@ -413,8 +415,8 @@ String.fromAscii(0xFF) == "\xff";
 \end{urbiassert}
 
 
-\item[isXdigit] Whether all the characters of \this are hexadecimal digits (see
-  \autoref{tab:string:ischar}).
+\item[isXdigit] Whether all the characters of \this are hexadecimal digits
+  (see \autoref{tab:string:ischar}).
 \begin{urbiassert}
           "".isXdigit;
     "abcdef".isXdigit;
