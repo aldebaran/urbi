@@ -523,12 +523,13 @@ slots \lstinline{defaultXSpeed}, \lstinline{defaultYSpeed},
 \subsubsection{Safety}
 
 \begin{urbiscriptapi}
-\item{watchdogInterval} If non-zero, duration after which the robot will
+\item[watchdogInterval] If non-zero, duration after which the robot will
   stop if no order was received. Once activated, one has to write to
-  \lstinline|watchdog|, to one of the speed variables or call one of the
-  blocking API functions every \lstinline|watchdogInterval| at most, or the
-  stop() function will be called.
-\item{watchdog} Writing any value to \lstinline|watchdog| will reset the
+  \refSlot{watchdog}, to one of the speed variables or call one of the
+  blocking API functions every \refSlot{watchdogInterval} at most, or the
+  \refSlot{stop} function will be called.
+
+\item[watchdog] Writing any value to \refSlot{watchdog} will reset the
   watchdog timer.
 \end{urbiscriptapi}
 
