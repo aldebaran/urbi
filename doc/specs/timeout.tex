@@ -26,6 +26,8 @@ t:{
 };
 [00000000] *** This will be displayed.
 [00000007:error] !!! Timeout_0x133ec0 has timed out.
+[00000007:error] !!!    called from: ---- event handler backtrace:
+[00000007:error] !!!    called from: new
 \end{urbiscript}
 
 The same Timeout, \lstinline|t| can be reused.  It is armed again each
@@ -35,9 +37,14 @@ time it is used to tag some code.
 t: { echo("Open"); sleep(1s); echo("Close"); };
 [00000007] *** Open
 [00000007:error] !!! Timeout_0x133ec0 has timed out.
+[00000007:error] !!!    called from: ---- event handler backtrace:
+[00000007:error] !!!    called from: new
+
 t: { echo("Open"); sleep(1s); echo("Close"); };
 [00000007] *** Open
 [00000007:error] !!! Timeout_0x133ec0 has timed out.
+[00000007:error] !!!    called from: ---- event handler backtrace:
+[00000007:error] !!!    called from: new
 \end{urbiscript}
 
 %%% FIXME: Something is wrong here.
@@ -59,6 +66,9 @@ count-down expired with \lstinline|timedOut|.
 \begin{urbiscript}
 t:sleep(500ms);
 [00000007:error] !!! Timeout_0x133ec0 has timed out.
+[00000007:error] !!!    called from: ---- event handler backtrace:
+[00000007:error] !!!    called from: new
+
 if (t.timedOut)
   echo("The Timeout expired.");
 [00000000] *** The Timeout expired.
@@ -78,26 +88,66 @@ it does).
 Timeout.new(300ms);
 [00000000] Timeout_0x953c1e0
 Timeout.new(300ms, false);
-[00000000] Timeout_0x953c1e0
+[00000000] Timeout_0x953c1e8
 \end{urbiscript}
 
 \subsection{Slots}
 \begin{urbiscriptapi}
 \item[asTimeout] Return \this.
-\begin{urbiscript}
-{
-  var t = Timeout.new(10);
-  assert
-  {
-    Timeout.asTimeout === Timeout;
-          t.asTimeout === t;
-  };
-};
-\end{urbiscript}
+\begin{urbiassert}
+var t = Timeout.new(10);
 
+Timeout.asTimeout === Timeout;
+      t.asTimeout === t;
+\end{urbiassert}
+
+
+\item[end] Stop \this, return \lstinline|void|.  Can be called several
+  times.  See \refSlot{launch}.
+
+\begin{urbiassert}
+var t = Timeout.new(10);
+!t.running;
+ t.end.isVoid;
+!t.running;
+t.launch.isVoid;
+ t.running;
+ t.end.isVoid;
+ t.end.isVoid;
+\end{urbiassert}
 
 \item[launch]
-  Fire \this.
+  Fire \this, return \lstinline|void|.  See \refSlot{end}.
+
+\begin{urbiassert}
+var t = Timeout.new(10);
+t.launch.isVoid;
+\end{urbiassert}
+
+\item[running]
+  Whether is currently running.
+\begin{urbiassert}
+var t = Timeout.new(10);
+
+!t.running;
+ t.launch.isVoid;
+ t.running;
+ t.end.isVoid;
+!t.running;
+\end{urbiassert}
+
+
+\item[timedOut]
+  Whether \this has timed out.
+
+\begin{urbiassert}
+var t = Timeout.new(100ms);
+ t.launch.isVoid;
+!t.timedOut;
+ sleep(200ms).isVoid;
+ t.timedOut;
+\end{urbiassert}
+
 
 %% FIXME: there is more.
 \end{urbiscriptapi}
