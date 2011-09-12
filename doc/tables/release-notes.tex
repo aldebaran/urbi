@@ -73,6 +73,7 @@ while (!(x = i.get.acceptVoid).isVoid)
   cout << x;
 i.close;
 \end{urbiunchecked}
+  \noindent
   \refSlot[nil]{isVoid} now returns \lstinline|true| and issues a warning:
   eventually it will return again \lstinline|false|.  Rewrite your code as:
 \begin{urbiunchecked}

@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2009-2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -9,14 +9,110 @@
 \chapter{Installation}
 \label{sec:installation}
 
+Read this chapter is you plan to install a precompiled package from Gostai.
+If \urbi is already installed, see \autoref{sec:tut:started},
+``\nameref{sec:tut:started}''.  If you plan to compile \urbi yourself, be
+sure to read the \autoref{sec:build}, ``\nameref{sec:build}''.
+
 \section{Download}
 
-Various pre-compiled packages are provided.  They are named
+If you already have an \urbi installed on your machine, proceed to
+\autoref{sec:install:install}.
+
+\subsection{Download \urbi \packageVersion}
+\label{sec:dl:latest}
+
+The following table gives a quick access to the different kinds of packages
+we provide.  You may also directly browse
+\url{\downloadUrl/urbi/\packageVersion/}.  If you need a more specific
+version of \usdk, please see the following section, \autoref{sec:dl:all}.
+
 \begin{center}
-\file{urbi-sdk-\var{version}-\var{arch}-\var{os}-\var{compiler}.\var{ext}}
+  % \dl{PACKAGE}{EXT}
+  % -----------------
+  % PACKAGE is sdk, runtime, or doc. EXT is .tar.bz2 for the source, and for
+  % instance linux-x86-gcc4.tar.bz2 for GNU/Linux Etch.
+  \newcommand{\dl}[2]{%
+    \href{\downloadUrl/urbi/\packageVersion/urbi-#1-\packageVersion-#2}{Download}
+    (\href{\downloadUrl/urbi/\packageVersion/urbi-#1-\packageVersion-#2.md5}{MD5})%
+  }
+
+  % \dlsr{KIND}{EXT}
+  % ----------------
+  % Name stands for: Down-Load Sdk Runtime.
+  % KIND is "Release", "Debug", etc. only used for the user (not url).
+  \newcommand{\dlsr}[2]
+  {
+    \multicolumn{1}{c|}{#1}
+    & \dl{sdk}{#2}
+    & \dl{runtime}{#2}
+  }
+
+  % \dlarch{ARCH}{KIND}{EXT}
+  % ------------------------
+  % For ARCH provide both the SDK and runtime of KIND, with EXT.
+  \newcommand{\dlarch}[3]
+  {
+    \multicolumn{1}{|c|}{#1}
+    & \dlsr{#2}{#3}
+    \\
+  }
+
+  \begin{tabular}{ll|c|c|}
+    \cline{3-4}
+    & & \multicolumn{2}{c|}{Package Type}\\
+    \hline
+    \multicolumn{1}{|c|}{Architecture} & \multicolumn{1}{c|}{Kind} & SDK & Runtime
+    \\
+    \hline
+    \dlarch{GNU/Linux Debian Etch x86}{Release}{linux-x86-gcc4.tar.bz2}
+    \dlarch{GNU/Linux Debian Etch x86\_64}{Release}{linux-x86\_86-gcc4.tar.bz2}
+    \hline
+    \dlarch{\multirow{2}{*}{GNU/Linux Ubuntu Lucid x86}}{Release}{linux\_lucid-x86-gcc4.tar.bz2}
+    \dlarch{}{Debug}{linux\_lucid-x86-gcc4-debug.tar.bz2}
+    \hline
+    \dlarch{\multirow{3}{*}{Microsoft Visual \Cxx 2005}}{Release}{windows-x86-vcxx2005.zip}
+    \dlarch{}{Debug}{windows-x86-vcxx2005-debug\_dynamic.zip}
+    \dlarch{}{Combo}{windows-x86-vcxx2005.exe}
+    \hline
+    \dlarch{\multirow{3}{*}{Microsoft Visual \Cxx 2008}}{Release}{windows-x86-vcxx2008.zip}
+    \dlarch{}{Debug}{windows-x86-vcxx2008-debug\_dynamic.zip}
+    \dlarch{}{Combo}{windows-x86-vcxx2008.exe}
+    \hline
+    \multicolumn{2}{|c|}{Documentation}
+    & \multicolumn{2}{c|}{\dl{doc}{tar.bz2}}
+    \\
+    \hline
+    \multicolumn{2}{|c|}{Sources}
+    & \multicolumn{2}{c|}{\dl{sdk}{tar.bz2}}
+    \\
+    \hline
+  \end{tabular}
+\end{center}
+
+The MD5 files may be useful if you want to check the integrity of the file
+you downloaded.
+
+\subsection{Download a Specific Version of \urbi}
+\label{sec:dl:all}
+
+All the versions of \urbi are available at \url{\downloadUrl/urbi/}.
+
+Our packages are named as follows:
+\begin{center}
+\file{urbi-\var{kind}-\var{version}-\var{arch}-\var{os}-\var{compiler}.\var{ext}}
 \end{center}
 where
 \begin{description}
+\item[\var{kind}] defines what the package is about:
+  \begin{description}
+  \item[sdk] \usdk, i.e., the full package, including libraries, headers,
+    programs, documentation, etc.  This is meant for the computers of the
+    developers.
+  \item[runtime] Only what is needed to \emph{run} (as opposed to
+    \emph{compile}) \urbi programs.  This is meant for robots.
+  \item[doc] The whole documentation.
+  \end{description}
 \item[\var{version}] specifies the exact revision of Urbi that you are
   using.  It can be simple, \code{2.0}, or more complex,
   \code{2.0-beta3-137-g28f8880}.  In that case,
