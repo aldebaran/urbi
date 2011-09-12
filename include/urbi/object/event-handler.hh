@@ -46,7 +46,8 @@ namespace urbi
       typedef std::vector<stop_job_type> stop_jobs_type;
 
       /// Listener jobs execution function.
-      void trigger_job(const rSubscription& actions, bool detach);
+      void trigger_job(const rSubscription& actions, bool detach, objects_type& args
+);
       /// Register the stop job.
       void register_stop_job(const stop_job_type& stop_job);
       /// The parent Event of this handler.

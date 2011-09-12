@@ -108,28 +108,16 @@ namespace urbi
     }
 
     void
-    EventHandler::trigger_job(const rSubscription& actions, bool detach)
+    EventHandler::trigger_job(const rSubscription& actions, bool detach,
+                              objects_type& args)
     {
-      if (actions->frozen)
-        return;
-      objects_type args;
-      args << this << this << payload_;
-      rObject pattern = nil_class;
-      if (actions->guard)
-        pattern = (*actions->guard)(args);
-      if (pattern != void_class)
+      detach = detach && actions->asynchronous_get();
+      if (actions->enter_)
       {
-        args << pattern;
-        detach = detach && actions->asynchronous_get();
-        if (actions->leave_)
-          register_stop_job(stop_job_type(actions, args, detach));
-        if (actions->enter_)
-        {
-          if (detach)
-            spawn_actions_job(actions, actions->enter_, args);
-          else
-            actions->enter(args);
-        }
+        if (detach)
+          spawn_actions_job(actions, actions->enter_, args);
+        else
+          actions->enter(args);
       }
     }
 

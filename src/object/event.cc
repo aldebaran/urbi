@@ -155,7 +155,21 @@ namespace urbi
 
       callbacks_ << actions;
       foreach (const actives_type::value_type& active, active_)
-        active->trigger_job(actions, true);
+      {
+        objects_type args;
+        args << this << this << active->payload();
+        rObject pattern = nil_class;
+        if (actions->guard)
+        {
+          pattern = (*actions->guard)(args);
+          if (pattern == void_class)
+            continue;
+        }
+        args << pattern;
+        if (actions->leave_)
+          active->register_stop_job(EventHandler::stop_job_type(actions, args, true));
+        active->trigger_job(actions, true, args);
+      }
       if (slot_has(SYMBOL(onSubscribe)))
         slot_get_value(SYMBOL(onSubscribe))->call(SYMBOL(syncEmit));
       subscribed_();
@@ -291,6 +305,26 @@ namespace urbi
           GD_FINFO_TRACE("Subscriber is live for notification"
                          " (cb: %s e: %s), async: %s",
                          s->cb_, s->event_, async);
+          if (s->frozen)
+          {
+            GD_FINFO_TRACE("%s: Skip frozen registration %s.", this, s);
+            continue;
+          }
+          objects_type args;
+          args << this << this << payload;
+          rObject pattern = nil_class;
+          if (s->guard)
+          {
+            pattern = (*s->guard)(args);
+            if (pattern == void_class)
+            {
+              GD_FINFO_TRACE("%s: Skip patters mismatch %s.", this, s);
+              continue;
+            }
+          }
+          args << pattern;
+          if (h && s->leave_)
+            h->register_stop_job(EventHandler::stop_job_type(s, args, detach));
           if (async)
           {
             // If we create a job, it can die before executing a single line
@@ -299,7 +333,7 @@ namespace urbi
             // touching any stat or holding any lock.
             eval::Action a =
               eval::exec(boost::bind(&Subscription::run_sync,
-                                     s, this, pl, h, detach, false),
+                                     s, this, pl, h, detach, false, args),
                          this);
             rLobby l =
               s->lobby ? s->lobby.get()
@@ -312,7 +346,7 @@ namespace urbi
             j->start_job();
           }
           else
-            s->run_sync(this, pl, h, detach, true);
+            s->run_sync(this, pl, h, detach, true, args);
         }
       }
     }

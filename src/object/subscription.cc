@@ -195,7 +195,7 @@ namespace urbi
     void
     Subscription::run_sync(rEvent src,
                            const objects_type& pl, EventHandler* h,
-                           bool detach, bool sync)
+                           bool detach, bool sync, objects_type& args)
     {
       GD_FPUSH_TRACE("Subscriber %s running synchronously in %s", this,
                      kernel::runner());
@@ -219,42 +219,28 @@ namespace urbi
         {
           if (h)
             // emit with duration case (trigger).
-            h->trigger_job(this, detach);
+            h->trigger_job(this, detach, args);
           else
           {
             // Dirac emit case (not trigger)
-            if (frozen)
-            {
-              GD_FINFO_TRACE("%s: Skip frozen registration %s.", src, this);
-              return;
-            }
             GD_FPUSH_TRACE("%s: Trigger registration %s.", src, this);
-            objects_type args;
-            args << src << src << new List(pl);
-            rObject pattern = nil_class;
-            if (guard)
-              pattern = (*guard)(args);
-            if (pattern != void_class)
+            if (detach && asynchronous_)
             {
-              args << pattern;
-              if (detach && asynchronous_)
+              sched::rJob leaveJob;
+              // We are already in a child job, so just spawn for one of the
+              // two tasks.  Start jobs simultaneously.
+              if (leave_)
               {
-                sched::rJob leaveJob;
-                // We are already in a child job, so just spawn for one of the
-                // two tasks.  Start jobs simultaneously.
-                if (leave_)
-                {
-                  leaveJob = src->spawn_actions_job(lobby, call_stack,
-                                                    leave_, profile, args);
-                  leaveJob->start_job();
-                }
-                enter(args);
+                leaveJob = src->spawn_actions_job(lobby, call_stack,
+                                                  leave_, profile, args);
+                leaveJob->start_job();
               }
-              else
-              {
-                enter(args);
-                leave(args);
-              }
+              enter(args);
+            }
+            else
+            {
+              enter(args);
+              leave(args);
             }
           }
         } // (event)

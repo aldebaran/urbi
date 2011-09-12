@@ -56,7 +56,7 @@ namespace urbi
      * @param sync true if run_sync was called from the emitter job.
      */
     void run_sync(rEvent src, const objects_type& payload, EventHandler* h,
-                  bool detach, bool sync);
+                  bool detach, bool sync, objects_type& args);
   private:
     friend class Event;
     friend class EventHandler;
