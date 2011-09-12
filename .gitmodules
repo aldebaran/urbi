@@ -22,3 +22,6 @@
 [submodule "sdk-remote/jpeg"]
 	path = sdk-remote/jpeg
 	url = git@git.gostai.com:libjpeg-6b.git
+[submodule "submodules/jazz-doc"]
+	path = submodules/jazz-doc
+	url = git@git.gostai.com:jazz-doc
