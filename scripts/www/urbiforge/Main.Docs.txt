@@ -4,42 +4,35 @@
 
 !!Urbi 2.x (latest release)
 
-Urbi SDK Manual, comes in two flavors:
+The documentation of Urbi SDK comes in two flavors:
 [[http://www.gostai.com/downloads/urbi/2.x/doc/urbi-sdk.pdf | a single PDF file]],
 or [[http://www.gostai.com/downloads/urbi/doc/| a set of HTML pages]]:
 
-::[[http://www.gostai.com/downloads/urbi/doc/introduction.html|Introduction]]:
-  Urbi SDK, the UObject middleware and the urbiscript language.
-  Provides the detailed table of contents.
-  See also the [[http://www.gostai.com/downloads/urbi/doc/index.html|index]].
-::[[http://www.gostai.com/downloads/urbi/doc/urbiscript-user-manual.html|urbiscript User Manual (The tutorial)]]:
+::[[http://www.gostai.com/downloads/urbi/doc/getting-started.html|Getting Started]]:
+  Hands on!
+::[[http://www.gostai.com/downloads/urbi/doc/urbiscript-user-manual.html|urbiscript Tutorial]]:
   How to program in urbiscript, from the basis to concurrent and
-  event-based programming.  No specific knowledge required.
-::[[http://www.gostai.com/downloads/urbi/doc/faq.html|Frequently Asked Questions]]:
-  Answers to common questions about Urbi, UObjects, and urbiscript.
+  event-based programming.
 ::[[http://www.gostai.com/downloads/urbi/doc/index-of-terms.html|Index]]:
   A useful starting point.
+::[[http://www.gostai.com/downloads/urbi/doc/faq.html|Frequently Asked Questions]]:
+  Answers to common questions about Urbi, UObjects, and urbiscript.
 
 ::[[http://www.gostai.com/downloads/urbi/doc/urbi-sdk-reference-manual.html|Urbi Reference Manual]]:
   Specifications, for advanced users: Urbi programs, UObjects,
   urbiscript, urbiscript library, etc.
 ::::[[http://www.gostai.com/downloads/urbi/doc/uobjects.html|UObjects Manual]]:
-    The Urbi architecture: its core components (client/server
-    architecture), how its middleware works, how to include extensions
-    as UObjects (C++ components), etc.
+    The Urbi architecture: the core components, the middleware,
+    the UObjects (C++ components), etc.
 ::::[[http://www.gostai.com/downloads/urbi/doc/urbiscript-language-reference-manual.html|urbiscript Reference Manual]]:
-    The specifications of urbiscript This part does not aim at giving
-    advanced programming techniques. Its only goal is to define the
-    language and its libraries.
+    The specifications of urbiscript: a definition of the language.
 ::::[[http://www.gostai.com/downloads/urbi/doc/urbiscript-standard-library.html|urbiscript Library]]:
-    The predefined objects and methods.
+    The predefined urbiscript objects and methods.
 ::::[[http://www.gostai.com/downloads/urbi/doc/release-notes.html|Release Notes]]:
-    Also known as the Urbi ChangeLog, or Urbi NEWS, the part lists the
-    user-visible changes in Urbi SDK releases.
+    User-visible changes in Urbi SDK releases.
 
 ::[[http://www.gostai.com/downloads/urbi/doc/urbi-platforms.html|Platforms]]:
-  This part covers the specific features of Urbi for some of the
-  platforms it was ported to:
+  Specific Urbi features for some of the platforms it was ported to:
   [[http://www.gostai.com/downloads/urbi/doc/bioloid.html|Bioloid]],
   [[http://www.gostai.com/downloads/urbi/doc/nxt.html|Mindstorm NXT]],
   [[http://www.gostai.com/downloads/urbi/doc/nao.html|Nao]],
