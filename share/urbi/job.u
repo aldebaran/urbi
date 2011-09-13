@@ -26,7 +26,7 @@ do (Job)
     echo("  State: " + status) |
 
     if (var t = timeShift)
-      echo("  Timeshift: " + t + "ms") |
+      echo("  Time Shift: " + t + "ms") |
 
     if (var ts = tags)
     {

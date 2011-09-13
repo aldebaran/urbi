@@ -1,4 +1,5 @@
-personal_ws-1.1 en 1504 utf-8
+personal_ws-1.1 en 1560 utf-8
+aa
 aaa
 abc
 abcABC
@@ -22,6 +23,7 @@ addDevice
 addProto
 addSecond
 addValue
+ADL
 Affero
 afoodef
 agg
@@ -55,7 +57,9 @@ Aperios
 api
 apijava
 APIS
+aplay
 appendRow
+applyTransition
 ar
 arccosine
 arcsine
@@ -162,7 +166,6 @@ boolean
 bot's
 brandNewTag
 breakInWhile
-Breakpoint
 breakpoint
 bsd
 bufferIn
@@ -186,6 +189,7 @@ cameraL
 cameraLoad
 cameraPitch
 cameraR
+cameraTopic
 cameraval
 cameraYaw
 cancelFindBase
@@ -199,6 +203,7 @@ ccwLimit
 cd
 ceil
 cerr
+CEST
 cflags
 changeConnections
 ChangeLog
@@ -224,7 +229,9 @@ combAdd
 combDiv
 combMul
 combSub
+commandName
 compl
+CompressedImage
 computeSalary
 cond
 config
@@ -315,11 +322,14 @@ detectBall
 Deux
 dev
 devel
+df
 DGain
+DHCP
 DifferentialWheels
 dir
 dirlist
 dirname
+displayStats
 distanceMatrix
 distanceMax
 distanceMin
@@ -331,11 +341,14 @@ distMin
 dlerror
 dll
 dlopen
+DNS
+dnsAddress
 docutils
 doesNotExist
 doin
 doubleValue
 doxygen
+dsp
 DUMPBIN
 dumpbin
 dumpState
@@ -360,6 +373,7 @@ elementRemoved
 elfic
 elt
 emacs
+emitDone
 emitEvent
 enableBypass
 enableStats
@@ -376,6 +390,8 @@ epsilonTilde
 epsilontilde
 eq
 eration
+errlog
+essid
 et
 ev
 eval
@@ -412,6 +428,8 @@ fireRate
 firstline
 FIXME
 flatDump
+floorLeft
+floorRight
 fmt
 fo
 foldl
@@ -444,11 +462,13 @@ freezeif
 Frodo
 fromAscii
 frontleft
+FRPA
 fsr
 fullengine
 func
 functionalities
 FunctionProfile
+gatewayAddress
 gcc
 gdb
 ge
@@ -488,15 +508,18 @@ getVal
 getWidth
 getWithDefault
 ghi
+GHz
 gl
 GLIBC
 gnulib
 gnuplot
+goDuring
 gostai
 Gostai's
 goTo
 goto
 goToAbsolute
+goToChargingDock
 goToChargingStation
 gotoChargingStation
 GPL
@@ -528,7 +551,9 @@ hh
 hideSystemFiles
 hisMind
 hisResult
+hoc
 Hocquet
+Hokuyo
 hookChanged
 hostAlias
 hostCpu
@@ -539,18 +564,23 @@ hpp
 html
 htmldir
 htmlxml
+htop
 http
 Huho
 hxx
 ic
 ie
 IEEE
+ifconfig
 iff
 IGain
 ImageConversion
 imageData
 ImageMagick
 imagemagick
+img
+imgLoop
+imgMsg
 ImmutableCounter
 ImplicitTagComponent
 inBounds
@@ -566,6 +596,8 @@ inline
 inotify
 InputPort
 InputPorts
+inputSpeedAlpha
+inputSpeedDelta
 InputStream
 InputStreams
 insectoid
@@ -580,9 +612,12 @@ invertible
 io
 IoService
 IP
+ipAddress
+ir
 IRCenter
 IRLeft
 IRRight
+IRs
 isA
 isAlnum
 isAlpha
@@ -608,13 +643,16 @@ isvoid
 isWindows
 isXdigit
 iterable
+Iwconfig
 javac
 javalibrarypath
 JavaScript
 jdk
+je
 jessie
 jni
 jpeg
+jpg
 keepEmpty
 keepSep
 keepSeparator
@@ -730,6 +768,7 @@ maxFunctionCallDepth
 maybeLoad
 mc
 MCPAN
+md
 mealReady
 meanCallTime
 Meccano
@@ -777,13 +816,17 @@ myCamera
 myCos
 myduration
 myEvent
+myfile
 myFunction
 myGroup
 myHandle
+myHiddenKey
+myimage
 myInstance
 myList
 myLocalVariable
 myMind
+myNetwork
 MYNODE
 myObj
 myObject
@@ -800,6 +843,7 @@ myTag
 mytag
 mytest
 myType
+myuob
 myUObject
 myuobject
 myVar
@@ -811,10 +855,12 @@ Nao's
 NaoQi
 Naur
 nb
+nc
 ndebug
 ne
 NegativeNumber
 netcat
+netMask
 newImage
 NewSingleton
 Nivault
@@ -874,6 +920,7 @@ os
 osx
 otherkeywords
 otool
+outlog
 OutputStream
 OutputStreams
 ownsSlot
@@ -881,6 +928,7 @@ p's
 PackageInfo
 param
 params
+parseopt
 pathPlanningEvent
 pc
 pdf
@@ -892,6 +940,7 @@ PGain
 php
 physicsReset
 PID
+pid
 pidChanged
 Pierron
 pitchSpeed
@@ -921,6 +970,8 @@ prerelease
 PrimitiveError
 printf
 printSalaries
+proc
+ProcessCamera
 prog
 programName
 proj
@@ -930,6 +981,7 @@ proto
 proto's
 protos
 ps
+pscp
 PseudoLazy
 PubSub
 pushback
@@ -978,6 +1030,7 @@ removeSlot
 removeSlots
 removeThrowingCallbacks
 removeTimer
+renunciationInterval
 representable
 req
 reqStruct
@@ -1009,6 +1062,7 @@ Romain
 ros
 roscore
 roscpp
+rosImg
 roslib
 rosmake
 rosout
@@ -1034,6 +1088,7 @@ runtime
 runTo
 rw
 rxconsole
+rxgraph
 safetyDistanceMax
 safetyDistanceMin
 Saltel
@@ -1042,6 +1097,7 @@ sampleFormat
 sampleSize
 SAS
 sayHello
+sayNo
 scalarEQ
 scalarGE
 scalarGT
@@ -1050,6 +1106,7 @@ scalarLT
 Sched
 SchedulingError
 scopeTag
+scp
 sdbxoefEDX
 sdk
 searchFile
@@ -1072,6 +1129,7 @@ serv
 serverPort
 servohub
 setAbsolutePosition
+setAdHoc
 setAngle
 setBypass
 setConfigValue
@@ -1156,6 +1214,7 @@ src
 ss
 StackFrame
 StackFrames
+startup
 stderr
 stdin
 stdlib
@@ -1184,6 +1243,7 @@ subtypes
 succ
 sudo
 Sugarful
+suis
 sumTwice
 svn
 sw
@@ -1193,6 +1253,7 @@ synclines
 syncTrigger
 syncValue
 syncWrite
+sys
 SYSV
 taglist
 tarballVersion
@@ -1206,6 +1267,7 @@ TCP
 te
 Technic
 teleop
+teleoperation
 teleport
 TemperatureSensor
 TerminatedChildrenSleepingMean
@@ -1280,6 +1342,7 @@ UBindThreadedFunctionRename
 UBindVar
 UBreakpoint
 ubuild
+Ubuntu
 UClient
 UClient's
 UConnection
@@ -1294,6 +1357,7 @@ uid
 uids
 UImage
 UImageFormat
+ulimit
 UList
 UltraSonicSensor
 UltraSoundSensor
@@ -1345,11 +1409,15 @@ Uowned
 UPATH
 updatable
 updateSlot
+updateWatchdog
+upLeft
+upRight
 UProp
 urbi
 urbiassert
 urbiConsole
 urbiHelloWorld
+urbiImage
 urbijava
 urbiscript
 urbiscript's
@@ -1381,6 +1449,7 @@ UVar
 uvar
 UVars
 valgrind
+valJPEG
 vals
 valueAccessed
 valueAlias
@@ -1416,6 +1485,7 @@ waituntil
 waituntilWalkIsFinished
 walkTo
 wallClockTime
+watchdogGoTag
 watchdogInterval
 watchEvent
 wav
@@ -1434,6 +1504,7 @@ wheelRadius
 whilePipe
 WiFi
 wildcards
+WinSCP
 WIPO
 withGas
 Wl
@@ -1451,6 +1522,7 @@ xb
 xCoord
 xe
 Xenomai
+xeyes
 xF
 xf
 xFF
@@ -1461,9 +1533,12 @@ xffff
 xffffff
 xFFFFFFFF
 xffffffff
+xffffffffb
 xfov
 xleftmargin
 xml
+xorg
+XP
 xrightmargin
 xsltproc
 xSpeed

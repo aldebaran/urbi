@@ -57,7 +57,7 @@ namespace
     im.height = static_cast<int>(static_cast<float>(img.height) * scale);
     convert(img, im);
 
-    /* Calculate framerate. */
+    /* Calculate frame rate. */
     if (!(imcount % 20))
     {
       static int tme = 0;
@@ -65,7 +65,7 @@ namespace
       {
         float it = msg.client.getCurrentTime() - tme;
         it = 20000.0 / it;
-        printf("***Framerate: %f fps***\n", it);
+        printf("***Frame rate: %f fps***\n", it);
       }
       tme = msg.client.getCurrentTime();
     }
