@@ -20,22 +20,41 @@ expression.
 \subsection{Construction}
 \label{stdlib:regexp:ctor}
 
-A \lstinline{Regexp} is created with the regular expression once and
-for all, and it can be used many times to match with other strings.
+A \lstinline{Regexp} is created from a regular expression once and for all;
+it can be used several times to match with other strings.
 
 \begin{urbiscript}
 Regexp.new(".");
 [00000001] Regexp(".")
+
+var num = Regexp.new("\\d+\\.\\d+");
+[00000004] Regexp("\\d+\\.\\d+")
+"1.3" in num;
+[00019618] true
+"1." in num;
+[00023113] false
 \end{urbiscript}
 
 \us supports Perl regular expressions, see
 \href{http://perldoc.perl.org/perlre.html}{the perlre man page}.
 
-Expressions cannot be empty.
+Expressions cannot be empty, and must be syntactically correct.
 
+%% This is likely to fails on some other arch because the error messages
+%% might be different.  This is to handle in neutralize, not here.
 \begin{urbiscript}
 Regexp.new("");
 [00000001:error] !!! new: invalid regular expression `': Empty expression
+
+Regexp.new("(");
+[00003237:error] !!! new: invalid regular expression `(': \
+[:]    Unmatched marking parenthesis ( or \(.  \
+[:]    The error occured while parsing the regular expression: '(>>>HERE>>>'.
+
+Regexp.new("*");
+[00004372:error] !!! new: invalid regular expression `*': \
+[:]    The repeat operator "*" cannot start a regular expression.  \
+[:]    The error occured while parsing the regular expression: '>>>HERE>>>*'.
 \end{urbiscript}
 
 

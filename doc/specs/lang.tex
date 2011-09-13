@@ -3640,25 +3640,11 @@ timeout (2.1s)
 [00002000] *** Are you still there?
 \end{urbiscript}
 
-It exists in several flavors, with the same syntax:
-
-\grammar{every-stm}
-
-\subsubsection{\lstinline{every;}}
-\label{sec:lang:every:semi}
-\lstIndexTwo{every}{every;}
-
-\subsubsection{\lstinline{every|}}
-\label{sec:lang:every:pipe}
-\lstIndexTwo{every}{everyPipe}
-
-
-The whole \lstinline'every|' statement itself remains in foreground:
-statements attached after it with \lstinline';' or \lstinline'|' will not be
-reached unless you \lstinline{break} out of it.  You may use
-\lstinline{continue} to finish one iteration.  In that case, the following
-iteration is not immediately started, it will be launched as expected, at
-the given period.
+The whole \lstinline{every} statement itself remains in foreground:
+following statements separated with \lstinline';' or \lstinline'|' will not
+be reached unless you \lstinline{break} out of it.  You may use
+\lstinline{continue} to finish one iteration; the following iteration is
+then launched as expected by the given period, \emph{not} immediately.
 
 % We used to use 100ms instead of 1s, but severely loaded machines
 % (the Mac Mini) fail way too often.
@@ -3666,7 +3652,7 @@ the given period.
 var count = 4|;
 var start = time|;
 echo("before");
-every| (1s)
+every (1s)
 {
   --count;
   echo("begin: %s @ %1.0fs" % [count, time - start]);
@@ -3690,44 +3676,55 @@ echo("after");
 removeSlots("count", "start");
 \end{urbicomment}
 
+It exists in several flavors, with the same syntax:
+
+\grammar{every-stm}
+
+\subsubsection{\lstinline{every;}}
+\label{sec:lang:every:semi}
+\lstIndexTwo{every}{every;}
+
+In this flavor, several instances of the body may overlap if the duration of
+their execution is longer than the period:
+
+\begin{urbiscript}
+var x = 0|;
+timeout (990ms)
+  every (125ms)
+  {
+    x++;
+    sleep(250ms);
+  };
+assert (x == 8);
+\end{urbiscript}
+\begin{urbicomment}
+removeSlots("x");
+\end{urbicomment}
+
+Contrast with \lstinline{every|}, \autoref{sec:lang:every:pipe}.
+
+\subsubsection{\lstinline{every|}}
+\label{sec:lang:every:pipe}
+\lstIndexTwo{every}{everyPipe}
+
 The \lstinline{every|} flavor does not let iterations overlap. If an
 iteration takes too long, the following iterations are delayed. That is, the
 next iterations will start immediately after the end of the current one, and
-next iterations will occur normally from this point.
+next iterations will occur normally from this point.  Contrast the following
+example with that of \lstinline{every}, \autoref{sec:lang:every:semi}.
 
 \begin{urbiscript}
-var tooLong = true|;
-
-var count = 5|;
-// Every other iteration exceeds the period, and will delay the
-// following one.
-every| (1s)
-{
-  if (! (count -=1))
-    break;
-
-  if (tooLong)
+var x = 0|;
+timeout (990ms)
+  every|(125ms)
   {
-    tooLong = false;
-    echo("Long in");
-    sleep(1.5s);
-    echo("Long out");
-  }
-  else
-  {
-    tooLong = true;
-    echo("Short");
+    x++;
+    sleep(250ms);
   };
-};
-[00000000] *** Long in
-[00001500] *** Long out
-[00001500] *** Short
-[00002500] *** Long in
-[00004000] *** Long out
-[00004000] *** Short
+assert (x == 4);
 \end{urbiscript}
 \begin{urbicomment}
-removeSlots("tooLong", "count");
+removeSlots("x");
 \end{urbicomment}
 
 The flow-control constructs \lstinline{break} and \lstinline{continue}
