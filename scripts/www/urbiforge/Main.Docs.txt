@@ -4,14 +4,15 @@
 
 !!Urbi 2.x (latest release)
 
-The documentation of Urbi SDK comes in two flavors:
+The documentation comes in several flavors:
 [[http://www.gostai.com/downloads/urbi/2.x/doc/urbi-sdk.pdf | a single PDF file]],
-or [[http://www.gostai.com/downloads/urbi/doc/| a set of HTML pages]]:
+[[http://www.gostai.com/downloads/urbi/2.x/doc/urbi-sdk-single.htmldir | a single large HTML file]],
+or [[http://www.gostai.com/downloads/urbi/doc/| a set of HTML pages]].
 
 ::[[http://www.gostai.com/downloads/urbi/doc/getting-started.html|Getting Started]]:
   Hands on!
 ::[[http://www.gostai.com/downloads/urbi/doc/urbiscript-user-manual.html|urbiscript Tutorial]]:
-  How to program in urbiscript, from the basis to concurrent and
+  How to program in urbiscript, from the basis up to concurrent and
   event-based programming.
 ::[[http://www.gostai.com/downloads/urbi/doc/index-of-terms.html|Index]]:
   A useful starting point.
@@ -20,19 +21,24 @@ or [[http://www.gostai.com/downloads/urbi/doc/| a set of HTML pages]]:
 
 ::[[http://www.gostai.com/downloads/urbi/doc/urbi-sdk-reference-manual.html|Urbi Reference Manual]]:
   Specifications, for advanced users: Urbi programs, UObjects,
-  urbiscript, urbiscript library, etc.
-::::[[http://www.gostai.com/downloads/urbi/doc/uobjects.html|UObjects Manual]]:
-    The Urbi architecture: the core components, the middleware,
-    the UObjects (C++ components), etc.
+  urbiscript, urbiscript library...
+::::[[http://www.gostai.com/downloads/urbi/doc/uobjects.html|UObject Manual]]:
+    The Urbi architecture: core components, middleware, UObjects (C++
+    components)...
 ::::[[http://www.gostai.com/downloads/urbi/doc/urbiscript-language-reference-manual.html|urbiscript Reference Manual]]:
     The specifications of urbiscript: a definition of the language.
 ::::[[http://www.gostai.com/downloads/urbi/doc/urbiscript-standard-library.html|urbiscript Library]]:
     The predefined urbiscript objects and methods.
 ::::[[http://www.gostai.com/downloads/urbi/doc/release-notes.html|Release Notes]]:
-    User-visible changes in Urbi SDK releases.
+    User-visible changes in Urbi releases.
 
 ::[[http://www.gostai.com/downloads/urbi/doc/urbi-platforms.html|Platforms]]:
   Specific Urbi features for some of the platforms it was ported to:
+(:comment
+  Not ready yet.
+  [[http://www.gostai.com/downloads/urbi/doc/open-jazz.html|Gostai
+  Open Jazz]],
+:)
   [[http://www.gostai.com/downloads/urbi/doc/bioloid.html|Bioloid]],
   [[http://www.gostai.com/downloads/urbi/doc/nxt.html|Mindstorm NXT]],
   [[http://www.gostai.com/downloads/urbi/doc/nao.html|Nao]],
