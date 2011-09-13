@@ -94,7 +94,7 @@ install_gostai_console
 strip_opt=
 $COMPILATION_MODE_DEBUG || strip_opt=--strip
 $srcdir/build-aux/bin/check-lib-deps            \
-  --verbose --verbose --verbose --verbose       \
+  --verbose --verbose                           \
   --destdir="$DESTDIR"                          \
   --host-os="$URBI_HOST_OS"                     \
   --libdir="$libdir"                            \
@@ -104,7 +104,7 @@ $srcdir/build-aux/bin/check-lib-deps            \
 
 # Header completion.  Might have become useless because of install-boost.
 $srcdir/build-aux/bin/check-include-deps        \
-  --verbose --verbose --verbose --verbose       \
+  --verbose --verbose                           \
   --check                                       \
   --include-dir="$DESTDIR$prefix/include"       \
   $builddir
