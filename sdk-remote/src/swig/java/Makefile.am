@@ -221,7 +221,7 @@ liburbijavadir = $(javadir)
 gen-liburbi-java:
 	$(AM_V_GEN)$(JAR) -cf $(notdir $(liburbijava_JAR)) $(liburbijava_OBJECTS)
 	$(AM_V_at)$(mkdir_p) $(dir $(liburbijava_JAR))
-	$(AM_V_at)mv $(notdir $(liburbijava_JAR)) $(dir $(liburbijava_JAR))
+	$(AM_V_at)mv -f $(notdir $(liburbijava_JAR)) $(dir $(liburbijava_JAR))
 
 $(liburbijava_JAR): $(liburbijava_SRC) classtobuild.stamp
 	$(AM_V_GEN)$(MAKE) -C . gen-liburbi-java
