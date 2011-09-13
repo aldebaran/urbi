@@ -129,7 +129,8 @@ TEX_ENVIRONMENT =				\
 %.htmldir: %.tex $(share_tex_dependencies) $(share_dir)/styles/urbi-style.cfg
 	$(AM_V_GEN)rm -rf $@ $@.tmp $@.log
 	$(AM_V_at)$(mkdir_p) $@.tmp || true
-	$(AM_V_at) export $(TEX_ENVIRONMENT);				\
+	$(AM_V_at)							\
+	$(if $(TEX_ENVIRONMENT), export $(TEX_ENVIRONMENT);)		\
 	if $(TEXI2HTML) $(TEXI2HTMLFLAGS) -o $@.tmp/$(*F).html $<;	\
 	then								\
 	  test ! -f $@.log ||						\
