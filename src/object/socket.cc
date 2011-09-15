@@ -92,21 +92,21 @@ namespace urbi
       BIND(connectSerial, connectSerial,
            void, (const std::string&, unsigned int, bool));
       BIND(disconnect);
+      BIND(getAutoRead);
+      BIND(getIoService);
       BIND(host);
       BIND(init);
       BIND(isConnected);
       BIND(localHost);
       BIND(localPort);
+      BIND(openFile);
       BIND(poll);
       BIND(port);
       BIND(read);
-      BIND(write);
-      BIND(syncWrite);
-      BIND(getIoService);
-      BIND(setAutoRead);
-      BIND(getAutoRead);
-      BIND(openFile);
       BIND(readOnce);
+      BIND(setAutoRead);
+      BIND(syncWrite);
+      BIND(write);
       setSlot(SYMBOL(connect), new Primitive(socket_connect_overload));
     }
 
@@ -139,9 +139,8 @@ namespace urbi
 #define EVENT(Name)                             \
       {                                         \
         rObject val = Event->call(SYMBOL(new)); \
-        slot_set_value(Name, val);                    \
-      }                                         \
-/**/
+        slot_set_value(Name, val);              \
+      }
 
       EVENT(SYMBOL(connected));
       EVENT(SYMBOL(disconnected));
