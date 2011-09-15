@@ -111,13 +111,69 @@ Because this dialog is asynchronous, the easiest way to wait for the dialog
 to finish is to wait for the \refSlot{disconnected} event.
 
 \begin{urbiscript}
-waituntil(client.disconnected?);
+waituntil(client.disconnected?) | echo("done");
 [00000004] *** server: Hey!
 [00000005] *** client: Hey you doin'?
 [00000006] *** server: Whazaaa!
 [00000007] *** client: See ya.
 [00000008] *** server: off
+[00000008] *** done
 \end{urbiscript}
+
+There is a catch though: the last message was still be processed by the
+system, and arrives \emph{after} we waited for the \lstinline{client} is to
+be \lstinline{disconnected}:
+
+\begin{urbiscript}
+sleep(100ms);
+[00000009] *** client: off
+\end{urbiscript}
+
+This is because both the last message sent from the server, and the
+disconnection request have arrived at the same ``instant'' to the client.
+Both are processed asynchronously, in particular the message reception since
+the code used an \emph{asynchronous} \lstinline{at}
+(\label{sec:lang:at:sync-async}).  In the case of asynchronous event
+handling, this is no guarantee on the order of event processing.  This can
+be addressed by \emph{synchronous} event processing on the client side; pay
+extra attention to the \textkwd{sync} qualifier passed to \lstinline{at}:
+
+\begin{urbiscript}
+var syncClient =
+  do (Socket.new)
+  {
+    at sync (received?(var data))
+    {
+      var reply = Dialog.reply(data);
+      write(reply);
+      echo("syncClient: " + reply);
+    };
+  }|;
+
+syncClient.connect(server.host, server.port);
+echo("syncClient: " + Dialog.lines[0]);
+syncClient.write(Dialog.lines[0]);
+[00000003] *** syncClient: Hi!
+\end{urbiscript}
+
+Because this dialog is asynchronous, the easiest way to wait for the dialog
+to finish is to wait for the \refSlot{disconnected} event.
+
+\begin{urbiscript}
+waituntil(syncClient.disconnected?) | echo("done");
+[00000004] *** server: Hey!
+[00000005] *** syncClient: Hey you doin'?
+[00000006] *** server: Whazaaa!
+[00000007] *** syncClient: See ya.
+[00000008] *** server: off
+[00000008] *** syncClient: off
+[00000008] *** done
+\end{urbiscript}
+
+\noindent
+This time, as one would expect at first, the \lstinline{*** done} appears
+after the full dialog was performed.
+
 
 \subsection{Prototypes}
 \begin{refObjects}
@@ -131,7 +187,7 @@ new \refObject{Socket} has four own slots: \refSlot{connected},
 \refSlot{disconnected}, \refSlot{error} and \refSlot{received}.
 
 \begin{urbiscript}
-var s = Socket.new|
+var s = Socket.new|;
 \end{urbiscript}
 
 \subsection{Slots}
