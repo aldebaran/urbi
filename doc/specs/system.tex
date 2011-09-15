@@ -109,6 +109,17 @@ Global.a == 3;
 
   Exceptions are thrown on error (including syntax errors).
 \begin{urbiscript}
+// Scanner errors.
+eval("#");
+[00000004:error] !!! 1.1: syntax error: invalid character: `#'
+[00000005:error] !!!    called from: eval
+
+// Syntax errors.
+eval("3; 1 * * 2");
+[00000002:error] !!! 1.8: syntax error: unexpected *
+[00000003:error] !!!    called from: eval
+
+// Exceptions.
 eval("1/0");
 [00008316:error] !!! 1.1-3: /: division by 0
 [00008316:error] !!!    called from: eval
