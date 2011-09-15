@@ -120,8 +120,8 @@ waituntil(client.disconnected?) | echo("done");
 [00000008] *** done
 \end{urbiscript}
 
-There is a catch though: the last message was still be processed by the
-system, and arrives \emph{after} we waited for the \lstinline{client} is to
+There is a catch though: the last message was still being processed by the
+system, and arrived \emph{after} we waited for the \lstinline{client} is to
 be \lstinline{disconnected}:
 
 \begin{urbiscript}
@@ -154,12 +154,6 @@ syncClient.connect(server.host, server.port);
 echo("syncClient: " + Dialog.lines[0]);
 syncClient.write(Dialog.lines[0]);
 [00000003] *** syncClient: Hi!
-\end{urbiscript}
-
-Because this dialog is asynchronous, the easiest way to wait for the dialog
-to finish is to wait for the \refSlot{disconnected} event.
-
-\begin{urbiscript}
 waituntil(syncClient.disconnected?) | echo("done");
 [00000004] *** server: Hey!
 [00000005] *** syncClient: Hey you doin'?
