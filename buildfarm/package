@@ -175,32 +175,24 @@ test -n "$MD5SUM" ||
 
 : ${TMPDIR=/tmp}
 
-case $# in
-  (10);;
-  (*) fatal "not enough arguments: $#, expecting 10";;
-esac
-
-PROJECT=$1    # name of the project
-source=$2     # source directory
-build=$3      # build directory
-install=$4    # install directory
-dest=$5       # where to create the package
-ARCH=$6       # archithecture; ex. x86
-OS=$7         # operating system; (linux|linux-bleeding-edge|macos|windows)
-COMP=$8       # compiler; ex. gcc4
-MODE=$9       # compile mode: (release|debug)_(static|dynamic)
-prefix=${10}  # prefix as given to configure
-
 # Sanity check: make sure that we are going to install in the right
 # shared "share" directory.
-sharedir=$(echo "$dest" | sed -e 's,/share/.*,/share,')
+sharedir=$HOME/share
 test -f $sharedir/README-share.txt ||
   fatal "$sharedir does not contain README-share.txt" "mount:" "$(mount)"
 
-# There are still places where kernel-2.0 is used instead of urbi-sdk.
-case $dest in
-  (*/kernel-2.0) dest=$(dirname $dest)/urbi-sdk;;
-esac
+PROJECT=$BUILDFARM_PROJECT    # name of the project
+source=$DIR_SOURCE            # source directory
+build=$DIR_BUILD              # build directory
+install=$DIR_INSTALL          # install directory
+# Where to put the tarballs.
+dest=$sharedir/built/$BUILDFARM_PROJECT
+
+ARCH=$BUILDFARM_ARCH      # archithecture; ex. x86
+OS=$BUILDFARM_OS          # operating system; (linux|linux_lucid|macos|windows)
+COMP=$BUILDFARM_COMPILER  # compiler; ex. gcc4
+MODE=$BUILDFARM_MODE      # compile mode: (release|debug)_(static|dynamic)
+prefix=/prefix            # prefix as given to configure
 
 # Make a slight effort so that instead of 2.2-8-g9b02553 we get
 # 2.2-008-g9b02553, which is better with "ls".  Always show the sha1
