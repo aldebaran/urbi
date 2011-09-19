@@ -1,4 +1,4 @@
-## Copyright (C) 2005-2010, Gostai S.A.S.
+## Copyright (C) 2005-2011, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -209,8 +209,8 @@ utoken_deps = $(FLEXXX_IN) parser/local.mk
 parser/utoken.stamp: parser/utoken.l $(utoken_deps)
 	$(AM_V_GEN)
 	$(AM_V_at)$(MAKE) $(AM_MAKEFLAGS) $(FLEXXX)
-	$(AM_V_at)rm -f $@.tmp
-	$(AM_V_at)touch $@.tmp
+	$(AM_V_at)rm -f $@ $@.tmp parser/utoken-pruned.l
+	$(AM_V_at)echo '$@ rebuilt because of: $?' >$@.tmp
 	$(AM_V_at)$(PRUNE_FOR_SPACE) - <$< >parser/utoken-pruned.l
 	$(AM_V_at)$(FLEXXX) parser/utoken-pruned.l parser/utoken.cc \
 	  $(FLEXXXFLAGS)
