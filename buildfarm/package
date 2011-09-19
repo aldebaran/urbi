@@ -1,0 +1,312 @@
+#!/bin/sh
+
+set -e
+set -x
+env=$(set +o)
+
+stderr ()
+{
+  set +xv
+  local i
+  for i
+  do
+    echo "$i"
+  done | sed -e "s,^,$0: ,g" >&2
+  eval "$env"
+}
+
+error ()
+{
+  set +xv
+  local status=$1
+  shift
+  stderr "$@"
+  exit $status
+}
+
+fatal ()
+{
+  set +xv
+  error 1 "$@"
+}
+
+find_prog ()
+{
+  find_prog_res=
+  local i
+  for i in "$@"
+  do
+    if $i --version >/dev/null 2>&1; then
+      find_prog_res=$i
+      break
+    fi
+  done
+}
+
+# make_tarball DIRECTORY
+# ----------------------
+#
+# Prepare a tarball (*.zip on Windows, tar.bz2 elsewhere) with an
+# inner MANIFEST.txt file.  Take care of permission issues.  Set
+# make_tarball_res to the name of the created tarball.
+make_tarball ()
+{
+  local dir=$1
+
+  # Fix permissions on DLL that were removed through DAVfs.
+  dlls=$(find "$dir" -name '*.dll')
+  test -n "$dlls" && chmod u+x $dlls
+
+  # MANIFEST.txt
+  #
+  # Build a MANIFEST.txt with the list of files to install into the
+  # final destination.
+  here=$(pwd)
+  cd "$dir"
+    find . -type f -print |
+      sed -e 's,^\./,,' |
+      xargs $MD5SUM \
+      >"$tmp/MANIFEST.txt"
+  cd $here
+  mv $tmp/MANIFEST.txt "$dir"
+
+  # Force mode 755/644 on all files.
+  chmod -R a+rX "$dir"
+
+  # Create archives.  Don't be verbose for each one, it clutters the web
+  # logs (and they take too long to load).
+  case $OS in
+    (windows)
+      make_tarball_res=$dir.zip
+      $ZIP -r -q "$make_tarball_res.tmp" "$dir"
+      ;;
+
+    (*)
+      make_tarball_res=$dir.tar.bz2
+      $TAR --owner root -cvjf "$make_tarball_res.tmp" "$dir"
+      ;;
+  esac
+
+  # Make the tarball in two steps to ensure atomicity: some of the
+  # tarballs are to be uncompressed as soon as they exist.
+  mv -f "$make_tarball_res.tmp" "$make_tarball_res"
+
+  # Let the reader of the log be able to check what we created.
+  $LS -l "$dir".*
+}
+
+
+# move_into DIR SOURCES...
+# ------------------------
+# Import the SOURCES... into DIR, making it atomic so that we don't
+# "see" files that are not ready to be used.
+move_into ()
+{
+  local dir=$1
+  shift
+  # First, copy them all into $dir with a tmp extension.
+  local i
+  for i
+  do
+    $MV -v -f "$i" "$dir/$(basename "$i").tmp"
+  done
+
+  # Then rename them all.
+  for i
+  do
+    $MV -v -f "$dir/$(basename "$i").tmp" "$dir/$(basename "$i")"
+  done
+}
+
+
+# check_md5 DIR FILE
+# ------------------
+# Make sure we managed to publish properly.  It's sad to say, but
+# there seems to be too much nondeterminism coming from our
+# distributed file system.  Give it some time, otherwise the archive
+# is incomplete.
+check_md5 ()
+{
+  local dir=$1
+  local file=$2
+  local here=$(pwd)
+  cd $dir
+  local n=5
+  while true;
+  do
+    stderr "$file: md5 check attempt..."
+    $LS -l "$file" "$file.md5"
+    if test -s "$file.md5"; then
+      cat "$file.md5"
+      if $MD5SUM --check $file.md5; then
+        stderr "$file: md5 check correct"
+        break
+      else
+        fatal "$file: md5 check incorrect"
+      fi
+    else
+      n=$(expr $n - 1)
+      test 0 -lt $n ||
+        fatal "$file.md5 is still empty"
+      sleep 1
+    fi
+  done
+  cd $here
+}
+
+# If some of those need to be chosen by configure, add an entry
+# there and add the "@" form.
+: ${CP=cp}
+: ${FIND=find}
+: ${GIT=git}
+: ${LN=ln}
+: ${LS=ls}
+: ${MKDIR_P="mkdir -p"}
+: ${MV=mv}
+: ${RM="rm -f"}
+: ${SED="sed"}
+: ${TAR=tar}
+: ${ZIP=zip}
+
+find_prog $MD5SUM gmd5sum md5sum
+MD5SUM=$find_prog_res
+test -n "$MD5SUM" ||
+  fatal "cannot find md5sum"
+
+: ${TMPDIR=/tmp}
+
+case $# in
+  (10);;
+  (*) fatal "not enough arguments: $#, expecting 10";;
+esac
+
+PROJECT=$1    # name of the project
+source=$2     # source directory
+build=$3      # build directory
+install=$4    # install directory
+dest=$5       # where to create the package
+ARCH=$6       # archithecture; ex. x86
+OS=$7         # operating system; (linux|linux-bleeding-edge|macos|windows)
+COMP=$8       # compiler; ex. gcc4
+MODE=$9       # compile mode: (release|debug)_(static|dynamic)
+prefix=${10}  # prefix as given to configure
+
+# Sanity check: make sure that we are going to install in the right
+# shared "share" directory.
+sharedir=$(echo "$dest" | sed -e 's,/share/.*,/share,')
+test -f $sharedir/README-share.txt ||
+  fatal "$sharedir does not contain README-share.txt" "mount:" "$(mount)"
+
+# There are still places where kernel-2.0 is used instead of urbi-sdk.
+case $dest in
+  (*/kernel-2.0) dest=$(dirname $dest)/urbi-sdk;;
+esac
+
+# Make a slight effort so that instead of 2.2-8-g9b02553 we get
+# 2.2-008-g9b02553, which is better with "ls".  Always show the sha1
+# (--long) so that when we use repeatedly the same tag, tarballs with
+# the same name are *not* stored at the same place.
+SHA1=$(cd "$source" &&
+       git describe --long |
+         perl -ne '
+  if (m{^(?:.*/)?(.*)-(\d+)-(g[\da-f]+)$})
+  {
+    printf "%s-%03d-%s\n", $1, $2, $3;
+  }
+  elsif (m{^(?:.*/)?(.*)$})
+  {
+    printf "%s\n", $1;
+  }')
+test -n "$SHA1" || SHA1=$(cd "$source" && git rev-parse HEAD)
+
+# Create a temporary directory where to package, and be ready to clear
+# it on success/failure.
+cleanup ()
+{
+  status=$?
+  cd /
+  rm -rf $tmp
+  exit $status
+}
+tmp=$(mktemp -d "$TMPDIR/buildfarm_package.XXXXXX")
+trap cleanup 0 1 2 13 15
+
+cd "$tmp"
+pwd
+
+# Where to install the packages.
+case $SHA1 in
+  # We could automatically install releases there, but it is feared
+  # that this is too much automation, the maintainer should do that.
+  # She might want also to get rid of the sha1 part when copying for
+  # archives/ to releases/.
+  #
+  # (*-000-g*) archivedir="$dest/releases/$SHA1";;
+  (*)        archivedir="$dest/archives/$SHA1";;
+esac
+export archivedir
+$MKDIR_P "$archivedir"
+
+# This part should create in the temporary directory a single
+# directory that will be archived and distributed. If the project
+# provides its own script, let it package.
+delegate="$build/scripts/package"
+
+build_type="${ARCH}-${OS}-${COMP}"
+test "$MODE" != "release" && build_type="${build_type}-${MODE}"
+unqualified_dir="${PROJECT}-${build_type}"
+qualified_dir="${PROJECT}-${SHA1}-${build_type}"
+
+if test -x "$delegate"; then
+  "$delegate" "$PROJECT" "$source" "$build" "$install/" \
+              "." "$ARCH" "$OS" "$COMP" "$MODE" "$prefix"
+  pwd
+  $LS -la
+  qualified_dir=$($LS)
+  test -n "$qualified_dir" ||
+    fatal "The project's package script didn't create anything"
+else
+  $RM -rf "$qualified_dir"
+  $CP -r "$install" "$qualified_dir"
+fi
+
+# Iterate over packaged content.
+for dir in $qualified_dir
+do
+  # $pack: the package (tarball/zip) to publish.
+  # If this is a directory, make it a tarball.
+  if test -d "$dir"; then
+    make_tarball "$dir"
+    pack=$make_tarball_res
+  else
+    pack=$dir
+  fi
+
+  # Compute the md5sum of the file.
+  $MD5SUM "$pack" >"$pack.md5"
+
+  # Publish the archive and its md5sum.
+  move_into "$archivedir" "$pack" "$pack.md5"
+
+  # Make sure we managed to publish properly.
+  check_md5 $archivedir $pack
+
+  # This looks useless, but it's an attempt to eliminate
+  # nondeterministic problems of availability of shared directories
+  # on OS X.
+  $LS "$dest" >/dev/null
+
+  delegate="$source/scripts/make-installer"
+  if test -x "$delegate"; then
+    sleep 10
+    # This is the expected output from this delegate.
+    exe=${dir%-$MODE}.exe
+    "$delegate" "$ARCH" "$OS" "$COMP" "$MODE" \
+                "$source" "$build" "$install" "$archivedir/$dir"
+    # The delegate might not create the installer, if it was run
+    # before its peer.
+    if test -f "$archivedir/$exe"; then
+      check_md5 "$archivedir" "$exe"
+    fi
+  fi
+done
