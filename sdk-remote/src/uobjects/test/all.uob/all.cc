@@ -20,6 +20,7 @@
 #include <stdexcept>
 
 #include <urbi/uclient.hh>
+#include <urbi/uconversion.hh>
 #undef URBI
 #include <urbi/uobject.hh>
 #include <urbi/customuvar.hh>
@@ -189,6 +190,9 @@ public:
 
     UBindFunctions(all, setLocale, getLocale);
 
+    // Image conversion.
+    UBindFunctions(all, convert);
+
     UBindCacheVar(all, writeLastChangeVal, bool);
     writeLastChangeVal = true;
     periodicWriteCount = 1;
@@ -212,6 +216,16 @@ public:
   ~all()
   {
     ++destructionCount;
+  }
+
+  urbi::UImage
+  convert (const urbi::UImage source, const std::string& id)
+  {
+    urbi::UImage res;
+    res.make ();
+    res.imageFormat = urbi::parse_image_format (id);
+    urbi::convert(source, res);
+    return res;
   }
 
   void multiWrite(int idx, int count, ufloat val)
