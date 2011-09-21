@@ -1,3 +1,11 @@
-*.pdf	binary
+*.pdf            binary
+*.ppm            binary
+*.rgb            binary
+*.grey8          binary
+*.nv12           binary
+*.YCbCr          binary
+*.yuv411_planar  binary
+*.yuv420_planar  binary
+
 
 src/parser/flex-lexer.hh -hook_copyright
