@@ -34,7 +34,7 @@ class Global.camera: Loadable
   {
     if (images.isVoid)
     {
-      var dir = System.urbiShareDir / "images" / "gostai-logo";
+      var dir = System.urbiShareDir / "images" / "gostai-logo" / "jpeg";
       clog << "Loading images from %s." % dir;
       images =
         Directory.new(dir)
