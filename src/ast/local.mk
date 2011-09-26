@@ -1,4 +1,4 @@
-## Copyright (C) 2007-2010, Gostai S.A.S.
+## Copyright (C) 2007-2011, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -71,6 +71,7 @@ dist_libuobject@LIBSFX@_la_SOURCES +=		\
   ast/flavor.hxx				\
   ast/formal.cc					\
   ast/formal.hh					\
+  ast/loc.cc					\
   ast/loc.hh					\
   ast/local-declarations-type.cc		\
   ast/local-declarations-type.hh		\

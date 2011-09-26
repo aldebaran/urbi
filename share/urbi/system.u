@@ -103,28 +103,10 @@ do (System)
       'loadFile$old'(file, target)
     });
 
-  [
-    searchFile("urbi/urbi.u").asString,
-    searchFile("urbi/system.u").asString,
-    searchFile("urbi/object.u").asString,
-    "ast/factory.cc",
-    "ast/parametric-ast.cc",
-    "ast/parametric-ast.hh",
-    "ast/parametric-ast.hxx",
-    "binder/binder.cc",
-    "flower/flower.cc",
-    "object/code.cc",
-    "object/object.cc",
-    "object/object-class.cc",
-    "parser/ugrammar.y",
-    "rewrite/desugarer.cc",
-    "rewrite/pattern-binder.cc",
-    "rewrite/rescoper.cc",
-    // Added by hand: not loaded by default, hence not automatically
-    // added.
-    searchFile("urbi/component.u").asString,
-    searchFile("urbi/naming-standard.u").asString,
-  ].each(getSlotValue("addSystemFile"));
+  for (var s: ["component", "naming-standard", "object",
+               "system", "test-suite", "urbi"])
+    // String.% is not available, yet.
+    addSystemFile(searchFile("urbi/" + s + ".u").asString);
 
   /// Look for file and load it.
   // Throw on errors.
