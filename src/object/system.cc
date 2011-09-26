@@ -486,32 +486,36 @@ namespace urbi
       }
     }
 
-    static system_files_type system_files_;
+
+    /*---------------.
+    | System files.  |
+    `---------------*/
 
     static void
-    system_addSystemFile(const rObject&, rObject name)
+    system_addSystemFile(const rObject&, const std::string& name)
     {
-      system_files_.insert(libport::Symbol(from_urbi<std::string>(name)));
+      system_files_get().insert(libport::Symbol(name));
     }
 
     static void
     system_setSystemFiles(const rObject&,
                           const std::vector<libport::Symbol>& names)
     {
-      system_files_.clear();
-      system_files_.insert(names.begin(), names.end());
+      system_files_get().clear();
+      system_files_get().insert(names.begin(), names.end());
     }
 
     static std::vector<libport::Symbol>
     system_systemFiles(const rObject&)
     {
-      return std::vector<libport::Symbol>(system_files_.begin(),
-                                          system_files_.end());
+      return std::vector<libport::Symbol>(system_files_get().begin(),
+                                          system_files_get().end());
     }
 
     system_files_type&
     system_files_get()
     {
+      static system_files_type system_files_;
       return system_files_;
     }
 
@@ -519,7 +523,7 @@ namespace urbi
     is_system_location(const ast::loc& l)
     {
       return (l.begin.filename
-              && libport::mhas(system_files_, *l.begin.filename));
+              && libport::mhas(system_files_get(), *l.begin.filename));
     }
 
     void

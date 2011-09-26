@@ -22,17 +22,25 @@
 
 # include <kernel/config.h>
 
-# define DECLARE_LOCATION_FILE                  \
-  static /* const */ ::libport::Symbol          \
-    _DECLARE_LOCATION_FILE_is_not_defined       \
-    (__FILE__ + sizeof(__SRCDIR__ "/src/") - 1)
+// If you have an error from here, it probably means that you used
+// LOCATION_HERE without first calling DECLARE_LOCATION_FILE (alone,
+// visible from the scopes using LOCATION_HERE).
+# define DECLARE_LOCATION_FILE                          \
+  static /* const */ ::libport::Symbol                  \
+  _DECLARE_LOCATION_FILE_is_missing =                   \
+    ::ast::declare_location_file(__SRCDIR__, __FILE__);
 
 # define LOCATION_HERE                                          \
-  ::ast::loc(&_DECLARE_LOCATION_FILE_is_not_defined, __LINE__)
+  ::ast::loc(&_DECLARE_LOCATION_FILE_is_missing, __LINE__)
 
 namespace ast
 {
   typedef yy::location loc;
+
+  /// A Symbol that represents the current source file.
+  /// Also add it to the urbi::system_files_get.
+  ::libport::Symbol
+  declare_location_file(const std::string& srcdir, std::string file);
 }
 
 #endif // !AST_LOC_HH
