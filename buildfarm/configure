@@ -65,7 +65,22 @@ fi
 local=$HOME/local
 export PKG_CONFIG_PATH=$local/pkgconfig/$BUILDFARM_MODE:$local/pkgconfig:$PKG_CONFIG_PATH
 
-BOOST=$(pkg-config --print-errors boost-1.38 --variable=prefix)
+case $BUILDFARM_OS in
+  (linux_lucid)
+    # Use the native Boost.
+    with_boost=
+    ;;
+  (windows)
+    # For some historical reason, we use Boost 1.39 on Windows.
+    BOOST=$(pkg-config --print-errors boost-1.39 --variable=prefix)
+    with_boost=--with-boost=$BOOST
+    ;;
+  (*)
+    # To match Naoqi's requirement, use Boost 1.38.
+    BOOST=$(pkg-config --print-errors boost-1.38 --variable=prefix)
+    with_boost=--with-boost=$BOOST
+    ;;
+esac
 CC='ccache gcc'
 CXX='ccache g++'
 CPPFLAGS="-I'$local/include'"
@@ -97,7 +112,6 @@ case $BUILDFARM_COMPILER in
   --enable-shared                                       \
   --disable-static                                      \
   --enable-dependency-tracking                          \
-  --with-boost=/home/build/local/boost/boost_1_39       \
   host_alias=mingw32                                    \
   --host=mingw32"
 esac
@@ -121,7 +135,7 @@ if $(older "$DIR_BUILD/Makefile" "$0"); then
   run "$DIR_SOURCE/configure"                   \
     --prefix=/prefix                            \
     --enable-compilation-mode=$COMPILATION_MODE \
-    --with-boost="'$BOOST'"                     \
+    "$with_boost"                               \
     "$DOC"                                      \
     --enable-headers-install                    \
     CPPFLAGS="'$CPPFLAGS'"                      \

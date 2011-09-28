@@ -351,10 +351,6 @@ Math.round(1.2) == 1.2.round;
   \us (\autoref{sec:build:debug}).  \urbi objects are pretty printed when
   accessed and commands are available for printing the backtrace of the
   current Job and for adding/removing breakpoints on \us.
-
-\item Binary packages now include simple aliases to the Boost libraries
-  (e.g., you may use \option{-lboost\_date\_time} instead of
-  \option{-lboost\_date\_time-gcc44-mt-1\_38}).
 \end{itemize}
 
 
@@ -380,6 +376,26 @@ Math.round(1.2) == 1.2.round;
 \end{itemize}
 
 
+\section{\usdk 2.7.3}
+\release{2.7}{2011-10-XX}
+
+\subsection{Changes}
+\begin{itemize}
+\item Compatibility with Boost 1.46.
+
+\item Binary packages now include simple aliases to the Boost libraries
+  (e.g., you may use \option{-lboost\_date\_time} instead of
+  \option{-lboost\_date\_time-gcc44-mt-1\_38}).
+
+\item Binary packages on Ubuntu Lucid now use its native Boost libraries
+  (1.40) instead of Boost 1.38.
+\end{itemize}
+
+\section{\usdk 2.7.2}
+\release{2.7}{2011-05-13}
+
+There was no public release of \usdk 2.7.2, which contained only a simple
+change for a single architecture for a customer of ours.
 
 \section{\usdk 2.7.1}
 \release{2.7}{2011-03-17}
