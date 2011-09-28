@@ -21,3 +21,7 @@ check -C tests TESTS_DIRS=1.x
 check -C tests TESTS_DIRS=uob/plug
 check -C tests TESTS_DIRS=uob/remote
 check -C tests TESTS_DIRS=uob/java
+check -C tests TESTS_DIRS=demo
+# Cannot install-check fsm, since fsm.u is not installed.
+# check -C tests TESTS_DIRS=@fsm
+check -C tests TESTS_DIRS=@ros
