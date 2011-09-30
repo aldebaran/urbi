@@ -78,12 +78,12 @@ make_tarball ()
   case $OS in
     (windows)
       make_tarball_res=$dir.zip
-      $ZIP -r -q "$make_tarball_res.tmp" "$dir"
+      zip -r -q "$make_tarball_res.tmp" "$dir"
       ;;
 
     (*)
       make_tarball_res=$dir.tar.bz2
-      $TAR --owner root -cvjf "$make_tarball_res.tmp" "$dir"
+      tar --owner root -cvjf "$make_tarball_res.tmp" "$dir"
       ;;
   esac
 
@@ -92,7 +92,7 @@ make_tarball ()
   mv -f "$make_tarball_res.tmp" "$make_tarball_res"
 
   # Let the reader of the log be able to check what we created.
-  $LS -l "$dir".*
+  ls -l "$dir".*
 }
 
 
@@ -108,13 +108,13 @@ move_into ()
   local i
   for i
   do
-    $MV -v -f "$i" "$dir/$(basename "$i").tmp"
+    mv -v -f "$i" "$dir/$(basename "$i").tmp"
   done
 
   # Then rename them all.
   for i
   do
-    $MV -v -f "$dir/$(basename "$i").tmp" "$dir/$(basename "$i")"
+    mv -v -f "$dir/$(basename "$i").tmp" "$dir/$(basename "$i")"
   done
 }
 
@@ -135,7 +135,7 @@ check_md5 ()
   while true;
   do
     stderr "$file: md5 check attempt..."
-    $LS -l "$file" "$file.md5"
+    ls -l "$file" "$file.md5"
     if test -s "$file.md5"; then
       cat "$file.md5"
       if $MD5SUM --check $file.md5; then
@@ -153,20 +153,6 @@ check_md5 ()
   done
   cd $here
 }
-
-# If some of those need to be chosen by configure, add an entry
-# there and add the "@" form.
-: ${CP=cp}
-: ${FIND=find}
-: ${GIT=git}
-: ${LN=ln}
-: ${LS=ls}
-: ${MKDIR_P="mkdir -p"}
-: ${MV=mv}
-: ${RM="rm -f"}
-: ${SED="sed"}
-: ${TAR=tar}
-: ${ZIP=zip}
 
 find_prog $MD5SUM gmd5sum md5sum
 MD5SUM=$find_prog_res
@@ -237,7 +223,7 @@ case $SHA1 in
   (*)        archivedir="$dest/archives/$SHA1";;
 esac
 export archivedir
-$MKDIR_P "$archivedir"
+mkdir -p "$archivedir"
 
 # This part should create in the temporary directory a single
 # directory that will be archived and distributed. If the project
@@ -253,13 +239,13 @@ if test -x "$delegate"; then
   "$delegate" "$PROJECT" "$source" "$build" "$install/" \
               "." "$ARCH" "$OS" "$COMP" "$MODE" "$prefix"
   pwd
-  $LS -la
-  qualified_dir=$($LS)
+  ls -la
+  qualified_dir=$(ls)
   test -n "$qualified_dir" ||
     fatal "The project's package script didn't create anything"
 else
-  $RM -rf "$qualified_dir"
-  $CP -r "$install" "$qualified_dir"
+  rm -rf "$qualified_dir"
+  cp -r "$install" "$qualified_dir"
 fi
 
 # Iterate over packaged content.
@@ -286,7 +272,7 @@ do
   # This looks useless, but it's an attempt to eliminate
   # nondeterministic problems of availability of shared directories
   # on OS X.
-  $LS "$dest" >/dev/null
+  ls "$dest" >/dev/null
 
   delegate="$source/scripts/make-installer"
   if test -x "$delegate"; then
