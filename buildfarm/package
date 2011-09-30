@@ -43,6 +43,22 @@ find_prog ()
   done
 }
 
+# Wrapper around "mv" that tries to do things three times, then forget
+# about it.  This is because sometimes we get "Input/output error"
+# with WebDAV, which is a huge loss of time on the BF.
+xmv ()
+{
+  local i
+  for i in 1 2 3
+  do
+    if mv "$@"; then
+      return 0
+    fi
+  done
+  fatal "cannot: mv $*"
+}
+
+
 # make_tarball DIRECTORY
 # ----------------------
 #
@@ -68,7 +84,7 @@ make_tarball ()
       xargs $MD5SUM \
       >"$tmp/MANIFEST.txt"
   cd $here
-  mv $tmp/MANIFEST.txt "$dir"
+  xmv $tmp/MANIFEST.txt "$dir"
 
   # Force mode 755/644 on all files.
   chmod -R a+rX "$dir"
@@ -89,7 +105,7 @@ make_tarball ()
 
   # Make the tarball in two steps to ensure atomicity: some of the
   # tarballs are to be uncompressed as soon as they exist.
-  mv -f "$make_tarball_res.tmp" "$make_tarball_res"
+  xmv -f "$make_tarball_res.tmp" "$make_tarball_res"
 
   # Let the reader of the log be able to check what we created.
   ls -l "$dir".*
@@ -108,13 +124,13 @@ move_into ()
   local i
   for i
   do
-    mv -v -f "$i" "$dir/$(basename "$i").tmp"
+    xmv -v -f "$i" "$dir/$(basename "$i").tmp"
   done
 
   # Then rename them all.
   for i
   do
-    mv -v -f "$dir/$(basename "$i").tmp" "$dir/$(basename "$i")"
+    xmv -v -f "$dir/$(basename "$i").tmp" "$dir/$(basename "$i")"
   done
 }
 
