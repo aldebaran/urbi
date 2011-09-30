@@ -182,7 +182,7 @@ namespace urbi
           int err = errno;
           XCLOSE(stdin_fd[0]);
           XCLOSE(stdin_fd[1]);
-          FRAISE("pipe failed: %s:", libport::strerror(err));
+          FRAISE("pipe failed: %s", libport::strerror(err));
         }
         if (pipe(stderr_fd))
         {
@@ -191,7 +191,7 @@ namespace urbi
           XCLOSE(stdout_fd[1]);
           XCLOSE(stdin_fd[0]);
           XCLOSE(stdin_fd[1]);
-          FRAISE("pipe failed: %s:", libport::strerror(err));
+          FRAISE("pipe failed: %s", libport::strerror(err));
         }
       }
       else
