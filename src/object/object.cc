@@ -406,8 +406,8 @@ namespace urbi
       else
       {
         if (s)
-        { // Slot present in parent, copy it.
-          // Careful, we want to call the ctor(Slot&) that copies the slot.
+        {
+          // Slot present in parent, copy it.
           Slot& slot = slot_copy_on_write(k, *s);
           bool cst = slot.constant_get();
           FINALLY(((Slot&, slot))((bool, cst)), slot.constant_set(cst));
@@ -542,7 +542,7 @@ namespace urbi
       if (rs->property_set(p, value)
           && rs->slot_has(SYMBOL(newPropertyHook)))
         rs->call(SYMBOL(newPropertyHook),
-                   this, new String(k), new String(p), value);
+                 this, new String(k), new String(p), value);
       return value;
     }
 

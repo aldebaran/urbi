@@ -115,7 +115,7 @@ namespace urbi
       ufloat f = (long)(void*)this;
       if (!r->slot_has(SYMBOL(DOLLAR_uobjectInUpdate)))
         r->slot_set_value(SYMBOL(DOLLAR_uobjectInUpdate),
-                    new Float(f));
+                          new Float(f));
       set(val, sender, timestamp);
       r->slot_remove(SYMBOL(DOLLAR_uobjectInUpdate));
     }
@@ -189,7 +189,8 @@ namespace urbi
     Slot::set_output_value(rObject v)
     {
       URBI_SCOPE_DISABLE_DEPENDENCY_TRACKER;
-      GD_FINFO_DUMP("Slot::set_output_value, slot %s, val %s changed %s ", this, v, changed_);
+      GD_FINFO_DUMP("Slot::set_output_value, slot %s, val %s changed %s ",
+                    this, v, changed_);
       output_value_ = v;
       check_waiters();
       // Both optim and let us run the init phase with no runner.
