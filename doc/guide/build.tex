@@ -311,16 +311,22 @@ $ ./bootstrap
 \section{Configure}
 \label{sec:build:configure}
 
-As of today, building where the source files are is a bad idea (the test
-suite of a sub-component of ours, Libport, is known to fail in that
-situation).  So, \strong{compile in another directory than the one
-  containing the sources}, for instance as follows.
+Do not compile where the source files are (the test suite of a sub-component
+of ours, Libport, is known to fail in that situation).  So, \strong{compile
+  in another directory than the one containing the sources}, for instance as
+follows.
 
 \begin{shell}
 $ mkdir _build
 $ cd _build
 $ ../configure \var{options}...
 \end{shell}
+
+Also, do not compile in a directory whose name, or the name of some of its
+ancester, use ``special characters'': stick to plain ASCII.  This is a
+limitation of the Java VM which seems to be unable to traverse properly
+directories with UTF-8 names when the locale is set to C
+(\autoref{sec:faq:jvm}).
 
 \subsection{configuration options}
 See \samp{../configure --help} for detailed information.  Unless you
