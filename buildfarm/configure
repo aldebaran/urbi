@@ -120,8 +120,9 @@ esac
 # gnulib's configure when a module is obsoleted: its symlinks remain.
 #
 # --no-run-if-empty, -r
+#   OS X does not support -r, and anyway "rm -f" is valid.
 # --verbose, -t
-find . -type l -print | perl -nle '-e || print' | xargs -r -t rm -f
+find . -type l -print | perl -nle '-e || print' | xargs -t rm -f
 
 here=$(pwd)
 if $(older "$DIR_SOURCE/configure" "$0"); then
