@@ -325,7 +325,7 @@ namespace urbi
     Object::slot_copy_on_write(key_type name, Slot& slot)
     {
       // Careful, we want to call the ctor(Slot&) that copies the slot.
-      rSlot cow = slot->call(SYMBOL(new))->as<Slot>();
+      rSlot cow = slot.call(SYMBOL(new))->as<Slot>();
       slot_set(name, cow);
       return *cow;
     }
