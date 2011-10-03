@@ -19,9 +19,10 @@
 \label{sec:faq:build}
 
 \subsection{Complaints about \samp{+=}}
-At random places we use \samp{+=} in \command{/bin/sh} scripts, which Ash
-(aka, \command{dash} and \command{sash}) does not support.  Please, use
-\command{bash} or \command{zsh} instead of Ash as \command{/bin/sh}.
+Although we tried to avoid it, there might still be shell scripts where we
+use \samp{+=}, which Ash (aka, \command{dash} and \command{sash}) does not
+support.  Please, use \command{bash} or \command{zsh} instead of Ash as
+\command{/bin/sh}.
 
 \subsection{error: `$<$anonymous$>$' is used uninitialized in this function}
 \label{sec:faq:build:uninitialized}
@@ -83,6 +84,41 @@ Automake item in \autoref{sec:build:req}.
 %%
 %% \noindent
 %% et voila.
+
+\subsection{configure: error: The Java VM java failed}
+\label{sec:faq:jvm}
+
+If you experience the following failure:
+
+\begin{verbatim}
+checking if java works...
+configure: error: The Java VM java failed
+                 (see config.log, check the CLASSPATH?)
+\end{verbatim}
+
+\noindent
+and if you looked at \file{config.log}, you should find something like:
+
+\begin{verbatim}
+Exception in thread "main" java.lang.NoClassDefFoundError: Test
+Caused by: java.lang.ClassNotFoundException: Test
+         at java.net.URLClassLoader$1.run(URLClassLoader.java:202)
+         at java.security.AccessController.doPrivileged(Native Method)
+         at java.net.URLClassLoader.findClass(URLClassLoader.java:190)
+         at java.lang.ClassLoader.loadClass(ClassLoader.java:306)
+         at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:301)
+         at java.lang.ClassLoader.loadClass(ClassLoader.java:247)
+ Could not find the main class: Test.  Program will exit.
+\end{verbatim}
+
+You might be trying to compile \usdk from a directory with non-ASCII
+characters in its full name (for instance
+\file{/home/jessy/Téléchargements/Sources}).  In that case the JVM fails to
+decode properly the path, and \command{configure} fails with the above
+message.
+
+Move you sources elsewhere, with only plain ASCII characters, such as
+\file{/home/jessy/Sources}.
 
 \subsection{\samp{make check} fails}
 
