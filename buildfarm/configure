@@ -45,7 +45,10 @@ set -ex
 #
 # bf-1-chroot$ javac Test.java
 # Java HotSpot(TM) Client VM warning: Can't detect initial thread stack location - find_vma failed
-if ! ps; then
+#
+# Beware that on OS X, if "ps" sees no process, it fails.  "ps x"
+# should help.
+if ! ps x; then
   fatal "ps does not work, is procfs properly mounted?"
 fi
 
