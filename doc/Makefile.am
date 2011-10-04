@@ -44,7 +44,10 @@ EXTRA_DIST +=					\
 ## Images.  ##
 ## -------- ##
 
-DOT_IMAGES = $(call ls_files,img/*.dot)
+# Images whose original is in DOT.
+DOT_IMAGES :=							\
+  $(call ls_files,img/*.dot					\
+                  @{../modules/system/ros}/doc/img/*.dot)
 PNG_IMAGES =							\
   $(call ls_files,img/*.png					\
                   @{../modules/system/ros}/doc/img/*.png)
