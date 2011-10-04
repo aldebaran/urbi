@@ -113,7 +113,8 @@ case $BUILDFARM_OS in
   (*)           ROS_VERSION=cturtle;;
 esac
 if pkg-config --print-errors --exists ros-$ROS_VERSION; then
-  ROS_ROOT=$(pkg-config --print-errors ros-$ROS_VERSION --variable=prefix)
+  ROS_PREFIX=$(pkg-config --print-errors ros-$ROS_VERSION --variable=prefix)
+  ROS_ROOT=$ROS_PREFIX/ros
   with_ros="ROS_ROOT=$ROS_ROOT"
 else
   unset ROS_ROOT
