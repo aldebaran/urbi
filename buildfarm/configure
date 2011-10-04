@@ -103,6 +103,20 @@ case $BUILDFARM_OS in
     ;;
 esac
 
+# ROS.
+case $BUILDFARM_OS in
+  (linux_lucid) ROS_VERSION=diamondback;;
+  (windows)     ;;
+  (*)           ROS_VERSION=cturtle;;
+esac
+if pkg-config --print-errors --exists ros-$ROS_VERSION; then
+  ROS_ROOT=$(pkg-config --print-errors ros-$ROS_VERSION --variable=prefix)
+  with_ros="ROS_ROOT=$ROS_ROOT"
+else
+  unset ROS_ROOT
+fi
+
+
 # Compiler.
 CC='ccache gcc'
 CXX='ccache g++'
@@ -111,8 +125,6 @@ LDFLAGS="-I'$local/lib'"
 
 case $BUILDFARM_COMPILER in
   (vcxx2005|vcxx2008)
-  CPPFLAGS= #'-I/home/build/local_wine/winroot/opt/include'
-  LDFLAGS= #'-L/home/build/local_wine/winroot/opt/lib'
   CONFIGUREFLAGS="                                      \
   AR='lib.exe'                                          \
   CC='ccache cl.exe'                                    \
@@ -145,6 +157,7 @@ if $(older "$DIR_BUILD/Makefile" "$0"); then
     --prefix=/prefix                            \
     --enable-compilation-mode=$COMPILATION_MODE \
     "$with_boost"                               \
+    "$with_ros"                                 \
     "$enable_doc"                               \
     --enable-headers-install                    \
     CPPFLAGS="'$CPPFLAGS'"                      \
