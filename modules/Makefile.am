@@ -26,6 +26,8 @@ sdk_remote_builddir = $(top_builddir)/sdk-remote
 LIBUOBJECT_REMOTE_LIBS =						\
   $(sdk_remote_builddir)/src/libuobject/libuobject$(LIBSFX).la
 
+ALLS =
+all: $(ALLS)
 module_LTLIBRARIES =
 moduledir = $(urbi_uobjectsdir)
 include modules.mk
