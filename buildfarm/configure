@@ -58,6 +58,26 @@ fi
 
 
 ## ----------- ##
+## Bootstrap.  ##
+## ----------- ##
+
+# Dead links are troublesome.  There can be some for instance with
+# gnulib's configure when a module is obsoleted: its symlinks remain.
+#
+# --no-run-if-empty, -r
+#   OS X does not support -r, and anyway "rm -f" is valid.
+# --verbose, -t
+find . -type l -print | perl -nle '-e || print' | xargs -t rm -f
+
+here=$(pwd)
+if $(older "$DIR_SOURCE/configure" "$0"); then
+  cd "$DIR_SOURCE"
+  ./bootstrap
+  cd $here
+fi
+
+
+## ----------- ##
 ## Configure.  ##
 ## ----------- ##
 
@@ -65,6 +85,7 @@ fi
 local=$HOME/local
 export PKG_CONFIG_PATH=$local/pkgconfig/$BUILDFARM_MODE:$local/pkgconfig:$PKG_CONFIG_PATH
 
+# Boost.
 case $BUILDFARM_OS in
   (linux_lucid)
     # Use the native Boost.
@@ -81,21 +102,12 @@ case $BUILDFARM_OS in
     with_boost=--with-boost=$BOOST
     ;;
 esac
+
+# Compiler.
 CC='ccache gcc'
 CXX='ccache g++'
 CPPFLAGS="-I'$local/include'"
 LDFLAGS="-I'$local/lib'"
-
-case $(uname -n) in
-  (bf-3) DOC=;;
-  (*)    DOC='--disable-doc';;
-esac
-
-case $BUILDFARM_MODE in
-  (release) COMPILATION_MODE=speed;;
-  (debug)   COMPILATION_MODE=debug;;
-  (*)   fatal "invalid buildfarm mode: $BUILDFARM_MODE"
-esac
 
 case $BUILDFARM_COMPILER in
   (vcxx2005|vcxx2008)
@@ -116,20 +128,16 @@ case $BUILDFARM_COMPILER in
   --host=mingw32"
 esac
 
-# Dead links are troublesome.  There can be some for instance with
-# gnulib's configure when a module is obsoleted: its symlinks remain.
-#
-# --no-run-if-empty, -r
-#   OS X does not support -r, and anyway "rm -f" is valid.
-# --verbose, -t
-find . -type l -print | perl -nle '-e || print' | xargs -t rm -f
+case $(uname -n) in
+  (bf-3) enable_doc='--enable-doc';;
+  (*)    enable_doc='--disable-doc';;
+esac
 
-here=$(pwd)
-if $(older "$DIR_SOURCE/configure" "$0"); then
-  cd "$DIR_SOURCE"
-  ./bootstrap
-  cd $here
-fi
+case $BUILDFARM_MODE in
+  (release) COMPILATION_MODE=speed;;
+  (debug)   COMPILATION_MODE=debug;;
+  (*)   fatal "invalid \$BUILDFARM_MODE: $BUILDFARM_MODE"
+esac
 
 if $(older "$DIR_BUILD/Makefile" "$0"); then
   cd "$DIR_BUILD"
@@ -137,7 +145,7 @@ if $(older "$DIR_BUILD/Makefile" "$0"); then
     --prefix=/prefix                            \
     --enable-compilation-mode=$COMPILATION_MODE \
     "$with_boost"                               \
-    "$DOC"                                      \
+    "$enable_doc"                               \
     --enable-headers-install                    \
     CPPFLAGS="'$CPPFLAGS'"                      \
     LDFLAGS="'$LDFLAGS'"                        \
