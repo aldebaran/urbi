@@ -198,7 +198,7 @@ Reading the variable will give the latest available sensor value.
     last left and right value from the Sonar module.
 \item \lstinline|footTouchL.val|, \lstinline|footTouchR.val| \\
     Foot bumper, can be 0 or 1.
-\item \lstinline|headSensorR.val, headSensorM.val, headSensorF.val| \\
+\item \lstinline|headTouchR.val, headTouchM.val, headTouchF.val| \\
     Head touch sensor segments.
 \item \lstinline|accelX.val, accelY.val, accelZ.val| \\
     Accelerometer values.
@@ -244,11 +244,37 @@ their methods directly.
 You can create a proxy on every \naoqi module, local or remote. The function
 \lstinline|ALProxy| can be used to ease the process:
 
+Here is an example with red ball detection and tracking module:
 \begin{urbiunchecked}
-// Instantiate a proxy for the ALMotion module.
-var motion = ALProxy("Motion", [], ["waituntilWalkIsFinished"]);
-motion.walkTo(0.1, 0, 0);
-motion.waituntilWalkIsFinished;
+// Instanciate a proxy to RedBallDetection
+var Global.redBallDetection = ALProxy("RedBallDetection", [], []);
+// Instanciate a proxy to RedBallTracker
+var Global.redBallTracker = ALProxy("RedBallTracker", [], []);
+// Enable nao head motors
+robot.body.head.load = 1;
+// Launch the red ball tracking
+redBallTracker.startTracker ();
+sleep(60s);
+// Stop red ball tracking
+redBallTracker.stopTracker ();
+// reset head position
+headYaw.val = 0 speed: 0.8 & headPitch.val = 0 speed: 0.8;
+\end{urbiunchecked}
+
+Another example with the vision toolbox module:
+\begin{urbiunchecked}
+var vision = ALProxy("VisionToolbox", [], ["isItDark",
+  "takePicture", "takePictureRegularly", "setWhiteBalance",
+  "startVideoRecord", "startVideoRecord_adv" ]);
+switch(vision.isItDark)
+{
+  case var x if x <= 4:
+    echo("We are outdoor");
+  case var x if x <= 100:
+    echo("We are indoor, it's bright");
+  case var x if x > 100:
+    echo("Here is a shadowed place");
+};
 \end{urbiunchecked}
 
 The first argument to \lstinline|ALProxy| is the name of the module without
@@ -311,6 +337,230 @@ mathematics.bindUrbiMethod("add", "Compute the sum of two numbers",
 // http://<Nao's IP>:9559/?eval=mathematics.add(2,3)
 \end{urbiunchecked}
 
+
+\subsection{More examples}
+
+Here is an example that shows how to declare in \us a callback called by a naoqi module:
+
+\begin{urbiunchecked}
+// Instanciate a proxy to RedBallDetection
+var redBallDetection = ALProxy("RedBallDetection", [], []);
+// Instanciate a proxy to RedBallTracker
+var redBallTracker = ALProxy("RedBallTracker", [], []);
+// Create an urbi ALModule that contains a callback function
+var urbiRedBall = do (ALModule.new("urbiRedBall"))
+{
+  function ballDetected(strVarName, value, message) {
+    echo("BallDecteded was triggered. Got: %s , %s , %s" % [ strVarName, value, message ]);
+  };
+  bindUrbiMethod("ballDetected", "called when ball is detected", [], []);
+};
+// Trigger the callback function whenever a ball is detected.
+memory.subscribeToMicroEvent ("redBallDetected", "urbiRedBall", "ballisdetected", "ballDetected");
+// Launch the red ball tracking
+redBallTracker.startTracker ();
+\end{urbiunchecked}
+
+Playing in \us with nao eyes:
+\begin{urbiunchecked}
+class Global.EyeLeds
+{
+  function rotate(var inc, var r, var g, var b,
+                  var frequency = 80ms, var duration = 3)
+  {
+    var eye_ = this.led.asList;
+    var i = 0; var p = -inc; var j = inc;
+    timeout (duration) loop {
+      i=(i+inc)%8; p=(p+inc)%8; j=(j+inc)%8;
+      eye_[p].val = 0;
+      eye_[i].r = r; eye_[i].g = g; eye_[i].b = b;
+      eye_[j].r = r; eye_[j].g = g; eye_[j].b = b;
+      sleep(frequency);
+    },
+  };
+
+  function redRotate() { rotate(1, 1, 0, 0); };
+  function greenRotate() { rotate(1, 0, 1, 0); };
+  function blueRotate() { rotate(1, 0, 0, 1); };
+
+  function randomize(var duration = 3) {
+    timeout(duration) loop {
+        led.r = random(100)/100;
+        led.g = random(100)/100;
+        led.b = random(100)/100;
+    };
+  };
+
+  function redBlink(var duration = 3) {
+    timeout(duration) led.r = 0.5 sin:1s ampli:0.5;
+  };
+  function greenBlink(var duration = 3) {
+    timeout(duration) led.g = 0.5 sin:1s ampli:0.5;
+  };
+  function blueBlink(var duration = 3) {
+    timeout(duration) led.b = 0.5 sin:1s ampli:0.5;
+  };
+
+  function color(var r, var g, var b) {
+    led.r = r; led.g = g; led.b = b;
+  };
+
+  function red() { color(1, 0, 0); };
+  function green() { color(0, 1, 0); };
+  function blue() { color(0, 0, 1); };
+  function black() { color(0, 0, 0); };
+
+  function __unit(slot)
+  {
+    eyeR.black & eyeL.black;
+    voice.say(slot) &
+    eyeR.getSlot(slot).apply([eyeR]) &
+    eyeL.getSlot(slot).apply([eyeL]);
+  };
+
+  function __test()
+  {
+    voice.say("Eyes test procedure");
+    __unit("red");
+    __unit("green");
+    __unit("blue");
+    __unit("redBlink");
+    __unit("greenBlink");
+    __unit("blueBlink");
+    eye.black;
+    voice.say("blink yellow") &
+    eyeL.greenBlink & eyeL.redBlink &
+    eyeR.greenBlink & eyeR.redBlink;
+    __unit("randomize");
+    __unit("redRotate");
+    __unit("greenRotate");
+    __unit("blueRotate");
+    eye.black;
+  };
+};
+
+do (eyeL)
+{
+  addProto(EyeLeds);
+
+  function rotateRight(var r, var g, var b, var frequency = 50ms,
+                       var duration = 1s) {
+    rotate(-1, r, g, b, frequency, duration)
+  };
+
+  function rotateLeft(var r, var g, var b, var frequency = 50ms,
+                      var duration = 1s) {
+    rotate(1, r, g, b, frequency, duration)
+  };
+};
+
+do (eyeR)
+{
+  addProto(EyeLeds);
+
+  function rotateRight(var r, var g, var b, var frequency = 50ms,
+                       var duration = 1s) {
+    rotate(1, r, g, b, frequency, duration)
+  };
+
+  function rotateLeft(var r, var g, var b, var frequency = 50ms,
+                      var duration = 1s) {
+    rotate(-1, r, g, b, frequency, duration)
+  };
+};
+
+EyeLeds.__test;
+\end{urbiunchecked}
+
+This example shows how to to set nao into it's initial standing pose:
+
+\begin{urbiunchecked}
+var HeadYawAngle       = 0;
+var HeadPitchAngle     = 0;
+var ShoulderPitchAngle = 80;
+var ShoulderRollAngle  = 20;
+var ElbowYawAngle      = -80;
+var ElbowRollAngle     = -60;
+var WristYawAngle      = 0;
+var HandAngle          = 0;
+var HipYawPitchAngle   = 0;
+var HipRollAngle       = 0;
+var HipPitchAngle      = -25;
+var KneePitchAngle     = 40;
+var AnklePitchAngle    = -20;
+var AnkleRollAngle     = 0;
+var Head = [];
+var LeftArm = [];
+var RightArm = [];
+var LeftLeg = [];
+var RightLeg = [];
+
+switch (ALMotion.getRobotConfig[1][0])
+{
+  case "naoAcademics":
+  {
+    Head     = [HeadYawAngle, HeadPitchAngle];
+    LeftArm  = [ ShoulderPitchAngle, +ShoulderRollAngle,
+      +ElbowYawAngle, +ElbowRollAngle, WristYawAngle, HandAngle];
+    RightArm = [ShoulderPitchAngle, -ShoulderRollAngle,
+      -ElbowYawAngle, -ElbowRollAngle, WristYawAngle, HandAngle];
+    LeftLeg  = [HipYawPitchAngle, +HipRollAngle,
+      HipPitchAngle, KneePitchAngle, AnklePitchAngle, +AnkleRollAngle];
+    RightLeg = [HipYawPitchAngle, -HipRollAngle,
+      HipPitchAngle, KneePitchAngle, AnklePitchAngle, -AnkleRollAngle]
+  };
+  case "naoRobocup":
+  {
+    Head     = [HeadYawAngle, HeadPitchAngle];
+    LeftArm  = [ShoulderPitchAngle, +ShoulderRollAngle,
+      +ElbowYawAngle, +ElbowRollAngle];
+    RightArm = [ShoulderPitchAngle, -ShoulderRollAngle,
+      -ElbowYawAngle, -ElbowRollAngle];
+    LeftLeg  = [HipYawPitchAngle, +HipRollAngle,
+      HipPitchAngle, KneePitchAngle, AnklePitchAngle, +AnkleRollAngle];
+    RightLeg = [HipYawPitchAngle, -HipRollAngle,
+      HipPitchAngle, KneePitchAngle, AnklePitchAngle, -AnkleRollAngle];
+  };
+  case "naoT14":
+  {
+    Head     = [HeadYawAngle, HeadPitchAngle];
+    LeftArm  = [ShoulderPitchAngle, +ShoulderRollAngle,
+      +ElbowYawAngle, +ElbowRollAngle, WristYawAngle, HandAngle];
+    RightArm = [ShoulderPitchAngle, -ShoulderRollAngle,
+      -ElbowYawAngle, -ElbowRollAngle, WristYawAngle, HandAngle];
+  };
+  case "naoT2":
+  {
+    Head     = [HeadYawAngle, HeadPitchAngle];
+  };
+};
+
+// Gather the joints together
+var pTargetAngles = Head + LeftArm + LeftLeg + RightLeg + RightArm;
+// Convert to radians
+pTargetAngles = pTargetAngles.map(function(x) {x*motion.TO_RAD});
+
+
+// ------------------------------ send the commands ---------------------------
+// We use the "Body" name to signify the collection of all joints
+var pNames = "Body";
+// We set the fraction of max speed
+var pMaxSpeedFraction = 0.2;
+
+ALProxy("RobotPose");
+switch(ALRobotPose.getActualPoseAndTime)
+{
+  case "crouch":
+    // Ask motion to do this with a blocking call
+    ALMotion.angleInterpolationWithSpeed(pNames, pTargetAngles, pMaxSpeedFraction);
+  case "stand":
+    // Ask motion to do this with a blocking call
+    ALMotion.angleInterpolationWithSpeed(pNames, pTargetAngles, pMaxSpeedFraction);
+  default:
+    voice.setLanguage("english");
+    voice.say("Please first stand me up");
+};
+\end{urbiunchecked}
 
 %%% Local Variables:
 %%% mode: latex
