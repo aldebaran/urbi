@@ -119,28 +119,30 @@ else
   unset ROS_ROOT
 fi
 
-
 # Compiler.
-CC='ccache gcc'
-CXX='ccache g++'
-CPPFLAGS="-I'$local/include'"
-LDFLAGS="-I'$local/lib'"
-
 case $BUILDFARM_COMPILER in
   (vcxx2005|vcxx2008)
-  CONFIGUREFLAGS="                                      \
-  AR='lib.exe'                                          \
-  CC='ccache cl.exe'                                    \
-  CC_FOR_BUILD=gcc                                      \
-  CXX='ccache cl.exe'                                   \
-  LD=link.exe                                           \
-  DUMPBIN=dumpbin.exe                                   \
-  RANLIB=:                                              \
-  --enable-shared                                       \
-  --disable-static                                      \
-  --enable-dependency-tracking                          \
-  host_alias=mingw32                                    \
-  --host=mingw32"
+  CONFIGUREFLAGS="                              \
+    AR='lib.exe'                                \
+    CC='ccache cl.exe'                          \
+    CC_FOR_BUILD=gcc                            \
+    CXX='ccache cl.exe'                         \
+    LD=link.exe                                 \
+    DUMPBIN=dumpbin.exe                         \
+    RANLIB=:                                    \
+    --enable-shared                             \
+    --disable-static                            \
+    --enable-dependency-tracking                \
+    host_alias=mingw32                          \
+    --host=mingw32"
+  ;;
+  (*)
+  CONFIGUREFLAGS="                              \
+    CC='ccache gcc'                             \
+    CXX='ccache g++'                            \
+    CPPFLAGS='-I$local/include'                 \
+    LDFLAGS='-I$local/lib'"
+  ;;
 esac
 
 case $(uname -n) in
@@ -163,8 +165,6 @@ if $(older "$DIR_BUILD/Makefile" "$0"); then
     "$with_ros"                                 \
     "$enable_doc"                               \
     --enable-headers-install                    \
-    CPPFLAGS="'$CPPFLAGS'"                      \
-    LDFLAGS="'$LDFLAGS'"                        \
     $CONFIGUREFLAGS                             \
   ||
   {
