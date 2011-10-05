@@ -59,6 +59,12 @@ if test ! -f $readme; then
   fatal "share/ does not seem to be mounted properly: there is no $readme"
 fi
 
+# colordiff sometimes does not tell different files apart (e.g., on
+# Debian Etch).
+if colordiff /dev/null $readme >/dev/null 2>&1; then
+  fatal "colordiff exits successfully on different files"
+fi
+
 
 ## ----------- ##
 ## Bootstrap.  ##
