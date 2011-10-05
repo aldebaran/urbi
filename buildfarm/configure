@@ -96,21 +96,14 @@ export PKG_CONFIG_PATH=$local/pkgconfig/$BUILDFARM_MODE:$local/pkgconfig:$PKG_CO
 
 # Boost.
 case $BUILDFARM_OS in
-  (linux_lucid)
-    # Use the native Boost.
-    with_boost=
-    ;;
-  (windows)
-    # For some historical reason, we use Boost 1.39 on Windows.
-    BOOST=$(pkg-config --print-errors boost-1.39 --variable=prefix)
-    with_boost=--with-boost=$BOOST
-    ;;
-  (*)
-    # To match Naoqi's requirement, use Boost 1.38.
-    BOOST=$(pkg-config --print-errors boost-1.38 --variable=prefix)
-    with_boost=--with-boost=$BOOST
-    ;;
+  (linux_lucid) ;;                   # Use the native Boost.
+  (windows)     BOOST_VERSION=1.39;; # For some historical reason.
+  (*)           BOOST_VERSION=1.38;; # Match Naoqi's requirement.
 esac
+if test -n "$BOOST_VERSION"; then
+  BOOST=$(pkg-config --print-errors boost-$BOOST_VERSION --variable=prefix)
+  with_boost=--with-boost=$BOOST
+fi
 
 # ROS.
 case $BUILDFARM_OS in
