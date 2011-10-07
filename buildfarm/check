@@ -4,14 +4,19 @@ set -xe
 
 cd "$DIR_BUILD"
 
-check_()
+make_()
 {
-  make installcheck DESTDIR="$DIR_INSTALL" "$@"
+  make DESTDIR="$DIR_INSTALL" "$@"
+}
+
+make_twice_()
+{
+  make_ -j$JOBS "$@" || make_ VERBOSE=1 "$@"
 }
 
 check ()
 {
-  check_ -j$JOBS "$@" || check_ VERBOSE=1 "$@"
+  make_twice_ installcheck "$@"
 }
 
 check -C tests TESTS_DIRS=0.x
@@ -20,8 +25,10 @@ check -C tests TESTS_DIRS=2.x
 check -C tests TESTS_DIRS=1.x
 check -C tests TESTS_DIRS=uob/plug
 check -C tests TESTS_DIRS=uob/remote
+check -C tests TESTS_DIRS=uob/rtp
 check -C tests TESTS_DIRS=uob/java
 check -C tests TESTS_DIRS=demo
-# Cannot install-check fsm, since fsm.u is not installed.
-# check -C tests TESTS_DIRS=@fsm
 check -C tests TESTS_DIRS=@ros
+
+# fsm.u is not installed, cannot installcheck.
+make_twice_ check -C tests TESTS_DIRS=@fsm
