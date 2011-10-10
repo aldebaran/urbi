@@ -44,15 +44,15 @@ Expressions cannot be empty, and must be syntactically correct.
 %% might be different.  This is to handle in neutralize, not here.
 \begin{urbiscript}
 Regexp.new("");
-[00000001:error] !!! new: invalid regular expression: empty expression: `'.
+[00000001:error] !!! new: invalid regular expression: empty expression: `'
 
 Regexp.new("(");
 [00003237:error] !!! new: invalid regular expression: \
-[:]    unmatched marking parenthesis ( or \(: `(>>>HERE>>>'.
+[:]    unmatched marking parenthesis ( or \(: `(>>>HERE>>>'
 
 Regexp.new("*");
 [00004372:error] !!! new: invalid regular expression: \
-[:]    the repeat operator "*" cannot start a regular expression: `>>>HERE>>>*'.
+[:]    the repeat operator "*" cannot start a regular expression: `>>>HERE>>>*'
 \end{urbiscript}
 
 
