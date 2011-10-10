@@ -30,5 +30,9 @@ check -C tests TESTS_DIRS=uob/java
 check -C tests TESTS_DIRS=demo
 check -C tests TESTS_DIRS=@ros
 
-# fsm.u is not installed, cannot installcheck.
-make_twice_ check -C tests TESTS_DIRS=@fsm
+# fsm.u is not installed, cannot installcheck.  Windows cannot run
+# properly with non-installed libraries.
+case $BUILDFARM_OS in
+  (windows);;
+  (*) make_twice_ check -C tests TESTS_DIRS=@fsm;;
+esac
