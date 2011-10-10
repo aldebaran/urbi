@@ -1,4 +1,4 @@
-%% Copyright (C) 2010, Gostai S.A.S.
+%% Copyright (C) 2010, 2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -10,11 +10,10 @@
 \label{sec:nxt}
 \setHtmlFileName{nxt}
 
-This documentation contains information about the LEGO Mindstorms NXT
-\urbi engine.  The first two chapters provide a short tutorial for
-using \urbi to control the TriBot robot.  The remainder of the
-documentation contains an exhaustive reference for the LEGO Mindstorms
-NXT \urbi engine devices.
+This documentation contains information about the LEGO Mindstorms NXT \urbi
+engine.  The first two sections provide a short tutorial for using \urbi to
+control the TriBot robot.  The remainder of the documentation contains an
+exhaustive reference for the LEGO Mindstorms NXT \urbi engine devices.
 
 \section{Launching \urbi for Mindstorms NXT}
 
@@ -22,17 +21,17 @@ First you should build the TriBot model from the LEGO Mindstorms NXT basic
 model.
 
 Install the engine Mindstorms by untaring it into the Urbi engine runtime
-folder. Follow instructions in INSTALL and README files
+folder. Follow instructions in \file{INSTALL} and \file{README} files.
 
 The file \file{TriBot.u} is loaded by default when server is launched. You
-can remove it by modifying global.u.
+can remove it by modifying \file{global.u}.
 
 \section{First steps with \urbi to control Mindstorms NXT}
 
-This section is a short tutorial for using \urbi with the LEGO TriBot model with
-the default configuration provided with the \urbi server. Users familiar with
-\urbi should look directly to the next section for an extensive list of the
-available devices.
+This section is a short tutorial for using \urbi with the LEGO TriBot model
+with the default configuration provided with the \urbi server. Users
+familiar with \urbi should look directly to the next section for an
+extensive list of the available devices.
 
 \subsection{Make basic movements}
 
@@ -70,8 +69,9 @@ wheels to a value will set both wheels to this value:
 wheels.speed = 0;
 \end{urbiunchecked}
 
-will stop both wheels.
-The third motor of the TriBot is associated with the claw variable.
+\noindent
+will stop both wheels.  The third motor of the TriBot is associated with the
+claw variable.
 
 \subsection{Improving the movements}
 The commands given so far simply set a speed to the wheels, but you can use
@@ -87,6 +87,7 @@ sleep(10s);
 wheels.speed = 0;
 \end{urbiunchecked}
 
+\noindent
 will make the robot to go forward during 10 seconds then stop.
 
 It is also possible with \urbi to control the way the values will change. In the
@@ -100,9 +101,8 @@ wheels.speed = 0 time:3s;
 \end{urbiunchecked}
 
 Using this code, the robot will accelerate to reach the speed of 50 after 3
-seconds, then slow down to stop after another 3 seconds.
-Other modifiers are available in \urbi, they are described in the \urbi tutorial
-available at http://www.gostai.com/doc.php.
+seconds, then slow down to stop after another 3 seconds.  Other modifiers
+are available in \urbi, described in the \urbi documentation.
 
 \subsection{Reading sensors}
 In all the previous steps the commands don't take the environment into account.
@@ -129,56 +129,57 @@ at (sonar.val < 50)
   wheels.speed = 0;
 \end{urbiunchecked}
 
+\noindent
 will stop the robot if an obstacle is detected at less than 50 centimeters.
-Note that this command remains active in the server. If you move the robot and
-set a forward speed:
+Note that this command remains active in the server. If you move the robot
+and set a forward speed:
 \begin{urbiunchecked}
 wheels.speed = 50;
 \end{urbiunchecked}
-
-the robot will stop again when another obstacle is encountered.
-The other sensors available for the TriBot are the sound sensor decibel, the
-bumper sensor bumper and the light sensor light. The following command:
+\noindent
+the robot will stop again when another obstacle is encountered.  The other
+sensors available for the TriBot are the sound sensor decibel, the bumper
+sensor bumper and the light sensor light. The following command:
 \begin{urbiunchecked}
 at (bumper.val == 1)
   wheels.speed = -50;
 \end{urbiunchecked}
-
-will make the robot go backward if something hits the bumper.
-Note that the at command reacts only when the condition becomes true. If you
-want to loop the execution of an action whenever the condition is true, use the
-whenever command (see \autoref{sec:nxt:sounds}).
+\noindent
+will make the robot go backward if something hits the bumper.  Note that the
+at command reacts only when the condition becomes true. If you want to loop
+the execution of an action whenever the condition is true, use the whenever
+command (see \autoref{sec:nxt:sounds}).
 
 
 \subsection{Tagging commands}
-The at commands you entered before are still active in the server. You need a
-way to stop them if you want to do something else. The tagging mechanism will
-enable you to do that.
-A tag in a name associated to a command. To tag a command with the name mytag,
-create it and simply prefix the command. For example:
+The \lstinline{at} commands you entered before are still active in the
+server. You need a way to stop them if you want to do something else. The
+tagging mechanism will enable you to do that.  A tag in a name associated to
+a command. To tag a command with the name \lstinline{myTag}, create it and
+simply prefix the command. For example:
 \begin{urbiunchecked}
-var mytag = Tag.new;
-mytag: at (decibel.val > 0.7)
+var myTag = Tag.new|;
+myTag: at (decibel.val > 0.7)
   wheels.speed = 0;
 \end{urbiunchecked}
-
-will launch the event catching command using the decibel sensor with tag mytag.
-Later you will be able to stop that command:
+\noindent
+will launch the event catching command using the decibel sensor with tag
+\lstinline{myTag}.  Later you will be able to stop that command:
 \begin{urbiunchecked}
-mytag.stop;
+myTag.stop;
 \end{urbiunchecked}
-
+\noindent
 will stop the previous command and the robot will not react to sound anymore.
 It if also possible to freeze temporarily a command:
 \begin{urbiunchecked}
-mytag.freeze;
+myTag.freeze;
 \end{urbiunchecked}
-
-will stop the commands tagged with mytag, but it will not be deleted, and
+\noindent
+will stop the commands tagged with myTag, but it will not be deleted, and
 \begin{urbiunchecked}
-mytag.unfreeze;
+myTag.unfreeze;
 \end{urbiunchecked}
-
+\noindent
 will resume the command.
 
 \subsection{Playing sounds}
@@ -192,13 +193,12 @@ beeper.play(200, 3s);
 \end{urbiunchecked}
 
 This will play a beep at 200Hz during 3 seconds (beep's frequency must be
-between 200Hz and 14000Hz).
-The parameters of the method may also be the result of operations, or depend on
-other variables. For example, it is possible to play a sound which frequency
-depends on the obstacle distance:
+between 200Hz and 14000Hz).  The parameters of the method may also be the
+result of operations, or depend on other variables. For example, it is
+possible to play a sound which frequency depends on the obstacle distance:
 \begin{urbiunchecked}
-var mytag = Tag.new;
-mytag: whenever (sonar.val < 100)
+var myTag = Tag.new|;
+myTag: whenever (sonar.val < 100)
   beeper.play(200 + 6 * sonar.val, 3ms);
 \end{urbiunchecked}
 
@@ -215,8 +215,8 @@ terminating the command with a comma instead a semicolon. More details about
 these command separators will be given in \autoref{sec:nxt:para}.  The sinus
 modifier can be used this way:
 \begin{urbiunchecked}
-var mytag = Tag.new;
-mytag: wheels.speed = 0 sin:10s ampli:100,
+var myTag = Tag.new|;
+myTag: wheels.speed = 0 sin:10s ampli:100,
 \end{urbiunchecked}
 
 This command will make the speed of the wheels oscillate around 0, between -100
@@ -236,13 +236,14 @@ through various command separators:
 
 \begin{itemize}
 \item As usual in programming languages, two commands separated by a
-  semicolon ";" will be executed one after the other:
+  semicolon will be executed one after the other:
 \begin{urbiunchecked}
 wheels.speed = 100;
 sleep(2s);
 wheels.speed = 0;
 \end{urbiunchecked}
 
+\noindent
 will turn the wheels, wait 2 seconds and then stop.
 
 \item In \urbi, two commands separated by \lstinline|&| will be executed in
@@ -251,46 +252,46 @@ will turn the wheels, wait 2 seconds and then stop.
 wheelL.speed = 50 & wheelR.speed = -50;
 \end{urbiunchecked}
 
+\noindent
 will move at the same time the left wheel forward and the right wheel
 backward (so the robot will turn).
 
-\item The comma "," makes the first action to go in background and starts
-  the next one as soon as possible, without enforcing a simultaneous start
-  of the two commands:
+\item The comma makes the first action to go in background and starts the
+  next one as soon as possible, without enforcing a simultaneous start of
+  the two commands:
 \begin{urbiunchecked}
 wheelL.speed = 50 time:10s,
 wheelR.speed = -40 time:10s,
 \end{urbiunchecked}
 
+\noindent
 will not wait that wheelL grows to 50 to make wheelR decrease to -40, but
 will not enforce that the commands terminate at the same time, which would
 be the case with the \lstinline|&| separator.
 \end{itemize}
 
-This explain why the comma was necessary in the previous section. If we finish
-a command that last forever with a semicolon, the server will wait forever
-before starting a new command. If you happen to make this mistake, it is still
-possible to open a new connection to the \urbi server using another client and
-using the stop tag; command.
+This explain why the comma was necessary in the previous section. If we
+finish a command that last forever with a semicolon, the server will wait
+forever before starting a new command. If you happen to make this mistake,
+it is still possible to open a new connection to the \urbi server using
+another client and using the stop tag; command.
 
-Here is an example where we use parallelism to move the TriBot awkwardly while
-playing sounds:
+Here is an example where we use parallelism to move the TriBot awkwardly
+while playing sounds:
 \begin{urbiunchecked}
 wheelR.speed = 0 sin:3s ampli:50 &
 wheelL.speed = 0 sin:4s ampli:30 &
 beeper.play(200,3s),
 \end{urbiunchecked}
 
-Parallelism handling is a key feature of \urbi, which has in fact four command
-separators. See the \urbi tutorial available at http://www.gostai.com/doc.php
-for more information.
+Parallelism handling is a key feature of \urbi, which has in fact four
+command separators.
 
 \subsection{Using functions}
-As in most programming language, it is possible to write functions in \urbi. The
-functions are useful for making more complex programs where the same commands
-are used several times.
-The following example defines a function which moves the robot for a given time
-at a given speed:
+As in most programming language, it is possible to write functions in
+\urbi. The functions are useful for making more complex programs where the
+same commands are used several times.  The following example defines a
+function which moves the robot for a given time at a given speed:
 \begin{urbiunchecked}
 function Global.forward(speed,timer)
 {
@@ -306,37 +307,35 @@ Once defined, this function can be called simply:
 Global.forward(100,3000);
 \end{urbiunchecked}
 
-More details about functions, objects and variables in \urbi are available in
-the \urbi tutorial (http://www.gostai.com/doc.php).
+More details about functions, objects and variables in \urbi are available
+in the \urbi tutorial.
 
 \subsection{Loading files}
 When making larger \urbi programs, it is easier to save them in files and to
-command the server to load the files.
-The files are simple text files in which you write \urbi commands. These files
-should be saved in the data/ sub-directory of your sever directory. The files
-should use the .u extension which is the extension used for \urbi script files.
-An example demo.u is provided with the server. To make the \urbi server to
+command the server to load the files.  The files are simple text files in
+which you write \urbi commands. These files should be saved in the data/
+sub-directory of your sever directory. The files should use the .u extension
+which is the extension used for \urbi script files.  An example
+\file{demo.u} is provided with the server. To make the \urbi server to
 execute this script, type the \urbi command:
 \begin{urbiunchecked}
-  load("demo.u");
+load("demo.u");
 \end{urbiunchecked}
 
 
 \subsection{Conclusion}
 This chapter has highlighted the main features of \urbi with the Mindstorms
 TriBot robot. The next chapter details all the devices available for the
-TriBot in the default layout. For more details about the \urbi language,
-please refer to the \urbi tutorial available at
-\url{http://www.gostai.com/doc.php}.
-
+TriBot in the default layout.
 
 \section{Default layout reference}
 
 This chapter describes the objects defined in the \file{TriBot.u} layout
 shipped with the \urbi Mindstorms NXT server.
 \subsection{Motors}
-Three motors are defined, wheelL, wheelR and claw.
-A group, wheels, is defined to group wheelL and wheelR:
+Three motors are defined: \lstinline{wheelL}, \lstinline{wheelR} and
+\lstinline{claw}.  A group, \lstinline{wheels}, is defined to group
+\lstinline{wheelL} and \lstinline{wheelR}:
 \begin{urbiunchecked}
 wheels.speed = 10;
 \end{urbiunchecked}
@@ -365,12 +364,12 @@ fails, 255 is returned.
 \subsubsection{Decibel}
 The sound sensor is called decibel.  Its value relates the level of ambient
 sound. It is between 0 and 1.  Two different modes can be used by changing
-the .mode slot to "DB" or "DBA".
+the .mode slot to \lstinline{"DB"} or \lstinline{"DBA"}.
 \begin{description}
 \item[DBA] is a mode measuring only frequencies between 200 and 14000Hz.
 \item[DB] measures a wider band.
 \end{description}
-Default value is "DBA".
+Default value is \lstinline{"DBA"}.
 
 \subsubsection{Light}
 The light sensor is called light.  The value returned is between 0 an 1
@@ -382,7 +381,7 @@ available by changing the .mode slot.
 \item[Ambient] lights off the led and measures the ambient light.
 \item[Normal] lights off the led too and return the raw value measured.
 \end{description}
-Default value is "Reflector".
+Default value is \lstinline{"Reflector"}.
 
 \subsection{Battery}
 The battery device is called battery.  Its value is the current battery
@@ -394,11 +393,10 @@ sound using the play method:
 beeper.play(frequency, time);
 \end{urbiunchecked}
 
-frequency is an integer between 200 and 14000, which is the frequency of the
-sound. time is an integer, which is the duration of the sound in milliseconds.
-A duration of 0 is infinite.
-The command returns immediately. If you want to wait until the end of the beep,
-use:
+\lstinline{frequency} is an integer between 200 and 14000, which is the
+frequency of the sound. time is an integer, which is the duration of the
+sound in milliseconds.  A duration of 0 is infinite.  The command returns
+immediately. If you want to wait until the end of the beep, use:
 \begin{urbiunchecked}
 {
   beeper.play(frequency, duration);
@@ -408,9 +406,9 @@ use:
 
 \subsection{Command}
 The Command UObject is not a device. It makes it possible to send direct
-commands as you do with the NXT SDK. You will find more information on http://
-mindstorms.lego.com/
-This object has methods to send and receive data to the NXT:
+commands as you do with the NXT SDK. You will find more information on
+\url{http:// mindstorms.lego.com/}. This object has methods to send and
+receive data to the NXT:
 \begin{urbiunchecked}
 Command.send(buff);
 \end{urbiunchecked}
@@ -452,26 +450,27 @@ that returns the information on input port 1.
 
 In this chapter, the method to build a custom layout for a different robot
 is explained. A good understanding of the objects in \urbi in useful and the
-reading of the \urbi tutorial is advised (available at
-\url{http://www.gostai.com/doc.php}).
+reading of the \urbi tutorial is advised.
 
-There are three kind of devices provided by the Mindstorms NXT server:
+There are three kinds of devices provided by the Mindstorms NXT server:
 motors, sensors and other devices. There is one type of motor called
-Servo. There is four types of sensors: Switch, SoundSensor, UltraSonicSensor
-and LightSensor. Two other devices are available: Battery and Beeper. A
-complete description of these devices is available in
-\autoref{sec:nxt:specs}.  Writing a layout entails instancing particular
-objects from the devices above.
+\lstinline{Servo}. There are four types of sensors: \lstinline{Switch},
+\lstinline{SoundSensor}, \lstinline{UltraSonicSensor} and
+\lstinline{LightSensor}. Two other devices are available:
+\lstinline{Battery} and \lstinline{Beeper}. A complete description of these
+devices is available in \autoref{sec:nxt:specs}.  Writing a layout entails
+instancing particular objects from the devices above.
 
 \subsection{Instancing Motors}
 The Servo init constructor has the following syntax:
 \begin{urbiunchecked}
-Servo.new(port);
+Servo.new(\var{port});
 \end{urbiunchecked}
-
-where port is either "A", "B" or "C". The created object makes it possible
-to control the motor connected to the port in parameter.  As an example, in
-the current \file{TriBot.u}, three Servo objects are created:
+\noindent
+where \var{port} is either \lstinline{"A"}, \lstinline{"B"} or
+\lstinline{"C"}. The created object makes it possible to control the motor
+connected to the port in parameter.  As an example, in the current
+\file{TriBot.u}, three Servo objects are created:
 \begin{urbiunchecked}
 wheelL = Servo.new("C");
 wheelR = Servo.new("A");
@@ -483,10 +482,10 @@ The wheel left is on port C, the wheel right on A and the claw is on port B.
 \subsection{Instancing sensors}
 To create a Switch object, the syntax is the following:
 \begin{urbiunchecked}
-Switch.new(port);
+Switch.new(\var{port});
 \end{urbiunchecked}
-
-where port can be 1, 2, 3 or 4.
+\noindent
+where \var{port} can be 1, 2, 3 or 4.
 
 In \file{TriBot.u} the switch is used as a bumper plugged on the port 4 so
 the instancing is:
@@ -512,9 +511,10 @@ SoundSensor.new(\var{port}, \var{mode});
 \end{urbiunchecked}
 
 \var{port} can be 1, 2, 3 or 4.  \var{mode} sets the mode of the sensor. It
-can be "DB" or "DBA", meaning "decibel" or "decibel adjusted" (the last one
-records sounds in the frequency range 200-14000Hz).  In \file{TriBot.u}, the
-sound sensor is on port 1 using decibel adjusted:
+can be \lstinline{"DB"} or \lstinline{"DBA"}, meaning ``decibel'' or
+``decibel adjusted'' (the latter records sounds in the frequency range
+200-14000Hz).  In \file{TriBot.u}, the sound sensor is on port 1 using
+decibel adjusted:
 \begin{urbiunchecked}
 decibel = SoundSensor.new(1,"DBA");
 \end{urbiunchecked}
@@ -525,9 +525,10 @@ LightSensor.new(\var{port}, \var{mode});
 \end{urbiunchecked}
 
 \var{port} can be 1, 2, 3 or 4. \var{mode} sets the sensor mode and it can
-be "Ambient" (so the sensor measures the ambient light), "Reflector" (the
-sensor lights on its led and measures the reflected light) and "Normal" (the
-sensor returns its raw value).
+be \lstinline{"Ambient"} (so the sensor measures the ambient light),
+\lstinline{"Reflector"} (the sensor lights on its led and measures the
+reflected light) and \lstinline{"Normal"} (the sensor returns its raw
+value).
 
 In \file{TriBot.u}, the light sensor is in reflector mode on port 1:
 \begin{urbiunchecked}
@@ -572,11 +573,11 @@ Servo describes a motor. A Servo instance contains the following slots:
 
 \item[speed] Motor's speed, from -100 to 100.
 
-\item[port] The port where the servo is plugged. It can be "A", "B" or
-  "C". You can change the value while the server is running. Beware, if you
-  change the port, that will free the old port (so you will be able to
-  create another device on it) and will busy the new one (so you won't be
-  able to create another device on it).
+\item[port] The port where the servo is plugged. It can be \lstinline{"A"},
+  \lstinline{"B"} or \lstinline{"C"}. You can change the value while the
+  server is running. Beware, if you change the port, that will free the old
+  port (so you will be able to create another device on it) and will busy
+  the new one (so you won't be able to create another device on it).
 
 \item[init](<port>) The UObject constructor. \var{port} is a port name. (See
   previous slot port). Example:
@@ -588,7 +589,7 @@ wheel = Servo.new("A");
 
 \subsection{UltraSonicSensor}
 \defObject{UltraSonicSensor}
-UltraSonicSensor describes a sonar sensor. A UltraSonicSensor instance
+UltraSonicSensor describes a sonar sensor. An UltraSonicSensor instance
 contains the following slots:
 
 \begin{urbiscriptapi}
@@ -618,8 +619,8 @@ following slots:
 
 \item[val] The sound level measured (from 0 to 1).
 
-\item[mode] "DB" is decibel or "DBA" is decibel audible (measures only in
-  the audible frequencies range).
+\item[mode] \lstinline{"DB"} is decibel or \lstinline{"DBA"} is decibel
+  audible (measures only in the audible frequencies range).
 
 \item[port] The port where the servo is plugged. It can be 1, 2, 3 or 4. You
   can change the value while the server is running. Beware, if you change
@@ -648,9 +649,9 @@ following slots:
 
 \item[mode]
   \begin{itemize}
-  \item "Ambient" measures the ambient light.
-  \item "Reflector" lights on a led and measures the reflection.
-  \item "Normal" returns the raw value
+  \item \lstinline{"Ambient"} measures the ambient light.
+  \item \lstinline{"Reflector"} lights on a led and measures the reflection.
+  \item \lstinline{"Normal"} returns the raw value
   \end{itemize}
 
 \item[port] The port where the servo is plugged. It can be 1, 2, 3 or 4. You
@@ -697,7 +698,10 @@ Battery describes a battery device. A Battery instance contains the
 following slots:
 \begin{urbiscriptapi}
 \item[val] Battery remaining power between 0 and 1.
-\item[init] The UObject constructor Example battery = Battery.new();
+\item[init] The UObject constructor. Example:
+\begin{urbiunchecked}
+battery = Battery.new;
+\end{urbiunchecked}
 \end{urbiscriptapi}
 
 \subsection{Beeper}
@@ -707,7 +711,10 @@ Beeper describes a speaker device. A Beeper instance contains the following
 methods:
 
 \begin{urbiscriptapi}
-\item[init] The UObject constructor Example beeper = Beeper.new();
+\item[init] The UObject constructor.  Example:
+\begin{urbiunchecked}
+beeper = Beeper.new;
+\end{urbiunchecked}
 \item[play](<frequency>, <duration>) Plays a beep of a custom frequency for
   a custom duration.  \var{frequency} is the frequency of the beep (in Hz),
   between 200 and 14000.  \var{duration} is the duration of the beep (in
@@ -728,11 +735,11 @@ following methods:
 \begin{urbiunchecked}
 Command.send([3,10,10,0,0]);
 \end{urbiunchecked}
-
+\noindent
 that plays a beep.
 
 \item[request](<bufferIn>, <sizeOut>)%
-  Sends a command requiring an answer, and returns the buffer out. This is
+  Send a command requiring an answer, and return the buffer out. This is
   only recommended to expert users. Beware of the \var{sizeOut}
   parameter. Indeed if it is too long, the request will normally fail and
   when the size is too short, the command may work but all Mindstorms
@@ -753,36 +760,39 @@ that returns the information on input port 0.
 \subsection{Instances}
 Here are the different instances in the \file{TriBot.u} layout.
 
-\begin{tabular}{|l|l|l|}
-  \hline
-  Instance & UObject          & Description    \\
-  \hline
-  wheelL   & Servo            & Left wheel     \\
-  wheelR   & Servo            & Right wheel    \\
-  claw     & Servo            & Claw           \\
-  sonar    & UltraSoundSensor & Distance sensor\\
-  decibel  & SoundSensor      & Sound sensor   \\
-  light    & LightSensor      & Light sensor   \\
-  bumper   & Switch           & Touch sensor   \\
-  beeper   & Beeper           & Emits beeps    \\
-  battery  & Battery          & Battery        \\
-  \hline
-\end{tabular}
+\begin{center}
+  \begin{tabular}{|l|l|l|}
+    \hline
+    Instance & UObject          & Description    \\
+    \hline
+    wheelL   & Servo            & Left wheel     \\
+    wheelR   & Servo            & Right wheel    \\
+    claw     & Servo            & Claw           \\
+    sonar    & UltraSoundSensor & Distance sensor\\
+    decibel  & SoundSensor      & Sound sensor   \\
+    light    & LightSensor      & Light sensor   \\
+    bumper   & Switch           & Touch sensor   \\
+    beeper   & Beeper           & Emits beeps    \\
+    battery  & Battery          & Battery        \\
+    \hline
+  \end{tabular}
+\end{center}
 
 \subsection{Groups}
 Here are the different groups provided in the current layout.
 
-\begin{tabular}{|l|l|l|}
-  \hline
-  Group Name & Description     \\
-  \hline
-  wheels     & The two wheels  \\
-  motors     & All the motors  \\
-  sensors    & All the sensors \\
-  hardware   & All the devices \\
-  \hline
-\end{tabular}
-
+\begin{center}
+  \begin{tabular}{|l|l|l|}
+    \hline
+    Group Name & Description     \\
+    \hline
+    wheels     & The two wheels  \\
+    motors     & All the motors  \\
+    sensors    & All the sensors \\
+    hardware   & All the devices \\
+    \hline
+  \end{tabular}
+\end{center}
 
 %%% Local Variables:
 %%% mode: latex
