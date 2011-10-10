@@ -8,6 +8,8 @@
  * See the LICENSE file for more information.
  */
 
+#include <boost/algorithm/string.hpp>
+
 #include <libport/escape.hh>
 #include <libport/format.hh>
 #include <libport/lexical-cast.hh>
@@ -66,16 +68,40 @@ namespace urbi
       // Depending on the version of Boost.Regex, "" might not be valid.
       // Make it always invalid.
       if (r.empty())
-        FRAISE("invalid regular expression `%s': %s",
-               libport::escape(r), "Empty expression");
+        FRAISE("invalid regular expression: %s: `%s'",
+               "empty expression", libport::escape(r));
       try
       {
         re_ = boost::regex(r);
       }
       catch (const boost::regex_error& e)
       {
-        FRAISE("invalid regular expression `%s': %s",
-               libport::escape(r), e.what());
+        std::string err = e.what();
+        // There's a typo in the typical error message.
+        boost::replace_all(err, "occur""ed", "occurred");
+        // And there should not be an upper case letter.
+        if (isupper(err[0]))
+          err[0] = tolower(err[0]);
+        // If Boost supplies the regexp, we don't need to repeat it.
+        if (err.find("occurred while parsing the regular expression:")
+            == std::string::npos)
+        {
+          FRAISE("invalid regular expression: %s: `%s'",
+                 err, libport::escape(r));
+        }
+        else
+        {
+          // Yet the message is too long.
+          boost::erase_all
+            (err,
+             ".  The error occurred while parsing the regular expression");
+          // We use `this' kind of quotes, not 'that' kind.
+          boost::replace_first(err, "'", "`");
+          // And we don't end sentences with a period.
+          if (err[err.size() - 1] == '.')
+            err.resize(err.size() - 1);
+          FRAISE("invalid regular expression: %s", err);
+        }
       }
     }
 
