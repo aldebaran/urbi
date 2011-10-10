@@ -1,5 +1,6 @@
 Contributors to Urbi SDK:
 
+ - Alexandre Morgand
  - Bastien Saltel
  - Benoît Sigoure
  - Clément Moussu

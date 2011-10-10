@@ -20,14 +20,26 @@ explains why its corresponding license is included here.
 
 % FIXME: determine and detail which parts are based on what license.
 
+\section{Boost Software License 1.0}
+\usdk uses Boost libraries.  Boost libraries and headers are included in
+binary packages.  See \url{http://www.boost.org/users/license.html}.
+
+\inputLicense{boost-1.0}
+
 \section{BSD License}
 \label{sec:license:bsd}
 In order to be included in \usdk, contributors can use this license for
 their patches, see \autoref{sec:faq:contribute}.
 
-This license is also known as the ``modified BSD License'', see the
-\href{http://www.gnu.org/licenses/license-list.html}{License List}
-maintained by the Free Software Foundation.
+This license is also known as:
+\begin{itemize}
+\item the ``modified BSD License,'' see the
+  \href{http://www.gnu.org/licenses/license-list.html}{License List}
+  maintained by the Free Software Foundation;
+\item or the ``BSD three-clause License,'' see
+  \url{http://www.opensource.org/licenses/BSD-3-Clause}.
+
+\end{itemize}
 
 \inputLicense{bsd}
 
@@ -36,7 +48,7 @@ maintained by the Free Software Foundation.
 In order to be included in \usdk, contributors can use this license for
 their patches, see \autoref{sec:faq:contribute}.
 
-This license is also known as the ``MIT License'', see the
+This license is also known as the ``MIT License,'' see the
 \href{http://www.gnu.org/licenses/license-list.html}{License List}
 maintained by the Free Software Foundation.
 
@@ -44,7 +56,7 @@ maintained by the Free Software Foundation.
 
 \section{gnu.bytecode}
 \label{sec:license:gnu.bytecode}
-The \Java API for UObject uses
+The \Java API for UObject uses the
 \href{http://www.gnu.org/software/kawa/api/gnu/bytecode/package-summary.html}{gnu.bytecode}
 Java package.
 
@@ -83,6 +95,19 @@ top-level directory of libjpeg.
 \section{OpenSSL License}
 
 \inputLicense{openssl}
+
+\section{ROS}
+
+The ROS bridge (\autoref{sec:tut:ros}) using ROS libraries, which are
+included in our binary packages.  As of today (October 10th, 2011), the ROS
+guidelines for developers
+(\url{http://www.ros.org/wiki/DevelopersGuide\#Licensing}) point to a BSD
+two-clause license
+(\url{http://www.opensource.org/licenses/bsd-license.php}).  This is the
+same license as the three-clause BSD (\autoref{sec:license:bsd}), without
+the third-clause.
+
+\inputLicense{ros}
 
 \clearpage
 \section{Urbi Open Source Contributor Agreement}

@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1560 utf-8
+personal_ws-1.1 en 1589 utf-8
 aa
 aaa
 abc
@@ -31,6 +31,7 @@ AGPL
 aibo
 Akim
 ALAudioPlayer
+Alexandre
 ALFrameManager
 aliveJobs
 allocator
@@ -269,6 +270,7 @@ createSlot
 createZeros
 criticalSection
 Ctrl
+CTurtle
 CTYPE
 currentRunner
 CustomUVar
@@ -276,6 +278,7 @@ cvf
 cvs
 cwd
 cwLimit
+CXX
 cxx
 CXXFLAGS
 Cyberbotics
@@ -391,6 +394,7 @@ epsilontilde
 eq
 eration
 errlog
+ESSID
 essid
 et
 ev
@@ -557,6 +561,7 @@ Hokuyo
 hookChanged
 hostAlias
 hostCpu
+HOSTNAME
 hostName
 hostOs
 hostVendor
@@ -569,6 +574,7 @@ http
 Huho
 hxx
 ic
+icu
 ie
 IEEE
 ifconfig
@@ -796,6 +802,7 @@ MOGS
 Monde
 monomethods
 mooh
+Morgand
 motorsLoad
 Moulard
 Moussu
@@ -807,6 +814,7 @@ MSI
 MSVC
 MSVC's
 multi
+MultipleMachines
 MutableCounter
 mutex
 mv
@@ -861,6 +869,7 @@ ne
 NegativeNumber
 netcat
 netMask
+NetworkSetup
 newImage
 NewSingleton
 Nivault
@@ -1062,6 +1071,7 @@ Romain
 ros
 roscore
 roscpp
+rosgraph
 rosImg
 roslib
 rosmake
@@ -1078,6 +1088,7 @@ rowDiv
 rowMul
 rowNorm
 rowSub
+rPGain
 rshift
 rst
 rtp
@@ -1537,7 +1548,7 @@ xffffffffb
 xfov
 xleftmargin
 xml
-xorg
+Xorg
 XP
 xrightmargin
 xsltproc

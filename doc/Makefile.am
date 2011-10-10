@@ -54,14 +54,10 @@ CSS_IMAGES =					\
   $(share_dir)/figs/doc-menubarbg.jpg		\
   $(share_dir)/figs/doc-menubarhoverbg.jpg
 
-# Images whose original is in DOT.
-DOT_IMAGES :=							\
-  $(call ls_files,img/*.dot					\
-                  @{../modules/system/ros}/doc/img/*.dot)
-# Images whose original is in PNG.
-PNG_IMAGES :=							\
-  $(call ls_files,img/*.png					\
-                  @{../modules/system/ros}/doc/img/*.png)
+# Images whose original is in Dot, JPEG, or PNG format.
+DOT_IMAGES := $(call ls_files,img/*.dot)
+JPG_IMAGES := $(call ls_files,img/*.jpg)
+PNG_IMAGES := $(call ls_files,img/*.png)
 
 logodir = document-aux/figs/urbi-sdk/$(PACKAGE_MAJOR).$(PACKAGE_MINOR)
 cube_and_disc =	$(logodir)/cube-and-disc
@@ -76,6 +72,7 @@ EXTRA_DIST += $(call ls_files,img/*)
 
 # Images converted to EPS.
 EPS_IMAGES =					\
+  $(JPG_IMAGES:.jpg=.eps)			\
   $(DOT_IMAGES:.dot=.eps) 			\
   $(PDF_IMAGES:.pdf=.eps) 			\
   $(PNG_IMAGES:.png=.eps)
@@ -109,9 +106,7 @@ endif
 # Find local *.sty files.  Find converted images from document-aux.
 TEXI2DVIFLAGS +=				\
   -I $(srcdir)					\
-  -I $(builddir)/document-aux			\
-  -I $(top_srcdir)/modules/system/ros/doc	\
-  -I $(top_builddir)/modules/system/ros/doc
+  -I $(builddir)/document-aux
 pdf_DATA =
 
 # Use tex4ht.

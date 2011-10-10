@@ -377,7 +377,12 @@ Math.round(1.2) == 1.2.round;
 
 
 \section{\usdk 2.7.3}
-\release{2.7}{2011-10-XX}
+\release{2.7}{2011-10-07}
+
+\subsection{Fixes}
+\begin{itemize}
+\item File descriptor leaks when using \refObject{Process}.
+\end{itemize}
 
 \subsection{Changes}
 \begin{itemize}
@@ -388,8 +393,14 @@ Math.round(1.2) == 1.2.round;
   \option{-lboost\_date\_time-gcc44-mt-1\_38}).
 
 \item Binary packages on Ubuntu Lucid now use its native Boost libraries
-  (1.40) instead of Boost 1.38.
+  (1.40) instead of Boost 1.38, and were built with ROS Diamondback.
 \end{itemize}
+
+\subsection{Documentation}
+\begin{itemize}
+\item Support for Gostai Jazz\ifthen{\boolean{jazz}}{ (\autoref{sec:jazz})}.
+\end{itemize}
+
 
 \section{\usdk 2.7.2}
 \release{2.7}{2011-05-13}
