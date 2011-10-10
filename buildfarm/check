@@ -36,3 +36,5 @@ case $BUILDFARM_OS in
   (windows);;
   (*) make_twice_ check -C tests TESTS_DIRS=@fsm;;
 esac
+
+make_ spell-check
