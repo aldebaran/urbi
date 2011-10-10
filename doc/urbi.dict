@@ -1,4 +1,5 @@
-personal_ws-1.1 en 1371 utf-8
+personal_ws-1.1 en 1438 utf-8
+aa
 aaa
 abc
 abcd
@@ -21,6 +22,7 @@ addDevice
 addProto
 addSecond
 addValue
+ADL
 Affero
 afoodef
 agg
@@ -28,6 +30,7 @@ AGPL
 aibo
 Akim
 ALAudioPlayer
+Alexandre
 ALFrameManager
 aliveJobs
 ALLogger
@@ -51,6 +54,8 @@ Aperios
 api
 apijava
 APIS
+aplay
+applyTransition
 ar
 arccosine
 arcsine
@@ -119,6 +124,7 @@ Baillie
 BallTracker
 basename
 basicstyle
+Bastien
 batteryVoltage
 baudRate
 baz
@@ -180,6 +186,7 @@ ccwLimit
 cd
 ceil
 cerr
+CEST
 cflags
 changeConnections
 channelName
@@ -199,6 +206,7 @@ Clément
 cmd
 CODESET
 colordiff
+commandName
 compl
 CompressedImage
 computeSalary
@@ -283,11 +291,14 @@ detectBall
 Deux
 dev
 devel
+df
 DGain
+DHCP
 DifferentialWheels
 dir
 dirlist
 dirname
+displayStats
 distanceMax
 distanceMin
 DistanceSensor
@@ -297,11 +308,14 @@ distMin
 dlerror
 dll
 dlopen
+DNS
+dnsAddress
 docutils
 doesNotExist
 doin
 doubleValue
 doxygen
+dsp
 dumpbin
 dumpState
 durations
@@ -323,6 +337,7 @@ elementChanged
 elementRemoved
 elt
 emacs
+emitDone
 emitEvent
 enableBypass
 enableStats
@@ -337,6 +352,9 @@ env
 EOF
 eq
 eration
+errlog
+ESSID
+essid
 et
 ev
 eval
@@ -370,6 +388,8 @@ fireRate
 firstline
 FIXME
 flatDump
+floorLeft
+floorRight
 fmt
 fo
 foldl
@@ -396,12 +416,15 @@ freezeif
 Frodo
 fromAscii
 frontleft
+FRPA
 fsr
 fullengine
 func
 functionalities
 FunctionProfile
+gatewayAddress
 gcc
+gdb
 ge
 generateALBindings
 getAll
@@ -433,15 +456,18 @@ getVal
 getWidth
 getWithDefault
 ghi
+GHz
 gl
 GLIBC
 gnulib
 gnuplot
+goDuring
 gostai
 Gostai's
 goTo
 goto
 goToAbsolute
+goToChargingDock
 goToChargingStation
 gotoChargingStation
 GPL
@@ -473,7 +499,9 @@ hh
 hideSystemFiles
 hisMind
 hisResult
+hoc
 Hocquet
+Hokuyo
 hookChanged
 hostAlias
 hostCpu
@@ -484,6 +512,7 @@ hpp
 html
 htmldir
 htmlxml
+htop
 http
 Huho
 hxx
@@ -491,6 +520,7 @@ ic
 icu
 ie
 IEEE
+ifconfig
 iff
 IGain
 ImageConversion
@@ -511,6 +541,8 @@ injunctive
 inline
 inotify
 InputPort
+inputSpeedAlpha
+inputSpeedDelta
 InputStream
 InputStreams
 insectoid
@@ -524,9 +556,11 @@ interruptible
 io
 IoService
 IP
+ipAddress
 IRCenter
 IRLeft
 IRRight
+IRs
 isA
 isalnum
 isalpha
@@ -554,10 +588,12 @@ isvoid
 isWindows
 isxdigit
 iterable
+Iwconfig
 javac
 javalibrarypath
 JavaScript
 jdk
+je
 jessie
 jni
 jpeg
@@ -697,6 +733,7 @@ MOGS
 Monde
 monomethods
 mooh
+Morgand
 motorsLoad
 Moulard
 Moussu
@@ -718,13 +755,17 @@ myCamera
 myCos
 myduration
 myEvent
+myfile
 myFunction
 myGroup
 myHandle
+myHiddenKey
+myimage
 myInstance
 myList
 myLocalVariable
 myMind
+myNetwork
 MYNODE
 myObj
 myObject
@@ -741,6 +782,7 @@ myTag
 mytag
 mytest
 myType
+myuob
 myUObject
 myuobject
 myVar
@@ -751,10 +793,12 @@ nao
 Nao's
 NaoQi
 nb
+nc
 ndebug
 ne
 NegativeNumber
 netcat
+netMask
 NetworkSetup
 newImage
 NewSingleton
@@ -811,6 +855,7 @@ oRTP
 os
 osx
 otool
+outlog
 OutputStream
 OutputStreams
 ownsSlot
@@ -818,6 +863,7 @@ p's
 PackageInfo
 param
 params
+parseopt
 pathPlanningEvent
 pc
 pdf
@@ -829,6 +875,7 @@ PGain
 php
 physicsReset
 PID
+pid
 pidChanged
 Pierron
 pitchSpeed
@@ -858,6 +905,8 @@ prerelease
 PrimitiveError
 printf
 printSalaries
+proc
+ProcessCamera
 prog
 programName
 proj
@@ -867,6 +916,7 @@ proto
 proto's
 protos
 ps
+pscp
 PseudoLazy
 PubSub
 pushback
@@ -913,6 +963,7 @@ removeSlot
 removeSlots
 removeThrowingCallbacks
 removeTimer
+renunciationInterval
 representable
 req
 reqStruct
@@ -966,13 +1017,16 @@ rxconsole
 rxgraph
 safetyDistanceMax
 safetyDistanceMin
+Saltel
 sameAs
 sampleFormat
 sampleSize
 SAS
 sayHello
+sayNo
 SchedulingError
 scopeTag
+scp
 sdbxoefEDX
 sdk
 searchFile
@@ -993,6 +1047,7 @@ serv
 serverPort
 servohub
 setAbsolutePosition
+setAdHoc
 setAngle
 setBypass
 setConfigValue
@@ -1067,6 +1122,7 @@ srandom
 src
 ss
 StackFrame
+startup
 stderr
 stdin
 stdlib
@@ -1093,6 +1149,7 @@ subtypes
 succ
 sudo
 Sugarful
+suis
 sumTwice
 svn
 sw
@@ -1102,6 +1159,7 @@ synclines
 syncTrigger
 syncValue
 syncWrite
+sys
 SYSV
 taglist
 Tardieu
@@ -1113,6 +1171,7 @@ TCP
 te
 Technic
 teleop
+teleoperation
 teleport
 TemperatureSensor
 TerminateException
@@ -1195,6 +1254,7 @@ uid
 uids
 UImage
 UImageFormat
+ulimit
 UList
 UltraSonicSensor
 UltraSoundSensor
@@ -1245,6 +1305,9 @@ Uowned
 UPATH
 updatable
 updateSlot
+updateWatchdog
+upLeft
+upRight
 UProp
 urbi
 urbiConsole
@@ -1254,6 +1317,7 @@ urbijava
 urbiscript
 urbiscript's
 UrbiSDK
+urbisdk
 UrbiSDKEnv
 urbisend
 urbistarter
@@ -1278,6 +1342,7 @@ UValueSerializable
 UVar
 UVars
 valgrind
+valJPEG
 vals
 valueAccessed
 valueAlias
@@ -1305,6 +1370,7 @@ waituntil
 waituntilWalkIsFinished
 walkTo
 wallClockTime
+watchdogGoTag
 watchdogInterval
 wav
 wb
@@ -1321,6 +1387,7 @@ wheelR
 wheelRadius
 WiFi
 wildcards
+WinSCP
 WIPO
 withGas
 Wl
@@ -1335,6 +1402,7 @@ xADDR
 xb
 xCoord
 Xenomai
+xeyes
 xf
 xFF
 xfF
@@ -1343,9 +1411,12 @@ xFFFF
 xffffff
 xFFFFFFFF
 xffffffff
+xffffffffb
 xfov
 xleftmargin
 xml
+Xorg
+XP
 xrightmargin
 xsltproc
 xSpeed
