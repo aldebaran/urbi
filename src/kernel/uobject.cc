@@ -1310,7 +1310,7 @@ namespace urbi
       rObject o = get_base(owner->__name);
       if (!o)
       {
-        // Instanciation occured through ucontext::bind.
+        // Instantiation occurred through ucontext::bind.
         o = ::urbi::uobjects::uobject_make_proto(owner->__name);
         where->slot_set_value(Symbol(owner->__name), o);
       }
