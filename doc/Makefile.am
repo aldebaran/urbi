@@ -45,14 +45,9 @@ EXTRA_DIST +=					\
 ## -------- ##
 
 # Images whose original is in DOT.
-DOT_IMAGES :=							\
-  $(call ls_files,img/*.dot					\
-                  @{../modules/system/ros}/doc/img/*.dot)
-PNG_IMAGES =							\
-  $(call ls_files,img/*.png					\
-                  @{../modules/system/ros}/doc/img/*.png)
-JPG_IMAGES =							\
-  $(call ls_files,img/*.jpg)
+DOT_IMAGES := $(call ls_files,img/*.dot)
+PNG_IMAGES := $(call ls_files,img/*.png)
+JPG_IMAGES := $(call ls_files,img/*.jpg)
 
 logodir = document-aux/figs/urbi-sdk/$(PACKAGE_MAJOR).$(PACKAGE_MINOR)
 cube_and_disc =	$(logodir)/cube-and-disc
@@ -99,9 +94,7 @@ endif
 # Find local *.sty files.  Find converted images from document-aux.
 TEXI2DVIFLAGS +=				\
   -I $(srcdir)					\
-  -I $(builddir)/document-aux			\
-  -I $(top_srcdir)/modules/system/ros/doc	\
-  -I $(top_builddir)/modules/system/ros/doc
+  -I $(builddir)/document-aux
 pdf_DATA =
 
 # Use tex4ht.
