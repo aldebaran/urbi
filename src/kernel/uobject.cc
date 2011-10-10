@@ -422,9 +422,26 @@ wrap_ucallback_notify(const object::objects_type& ol,
   bool useArgVar = ol.size() > 1 && !impl.useClosedVar_;
   if (useArgVar)
     l[0].storage = new urbi::UVar
-      (object::from_urbi<std::string>(ol[1]->call(SYMBOL(fullName))));
+  (object::from_urbi<std::string>(ol[1]->call(SYMBOL(fullName))));
   else
     l[0].storage = ugc->target;
+  if (!ugc->isSynchronous())
+  {
+    /* This is an asynchronous notifychange. For synchronous ones we pass the
+     * UVar to the callback function, but it is not appropriate for asynchronous
+     * calls: we want each call to receive the value at the time of the call.
+     * So we pass the value. It just means our user cannot take a UVar& as
+     * callback argument, and must take the value directly.
+     */
+     urbi::UVar* uv = (urbi::UVar*)l[0].storage;
+     l[0] = uv->val();
+     if (useArgVar)
+     {
+       delete uv;
+       useArgVar = false;
+     }
+     GD_FINFO_DUMP("async args: %s", l);
+  }
   libport::utime_t t = libport::utime();
   if (useArgVar)
     ugc->eval(l, boost::bind(delete_uvar, (urbi::UVar*)l[0].storage));
