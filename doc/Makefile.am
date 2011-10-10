@@ -51,6 +51,8 @@ DOT_IMAGES :=							\
 PNG_IMAGES =							\
   $(call ls_files,img/*.png					\
                   @{../modules/system/ros}/doc/img/*.png)
+JPG_IMAGES =							\
+  $(call ls_files,img/*.jpg)
 
 logodir = document-aux/figs/urbi-sdk/$(PACKAGE_MAJOR).$(PACKAGE_MINOR)
 cube_and_disc =	$(logodir)/cube-and-disc
@@ -63,7 +65,10 @@ PDF_IMAGES =					\
   $(DOT_IMAGES:.dot=.pdf)
 EXTRA_DIST += $(call ls_files,img/*)
 
-EPS_IMAGES = $(PDF_IMAGES:.pdf=.eps) $(PNG_IMAGES:.png=.eps)
+EPS_IMAGES =					\
+  $(JPG_IMAGES:.jpg=.eps)			\
+  $(PDF_IMAGES:.pdf=.eps)			\
+  $(PNG_IMAGES:.png=.eps)
 CONVERT_TO_EPS =				\
   { $(ENSURE_TARGET_DIR) ; } &&			\
   $(CONVERT) $< eps:$@.tmp &&			\
