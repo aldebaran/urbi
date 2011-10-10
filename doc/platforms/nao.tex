@@ -258,9 +258,9 @@ You can create a proxy on every \naoqi module, local or remote. The function
 
 Here is an example with red ball detection and tracking module:
 \begin{urbiunchecked}
-// Instanciate a proxy to RedBallDetection
+// Instantiate a proxy to RedBallDetection
 var Global.redBallDetection = ALProxy("RedBallDetection", [], []);
-// Instanciate a proxy to RedBallTracker
+// Instantiate a proxy to RedBallTracker
 var Global.redBallTracker = ALProxy("RedBallTracker", [], []);
 // Enable nao head motors
 robot.body.head.load = 1;
@@ -354,23 +354,25 @@ mathematics.bindUrbiMethod("add", "Compute the sum of two numbers",
 
 \subsection{More examples}
 
-Here is an example that shows how to declare in \us a callback called by a naoqi module:
+Here is an example that shows how to declare in \us a callback called by a
+NaoQi module:
 
 \begin{urbiunchecked}
-// Instanciate a proxy to RedBallDetection
+// Instantiate a proxy to RedBallDetection
 var redBallDetection = ALProxy("RedBallDetection", [], []);
-// Instanciate a proxy to RedBallTracker
+// Instantiate a proxy to RedBallTracker
 var redBallTracker = ALProxy("RedBallTracker", [], []);
 // Create an urbi ALModule that contains a callback function
 var urbiRedBall = do (ALModule.new("urbiRedBall"))
 {
-  function ballDetected(strVarName, value, message) {
-    echo("BallDecteded was triggered. Got: %s , %s , %s" % [ strVarName, value, message ]);
+  function ballDetected(varName, value, message) {
+    echo("BallDetected was triggered. Got: %s, %s, %s" % [varName, value, message]);
   };
   bindUrbiMethod("ballDetected", "called when ball is detected", [], []);
 };
 // Trigger the callback function whenever a ball is detected.
-memory.subscribeToMicroEvent ("redBallDetected", "urbiRedBall", "ballisdetected", "ballDetected");
+memory.subscribeToMicroEvent("redBallDetected", "urbiRedBall",
+                             "ballisdetected", "ballDetected");
 // Launch the red ball tracking
 redBallTracker.startTracker ();
 \end{urbiunchecked}
@@ -384,25 +386,29 @@ class Global.EyeLeds
   {
     var eye_ = this.led.asList;
     var i = 0; var p = -inc; var j = inc;
-    timeout (duration) loop {
-      i=(i+inc)%8; p=(p+inc)%8; j=(j+inc)%8;
-      eye_[p].val = 0;
-      eye_[i].r = r; eye_[i].g = g; eye_[i].b = b;
-      eye_[j].r = r; eye_[j].g = g; eye_[j].b = b;
-      sleep(frequency);
-    },
+    timeout (duration)
+      every (frequency)
+      {
+        i = (i+inc)%8; p = (p+inc)%8; j = (j+inc)%8;
+        eye_[p].val = 0;
+        eye_[i].r = r; eye_[i].g = g; eye_[i].b = b;
+        eye_[j].r = r; eye_[j].g = g; eye_[j].b = b;
+      };
   };
 
-  function redRotate() { rotate(1, 1, 0, 0); };
+  function redRotate()   { rotate(1, 1, 0, 0); };
   function greenRotate() { rotate(1, 0, 1, 0); };
-  function blueRotate() { rotate(1, 0, 0, 1); };
+  function blueRotate()  { rotate(1, 0, 0, 1); };
 
-  function randomize(var duration = 3) {
-    timeout(duration) loop {
+  function randomize(var duration = 3)
+  {
+    timeout(duration)
+      loop
+      {
         led.r = random(100)/100;
         led.g = random(100)/100;
         led.b = random(100)/100;
-    };
+      };
   };
 
   function redBlink(var duration = 3) {
@@ -419,9 +425,9 @@ class Global.EyeLeds
     led.r = r; led.g = g; led.b = b;
   };
 
-  function red() { color(1, 0, 0); };
+  function red()   { color(1, 0, 0); };
   function green() { color(0, 1, 0); };
-  function blue() { color(0, 0, 1); };
+  function blue()  { color(0, 0, 1); };
   function black() { color(0, 0, 0); };
 
   function __unit(slot)
@@ -512,41 +518,36 @@ var RightLeg = [];
 switch (ALMotion.getRobotConfig[1][0])
 {
   case "naoAcademics":
-  {
     Head     = [HeadYawAngle, HeadPitchAngle];
-    LeftArm  = [ ShoulderPitchAngle, +ShoulderRollAngle,
-      +ElbowYawAngle, +ElbowRollAngle, WristYawAngle, HandAngle];
+    LeftArm  = [ShoulderPitchAngle, +ShoulderRollAngle,
+                +ElbowYawAngle, +ElbowRollAngle, WristYawAngle, HandAngle];
     RightArm = [ShoulderPitchAngle, -ShoulderRollAngle,
-      -ElbowYawAngle, -ElbowRollAngle, WristYawAngle, HandAngle];
+                -ElbowYawAngle, -ElbowRollAngle, WristYawAngle, HandAngle];
     LeftLeg  = [HipYawPitchAngle, +HipRollAngle,
-      HipPitchAngle, KneePitchAngle, AnklePitchAngle, +AnkleRollAngle];
+                HipPitchAngle, KneePitchAngle, AnklePitchAngle, +AnkleRollAngle];
     RightLeg = [HipYawPitchAngle, -HipRollAngle,
-      HipPitchAngle, KneePitchAngle, AnklePitchAngle, -AnkleRollAngle]
-  };
+                HipPitchAngle, KneePitchAngle, AnklePitchAngle, -AnkleRollAngle]
+
   case "naoRobocup":
-  {
     Head     = [HeadYawAngle, HeadPitchAngle];
     LeftArm  = [ShoulderPitchAngle, +ShoulderRollAngle,
-      +ElbowYawAngle, +ElbowRollAngle];
+                +ElbowYawAngle, +ElbowRollAngle];
     RightArm = [ShoulderPitchAngle, -ShoulderRollAngle,
-      -ElbowYawAngle, -ElbowRollAngle];
+                -ElbowYawAngle, -ElbowRollAngle];
     LeftLeg  = [HipYawPitchAngle, +HipRollAngle,
-      HipPitchAngle, KneePitchAngle, AnklePitchAngle, +AnkleRollAngle];
+                HipPitchAngle, KneePitchAngle, AnklePitchAngle, +AnkleRollAngle];
     RightLeg = [HipYawPitchAngle, -HipRollAngle,
-      HipPitchAngle, KneePitchAngle, AnklePitchAngle, -AnkleRollAngle];
-  };
+                HipPitchAngle, KneePitchAngle, AnklePitchAngle, -AnkleRollAngle];
+
   case "naoT14":
-  {
     Head     = [HeadYawAngle, HeadPitchAngle];
     LeftArm  = [ShoulderPitchAngle, +ShoulderRollAngle,
-      +ElbowYawAngle, +ElbowRollAngle, WristYawAngle, HandAngle];
+                +ElbowYawAngle, +ElbowRollAngle, WristYawAngle, HandAngle];
     RightArm = [ShoulderPitchAngle, -ShoulderRollAngle,
-      -ElbowYawAngle, -ElbowRollAngle, WristYawAngle, HandAngle];
-  };
+                -ElbowYawAngle, -ElbowRollAngle, WristYawAngle, HandAngle];
+
   case "naoT2":
-  {
     Head     = [HeadYawAngle, HeadPitchAngle];
-  };
 };
 
 // Gather the joints together
@@ -556,7 +557,7 @@ pTargetAngles = pTargetAngles.map(function(x) {x*motion.TO_RAD});
 
 
 // ------------------------------ send the commands ---------------------------
-// We use the "Body" name to signify the collection of all joints
+// We use the "Body" name to denote the collection of all joints.
 var pNames = "Body";
 // We set the fraction of max speed
 var pMaxSpeedFraction = 0.2;
