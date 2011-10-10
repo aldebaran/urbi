@@ -13,6 +13,9 @@
   \lowersections
   \let\urbiObject\refObject
   \let\urbiSlot\refSlot
+  %% Unfortunately between 2.7 and master \labelObject and \defObject have
+  %% exchanged their semantics.  So use a wrapper.
+  \let\labelJazz\defObject
   \input{platforms/open-jazz}
 }
 
