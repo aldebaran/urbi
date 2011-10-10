@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1438 utf-8
+personal_ws-1.1 en 1505 utf-8
 aa
 aaa
 abc
@@ -41,14 +41,18 @@ ALModule
 ALMotion
 ALMotor
 ALProxy
+ALRobotPose
 ALTextToSpeech
 ALUrbiStarter
 american
 ampli
+angleInterpolationWithSpeed
 angleMax
 angleMin
 angTag
 animaloid
+AnklePitchAngle
+AnkleRollAngle
 aoba
 Aperios
 api
@@ -121,6 +125,8 @@ backtraces
 BadInteger
 BadNumber
 Baillie
+ballDetected
+ballisdetected
 BallTracker
 basename
 basicstyle
@@ -147,6 +153,8 @@ bitor
 bitwise
 BlobDetector
 Blog
+blueBlink
+blueRotate
 bodyString
 Bonjour
 bool
@@ -332,6 +340,8 @@ ec
 echoEach
 eE
 elbowR
+ElbowRollAngle
+ElbowYawAngle
 elementAdded
 elementChanged
 elementRemoved
@@ -344,6 +354,7 @@ enableStats
 encoderResolution
 endif
 endl
+english
 ENOENT
 enterTheKitchen
 enum
@@ -364,6 +375,9 @@ exe
 executables
 exn
 extern
+eyeL
+EyeLeds
+eyeR
 fA
 faq
 fastMachine
@@ -427,6 +441,7 @@ gcc
 gdb
 ge
 generateALBindings
+getActualPoseAndTime
 getAll
 getChar
 getConfigValue
@@ -444,6 +459,7 @@ getOne
 getPeriod
 getPosition
 getProperty
+getRobotConfig
 getSender
 getSlot
 getStackFrame
@@ -473,6 +489,8 @@ gotoChargingStation
 GPL
 GraphViz
 graphviz
+greenBlink
+greenRotate
 GSRAPI
 Guillaume
 gyrometer
@@ -482,6 +500,7 @@ gyroY
 gyroZ
 gz
 halfPi
+HandAngle
 hasLocalSlot
 hasNot
 hasProperty
@@ -490,13 +509,21 @@ hasSlot
 headLed
 headPan
 headPitch
+HeadPitchAngle
 headSensorF
 headSensorM
 headSensorR
 headTouch
+headTouchF
+headTouchM
+headTouchR
 headYaw
+HeadYawAngle
 hh
 hideSystemFiles
+HipPitchAngle
+HipRollAngle
+HipYawPitchAngle
 hisMind
 hisResult
 hoc
@@ -572,6 +599,7 @@ isdigit
 isDir
 isgraph
 isInf
+isItDark
 isLower
 islower
 isNan
@@ -604,6 +632,7 @@ keepSeparator
 kenny
 KeyError
 kneeL
+KneePitchAngle
 ko
 kyle
 lang
@@ -628,8 +657,10 @@ leaveTheKitchen
 ledL
 ledR
 leds
+LeftArm
 leftCoeff
 leftFootTotalWeight
+LeftLeg
 leftSpeed
 leftSpeedCoeff
 Levenshtein
@@ -791,7 +822,10 @@ NaN
 nan
 nao
 Nao's
+naoAcademics
 NaoQi
+naoRobocup
+naoT
 nb
 nc
 ndebug
@@ -883,6 +917,8 @@ pkgconfig
 playSound
 plugin
 plusTwo
+pMaxSpeedFraction
+pNames
 pollFor
 pollInterval
 pollOneFor
@@ -918,6 +954,7 @@ protos
 ps
 pscp
 PseudoLazy
+pTargetAngles
 PubSub
 pushback
 pushfront
@@ -944,8 +981,15 @@ rc
 RCS
 README
 realloc
+redBallDetected
+RedBallDetection
+redBallDetection
+RedBallTracker
+redBallTracker
+redBlink
 redefinable
 redefinitionMode
+redRotate
 relicensing
 remoteIP
 removeAll
@@ -978,14 +1022,17 @@ rf
 rgb
 RGBLed
 rhs
+RightArm
 rightCoeff
 rightFootTotalWeight
+RightLeg
 rightSpeed
 rightSpeedCoeff
 riskyFeature
 rlwrap
 rmp
 robotis
+RobotPose
 robotType
 rollSpeed
 Romain
@@ -1002,6 +1049,8 @@ ROSService
 ROSTools
 ROSTopic
 ROSTopics
+rotateLeft
+rotateRight
 RotationalMotor
 RotationalSpeedMotor
 rshift
@@ -1055,6 +1104,7 @@ setConstSlot
 setDCMShift
 setDCMWrite
 setenv
+setLanguage
 setModuleDescription
 setNth
 setPID
@@ -1067,11 +1117,14 @@ setSlot
 setThreadLimit
 setTrace
 setValue
+setWhiteBalance
 sgn
 sha
 shiftedTime
 shiftValue
+ShoulderPitchAngle
 shoulderPitchR
+ShoulderRollAngle
 shoulderRollR
 SIGINT
 SIGKILL
@@ -1122,13 +1175,16 @@ srandom
 src
 ss
 StackFrame
+startTracker
 startup
+startVideoRecord
 stderr
 stdin
 stdlib
 stdout
 stm
 stopif
+stopTracker
 str
 stringPub
 stringstream
@@ -1144,6 +1200,7 @@ submodules
 subscope
 subscopes
 subscriberCount
+subscribeToMicroEvent
 Subsubsection
 subtypes
 succ
@@ -1162,6 +1219,8 @@ syncWrite
 sys
 SYSV
 taglist
+takePicture
+takePictureRegularly
 Tardieu
 tarfile
 targetMine
@@ -1314,6 +1373,7 @@ urbiConsole
 urbiHelloWorld
 urbiImage
 urbijava
+urbiRedBall
 urbiscript
 urbiscript's
 UrbiSDK
@@ -1360,6 +1420,7 @@ versa
 verylightgray
 VEXplorer
 VideoIn
+VisionToolbox
 VM
 VoiceXML
 voicexml
@@ -1393,6 +1454,7 @@ withGas
 Wl
 woot
 workspace
+WristYawAngle
 writePoint
 writeToVar
 xABCDEF
