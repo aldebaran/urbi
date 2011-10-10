@@ -320,6 +320,18 @@ disrupts the data flow between \UObject.
 You can remove all notifies associated to any given \UVar by calling its
 \lstinline{unnotify} function.
 
+\subection{Threaded notification}
+
+In a manner similar to \lstinline{UBindThreadedFunction}, you can request
+your callback function to be called in a separate thread by using
+\lstinline|UNotifyThreadedChange(\var{var}, \var{func}, \var{lock-mode})|.
+
+The \var{lock-mode} argument has the same semantic as for bound functions.
+
+There is one restriction: the callback function must not take a \lstinline{UVar&}
+as argument. This restriction is here to ensure that each invokation of your
+callback will receive the correct value that the source \UVar had at call
+time.
 
 \section{Data-flow based programming: exchanging UVars}
 
