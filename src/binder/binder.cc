@@ -325,6 +325,8 @@ namespace binder
       args = res->arguments_get();
     else if (ast::rLocal res = result_.unsafe_cast<ast::Local>())
       args = res->arguments_get();
+    // FIXME: What????
+    (void) args;
   }
 
 

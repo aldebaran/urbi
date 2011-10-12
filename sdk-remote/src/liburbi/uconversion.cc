@@ -498,16 +498,11 @@ namespace urbi
       return 0;
     }
 
-    // Avoid using src fields because JPEG file format embedded these
-    // information in the data buffer.
-    size_t w, h;
-    size_t usz;
-    if (src.imageFormat != IMAGE_JPEG)
-    {
-      w = src.width;
-      h = src.height;
-      usz = w * h * 3;
-    }
+    // When src.imageFormat == IMAGE_JPEG, these actually actually
+    // overridden by the values in the JPEG headers.
+    size_t w = src.width;
+    size_t h = src.height;
+    size_t usz = w * h * 3;
 
     // uncompressed data.
     byte* data = 0;

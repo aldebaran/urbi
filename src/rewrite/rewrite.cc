@@ -26,7 +26,7 @@ namespace rewrite
   ast::rAst
   rescope(ast::rConstAst ast)
   {
-    GD_CATEGORY(Urbi.Ast.Rescope);
+    // GD_CATEGORY(Urbi.Ast.Rescope);
     // GD_FINFO_TRACE("Rescope in: %s", *ast);
     Rescoper rescope;
     ast::rAst res = ast::analyze(rescope, ast);
