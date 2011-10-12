@@ -8,6 +8,7 @@
  * See the LICENSE file for more information.
  */
 
+#include <fstream>
 #include <libport/cstdlib>
 #include <libport/debug.hh>
 #include <libport/cstdio>
@@ -209,12 +210,17 @@ namespace urbi
   convertRGBtoGrey8_601(const byte* in, size_t bufferSize,
                         byte* out)
   {
+    std::ofstream o("/tmp/rgd2grey8.txt");
     for (size_t j = 0, i = 0; i < bufferSize - 2; i += 3, j++)
     {
       float r = in[i];
       float g = in[i + 1];
       float b = in[i + 2];
-      out[j]  = clamp( 0.299f * r + 0.587f * g + 0.114f * b);
+      out[j]  = clamp(0.299f * r + 0.587f * g + 0.114f * b);
+      o << i << ": "
+        << int(in[i]) << " " << int(in[i + 1]) << " " << int(in[i + 2])
+        << ": " << int(out[j])
+        << std::endl;
     }
     return 1;
   }
@@ -483,11 +489,174 @@ namespace urbi
     }
   }
 
+  struct converted_image
+  {
+    converted_image()
+      : format(UNSET)
+      , allocated(false)
+      , data(0)
+      {}
+
+    void
+    from_YCbCr(byte* src)
+    {
+      format = YUV;
+      allocated = false;
+      data = src;
+    }
+
+    void
+    from_RGB(byte* src)
+    {
+      format = RGB;
+      allocated = false;
+      data = src;
+    }
+
+    void
+    from_PPM(byte* src, size_t size)
+    {
+      format = RGB;
+      allocated = false;
+      // locate header end
+      unsigned int p = 0;
+      unsigned int c = 0;
+      while (c < 3 && p < size)
+        if (src[p++] == '\n')
+          ++c;
+      data = src + p;
+    }
+
+    // Note that we pass w, h, usz by ref: they are defined in
+    // convertJPEGto* functions.
+    void
+    from_JPEG(byte* src, size_t size, FormatKind target,
+              size_t& w, size_t& h, size_t& usz)
+    {
+      // this image is allocated by the function convertJPEG* function.
+      // w, h and usz are defined by these functions calls.
+      if (target == RGB)
+      {
+        convertJPEGtoRGB((byte*) src, size,
+                         (byte**) &data, usz, w, h);
+        allocated = true;
+        format = RGB;
+      }
+      else
+      {
+        convertJPEGtoYCrCb((byte*) src, size,
+                           (byte**) &data, usz, w, h);
+        allocated = true;
+        format = YUV;
+      }
+    }
+
+    void
+    from_YUV422(byte* src, size_t w, size_t h, size_t usz)
+    {
+      format = YUV;
+      allocated = true;
+      data = (byte*) malloc(usz);
+      for (unsigned i = 0; i < w * h; i += 2)
+      {
+        data[i * 3] = src[i * 2];
+        data[i * 3 + 1] = src[i * 2 + 1];
+        data[i * 3 + 2] = src[i * 2 + 3];
+        data[(i + 1) * 3] = src[i * 2 + 2];
+        data[(i + 1) * 3 + 1] = src[i * 2 + 1];
+        data[(i + 1) * 3 + 2] = src[i * 2 + 3];
+      }
+    }
+
+    void
+    from_YUV411_PLANAR(byte* src, size_t w, size_t h, size_t usz)
+    {
+      format = YUV;
+      allocated = true;
+      data = (byte*) malloc(usz);
+      unsigned char* cy = src;
+      unsigned char* u = cy + w * h;
+      unsigned char* v = u + w * h / 4;
+      for (size_t x = 0; x < w; ++x)
+        for (size_t y = 0; y < h; ++y)
+        {
+          data[(x + y * w) * 3 + 0] = cy[x + y * w];
+          data[(x + y * w) * 3 + 1] = u[x / 4 + y * w / 4];
+          data[(x + y * w) * 3 + 2] = v[x / 4 + y * w / 4];
+        }
+    }
+
+    void
+    from_YUV420_PLANAR(byte* src, size_t w, size_t h, size_t usz)
+    {
+      format = YUV;
+      allocated = true;
+      data = (byte*) malloc(usz);
+      unsigned char* cy = src;
+      unsigned char* u = cy + w * h;
+      unsigned char* v = u + w * h / 4;
+      for (size_t x = 0; x < w; ++x)
+        for (size_t y = 0; y < h; ++y)
+        {
+          data[(x + y * w) * 3 + 0] = cy[x + y * w];
+          data[(x + y * w) * 3 + 1] = u[x / 2 + (y >> 1) * w / 2];
+          data[(x + y * w) * 3 + 2] = v[x / 2 + (y >> 1) * w / 2];
+        }
+    }
+
+    void
+    from_NV12(byte* src, size_t w, size_t h, size_t usz)
+    {
+      format = YUV;
+      allocated = true;
+      data = (byte*) malloc(usz);
+      unsigned char* cy = src;
+      unsigned char* uv = src + w * h;
+      for (size_t x = 0; x < w; ++x)
+        for (size_t y = 0; y < h; ++y)
+        {
+          data[(x + y * w) * 3 + 0] = cy[x + y * w];
+          data[(x + y * w) * 3 + 1] = uv[((x >> 1) + (((y >> 1) * w) >> 1)) * 2];
+          data[(x + y * w) * 3 + 2] = uv[((x >> 1) + (((y >> 1) * w)>> 1)) * 2 + 1];
+        }
+    }
+
+    void
+    from_GREY8(byte* src, size_t w, size_t h, size_t usz)
+    {
+      format = YUV;
+      allocated = true;
+      data = (byte*) malloc(usz);
+      memset(data, 127, usz);
+      for (unsigned i = 0; i < w * h; ++i)
+        data[i * 3] = src[i];
+    }
+
+    void
+    from_GREY4(byte* src, size_t w, size_t h, size_t usz)
+    {
+      format = YUV;
+      allocated = true;
+      data = (byte*) malloc(usz);
+      memset(data, 127, usz);
+      for (unsigned i = 0; i < w * h; i += 2)
+      {
+        data[i * 3] = src[i / 2] & 0xF0;
+        data[(i + 1) * 3] = (src[i / 2] & 0x0F) << 4;
+      }
+    }
+
+    FormatKind format;
+    // true if data must be freed.
+    bool allocated;
+    // uncompressed data.
+    byte* data;
+  };
+
 
   int convert(const UImage& src, UImage& dest)
   {
     //step 1: uncompress source, to have raw uncompressed rgb or ycbcr
-    bool allocated = false; // true if data must be freed
 
     // Format we need the source in
     FormatKind targetformat = format_kind(dest.imageFormat);
@@ -505,132 +674,38 @@ namespace urbi
     size_t usz = w * h * 3;
 
     // uncompressed data.
-    byte* data = 0;
-    // Effective format of the source in 'data'.
-    FormatKind format = UNSET;
+    converted_image ci;
     switch (src.imageFormat)
     {
     case IMAGE_YCbCr:
-      format = YUV;
-      data = src.data;
+      ci.from_YCbCr(src.data);
       break;
     case IMAGE_RGB:
-      format = RGB;
-      data = src.data;
+      ci.from_RGB(src.data);
       break;
     case IMAGE_PPM:
-      format = RGB;
-      //locate header end
-      {
-        unsigned int p = 0;
-        unsigned int c = 0;
-        while (c < 3 && p < src.size)
-        {
-          if (src.data[p++] == '\n')
-            ++c;
-        }
-      data = src.data + p;
-      }
+      ci.from_PPM(src.data, src.size);
       break;
     case IMAGE_JPEG:
-      // this image is allocated by the function convertJPEG* function.
-      // w, h and usz are defined by these functions calls.
-      allocated = true;
-      if (targetformat == RGB)
-      {
-        convertJPEGtoRGB((byte*) src.data, src.size,
-                         (byte**) &data, usz, w, h);
-        format = RGB;
-      }
-      else
-      {
-        convertJPEGtoYCrCb((byte*) src.data, src.size,
-                           (byte**) &data, usz, w, h);
-        format = YUV;
-      }
+      ci.from_JPEG(src.data, src.size, targetformat, w, h, usz);
       break;
     case IMAGE_YUV422:
-      format = YUV;
-      data = (byte*) malloc(usz);
-      allocated = true;
-      for (unsigned i = 0; i < src.width * src.height; i += 2)
-      {
-        data[i * 3] = src.data[i * 2];
-        data[i * 3 + 1] = src.data[i * 2 + 1];
-        data[i * 3 + 2] = src.data[i * 2 + 3];
-        data[(i + 1) * 3] = src.data[i * 2 + 2];
-        data[(i + 1) * 3 + 1] = src.data[i * 2 + 1];
-        data[(i + 1) * 3 + 2] = src.data[i * 2 + 3];
-      }
+      ci.from_YUV422(src.data, src.width, src.height, usz);
       break;
     case IMAGE_YUV411_PLANAR:
-    {
-      format = YUV;
-      data = (byte*) malloc(usz);
-      allocated = true;
-      unsigned char* cy = src.data;
-      unsigned char* u = cy + w * h;
-      unsigned char* v = u + w * h / 4;
-      for (size_t x = 0; x < w; ++x)
-        for (size_t y = 0; y < h; ++y)
-        {
-          data[(x + y * w) * 3 + 0] = cy[x + y * w];
-          data[(x + y * w) * 3 + 1] = u[x / 4 + y * w / 4];
-          data[(x + y * w) * 3 + 2] = v[x / 4 + y * w / 4];
-        }
-    }
-    break;
+      ci.from_YUV411_PLANAR(src.data, src.width, src.height, usz);
+      break;
     case IMAGE_YUV420_PLANAR:
-    {
-      format = YUV;
-      data = (byte*) malloc(usz);
-      allocated = true;
-      unsigned char* cy = src.data;
-      unsigned char* u = cy + w * h;
-      unsigned char* v = u + w * h / 4;
-      for (size_t x = 0; x < w; ++x)
-        for (size_t y = 0; y < h; ++y)
-        {
-          data[(x + y * w) * 3 + 0] = cy[x + y * w];
-          data[(x + y * w) * 3 + 1] = u[x / 2 + (y >> 1) * w / 2];
-          data[(x + y * w)*3 + 2] = v[x / 2 + (y >> 1) * w / 2];
-        }
-    }
-    break;
+      ci.from_YUV420_PLANAR(src.data, src.width, src.height, usz);
+      break;
     case IMAGE_NV12:
-    {
-      format = YUV;
-      data = (byte*) malloc(usz);
-      allocated = true;
-      unsigned char* cy = src.data;
-      unsigned char* uv = src.data + w * h;
-      for (size_t x = 0; x < w; ++x)
-        for (size_t y = 0; y < h; ++y)
-        {
-          data[(x + y * w) * 3 + 0] = cy[x + y * w];
-          data[(x + y * w) * 3 + 1] = uv[((x >> 1) + (((y >> 1) * w) >> 1)) * 2];
-          data[(x + y * w) * 3 + 2] = uv[((x >> 1) + (((y >> 1) * w)>> 1)) * 2 + 1];
-        }
-    }
-    break;
+      ci.from_NV12(src.data, src.width, src.height, usz);
+      break;
     case IMAGE_GREY8:
-      format = YUV;
-      data = (byte*) malloc(usz);
-      allocated = true;
-      memset(data, 127, usz);
-      for (unsigned i = 0; i < src.width * src.height; ++i)
-        data[i * 3] = src.data[i];
+      ci.from_GREY8(src.data, src.width, src.height, usz);
       break;
     case IMAGE_GREY4:
-      format = YUV;
-      data = (byte*) malloc(usz);
-      allocated = true;
-      memset(data, 127, usz);
-      for (unsigned i = 0; i < src.width * src.height; i += 2)
-      {
-        data[i * 3] = src.data[i / 2] & 0xF0;
-        data[(i + 1) * 3] = (src.data[i / 2] & 0x0F) << 4;
-      }
+      ci.from_GREY4(src.data, src.width, src.height, usz);
       break;
     case IMAGE_UNKNOWN:
       break;
@@ -645,30 +720,30 @@ namespace urbi
     if (w != dest.width || h != dest.height)
     {
       void* scaled = malloc(dest.width * dest.height * 3);
-      scaleColorImage(data, w, h, w / 2, h / 2,
+      scaleColorImage(ci.data, w, h, w / 2, h / 2,
 		      (byte*) scaled, dest.width, dest.height,
 		      (float) dest.width / (float) w,
 		      (float) dest.height / (float) h);
-      if (allocated)
-        free(data);
-      data = (byte*) scaled;
-      allocated = true;
+      if (ci.allocated)
+        free (ci.data);
+      ci.data = (byte*) scaled;
+      ci.allocated = true;
     }
     // Then factor YUV<->RGB conversion if necessary
-    if ((format == RGB && targetformat == YUV)
-        || (format == YUV && targetformat == RGB))
+    if (ci.format == RGB && targetformat == YUV
+        || ci.format == YUV && targetformat == RGB)
     {
-      byte* src = data;
-      if (!allocated)
+      byte* src = ci.data;
+      if (!ci.allocated)
       {
-        allocated = true;
-        data = (byte*) malloc(usz);
+        ci.allocated = true;
+        ci.data = (byte*) malloc(usz);
       }
-      if (format == RGB)
-        convertRGBtoYCbCr(src, usz, data);
+      if (ci.format == RGB)
+        convertRGBtoYCbCr(src, usz, ci.data);
       else
-        convertYCbCrtoRGB(src, usz, data);
-      format = targetformat;
+        convertYCbCrtoRGB(src, usz, ci.data);
+      ci.format = targetformat;
     }
     // Then convert to destination format.
 
@@ -693,73 +768,73 @@ namespace urbi
     switch (dest.imageFormat)
     {
     case IMAGE_RGB:
-      memcpy(dest.data, data, usz);
+      memcpy(dest.data, ci.data, usz);
       break;
     case IMAGE_GREY8:
-      assert(format == 0);
-      convertRGBtoGrey8_601((byte*) data, usz, (byte*) dest.data);
+      assert(ci.format == 0);
+      convertRGBtoGrey8_601(ci.data, usz, (byte*) dest.data);
       break;
     case IMAGE_YCbCr:
-      memcpy(dest.data, data, usz);
+      memcpy(dest.data, ci.data, usz);
       break;
     case IMAGE_PPM:
       strcpy((char*) dest.data,
              libport::format("P6\n%s %s\n255\n",
                              dest.width, dest.height).c_str());
       memcpy(dest.data + strlen((char*) dest.data),
-             data, usz);
+             ci.data, usz);
       break;
     case IMAGE_JPEG:
-      if (format == YUV)
-        convertYCrCbtoJPEG((byte*) data,
-                           dest.width ,dest.height,
+      if (ci.format == YUV)
+        convertYCrCbtoJPEG(ci.data,
+                           dest.width, dest.height,
                            (byte*) dest.data, dsz, 80);
       else
-        convertRGBtoJPEG((byte*) data,
-                         dest.width , dest.height,
+        convertRGBtoJPEG(ci.data,
+                         dest.width, dest.height,
                          (byte*) dest.data, dsz, 80);
       dest.size = dsz;
       break;
     case IMAGE_YUV411_PLANAR:
     {
       for (unsigned int i = 0; i < plane; ++i)
-        dest.data[i] = data[i * 3];
+        dest.data[i] = ci.data[i * 3];
       for (unsigned int y = 0; y < dest.height; y++)
         for (unsigned int x = 0; x < dest.width; x += 4)
         {
           dest.data[plane + x / 4 + y * dest.width / 4]
-            = data[(x + y * dest.width) * 3 + 1];
+            = ci.data[(x + y * dest.width) * 3 + 1];
           dest.data[plane+plane / 4 + x / 4 + y * dest.width / 4]
-            = data[(x + y * dest.width) * 3 + 2];
+            = ci.data[(x + y * dest.width) * 3 + 2];
         }
       break;
     }
     case IMAGE_YUV420_PLANAR:
     {
       for (unsigned int i = 0; i < plane; ++i)
-        dest.data[i] = data[i * 3];
+        dest.data[i] = ci.data[i * 3];
       for (unsigned int y = 0; y < dest.height / 2; y++)
         for (unsigned int x = 0; x < dest.width / 2; x++)
         {
           dest.data[plane + x + y * dest.width / 2]
-            = data[(x * 2 + y * 2 * dest.width) * 3 + 1];
+            = ci.data[(x * 2 + y * 2 * dest.width) * 3 + 1];
           dest.data[plane + plane/4 + x + y * dest.width / 2]
-            = data[(x * 2 + y * 2 * dest.width) * 3 + 2];
+            = ci.data[(x * 2 + y * 2 * dest.width) * 3 + 2];
         }
       break;
     }
     case IMAGE_NV12:
     {
       for (unsigned int p = 0; p < plane; ++p)
-        dest.data[p] = data[p * 3];
+        dest.data[p] = ci.data[p * 3];
       // crcb interleaved plane
       for (unsigned int y = 0; y < dest.height; y += 2)
         for (unsigned int x = 0; x < dest.width; x += 2)
         {
           dest.data[plane + x + y * dest.width / 2]
-            = data[(x + y * dest.width) * 3 + 1];
+            = ci.data[(x + y * dest.width) * 3 + 1];
           dest.data[plane + x + y * dest.width / 2 + 1]
-            = data[(x + y * dest.width) * 3 + 2];
+            = ci.data[(x + y * dest.width) * 3 + 2];
         }
       dest.size = plane * 3 / 2;
     }
@@ -768,8 +843,8 @@ namespace urbi
       GD_FERROR("Image conversion to format %s is not implemented",
                 dest.format_string());
     }
-    if (allocated)
-      free(data);
+    if (ci.allocated)
+      free (ci.data);
     return 1;
   }
 
