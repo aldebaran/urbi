@@ -452,44 +452,47 @@ namespace urbi
 
   } // anonymous namespace
 
-  int convert(const UImage& src, UImage& dest)
+
+  enum FormatKind
   {
-    enum FormatKind
-    {
-      RGB,
-      YUV,
-      COMPRESSED,
-      UNSET
-    };
-    //step 1: uncompress source, to have raw uncompressed rgb or ycbcr
-    bool allocated = false; // true if data must be freed
+    RGB,
+    YUV,
+    COMPRESSED,
+    UNSET
+  };
 
-    // uncompressed data.
-    byte* data = 0;
-    size_t w, h;
-    size_t usz;
-    // Effective format of the source in 'data'.
-    FormatKind format = UNSET;
-    // Format we need the source in
-    FormatKind targetformat = UNSET;
-
-    switch (dest.imageFormat)
+  static
+  FormatKind
+  format_kind(UImageFormat f)
+  {
+    switch (f)
     {
     case IMAGE_RGB:
     case IMAGE_PPM:
     case IMAGE_GREY8:
-      targetformat = RGB;
-      break;
+      return RGB;
     case IMAGE_YCbCr:
     case IMAGE_NV12:
     case IMAGE_YUV411_PLANAR:
     case IMAGE_YUV420_PLANAR:
-      targetformat = YUV;
-      break;
+      return YUV;
     case IMAGE_JPEG:
-      targetformat = COMPRESSED;
-      break;
+      return COMPRESSED;
     default:
+      return UNSET;
+    }
+  }
+
+
+  int convert(const UImage& src, UImage& dest)
+  {
+    //step 1: uncompress source, to have raw uncompressed rgb or ycbcr
+    bool allocated = false; // true if data must be freed
+
+    // Format we need the source in
+    FormatKind targetformat = format_kind(dest.imageFormat);
+    if (targetformat == UNSET)
+    {
       GD_FERROR("Image conversion to format %s is not implemented",
                 dest.format_string());
       return 0;
@@ -497,6 +500,8 @@ namespace urbi
 
     // Avoid using src fields because JPEG file format embedded these
     // information in the data buffer.
+    size_t w, h;
+    size_t usz;
     if (src.imageFormat != IMAGE_JPEG)
     {
       w = src.width;
@@ -504,9 +509,10 @@ namespace urbi
       usz = w * h * 3;
     }
 
-    unsigned int p = 0;
-    unsigned int c = 0;
-
+    // uncompressed data.
+    byte* data = 0;
+    // Effective format of the source in 'data'.
+    FormatKind format = UNSET;
     switch (src.imageFormat)
     {
     case IMAGE_YCbCr:
@@ -520,12 +526,16 @@ namespace urbi
     case IMAGE_PPM:
       format = RGB;
       //locate header end
-      while (c < 3 && p < src.size)
       {
-        if (src.data[p++] == '\n')
-          ++c;
-      }
+        unsigned int p = 0;
+        unsigned int c = 0;
+        while (c < 3 && p < src.size)
+        {
+          if (src.data[p++] == '\n')
+            ++c;
+        }
       data = src.data + p;
+      }
       break;
     case IMAGE_JPEG:
       // this image is allocated by the function convertJPEG* function.
