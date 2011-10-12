@@ -670,6 +670,12 @@ $ make check -C tests TESTS='uob/remote/*'
 \begin{shell}
 $ make check -C doc
 \end{shell}
+
+Partial runs for the doc tests:
+
+\begin{shell}
+$ make -C doc check-TESTS TESTS='tests/specs/float-00.chk'
+\end{shell}
 \end{files}
 
 %%% Local Variables:
