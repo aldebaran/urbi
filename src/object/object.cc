@@ -45,7 +45,7 @@
 #include <eval/send-message.hh>
 #include <eval/call.hh>
 
-#  include <urbi/object/centralized-slots.hxx>
+#include <urbi/object/centralized-slots.hxx>
 GD_CATEGORY(Urbi.Object);
 
 

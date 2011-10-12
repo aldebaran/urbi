@@ -225,12 +225,13 @@ namespace urbi
       // temporary value, and unblock them.
       if (waiter_count_)
       {
-        /* Split val declaration and assignment to work around g++ 4.3.3 wich warns:
-         * intrusive-ptr.hxx:89: error: 'val.libport::intrusive_ptr<urbi::object::UValue>::pointee_'
-         *                              may be used uninitialized in this function.
-         */
+        // Split val declaration and assignment to work around g++
+        // 4.3.3 which warns:
+        // intrusive-ptr.hxx:89: error:
+        //   'val.libport::intrusive_ptr<urbi::object::UValue>::pointee_'
+        //   may be used uninitialized in this function.
         rUValue val;
-        val = (split_?output_value_:value_)->as<UValue>();
+        val = (split_ ? output_value_ : value_)->as<UValue>();
         if (val)
           val->extract();
         if (waiter_tag_)
@@ -356,8 +357,7 @@ namespace urbi
             res.reset();
             bv.reset();
             ++waiter_count_;
-            waiter_tag()->call(SYMBOL(waitUntilStopped),
-                                              new Float(0.5));
+            waiter_tag()->call(SYMBOL(waitUntilStopped), new Float(0.5));
             --waiter_count_;
             // The val slot likely changed, fetch it again.
             res = split_?output_value_:value_;

@@ -301,9 +301,9 @@ namespace urbi
                               primitive(&Object::hasLocalSlot));
 
 #define DECLARE(Name)                                                   \
-      Object::proto->slot_set_value(SYMBOL_(Name),                            \
+      Object::proto->slot_set_value(SYMBOL_(Name),                      \
                               new Primitive(object_class_##Name),       \
-                              true)                                     \
+                              true)
 
       DECLARE(EQ_EQ);
       DECLARE(EQ_EQ_EQ);

@@ -64,7 +64,7 @@ namespace urbi
 
       foreach (const FunctionProfiles::value_type& fp,
                profile->functions_profile_get())
-        res.push_back(fp.second);
+        res << fp.second;
       std::sort(res.begin(), res.end(), &function_profiles_sort);
 
       return new List(res);
