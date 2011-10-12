@@ -681,17 +681,16 @@ namespace urbi
     dest.size = dest.width * dest.height;
 
     if (dest.imageFormat != IMAGE_GREY8)
-      dest.size = dest.size * (3);
+      dest.size *= 3;
 
-    if ((dest.imageFormat == IMAGE_YUV420_PLANAR) ||
-        (dest.imageFormat == IMAGE_YUV411_PLANAR))
-      dest.size = dest.width * dest.height + ((dest.width * dest.height) / 2);
+    if (dest.imageFormat == IMAGE_YUV420_PLANAR ||
+        dest.imageFormat == IMAGE_YUV411_PLANAR)
+      dest.size = dest.width * dest.height + dest.width * dest.height / 2;
 
     // We need place for the header
-    if ((dest.imageFormat == IMAGE_JPEG) ||
-        (dest.imageFormat == IMAGE_PPM))
+    if (dest.imageFormat == IMAGE_JPEG ||
+        dest.imageFormat == IMAGE_PPM)
       dest.size += 15;
-
 
     dest.data = static_cast<byte*> (realloc(dest.data, dest.size));
     size_t dsz = dest.size;
