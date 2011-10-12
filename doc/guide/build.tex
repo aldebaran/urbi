@@ -242,6 +242,11 @@ deb: python-docutils
 MacPorts: py26-docutils
 \end{package}
 
+\item[ROS CTurtle or later] Needed to enable our ROS bridge.
+  Versions CTurle, Diamondback, and Electric Emys (1.2.X, 1.4.X, 1.6.X)
+are known to work. All the packages and installation processes
+are detailed at \url{http://www.ros.org/wiki/ROS}
+
 \item[SWIG 1.3.36 or later] Used to generate the Java support for UObjects.
   Versions 1.3.36, 1.3.40, and 2.0.0 are known to work.
 \begin{package}
@@ -650,6 +655,12 @@ $ make check -C tests TESTS='uob/remote/*'
   documentation are transformed into test files.
 \begin{shell}
 $ make check -C doc
+\end{shell}
+
+Partial runs for the doc tests:
+
+\begin{shell}
+$ make -C doc check-TESTS TESTS='tests/specs/float-00.chk'
 \end{shell}
 \end{files}
 
