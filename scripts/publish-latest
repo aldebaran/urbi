@@ -170,9 +170,9 @@ getargs "$@"
 # Get the content of the directory containing the latest successful builds:
 # urbi-sdk-2.0-beta3-linux-x86.tar.bz2
 # urbi-sdk-2.0-beta3-macos-x86.tar.bz2
-# urbi-sdk-2.0-beta3-linux-x86-gcc4-debug_dynamic.tar.bz2
+# urbi-sdk-2.0-beta3-linux-x86-gcc4-debug.tar.bz2
 # urbi-sdk-2.0-beta2-498-g4f7f361-windows-x86.zip
-# urbi-sdk-2.0-beta2-498-g4f7f361-linux-x86-gcc4-debug_dynamic.tar.bz2
+# urbi-sdk-2.0-beta2-498-g4f7f361-linux-x86-gcc4-debug.tar.bz2
 # urbi-sdk-2.0-beta2-498-g4f7f361-linux-x86.tar.bz2
 # urbi-sdk-2.0-beta2-498-g4f7f361-macos-x86.tar.bz2
 version=$(ssh $(scp_point "$from") \
@@ -196,7 +196,7 @@ test -n "$latest" ||
                         (?:
                           -(?:linux|macos|windows)
                           -(?:ARM|ppc|x86)
-                          (?:-gcc4-debug_dynamic|vcxx200\d)?
+                          (?:-gcc4-debug|vcxx200\d)?
                         )?/x)
                   { print "$1\n"; exit 0; }')
 

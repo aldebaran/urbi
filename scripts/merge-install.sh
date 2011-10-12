@@ -5,23 +5,39 @@
 set -e
 set -x
 
-files=
-verbose=false
-vcredist="/mnt/share/tools/vcredist/vcredist_x86-vcxx-2008.exe"
-comp="vcxx-2008"
-version=
-installer="$HOME/.wine/drive_c/Program Files/NSIS/makensis.exe"
-installerargs="/NOCD share/installer/installer.nsh"
-# Location of installer.nsh, will create a symlink to it if set
-instalscriptloc=
-templateloc=
-urbiconsole=
-# Target
-output=
+me=$(basename "$0")
+
+## ----------- ##
+## Functions.  ##
+## ----------- ##
+
+stderr ()
+{
+  local i
+  for i
+  do
+    echo "$i"
+  done | sed -e "s/^/$me: /" >&2
+}
+
+error ()
+{
+  local status="$1"
+  shift
+  local first="error: $1"
+  shift
+  stderr "$first" "$@"
+  exit $status
+}
+
+fatal ()
+{
+  error 1 "$@"
+}
 
 verb ()
 {
-  if $verbose; then echo "$@" >&2 ; fi
+  if $verbose; then stderr "$@"; fi
 }
 
 ifverb ()
@@ -60,6 +76,20 @@ EOF
   exit 0
 }
 
+files=
+verbose=false
+vcredist="/home/build/share/tools/vcredist/vcredist_x86-vcxx-2008.exe"
+comp="vcxx-2008"
+version=
+installer="$HOME/.wine/drive_c/Program Files/NSIS/makensis.exe"
+installerargs="/NOCD share/installer/installer.nsh"
+# Location of installer.nsh, will create a symlink to it if set
+instalscriptloc=
+templateloc=
+urbiconsole=
+# Target
+output=
+
 while test $# -ne 0
 do
   case $1 in
@@ -69,7 +99,9 @@ do
   (-s|--installscriptloc) shift; installscriptloc=$1 ;;
   (-t|--templateloc) shift; templateloc=$1;;
   (--vcredist) shift; vcredist=$1;;
-  (--comp) shift; comp=$1;;
+  (--comp) shift;
+     # We need vcxx-2005, not vcxx2005.
+     comp=$(echo "$1" | perl -pe 's/(vcxx)(\d+)/$1-$2/');;
   (--version) shift; version=$1;;
   (--gostai-console) shift; gostaiconsole=$1;;
   (--gostai-editor) shift; gostaieditor=$1;;
@@ -85,6 +117,9 @@ if test "$(echo $files |wc -w)" -ne 2; then
   echo "Expected exactly two files."
   exit 1
 fi
+
+test -r "$vcredist" ||
+  fatal "cannot read $vcredist"
 
 verb "merging archives $files"
 dir=$(mktemp -d)

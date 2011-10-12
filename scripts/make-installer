@@ -3,10 +3,40 @@
 set -e
 set -x
 
+me=$(basename "$0")
+
 ## ----------- ##
 ## Functions.  ##
 ## ----------- ##
 
+stderr ()
+{
+  local i
+  for i
+  do
+    echo "$i"
+  done | sed -e "s/^/$me: /" >&2
+}
+
+error ()
+{
+  local status="$1"
+  shift
+  local first="error: $1"
+  shift
+  stderr "$first" "$@"
+  exit $status
+}
+
+fatal ()
+{
+  error 1 "$@"
+}
+
+# find_prog EXE...
+# ----------------
+# Set find_prog_exe to the first EXE found in the path, or set it to
+# empty.
 find_prog ()
 {
   find_prog_res=
@@ -20,55 +50,35 @@ find_prog ()
   done
 }
 
-stderr ()
+# find_dual ZIP
+# -------------
+# If ZIP is release, return the debug one, and vice versa.  Does not
+# check for the existence of the files.
+find_dual ()
+{
+  echo "$1" | perl -pe 's/-debug// || s/((-no-doc)?\.zip)/-debug$1/'
+}
+
+# Check the previous function.
+find_dual_unit_test ()
 {
   local i
-  for i
+  local o
+  local res
+  for i in \
+  urbi-runtime-2.7.3-windows-x86-vcxx2008-debug-no-doc.zip:urbi-runtime-2.7.3-windows-x86-vcxx2008-no-doc.zip\
+  /home/build/share/built/urbi-sdk/archives/2.7.3-000-g0fb1c3f/urbi-runtime-2.7.3-windows-x86-vcxx2008-debug.zip:/home/build/share/built/urbi-sdk/archives/2.7.3-000-g0fb1c3f/urbi-runtime-2.7.3-windows-x86-vcxx2008.zip\
+  urbi-runtime-2.7.3-windows-x86-vcxx2008-no-doc.zip:urbi-runtime-2.7.3-windows-x86-vcxx2008-debug-no-doc.zip
   do
-    echo >&2 "$0: $i"
+    o=$(echo "$i" | sed -e 's/^.*://')
+    i=$(echo "$i" | sed -e 's/:.*$//')
+    res=$(find_dual $i)
+    test "$o" = "$res" ||
+      fatal "find_dual fails on $i: $res instead of $o"
   done
 }
 
-error ()
-{
-  local status="$1"
-  shift
-  stderr "$@"
-  exit $status
-}
-
-find_dual ()
-{
-  local f="$1"
-  local dbg="debug_dynamic"
-  local nod="no-doc"
-
-  test -r "$f" || exit 1
-
-  # FIXME: this is too hard to read.  Use case/esac.
-  if test "$f" = "${f%%-$dbg*}"; then # MODE= release
-    if test "$f" = "${f%%-$nod*}"; then # HASDOC= yes
-      f=${f/.zip/-$dbg.zip}
-      test -r "$f" && echo "$f" && return 0
-    else # HASDOC= no
-      f=${f/-$nod/-$dbg}
-      test -r "$f" && echo "$f" && return 0
-    fi
-    f=${f/.zip/-$nod.zip}
-    test -r "$f" && echo "$f" && return 0
-  else # MODE = debug
-    f=${f/-$dbg/}
-    test -r "$f" && echo "$f" && return 0
-    if test "$f" = "${f%%-$nod*}"; then # HASDOC= yes
-      f=${f/.zip/-$nod.zip}
-      test -r "$f" && echo "$f" && return 0
-    else # HASDOC= no
-      f=${f/-$nod/}
-      test -r "$f" && echo "$f" && return 0
-    fi
-  fi
-  return 1
-}
+find_dual_unit_test
 
 get_installer_name ()
 {
@@ -120,9 +130,22 @@ case $OS in
 esac
 
 tools=$HOME/share/tools
-vcredist="vcredist_x86-$COMP.exe"
-gostai_console="gostai-console-2.6-win32.exe"
-gostai_editor="gostai-editor-2.5-win32.exe"
+# vcredist has name with vcxx-2005, not vcxx2005.
+vcredist=$(echo "$tools/vcredist/vcredist_x86-$COMP.exe" |
+            perl -pe 's/(vcxx)(\d+)/$1-$2/')
+gostai_console="$tools/gostai-console/gostai-console-2.6-win32.exe"
+gostai_editor="$tools/gostai-editor/gostai-editor-2.5-win32.exe"
+for i in vcredist gostai_console gostai_editor
+do
+  eval "file=\$$i"
+  test -r "$file" ||
+    fatal "cannot read $i: $val"
+  test -f "$file" ||
+    fatal "not a file $i: $val"
+  test -s "$file" ||
+    fatal "empty file $i: $val"
+done
+
 version=$(get_version)
 
 find_prog $MD5SUM gmd5sum md5sum
@@ -155,21 +178,21 @@ my_zip="$upname.zip"
 other_zip=$(find_dual "$my_zip")
 installer=$(get_installer_name "$(basename $my_zip)")
 
-if test -r "$my_zip"                             \
-    -a -r "$other_zip"                           \
-    -a "$my_zip" -nt "$other_zip"; then
+if test -r "$my_zip"                            \
+   && test -r "$other_zip"                      \
+   && test "$my_zip" -nt "$other_zip"; then
   # My zip is the newest, do the merge-install.
 
   # Merge zips.
-  $srcdir/scripts/merge-install.sh -v                           \
-      --vcredist "$tools/vcredist/$vcredist"                    \
-      --comp "$COMP"                                            \
-      --version "$version"                                      \
-      --templateloc "$srcdir/share/templates"                   \
-      --installscriptloc "$srcdir/share/installer/"             \
-      --gostai-console "$tools/gostai-console/$gostai_console"  \
-      --gostai-editor "$tools/gostai-editor/$gostai_editor"     \
-      --output "$tmp/$installer"                                \
+  $srcdir/scripts/merge-install.sh -v                   \
+      --vcredist "$vcredist"                            \
+      --comp "$COMP"                                    \
+      --version "$version"                              \
+      --templateloc "$srcdir/share/templates"           \
+      --installscriptloc "$srcdir/share/installer/"     \
+      --gostai-console "$gostai_console"                \
+      --gostai-editor "$gostai_editor"                  \
+      --output "$tmp/$installer"                        \
       "$my_zip" "$other_zip"
 
   # Upload the installer and its MD5.  Be sure to generate an MD5sum
