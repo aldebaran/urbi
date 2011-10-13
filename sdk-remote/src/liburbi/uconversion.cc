@@ -53,7 +53,7 @@ namespace urbi
     {
       return (v < 0     ? 0
               : 255 < v ? 255
-              :           (byte) v);
+              :           (byte) lrint(v));
     }
   } // namespace
 
