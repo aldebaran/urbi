@@ -192,6 +192,7 @@ public:
 
     // Image conversion.
     UBindFunctions(all, convert);
+    UBindFunctions(all, imageDiff);
 
     UBindCacheVar(all, writeLastChangeVal, bool);
     writeLastChangeVal = true;
@@ -226,6 +227,30 @@ public:
     res.imageFormat = urbi::parse_image_format (id);
     urbi::convert(source, res);
     return res;
+  }
+
+  void imageDiff (std::string img1, std::string img2, std::string conversion)
+  {
+    int len = img1.size();
+    int biggestDiff = 0;
+    for (int i = 0; i < len; ++i)
+    {
+      if (img1[i] != img2[i])
+      {
+        // Ugly ugly cast but didn't manage to print correctly.
+        int tmp = abs((int)(unsigned char)img1[i] - (int)(unsigned char)img2[i]);
+        GD_FERROR("error while comparing images at the %d byte "
+                  "for the %s conversion, diff:"
+                  "reference : %d source %d, distance %d.",
+                   i, conversion, (int)(unsigned char) img1[i],
+                   (int)(unsigned char) img2[i], tmp);
+
+        if (tmp > biggestDiff)
+          biggestDiff = tmp;
+      }
+    }
+    GD_FERROR ("biggest Diff is %d for %s conversion.",
+               biggestDiff, conversion);
   }
 
   void multiWrite(int idx, int count, ufloat val)
