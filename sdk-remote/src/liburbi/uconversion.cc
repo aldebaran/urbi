@@ -49,7 +49,7 @@ namespace urbi
               :           v);
     }
 
-    inline byte clamp(float v)
+    inline byte clamp(ufloat v)
     {
       return (v < 0     ? 0
               : 255 < v ? 255
@@ -63,9 +63,9 @@ namespace urbi
   {
     for (size_t i = 0; i < bufferSize - 2; i += 3)
     {
-      float r = in[i];
-      float g = in[i + 1];
-      float b = in[i + 2];
+      ufloat r = in[i];
+      ufloat g = in[i + 1];
+      ufloat b = in[i + 2];
       /*
 	Y  =      (0.257 * R) + (0.504 * G) + (0.098 * B) + 16
 	Cr = V =  (0.439 * R) - (0.368 * G) - (0.071 * B) + 128
@@ -109,9 +109,9 @@ namespace urbi
       out[i+1] = clamp((c298 + 100*d - 20*e + 128) >> 8);
       out[i+2] = clamp((c298 + 516*d + 128) >> 8);
       /* Float version, 5 times slower on p4.
-         float y = in[i];
-         float cb = in[i + 1];
-         float cr = in[i + 2];
+         ufloat y = in[i];
+         ufloat cb = in[i + 1];
+         ufloat cr = in[i + 2];
          out[i] = clamp(1.164 * (y - 16) + 1.596 * (cr - 128));
          out[i + 1] = clamp(1.164 * (y - 16) - 0.813 * (cr - 128) -
          0.392 * (cb - 128));
@@ -213,9 +213,9 @@ namespace urbi
     std::ofstream o("/tmp/rgd2grey8.txt");
     for (size_t j = 0, i = 0; i < bufferSize - 2; i += 3, j++)
     {
-      float r = in[i];
-      float g = in[i + 1];
-      float b = in[i + 2];
+      ufloat r = in[i];
+      ufloat g = in[i + 1];
+      ufloat b = in[i + 2];
       out[j]  = clamp(0.299f * r + 0.587f * g + 0.114f * b);
       o << i << ": "
         << int(in[i]) << " " << int(in[i + 1]) << " " << int(in[i + 2])
@@ -424,32 +424,32 @@ namespace urbi
     //scale putting (scx, scy) at the center of destination image
     void scaleColorImage(byte* src, int sw, int sh,
 			 int scx, int scy, byte* dst,
-			 int dw, int dh, float sx, float sy)
+			 int dw, int dh, ufloat sx, ufloat sy)
     {
       for (int x = 0; x < dw; ++x)
 	for (int y = 0; y < dh; ++y)
 	{
 	  //find the corresponding point in source image
-	  float fsrcx = (float) (x-dw/2) / sx  + (float) scx;
-	  float fsrcy = (float) (y-dh/2) / sy  + (float) scy;
+	  ufloat fsrcx = (ufloat) (x-dw/2) / sx  + (ufloat) scx;
+	  ufloat fsrcy = (ufloat) (y-dh/2) / sy  + (ufloat) scy;
 	  int srcx = (int) fsrcx;
 	  int srcy = (int) fsrcy;
 	  if (srcx <= 0 || srcx >= sw - 1 || srcy <= 0 || srcy >= sh - 1)
 	    memset(dst + (x + y * dw) * 3, 0, 3);
 	  else //do the bilinear interpolation
 	  {
-	    float xfactor = fsrcx - (float) srcx;
-	    float yfactor = fsrcy - (float) srcy;
+	    ufloat xfactor = fsrcx - (ufloat) srcx;
+	    ufloat yfactor = fsrcy - (ufloat) srcy;
 	    for (int color = 0; color < 3; ++color)
 	    {
-	      float up = (float) src[(srcx + srcy * sw) * 3 + color]
+	      ufloat up = (ufloat) src[(srcx + srcy * sw) * 3 + color]
 		* (1.0 - xfactor)
-		+ (float) src[(srcx + 1 + srcy * sw) * 3 + color] * xfactor;
-	      float down = (float) src[(srcx + (srcy + 1) * sw) * 3 + color]
+		+ (ufloat) src[(srcx + 1 + srcy * sw) * 3 + color] * xfactor;
+	      ufloat down = (ufloat) src[(srcx + (srcy + 1) * sw) * 3 + color]
 		* (1.0 - xfactor)
-		+ (float) src[(srcx + 1 + (srcy + 1) * sw) * 3 + color]
+		+ (ufloat) src[(srcx + 1 + (srcy + 1) * sw) * 3 + color]
 		* xfactor;
-	      float result = up * (1.0 - yfactor) + down * yfactor;
+	      ufloat result = up * (1.0 - yfactor) + down * yfactor;
 	      dst[(x + y * dw) * 3 + color] = (byte) result;
 	    }
 	  }
@@ -722,8 +722,8 @@ namespace urbi
       void* scaled = malloc(dest.width * dest.height * 3);
       scaleColorImage(ci.data, w, h, w / 2, h / 2,
 		      (byte*) scaled, dest.width, dest.height,
-		      (float) dest.width / (float) w,
-		      (float) dest.height / (float) h);
+		      (ufloat) dest.width / (ufloat) w,
+		      (ufloat) dest.height / (ufloat) h);
       if (ci.allocated)
         free (ci.data);
       ci.data = (byte*) scaled;
@@ -910,9 +910,9 @@ namespace urbi
     }
     for (size_t i = 0; i < count; ++i)
     {
-      float soffset = (float)i * ((float)sr / (float)dr);
+      ufloat soffset = (ufloat)i * ((ufloat)sr / (ufloat)dr);
       int so = (int)soffset;
-      float factor = soffset - (float)so;
+      ufloat factor = soffset - (ufloat)so;
       S s1, s2;
       s1 = src[so * sc];
       if (i != count - 1)
@@ -924,7 +924,7 @@ namespace urbi
 	s1 = s1 ^ (1<<(sizeof (S)*8-1));
 	s2 = s2 ^ (1<<(sizeof (S)*8-1));
       }
-      int v1 = (int) ((float)(s1)*(1.0-factor) + (float)(s2)*factor);
+      int v1 = (int) ((ufloat)(s1)*(1.0-factor) + (ufloat)(s2)*factor);
       int v2;
       if (sc==1)
 	v2 = v1;
@@ -940,7 +940,7 @@ namespace urbi
 	  s1 = s1 ^ (1<<(sizeof (S)*8-1));
 	  s2 = s2 ^ (1<<(sizeof (S)*8-1));
 	}
-	v2 = (int) ((float)(s1)*(1.0-factor) + (float)(s2)*factor);
+	v2 = (int) ((ufloat)(s1)*(1.0-factor) + (ufloat)(s2)*factor);
       }
       D d1, d2;
       if (shift>=0)
