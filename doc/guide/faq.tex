@@ -129,6 +129,27 @@ failures remain, please submit the \file{test-suite.log} file(s) (see
 
 \section{Troubleshooting}
 
+\subsection{error while loading shared libraries: libport.so}
+
+If on GNU/Linux you get an error such as:
+
+\begin{shell}
+urbi-sdk/2.7.1 $ ./bin/urbi
+./bin/urbi: error while loading shared libraries: libport.so: \
+      cannot open shared object file: No such file or directory
+\end{shell}
+
+\noindent
+then check that \file{/proc} is properly mounted.  To make \usdk
+relocatable, executables and libraries use a relative path to their peers.
+To resolve these paths into absolute paths, the loader needs to know where
+the program is located, a feature provided by \file{/proc}.  If for instance
+you run \usdk in a chrooted environment, then it is possible that you forgot
+to mount \file{/proc}.  The traditional \command{ps} utility also needs
+\file{/proc} to be mounted, so running it would also help checking if the
+setup is complete.
+
+
 \subsection{Error 1723: ``A DLL required for this install to complete could
   not be run.''}
 
@@ -1120,6 +1141,7 @@ read \autoref{sec:build:check}.
 
 
 %%% Local Variables:
+%%% coding: utf-8
 %%% mode: latex
 %%% TeX-master: "urbi-sdk"
 %%% ispell-dictionary: "american"
