@@ -248,7 +248,8 @@ dir.remove.isVoid;
   Event launched when a file is created inside the directory.
   May not exist if not supported by your architecture.
 
-%% firstline is used to separate inotify test from the others.
+%% firstline is used to separate inotify test from the others, since they
+%% are skipped on architectures such as Mac OS X.
 \begin{urbiscript}[firstnumber=1]
 if (Path.new("./dummy.txt").exists)
   File.new("./dummy.txt").remove;
@@ -273,8 +274,7 @@ if (Path.new("./dummy.txt").exists)
 \item[fileDeleted](<name>)%
   Event launched when a file is deleted from the directory.  May not exist
   if not supported by your architecture.
-
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 if (!Path.new("./dummy.txt").exists)
   File.create("./dummy.txt")|;
 
@@ -307,7 +307,9 @@ if (!Path.new("./dummy.txt").exists)
   \experimental{}
 
   Move \this into \var{dirname} without creating it.
-\begin{urbiscript}
+%% firstnumber=1 so that these tests are run even on machines with inotify
+%% support.
+\begin{urbiscript}[firstnumber=1]
 var dir1 = Directory.create("dir1")|;
 var dir2 = Directory.create("dir1/dir2")|;
 var file = File.create("dir1/file")|;
@@ -316,19 +318,20 @@ dir1.moveInto(dir);
 [00000001] Directory("dir/dir1")
 dir1;
 [00000002] Directory("dir/dir1")
-dir1.content;
-[00000003] ["dir2", "file"]
-dir.content;
-[00000004] ["dir1"]
+assert
+{
+  dir1.content == ["dir2", "file"];
+  dir.content == ["dir1"]
+};
 \end{urbiscript}
 \begin{urbicomment}
-dir1.removeAll;
+dir.removeAll;
 removeSlots("dir1", "dir2", "file", "dir");
 \end{urbicomment}
 
 
 \item[parent]
-  Return the parent of the directory.
+  The Directory parent of \this.
 \begin{urbiscript}
 Directory.create("dir")|;
 var dir = Directory.create("dir/dir")|;
@@ -343,7 +346,7 @@ removeSlots("dir");
 
 
 \item[remove]
-  Remove the directory only if it is empty.
+  Remove \this directory if it is empty.
 \begin{urbiscript}
 var dir = Directory.create("dir")|;
 File.create("dir/file")|;
@@ -384,7 +387,7 @@ dir;
 [00000002] Directory("other")
 dir.content;
 [00000003] ["file"]
-dir2 = Directory.create("dir2")|;
+var dir2 = Directory.create("dir2")|;
 dir.rename("dir2/other2");
 [00000004] Directory("dir2/other2")
 dir;
@@ -393,6 +396,7 @@ dir.content;
 [00000006] ["file"]
 \end{urbiscript}
 \begin{urbicomment}
+dir.removeAll;
 dir2.removeAll;
 removeSlots("dir", "dir2");
 \end{urbicomment}
@@ -406,13 +410,14 @@ removeSlots("dir", "dir2");
 var dir = Directory.create("dir")|;
 Directory.create("dir/dir")|;
 File.save("dir/file", "content");
-file1 = File.create("dir/file")|;
+var file1 = File.create("dir/file")|;
 File.save("dir/dir/file", "content");
-file2 = File.create("dir/dir/file")|;
+var file2 = File.create("dir/dir/file")|;
 assert(dir.size() == file1.size() + file2.size());
 \end{urbiscript}
 \begin{urbicomment}
-removeSlots("dir");
+dir.removeAll;
+removeSlots("dir", "file1", "file2");
 \end{urbicomment}
 \end{urbiscriptapi}
 
