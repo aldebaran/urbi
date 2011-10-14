@@ -220,37 +220,42 @@ public:
   }
 
   urbi::UImage
-  convert (const urbi::UImage source, const std::string& id)
+  convert(const urbi::UImage source, const std::string& id)
   {
     urbi::UImage res;
-    res.make ();
-    res.imageFormat = urbi::parse_image_format (id);
+    res.make();
+    res.imageFormat = urbi::parse_image_format(id);
     urbi::convert(source, res);
     return res;
   }
 
-  void imageDiff (std::string img1, std::string img2, std::string conversion)
+  size_t
+  imageDiff(const std::string& img1,
+            const std::string& img2,
+            const std::string& conversion)
   {
-    int len = img1.size();
-    int biggestDiff = 0;
-    for (int i = 0; i < len; ++i)
+    size_t res = 0;
+    size_t len = img1.size();
+    for (size_t i = 0; i < len; ++i)
     {
       if (img1[i] != img2[i])
       {
+        int i1 = (unsigned char)img1[i];
+        int i2 = (unsigned char)img2[i];
         // Ugly ugly cast but didn't manage to print correctly.
-        int tmp = abs((int)(unsigned char)img1[i] - (int)(unsigned char)img2[i]);
+        size_t d = abs(i2 - i1);
         GD_FERROR("error while comparing images at the %d byte "
                   "for the %s conversion, diff:"
                   "reference : %d source %d, distance %d.",
-                   i, conversion, (int)(unsigned char) img1[i],
-                   (int)(unsigned char) img2[i], tmp);
-
-        if (tmp > biggestDiff)
-          biggestDiff = tmp;
+                  i, conversion, i1, i2, d);
+        if (res < d)
+          res = d;
       }
     }
-    GD_FERROR ("biggest Diff is %d for %s conversion.",
-               biggestDiff, conversion);
+    if (res)
+      GD_FERROR("largest diff is %d for %s conversion.",
+                res, conversion);
+    return res;
   }
 
   void multiWrite(int idx, int count, ufloat val)
