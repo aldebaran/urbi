@@ -44,7 +44,7 @@ class Global.Dialog
 \end{urbiscript}
 
 The server, an instance of \refObject{Server}, expects incoming connections,
-notified by the socket's \refSlot{connection} event.  Once the connection
+notified by \refSlot[Server]{connection} event.  Once the connection
 establish, it listens to the \lstinline|socket| for incoming messages,
 notified by the \refSlot{received} event.  Its reaction to this event is to
 send the following line of the dialog.  At the end of the dialog, the socket
@@ -133,7 +133,7 @@ This is because both the last message sent from the server, and the
 disconnection request have arrived at the same ``instant'' to the client.
 Both are processed asynchronously, in particular the message reception since
 the code used an \emph{asynchronous} \lstinline{at}
-(\label{sec:lang:at:sync-async}).  In the case of asynchronous event
+(\autoref{sec:lang:at:sync-async}).  In the case of asynchronous event
 handling, this is no guarantee on the order of event processing.  This can
 be addressed by \emph{synchronous} event processing on the client side; pay
 extra attention to the \textkwd{sync} qualifier passed to \lstinline{at}:

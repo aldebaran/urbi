@@ -297,7 +297,10 @@ latex_subsections =							\
   perl -ne '/(.*?):\\subsection({.*})/ && { $$secs{$$1} .= $$2 };'	\
        -e  'END { print "$$_:$$secs{$$_}\n" foreach sort keys %secs; }'
 # This is not spell-checking, but that's easier for the BF.
-.PHONY spell-check: style-check
+# An order-only dependency so that we don't get style-check in the
+# list of dependencies of spell-check (we would try to find errors in
+# the style-check non-existing file).
+.PHONY spell-check: | style-check
 style-check: $(urbi_sdk_tex)
 ## Use the {verbatim} environment, not {lstlisting}.
 	$(AM_V_GEN) ! grep '{lstlisting}' $^

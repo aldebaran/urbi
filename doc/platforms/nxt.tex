@@ -459,10 +459,10 @@ motors, sensors and other devices. There is one type of motor called
 \lstinline{LightSensor}. Two other devices are available:
 \lstinline{Battery} and \lstinline{Beeper}. A complete description of these
 devices is available in \autoref{sec:nxt:specs}.  Writing a layout entails
-instancing particular objects from the devices above.
+instantiating particular objects from the devices above.
 
-\subsection{Instancing Motors}
-The Servo init constructor has the following syntax:
+\subsection{Instantiating Motors}
+The Servo constructor has the following syntax:
 \begin{urbiunchecked}
 Servo.new(\var{port});
 \end{urbiunchecked}
@@ -479,7 +479,7 @@ claw = Servo.new("B");
 
 The wheel left is on port C, the wheel right on A and the claw is on port B.
 
-\subsection{Instancing sensors}
+\subsection{Instantiating sensors}
 To create a Switch object, the syntax is the following:
 \begin{urbiunchecked}
 Switch.new(\var{port});
@@ -488,7 +488,7 @@ Switch.new(\var{port});
 where \var{port} can be 1, 2, 3 or 4.
 
 In \file{TriBot.u} the switch is used as a bumper plugged on the port 4 so
-the instancing is:
+the instantiation is:
 \begin{urbiunchecked}
 bumper  = Switch.new(4);
 \end{urbiunchecked}
@@ -568,6 +568,7 @@ Mindstorms NXT \urbi server.
 \let\subsection\subsectionObject
 
 \subsection{Servo}
+\labelObject{nxt.Servo}
 Servo describes a motor. A Servo instance contains the following slots:
 
 \begin{urbiscriptapi}
@@ -590,7 +591,7 @@ wheel = Servo.new("A");
 
 
 \subsection{UltraSonicSensor}
-\labelObject{UltraSonicSensor}
+\labelObject{nxt.UltraSonicSensor}
 UltraSonicSensor describes a sonar sensor. An UltraSonicSensor instance
 contains the following slots:
 
@@ -612,6 +613,7 @@ sonar = UltraSonicSensor.new(1);
 \end{urbiscriptapi}
 
 \subsection{SoundSensor}
+\labelObject{nxt.SoundSensor}
 SoundSensor describes a sound sensor. A SoundSensor instance contains the
 following slots:
 
@@ -639,6 +641,7 @@ decibel = SoundSensor.new(1, "DB");
 \end{urbiscriptapi}
 
 \subsection{LightSensor}
+\labelObject{nxt.LightSensor}
 LightSensor describes a light sensor. A LightSensor instance contains the
 following slots:
 
@@ -667,6 +670,7 @@ light = LightSensor.new(1, "Ambient");
 \end{urbiscriptapi}
 
 \subsection{Switch}
+\labelObject{nxt.Switch}
 Switch describes a touch sensor. A Switch instance contains the following
 slots:
 
@@ -688,6 +692,7 @@ bumper = Switch.new(1);
 \end{urbiscriptapi}
 
 \subsection{Battery}
+\labelObject{nxt.Battery}
 Battery describes a battery device. A Battery instance contains the
 following slots:
 \begin{urbiscriptapi}
@@ -699,6 +704,7 @@ battery = Battery.new;
 \end{urbiscriptapi}
 
 \subsection{Beeper}
+\labelObject{nxt.Beeper}
 Beeper describes a speaker device. A Beeper instance contains the following
 methods:
 
@@ -717,6 +723,7 @@ beeper.play(200,1s);
 \end{urbiscriptapi}
 
 \subsection{Command}
+\labelObject{nxt.Command}
 
 Command allows you to use expert commands. The Command UObject contains the
 following methods:
