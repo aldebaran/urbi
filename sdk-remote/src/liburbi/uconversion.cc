@@ -491,6 +491,15 @@ namespace urbi
       {}
 
     void
+    alloc(size_t size)
+    {
+      aver(!allocated);
+      aver(!data);
+      allocated = true;
+      data = (byte*) malloc(size);
+    }
+
+    void
     from_YCbCr(byte* src)
     {
       format = IMAGE_YCbCr;
@@ -548,8 +557,7 @@ namespace urbi
     from_YUV422(byte* src, size_t w, size_t h, size_t usz)
     {
       format = IMAGE_YCbCr;
-      allocated = true;
-      data = (byte*) malloc(usz);
+      alloc(usz);
       for (unsigned i = 0; i < w * h; i += 2)
       {
         data[i * 3] = src[i * 2];
@@ -565,8 +573,7 @@ namespace urbi
     from_YUV411_PLANAR(byte* src, size_t w, size_t h, size_t usz)
     {
       format = IMAGE_YCbCr;
-      allocated = true;
-      data = (byte*) malloc(usz);
+      alloc(usz);
       unsigned char* cy = src;
       unsigned char* u = cy + w * h;
       unsigned char* v = u + w * h / 4;
@@ -583,8 +590,7 @@ namespace urbi
     from_YUV420_PLANAR(byte* src, size_t w, size_t h, size_t usz)
     {
       format = IMAGE_YCbCr;
-      allocated = true;
-      data = (byte*) malloc(usz);
+      alloc(usz);
       unsigned char* cy = src;
       unsigned char* u = cy + w * h;
       unsigned char* v = u + w * h / 4;
@@ -601,8 +607,7 @@ namespace urbi
     from_NV12(byte* src, size_t w, size_t h, size_t usz)
     {
       format = IMAGE_YCbCr;
-      allocated = true;
-      data = (byte*) malloc(usz);
+      alloc(usz);
       unsigned char* cy = src;
       unsigned char* uv = src + w * h;
       for (size_t x = 0; x < w; ++x)
@@ -618,8 +623,7 @@ namespace urbi
     from_GREY8(byte* src, size_t w, size_t h, size_t usz)
     {
       format = IMAGE_YCbCr;
-      allocated = true;
-      data = (byte*) malloc(usz);
+      alloc(usz);
       memset(data, 127, usz);
       for (unsigned i = 0; i < w * h; ++i)
         data[i * 3] = src[i];
@@ -629,8 +633,7 @@ namespace urbi
     from_GREY4(byte* src, size_t w, size_t h, size_t usz)
     {
       format = IMAGE_YCbCr;
-      allocated = true;
-      data = (byte*) malloc(usz);
+      alloc(usz);
       memset(data, 127, usz);
       for (unsigned i = 0; i < w * h; i += 2)
       {
