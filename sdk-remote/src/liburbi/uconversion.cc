@@ -210,7 +210,6 @@ namespace urbi
   convertRGBtoGrey8_601(const byte* in, size_t bufferSize,
                         byte* out)
   {
-    //std::ofstream o("/tmp/rgd2grey8.txt");
     for (size_t j = 0, i = 0; i < bufferSize - 2; i += 3, j++)
     {
       ufloat r = in[i];
