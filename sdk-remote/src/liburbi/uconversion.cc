@@ -210,17 +210,17 @@ namespace urbi
   convertRGBtoGrey8_601(const byte* in, size_t bufferSize,
                         byte* out)
   {
-    std::ofstream o("/tmp/rgd2grey8.txt");
+    //std::ofstream o("/tmp/rgd2grey8.txt");
     for (size_t j = 0, i = 0; i < bufferSize - 2; i += 3, j++)
     {
       ufloat r = in[i];
       ufloat g = in[i + 1];
       ufloat b = in[i + 2];
       out[j]  = clamp(0.299f * r + 0.587f * g + 0.114f * b);
-      o << i << ": "
-        << int(in[i]) << " " << int(in[i + 1]) << " " << int(in[i + 2])
-        << ": " << int(out[j])
-        << std::endl;
+      //o << i << ": "
+      //  << int(in[i]) << " " << int(in[i + 1]) << " " << int(in[i + 2])
+      //  << ": " << int(out[j])
+      //  << std::endl;
     }
     return 1;
   }
@@ -767,7 +767,7 @@ namespace urbi
       memcpy(dest.data, pivot.data, usz);
       break;
     case IMAGE_GREY8:
-      assert(pivot.format == 0);
+      assert(pivot.format == IMAGE_RGB);
       convertRGBtoGrey8_601(pivot.data, usz, (byte*) dest.data);
       break;
     case IMAGE_YCbCr:
