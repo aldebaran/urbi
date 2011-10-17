@@ -217,10 +217,6 @@ namespace urbi
       ufloat g = in[i + 1];
       ufloat b = in[i + 2];
       out[j]  = clamp(0.299f * r + 0.587f * g + 0.114f * b);
-      //o << i << ": "
-      //  << int(in[i]) << " " << int(in[i + 1]) << " " << int(in[i + 2])
-      //  << ": " << int(out[j])
-      //  << std::endl;
     }
     return 1;
   }
