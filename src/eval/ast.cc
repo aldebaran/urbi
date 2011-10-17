@@ -76,12 +76,39 @@ namespace eval
 
     object::rTag eval_tag(ast::rConstExp e);
 
-
-# define VISIT(Macro, Data, Node)               \
+# define VISIT(Node)                            \
     LIBPORT_SPEED_ALWAYS_INLINE rObject         \
-    visit(const ast::Node* n);
+    visit(const ast::Node* n)
 
-    AST_FOR_EACH_NODE(VISIT);
+    VISIT(And);
+    VISIT(Call);
+    VISIT(CallMsg);
+    VISIT(Dictionary);
+    VISIT(Do);
+    VISIT(Event);
+    VISIT(Finally);
+    VISIT(Float);
+    VISIT(If);
+    VISIT(Implicit);
+    VISIT(List);
+    VISIT(Local);
+    VISIT(LocalAssignment);
+    VISIT(LocalDeclaration);
+    VISIT(Nary);
+    VISIT(Noop);
+    VISIT(Pipe);
+    VISIT(Property);
+    VISIT(PropertyWrite);
+    VISIT(Routine);
+    VISIT(Scope);
+    VISIT(Stmt);
+    VISIT(String);
+    VISIT(TaggedStmt);
+    VISIT(This);
+    VISIT(Throw);
+    VISIT(Try);
+    VISIT(Watch);
+    VISIT(While);
 #undef VISIT
   };
 
@@ -1017,15 +1044,57 @@ namespace eval
     return object::void_class;
   }
 
+} // namespace eval
 
+namespace ast
+{
 
-  // Invalid nodes
-#define INVALID(Node)                                                   \
-  LIBPORT_SPEED_ALWAYS_INLINE rObject                                   \
-  Visitor::visit(const ast::Node* n)                                    \
-  {                                                                     \
-    LIBPORT_USE(n);                                                     \
-    pabort("Interpreter: invalid " << #Node << " node: " << *n);        \
+#define DEFINE(Class)                           \
+  urbi::object::rObject                         \
+  Class::eval(runner::Job& r) const             \
+  {                                             \
+    ::eval::Visitor v(r);                       \
+    urbi::object::rObject res = v.visit(this);  \
+    return assert_exp(res);                     \
+  }
+
+  // FIXME: Move to AST_FOR_EACH_NODE.
+  DEFINE(And);
+  DEFINE(Call);
+  DEFINE(CallMsg);
+  DEFINE(Dictionary);
+  DEFINE(Do);
+  DEFINE(Event);
+  DEFINE(Finally);
+  DEFINE(Float);
+  DEFINE(If);
+  DEFINE(Implicit);
+  DEFINE(List);
+  DEFINE(Local);
+  DEFINE(LocalAssignment);
+  DEFINE(LocalDeclaration);
+  DEFINE(Nary);
+  DEFINE(Noop);
+  DEFINE(Pipe);
+  DEFINE(Property);
+  DEFINE(PropertyWrite);
+  DEFINE(Routine);
+  DEFINE(Scope);
+  DEFINE(Stmt);
+  DEFINE(String);
+  DEFINE(TaggedStmt);
+  DEFINE(This);
+  DEFINE(Throw);
+  DEFINE(Try);
+  DEFINE(Watch);
+  DEFINE(While);
+#undef DEFINE
+
+#define INVALID(Class)                                  \
+  urbi::object::rObject                                 \
+  Class::eval(runner::Job&) const                       \
+  {                                                     \
+    pabort("eval: invalid " #Class " node: " << *this); \
   }
 
   INVALID(Assign);
@@ -1051,98 +1120,6 @@ namespace eval
   INVALID(Return);
   INVALID(Subscript);
   INVALID(Unscope);
+
 #undef INVALID
-
-#define IMPOSSIBLE(Node)                                        \
-  LIBPORT_SPEED_ALWAYS_INLINE rObject                           \
-  Visitor::visit(const ast::Node* n)                            \
-  {                                                             \
-    LIBPORT_USE(n);                                             \
-    pabort("Interpreter: unreachable " #Node " node: " << *n);  \
-  }
-
-  IMPOSSIBLE(Ast);
-  IMPOSSIBLE(Composite);
-  IMPOSSIBLE(Exp);
-  IMPOSSIBLE(Flavored);
-  IMPOSSIBLE(LValue);
-  IMPOSSIBLE(LValueArgs);
-  IMPOSSIBLE(LocalWrite);
-  IMPOSSIBLE(PropertyAction);
-  IMPOSSIBLE(Unary);
-  IMPOSSIBLE(Write);
-#undef IMPOSSIBLE
-
-} // namespace eval
-
-namespace ast
-{
-
-#define DEFINE(Class)                           \
-  urbi::object::rObject                         \
-  Class::eval(runner::Job& r) const             \
-  {                                             \
-    ::eval::Visitor v(r);                       \
-    urbi::object::rObject res = v.visit(this);  \
-    return assert_exp(res);                     \
-  }
-
-  // FIXME: Move to AST_FOR_EACH_NODE.
-  DEFINE(And);
-  DEFINE(Assign);
-  DEFINE(Assignment);
-  DEFINE(At);
-  DEFINE(Binding);
-  DEFINE(Break);
-  DEFINE(Call);
-  DEFINE(CallMsg);
-  DEFINE(Catch);
-  DEFINE(Class);
-  DEFINE(Continue);
-  DEFINE(Declaration);
-  DEFINE(Decrementation);
-  DEFINE(Dictionary);
-  DEFINE(Do);
-  DEFINE(Emit);
-  DEFINE(Event);
-  DEFINE(Finally);
-//  DEFINE(Flavored);
-  DEFINE(Float);
-  DEFINE(Foreach);
-  DEFINE(If);
-  DEFINE(Implicit);
-  DEFINE(Incrementation);
-//  DEFINE(LValueArgs);
-  DEFINE(List);
-  DEFINE(Local);
-  DEFINE(LocalAssignment);
-  DEFINE(LocalDeclaration);
-  DEFINE(Match);
-  DEFINE(MetaArgs);
-  DEFINE(MetaCall);
-  DEFINE(MetaExp);
-  DEFINE(MetaId);
-  DEFINE(MetaLValue);
-  DEFINE(Nary);
-  DEFINE(Noop);
-  DEFINE(OpAssignment);
-  DEFINE(Pipe);
-  DEFINE(Property);
-//  DEFINE(PropertyAction);
-  DEFINE(PropertyWrite);
-  DEFINE(Return);
-  DEFINE(Routine);
-  DEFINE(Scope);
-  DEFINE(Stmt);
-  DEFINE(String);
-  DEFINE(Subscript);
-  DEFINE(TaggedStmt);
-  DEFINE(This);
-  DEFINE(Throw);
-  DEFINE(Try);
-  DEFINE(Unscope);
-  DEFINE(Watch);
-  DEFINE(While);
-//  DEFINE(Write);
-#undef DEFINE
 } // namespace ast
