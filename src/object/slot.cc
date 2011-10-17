@@ -413,7 +413,7 @@ namespace urbi
     Slot::get_set(const rObject& o)
     {
       bool had_one = get_ || oget_;
-      get_ = o==nil_class?0:o;
+      get_ = o == nil_class ? 0 : o;
       push_pull_check(!had_one && (get_ || oget_));
     }
 
@@ -421,20 +421,20 @@ namespace urbi
     Slot::oget_set(const rObject& o)
     {
       bool had_one = get_ || oget_;
-      oget_ = o==nil_class?0:o;
+      oget_ = o == nil_class ? 0 : o;
       push_pull_check(!had_one && (get_ || oget_));
     }
 
     void
     Slot::oset_set(const rObject& o)
     {
-      oset_ = o==nil_class?0:o;
+      oset_ = o == nil_class ? 0 : o;
     }
 
     void
     Slot::set_set(const rObject& o)
     {
-      set_ = o==nil_class?0:o;
+      set_ = o == nil_class ? 0 : o;
     }
 
     rObject
