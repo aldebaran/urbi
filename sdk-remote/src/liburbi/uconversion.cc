@@ -480,173 +480,188 @@ namespace urbi
       height = src.height;
     }
 
+    template <UImageFormat Src, UImageFormat Dest>
     void
-    from_YCbCr(const UImage& src)
-    {
-      imageFormat = IMAGE_YCbCr;
-      dimensions(src);
-      allocated = false;
-      data = src.data;
-      size = src.size;
-    }
-
-    void
-    from_RGB(const UImage& src)
-    {
-      imageFormat = IMAGE_RGB;
-      dimensions(src);
-      allocated = false;
-      data = src.data;
-      size = src.size;
-    }
-
-    void
-    from_PPM(const UImage& src)
-    {
-      imageFormat = IMAGE_RGB;
-      dimensions(src);
-      allocated = false;
-      // locate header end
-      unsigned int p = 0;
-      unsigned int c = 0;
-      while (c < 3 && p < src.size)
-        if (src.data[p++] == '\n')
-          ++c;
-      data = src.data + p;
-      size = src.size - p;
-    }
-
-    void
-    from_JPEG(const UImage& src, UImageFormat target)
-    {
-      // This image is allocated by the function convertJPEG*
-      // function.  width, height and size are defined by these
-      // functions calls.
-      if (target == IMAGE_RGB)
-      {
-        convertJPEGtoRGB(src.data, src.size,
-                         &data, size, width, height);
-        allocated = true;
-        imageFormat = IMAGE_RGB;
-      }
-      else
-      {
-        convertJPEGtoYCrCb(src.data, src.size,
-                           &data, size, width, height);
-        allocated = true;
-        imageFormat = IMAGE_YCbCr;
-      }
-    }
-
-    void
-    from_YUV422(const UImage& src)
-    {
-      imageFormat = IMAGE_YCbCr;
-      dimensions(src);
-      size_t s = width * height;
-      alloc(s * 3);
-      for (unsigned i = 0; i < s; i += 2)
-      {
-        data[i * 3] = src.data[i * 2];
-        data[i * 3 + 1] = src.data[i * 2 + 1];
-        data[i * 3 + 2] = src.data[i * 2 + 3];
-        data[(i + 1) * 3] = src.data[i * 2 + 2];
-        data[(i + 1) * 3 + 1] = src.data[i * 2 + 1];
-        data[(i + 1) * 3 + 2] = src.data[i * 2 + 3];
-      }
-    }
-
-    void
-    from_YUV411_PLANAR(const UImage& src)
-    {
-      imageFormat = IMAGE_YCbCr;
-      dimensions(src);
-      size_t w = width;
-      size_t h = height;
-      alloc(w * h * 3);
-      unsigned char* cy = src.data;
-      unsigned char* u = cy + w * h;
-      unsigned char* v = u + w * h / 4;
-      for (size_t x = 0; x < w; ++x)
-        for (size_t y = 0; y < h; ++y)
-        {
-          data[(x + y * w) * 3 + 0] = cy[x + y * w];
-          data[(x + y * w) * 3 + 1] = u[x / 4 + y * w / 4];
-          data[(x + y * w) * 3 + 2] = v[x / 4 + y * w / 4];
-        }
-    }
-
-    void
-    from_YUV420_PLANAR(const UImage& src)
-    {
-      imageFormat = IMAGE_YCbCr;
-      dimensions(src);
-      size_t w = width;
-      size_t h = height;
-      alloc(w * h * 3);
-      unsigned char* cy = src.data;
-      unsigned char* u = cy + w * h;
-      unsigned char* v = u + w * h / 4;
-      for (size_t x = 0; x < w; ++x)
-        for (size_t y = 0; y < h; ++y)
-        {
-          data[(x + y * w) * 3 + 0] = cy[x + y * w];
-          data[(x + y * w) * 3 + 1] = u[x / 2 + (y >> 1) * w / 2];
-          data[(x + y * w) * 3 + 2] = v[x / 2 + (y >> 1) * w / 2];
-        }
-    }
-
-    void
-    from_NV12(const UImage& src)
-    {
-      imageFormat = IMAGE_YCbCr;
-      dimensions(src);
-      size_t w = width;
-      size_t h = height;
-      alloc(w * h * 3);
-      unsigned char* cy = src.data;
-      unsigned char* uv = src.data + w * h;
-      for (size_t x = 0; x < w; ++x)
-        for (size_t y = 0; y < h; ++y)
-        {
-          data[(x + y * w) * 3 + 0] = cy[x + y * w];
-          data[(x + y * w) * 3 + 1] = uv[((x >> 1) + (((y >> 1) * w) >> 1)) * 2];
-          data[(x + y * w) * 3 + 2] = uv[((x >> 1) + (((y >> 1) * w)>> 1)) * 2 + 1];
-        }
-    }
-
-    void
-    from_GREY8(const UImage& src)
-    {
-      imageFormat = IMAGE_YCbCr;
-      dimensions(src);
-      size_t s = width * height;
-      size_t usz = s * 3;
-      alloc(usz);
-      memset(data, 127, usz);
-      for (unsigned i = 0; i < s; ++i)
-        data[i * 3] = src.data[i];
-    }
-
-    void
-    from_GREY4(const UImage& src)
-    {
-      imageFormat = IMAGE_YCbCr;
-      dimensions(src);
-      size_t s = width * height;
-      size_t usz = s * 3;
-      alloc(usz);
-      memset(data, 127, usz);
-      for (unsigned i = 0; i < s; i += 2)
-      {
-        data[i * 3] = src.data[i / 2] & 0xF0;
-        data[(i + 1) * 3] = (src.data[i / 2] & 0x0F) << 4;
-      }
-    }
+    convert_(const UImage& src);
 
     // Whether data must be freed.
     bool allocated;
   };
+
+  template <>
+  void
+  PivotImage::convert_<IMAGE_YCbCr, IMAGE_YCbCr>(const UImage& src)
+  {
+    imageFormat = IMAGE_YCbCr;
+    dimensions(src);
+    allocated = false;
+    data = src.data;
+    size = src.size;
+  }
+
+
+  template <>
+  void
+  PivotImage::convert_<IMAGE_RGB, IMAGE_RGB>(const UImage& src)
+  {
+    imageFormat = IMAGE_RGB;
+    dimensions(src);
+    allocated = false;
+    data = src.data;
+    size = src.size;
+  }
+
+  template <>
+  void
+  PivotImage::convert_<IMAGE_PPM, IMAGE_RGB>(const UImage& src)
+  {
+    imageFormat = IMAGE_RGB;
+    dimensions(src);
+    allocated = false;
+    // locate header end
+    unsigned int p = 0;
+    unsigned int c = 0;
+    while (c < 3 && p < src.size)
+      if (src.data[p++] == '\n')
+        ++c;
+    data = src.data + p;
+    size = src.size - p;
+  }
+
+  template <>
+  void
+  PivotImage::convert_<IMAGE_JPEG, IMAGE_RGB>(const UImage& src)
+  {
+    // This image is allocated by the function convertJPEG*
+    // function.  width, height and size are defined by these
+    // functions calls.
+    convertJPEGtoRGB(src.data, src.size,
+                     &data, size, width, height);
+    allocated = true;
+    imageFormat = IMAGE_RGB;
+  }
+
+  template <>
+  void
+  PivotImage::convert_<IMAGE_JPEG, IMAGE_YCbCr>(const UImage& src)
+  {
+    convertJPEGtoYCrCb(src.data, src.size,
+                       &data, size, width, height);
+    allocated = true;
+    imageFormat = IMAGE_YCbCr;
+  }
+
+  template <>
+  void
+  PivotImage::convert_<IMAGE_YUV422, IMAGE_YCbCr>(const UImage& src)
+  {
+    imageFormat = IMAGE_YCbCr;
+    dimensions(src);
+    size_t s = width * height;
+    alloc(s * 3);
+    for (unsigned i = 0; i < s; i += 2)
+    {
+      data[i * 3] = src.data[i * 2];
+      data[i * 3 + 1] = src.data[i * 2 + 1];
+      data[i * 3 + 2] = src.data[i * 2 + 3];
+      data[(i + 1) * 3] = src.data[i * 2 + 2];
+      data[(i + 1) * 3 + 1] = src.data[i * 2 + 1];
+      data[(i + 1) * 3 + 2] = src.data[i * 2 + 3];
+    }
+  }
+
+  template <>
+  void
+  PivotImage::convert_<IMAGE_YUV411_PLANAR, IMAGE_YCbCr>(const UImage& src)
+  {
+    imageFormat = IMAGE_YCbCr;
+    dimensions(src);
+    size_t w = width;
+    size_t h = height;
+    alloc(w * h * 3);
+    unsigned char* cy = src.data;
+    unsigned char* u = cy + w * h;
+    unsigned char* v = u + w * h / 4;
+    for (size_t x = 0; x < w; ++x)
+      for (size_t y = 0; y < h; ++y)
+      {
+        data[(x + y * w) * 3 + 0] = cy[x + y * w];
+        data[(x + y * w) * 3 + 1] = u[x / 4 + y * w / 4];
+        data[(x + y * w) * 3 + 2] = v[x / 4 + y * w / 4];
+      }
+  }
+
+  template <>
+  void
+  PivotImage::convert_<IMAGE_YUV420_PLANAR, IMAGE_YCbCr>(const UImage& src)
+  {
+    imageFormat = IMAGE_YCbCr;
+    dimensions(src);
+    size_t w = width;
+    size_t h = height;
+    alloc(w * h * 3);
+    unsigned char* cy = src.data;
+    unsigned char* u = cy + w * h;
+    unsigned char* v = u + w * h / 4;
+    for (size_t x = 0; x < w; ++x)
+      for (size_t y = 0; y < h; ++y)
+      {
+        data[(x + y * w) * 3 + 0] = cy[x + y * w];
+        data[(x + y * w) * 3 + 1] = u[x / 2 + (y >> 1) * w / 2];
+        data[(x + y * w) * 3 + 2] = v[x / 2 + (y >> 1) * w / 2];
+      }
+  }
+
+  template <>
+  void
+  PivotImage::convert_<IMAGE_NV12, IMAGE_YCbCr>(const UImage& src)
+  {
+    imageFormat = IMAGE_YCbCr;
+    dimensions(src);
+    size_t w = width;
+    size_t h = height;
+    alloc(w * h * 3);
+    unsigned char* cy = src.data;
+    unsigned char* uv = src.data + w * h;
+    for (size_t x = 0; x < w; ++x)
+      for (size_t y = 0; y < h; ++y)
+      {
+        data[(x + y * w) * 3 + 0] = cy[x + y * w];
+        data[(x + y * w) * 3 + 1] = uv[((x >> 1) + (((y >> 1) * w) >> 1)) * 2];
+        data[(x + y * w) * 3 + 2] = uv[((x >> 1) + (((y >> 1) * w)>> 1)) * 2 + 1];
+      }
+  }
+
+  template <>
+  void
+  PivotImage::convert_<IMAGE_GREY8, IMAGE_RGB>(const UImage& src)
+  {
+    imageFormat = IMAGE_YCbCr;
+    dimensions(src);
+    size_t s = width * height;
+    size_t usz = s * 3;
+    alloc(usz);
+    memset(data, 127, usz);
+    for (unsigned i = 0; i < s; ++i)
+      data[i * 3] = src.data[i];
+  }
+
+  template <>
+  void
+  PivotImage::convert_<IMAGE_GREY4, IMAGE_RGB>(const UImage& src)
+  {
+    imageFormat = IMAGE_YCbCr;
+    dimensions(src);
+    size_t s = width * height;
+    size_t usz = s * 3;
+    alloc(usz);
+    memset(data, 127, usz);
+    for (unsigned i = 0; i < s; i += 2)
+    {
+      data[i * 3] = src.data[i / 2] & 0xF0;
+      data[(i + 1) * 3] = (src.data[i / 2] & 0x0F) << 4;
+    }
+  }
 
 
   // The image format used as a pivot between input to output conversion.
@@ -690,34 +705,37 @@ namespace urbi
     switch (src.imageFormat)
     {
     case IMAGE_YCbCr:
-      pivot.from_YCbCr(src);
+      pivot.convert_<IMAGE_YCbCr, IMAGE_YCbCr>(src);
       break;
     case IMAGE_RGB:
-      pivot.from_RGB(src);
+      pivot.convert_<IMAGE_RGB, IMAGE_RGB>(src);
       break;
     case IMAGE_PPM:
-      pivot.from_PPM(src);
+      pivot.convert_<IMAGE_PPM, IMAGE_RGB>(src);
       break;
     case IMAGE_JPEG:
-      pivot.from_JPEG(src, targetformat);
+      if (targetformat == IMAGE_RGB)
+        pivot.convert_<IMAGE_JPEG, IMAGE_RGB>(src);
+      else
+        pivot.convert_<IMAGE_JPEG, IMAGE_YCbCr>(src);
       break;
     case IMAGE_YUV422:
-      pivot.from_YUV422(src);
+      pivot.convert_<IMAGE_YUV422, IMAGE_YCbCr>(src);
       break;
     case IMAGE_YUV411_PLANAR:
-      pivot.from_YUV411_PLANAR(src);
+      pivot.convert_<IMAGE_YUV411_PLANAR, IMAGE_YCbCr>(src);
       break;
     case IMAGE_YUV420_PLANAR:
-      pivot.from_YUV420_PLANAR(src);
+      pivot.convert_<IMAGE_YUV420_PLANAR, IMAGE_YCbCr>(src);
       break;
     case IMAGE_NV12:
-      pivot.from_NV12(src);
+      pivot.convert_<IMAGE_NV12, IMAGE_YCbCr>(src);
       break;
     case IMAGE_GREY8:
-      pivot.from_GREY8(src);
+      pivot.convert_<IMAGE_GREY8, IMAGE_RGB>(src);
       break;
     case IMAGE_GREY4:
-      pivot.from_GREY4(src);
+      pivot.convert_<IMAGE_GREY4, IMAGE_RGB>(src);
       break;
     case IMAGE_UNKNOWN:
       break;
