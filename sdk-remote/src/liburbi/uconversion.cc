@@ -454,43 +454,57 @@ namespace urbi
   } // anonymous namespace
 
 
-  struct PivotImage
+  // An UImage that knows if it's allocated.
+  struct PivotImage: UImageImpl
   {
     PivotImage()
-      : format(IMAGE_UNKNOWN)
-      , allocated(false)
-      , data(0)
-      {}
+      : allocated(false)
+    {
+      init();
+    }
 
     void
-    alloc(size_t size)
+    alloc(size_t s)
     {
       aver(!allocated);
       aver(!data);
       allocated = true;
+      size = s;
       data = (byte*) malloc(size);
+    }
+
+    void
+    dimensions(const UImage& src)
+    {
+      width = src.width;
+      height = src.height;
     }
 
     void
     from_YCbCr(const UImage& src)
     {
-      format = IMAGE_YCbCr;
+      imageFormat = IMAGE_YCbCr;
+      dimensions(src);
       allocated = false;
       data = src.data;
+      size = src.size;
     }
 
     void
     from_RGB(const UImage& src)
     {
-      format = IMAGE_RGB;
+      imageFormat = IMAGE_RGB;
+      dimensions(src);
       allocated = false;
       data = src.data;
+      size = src.size;
     }
 
     void
     from_PPM(const UImage& src)
     {
-      format = IMAGE_RGB;
+      imageFormat = IMAGE_RGB;
+      dimensions(src);
       allocated = false;
       // locate header end
       unsigned int p = 0;
@@ -499,37 +513,37 @@ namespace urbi
         if (src.data[p++] == '\n')
           ++c;
       data = src.data + p;
+      size = src.size - p;
     }
 
-    // Note that we pass w, h, usz by ref: they are defined in
-    // convertJPEGto* functions.
     void
-    from_JPEG(byte* src, size_t size, UImageFormat target,
-              size_t& w, size_t& h, size_t& usz)
+    from_JPEG(const UImage& src, UImageFormat target)
     {
-      // this image is allocated by the function convertJPEG* function.
-      // w, h and usz are defined by these functions calls.
+      // This image is allocated by the function convertJPEG*
+      // function.  width, height and size are defined by these
+      // functions calls.
       if (target == IMAGE_RGB)
       {
-        convertJPEGtoRGB((byte*) src, size,
-                         (byte**) &data, usz, w, h);
+        convertJPEGtoRGB(src.data, src.size,
+                         &data, size, width, height);
         allocated = true;
-        format = IMAGE_RGB;
+        imageFormat = IMAGE_RGB;
       }
       else
       {
-        convertJPEGtoYCrCb((byte*) src, size,
-                           (byte**) &data, usz, w, h);
+        convertJPEGtoYCrCb(src.data, src.size,
+                           &data, size, width, height);
         allocated = true;
-        format = IMAGE_YCbCr;
+        imageFormat = IMAGE_YCbCr;
       }
     }
 
     void
     from_YUV422(const UImage& src)
     {
-      format = IMAGE_YCbCr;
-      size_t s = src.width * src.height;
+      imageFormat = IMAGE_YCbCr;
+      dimensions(src);
+      size_t s = width * height;
       alloc(s * 3);
       for (unsigned i = 0; i < s; i += 2)
       {
@@ -545,9 +559,10 @@ namespace urbi
     void
     from_YUV411_PLANAR(const UImage& src)
     {
-      format = IMAGE_YCbCr;
-      size_t w = src.width;
-      size_t h = src.height;
+      imageFormat = IMAGE_YCbCr;
+      dimensions(src);
+      size_t w = width;
+      size_t h = height;
       alloc(w * h * 3);
       unsigned char* cy = src.data;
       unsigned char* u = cy + w * h;
@@ -564,9 +579,10 @@ namespace urbi
     void
     from_YUV420_PLANAR(const UImage& src)
     {
-      format = IMAGE_YCbCr;
-      size_t w = src.width;
-      size_t h = src.height;
+      imageFormat = IMAGE_YCbCr;
+      dimensions(src);
+      size_t w = width;
+      size_t h = height;
       alloc(w * h * 3);
       unsigned char* cy = src.data;
       unsigned char* u = cy + w * h;
@@ -583,9 +599,10 @@ namespace urbi
     void
     from_NV12(const UImage& src)
     {
-      format = IMAGE_YCbCr;
-      size_t w = src.width;
-      size_t h = src.height;
+      imageFormat = IMAGE_YCbCr;
+      dimensions(src);
+      size_t w = width;
+      size_t h = height;
       alloc(w * h * 3);
       unsigned char* cy = src.data;
       unsigned char* uv = src.data + w * h;
@@ -601,8 +618,9 @@ namespace urbi
     void
     from_GREY8(const UImage& src)
     {
-      format = IMAGE_YCbCr;
-      size_t s = src.width * src.height;
+      imageFormat = IMAGE_YCbCr;
+      dimensions(src);
+      size_t s = width * height;
       size_t usz = s * 3;
       alloc(usz);
       memset(data, 127, usz);
@@ -613,8 +631,9 @@ namespace urbi
     void
     from_GREY4(const UImage& src)
     {
-      format = IMAGE_YCbCr;
-      size_t s = src.width * src.height;
+      imageFormat = IMAGE_YCbCr;
+      dimensions(src);
+      size_t s = width * height;
       size_t usz = s * 3;
       alloc(usz);
       memset(data, 127, usz);
@@ -625,11 +644,8 @@ namespace urbi
       }
     }
 
-    UImageFormat format;
-    // true if data must be freed.
+    // Whether data must be freed.
     bool allocated;
-    // uncompressed data.
-    byte* data;
   };
 
 
@@ -669,12 +685,6 @@ namespace urbi
       return 0;
     }
 
-    // When src.imageFormat == IMAGE_JPEG, these actually actually
-    // overridden by the values in the JPEG headers.
-    size_t w = src.width;
-    size_t h = src.height;
-    size_t usz = w * h * 3;
-
     // uncompressed data.
     PivotImage pivot;
     switch (src.imageFormat)
@@ -689,7 +699,7 @@ namespace urbi
       pivot.from_PPM(src);
       break;
     case IMAGE_JPEG:
-      pivot.from_JPEG(src.data, src.size, targetformat, w, h, usz);
+      pivot.from_JPEG(src, targetformat);
       break;
     case IMAGE_YUV422:
       pivot.from_YUV422(src);
@@ -714,38 +724,40 @@ namespace urbi
     }
 
     if (dest.width == 0)
-      dest.width = w;
+      dest.width = pivot.width;
     if (dest.height == 0)
-      dest.height = h;
+      dest.height = pivot.height;
 
     //now resize if target size is different
-    if (w != dest.width || h != dest.height)
+    if (pivot.width != dest.width || pivot.height != dest.height)
     {
       byte* scaled = (byte*)malloc(dest.width * dest.height * 3);
-      scaleColorImage(pivot.data, w, h, w / 2, h / 2,
+      scaleColorImage(pivot.data,
+                      pivot.width, pivot.height,
+                      pivot.width / 2, pivot.height / 2,
 		      scaled, dest.width, dest.height,
-		      (ufloat) dest.width / (ufloat) w,
-		      (ufloat) dest.height / (ufloat) h);
+		      (ufloat) dest.width / (ufloat) src.width,
+		      (ufloat) dest.height / (ufloat) src.height);
       if (pivot.allocated)
         free(pivot.data);
       pivot.data = scaled;
       pivot.allocated = true;
     }
     // Then factor YUV<->RGB conversion if necessary
-    if (pivot.format == IMAGE_RGB && targetformat == IMAGE_YCbCr
-        || pivot.format == IMAGE_YCbCr && targetformat == IMAGE_RGB)
+    if (pivot.imageFormat == IMAGE_RGB && targetformat == IMAGE_YCbCr
+        || pivot.imageFormat == IMAGE_YCbCr && targetformat == IMAGE_RGB)
     {
       byte* src = pivot.data;
       if (!pivot.allocated)
       {
         pivot.allocated = true;
-        pivot.data = (byte*) malloc(usz);
+        pivot.data = (byte*) malloc(pivot.size);
       }
-      if (pivot.format == IMAGE_RGB)
-        convertRGBtoYCbCr(src, usz, pivot.data);
+      if (pivot.imageFormat == IMAGE_RGB)
+        convertRGBtoYCbCr(src, pivot.size, pivot.data);
       else
-        convertYCbCrtoRGB(src, usz, pivot.data);
-      pivot.format = targetformat;
+        convertYCbCrtoRGB(src, pivot.size, pivot.data);
+      pivot.imageFormat = targetformat;
     }
     // Then convert to destination format.
 
@@ -768,24 +780,24 @@ namespace urbi
     switch (dest.imageFormat)
     {
     case IMAGE_RGB:
-      memcpy(dest.data, pivot.data, usz);
+      memcpy(dest.data, pivot.data, pivot.size);
       break;
     case IMAGE_GREY8:
-      assert(pivot.format == IMAGE_RGB);
-      convertRGBtoGrey8_601(pivot.data, usz, (byte*) dest.data);
+      assert(pivot.imageFormat == IMAGE_RGB);
+      convertRGBtoGrey8_601(pivot.data, pivot.size, (byte*) dest.data);
       break;
     case IMAGE_YCbCr:
-      memcpy(dest.data, pivot.data, usz);
+      memcpy(dest.data, pivot.data, pivot.size);
       break;
     case IMAGE_PPM:
       strcpy((char*) dest.data,
              libport::format("P6\n%s %s\n255\n",
                              dest.width, dest.height).c_str());
       memcpy(dest.data + strlen((char*) dest.data),
-             pivot.data, usz);
+             pivot.data, pivot.size);
       break;
     case IMAGE_JPEG:
-      if (pivot.format == IMAGE_YCbCr)
+      if (pivot.imageFormat == IMAGE_YCbCr)
         convertYCrCbtoJPEG(pivot.data,
                            dest.width, dest.height,
                            (byte*) dest.data, dsz, 80);
