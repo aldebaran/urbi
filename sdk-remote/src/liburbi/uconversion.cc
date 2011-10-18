@@ -495,33 +495,33 @@ namespace urbi
     }
 
     void
-    from_YCbCr(byte* src)
+    from_YCbCr(const UImage& src)
     {
       format = IMAGE_YCbCr;
       allocated = false;
-      data = src;
+      data = src.data;
     }
 
     void
-    from_RGB(byte* src)
+    from_RGB(const UImage& src)
     {
       format = IMAGE_RGB;
       allocated = false;
-      data = src;
+      data = src.data;
     }
 
     void
-    from_PPM(byte* src, size_t size)
+    from_PPM(const UImage& src)
     {
       format = IMAGE_RGB;
       allocated = false;
       // locate header end
       unsigned int p = 0;
       unsigned int c = 0;
-      while (c < 3 && p < size)
-        if (src[p++] == '\n')
+      while (c < 3 && p < src.size)
+        if (src.data[p++] == '\n')
           ++c;
-      data = src + p;
+      data = src.data + p;
     }
 
     // Note that we pass w, h, usz by ref: they are defined in
@@ -549,27 +549,30 @@ namespace urbi
     }
 
     void
-    from_YUV422(byte* src, size_t w, size_t h, size_t usz)
+    from_YUV422(const UImage& src)
     {
       format = IMAGE_YCbCr;
-      alloc(usz);
-      for (unsigned i = 0; i < w * h; i += 2)
+      size_t s = src.width * src.height;
+      alloc(s * 3);
+      for (unsigned i = 0; i < s; i += 2)
       {
-        data[i * 3] = src[i * 2];
-        data[i * 3 + 1] = src[i * 2 + 1];
-        data[i * 3 + 2] = src[i * 2 + 3];
-        data[(i + 1) * 3] = src[i * 2 + 2];
-        data[(i + 1) * 3 + 1] = src[i * 2 + 1];
-        data[(i + 1) * 3 + 2] = src[i * 2 + 3];
+        data[i * 3] = src.data[i * 2];
+        data[i * 3 + 1] = src.data[i * 2 + 1];
+        data[i * 3 + 2] = src.data[i * 2 + 3];
+        data[(i + 1) * 3] = src.data[i * 2 + 2];
+        data[(i + 1) * 3 + 1] = src.data[i * 2 + 1];
+        data[(i + 1) * 3 + 2] = src.data[i * 2 + 3];
       }
     }
 
     void
-    from_YUV411_PLANAR(byte* src, size_t w, size_t h, size_t usz)
+    from_YUV411_PLANAR(const UImage& src)
     {
       format = IMAGE_YCbCr;
-      alloc(usz);
-      unsigned char* cy = src;
+      size_t w = src.width;
+      size_t h = src.height;
+      alloc(w * h * 3);
+      unsigned char* cy = src.data;
       unsigned char* u = cy + w * h;
       unsigned char* v = u + w * h / 4;
       for (size_t x = 0; x < w; ++x)
@@ -582,11 +585,13 @@ namespace urbi
     }
 
     void
-    from_YUV420_PLANAR(byte* src, size_t w, size_t h, size_t usz)
+    from_YUV420_PLANAR(const UImage& src)
     {
       format = IMAGE_YCbCr;
-      alloc(usz);
-      unsigned char* cy = src;
+      size_t w = src.width;
+      size_t h = src.height;
+      alloc(w * h * 3);
+      unsigned char* cy = src.data;
       unsigned char* u = cy + w * h;
       unsigned char* v = u + w * h / 4;
       for (size_t x = 0; x < w; ++x)
@@ -599,12 +604,14 @@ namespace urbi
     }
 
     void
-    from_NV12(byte* src, size_t w, size_t h, size_t usz)
+    from_NV12(const UImage& src)
     {
       format = IMAGE_YCbCr;
-      alloc(usz);
-      unsigned char* cy = src;
-      unsigned char* uv = src + w * h;
+      size_t w = src.width;
+      size_t h = src.height;
+      alloc(w * h * 3);
+      unsigned char* cy = src.data;
+      unsigned char* uv = src.data + w * h;
       for (size_t x = 0; x < w; ++x)
         for (size_t y = 0; y < h; ++y)
         {
@@ -615,25 +622,29 @@ namespace urbi
     }
 
     void
-    from_GREY8(byte* src, size_t w, size_t h, size_t usz)
+    from_GREY8(const UImage& src)
     {
       format = IMAGE_YCbCr;
+      size_t s = src.width * src.height;
+      size_t usz = s * 3;
       alloc(usz);
       memset(data, 127, usz);
-      for (unsigned i = 0; i < w * h; ++i)
-        data[i * 3] = src[i];
+      for (unsigned i = 0; i < s; ++i)
+        data[i * 3] = src.data[i];
     }
 
     void
-    from_GREY4(byte* src, size_t w, size_t h, size_t usz)
+    from_GREY4(const UImage& src)
     {
       format = IMAGE_YCbCr;
+      size_t s = src.width * src.height;
+      size_t usz = s * 3;
       alloc(usz);
       memset(data, 127, usz);
-      for (unsigned i = 0; i < w * h; i += 2)
+      for (unsigned i = 0; i < s; i += 2)
       {
-        data[i * 3] = src[i / 2] & 0xF0;
-        data[(i + 1) * 3] = (src[i / 2] & 0x0F) << 4;
+        data[i * 3] = src.data[i / 2] & 0xF0;
+        data[(i + 1) * 3] = (src.data[i / 2] & 0x0F) << 4;
       }
     }
 
@@ -669,34 +680,34 @@ namespace urbi
     switch (src.imageFormat)
     {
     case IMAGE_YCbCr:
-      pivot.from_YCbCr(src.data);
+      pivot.from_YCbCr(src);
       break;
     case IMAGE_RGB:
-      pivot.from_RGB(src.data);
+      pivot.from_RGB(src);
       break;
     case IMAGE_PPM:
-      pivot.from_PPM(src.data, src.size);
+      pivot.from_PPM(src);
       break;
     case IMAGE_JPEG:
       pivot.from_JPEG(src.data, src.size, targetformat, w, h, usz);
       break;
     case IMAGE_YUV422:
-      pivot.from_YUV422(src.data, src.width, src.height, usz);
+      pivot.from_YUV422(src);
       break;
     case IMAGE_YUV411_PLANAR:
-      pivot.from_YUV411_PLANAR(src.data, src.width, src.height, usz);
+      pivot.from_YUV411_PLANAR(src);
       break;
     case IMAGE_YUV420_PLANAR:
-      pivot.from_YUV420_PLANAR(src.data, src.width, src.height, usz);
+      pivot.from_YUV420_PLANAR(src);
       break;
     case IMAGE_NV12:
-      pivot.from_NV12(src.data, src.width, src.height, usz);
+      pivot.from_NV12(src);
       break;
     case IMAGE_GREY8:
-      pivot.from_GREY8(src.data, src.width, src.height, usz);
+      pivot.from_GREY8(src);
       break;
     case IMAGE_GREY4:
-      pivot.from_GREY4(src.data, src.width, src.height, usz);
+      pivot.from_GREY4(src);
       break;
     case IMAGE_UNKNOWN:
       break;
