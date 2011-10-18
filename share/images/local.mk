@@ -7,5 +7,9 @@
 ## See the LICENSE file for more information.
 
 imagesdir = $(brandsharedir)/images
-gostai_logodir = $(imagesdir)/gostai-logo
-dist_gostai_logo_DATA := $(call ls_files,share/images/gostai-logo/*.jpg)
+gostai_jpegdir = $(imagesdir)/gostai-logo/jpeg
+gostai_ppmdir = $(imagesdir)/gostai-logo/ppm
+gostai_headerlessdir = $(imagesdir)/gostai-logo/hearderless
+dist_gostai_jpeg_DATA := $(call ls_files,share/images/gostai-logo/jpeg/*)
+dist_gostai_ppm_DATA := $(call ls_files,share/images/gostai-logo/ppm/*)
+dist_gostai_headerless_DATA := $(call ls_files,share/images/gostai-logo/headerless/*)
