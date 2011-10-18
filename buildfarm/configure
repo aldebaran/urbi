@@ -146,6 +146,7 @@ case $BUILDFARM_COMPILER in
 esac
 
 case $(uname -n) in
+  # bf-2 is in charge of distcheck, cut it some slack.
   (bf-3) enable_doc='--enable-doc';;
   (*)    enable_doc='--disable-doc';;
 esac

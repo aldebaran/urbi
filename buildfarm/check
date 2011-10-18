@@ -9,6 +9,8 @@ make_()
   make DESTDIR="$DIR_INSTALL" "$@"
 }
 
+# Sometimes the load is responsible for failures.  Try in parallel,
+# then sequential.
 make_twice_()
 {
   make_ -j$JOBS "$@" || make_ VERBOSE=1 "$@"
@@ -19,22 +21,37 @@ check ()
   make_twice_ installcheck "$@"
 }
 
-check -C tests TESTS_DIRS=0.x
-check -C doc
-check -C tests TESTS_DIRS=2.x
-check -C tests TESTS_DIRS=1.x
-check -C tests TESTS_DIRS=uob/plug
-check -C tests TESTS_DIRS=uob/remote
-check -C tests TESTS_DIRS=uob/rtp
-check -C tests TESTS_DIRS=uob/java
-check -C tests TESTS_DIRS=demo
-check -C tests TESTS_DIRS=@ros
+case $BUILDFARM_HOST in
+  (bf-2)
+     # Spell check.  One machine is enough.
+     make_ spell-check
+     # This is Ubuntu release, it should be fast enough to handle a a
+     # distcheck.  Ubuntu debug (bf-3) compiles the documentation.
+     make_ distcheck
+     ;;
 
-# fsm.u is not installed, cannot installcheck.  Windows cannot run
-# properly with non-installed libraries.
-case $BUILDFARM_OS in
-  (windows);;
-  (*) make_twice_ check -C tests TESTS_DIRS=@fsm;;
+  (*)
+     # Libport.
+     check -C sdk-remote/libport
+     # SDK-Remote
+     check -C sdk-remote/src/tests
+     # Urbi.
+     check -C tests TESTS_DIRS=0.x
+     check -C doc
+     check -C tests TESTS_DIRS=2.x
+     check -C tests TESTS_DIRS=1.x
+     check -C tests TESTS_DIRS=uob/plug
+     check -C tests TESTS_DIRS=uob/remote
+     check -C tests TESTS_DIRS=uob/rtp
+     check -C tests TESTS_DIRS=uob/java
+     check -C tests TESTS_DIRS=demo
+     check -C tests TESTS_DIRS=@ros
+
+     # fsm.u is not installed, cannot installcheck.  Windows cannot run
+     # properly with non-installed libraries.
+     case $BUILDFARM_OS in
+       (windows);;
+       (*) make_twice_ check -C tests TESTS_DIRS=@fsm;;
+     esac
+     ;;
 esac
-
-make_ spell-check
