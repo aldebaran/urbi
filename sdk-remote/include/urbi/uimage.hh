@@ -55,7 +55,7 @@ namespace urbi
   /** Class encapsulating an image.
 
    This class does not manage its memory: the data field must be
-   freed manualy.  */
+   freed manually.  */
   class URBI_SDK_API UImageImpl
   {
   public:

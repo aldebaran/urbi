@@ -454,29 +454,6 @@ namespace urbi
   } // anonymous namespace
 
 
-  // The image format used as a pivot between input to output conversion.
-  static
-  UImageFormat
-  pivot_format(UImageFormat f)
-  {
-    switch (f)
-    {
-    case IMAGE_RGB:
-    case IMAGE_PPM:
-    case IMAGE_GREY8:
-      return IMAGE_RGB;
-    case IMAGE_YCbCr:
-    case IMAGE_NV12:
-    case IMAGE_YUV411_PLANAR:
-    case IMAGE_YUV420_PLANAR:
-      return IMAGE_YCbCr;
-    case IMAGE_JPEG:
-      return IMAGE_JPEG;
-    default:
-      return IMAGE_UNKNOWN;
-    }
-  }
-
   struct PivotImage
   {
     PivotImage()
@@ -656,6 +633,29 @@ namespace urbi
   };
 
 
+  // The image format used as a pivot between input to output conversion.
+  static
+  UImageFormat
+  pivot_format(UImageFormat f)
+  {
+    switch (f)
+    {
+    case IMAGE_RGB:
+    case IMAGE_PPM:
+    case IMAGE_GREY8:
+      return IMAGE_RGB;
+    case IMAGE_YCbCr:
+    case IMAGE_NV12:
+    case IMAGE_YUV411_PLANAR:
+    case IMAGE_YUV420_PLANAR:
+      return IMAGE_YCbCr;
+    case IMAGE_JPEG:
+      return IMAGE_JPEG;
+    default:
+      return IMAGE_UNKNOWN;
+    }
+  }
+
   int convert(const UImage& src, UImage& dest)
   {
     //step 1: uncompress source, to have raw uncompressed rgb or ycbcr
@@ -754,14 +754,12 @@ namespace urbi
 
     if (dest.imageFormat != IMAGE_GREY8)
       dest.size *= 3;
-
-    if (dest.imageFormat == IMAGE_YUV420_PLANAR ||
-        dest.imageFormat == IMAGE_YUV411_PLANAR)
+    if (dest.imageFormat == IMAGE_YUV420_PLANAR
+        || dest.imageFormat == IMAGE_YUV411_PLANAR)
       dest.size = dest.width * dest.height + dest.width * dest.height / 2;
-
-    // We need place for the header
-    if (dest.imageFormat == IMAGE_JPEG ||
-        dest.imageFormat == IMAGE_PPM)
+    else if (dest.imageFormat == IMAGE_JPEG
+             || dest.imageFormat == IMAGE_PPM)
+      // We need place for the header.
       dest.size += 15;
 
     dest.data = static_cast<byte*> (realloc(dest.data, dest.size));
