@@ -34,7 +34,7 @@ class Global.camera: Loadable
       if (var s = getenv("URBI_SHARE"))
         Path.new(s)
       else
-        System.urbiRoot / "share" / "gostai"
+        System.urbiRoot / "share"
     };
 
 
