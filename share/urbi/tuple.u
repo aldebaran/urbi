@@ -90,6 +90,11 @@ class Global.Tuple : Global.RangeIterable, Global.Container
   {
     pattern.isA(Tuple) && members.matchAgainst(handler, pattern.members)
   };
+
+  function hash ()
+  {
+    Object.getSlotValue("hash").apply([Tuple]).combine (members);
+  };
 };
 
 {
