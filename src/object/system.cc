@@ -340,7 +340,6 @@ namespace urbi
       unsetenv(name.c_str());
       return res;
     }
-
 #define MESSAGE "aborting module loading because of "
     void
     initializations_run()
@@ -412,6 +411,8 @@ namespace urbi
 
     static libport::cli_args_type urbi_arguments_;
     static boost::optional<std::string> urbi_program_name_;
+    // We will keep our environment in a dictionary.
+    static rDictionary env_;
 
     void
     system_push_argument(const std::string& arg)
@@ -424,6 +425,7 @@ namespace urbi
     {
       urbi_program_name_ = name;
     }
+
 
     static const libport::cli_args_type&
     system_arguments()
@@ -458,6 +460,29 @@ namespace urbi
       }
     }
 
+    static rDictionary
+    system_environ_init()
+    {
+      if (!env_)
+        env_ = new Dictionary;
+      for (int i = 0; environ[i] != 0; ++i)
+      {
+        std::string str = std::string(environ[i]);
+        int pos = str.find("=");
+        std::string k = str.substr(0, pos);
+        std::string v = str.substr(pos + 1, str.size());
+        env_->set (to_urbi(k), to_urbi(v));
+      }
+      return env_;
+    }
+
+    static rDictionary
+    system_environ()
+    {
+      if (!env_)
+        system_environ_init();
+      return env_;
+    }
 
     /*---------------.
     | System files.  |
@@ -669,6 +694,7 @@ namespace urbi
       DECLARE(arguments);
       DECLARE(breakpoint);
       DECLARE(cycle);
+      DECLARE(environ);
       DECLARE(getLocale);
       DECLARE(getenv);
       DECLARE(hostName);
@@ -703,6 +729,7 @@ namespace urbi
 
 #undef DECLARE
 
+      system_class->bind(SYMBOL(environ.init), &system_environ_init);
       system_class->bind(SYMBOL(sleep), &system_sleep);
       system_class->bind(SYMBOL(sleep), &system_sleep_inf);
       system_class->bind(SYMBOL(searchPath), &system_searchPath,

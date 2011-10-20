@@ -75,6 +75,31 @@ do (System)
     Job.current
   };
 
+  do (environ)
+  {
+    var getenv = System.getSlotValue("getenv") |
+    var setenv = System.getSlotValue("setenv") |
+    var unsetenv = System.getSlotValue("unsetenv") |
+
+    function '[]'(var key)
+    {
+      getenv(key);
+    };
+
+    function '[]='(var key, var value)
+    {
+      Dictionary.getSlotValue("[]=").apply([environ, key, value]) |
+      setenv(key, value);
+    };
+
+    function erase(var key)
+    {
+      if (environ.has(key))
+        Dictionary.getSlotValue("erase").apply([environ, key]) |
+      unsetenv(key);
+    };
+  };
+
   var period = 20ms;
 
   // systemFiles.
@@ -195,4 +220,27 @@ do (System)
   {
     PackageInfo.components["Urbi SDK"].version
   };
+
+  System.removeSlot("getenv");
+  System.removeSlot("setenv");
+  System.removeSlot("unsetenv");
+
+  function getenv(var k)
+  {
+    Kernel1.deprecated("System.getenv(that)", "System.environ[that]") |
+    environ[k];
+  };
+
+  function setenv(var k, var v)
+  {
+    Kernel1.deprecated("System.setenv(var, value)",
+                       "System.environ[var] = value") |
+    environ[k] = v
+  }|;
+
+  function unsetenv(var k)
+  {
+    Kernel1.deprecated("System.unsetenv(var)", "System.environ.erase(var)") |
+    environ.erase(k)
+  }|;
 };
