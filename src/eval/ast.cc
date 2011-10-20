@@ -782,6 +782,9 @@ namespace eval
       aver(k);
       rObject v = ast(this_, exp.second.get());
       aver(v);
+      // Reject duplicate keys.
+      if (libport::has(res->value_get(), k))
+        runner::raise_duplicate_error(k, "duplicate dictionary key");
       // Refuse void in literals.
       if (v == object::void_class || k == object::void_class)
         runner::raise_unexpected_void_error();
