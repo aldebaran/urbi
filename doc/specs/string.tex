@@ -88,8 +88,7 @@ String == "";
 
 
 \item|'[]'|(<from>, <to> = <from> + 1)%
-  Return the sub-string starting at \var{from}, up to and not including
-  \var{to}.
+  The sub-string starting at \var{from}, up to and not including \var{to}.
 \begin{urbiassert}
 "foobar"[0, 3] == "foo";
 "foobar"[0] == "f";
@@ -176,10 +175,9 @@ assert
 \end{urbiscript}
 
 
-\item[asList]
-  Return a List of one-letter Strings that, concatenated, equal
-  \this.  This allows to use \lstinline|for| to iterate
-  over the string.
+\item[asList]%
+  A List of one-letter Strings that, concatenated, equal \this.  This allows
+  to use \lstinline|for| to iterate over the string.
 \begin{urbiscript}
 assert("123".asList == ["1", "2", "3"]);
 for (var v : "123")
@@ -191,7 +189,7 @@ for (var v : "123")
 
 
 \item[asPrintable]
-  Return \this as a literal (escaped) string.
+  \this as a literal (escaped) string.
 \begin{urbiassert}
 "foo".asPrintable == "\"foo\"";
 "foo".asPrintable.asPrintable == "\"\\\"foo\\\"\"";
@@ -199,19 +197,16 @@ for (var v : "123")
 
 
 \item[asString]
-  Return \this.
-\begin{urbiscript}
-{
-  var s = "\"foo\"";
-  assert { s.asString === s; };
-};
-\end{urbiscript}
+  \this.
+\begin{urbiassert}
+var s = "\"foo\"";
+s.asString === s;
+\end{urbiassert}
 
 
 \item[closest](<set>)%
-  Return the string in \var{set} that is the closest (in the sense of
-  \refSlot{distance}) to \this.  If there is no convincing match,
-  return \lstinline|nil|.
+  The closest (in the sense of \refSlot{distance}) string in \var{set} to
+  \this.  If there is no convincing match, return \lstinline|nil|.
 \begin{urbiassert}
 "foo".closest(["foo", "baz", "qux", "quux"]) == "foo";
 "bar".closest(["foo", "baz", "qux", "quux"]) == "baz";
@@ -221,11 +216,9 @@ for (var v : "123")
 
 
 \item[distance](<other>)%
-  Return the
-  \href{http://en.wikipedia.org/wiki/Damerau-Levenshtein_distance}
-  {Damerau-Levenshtein distance} between \this and
-  \var{other}.  The more alike the strings are, the smaller the
-  distance is.
+  The \href{http://en.wikipedia.org/wiki/Damerau-Levenshtein_distance}
+  {Damerau-Levenshtein distance} between \this and \var{other}.  The more
+  alike the strings are, the smaller the distance is.
 \begin{urbiassert}
 "foo".distance("foo") == 0;
 "bar".distance("baz") == 1;
@@ -263,9 +256,8 @@ for (var v : "123")
 \end{urbiassert}
 
 
-\item[fresh] Return a String that has never been used as an identifier,
-  prefixed by \this.  It can safely be used with
-  \refSlot[Object]{setSlot} and so forth.
+\item[fresh] A String that has never been used as an identifier, prefixed by
+  \this.  It can safely be used with \refSlot[Object]{setSlot} and so forth.
 \begin{urbiassert}
 String.fresh == "_5";
 "foo".fresh == "foo_6";
@@ -457,9 +449,8 @@ String.fromAscii(0xFF) == "\xff";
 
 
 \item[replace](<from>, <to>)%
-  Replace every occurrence of the string \var{from} in
-  \this by \var{to}, and return the result.
-  \this is not modified.
+  Replace every occurrence of the string \var{from} in \this by \var{to},
+  and return the result.  \this is not modified.
 \begin{urbiassert}
 "Hello, World!".replace("Hello", "Bonjour")
                       .replace("World!", "Monde !") ==
@@ -567,19 +558,23 @@ negative number corresponds to no limit:
 \end{urbiassert}
 
 
-\item[toLower]
-  Make lower case every upper case character in \this and
-  return the result.  \this is not modified.
+\item[toLower]%
+  A String which is \this with upper case letters converted to lower case.
+  See also \refSlot{toLower}.
 \begin{urbiassert}
-"Hello, World!".toLower == "hello, world!";
+    var hello =  "Hello, World!";
+hello.toLower == "hello, world!";
+        hello == "Hello, World!";
 \end{urbiassert}
 
 
 \item[toUpper]
-  Make upper case every lower case character in \this and
-  return the result.  \this is not modified.
+  A String which is \this with lower case letters converted to upper case.
+  See also \refSlot{toLower}.
 \begin{urbiassert}
-"Hello, World!".toUpper == "HELLO, WORLD!";
+    var hello =  "Hello, World!";
+hello.toUpper == "HELLO, WORLD!";
+        hello == "Hello, World!";
 \end{urbiassert}
 \end{urbiscriptapi}
 
