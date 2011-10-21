@@ -275,8 +275,8 @@ namespace urbi
     {
       URBI_AT_HOOK(contentChanged);
       value_type s(content_);
-      std::sort(s.begin(), s.end(),
-                boost::bind(compareListItemsLambda, f, this, _1, _2));
+      std::sort_heap(s.begin(), s.end(),
+                     boost::bind(compareListItemsLambda, f, this, _1, _2));
       return s;
     }
 

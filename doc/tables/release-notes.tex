@@ -84,6 +84,9 @@ while (!(x = i.get).isNil)
 i.close;
 \end{urbiunchecked}
 
+\item \refSlot[List]{sort} no longer crashes when the predicate is not a
+  strict weak ordering.
+
 \item \refSlot[String]{asFloat} is now on par with the syntax supported for
   literal \refSlot{Float}s, including support for underscores and
   hexadecimal.

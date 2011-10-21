@@ -592,6 +592,29 @@ l.sort(function(a, b) {a.abs < b.abs})
 [00000001:error] !!! unexpected 1, expected a Executable
 \end{urbiscript}
 
+Following the \wref[Garbage_In,_Garbage_Out]{Garbage In, Garbage Out}
+principle, if \var{comp} is not a strict weak ordering (e.g., if
+\lstinline|comp(\var{a}, \var{b}) && comp(\var{b}, \var{a})| holds for some
+\var{a} and \var{b}), the result is meaningless.
+
+\begin{urbiscript}
+class Foo : Orderable
+{
+  var value = 0;
+  function init (v)   { value = v; };
+  function '<' (that) { true };       // <-------- Very wrong.
+  function asString() { "<" + value.asString + ">"; };
+}|;
+var l = [Foo.new(1), Foo.new(2), Foo.new(3)];
+[00004373] [<1>, <2>, <3>]
+l.sort;
+[00008907] [<3>, <2>, <1>]
+l.sort.sort;
+[00011293] [<1>, <2>, <3>]
+\end{urbiscript}
+\begin{urbicomment}
+removeSlots("l");
+\end{urbicomment}
 
 \item[subset](<that>)%
   Whether the members of \this are members of \var{that}.
@@ -716,6 +739,10 @@ l[0] << 1;
 l;
 [00000000] [[1], [1], [1]]
 \end{urbiscript}
+\begin{urbicomment}
+removeSlots("l");
+\end{urbicomment}
+
 
 \item['+'](<other>)%
   Return the concatenation of the target and the \var{other} list.
