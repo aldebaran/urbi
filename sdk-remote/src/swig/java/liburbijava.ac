@@ -20,29 +20,39 @@ AC_PROG_JAR
 ## ----------- ##
 AX_CHECK_JAVA_HOME
 if test x"$JAVA_HOME" = "x"; then
-  AC_MSG_ERROR([Environment variable JAVA_HOME is not set.])
+  AC_MSG_ERROR([cannot guess \$JAVA_HOME])
 fi
 AC_SUBST([JAVA_HOME])
 
 case $host_os in
   (*mingw*|*cygwin*)
-     JAVA_CPPFLAGS='-I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/win32'
-     JAVA_LDFLAGS='-L$(JAVA_HOME)/lib'
+     JAVA_CPPFLAGS='-I${JAVA_HOME}/include -I${JAVA_HOME}/include/win32'
+     JAVA_LDFLAGS='-L${JAVA_HOME}/lib'
      JAVA_LIBS='-ljvm'
      ;;
   (*darwin*)
-     JAVA_CPPFLAGS='-I$(JAVA_HOME)/include'
+     JAVA_CPPFLAGS='-I${JAVA_HOME}/include'
      ;;
   (*)
-     JAVA_CPPFLAGS='-I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux'
+     JAVA_CPPFLAGS='-I${JAVA_HOME}/include -I${JAVA_HOME}/include/linux'
      ;;
 esac
 AC_SUBST([JAVA_CPPFLAGS])dnl
 AC_SUBST([JAVA_LDFLAGS])dnl
 AC_SUBST([JAVA_LIBS])dnl
 
-
-
+# Check that we can find jni.h.
+JAVA_CPPFLAGS_save=$CPPFLAGS
+# Expand JAVA_HOME.
+eval "CPPFLAGS=\"$JAVA_CPPFLAGS\""
+AC_CHECK_HEADERS([jni.h])
+case $ac_cv_header_jni_h in
+  (no)
+     AC_MSG_ERROR([cannot find jni.h.
+                   See the Build chapter of the documentation.])
+     ;;
+esac
+CPPFLAGS=$JAVA_CPPFLAGS_save
 
 AC_SUBST([SHARED_LIBS_ENVVAR_NAME], [URBI_ROOT])dnl
 AC_SUBST([SHARED_LIBS_ENVVAR_VALUE], ["\${resource_loc:urbijava}/../../../"])dnl
