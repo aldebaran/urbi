@@ -150,17 +150,29 @@ assert
 \end{urbiscript}
 
 
-\item[asFloat] If the whole content of \this is an number, return it as a
-  \refObject{Float}, otherwise raise an error.
-\begin{urbiscript}
-assert
-{
-     "23".asFloat == 23;
-  "23.03".asFloat == 23.03;
-};
+\item[asFloat]%
+  The value of \this as a \refObject{Float}.  See \autoref{sec:lang:float}
+  for their syntax.
+\begin{urbiassert}
+            "23".asFloat == 23;
+         "23.03".asFloat == 23.03;
+   "123_456_789".asFloat == 123_456_789;
+"12_34_56_78_90".asFloat == 12_34_56_78_90;
+   "1_2__3___45".asFloat == 1_2__3___45;
+      "1_2.3__4".asFloat == 1_2.3__4;
+   "0xFFFF_FFFF".asFloat == 0xFFFF_FFFF;
+         "1e1_0".asFloat == 1e1_0;
+\end{urbiassert}
 
+  Raise an error on invalid numbers.
+
+\begin{urbiscript}
 "123abc".asFloat;
-[00000001:error] !!! asFloat: cannot convert to float: "123abc"
+[00000001:error] !!! asFloat: invalid number: "123abc"
+"0xabcdefg".asFloat;
+[00061848:error] !!! asFloat: invalid number: "0xabcdefg"
+"1.2_".asFloat;
+[00048342:error] !!! asFloat: invalid number: "1.2_"
 \end{urbiscript}
 
 

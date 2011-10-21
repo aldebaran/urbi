@@ -233,21 +233,11 @@ namespace urbi
     {
       try
       {
-        if (content_.size() >=2 && content_.substr(0, 2) == "0x")
-        {
-          std::string s = content_.substr(2);
-          boost::algorithm::erase_all(s, "_");
-          return strtoll(s.c_str(), 0, 16);
-        }
-        else
-        {
-          return boost::lexical_cast<libport::ufloat>
-            (boost::algorithm::erase_all_copy(content_, "_"));
-        }
+        return libport::as_ufloat(content_);
       }
       catch (const boost::bad_lexical_cast&)
       {
-        FRAISE("cannot convert to float: %s", as_printable());
+        FRAISE("invalid number: %s", as_printable());
       }
     }
 
