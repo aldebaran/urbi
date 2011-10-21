@@ -182,6 +182,14 @@ Exception.Constness.new.asString
   == "cannot modify const slot";
 \end{urbiassert}
 
+\item[Duplicate](<fmt>, <name>)%
+  A duplication was made. Use the format \var{fmt} to
+  create an error message from \var{name}.
+\begin{urbiassert}
+Exception.Duplicate.new("duplicate dictionary key", "key").asString
+  == "duplicate dictionary key: \"key\"";
+\end{urbiassert}
+
 
 \item[FileNotFound](<name>)%
   The file named \var{name} cannot be found.

@@ -108,6 +108,16 @@ first, the value.
 == ["a_5"     => "b_6",     "c_7"     => "d_8"];
 \end{urbiassert}
 
+Duplicate keys in Dictionary literal are an error.
+On this regards, \us departs from choices made in JavaScript, Perl, Python,
+Ruby, and probably many other languages.
+
+\begin{urbiscript}
+["one" => 1, "one" => 2];
+[00000001:error] !!! duplicate dictionary key: "one"
+\end{urbiscript}
+
+
 \subsection{Slots}
 
 \begin{urbiscriptapi}

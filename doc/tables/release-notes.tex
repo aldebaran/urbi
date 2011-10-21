@@ -488,6 +488,14 @@ write:
 \end{urbiunchecked}
 Backward compatibility is ensured, but a warning will be issued.
 
+\item \refObject{Dictionary} Duplicate keys in \refObject{Dictionary}
+literals are now an error.
+Instead of setting the value of the last occurrence, it will throw an error.
+\begin{urbiscript}
+["one" => 1, "one" => 2];
+[00000001:error] !!! duplicate dictionary key: "one"
+\end{urbiscript}
+
 \item The functions \lstinline{urbi::convertRGBtoYCrCb} and
   \lstinline{urbi::convertYCrCbtoRGB} have been renamed as
   \lstinline{urbi::convertRGBtoYCbCr} and
