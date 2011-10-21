@@ -238,7 +238,7 @@ makeException(
 // the message.
 makeFmtException(
   "Redefinition", Exception, [],
-  "slot redefinition: %s", ["slot_name"]
+  "slot redefinition: %s", ["slotName"]
 );
 
 class Exception.Scheduling: Exception
