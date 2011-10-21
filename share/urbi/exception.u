@@ -247,6 +247,11 @@ makeFmtException(
   "slot redefinition: %s", ["slotName"]
 );
 
+makeFmtException(
+  "Duplicate", Exception, [],
+  "%s: \"%s\"", ["msg", "elt"]
+);
+
 class Exception.Scheduling: Exception
 {
   function throwNew(msg)

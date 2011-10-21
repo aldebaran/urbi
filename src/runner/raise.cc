@@ -173,6 +173,15 @@ namespace runner
   }
 
   void
+  raise_duplicate_error(object::rObject elt,
+                        const std::string& msg)
+  {
+    raise_urbi_skip(SYMBOL(Duplicate),
+                    to_urbi(msg),
+                    to_urbi(elt));
+  }
+
+  void
   raise_lookup_error(libport::Symbol msg, const object::rObject& obj,
                      bool deep)
   {

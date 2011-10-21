@@ -113,6 +113,11 @@ namespace runner
   URBI_SDK_API
   void raise_const_error();
 
+  ATTRIBUTE_NORETURN
+  URBI_SDK_API
+  void raise_duplicate_error(object::rObject elt,
+                             const std::string& type);
+
   /// \param deep
   ///   whether error correction should consider slotNames,
   ///   instead of localSlotNames.
