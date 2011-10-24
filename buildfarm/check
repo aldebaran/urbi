@@ -21,7 +21,7 @@ check ()
   make_twice_ installcheck "$@"
 }
 
-case $BUILDFARM_HOST in
+case $BUILDFARM_HOSTNAME in
   (bf-2)
      # Spell check.  One machine is enough.
      make_ spell-check
