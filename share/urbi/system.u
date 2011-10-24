@@ -80,6 +80,7 @@ do (System)
     var getenv = System.getSlotValue("getenv") |
     var setenv = System.getSlotValue("setenv") |
     var unsetenv = System.getSlotValue("unsetenv") |
+    var init = System.init |
 
     function '[]'(var key)
     {

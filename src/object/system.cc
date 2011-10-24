@@ -729,7 +729,7 @@ namespace urbi
 
 #undef DECLARE
 
-      system_class->bind(SYMBOL(environ.init), &system_environ_init);
+      system_class->bind(SYMBOL(init), &system_environ_init);
       system_class->bind(SYMBOL(sleep), &system_sleep);
       system_class->bind(SYMBOL(sleep), &system_sleep_inf);
       system_class->bind(SYMBOL(searchPath), &system_searchPath,
