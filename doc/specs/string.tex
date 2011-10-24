@@ -302,21 +302,21 @@ String.fromAscii(0xFF) == "\xff";
       & \is{isAlpha} & \is{isDigit} & \is{isXdigit} & \is{isAlnum}
       & \is{isPunct} & \is{isGraph} & \is{isPrint}
       \\ \hline \hline
-      0x00 .. 0x08 & & \X & & & & & & & & & & &\\ \hline
-      0x09         & \B{t} & \X & \X & \X & & & & & & & & &\\ \hline
-      0x0A .. 0x0D & \B{f}, \B{v}, \B{n}, \B{r} & \X & & \X & & & & & & & & &\\ \hline
-      0x0E .. 0x1F & & \X & & & & & & & & & & &\\ \hline
-      0x20         & space (' ') & & \X & \X & & & & & & & & & \X\\ \hline
-      0x21 .. 0x2F & \verb|!"#$%&'()*+,-./| & & & & & & & & & & \X & \X & \X\\ \hline
-      0x30 .. 0x39 & \verb|0-9| & & & & & & & \X & \X & \X & & \X & \X\\ \hline
-      0x3a .. 0x40 & \verb|:;<=>?@| & & & & & & & & & & \X & \X & \X\\ \hline
-      0x41 .. 0x46 & \verb|A-F| & & & & \X & & \X & & \X & \X & & \X & \X\\ \hline
-      0x47 .. 0x5A & \verb|G-Z| & & & & \X & & \X & & & \X & & \X & \X\\ \hline
-      0x5B .. 0x60 & \verb|[\]^{}_`| & & & & & & & & & & \X & \X & \X\\ \hline
-      0x61 .. 0x66 & \verb|a-f| & & & & & \X & \X & & \X & \X & & \X & \X\\ \hline
-      0x67 .. 0x7A & \verb|g-z| & & & & & \X & \X & & & \X & & \X & \X\\ \hline
-      0x7B .. 0x7E & \verb-{|}~- & & & & & & & & & & \X & \X & \X\\ \hline
-      0x7F         & (DEL) &  \X & & & & & & & & & & &\\\hline
+      0x00 .. 0x08 &                            & \X &    &    &    &    &    &    &    &    &    &    &    \\\hline
+      0x09         & \B{t}                      & \X & \X & \X &    &    &    &    &    &    &    &    &    \\\hline
+      0x0A .. 0x0D & \B{f}, \B{v}, \B{n}, \B{r} & \X &    & \X &    &    &    &    &    &    &    &    &    \\\hline
+      0x0E .. 0x1F &                            & \X &    &    &    &    &    &    &    &    &    &    &    \\\hline
+      0x20         & space (' ')                &    & \X & \X &    &    &    &    &    &    &    &    & \X \\\hline
+      0x21 .. 0x2F & \verb|!"#$%&'()*+,-./|     &    &    &    &    &    &    &    &    &    & \X & \X & \X \\\hline
+      0x30 .. 0x39 & \verb|0-9|                 &    &    &    &    &    &    & \X & \X & \X &    & \X & \X \\\hline
+      0x3a .. 0x40 & \verb|:;<=>?@|             &    &    &    &    &    &    &    &    &    & \X & \X & \X \\\hline
+      0x41 .. 0x46 & \verb|A-F|                 &    &    &    & \X &    & \X &    & \X & \X &    & \X & \X \\\hline
+      0x47 .. 0x5A & \verb|G-Z|                 &    &    &    & \X &    & \X &    &    & \X &    & \X & \X \\\hline
+      0x5B .. 0x60 & \verb|[\]^{}_`|            &    &    &    &    &    &    &    &    &    & \X & \X & \X \\\hline
+      0x61 .. 0x66 & \verb|a-f|                 &    &    &    &    & \X & \X &    & \X & \X &    & \X & \X \\\hline
+      0x67 .. 0x7A & \verb|g-z|                 &    &    &    &    & \X & \X &    &    & \X &    & \X & \X \\\hline
+      0x7B .. 0x7E & \verb-{|}~-                &    &    &    &    &    &    &    &    &    & \X & \X & \X \\\hline
+      0x7F         & (DEL)                      & \X &    &    &    &    &    &    &    &    &    &    &    \\\hline
     \end{tabular}
     \begin{legend}
       Here is a map of how the original 127-character ASCII set is
