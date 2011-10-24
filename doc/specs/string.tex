@@ -322,6 +322,22 @@ String.fromAscii(0xFF) == "\xff";
       Here is a map of how the original 127-character ASCII set is
       considered by each function (a \textbullet{} indicates that the
       function returns true if all characters of \this are on the row).
+
+      Note the following equivalences:
+
+      \begin{tabular}{r@{~$\equiv$~}l}
+        \lstinline'isAlnum'
+        & \lstinline'isAlpha || isDigit'\\
+        & \lstinline'isDigit || isLower || isUpper'\\
+        \lstinline'isAlpha'
+        & \lstinline'isLower || isUpper'\\
+        \lstinline'isGraph'
+        & \lstinline'isAlpha || isDigit || isPunct'\\
+        & \lstinline'isDigit || isLower || isPunct || isUpper'\\
+        \lstinline'isPrint'
+        & \lstinline'isBlank || isGraph'\\
+        & \lstinline'isBlank || isDigit || isLower || isPunct || isUpper'\\
+      \end{tabular}
     \end{legend}
     \caption{Character handling functions}
     \label{tab:string:ischar}
