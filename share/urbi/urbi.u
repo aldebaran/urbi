@@ -93,7 +93,7 @@ requireFile("urbi/require-file.u");
 
 requireFile("urbi/uobject.u");
 
-if ("ros" in Platform.enabledModules && System.getenv("ROS_ROOT"))
+if ("ros" in Platform.enabledModules && System.environ["ROS_ROOT"])
   loadModule("urbi/ros");
 
 // These guys are loading modules via loadModule, which needs

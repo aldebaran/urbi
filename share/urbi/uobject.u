@@ -447,7 +447,7 @@ do (Slot)
   UObject.hasProperty = getSlotValue("hasProperty");
   var onHasNotifyAccess = Event.new;
   // hooking of changed has a cost of one at per UVar.
-  var hookChanged = !getenv("URBI_UVAR_HOOK_CHANGED");
+  var hookChanged = !System.environ["URBI_UVAR_HOOK_CHANGED"];
 
   // If \a compatF is non-nil, warn about a deprecated use of function
   // \a fnName and return \a compatF, otherwise return \a f.
