@@ -1445,8 +1445,8 @@ library specifications) is included.
 
 \begin{itemize}
 \item Bitwise operations.\\
-  The native "long unsigned int" type is now used for all the bitwise
-  operations (\lstinline|&|, \lstinline{|}, \lstinline|^|,
+  The native \lstinline{long unsigned int} type is now used for all the
+  bitwise operations (\lstinline|&|, \lstinline{|}, \lstinline|^|,
   \lstinline|compl|, \lstinline|<<|, \lstinline|>>|).  As a consequence it
   is now an error to pass negative operands to these operations.
 
@@ -1488,9 +1488,9 @@ library specifications) is included.
 
 The environment variable \env{URBI\_ROOT} denotes the directory which is the
 root of the tree into which Urbi was installed.  It corresponds to the
-"prefix" in GNU Autoconf parlance, and defaults to \file{/usr/local} under
+``prefix'' in GNU Autoconf parlance, and defaults to \file{/usr/local} under
 Unix.  urbiscript library files are expected to be in
-<URBI\_ROOT>/share/gostai/urbi.
+\var{URBI\_ROOT}/share/gostai/urbi.
 
 The environment variable \env{URBI\_PATH}, which allows to specify a
 colon-separated list of directories into which urbiscript files are
@@ -1568,22 +1568,24 @@ asked by our users during the beta-test period.
 
 \begin{itemize}
 \item \lstinline|new| syntax revamped.\\
-  The syntax "new myObject(myArgs)" has been deprecated and now gives a
-  warning. The recommended "myObject.new(myArgs)" is suggested.
+  The syntax \lstinline{new myObject(myArgs)} has been deprecated and now
+  gives a warning. The recommended \lstinline{myObject.new(myArgs)} is
+  suggested.
 
 \item \lstinline|delete| has been removed.\\
   \lstinline|delete| was never the right thing to do. A local variable
   should not be deleted, and a slot can be removed using
-  \refSlot[Object]{removeSlot}.  The construct "delete object" has been
-  removed from the language.
+  \refSlot[Object]{removeSlot}.  The construct \lstinline{delete object} has
+  been removed from the language.
 
 \item \lstinline|__HERE__|.\\
   The new \lstinline|__HERE__| pseudo-symbol gives the current position.  It
-  features three self explanatory slots: "file", "line", and "column".
+  features three self explanatory slots: \slot{file}, \slot{line}, and
+  \slot{column}.
 
-\item Operator "()".\\
-  It is now possible to define the "()" operator on objects and have it
-  called as soon as at least one parameter is given:
+\item Operator \lstinline|()|.\\
+  It is now possible to define the \lstinline|()| operator on objects and
+  have it called as soon as at least one parameter is given:
 
 \begin{urbiscript}
 class A {
@@ -1597,7 +1599,7 @@ A(42);
 [00000003] *** A called with 42
 \end{urbiscript}
 
-\item \lstinline|catch(\var{type} \var{name})| syntax removed.\\
+\item \lstinline|catch (\var{type} \var{name})| syntax removed.\\
   It was used to catch exceptions if and only if they inherited
   \var{type}. This behavior can be obtained with the more general guard
   system:
@@ -1611,9 +1613,9 @@ catch (var e if e.isA(<type>))
 
 \item Pattern matching and guards in catch blocks.\\
   Exception can now be filtered thanks to pattern matching, just like
-  events. Moreover, the pattern can be followed by the "if" keyword and an
-  arbitrary guard. The block will catch the exception only if the guard is
-  true.
+  events. Moreover, the pattern can be followed by the \lstinline{if}
+  keyword and an arbitrary guard. The block will catch the exception only if
+  the guard is true.
 
 \begin{urbiunchecked}
 try
@@ -1627,17 +1629,17 @@ catch (var e)  // Catch any other exception
 \end{urbiunchecked}
 
 \item Parsing of integer literals.\\
-  The parser could not read integer literals greater than 2**31-1.  This
-  constraint has been alleviated, and Urbi now accepts integer literals up
-  to 2**63-1.
+  The parser could not read integer literals greater than $2^{31}-1$.  This
+  constraint has been alleviated; integer literals up to $2^{63}-1$ are
+  accepted.
 
 \item Display of integer literals.\\
   Some large floating point values could not be displayed correctly at the
   top level of the interpreter. This limitation has been removed.
 
 \item Variables binding in event matching.\\
-  Parentheses around variables bindings ("var x") are no longer required in
-  event matching:
+  Parentheses around variables bindings (\lstinline{var x}) are no longer
+  required in event matching:
 
 \begin{urbiunchecked}
 at (?myEvent(var x, var y, 1))
@@ -1651,8 +1653,8 @@ at (?myEvent((var x), (var y), 1))
 \end{urbiunchecked}
 
 \item Waituntil and bindings.\\
-  Bindings performed in "waituntil" constructs are now available in its
-  context:
+  Bindings performed in \lstinline{waituntil} constructs are now available
+  in its context:
 
 \begin{urbiunchecked}
 waituntil(?event(var x));
@@ -1671,8 +1673,9 @@ echo (x);
 
 \item \refSlot[List]{sort}.\\
   Now takes an optional argument, which is a function to call instead of the
-  "<" operator. Here are two examples illustrating how to sort strings,
-  depending on whether we want to be case-sensitive (the default) or not:
+  \lstinline|<| operator. Here are two examples illustrating how to sort
+  strings, depending on whether we want to be case-sensitive (the default)
+  or not:
 
 \begin{urbiscript}
 ["foo", "bar", "Baz"].sort;
@@ -1775,9 +1778,9 @@ is now safe.
 \subsection{\us}
 
 \begin{itemize}
-\item "object" and "from" as identifiers.\\
-  "object" and "from" are now regular identifiers and can be used as other
-  names.  For example, it is now legal to declare:
+\item \lstinline{object} and \lstinline{from} as identifiers.\\
+  \lstinline{object} and \lstinline{from} are now regular identifiers and
+  can be used as other names.  For example, it is now legal to declare:
 
 \begin{urbiscript}
 var object = 1|;
@@ -1786,7 +1789,7 @@ var from = 1|;
 
 \item Hexadecimal literals.\\
   It is now possible to enter (integral) hexadecimal numbers by
-  prefixing them with "0x", as in:
+  prefixing them with \lstinline{0x}, as in:
 
 \begin{urbiscript}
 0x2a;
@@ -1810,8 +1813,8 @@ var from = 1|;
 \subsection{Standard library}
 \begin{itemize}
 \item \refSlot[String]{asList}.\\
-  "String" now has a "asList" method, which can be used transparently to
-  iterate over the characters of a string:
+  \refObject{String} now has a \slot{asList} method, which can be used
+  transparently to iterate over the characters of a string:
 
 \begin{urbiscript}
 for (var c: "foo") echo (c);
@@ -1832,11 +1835,11 @@ for (var c: "foo") echo (c);
 %%% FIXME: [00000001] "abc, def, ghi"
 %%% FIXME: \end{urbiscript}
 \item \refSlot[List]{min} and \refSlot[List]{max}.\\
-  It is now possible to call "min" and "max" on a list. By default, the "<"
-  comparison operator is used, but one explicit `lower than' function can be
-  provided as "min" or "max" argument should one be needed. Here is an
-  example on how to compare strings in case-sensitive and case-insensitive
-  modes:
+  It is now possible to call \lstinline{min} and \lstinline{max} on a
+  list. By default, the \lstinline|<| comparison operator is used, but one
+  explicit ``less than'' function can be provided as \lstinline{min} or
+  \lstinline{max} argument should one be needed. Here is an example on how
+  to compare strings in case-sensitive and case-insensitive modes:
 
 \begin{urbiscript}
 ["the", "brown", "Fox"].min;
@@ -1846,8 +1849,8 @@ for (var c: "foo") echo (c);
 \end{urbiscript}
 
   \refSlot[Math]{min} and \refSlot[Math]{max} taking an arbitrary number of
-  arguments have also been defined. In this case, the default "<" operator
-  is used for comparison:
+  arguments have also been defined. In this case, the default \lstinline{<}
+  operator is used for comparison:
 
 \begin{urbiscript}
 min(3, 2, 17);
@@ -1864,8 +1867,9 @@ min(3, 2, 17);
 \end{urbiscript}
 
 \item Tag names.\\
-  Tags were displayed as \lstinline|Tag_0xADDR| which did not make
-  their "name" slot apparent. They are now displayed as "Tag<name>":
+  Tags were displayed as \lstinline|Tag_0x01234500| which did not make their
+  \lstinline{name} slot apparent. They are now displayed as
+  \lstinline|Tag<\var{name}>|:
 
 \begin{urbiscript}
 Tag.new;
@@ -1874,18 +1878,18 @@ Tag.new("mytag");
 [00000002] Tag<mytag>
 \end{urbiscript}
 
-\item "every" and exceptions.\\
+\item \lstinline{every} and exceptions.\\
   If an exception is thrown and not caught during the execution of an
-  "every" block, the "every" expression is stopped and the exception
-  displayed.
+  \lstinline{every} block, the \lstinline{every} expression is stopped and
+  the exception displayed.
 \end{itemize}
 
 \subsection{UObjects}
 \begin{description}
-\item "UVar::type()" method.\\
-  It is now possible to get the type of a "UVar" by calling its "type()"
-  method, which returns a "UDataType" (see \file{urbi/uvalue.hh} for the
-  types declarations).
+\item \lstinline{UVar::type()} method.\\
+  It is now possible to get the type of a \lstinline{UVar} by calling its
+  \lstinline{type()} method, which returns a \lstinline{UDataType} (see
+  \file{urbi/uvalue.hh} for the types declarations).
 \end{description}
 
 \subsection{Run-time}
@@ -1916,22 +1920,23 @@ xx = 20 ampli:5 sin:10s;
   remote directory whose name is starting with two slashes such as
   \file{//share/some/dir}.
 
-\item Implement "UVar::syncValue()" in plugged uobjects
+\item Implement \lstinline{UVar::syncValue()} in plugged uobjects
 
-  Calling "syncValue()" on a "UVar" from a plugged UObject resulted in a
-  link error.  This method is now implemented, but does nothing as there is
-  nothing to do. However, its presence is required to be able to use the
-  same UObject in both remote and engine modes.
+  Calling \lstinline{syncValue()} on a \lstinline{UVar} from a plugged
+  UObject resulted in a link error.  This method is now implemented, but
+  does nothing as there is nothing to do. However, its presence is required
+  to be able to use the same UObject in both remote and engine modes.
 
-\item "isdef" works again
+\item \lstinline{isdef} works again
 
-  The support for k1 compatibility function "isdef" was broken in the case
-  of composed names or variables whose content was "void". Note that we do
-  not recommend using "isdef" at all. Slots related methods such as
-  "getSlot", "hasSlot", "locateSlot", or "slotNames" have much cleaner
-  semantics.
+  The support for k1 compatibility function \lstinline{isdef} was broken in
+  the case of composed names or variables whose content was
+  \lstinline{void}. Note that we do not recommend using \lstinline{isdef} at
+  all. Slots related methods such as \lstinline{getSlot},
+  \lstinline{hasSlot}, \lstinline{locateSlot}, or \lstinline{slotNames} have
+  much cleaner semantics.
 
-\item "\_\_name" macro
+\item \lstinline{__name} macro
 
   In some cases, the \lstinline|__name| macro could not be used with
   plugged uobjects, for example in the following expression:
