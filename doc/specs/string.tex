@@ -224,16 +224,12 @@ s.asString === s;
 "bar".distance("baz") == 1;
 "foo".distance("bar") == 3;
 
-// Deletion.
-"foo".distance("fozo") == 1;
-// Insertion.
-"fozo".distance("foo") == 1;
-// Transposition.
-"ofzo".distance("fozo") == 1;
-// Substitution.
-"fpzo".distance("fozo") == 1;
-// Substitution and insertion.
-"fpzzo".distance("fozo") == 2;
+  "foo".distance("fozo") == 1; // Deletion.
+ "fozo".distance("foo")  == 1; // Insertion.
+ "ofzo".distance("fozo") == 1; // Transposition.
+ "fpzo".distance("fozo") == 1; // Substitution.
+
+"fpzzo".distance("fozo") == 2; // Substitution and insertion.
 \end{urbiassert}
 
 
