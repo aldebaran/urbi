@@ -289,54 +289,55 @@ String.fromAscii(0xFF) == "\xff";
   characters (see \autoref{tab:string:ischar}).
   \begin{table}[tp]
     %% Not factoring the common "is" to avoid adding too many words to our
-    %% dictionary (e.g., adding Cntrl in addition to isCntrl).
-    \newcommand{\is}[1]{\begin{sideways}#1\end{sideways}}
+    %% dictionary (e.g., adding Cntrl in addition to isCntrl).  Add a small
+    %% space (~) afterwards, otherwise the hline touches it.
+    \newcommand{\is}[1]{\begin{sideways}\refSlot{#1}~~\end{sideways}}
+    \newcommand{\X}{\textbullet}
+    \newcommand{\B}[1]{\textbackslash{}#1}
     \centering
-    \begin{tabular}{|l||l||c|c|c|c|c|c|c|c|c|c|c|}
+    \begin{tabular}{|l||l||*{12}{c|}}
       \hline
-      &&&&&&&&&&&&\\
       ASCII values & Characters
-      & \is{isCntrl} & \is{isSpace} & \is{isUpper} & \is{isLower}
+      & \is{isCntrl} & \is{isSpace} & \is{isBlank} & \is{isUpper} & \is{isLower}
       & \is{isAlpha} & \is{isDigit} & \is{isXdigit} & \is{isAlnum}
       & \is{isPunct} & \is{isGraph} & \is{isPrint}
       \\ \hline \hline
-      0x00 .. 0x08 & & \textbullet & & & & & & & & & &\\ \hline
-      0x09 .. 0x0D & \textbackslash{}t, \textbackslash{}f,
-      \textbackslash{}v, \textbackslash{}n, \textbackslash{}r &
-      \textbullet & \textbullet & & & & & & & & &\\ \hline
-      0x0E .. 0x1F & & \textbullet & & & & & & & & & &\\ \hline
-      0x20 & space (' ') & & \textbullet & & & & & & & & & \textbullet\\ \hline
-      0x21 .. 0x2F & \verb|!"#$%&'()*+,-./| & & & & & & & & & \textbullet & \textbullet & \textbullet\\ \hline
-      0x30 .. 0x39 & \verb|0-9| & & & & & & \textbullet & \textbullet & \textbullet & & \textbullet & \textbullet\\ \hline
-      0x3a .. 0x40 & \verb|:;<=>?@| & & & & & & & & & \textbullet & \textbullet & \textbullet\\ \hline
-      0x41 .. 0x46 & \verb|A-F| & & & \textbullet & & \textbullet & & \textbullet & \textbullet & & \textbullet & \textbullet\\ \hline
-      0x47 .. 0x5A & \verb|G-Z| & & & \textbullet & & \textbullet & & & \textbullet & & \textbullet & \textbullet\\ \hline
-      0x5B .. 0x60 & \verb|[\]^{}_`| & & & & & & & & & \textbullet & \textbullet & \textbullet\\ \hline
-      0x61 .. 0x66 & \verb|a-f| & & & & \textbullet & \textbullet & & \textbullet & \textbullet & & \textbullet & \textbullet\\ \hline
-      0x67 .. 0x7A & \verb|g-z| & & & & \textbullet & \textbullet & & & \textbullet & & \textbullet & \textbullet\\ \hline
-      0x7B .. 0x7E & \verb-{|}~- & & & & & & & & & \textbullet & \textbullet & \textbullet\\ \hline
-      0x7F & (DEL) &  \textbullet & & & & & & & & & &\\
-      \hline
+      0x00 .. 0x08 & & \X & & & & & & & & & & &\\ \hline
+      0x09         & \B{t} & \X & \X & \X & & & & & & & & &\\ \hline
+      0x0A .. 0x0D & \B{f}, \B{v}, \B{n}, \B{r} & \X & & \X & & & & & & & & &\\ \hline
+      0x0E .. 0x1F & & \X & & & & & & & & & & &\\ \hline
+      0x20         & space (' ') & & \X & \X & & & & & & & & & \X\\ \hline
+      0x21 .. 0x2F & \verb|!"#$%&'()*+,-./| & & & & & & & & & & \X & \X & \X\\ \hline
+      0x30 .. 0x39 & \verb|0-9| & & & & & & & \X & \X & \X & & \X & \X\\ \hline
+      0x3a .. 0x40 & \verb|:;<=>?@| & & & & & & & & & & \X & \X & \X\\ \hline
+      0x41 .. 0x46 & \verb|A-F| & & & & \X & & \X & & \X & \X & & \X & \X\\ \hline
+      0x47 .. 0x5A & \verb|G-Z| & & & & \X & & \X & & & \X & & \X & \X\\ \hline
+      0x5B .. 0x60 & \verb|[\]^{}_`| & & & & & & & & & & \X & \X & \X\\ \hline
+      0x61 .. 0x66 & \verb|a-f| & & & & & \X & \X & & \X & \X & & \X & \X\\ \hline
+      0x67 .. 0x7A & \verb|g-z| & & & & & \X & \X & & & \X & & \X & \X\\ \hline
+      0x7B .. 0x7E & \verb-{|}~- & & & & & & & & & & \X & \X & \X\\ \hline
+      0x7F         & (DEL) &  \X & & & & & & & & & & &\\\hline
     \end{tabular}
     \begin{legend}
       Here is a map of how the original 127-character ASCII set is
-      considered by each function (a \textbullet{} indicates that the
-      function returns true if all characters of \this are on the row).
+      considered by each function (a \X{} indicates that the function
+      returns true if all characters of \this are on the row).
 
       Note the following equivalences:
 
       \begin{tabular}{r@{~$\equiv$~}l}
         \lstinline'isAlnum'
         & \lstinline'isAlpha || isDigit'\\
-        & \lstinline'isDigit || isLower || isUpper'\\
+%%        & \lstinline'isDigit || isLower || isUpper'\\
         \lstinline'isAlpha'
         & \lstinline'isLower || isUpper'\\
         \lstinline'isGraph'
         & \lstinline'isAlpha || isDigit || isPunct'\\
-        & \lstinline'isDigit || isLower || isPunct || isUpper'\\
-        \lstinline'isPrint'
-        & \lstinline'isBlank || isGraph'\\
-        & \lstinline'isBlank || isDigit || isLower || isPunct || isUpper'\\
+%%        & \lstinline'isDigit || isLower || isPunct || isUpper'\\
+% Not true, there is not \t in isPrint.
+%        \lstinline'isPrint'
+%        & \lstinline'isBlank || isGraph'\\
+%        & \lstinline'isBlank || isDigit || isLower || isPunct || isUpper'\\
       \end{tabular}
     \end{legend}
     \caption{Character handling functions}
@@ -349,12 +350,21 @@ String.fromAscii(0xFF) == "\xff";
 \end{urbiassert}
 
 
-\item[isAlpha] Whether all the characters of \this are characters (see
-  \autoref{tab:string:ischar}).
+\item[isAlpha] Whether all the characters of \this are letters, upper or
+  lower case (see \autoref{tab:string:ischar}).
 \begin{urbiassert}
            "".isAlpha;
      "abcABC".isAlpha;
        !"123".isAlpha;  "b".isAlpha;
+\end{urbiassert}
+
+
+\item[isBlank] Whether all the characters of \this are spaces or tabulations
+  (see \autoref{tab:string:ischar}).
+\begin{urbiassert}
+           "".isBlank;
+     "\t \t ".isBlank;
+       !"123".isBlank;  "\v".isBlank;
 \end{urbiassert}
 
 

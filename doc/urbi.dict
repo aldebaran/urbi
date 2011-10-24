@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1641 utf-8
+personal_ws-1.1 en 1644 utf-8
 aa
 aaa
 abc
@@ -336,6 +336,7 @@ devel
 df
 DGain
 DHCP
+dialogs
 DifferentialWheels
 dir
 dirlist
@@ -654,6 +655,7 @@ IRs
 isA
 isAlnum
 isAlpha
+isBlank
 isCntrl
 isConnected
 isdef

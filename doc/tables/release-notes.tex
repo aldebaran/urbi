@@ -95,6 +95,10 @@ i.close;
 "0xFFFF_FFFF".asFloat == 0xFFFF_FFFF;
 \end{urbiassert}
 
+\item \refSlot[String]{isBlank} (spaces and horizontal tabulations)
+  completes the table of character classification functions
+  (\autoref{tab:string:ischar}).
+
 \item The internal functions \slot[System]{backtrace}, \slot[System]{jobs},
   and \slot[System]{aliveJobs} are removed in favor of
   \refSlot[Job]{backtrace}, \refSlot[Job]{jobs} and

@@ -129,17 +129,18 @@ namespace urbi
 
       /// Functions is_XXX:
       /// Whether C isXXX is true for all characters.
-      bool is_upper() const;
-      bool is_lower() const;
-      bool is_alpha() const;
-      bool is_cntrl() const;
-      bool is_space() const;
-      bool is_digit() const;
-      bool is_xdigit() const;
       bool is_alnum() const;
-      bool is_punct() const;
+      bool is_alpha() const;
+      bool is_blank() const;
+      bool is_cntrl() const;
+      bool is_digit() const;
       bool is_graph() const;
+      bool is_lower() const;
       bool is_print() const;
+      bool is_punct() const;
+      bool is_space() const;
+      bool is_upper() const;
+      bool is_xdigit() const;
 
       static value_type fromAscii(rObject, unsigned char code);
 

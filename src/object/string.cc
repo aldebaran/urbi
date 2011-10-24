@@ -141,6 +141,7 @@ namespace urbi
       BIND(hash);
       BIND(isAlnum, is_alnum);
       BIND(isAlpha, is_alpha);
+      BIND(isBlank, is_blank);
       BIND(isCntrl, is_cntrl);
       BIND(isDigit, is_digit);
       BIND(isGraph, is_graph);
@@ -492,6 +493,7 @@ namespace urbi
 
     IS(alnum)
     IS(alpha)
+    IS(blank)
     IS(cntrl)
     IS(digit)
     IS(graph)
