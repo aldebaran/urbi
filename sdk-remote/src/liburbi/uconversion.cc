@@ -53,7 +53,7 @@ namespace urbi
     {
       return (v < 0     ? 0
               : 255 < v ? 255
-              :           (byte) lrint(v));
+              :           libport::rounding_cast<byte>(v));
     }
   } // namespace
 
