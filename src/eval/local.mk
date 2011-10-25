@@ -6,18 +6,19 @@
 ##
 ## See the LICENSE file for more information.
 
-dist_libuobject@LIBSFX@_la_SOURCES +=		\
-  eval/action.hh				\
-  eval/ast.cc					\
-  eval/ast.hh					\
-  eval/ast.hxx					\
-  eval/call.cc					\
-  eval/call.hh					\
-  eval/call.hxx					\
-  eval/exec.hh					\
-  eval/exec.hxx					\
-  eval/raise.cc					\
-  eval/raise.hh					\
-  eval/send-message.cc				\
-  eval/send-message.hh				\
+dist_libuobject@LIBSFX@_la_SOURCES +=           \
+  eval/action.hh                                \
+  eval/ast.cc                                   \
+  eval/ast.hh                                   \
+  eval/ast.hxx                                  \
+  eval/call.cc                                  \
+  eval/call.hh                                  \
+  eval/call.hxx                                 \
+  eval/exec.hh                                  \
+  eval/exec.hxx                                 \
+  eval/fwd.hh                                   \
+  eval/raise.cc                                 \
+  eval/raise.hh                                 \
+  eval/send-message.cc                          \
+  eval/send-message.hh                          \
   eval/send-message.hxx
