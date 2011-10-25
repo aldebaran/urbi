@@ -188,6 +188,9 @@ class Exception.Arity: Exception
 
 class Exception.BadNumber: Exception
 {
+  var this.fmt = "<no message>";
+  var this.effective = "<no message>";
+
   function init(routine, fmt, effective)
   {
     this.routine = routine|
@@ -197,7 +200,10 @@ class Exception.BadNumber: Exception
 
   function message()
   {
-    fmt % effective
+    if (fmt !== Exception.BadNumber.fmt)
+      fmt % effective
+    else
+      fmt;
   };
 };
 
