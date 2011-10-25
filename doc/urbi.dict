@@ -381,6 +381,7 @@ eE
 elbowR
 ElbowRollAngle
 ElbowYawAngle
+Electric
 elementAdded
 elementChanged
 elementRemoved
@@ -389,6 +390,7 @@ elt
 emacs
 emitDone
 emitEvent
+Emys
 enableBypass
 enableStats
 encoderResolution
