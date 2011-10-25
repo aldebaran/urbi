@@ -1995,6 +1995,7 @@ echo (x);
 
 \begin{urbiscript}
 var ne = System.getenv("nonexistent");
+[00000001:warning] !!! `System.getenv(that)' is deprecated, use `System.environ[that]'
 if (!ne.isNil) do_something(ne);
 \end{urbiscript}
 
