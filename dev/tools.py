@@ -19,6 +19,20 @@ def indent(tab, text):
   "Add tab spaces in front of text."
   return bols.sub (" " * tab, text);
 
+def diff(old, new):
+  "Display the diffs (possibly in colors) from old to new."
+  color = os.getenv('AM_COLOR_TESTS') is 'always' \
+      or ((os.getenv('AM_COLOR_TESTS') is None \
+            or os.getenv('AM_COLOR_TESTS') == 'no')\
+          and (os.getenv('TERM') is None \
+               or os.getenv('TERM') == 'dumb')\
+          and os.getenv('BUILDFARM_PROJECT') is None \
+          and os.getenv('INSIDE_EMACS') is None)
+  cmd = "diff -uw " + new + " " + old
+  if color:
+    cmd = 'color' + cmd
+  os.system(cmd)
+
 def lazy_overwrite (old, new):
   """Overwrite old with new if different, or nonexistant.
   Remove the write permission on the result to avoid accidental edition
