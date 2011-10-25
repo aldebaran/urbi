@@ -463,11 +463,15 @@ namespace urbi
     static rDictionary
     system_environ_init()
     {
+      char** env = libport::getenviron();
+
       if (!env_)
         env_ = new Dictionary;
-      for (int i = 0; environ[i] != 0; ++i)
+      else
+        env_->clear();
+      for (int i = 0; env[i] != 0; ++i)
       {
-        std::string str = std::string(environ[i]);
+        std::string str = std::string(env[i]);
         int pos = str.find("=");
         std::string k = str.substr(0, pos);
         std::string v = str.substr(pos + 1, str.size());
