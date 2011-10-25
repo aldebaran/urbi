@@ -24,7 +24,7 @@ UMachine::UMachine(const std::string& name)
 }
 
 int
-UMachine::init(ufloat d)
+UMachine::init(urbi::ufloat d)
 {
   // Failure on invalid arguments.
   if (d < 0)
@@ -55,7 +55,7 @@ int
 UMachine::duration_set(urbi::UVar& v)
 {
   assert(machine);
-  ufloat d = static_cast<ufloat>(v);
+  urbi::ufloat d = static_cast<urbi::ufloat>(v);
   if (0 <= d)
   {
     // Valid value.

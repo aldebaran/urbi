@@ -58,7 +58,7 @@ namespace urbi
       /// Also known as pop.
       rObject removeFront();
       rObject removeBack();
-      rList insert(ufloat idx, const rObject& elt);
+      rList insert(libport::ufloat idx, const rObject& elt);
       rList insertBack(const rObject& elt);
       rList insertFront(const rObject& elt);
 
@@ -66,7 +66,7 @@ namespace urbi
 
       rList remove_by_id(const rObject& elt);
       rList reverse() const;
-      rObject set(ufloat nth, const rObject& value);
+      rObject set(libport::ufloat nth, const rObject& value);
       size_type  size() const;
       value_type sort();
       value_type sort(rObject f);
@@ -75,12 +75,12 @@ namespace urbi
       rList operator+=(const rList& rhs);
       rList operator*(unsigned int times) const;
       bool operator==(List* rhs) const;
-      rObject operator[](ufloat idx);
+      rObject operator[](libport::ufloat idx);
 
     private:
       value_type content_;
       /// Check that is a valid index, and return its value in bounds.
-      size_type index(ufloat idx) const;
+      size_type index(libport::ufloat idx) const;
 
       URBI_ATTRIBUTE_ON_DEMAND_DECLARE(Event, sizeChanged);
       URBI_ATTRIBUTE_ON_DEMAND_DECLARE(Event, contentChanged);

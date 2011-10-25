@@ -25,6 +25,8 @@
 
 namespace urbi
 {
+  using libport::ufloat;
+
   namespace object
   {
     class URBI_SDK_API String

@@ -444,7 +444,7 @@ static inline void traceOperation(urbi::UVar*v, libport::Symbol op)
   }
 }
 
-static void periodic_call(rObject, ufloat interval, rObject method,
+static void periodic_call(rObject, libport::ufloat interval, rObject method,
                           libport::Symbol msg, object::objects_type args)
 {
   runner::Job& r = ::kernel::runner();
@@ -1237,7 +1237,7 @@ namespace urbi
     {
     }
 
-    void KernelUContextImpl::setHubUpdate(UObjectHub* hub, ufloat period)
+    void KernelUContextImpl::setHubUpdate(UObjectHub* hub, libport::ufloat period)
     {
       // Call Urbi-side setHubUpdate, passing an rPrimitive wrapping
       // the 'update' call.
@@ -1402,7 +1402,7 @@ namespace urbi
     }
 
     void
-    KernelUObjectImpl::setUpdate(ufloat period)
+    KernelUObjectImpl::setUpdate(libport::ufloat period)
     {
       if (server().isAnotherThread())
       {
@@ -1676,12 +1676,12 @@ namespace urbi
       }
     }
 
-    ufloat& KernelUVarImpl::in()
+    libport::ufloat& KernelUVarImpl::in()
     {
       throw std::runtime_error("in() is not implemented");
     }
 
-    ufloat& KernelUVarImpl::out()
+    libport::ufloat& KernelUVarImpl::out()
     {
       throw std::runtime_error("out() is not implemented");
     }

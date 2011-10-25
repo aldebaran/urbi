@@ -29,6 +29,8 @@
 
 namespace urbi
 {
+  using libport::ufloat;
+
   namespace object
   {
 

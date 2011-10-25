@@ -30,7 +30,7 @@
 # include <libport/compiler.hh>
 # include <libport/file-library.hh>
 # include <libport/lockable.hh>
-# include <libport/ufloat.h>
+# include <libport/ufloat.hh>
 # include <libport/utime.hh>
 # include <libport/pthread.h>
 # include <libport/synchronizer.hh>

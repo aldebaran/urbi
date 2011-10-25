@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2010, 2011, Gostai S.A.S.
+ * Copyright (C) 2007-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -19,7 +19,7 @@
 # include <libport/hash.hh>
 # include <libport/preproc.hh>
 # include <libport/traits.hh>
-# include <libport/ufloat.h>
+# include <libport/ufloat.hh>
 
 # include <urbi/fwd.hh>
 # include <urbi/export.hh>
@@ -27,6 +27,7 @@
 
 namespace urbi
 {
+  using libport::ufloat;
 
   /*--------------------------.
   | Free standing functions.  |
@@ -112,7 +113,7 @@ namespace urbi
   public:
     UDataType type;
 
-    ufloat val;                 ///< value if of type DATA_DOUBLE
+    libport::ufloat val;        ///< value if of type DATA_DOUBLE
     union
     {
       std::string* stringValue; ///< value if of type DATA_STRING

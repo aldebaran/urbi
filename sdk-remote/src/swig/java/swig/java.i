@@ -31,6 +31,7 @@
 ///
 
 #include <libport/cmath>
+#include <libport/ufloat.hh>
 #include <sstream>
 #include <urbi/ubinary.hh>
 #include <urbi/uimage.hh>
@@ -181,12 +182,12 @@ namespace urbi
 
 %include "arrays_java.i"
 
-/// Tell swig that ufloat is a double (I wonder if it's that much
-/// a good idea...)
-typedef double ufloat;
-
 namespace libport
 {
+  /// Tell SWIG that ufloat is a double (I wonder if it's that much
+  /// a good idea...)
+  typedef double ufloat;
+
   /// Microseconds.
   typedef long long utime_t;
 };
@@ -560,7 +561,7 @@ namespace boost
            }
       }
 
-      %template(UVector) vector<ufloat>;
+      %template(UVector) vector<libport::ufloat>;
     }
   }
 }
@@ -597,7 +598,7 @@ namespace boost
            }
       }
 
-      %template(UMatrix) matrix<ufloat>;
+      %template(UMatrix) matrix<libport::ufloat>;
     }
   }
 }

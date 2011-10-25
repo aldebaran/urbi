@@ -22,7 +22,7 @@
 # include <libport/fwd.hh>
 # include <libport/preproc.hh>
 # include <libport/thread-pool.hh>
-# include <libport/ufloat.h>
+# include <libport/ufloat.hh>
 # include <libport/utime.hh>
 
 # include <urbi/export.hh>

@@ -30,7 +30,7 @@ public:
   /// \param d  the duration of the assembly process.
   ///           Must be positive.
   /// \return 0 on success.
-  int init(ufloat d);
+  int init(urbi::ufloat d);
 
   /// Wrapper around Machine::operator().
   std::string assemble(std::list<std::string> components);

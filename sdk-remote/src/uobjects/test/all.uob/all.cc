@@ -47,7 +47,7 @@ struct Point
     : x(0)
     , y(0)
   {}
-  ufloat x,y;
+  urbi::ufloat x,y;
 };
 
 struct Rect
@@ -258,7 +258,7 @@ public:
     return res;
   }
 
-  void multiWrite(int idx, int count, ufloat val)
+  void multiWrite(int idx, int count, urbi::ufloat val)
   {
     for (int i = 0; i < count; ++i)
       *vars[idx] = val + idx;
@@ -266,12 +266,12 @@ public:
 
   void multiRead(int idx, int count)
   {
-    ufloat sum = 0;
+    urbi::ufloat sum = 0;
     for (int i = 0; i < count; ++i)
-      sum += (ufloat)*vars[idx];
+      sum += (urbi::ufloat)*vars[idx];
   }
 
-  void boundev(ufloat v)
+  void boundev(urbi::ufloat v)
   {
     lastChange = "boundev";
     lastChangeVal = v;
@@ -279,7 +279,7 @@ public:
 
   void onRateChange(urbi::UVar&)
   {
-    USetUpdate((ufloat)periodicWriteRate * 1000.0);
+    USetUpdate((urbi::ufloat)periodicWriteRate * 1000.0);
   }
 
   UObject* instanciate() const
@@ -411,7 +411,7 @@ public:
     return 0;
   }
 
-  void selfWriteVD(int i, std::vector<ufloat> v)
+  void selfWriteVD(int i, std::vector<urbi::ufloat> v)
   {
     *vars[i] = v;
   }
@@ -646,7 +646,7 @@ public:
     res.array.push_back(new urbi::UValue(Value))
 
 #define APPEND_UFLOAT(Prop)                     \
-    APPEND(static_cast<ufloat>(v.Prop))
+    APPEND(static_cast<urbi::ufloat>(v.Prop))
 
     APPEND_UFLOAT(rangemin);
     APPEND_UFLOAT(rangemax);
@@ -663,7 +663,7 @@ public:
     return res;
   }
 
-  int writeProps(const std::string& name, ufloat val)
+  int writeProps(const std::string& name, urbi::ufloat val)
   {
     threadCheck();
     urbi::UVar v(name);
@@ -680,7 +680,7 @@ public:
 
   /**  Test write to UVAR.  **/
 
-  int writeD(const std::string& name, ufloat val)
+  int writeD(const std::string& name, urbi::ufloat val)
   {
     threadCheck();
     GD_FINFO_DEBUG("writeD %s", name);
@@ -790,7 +790,7 @@ public:
 
 
   /** Test function parameter and return value **/
-  ufloat transmitD(ufloat v) const
+  urbi::ufloat transmitD(urbi::ufloat v) const
   {
     threadCheck();
     return -v;
@@ -934,7 +934,7 @@ public:
     }
   }
 
-  void writeAD(ufloat d) { a = d; }
+  void writeAD(urbi::ufloat d) { a = d; }
 
   void writeAS(const std::string& s) {a = s;}
 
@@ -984,14 +984,14 @@ public:
 #define CHECK                                                   \
     if (d.size() !=2 || d[0] != 1 || d[1] != 2)                 \
       throw std::runtime_error("vector is not what we expect")
-    std::vector<ufloat> d;
+    std::vector<urbi::ufloat> d;
     d.push_back(1);
     d.push_back(2);
     urbi::UVar& v =*vars[i];
     v = d;
     d = v.as(&d);
     CHECK;
-    d = v.as<std::vector<ufloat> >();
+    d = v.as<std::vector<urbi::ufloat> >();
     CHECK;
     v.fill(d);
     if (!(v == d))
@@ -1005,7 +1005,7 @@ public:
       throw std::runtime_error("hash is not what we expect");
   }
 
-  ufloat area(Rect r)
+  urbi::ufloat area(Rect r)
   {
     return libport::round((r.a.x-r.b.x) * (r.a.y  - r.b.y));
   }
@@ -1047,12 +1047,12 @@ public:
     return src;
   }
 
-  std::vector<ufloat> unpack(UPackedData<ufloat> d)
+  std::vector<urbi::ufloat> unpack(UPackedData<urbi::ufloat> d)
   {
     return d;
   }
 
-  UPackedData<ufloat> pack(std::vector<ufloat> d)
+  UPackedData<urbi::ufloat> pack(std::vector<urbi::ufloat> d)
   {
     return d;
   }

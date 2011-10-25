@@ -201,6 +201,7 @@ object_cast(const urbi::UValue& v)
       int count2 = -1;
       std::stringstream s(msg);
       s >> kw >> elemSize >> elemType >> count1 >> count2;
+      using libport::ufloat;
       if (kw == "packed" && elemSize == sizeof(ufloat))
       {
         if (count2 == -1)

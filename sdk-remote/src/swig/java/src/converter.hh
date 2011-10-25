@@ -18,6 +18,8 @@
 # include <urbi/uvalue.hh>
 # include <urbi/ucallbacks.hh>
 
+using libport::ufloat;
+
 # define FRAISE(...)                                            \
   throw std::runtime_error(libport::format(__VA_ARGS__))
 

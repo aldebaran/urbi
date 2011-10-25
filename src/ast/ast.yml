@@ -70,7 +70,7 @@ includes_map:
   'modifiers_type':                       '<libport/hash.hh>'
   'std::string':                          '<string>'
   'symbols_type':                         '<ast/symbols-type.hh>'
-  'ufloat':                               '<libport/ufloat.h>'
+  'libport::ufloat':                      '<libport/ufloat.hh>'
 # FIXME: Can't we compute this list from atomic_types?  Or simply, one
 # cannot visit something which is not a defined ast node?
 # Used by the cloner.
@@ -80,7 +80,7 @@ non_visitable_types:
   - 'libport::Symbol'
   - 'loc'
   - 'std::string'
-  - 'ufloat'
+  - 'libport::ufloat'
   - 'unsigned'
 
 # In the cloner, these require 'recurse_collection'.
@@ -805,7 +805,7 @@ Float:
   super: Exp
   attributes:
     - value:
-        type: ufloat
+        type: libport::ufloat
         access: r
         desc: Float value
   clone_by_ref: true
