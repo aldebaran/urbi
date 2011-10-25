@@ -37,6 +37,15 @@ namespace urbi
     IMAGE_YUV411_PLANAR=8, ///< 4y 1u1v planar
     IMAGE_NV12=9,      ///< planar y then interleaved uv subsampled 2x2.
     IMAGE_YUV420_PLANAR=10, ///< 4y 1u1v planar
+
+    // Keep IMAGE_END (below) up to date!
+  };
+  // So that we can use IMAGE_END to build tables, yet avoid putting
+  // it in UImageFormat so that "switch" don't need to handle this
+  // impossible case.
+  enum
+  {
+    IMAGE_END = 11,
   };
 
 

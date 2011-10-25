@@ -457,11 +457,7 @@ namespace urbi
   // An UImage that knows if it's allocated.
   struct PivotImage: UImageImpl
   {
-    PivotImage()
-      : allocated(false)
-    {
-      init();
-    }
+    PivotImage();
 
     void
     alloc(size_t s)
@@ -484,9 +480,18 @@ namespace urbi
     void
     convert_(const UImage& src);
 
+    typedef void (PivotImage::*conversion_type) (const UImage& src);
+    static conversion_type converters[IMAGE_END][IMAGE_END];
+
     // Whether data must be freed.
     bool allocated;
+
+    static bool converters_set;
   };
+
+  PivotImage::conversion_type
+    PivotImage::converters[IMAGE_END][IMAGE_END];
+  bool PivotImage::converters_set = false;
 
   template <>
   void
@@ -663,11 +668,71 @@ namespace urbi
     }
   }
 
+  PivotImage::PivotImage()
+    : allocated(false)
+  {
+    if (!converters_set)
+    {
+      for (int i = 0; i < IMAGE_END; ++i)
+        for (int j = 0; j < IMAGE_END; ++j)
+          converters[i][j] = 0;
+#define CASE(From, To)                                                  \
+      converters[IMAGE_ ## From][IMAGE_ ## To]                          \
+        = &urbi::PivotImage::convert_<IMAGE_ ## From, IMAGE_ ## To>;
+      CASE(GREY4,         RGB);
+      CASE(GREY8,         RGB);
+      CASE(JPEG,          RGB);
+      CASE(JPEG,          YCbCr);
+      CASE(NV12,          YCbCr);
+      CASE(PPM,           RGB);
+      CASE(RGB,           RGB);
+      CASE(YCbCr,         YCbCr);
+      CASE(YUV411_PLANAR, YCbCr);
+      CASE(YUV420_PLANAR, YCbCr);
+      CASE(YUV422,        YCbCr);
+#undef CASE
+      converters_set = true;
+    }
+    init();
+  }
 
-  // The image format used as a pivot between input to output conversion.
+  // The image format to convert the src image first.  Depends on the
+  // target format.
   static
   UImageFormat
-  pivot_format(UImageFormat f)
+  pivot_in_format(UImageFormat f, UImageFormat target)
+  {
+    switch (f)
+    {
+    case IMAGE_GREY4:
+    case IMAGE_GREY8:
+    case IMAGE_PPM:
+    case IMAGE_RGB:
+      return IMAGE_RGB;
+
+    case IMAGE_JPEG:
+      if (target == IMAGE_RGB)
+        return IMAGE_RGB;
+      else
+        return IMAGE_YCbCr;
+
+    case IMAGE_NV12:
+    case IMAGE_YCbCr:
+    case IMAGE_YUV411_PLANAR:
+    case IMAGE_YUV420_PLANAR:
+    case IMAGE_YUV422:
+      return IMAGE_YCbCr;
+
+    case IMAGE_UNKNOWN:
+      ;
+    }
+    return IMAGE_UNKNOWN;
+  }
+
+  // The image format to prepare before making the last conversion step.
+  static
+  UImageFormat
+  pivot_out_format(UImageFormat f)
   {
     switch (f)
     {
@@ -692,7 +757,7 @@ namespace urbi
     //step 1: uncompress source, to have raw uncompressed rgb or ycbcr
 
     // Format we need the source in
-    UImageFormat targetformat = pivot_format(dest.imageFormat);
+    UImageFormat targetformat = pivot_out_format(dest.imageFormat);
     if (targetformat == IMAGE_UNKNOWN)
     {
       GD_FERROR("Image conversion to format %s is not implemented",
@@ -702,44 +767,12 @@ namespace urbi
 
     // uncompressed data.
     PivotImage pivot;
-    switch (src.imageFormat)
-    {
-    case IMAGE_YCbCr:
-      pivot.convert_<IMAGE_YCbCr, IMAGE_YCbCr>(src);
-      break;
-    case IMAGE_RGB:
-      pivot.convert_<IMAGE_RGB, IMAGE_RGB>(src);
-      break;
-    case IMAGE_PPM:
-      pivot.convert_<IMAGE_PPM, IMAGE_RGB>(src);
-      break;
-    case IMAGE_JPEG:
-      if (targetformat == IMAGE_RGB)
-        pivot.convert_<IMAGE_JPEG, IMAGE_RGB>(src);
-      else
-        pivot.convert_<IMAGE_JPEG, IMAGE_YCbCr>(src);
-      break;
-    case IMAGE_YUV422:
-      pivot.convert_<IMAGE_YUV422, IMAGE_YCbCr>(src);
-      break;
-    case IMAGE_YUV411_PLANAR:
-      pivot.convert_<IMAGE_YUV411_PLANAR, IMAGE_YCbCr>(src);
-      break;
-    case IMAGE_YUV420_PLANAR:
-      pivot.convert_<IMAGE_YUV420_PLANAR, IMAGE_YCbCr>(src);
-      break;
-    case IMAGE_NV12:
-      pivot.convert_<IMAGE_NV12, IMAGE_YCbCr>(src);
-      break;
-    case IMAGE_GREY8:
-      pivot.convert_<IMAGE_GREY8, IMAGE_RGB>(src);
-      break;
-    case IMAGE_GREY4:
-      pivot.convert_<IMAGE_GREY4, IMAGE_RGB>(src);
-      break;
-    case IMAGE_UNKNOWN:
-      break;
-    }
+    PivotImage::conversion_type converter
+      = (PivotImage::converters
+         [src.imageFormat]
+         [pivot_in_format(src.imageFormat, targetformat)]);
+    if (converter)
+      (pivot.*converter)(src);
 
     if (dest.width == 0)
       dest.width = pivot.width;
