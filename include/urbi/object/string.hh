@@ -133,6 +133,7 @@ namespace urbi
       /// Whether C isXXX is true for all characters.
       bool is_alnum() const;
       bool is_alpha() const;
+      bool is_ascii() const;
       bool is_blank() const;
       bool is_cntrl() const;
       bool is_digit() const;
