@@ -13,7 +13,7 @@
  ** \brief Creation of the Urbi object string.
  */
 
-#include <cctype>
+#include <libport/cctype>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/assign.hpp>
