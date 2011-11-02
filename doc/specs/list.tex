@@ -59,6 +59,182 @@ List.new;
 \subsection{Slots}
 
 \begin{urbiscriptapi}
+\item['*'](<n>)%
+  Return the target, concatenated \var{n} times to itself.
+\begin{urbiassert}
+[0, 1] * 0 == [];
+[0, 1] * 3 == [0, 1, 0, 1, 0, 1];
+\end{urbiassert}
+
+  \var{n} must be a non-negative integer.
+
+\begin{urbiscript}
+[0, 1] * -2;
+[00000063:error] !!! *: argument 1: expected non-negative integer: -2
+\end{urbiscript}
+
+
+  Note that since it is the very same list which is repeatedly
+  concatenated (the content is not cloned), side-effects on one item
+  will reflect on ``all the items''.
+
+\begin{urbiscript}
+var l = [[]] * 3;
+[00000000] [[], [], []]
+l[0] << 1;
+[00000000] [1]
+l;
+[00000000] [[1], [1], [1]]
+\end{urbiscript}
+\begin{urbicomment}
+removeSlots("l");
+\end{urbicomment}
+
+
+\item['+'](<other>)%
+  Return the concatenation of the target and the \var{other} list.
+
+\begin{urbiassert}
+[0, 1] + [2, 3] == [0, 1, 2, 3];
+    [] + [2, 3] == [2, 3];
+[0, 1] + []     == [0, 1];
+    [] + []     == [];
+\end{urbiassert}
+
+The target is left unmodified (contrary to \refSlot{'+='}).
+\begin{urbiassert}
+var l = [1, 2, 3];
+l + l == [1, 2, 3, 1, 2, 3];
+l     == [1, 2, 3];
+\end{urbiassert}
+
+
+\item['+='](<that>)%
+  Concatenate the contents of the List \var{that} to \this, and return
+  \this.  This function modifies its target, contrary to \refSlot{'+'}.  See
+  also \refSlot{'<<'}.
+
+\begin{urbiassert}
+var l = [];
+var alias = l;
+
+(l += [1, 2]) == l;
+l == [1, 2];
+(l += [3, 4]) == l;
+l == [1, 2, 3, 4];
+alias == [1, 2, 3, 4];
+\end{urbiassert}
+
+
+\item['-'](<other>)%
+  Return the target without the elements that are equal to any element
+  in the \var{other} list.
+
+\begin{urbiassert}
+[0, 1, 0, 2, 3] - [1, 2] == [0, 0, 3];
+[0, 1, 0, 1, 0] - [1, 2] == [0, 0, 0];
+\end{urbiassert}
+
+
+\item['<'](<that>)%
+  Whether \this is less than the \that List.  This is the lexicographic
+  comparison: \this is ``less than'' \that if, from left to right, one of
+  its member is ``less than'' the corresponding member of \that:
+
+\begin{urbiassert}
+  [0, 0, 0] < [0, 0, 1];    !([0, 0, 1] < [0, 0, 0]);
+  [0, 1, 2] < [0, 2, 1];    !([0, 2, 1] < [0, 1, 2]);
+
+  [1, 1, 1] < [2];          !([2] < [1, 1, 1]);
+
+ !([0, 1, 2] < [0, 1, 2]);
+\end{urbiassert}
+
+  \noindent
+  or \that is a prefix (strict) of \this:
+
+\begin{urbiassert}
+           [] < [0];          !(      [0] < []);
+       [0, 1] < [0, 1, 2];    !([0, 1, 2] < [0, 1]);
+  !([0, 1, 2] < [0, 1, 2]);
+\end{urbiassert}
+
+  Since List derives from \refObject{Orderable}, the other order-based
+  operators are defined.
+
+\begin{urbiassert}
+        [] <= [];
+        [] <= [0, 1, 2];
+ [0, 1, 2] <= [0, 1, 2];
+
+        [] >= [];
+ [0, 1, 2] >= [];
+ [0, 1, 2] >= [0, 1, 2];
+ [0, 1, 2] >= [0, 0, 2];
+
+       !([] > []);
+  [0, 1, 2] > [];
+!([0, 1, 2] > [0, 1, 2]);
+  [0, 1, 2] > [0, 0, 2];
+\end{urbiassert}
+
+
+\item['<<'](<that>)%
+  A synonym for \lstinline|insertBack|.
+
+
+\item['=='](<that>)%
+Check whether all elements in the target and \var{that}, are
+equal two by two.
+
+\begin{urbiassert}
+[0, 1, 2] == [0, 1, 2];
+!([0, 1, 2] == [0, 0, 2]);
+\end{urbiassert}
+
+
+\item|'[]'|(<n>)%
+  Return the \var{n}th member of the target (indexing is
+  zero-based). If \var{n} is negative, start from the end.  An error
+  if out of bounds.
+
+\begin{urbiscript}
+assert
+{
+  ["0", "1", "2"][0] == "0";
+  ["0", "1", "2"][2] == "2";
+};
+["0", "1", "2"][3];
+[00007061:error] !!! []: invalid index: 3
+
+assert
+{
+  ["0", "1", "2"][-1] == "2";
+  ["0", "1", "2"][-3] == "0";
+};
+["0", "1", "2"][-4];
+[00007061:error] !!! []: invalid index: -4
+\end{urbiscript}
+
+
+\item|'[]='|(<index>, <value>)%
+  Assign \var{value} to the element of the target at the given
+  \var{index}.
+
+\begin{urbiscript}
+var f = [0, 1, 2]|;
+assert
+{
+  (f[1] = 42) == 42;
+  f == [0, 42, 2];
+};
+
+for (var i: [0, 1, 2])
+  f[i] = 10 * f[i];
+assert (f == [0, 420, 20]);
+\end{urbiscript}
+
+
 \item[append](<that>)%
   Deprecated alias for \refSlot{'+='}.
 
@@ -649,174 +825,6 @@ assert([0, 1, 2].tail == [1, 2]);
        == [(1, 4), (2, 5), (3, 6)];
 [1, 2, 3].zip(closure (x, y) { x + y }, [4, 5, 6])
        == [5, 7, 9];
-\end{urbiassert}
-
-\item['=='](<that>)%
-Check whether all elements in the target and \var{that}, are
-equal two by two.
-
-\begin{urbiassert}
-[0, 1, 2] == [0, 1, 2];
-!([0, 1, 2] == [0, 0, 2]);
-\end{urbiassert}
-
-\item|'[]'|(<n>)%
-  Return the \var{n}th member of the target (indexing is
-  zero-based). If \var{n} is negative, start from the end.  An error
-  if out of bounds.
-
-\begin{urbiscript}
-assert
-{
-  ["0", "1", "2"][0] == "0";
-  ["0", "1", "2"][2] == "2";
-};
-["0", "1", "2"][3];
-[00007061:error] !!! []: invalid index: 3
-
-assert
-{
-  ["0", "1", "2"][-1] == "2";
-  ["0", "1", "2"][-3] == "0";
-};
-["0", "1", "2"][-4];
-[00007061:error] !!! []: invalid index: -4
-\end{urbiscript}
-
-\item|'[]='|(<index>, <value>)%
-  Assign \var{value} to the element of the target at the given
-  \var{index}.
-
-\begin{urbiscript}
-var f = [0, 1, 2]|;
-assert
-{
-  (f[1] = 42) == 42;
-  f == [0, 42, 2];
-};
-
-for (var i: [0, 1, 2])
-  f[i] = 10 * f[i];
-assert (f == [0, 420, 20]);
-\end{urbiscript}
-
-\item['*'](<n>)%
-  Return the target, concatenated \var{n} times to itself.
-\begin{urbiassert}
-[0, 1] * 0 == [];
-[0, 1] * 3 == [0, 1, 0, 1, 0, 1];
-\end{urbiassert}
-
-  \var{n} must be a non-negative integer.
-
-\begin{urbiscript}
-[0, 1] * -2;
-[00000063:error] !!! *: argument 1: expected non-negative integer: -2
-\end{urbiscript}
-
-
-  Note that since it is the very same list which is repeatedly
-  concatenated (the content is not cloned), side-effects on one item
-  will reflect on ``all the items''.
-
-\begin{urbiscript}
-var l = [[]] * 3;
-[00000000] [[], [], []]
-l[0] << 1;
-[00000000] [1]
-l;
-[00000000] [[1], [1], [1]]
-\end{urbiscript}
-\begin{urbicomment}
-removeSlots("l");
-\end{urbicomment}
-
-
-\item['+'](<other>)%
-  Return the concatenation of the target and the \var{other} list.
-
-\begin{urbiassert}
-[0, 1] + [2, 3] == [0, 1, 2, 3];
-    [] + [2, 3] == [2, 3];
-[0, 1] + []     == [0, 1];
-    [] + []     == [];
-\end{urbiassert}
-
-The target is left unmodified (contrary to \refSlot{'+='}).
-\begin{urbiassert}
-var l = [1, 2, 3];
-l + l == [1, 2, 3, 1, 2, 3];
-l     == [1, 2, 3];
-\end{urbiassert}
-
-\item['+='](<that>)%
-  Concatenate the contents of the List \var{that} to \this, and return
-  \this.  This function modifies its target, contrary to \refSlot{'+'}.  See
-  also \refSlot{'<<'}.
-
-\begin{urbiassert}
-var l = [];
-var alias = l;
-
-(l += [1, 2]) == l;
-l == [1, 2];
-(l += [3, 4]) == l;
-l == [1, 2, 3, 4];
-alias == [1, 2, 3, 4];
-\end{urbiassert}
-
-\item['-'](<other>)%
-  Return the target without the elements that are equal to any element
-  in the \var{other} list.
-
-\begin{urbiassert}
-[0, 1, 0, 2, 3] - [1, 2] == [0, 0, 3];
-[0, 1, 0, 1, 0] - [1, 2] == [0, 0, 0];
-\end{urbiassert}
-
-\item['<<'](<that>)%
-  A synonym for \lstinline|insertBack|.
-
-\item['<'](<that>)%
-  Whether \this is less than the \that List.  This is the lexicographic
-  comparison: \this is ``less than'' \that if, from left to right, one of
-  its member is ``less than'' the corresponding member of \that:
-
-\begin{urbiassert}
-  [0, 0, 0] < [0, 0, 1];    !([0, 0, 1] < [0, 0, 0]);
-  [0, 1, 2] < [0, 2, 1];    !([0, 2, 1] < [0, 1, 2]);
-
-  [1, 1, 1] < [2];          !([2] < [1, 1, 1]);
-
- !([0, 1, 2] < [0, 1, 2]);
-\end{urbiassert}
-
-  \noindent
-  or \that is a prefix (strict) of \this:
-
-\begin{urbiassert}
-           [] < [0];          !(      [0] < []);
-       [0, 1] < [0, 1, 2];    !([0, 1, 2] < [0, 1]);
-  !([0, 1, 2] < [0, 1, 2]);
-\end{urbiassert}
-
-  Since List derives from \refObject{Orderable}, the other order-based
-  operators are defined.
-
-\begin{urbiassert}
-        [] <= [];
-        [] <= [0, 1, 2];
- [0, 1, 2] <= [0, 1, 2];
-
-        [] >= [];
- [0, 1, 2] >= [];
- [0, 1, 2] >= [0, 1, 2];
- [0, 1, 2] >= [0, 0, 2];
-
-       !([] > []);
-  [0, 1, 2] > [];
-!([0, 1, 2] > [0, 1, 2]);
-  [0, 1, 2] > [0, 0, 2];
 \end{urbiassert}
 \end{urbiscriptapi}
 
