@@ -127,6 +127,7 @@ expressions are also accepted.
 (1, 2, 3, 4,).asString == "(1, 2, 3, 4)";
 \end{urbiassert}
 
+
 \item[hash] A \refObject{Hash} object corresponding to this tuple
   value. Equal tuples (in the sense of \refSlot{'=='}) have equal hashes, see
   \refSlot[Object]{hash}.
@@ -140,6 +141,7 @@ expressions are also accepted.
 (0, 1).members.hash == [0, 1].hash;
         (0, 1).hash != (1, 0).hash;
 \end{urbiassert}
+
 
 \item[matchAgainst](<handler>, <pattern>)%
   Pattern matching on members.  See \refObject{Pattern}.

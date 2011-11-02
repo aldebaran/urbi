@@ -122,6 +122,7 @@ void.asBool;
 [00000421:error] !!! unexpected void
 \end{urbiscript}
 
+
 \item[asPrintable]%
   A \refObject{String} that can be used to display faithfully \this using
   \refSlot[Lobby]{echo}.  Defaults to \refSlot{asString}.
@@ -284,6 +285,7 @@ var o = Object.new;
  o.hasLocalSlot("foo");
 \end{urbiassert}
 
+
 \item[dump](<depth>)%
   Describe \this: its prototypes and slots.  The argument \var{depth}
   specifies how recursive the description is: the greater, the more
@@ -407,6 +409,7 @@ o1.hash == o1.hash;
 o1.hash != o2.hash;
 \end{urbiassert}
 
+
 \item[hasLocalSlot](<slot>)%
   Whether \this features a slot \var{slot}, locally, not
   from some ancestor.  See also \refSlot{hasSlot}.
@@ -417,6 +420,7 @@ assert(Derive.hasLocalSlot("derive"));
 assert(!Derive.hasLocalSlot("base"));
 \end{urbiscript}
 
+
 \item[hasProperty](<slotName>, <propName>)%
   Whether the slot \var{slotName} of \this has a property \var{propName}.
 \begin{urbiassert}
@@ -426,6 +430,7 @@ const var o.halfPi = pi / 2;
  o.hasProperty("halfPi", "constant");
 !o.hasProperty("halfPi", "foobar");
 \end{urbiassert}
+
 
 \item[hasSlot](<slot>)%
   Whether \this has the slot \var{slot}, locally, or from

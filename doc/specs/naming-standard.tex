@@ -308,8 +308,14 @@ The AudioOut interface groups every information relative to speakers.
 Power source of any kind.
 \begin{urbiscriptapi}
 \item[capacity] Storage capacity in Amp.Hour.
+
+
 \item[current] Current current consumption in Amp.
+
+
 \item[remain] Estimation of the remaining energy between 0 and 1.
+
+
 \item[voltage] Current voltage in Volt.
 \end{urbiscriptapi}
 
@@ -463,14 +469,15 @@ slots \lstinline{defaultXSpeed}, \lstinline{defaultYSpeed},
 \subsubsection{Safety}
 
 \begin{urbiscriptapi}
+\item[watchdog] Writing any value to \refSlot{watchdog} will reset the
+  watchdog timer.
+
+
 \item[watchdogInterval] If non-zero, duration after which the robot will
   stop if no order was received. Once activated, one has to write to
   \refSlot{watchdog}, to one of the speed variables or call one of the
   blocking API functions every \refSlot{watchdogInterval} at most, or the
   \refSlot{stop} function will be called.
-
-\item[watchdog] Writing any value to \refSlot{watchdog} will reset the
-  watchdog timer.
 \end{urbiscriptapi}
 
 \subsubsection{State}
