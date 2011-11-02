@@ -358,6 +358,13 @@ String.fromAscii(0xFF) == "\xff";
        !"123".isAlpha;  "b".isAlpha;
 \end{urbiassert}
 
+\item[isAscii] Whether all the characters of \this are ascii characters
+  (see \autoref{tab:string:ischar}).
+\begin{urbiassert}[escapeinside=<>]
+           "".isAscii;
+     "abc123".isAscii;
+         !"<é>".isAscii; !"<è>".isAscii;
+\end{urbiassert}
 
 \item[isBlank] Whether all the characters of \this are spaces or tabulations
   (see \autoref{tab:string:ischar}).
