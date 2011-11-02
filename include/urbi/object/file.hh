@@ -47,7 +47,6 @@ namespace urbi
       void init(rPath path);
       void init(const std::string& path);
 
-      rString basename() const;
       static rFile createTemp(rObject);
       rDate last_modified_date() const;
       void remove();

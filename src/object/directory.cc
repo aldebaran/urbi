@@ -236,7 +236,6 @@ namespace urbi
       BIND(content, list<&directory_mk_string>);
       BIND(create);
       BIND(createAll, create_all);
-      BIND(basename);
       BIND(empty);
       BIND(exists);
       BIND(lastModifiedDate, last_modified_date);
@@ -386,12 +385,6 @@ namespace urbi
     Directory::exists() const
     {
       return path_->exists();
-    }
-
-    rString
-    Directory::basename() const
-    {
-      return new String(path_->basename());
     }
 
     rDate

@@ -13,6 +13,12 @@ do (File)
 {
   protos << RangeIterable;
 
+  function basename()
+  {
+    Kernel1.deprecated("basename", "asPath.basename") |
+    asPath.basename
+  };
+
   function '$doInto'(rhs, action, routine)
   {
     Directory.getSlotValue("$doInto").apply([this, rhs, action, routine]);

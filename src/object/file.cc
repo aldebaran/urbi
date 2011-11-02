@@ -91,7 +91,6 @@ namespace urbi
       BIND(asPath, as_path);
       BIND(asPrintable, as_printable);
       BIND(asString, as_string);
-      BIND(basename);
       BIND(content);
       BIND(create);
       BIND(lastModifiedDate, last_modified_date);
@@ -100,12 +99,6 @@ namespace urbi
       BIND(size);
 
       setSlot(SYMBOL(init), new Primitive(&file_init_bouncer));
-    }
-
-    rString
-    File::basename() const
-    {
-      return new String(path_->basename());
     }
 
     rDate

@@ -77,9 +77,26 @@ assert(File.new("file.txt").asString == "file.txt");
 \end{urbiscript}
 
 
-\item[basename]
-  Return a \refObject{String} containing the path of the file without
-  its dirname.
+\item[basename] A \refObject{String} containing the path of the file without
+  its dirname.  Deprecated, use \lstinline|asPath.basename| instead.
+\begin{urbiscript}
+var dir = Directory.create("dir")|;
+var file1 = File.create("dir/file")|;
+var file2 = File.create("file")|;
+assert
+{
+  file1.basename == file1.asPath.basename == "file";
+  file2.basename == file2.asPath.basename == "file";
+};
+[00000808:warning] !!! `basename' is deprecated, use `asPath.basename'
+[00000811:warning] !!! `basename' is deprecated, use `asPath.basename'
+\end{urbiscript}
+\begin{urbicomment}
+file1.remove;
+file2.remove;
+dir.removeAll;
+removeSlots("file1", "file2", "dir");
+\end{urbicomment}
 
 
 \item[content]

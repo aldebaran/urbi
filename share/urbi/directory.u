@@ -12,7 +12,7 @@ requireFile("urbi/file.u");
 requireFile("urbi/path.u");
 requireFile("urbi/exception.u");
 
-do(Global.Directory)
+do (Global.Directory)
 {
   function '$doInto'(rhs, action, routine)
   {
@@ -24,7 +24,7 @@ do(Global.Directory)
     else
       throw Exception.argumentTypeException(routine, 1, rhs,
                                             [Directory, Path, String]) |
-    var path = Path.new(dir.asString) / Path.new(basename) |
+    var path = Path.new(dir.asString) / Path.new(asPath.basename) |
     getSlotValue(action).apply([this, path.asString])
   };
 
@@ -33,7 +33,7 @@ do(Global.Directory)
     var path = asPath / Path.new(rhs) |
     if (path.isDir)
       Directory.new(path.asString)
-    else if(path.exists)
+    else if (path.exists)
       File.new(path.asString)
     else
       throw Exception.FileNotFound.new("/", path)
@@ -44,9 +44,15 @@ do(Global.Directory)
     if (!rhs.isA(File) && !rhs.isA(Directory))
       throw Exception.argumentTypeException(
                         '<<', 1, rhs.type, [File, Directory]) |
-    var path = Path.new(asString) / Path.new(rhs.basename) |
+    var path = Path.new(asString) / Path.new(rhs.asPath.basename) |
     rhs.copy(path.asString) |
     this
+  };
+
+  function basename()
+  {
+    Kernel1.deprecated("basename", "asPath.basename") |
+    asPath.basename
   };
 
   function copy(dirname)
