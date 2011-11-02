@@ -88,6 +88,7 @@ namespace urbi
       : path_(new Path("/"))
     {
       BIND(asList, as_list);
+      BIND(asPath, as_path);
       BIND(asPrintable, as_printable);
       BIND(asString, as_string);
       BIND(basename);

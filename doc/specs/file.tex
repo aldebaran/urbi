@@ -43,6 +43,22 @@ assert(File.new("file.txt").asList == ["1", "2"]);
 
 
 \item[asPath] A \refObject{Path} being the path of the file.
+\begin{urbiscript}
+var dir = Directory.create("dir")|;
+var file1 = File.create("dir/file")|;
+var file2 = File.create("file")|;
+assert
+{
+  file1.asPath == Path.new("dir/file");
+  file2.asPath == Path.new("file");
+};
+\end{urbiscript}
+\begin{urbicomment}
+file1.remove;
+file2.remove;
+dir.removeAll;
+removeSlots("file1", "file2", "dir");
+\end{urbicomment}
 
 
 \item[asPrintable]
