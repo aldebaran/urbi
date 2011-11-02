@@ -62,6 +62,7 @@ removeSlots("file1", "file2", "dir");
 
 
 \item[asPrintable]
+  A readable description of \this.
 \begin{urbiscript}
 File.save("file.txt", "1\n2\n");
 assert(File.new("file.txt").asPrintable == "File(\"file.txt\")");
@@ -101,10 +102,12 @@ var file = File.new("file");
 var file2 = file.copy("file2");
 [00000002] File("file2")
 assert(file2.content == file.content);
+\end{urbiscript}
+\begin{urbicomment}
 file.remove;
 file2.remove;
-\end{urbiscript}
-
+removeSlots("file", "file2");
+\end{urbicomment}
 
 \item[copyInto](<dirname>)
   \experimental{}
@@ -112,16 +115,18 @@ file2.remove;
   Copy file into \var{dirname} directory.
 \begin{urbiscript}
 var dir = Directory.create("dir")|;
-file = File.create("file")|;
+var file = File.create("file")|;
 file.copyInto(dir);
 [00000001] File("dir/file")
 file;
 [00000002] File("file")
 dir.content;
 [00000003] ["file"]
-dir.removeAll;
-file.remove;
 \end{urbiscript}
+\begin{urbicomment}
+dir.removeAll;
+removeSlots("file", "dir");
+\end{urbicomment}
 
 
 \item[create](<name>)%
@@ -162,17 +167,19 @@ assert
 
   Move file into \var{dirname} directory.
 \begin{urbiscript}
-dir = Directory.create("dir")|;
-file = File.create("file")|;
+var dir = Directory.create("dir")|;
+var file = File.create("file")|;
 file.moveInto(dir);
 [00000001] File("dir/file")
 file;
 [00000001] File("dir/file")
 dir.content;
 [00000001] ["file"]
-dir.removeAll;
 \end{urbiscript}
-
+\begin{urbicomment}
+dir.removeAll;
+removeSlots("dir", "file");
+\end{urbicomment}
 
 \item[remove]
   Remove the current file.  Returns void.
@@ -217,7 +224,7 @@ File.new("file.txt").content.data == "1\n2\n";
 
 
 \item[size]
-  The size of the file.
+  The size of the file, in number of bytes.
 \begin{urbiscript}
 File.save("file.txt", "1234");
 File.new("file.txt").size;

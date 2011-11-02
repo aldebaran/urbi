@@ -44,9 +44,9 @@ dir1 / "dir2";
 [00000001] Directory("dir1/dir2")
 dir1 / "file";
 [00000002] File("dir1/file")
-dir1.removeAll;
 \end{urbiscript}
 \begin{urbicomment}
+dir1.removeAll;
 removeSlots("dir1", "dir2", "file");
 \end{urbicomment}
 
@@ -69,11 +69,11 @@ dir2;
 [00000004] Directory("dir2")
 file;
 [00000005] File("file")
+\end{urbiscript}
+\begin{urbicomment}
 dir1.removeAll;
 dir2.removeAll;
 file.remove;
-\end{urbiscript}
-\begin{urbicomment}
 removeSlots("dir1", "dir2", "file");
 \end{urbicomment}
 
@@ -405,7 +405,8 @@ removeSlots("dir", "dir2");
 \item[size]
   \experimental{}
 
-  The size of all the directory content computed recursively.
+  The size of all the directory content computed recursively, in number of
+  bytes.
 \begin{urbiscript}
 var dir = Directory.create("dir")|;
 Directory.create("dir/dir")|;
