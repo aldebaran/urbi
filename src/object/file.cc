@@ -231,7 +231,7 @@ namespace urbi
     rPath
     File::as_path() const
     {
-      return new Path(path_);
+      return path_;
     }
 
     std::string File::as_string() const

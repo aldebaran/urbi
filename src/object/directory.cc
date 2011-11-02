@@ -355,7 +355,7 @@ namespace urbi
     rPath
     Directory::as_path() const
     {
-      return new Path(path_);
+      return path_;
     }
 
     void
@@ -363,12 +363,10 @@ namespace urbi
     {
       boostfs::path p = path_->as_string().c_str();
       boostfs::directory_iterator end_itr;
-      for ( boostfs::directory_iterator itr( p );
-            itr != end_itr;
-            ++itr )
-      {
+      for (boostfs::directory_iterator itr(p);
+           itr != end_itr;
+           ++itr)
         boostfs::remove_all(itr->path());
-      }
     }
 
     bool
