@@ -363,7 +363,7 @@ String.fromAscii(0xFF) == "\xff";
 \begin{urbiassert}[escapeinside=<>]
            "".isAscii;
      "abc123".isAscii;
-         !"<é>".isAscii; !"<è>".isAscii;
+         !"<\textstr{é}>".isAscii; !"<\textstr{è}>".isAscii;
 \end{urbiassert}
 
 \item[isBlank] Whether all the characters of \this are spaces or tabulations
