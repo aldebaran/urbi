@@ -17,8 +17,17 @@ user-visible changes in \usdk releases.
 \section{\usdk 3.0}
 \release{2.8}{2011-XX-YY}
 
+\subsection{Fixes}
+\begin{itemize}
+\item The indentation of the Emacs \us mode is fixed.
+
+\item \refSlot[List]{sort} no longer crashes when the predicate is not a
+  strict weak ordering.
+\end{itemize}
 
 \subsection{Changes}
+Please, pay attention to these changes, as your code may have to be
+adjusted.
 \begin{itemize}
 \item The implicit empty statement, which was warned about:
 \begin{urbiunchecked}
@@ -84,8 +93,25 @@ while (!(x = i.get).isNil)
 i.close;
 \end{urbiunchecked}
 
-\item \refSlot[List]{sort} no longer crashes when the predicate is not a
-  strict weak ordering.
+\item The internal functions \slot[System]{backtrace}, \slot[System]{jobs},
+  and \slot[System]{aliveJobs} are removed in favor of
+  \refSlot[Job]{backtrace}, \refSlot[Job]{jobs} and
+  \lstinline|Job.jobs.size|.
+
+\item \refSlot[System]{currentRunner} is deprecated in favor of
+  \refSlot[Job]{current}.
+
+\item \refSlot[System]{getenv}, \refSlot[System]{setenv},
+  \refSlot[System]{unsetenv} are deprecated in favor of
+  \refSlot[System]{environ}.
+
+\item \refSlot[System]{spawn} is deprecated in favor of
+  \refSlot[Code]{spawn}.
+\end{itemize}
+
+\subsection{New features}
+\begin{itemize}
+\item \refSlot[Group]{'=='}.
 
 \item \refSlot[String]{asFloat} is now on par with the syntax supported for
   literal \refObject{Float}s, including support for underscores and
@@ -98,26 +124,6 @@ i.close;
 \item \refSlot[String]{isBlank} (spaces and horizontal tabulations)
   completes the table of character classification functions
   (\autoref{tab:string:ischar}).
-
-\item The internal functions \slot[System]{backtrace}, \slot[System]{jobs},
-  and \slot[System]{aliveJobs} are removed in favor of
-  \refSlot[Job]{backtrace}, \refSlot[Job]{jobs} and
-  \lstinline|Job.jobs.size|.
-
-\item \refSlot[System]{currentRunner} is deprecated in favor of
-  \refSlot[Job]{current}.
-
-\item \refSlot[System]{getenv}, \refSlot[System]{setenv},
-\refSlot[System]{unsetenv}  are deprecated in favor of
-  \refSlot[System]{environ}.
-
-\item \refSlot[System]{spawn} is deprecated in favor of
-  \refSlot[Code]{spawn}.
-\end{itemize}
-
-\subsection{New features}
-\begin{itemize}
-\item \refSlot[Group]{'=='}.
 \end{itemize}
 
 \subsection{Documentation}
