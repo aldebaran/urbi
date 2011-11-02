@@ -52,6 +52,154 @@ object-oriented programming languages (see \autoref{sec:tut:class}).
 \subsection{Slots}
 
 \begin{urbiscriptapi}
+\item['!']%
+  Logical negation.  If \this evaluates to false return \lstinline|true| and
+  vice-versa.
+\begin{urbiassert}
+!1 == false;
+!0 == true;
+
+!"foo" == false;
+!""    == true;
+\end{urbiassert}
+
+
+\item['!=='](<that>)
+  The negation of \lstinline|\this === \that|, see \refSlot{'==='}.
+\begin{urbiassert}
+var o1 = Object.new;
+var o2 = Object.new;
+
+      o1 !== o2;
+    !(o1 !== o1);
+
+      1  !==  1;
+     "1" !== "1";
+     [1] !== [1];
+\end{urbiassert}
+
+
+%\item \lstinline|'%='(\var{that})|\\
+%  Bounce to \lstinline|this '%' \var{that}|.
+
+
+\item['&&'](<that>)%
+  Short-circuiting logical \dfn{and}. If \this evaluates to true evaluate
+  and return \var{that}, otherwise return \this without evaluating
+\begin{urbiassert}
+(0 && "foo") == 0;
+(2 && "foo") == "foo";
+
+(""    && "foo") == "";
+("foo" && "bar") == "bar";
+\end{urbiassert}
+
+
+\item['*='](<that>)%
+  Bounce to \lstinline|this * \var{that}| (\autoref{sec:lang:op:ass}).
+\begin{urbiassert}
+var x = 2;
+(x *= 5)  == 10;  x == 10;
+x.'*='(2) == 20;  x == 10;
+\end{urbiassert}
+
+
+\item['+='](<that>)%
+  Bounce to \lstinline|this + \var{that}|.  Be sure to understand how
+  in-place operators are handled in \us: \autoref{sec:lang:op:ass}.
+\begin{urbiassert}
+var x = 1;
+(x += 1)  == 2; x == 2;
+x.'+='(1) == 3; x == 2;
+\end{urbiassert}
+
+
+\item['-='](<that>)%
+  Bounce to \lstinline|this - \var{that}| (\autoref{sec:lang:op:ass}).
+\begin{urbiassert}
+var x = 10;
+(x -= 3)  == 7;  x == 7;
+x.'-='(3) == 4;  x == 7;
+\end{urbiassert}
+
+
+\item['/='](<that>)%
+  Bounce to \lstinline|this / \var{that}| (\autoref{sec:lang:op:ass}).
+\begin{urbiassert}
+var x = 200;
+(x /= 10) == 20;  x == 20;
+x.'/='(2) == 10;  x == 20;
+\end{urbiassert}
+
+
+\item['=='](<that>)%
+  Whether \this and \that are equal.  See also \refObject{Comparable} and
+  \autoref{sec:lang:op:comparison}.  By default, bounces to
+  \refSlot{'==='}.  This operator \emph{must} be redefined for objects that
+  have a value-semantics; for instance two \refObject{String} objects that
+  denotes the same string should be equal according to \lstinline|==|,
+  although physically different (i.e., not equal according to
+  \lstinline|===|).
+\begin{urbiassert}
+var o1 = Object.new;
+var o2 = Object.new;
+
+      o1 == o1;
+    !(o1 == o2);
+      o1 != o2;
+    !(o1 != o1);
+
+      1  ==  1;
+     "1" == "1";
+     [1] == [1];
+\end{urbiassert}
+
+
+\item['==='](<that>)%
+  Whether \this and \that are exactly the same object (i.e., \this and \that
+  are two different means to denote the very same location in memory).  To
+  denote equivalence, use \refSlot{'=='}; for instance two \refObject{Float}
+  objects that denote 42 can be different objects (in the sense of
+  \lstinline|===|), but will be considered equal by \lstinline|==|.  See
+  also \refSlot{'==='} and \autoref{sec:lang:op:comparison}.
+\begin{urbiassert}
+var o1 = Object.new;
+var o2 = Object.new;
+
+      o1 === o1;
+    !(o1 === o2);
+
+    !( 1  ===  1 );
+    !("1" === "1");
+    !([1] === [1]);
+\end{urbiassert}
+
+
+\item['^='](<that>)%
+  Bounce to \lstinline|this ^ \var{that}| (\autoref{sec:lang:op:ass}).
+\begin{urbiassert}
+var x = 0xff00;
+(x ^= 0xffff)  == 0x00ff;  x == 0x00ff;
+x.'^='(0xffff) == 0xff00;  x == 0x00ff;
+\end{urbiassert}
+
+
+\item \lstinline+'||'(\var{that})+%
+  Short-circuiting logical \dfn{or}. If \this evaluates to false evaluate
+  and return \var{that}, otherwise return \this without evaluating
+  \var{that}.
+\begin{urbiassert}
+(0 || "foo") == "foo";
+(2 ||  1/0)  == 2;
+
+(""    || "foo") == "foo";
+("foo" || 1/0)   == "foo";
+\end{urbiassert}
+
+
+\item['$id']% fix color $
+
+
 \item[acceptVoid]
   Return \this.  See \refObject{void} to know why.
 \begin{urbiassert}
@@ -140,6 +288,7 @@ Object.asPrintable == Object.asString;
 
   See also \refSlot{asString} and \refSlot{asTopLevelPrintable}.
 
+
 \item[asString]%
   A conversion of \this into a \refObject{String}.  In general:
   \begin{itemize}
@@ -173,6 +322,7 @@ assert
 \end{urbiscript}
 \end{itemize}
   See also \refSlot{asTopLevelPrintable} and \refSlot{asPrintable}.
+
 
 \item[asTopLevelPrintable]%
   A \refObject{String} used to display \this in interactive sessions, or
@@ -442,7 +592,6 @@ Derive.hasSlot("base");
 !Base.hasSlot("derive");
 \end{urbiassert}
 
-\item['$id']% fix color $
 
 \item[inspect](<deep> = false)%
   Describe \this: its prototypes and slots, and their
@@ -835,144 +984,6 @@ assert
   Top.x == [1, 2];
 };
 \end{urbiscript}
-
-\item['&&'](<that>)%
-  Short-circuiting logical \dfn{and}. If \this evaluates to true evaluate
-  and return \var{that}, otherwise return \this without evaluating
-\begin{urbiassert}
-(0 && "foo") == 0;
-(2 && "foo") == "foo";
-
-(""    && "foo") == "";
-("foo" && "bar") == "bar";
-\end{urbiassert}
-
-\item \lstinline+'||'(\var{that})+%
-  Short-circuiting logical \dfn{or}. If \this evaluates to false evaluate
-  and return \var{that}, otherwise return \this without evaluating
-  \var{that}.
-\begin{urbiassert}
-(0 || "foo") == "foo";
-(2 ||  1/0)  == 2;
-
-(""    || "foo") == "foo";
-("foo" || 1/0)   == "foo";
-\end{urbiassert}
-
-\item['!']%
-  Logical negation.  If \this evaluates to false return \lstinline|true| and
-  vice-versa.
-\begin{urbiassert}
-!1 == false;
-!0 == true;
-
-!"foo" == false;
-!""    == true;
-\end{urbiassert}
-
-\item['+='](<that>)%
-  Bounce to \lstinline|this + \var{that}|.  Be sure to understand how
-  in-place operators are handled in \us: \autoref{sec:lang:op:ass}.
-\begin{urbiassert}
-var x = 1;
-(x += 1)  == 2; x == 2;
-x.'+='(1) == 3; x == 2;
-\end{urbiassert}
-
-\item['-='](<that>)%
-  Bounce to \lstinline|this - \var{that}| (\autoref{sec:lang:op:ass}).
-\begin{urbiassert}
-var x = 10;
-(x -= 3)  == 7;  x == 7;
-x.'-='(3) == 4;  x == 7;
-\end{urbiassert}
-
-
-\item['*='](<that>)%
-  Bounce to \lstinline|this * \var{that}| (\autoref{sec:lang:op:ass}).
-\begin{urbiassert}
-var x = 2;
-(x *= 5)  == 10;  x == 10;
-x.'*='(2) == 20;  x == 10;
-\end{urbiassert}
-
-
-\item['/='](<that>)%
-  Bounce to \lstinline|this / \var{that}| (\autoref{sec:lang:op:ass}).
-\begin{urbiassert}
-var x = 200;
-(x /= 10) == 20;  x == 20;
-x.'/='(2) == 10;  x == 20;
-\end{urbiassert}
-
-
-\item['^='](<that>)%
-  Bounce to \lstinline|this ^ \var{that}| (\autoref{sec:lang:op:ass}).
-\begin{urbiassert}
-var x = 0xff00;
-(x ^= 0xffff)  == 0x00ff;  x == 0x00ff;
-x.'^='(0xffff) == 0xff00;  x == 0x00ff;
-\end{urbiassert}
-
-
-%\item \lstinline|'%='(\var{that})|\\
-%  Bounce to \lstinline|this '%' \var{that}|.
-
-\item['=='](<that>)%
-  Whether \this and \that are equal.  See also \refObject{Comparable} and
-  \autoref{sec:lang:op:comparison}.  By default, bounces to
-  \refSlot{'==='}.  This operator \emph{must} be redefined for objects that
-  have a value-semantics; for instance two \refObject{String} objects that
-  denotes the same string should be equal according to \lstinline|==|,
-  although physically different (i.e., not equal according to
-  \lstinline|===|).
-\begin{urbiassert}
-var o1 = Object.new;
-var o2 = Object.new;
-
-      o1 == o1;
-    !(o1 == o2);
-      o1 != o2;
-    !(o1 != o1);
-
-      1  ==  1;
-     "1" == "1";
-     [1] == [1];
-\end{urbiassert}
-
-\item['==='](<that>)%
-  Whether \this and \that are exactly the same object (i.e., \this and \that
-  are two different means to denote the very same location in memory).  To
-  denote equivalence, use \refSlot{'=='}; for instance two \refObject{Float}
-  objects that denote 42 can be different objects (in the sense of
-  \lstinline|===|), but will be considered equal by \lstinline|==|.  See
-  also \refSlot{'==='} and \autoref{sec:lang:op:comparison}.
-\begin{urbiassert}
-var o1 = Object.new;
-var o2 = Object.new;
-
-      o1 === o1;
-    !(o1 === o2);
-
-    !( 1  ===  1 );
-    !("1" === "1");
-    !([1] === [1]);
-\end{urbiassert}
-
-\item['!=='](<that>)
-  The negation of \lstinline|\this === \that|, see \refSlot{'==='}.
-\begin{urbiassert}
-var o1 = Object.new;
-var o2 = Object.new;
-
-      o1 !== o2;
-    !(o1 !== o1);
-
-      1  !==  1;
-     "1" !== "1";
-     [1] !== [1];
-\end{urbiassert}
-
 \end{urbiscriptapi}
 
 %%% Local Variables:
