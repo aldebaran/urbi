@@ -142,6 +142,7 @@
 ;; ------- ;;
 
 (defun goto-char? (point)
+  "If POINT non-nil, as `goto-char'. Otherwise, returns nil."
   (when point (goto-char point)))
 
 (defun urbiscript-beginning-of-line-point (&optional point)
@@ -159,9 +160,12 @@
     (point)))
 
 (defun urbiscript-first-line ()
+  "Returns true when the current line is the first line."
   (= (line-number-at-pos) 1))
 
 (defun urbiscript-line (&optional point)
+  "Returns a substring containing the contents of the line at point.
+If POINT provided, uses the line at POINT instead."
   (save-excursion
     (goto-char? point)
     (let ((begin (progn (beginning-of-line) (point)))
@@ -173,18 +177,19 @@
 ;; ------------------------- ;;
 
 (defun urbiscript-in-comment-p (&optional point)
-  "Whether \a point is in a comment"
+  "Whether POINT is in a comment"
   (eq (get-text-property (if point point (point)) 'face)
       font-lock-comment-face))
 
 (defun urbiscript-on-whitespace-p (point)
-  "Whether \a point is in a comment"
+  "Whether POINT is in a comment"
   (let ((c (char-after point)))
     (or (= (char-syntax c) ? )
         (= c ?\n))))
 
 (defun urbiscript-irrelevant-char-p (&optional point)
-  "Whether current character is irrelevant"
+  "Whether the character at POINT is irrelevant.
+Irrelevant means either a comment or whitespace character."
   (or (urbiscript-in-comment-p point)
       (urbiscript-on-whitespace-p point)))
 
@@ -260,16 +265,16 @@ That is, not only comments and/or whitespaces"
 ;; handle else
 
 (defun urbiscript-indentation (&optional point)
-  "Indentation of the line at \a point"
+  "Indentation of the line at POINT."
   (save-excursion
     (goto-char? point)
-    (length (replace-regexp-in-string "^\\(\\s-*\\).*$" "\\1"
-                                      (urbiscript-line)))))
+    (current-indentation)))
 
-(defun urbiscript-set-indentation (idt)
-  "Indent the line at \a point by \a idt"
+(defun urbiscript-set-indentation (column)
+  "Indent the line at point to COLUMN.
+Leaves point on the first non-space character in the line."
   (save-excursion
-    (indent-line-to idt))
+    (indent-line-to column))
   (when (looking-back "^\\s-*")
     (while (looking-at "\\s-")
       (forward-char))))
@@ -321,6 +326,15 @@ That is, not only comments and/or whitespaces"
           (when (urbiscript-line-continuation-p prev)
             (message "Previous line was a continuation, desindenting")
             (set 'idt (- idt urbiscript-indent-width)))))
+      ; Round IDT down to a multiple of `urbiscript-indent-width'.
+      ; This relies on the fact that integer division truncates.
+      (message "Rounding indent down")
+      (set 'idt (* (/ idt urbiscript-indent-width) urbiscript-indent-width))
+      ; Avoid errors due to indenting a negative amount.
+      ; This occurs when the previous line was indented less than the
+      ; indent width.
+      (if (< idt 0)
+	  (set 'idt 0))
       (message "Indenting to:        %s" idt)
       (urbiscript-set-indentation idt)
       )))))
