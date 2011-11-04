@@ -291,7 +291,12 @@ String.fromAscii(0xFF) == "\xff";
     %% Not factoring the common "is" to avoid adding too many words to our
     %% dictionary (e.g., adding Cntrl in addition to isCntrl).  Add a small
     %% space (~) afterwards, otherwise the hline touches it.
-    \newcommand{\is}[1]{\begin{sideways}\refSlot{#1}~~\end{sideways}}
+    %%
+    %% \begin/\end on two lines to please api-sort.
+    \newcommand{\is}[1]{%
+      \begin{sideways}%
+        \refSlot{#1}~~%
+      \end{sideways}}
     \newcommand{\X}{\textbullet}
     \newcommand{\B}[1]{\textbackslash{}#1}
     \centering
