@@ -572,9 +572,12 @@ Mindstorms NXT \urbi server.
 Servo describes a motor. A Servo instance contains the following slots:
 
 \begin{urbiscriptapi}
-\item[val] Motor's position.
+\item[init](<port>) The UObject constructor. \var{port} is a port name. (See
+  previous slot port). Example:
+\begin{urbiunchecked}
+wheel = Servo.new("A");
+\end{urbiunchecked}
 
-\item[speed] Motor's speed, from -100 to 100.
 
 \item[port] The port where the servo is plugged. It can be \lstinline{"A"},
   \lstinline{"B"} or \lstinline{"C"}. You can change the value while the
@@ -582,11 +585,11 @@ Servo describes a motor. A Servo instance contains the following slots:
   port (so you will be able to create another device on it) and will busy
   the new one (so you won't be able to create another device on it).
 
-\item[init](<port>) The UObject constructor. \var{port} is a port name. (See
-  previous slot port). Example:
-\begin{urbiunchecked}
-wheel = Servo.new("A");
-\end{urbiunchecked}
+
+\item[speed] Motor's speed, from -100 to 100.
+
+
+\item[val] Motor's position.
 \end{urbiscriptapi}
 
 
@@ -596,7 +599,12 @@ UltraSonicSensor describes a sonar sensor. An UltraSonicSensor instance
 contains the following slots:
 
 \begin{urbiscriptapi}
-\item[val] Distance in cm (from 0 to 255).
+\item[init](<port>) The UObject constructor. \var{port} is a port name. (See
+  previous slot port). Example:
+\begin{urbiunchecked}
+sonar = UltraSonicSensor.new(1);
+\end{urbiunchecked}
+
 
 \item[port] The port where the servo is plugged. It can be 1, 2, 3 or 4. You
   can change the value while the server is running. Beware, if you change
@@ -604,12 +612,8 @@ contains the following slots:
   another device on it) and will busy the new one (so you won't be able to
   create another device on it).
 
-\item[init](<port>) The UObject constructor. \var{port} is a port name. (See
-  previous slot port). Example:
-\begin{urbiunchecked}
-sonar = UltraSonicSensor.new(1);
-\end{urbiunchecked}
 
+\item[val] Distance in cm (from 0 to 255).
 \end{urbiscriptapi}
 
 \subsection{SoundSensor}
@@ -618,11 +622,17 @@ SoundSensor describes a sound sensor. A SoundSensor instance contains the
 following slots:
 
 \begin{urbiscriptapi}
+\item[init](<port>, <mode>) The UObject constructor. \var{port} is a port
+  name. (See previous slot port). \var{mode} is a mode name. (See
+  previous slot mode). Example:
+\begin{urbiunchecked}
+decibel = SoundSensor.new(1, "DB");
+\end{urbiunchecked}
 
-\item[val] The sound level measured (from 0 to 1).
 
 \item[mode] \lstinline{"DB"} is decibel or \lstinline{"DBA"} is decibel
   audible (measures only in the audible frequencies range).
+
 
 \item[port] The port where the servo is plugged. It can be 1, 2, 3 or 4. You
   can change the value while the server is running. Beware, if you change
@@ -631,13 +641,7 @@ following slots:
   create another device on it).
 
 
-\item[init](<port>, <mode>) The UObject constructor. \var{port} is a port
-  name. (See previous slot port). \var{mode} is a mode name. (See
-  previous slot mode). Example:
-\begin{urbiunchecked}
-decibel = SoundSensor.new(1, "DB");
-\end{urbiunchecked}
-
+\item[val] The sound level measured (from 0 to 1).
 \end{urbiscriptapi}
 
 \subsection{LightSensor}
@@ -646,7 +650,13 @@ LightSensor describes a light sensor. A LightSensor instance contains the
 following slots:
 
 \begin{urbiscriptapi}
-\item[val] The light level measured (from 0 to 1).
+\item[init](<port>, <mode>) The UObject constructor. \var{port} is a port
+  name. (See previous slot port). \var{mode} is a mode name. (See previous
+  slot mode). Example:
+\begin{urbiunchecked}
+light = LightSensor.new(1, "Ambient");
+\end{urbiunchecked}
+
 
 \item[mode]
   \begin{itemize}
@@ -655,18 +665,15 @@ following slots:
   \item \lstinline{"Normal"} returns the raw value
   \end{itemize}
 
+
 \item[port] The port where the servo is plugged. It can be 1, 2, 3 or 4. You
   can change the value while the server is running. Beware, if you change
   the port, that will free the old port (so you will be able to create
   another device on it) and will busy the new one (so you won't be able to
   create another device on it).
 
-\item[init](<port>, <mode>) The UObject constructor. \var{port} is a port
-  name. (See previous slot port). \var{mode} is a mode name. (See previous
-  slot mode). Example:
-\begin{urbiunchecked}
-light = LightSensor.new(1, "Ambient");
-\end{urbiunchecked}
+
+\item[val] The light level measured (from 0 to 1).
 \end{urbiscriptapi}
 
 \subsection{Switch}
@@ -675,7 +682,12 @@ Switch describes a touch sensor. A Switch instance contains the following
 slots:
 
 \begin{urbiscriptapi}
-\item[val] The switch status (0 or 1).
+\item[init](<port>) The UObject constructor. \var{port} is a port name. (See
+  previous slot port). Example:
+\begin{urbiunchecked}
+bumper = Switch.new(1);
+\end{urbiunchecked}
+
 
 \item[port] The port where the servo is plugged. It can be 1, 2, 3 or 4. You
   can change the value while the server is running. Beware, if you change
@@ -683,12 +695,8 @@ slots:
   another device on it) and will busy the new one (so you won't be able to
   create another device on it).
 
-\item[init](<port>) The UObject constructor. \var{port} is a port name. (See
-  previous slot port). Example:
-\begin{urbiunchecked}
-bumper = Switch.new(1);
-\end{urbiunchecked}
 
+\item[val] The switch status (0 or 1).
 \end{urbiscriptapi}
 
 \subsection{Battery}
@@ -696,11 +704,13 @@ bumper = Switch.new(1);
 Battery describes a battery device. A Battery instance contains the
 following slots:
 \begin{urbiscriptapi}
-\item[val] Battery remaining power between 0 and 1.
 \item[init] The UObject constructor. Example:
 \begin{urbiunchecked}
 battery = Battery.new;
 \end{urbiunchecked}
+
+
+\item[val] Battery remaining power between 0 and 1.
 \end{urbiscriptapi}
 
 \subsection{Beeper}
@@ -713,6 +723,8 @@ methods:
 \begin{urbiunchecked}
 beeper = Beeper.new;
 \end{urbiunchecked}
+
+
 \item[play](<frequency>, <duration>) Plays a beep of a custom frequency for
   a custom duration.  \var{frequency} is the frequency of the beep (in Hz),
   between 200 and 14000.  \var{duration} is the duration of the beep (in
@@ -728,14 +740,6 @@ beeper.play(200,1s);
 Command allows you to use expert commands. The Command UObject contains the
 following methods:
 \begin{urbiscriptapi}
-\item[send](<buffer>) Sends a command without requiring any answer.
-  \var{buffer} must be a list of integers between 0 and 255.  Example:
-\begin{urbiunchecked}
-Command.send([3,10,10,0,0]);
-\end{urbiunchecked}
-\noindent
-that plays a beep.
-
 \item[request](<bufferIn>, <sizeOut>)%
   Send a command requiring an answer, and return the buffer out. This is
   only recommended to expert users. Beware of the \var{sizeOut}
@@ -753,6 +757,15 @@ answer = Command.request([7,0], 15);
 \end{urbiunchecked}
 
 that returns the information on input port 0.
+
+
+\item[send](<buffer>) Sends a command without requiring any answer.
+  \var{buffer} must be a list of integers between 0 and 255.  Example:
+\begin{urbiunchecked}
+Command.send([3,10,10,0,0]);
+\end{urbiunchecked}
+\noindent
+that plays a beep.
 \end{urbiscriptapi}
 
 %% Restore the definition of \section.

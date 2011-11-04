@@ -158,6 +158,8 @@ RTP will then be used automatically.
     \item[1] for a jpeg-compressed image.
     \end{description}
   \end{sublist}
+
+
 \item[formatDetail] Set the image format, providing more options:
   \begin{sublist}
     \begin{description}
@@ -172,8 +174,17 @@ RTP will then be used automatically.
   \end{sublist}
   JPEG mode gives the smallest images and uses less bandwidth to access the
   images remotely, but uses more CPU power.
+
+
+\item[height] Image height. Read-only.
+
+
 \item[quality] Set JPEG compression quality, from 0 to 100.
+
+
 \item[rate] Set image frame rate in Hz.
+
+
 \item[resolution] Set image resolution:
   \begin{sublist}
     \begin{description}
@@ -184,11 +195,13 @@ RTP will then be used automatically.
     \end{description}
   \end{sublist}
 
-\item[width] Image width. Read-only.
-\item[height] Image height. Read-only.
+
 \item[threaded] Set to 1 to activate threaded mode, and to 0 to
   deactivate. This must be set before switching load to 1 for the first
   time. Defaults to 1.
+
+
+\item[width] Image width. Read-only.
 \end{urbiscriptapi}
 
 \section{Whole body motion}
@@ -232,10 +245,6 @@ the \lstinline|ALMemory| module. This module is available under the
 \lstinline|stm| name in \urbi, and has the following slots:
 
 \begin{urbiscriptapi}
-\item[get](<name>)
-  Return the value of memory location \var{name}.
-\item[set](<name>, <value>)
-  Set memory location \var{name} to \var{value}.
 \item[bindRenameVariable](<memoryName>, <variableName>) Create a \us slot
   named \var{variableName}, and synchronize it with memory location
   \var{memoryName}. Only read support is available.  \var{variableName} can
@@ -243,6 +252,14 @@ the \lstinline|ALMemory| module. This module is available under the
   \lstinline{b} in object \lstinline{a}, or of the form \lstinline{b}, in
   which case variable \lstinline{b} will be created in object
   \lstinline{stm}.
+
+
+\item[get](<name>)
+  Return the value of memory location \var{name}.
+
+
+\item[set](<name>, <value>)
+  Set memory location \var{name} to \var{value}.
 \end{urbiscriptapi}
 
 \subsection{Accessing standard \naoqi modules}

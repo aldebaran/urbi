@@ -114,29 +114,28 @@ the main slots with code examples explaining how to use them. You can use
 more information.
 
 \begin{urbiscriptapi}
-\item[val] The current motor position when read, the target position when
-  written to.
+\item \labelSlot{ccwLimit}\\
+  Set max reachable angle. When both \refSlot{cwLimit} and
+  \refSlot{ccwLimit} equal 0, the motor is put in continuous rotation
+  mode. In this mode, writing to \refSlot{val} has no effect: the motor
+  moves at the speed given by the \refSlot{speed} slot.
 
-\begin{urbiunchecked}
-// Move motor6 to 90 degrees.
-motor6.val = 90deg;
-// Move to 0 in 5 seconds.
-motor6.val = 0 time:5s;
-// Ticking clock.
-at (motor6.val > 0) echo("tick") onleave echo("tack");
-motor6.val = 0 sin:1s ampli:20deg,
-\end{urbiunchecked}
 
 \item[cwLimit] Set min reachable angle.  See \refSlot{ccwLimit}.
 
 %% FIXME: Something horrible happens when the slot name starts with twice
 %% the same letter.  I have no idea what's going on, I need to make an small
 %% seft-contained example and ask for help.
-\item \labelSlot{ccwLimit}\\
-  Set max reachable angle. When both \refSlot{cwLimit} and
-  \refSlot{ccwLimit} equal 0, the motor is put in continuous rotation
-  mode. In this mode, writing to \refSlot{val} has no effect: the motor
-  moves at the speed given by the \refSlot{speed} slot.
+
+
+\item[load]
+  Shut down the motor when 0.
+
+\begin{urbiunchecked}
+//Turn the motor off if the torque is too high.
+at(motor6.torque > 5) motor6.load = 0;
+\end{urbiunchecked}
+
 
 \item[speed] When read, gives the current rotation speed. When written to,
   set the speed at which following commands will be executed. In continuous
@@ -152,17 +151,23 @@ motor6.cwLimit = motor6.ccwLimit = 0;
 motor6.speed = 1;
 \end{urbiunchecked}
 
+
 \item[torque]
   Current torque the motor is giving.
 
-\item[load]
-  Shut down the motor when 0.
+
+\item[val] The current motor position when read, the target position when
+  written to.
 
 \begin{urbiunchecked}
-//Turn the motor off if the torque is too high.
-at(motor6.torque > 5) motor6.load = 0;
+// Move motor6 to 90 degrees.
+motor6.val = 90deg;
+// Move to 0 in 5 seconds.
+motor6.val = 0 time:5s;
+// Ticking clock.
+at (motor6.val > 0) echo("tick") onleave echo("tack");
+motor6.val = 0 sin:1s ampli:20deg,
 \end{urbiunchecked}
-
 \end{urbiscriptapi}
 
 \subsection{Sensor features}
@@ -174,27 +179,39 @@ the main slots with code examples explaining how to use them.  You can use
 more information.
 
 \begin{urbiscriptapi}
-
-\item[IRLeft] See \refSlot{IRRight}.
-\item[IRCenter] See \refSlot{IRRight}.
-\item[IRRight] Amount of infrared received by the sensor using the internal
-  emitter. This sensors detect light reflected by objects nearby in the
-  direction of the sensor.
-
-\item[lightLeft] See \refSlot{lightRight}.
-\item[lightCenter] See \refSlot{lightRight}.
-\item[lightRight] Amount of infrared received by the sensor without the
-  emitter. Detects infrared light sources such as incandescent light,
-  candles, etc.
-
 \item[buzzerIndex]
   Play a note when written to.
+
 
 \item[buzzerTime]
   Set length of next played note.
 
+
 \item[clapCount]
   Number of successive claps detected by the microphone.
+
+
+\item[IRCenter] See \refSlot{IRRight}.
+
+
+\item[IRLeft] See \refSlot{IRRight}.
+
+
+\item[IRRight] Amount of infrared received by the sensor using the internal
+  emitter. This sensors detect light reflected by objects nearby in the
+  direction of the sensor.
+
+
+\item[lightCenter] See \refSlot{lightRight}.
+
+
+\item[lightLeft] See \refSlot{lightRight}.
+
+
+\item[lightRight] Amount of infrared received by the sensor without the
+  emitter. Detects infrared light sources such as incandescent light,
+  candles, etc.
+
 
 \item[soundVolume]
   Volume of sound received by the microphone.
@@ -208,6 +225,7 @@ at (sensor100.soundVolume->changed?)
 at (sensor100.clapCount == 4)
   motor6.speed = 0;
 \end{urbiunchecked}
+
 
 \item[soundVolumeMax] Holds maximum sound volume recorded so far. Write 0 to
   this slot to reset.

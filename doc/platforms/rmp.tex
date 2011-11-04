@@ -32,6 +32,8 @@ coders will be read.
 \begin{urbiscriptapi}
 \item[forwardSpeed] forward speed in meters per second.  Can be read to
   (behaves as a sensor), or written to (actuator).
+
+
 \item[yawSpeed] yaw speed in radian per second.  Can be read and written
   to.
 \end{urbiscriptapi}
@@ -39,12 +41,22 @@ coders will be read.
 \paragraph{Raw sensors}
 Current speed and coder values.
 \begin{urbiscriptapi}
-\item[leftSpeed]
-\item[rightSpeed]
 \item[forward]
-\item[yaw]
+
+
 \item[left]
+
+
+\item[leftSpeed]
+
+
 \item[right]
+
+
+\item[rightSpeed]
+
+
+\item[yaw]
 \end{urbiscriptapi}
 
 \paragraph{Calibration}
@@ -52,14 +64,28 @@ Current speed and coder values.
 \urbi unit per coder unit coefficients.
 
 \begin{urbiscriptapi}
-\item[forwardSpeedCoeff]
-\item[yawSpeedCoeff]
-\item[leftSpeedCoeff]
-\item[rightSpeedCoeff]
 \item[forwardCoeff]
-\item[yawCoeff]
+
+
+\item[forwardSpeedCoeff]
+
+
 \item[leftCoeff]
+
+
+\item[leftSpeedCoeff]
+
+
 \item[rightCoeff]
+
+
+\item[rightSpeedCoeff]
+
+
+\item[yawCoeff]
+
+
+\item[yawSpeedCoeff]
 \end{urbiscriptapi}
 
 The file \file{usegway.u} contains approximate values for meter, seconds,

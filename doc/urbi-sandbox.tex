@@ -127,28 +127,52 @@ Inside Job 0x6a2f70
 \sectionObject{Bar}
 
 \begin{urbiscriptapi}
-\item[!] A test about bang.
 \item['!'](<arg>) Another test about bang.
+
+
+\item[!] A test about bang.
+
+
 \item['!='](<arg>) Another test about bang.
+
+
 \item['!=='](<arg>) Another test about bang.
   Short-circuiting logical or. If \this is \lstinline|false| evaluate and
-%\item['\%'](<arg>) Another test about bang.
-\item[bar] This is Bar.bar.
-\item[foo](<x>) This is Bar.foo with arguments.
+
+
 \item['&&'](<arg>) Another test about bang.
+
+
+%\item['\%'](<arg>) Another test about bang.
+
+
+\item[bar] This is Bar.bar.
+
+
+\item[foo](<x>) This is Bar.foo with arguments.
+
+
+\item|fun[foo][bar]|(<var>) a function
+
+
+\item \lstinline|I do it myself|
+\item beware (not to catch the first word)
+
+
 \item[set](<key>, <value>) Map \var{key} to \var{value} and return \this so
   that invocations to \lstinline|set| can be chained.  The possibly existing
   previous mapping is overridden.
-\item \lstinline|I do it myself|
-\item beware (not to catch the first word)
+
+
 \item|slot[foo][bar]| a slot
-\item|fun[foo][bar]|(<var>) a function
 \end{urbiscriptapi}
 
 \sectionObject{Foo}
 
 \begin{urbiscriptapi}
 \item[bar] This is Foo.bar.
+
+
 \item[foo] This is Foo.foo.
 \end{urbiscriptapi}
 
@@ -173,20 +197,24 @@ This is the second chapter.
 \urbitrajectory{accel}
 
 \begin{urbiscriptapi}
-\item[count] Return the count.
-\item[launch]
-  Fire \this.
-
-%% FIXME: Something horrible happens when the slot name starts with twice
-%% the same letter.  I have no idea what's going on, I need to make an small
-%% seft-contained example and ask for help.
 \item[ccwLimit]
+  %% FIXME: Something horrible happens when the slot name starts with twice
+  %% the same letter.  I have no idea what's going on, I need to make a
+  %% small self-contained example and ask for help.
   Set max reachable angle. When both \refSlot{cwLimit} and
   \refSlot{ccwLimit} equal 0, the motor is put in continuous rotation
   mode. In this mode, writing to \refSlot{val} has no effect: the motor
   moves at the speed given by the \refSlot{speed} slot.
 
-\item \lstinline|launch|~\\
+
+\item[count] Return the count.
+
+
+\item[launch]
+  Fire \this.
+
+
+\item \lstinline|launch1|~\\
   Fire \this.
 \end{urbiscriptapi}
 
