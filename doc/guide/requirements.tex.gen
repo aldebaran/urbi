@@ -1,0 +1,64 @@
+#! /usr/bin/perl -w
+
+BEGIN
+{
+  use File::Basename;
+  unshift @INC, dirname($0) . '/../../build-aux/lib/perl';
+}
+
+use strict;
+use BuildAux::XFile;
+
+sub install($@)
+{
+  my ($package, @package) = @_;
+  my $install = $package eq "MacPorts" ? "sudo port install"
+    : "sudo apt-get install";
+
+  use Text::Wrap;
+  $Text::Wrap::columns = 60;
+  $Text::Wrap::separator = "  \\\n";
+
+  print "\\paragraph{$package}~\\\\\n";
+  print "\\begin{shell}\n";
+  print "$install$Text::Wrap::separator";
+  print wrap("   ", "   ", sort @package), "\n\n";
+  print "\\end{shell}\n";
+}
+
+
+my $input = "$ENV{srcdir}/guide/build.tex";
+my $in = new BuildAux::XFile($input);
+my @macports;
+my @deb;
+
+while ($_ = $in->getline)
+{
+  push @macports, split /\s+/, $1
+    if /^(?:MacPorts|package):\s*(.*)/;
+  push @deb, split /\s+/, $1
+    if /^(?:deb|package):\s*(.*)/;
+}
+
+install ("Debian or Ubuntu", @deb);
+print "\n";
+install ("MacPorts", @macports);
+
+
+
+### Setup "Gostai" style for perl-mode and cperl-mode.
+## Local Variables:
+## perl-indent-level: 2
+## perl-continued-statement-offset: 2
+## perl-continued-brace-offset: -2
+## perl-brace-offset: 0
+## perl-brace-imaginary-offset: 0
+## perl-label-offset: -2
+## cperl-indent-level: 2
+## cperl-brace-offset: 0
+## cperl-continued-brace-offset: -2
+## cperl-label-offset: -2
+## cperl-extra-newline-before-brace: t
+## cperl-merge-trailing-else: nil
+## cperl-continued-statement-offset: 2
+## End:

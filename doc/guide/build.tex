@@ -23,12 +23,20 @@ you just want to install a pre-built \usdk, see \autoref{sec:installation}.
 \section{Requirements}
 \label{sec:build:req}
 
-This section lists all the dependencies of this package.  Some of them are
-required to \dfn{bootstrap} the package, i.e., to build it from the
-repository.  Others are required to \dfn{build} the package, i.e., to
-compile it from a tarball, or after a bootstrap.
+This section details the dependencies of this package.  Some of them are
+required to \dfn{bootstrap} the package (\autoref{sec:build:req:bootstrap}),
+i.e., to build it from the repository.  Others are required to \dfn{build}
+the package (\autoref{sec:build:req:build}), i.e., to compile it from a
+tarball, or after a bootstrap.  Finally, some are needed to run the test
+suite (\autoref{sec:build:req:check}).
+
+The reader in a hurry can simply run one of the following commands,
+depending on her environment.
+
+\input{guide/requirements}
 
 \subsection{Bootstrap}
+\label{sec:build:req:bootstrap}
 
 To bootstrap this package from its repository, and then to compile it,
 the following tools are needed.
@@ -65,6 +73,9 @@ package: cvs
 \end{package}
 
 \item[colordiff] Not a requirement, but a useful addition.  Used if exists.
+\begin{package}
+package: colordiff
+\end{package}
 
 \item[Git 1.6 or later]
   Beware that older versions behave poorly with submodules.
@@ -96,8 +107,7 @@ package: help2man
     python\_select python26}).
 \begin{package}
 deb: python2.6
-MacPorts: python26
-MacPorts: python_select
+MacPorts: python26 python_select
 \end{package}
 
 \item[Texinfo] Needed to compile Bison.
@@ -133,6 +143,7 @@ export PYTHONPATH="\
 \end{description}
 
 \subsection{Build}
+\label{sec:build:req:build}
 
 \begin{description}
 \item[Boost 1.38 or later] Don't try to build it yourself, ask your
@@ -151,6 +162,9 @@ package: ccache
 
 \item[Doxygen] Needed if you enable the Doxygen documentation (via
   \command{configure}'s option \option{--enable-documentation=doxygen,...}).
+\begin{package}
+package: doxygen
+\end{package}
 
 \item[Flex 2.5.35 or later]
   Beware that 2.5.33 has bugs than prevents this package from building
@@ -159,11 +173,11 @@ package: ccache
 package: flex
 \end{package}
 
-\item[G++ 4.0 or later] GCC 4.2 or later is a better option.  Beware that
-  you may find a problem with GCC-4.4 which rejects some Bison generated
-  code.  See \autoref{sec:faq:build:uninitialized}.
+\item[G++ 4.0 or later] GCC 4.2 or later is a better option.  You may have a
+  problem with GCC 4.4 which rejects some Bison generated code.  See
+  \autoref{sec:faq:build:uninitialized}.
 \begin{package}
-deb: g++-4.2
+deb: g++
 MacPorts: gcc42
 \end{package}
 
@@ -242,6 +256,11 @@ deb: python-docutils
 MacPorts: py26-docutils
 \end{package}
 
+\item[ROS CTurtle or later] Needed to enable our ROS bridge.  Versions
+  CTurtle, Diamondback, and Electric Emys (1.2.X, 1.4.X, 1.6.X) are known to
+  work.  The packages and installation processes are detailed at
+  \url{http://www.ros.org/wiki/ROS}.
+
 \item[SWIG 1.3.36 or later] Used to generate the Java support for UObjects.
   Versions 1.3.36, 1.3.40, and 2.0.0 are known to work.
 \begin{package}
@@ -263,9 +282,13 @@ package: transfig
 
 \item[xsltproc] This is not a requirement, but it's better to have it. Used
   to generate reports about the \us grammar.
+\begin{package}
+MacPorts: libxslt
+\end{package}
 \end{description}
 
 \subsection{Check}
+\label{sec:build:req:check}
 
 \begin{description}
 \item[aspell] Needed by the test suite.
@@ -557,6 +580,7 @@ $ make stamps             # Update the timestamps.
 $ make check -C tests     # All passes again.
 \end{shell}
 
+\noindent
 or completely disable the test suite laziness:
 
 \begin{shell}
