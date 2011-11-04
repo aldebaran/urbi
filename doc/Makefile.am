@@ -183,7 +183,7 @@ CLEANFILES += $(pdf_DATA)
 urbi_sdk_tex := $(call ls_files,*.tex)
 urbi_sdk_sources =				\
   $(urbi_sdk_tex)				\
-  specs/keywords.tex				\
+  $(FROM_GEN)					\
   $(call ls_files,*.sty tables/*.txt tables/*.bnf)
 CLEANFILES += config.sty
 
@@ -231,13 +231,14 @@ $(REVISION_FILE):
 ## ------------------------ ##
 
 FROM_GEN =					\
-  specs/keywords.tex
+  specs/keywords.tex				\
+  guide/requirements.tex
 BUILT_SOURCES += $(FROM_GEN)
 EXTRA_DIST += $(FROM_GEN:=.gen)
 
 $(FROM_GEN): %: %.gen
 	$(AM_V_GEN)mkdir -p $(@D)
-	$(AM_V_at)$< > $@.tmp
+	$(AM_V_at)srcdir=$(srcdir) $< > $@.tmp
 	$(AM_V_at)chmod a-w $@.tmp
 	$(AM_V_at)$(move_if_change) --verbose --color $@.tmp $@
 	$(AM_V_at)touch $@
