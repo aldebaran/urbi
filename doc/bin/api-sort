@@ -73,12 +73,14 @@ sub latex_environment($$)
 	}
       elsif (m{\\end\{(\w+)\}})
 	{
-          die "$.: unexpected \\end{$1} in \\begin{$env}"
+          die $f->filename . ":$.: unexpected \\end{$1} in \\begin{$env}"
             if $1 ne $env;
 	  return $res;
 	}
     }
 }
+
+my %defined;
 
 =item C<transform($file, \$contents)>
 
@@ -92,6 +94,7 @@ sub transform ($)
   my $f = new BuildAux::XFile($file);
   my $res = '';
   # The slot being currently defined.
+  my $object = undef;
   my $slot = undef;
   my %slot;
   local $_;
@@ -132,12 +135,10 @@ sub transform ($)
         $slot = $+{name};
         die "multiply defined slot: $slot"
           if defined $slot{$slot};
+        $defined{"$object.$slot"} = "$file:$."
+          if defined $object;
         verbose 1, "Slot: $slot";
         $slot{$slot} = $_;
-      }
-      elsif (m{\\begin\{(\w+)\}})
-      {
-        $slot{$slot} .= $_ . latex_environment($f, $1);
       }
       elsif (m{\\end\{(\w+)\}})
       {
@@ -145,13 +146,18 @@ sub transform ($)
       }
       else
       {
+        if (m{\\begin\{(\w+)\}})
+        {
+          $_ .= latex_environment($f, $1);
+        }
+
         if (defined $slot)
         {
           $slot{$slot} .= $_;
         }
         # No slot currently being defined, it is certainly right after
         # the begin{urbiscriptapi}, but before the first \item.
-        # Ignore empty lines, keep the rest.
+        # Ignore empty lines, keep the rest (e.g., comments).
         elsif (!m{^\s*^})
         {
           $res .= $_;
@@ -160,6 +166,10 @@ sub transform ($)
     }
     else
     {
+      if (/\s*\\section(?:Object)?\{(.*)\}/)
+      {
+        $object = $1;
+      }
       $res .= $_;
     }
   }
@@ -192,6 +202,9 @@ sub transform_file ($$)
 getopt;
 map { transform_file ($_, \&transform); } @ARGV;
 
+my $documented = new BuildAux::XFile(">documented.txt");
+print $documented "$_\n"
+  foreach sort slot_cmp keys %defined;
 
 ### Setup "Gostai" style for perl-mode and cperl-mode.
 ## Local Variables:
