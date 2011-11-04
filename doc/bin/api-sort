@@ -48,66 +48,123 @@ sub slot_cmp
   $l cmp $r
 }
 
+=item C<latex_environment($f, $env)>
+
+Return all the lines until (and including) the matching C<\end{$env}>
+in the IO::File C<$f>.
+
+Takes care of nested environments, it really returns the corresponding
+end, not the first one coming.
+
+=cut
+
+sub latex_environment($$);
+sub latex_environment($$)
+{
+  my ($f, $env) = @_;
+  my $res = '';
+  local $_;
+  while ($_ = $f->getline)
+    {
+      $res .= $_;
+      if (m{\\begin\{(\w+)\}})
+	{
+	  $res .= latex_environment($f, $1);
+	}
+      elsif (m{\\end\{(\w+)\}})
+	{
+          die "$.: unexpected \\end{$1} in \\begin{$env}"
+            if $1 ne $env;
+	  return $res;
+	}
+    }
+}
+
 =item C<transform($file, \$contents)>
 
 Sort the urbiscriptapi sections.
 
 =cut
 
-sub transform ($\$)
+sub transform ($)
 {
-  my ($file, $contents_ref) = @_;
-  $$contents_ref =~
-    s
-    <
-      \\begin{urbiscriptapi}
-      (.*?)
-      \\end{urbiscriptapi}
-    >
+  my ($file) = @_;
+  my $f = new BuildAux::XFile($file);
+  my $res = '';
+  # The slot being currently defined.
+  my $slot = undef;
+  my %slot;
+  local $_;
+  while ($_ = $f->getline)
+  {
+    if (/\\begin\{urbiscriptapi\}/ .. /\\end\{urbiscriptapi\}/)
     {
-      my %slot;
-      verbose 1, "Got an urbiscriptapi section";
-      my $body = $1;
-      verbose 2, "<<<$body>>>";
-      $body =~ s{(
-                   ^[% ]*\\item
-                   (?:\[(?<name>.*?)\]
-                     |\|(?<name>.*?)\|
-                     |\s*\\lstinline[|+](?<name>.*?)\(
-                     |\s*\\labelSlot\{(?<name>.*?)\}
-                   )
-                   .*?
-                 )
-                 (?=^[% ]*\\item|\z)}
-         {
-           my $k = $+{name};
-           die "multiply defined slot: $k"
-             if defined $slot{$k};
-           (my $v = $1) =~ s/\s*\z//s;;
-           verbose 1, "Key: $k";
-           $slot{$k} = $v;
-           ""
-         }gexsm;
+      if (/\\begin\{urbiscriptapi\}/)
+      {
+        verbose 1, "$file:$.: begin{urbiscriptapi}";
+        $res .= $_;
+        %slot = ();
+        $slot = undef;
+      }
+      elsif (/\\end\{urbiscriptapi\}/)
+      {
+        verbose 1, "$file:$.: end{urbiscriptapi}";
 
-       # This is what was not recognized.
-       $body = strip_spaces $body;
-       if ($body)
-       {
-         verbose 1, "Found leftover: <<$body>>";
-         $slot{"ZZZZZ"} = $body;
-       }
+        # Trailing spaces;
+        map { s/\s+\z//g } values %slot;
 
-       # Trailing spaces;
-       map { s/\s+\z//g } values %slot;
+        my @slot = sort slot_cmp keys %slot;
+        verbose 3, map { "$_: <<$slot{$_}>>" } @slot;
 
-       my @slot = sort slot_cmp keys %slot;
-       verbose 3, map { "$_: <<$slot{$_}>>" } @slot;
+        $res .=
+          (join ("\n\n\n", map { "$slot{$_}" } @slot)
+           . "\n"
+           . $_);
+      }
+      elsif (m{^[% ]*\\item
+                (?:\[(?<name>.*?)\]
+                  |\|(?<name>.*?)\|
+                  |\s*\\lstinline(?<quote>[|+])(?<name>.*?)(?:\k{quote}|\()
+                  |\s*\\labelSlot\{(?<name>.*?)\}
+                )
+               }x)
+      {
+        $slot = $+{name};
+        die "multiply defined slot: $slot"
+          if defined $slot{$slot};
+        verbose 1, "Slot: $slot";
+        $slot{$slot} = $_;
+      }
+      elsif (m{\\begin\{(\w+)\}})
+      {
+        $slot{$slot} .= $_ . latex_environment($f, $1);
+      }
+      elsif (m{\\end\{(\w+)\}})
+      {
+        die "$file:$.:unexpected \\end";
+      }
+      else
+      {
+        if (defined $slot)
+        {
+          $slot{$slot} .= $_;
+        }
+        # No slot currently being defined, it is certainly right after
+        # the begin{urbiscriptapi}, but before the first \item.
+        # Ignore empty lines, keep the rest.
+        elsif (!m{^\s*^})
+        {
+          $res .= $_;
+        }
+      }
+    }
+    else
+    {
+      $res .= $_;
+    }
+  }
 
-       ("\\begin{urbiscriptapi}\n"
-        . join ("\n\n\n", map { "$slot{$_}" } @slot)
-        . "\n\\end{urbiscriptapi}");
-    }xsge;
-  $$contents_ref;
+  $res;
 }
 
 
@@ -124,7 +181,7 @@ sub transform_file ($$)
 {
   my ($file, $transform_ref) = @_;
   my $contents = contents ($file);
-  file_update($file, $transform_ref->($file, \$contents));
+  file_update($file, $transform_ref->($file));
 }
 
 
