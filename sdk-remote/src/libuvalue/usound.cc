@@ -55,6 +55,7 @@ namespace urbi
     for (unsigned i = 0; i < cardinality_of(formats); ++i)
       if (s == formats[i])
         return static_cast<USoundFormat>(i);
+    GD_FINFO_TRACE("unknown sound format: %s", s);
     return SOUND_UNKNOWN;
   }
 
