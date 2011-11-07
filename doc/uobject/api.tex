@@ -728,19 +728,20 @@ void BinaryProcessor::onData(UVar& v)
 Typing \lstinline{OptimizedImageSource.val} in \us will wait for the next
 update from OptimizedImageSource::update and copy the data at this point.
 
-\section{Direct communication between UObjects}
-
+\section{Direct Communication between UObjects}
+\label{sec:uob:api:direct}
 For modularity reasons, all interactions between \lstinline{UObjects} should
 go through the various middleware communication mechanisms, mainly
 \lstinline{InputPort} and \lstinline{UNotifyChange}. But it is possible to
-access directly the C++ instance of an \UObject :
+access directly the \Cxx instance of an \UObject:
 
 \begin{itemize}
 \item by binding a function taking a \lstinline{UObject*} as argument, and
-calling it from \us, passing the \UObject itself.
-\item by calling the C++ function \lstinline{getUObject(name)}. \lstinline{name}
-must be the canonical \UObject name, passed to your constructor, and stored in
-the \lstinline{__name} member.
+  calling it from \us, passing the \UObject itself.
+\item by calling the \Cxx function
+  \lstinline|getUObject(\var{name})|. \var{name} must be the canonical
+  \UObject name, passed to your constructor, and stored in the
+  \lstinline{__name} member.
 \end{itemize}
 
 
