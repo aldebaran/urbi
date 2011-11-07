@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1507 utf-8
+personal_ws-1.1 en 1510 utf-8
 aa
 aaa
 abc
@@ -111,6 +111,7 @@ AudioIn
 AudioOut
 autocompletion
 autoconf
+autodebug
 automain
 automake
 autopoint
@@ -349,6 +350,7 @@ elt
 emacs
 emitDone
 emitEvent
+Emys
 enableBypass
 enableStats
 encoderResolution
@@ -364,7 +366,6 @@ EOF
 eq
 eration
 errlog
-ESSID
 essid
 et
 ev
@@ -467,6 +468,7 @@ getStats
 getTarget
 getter
 gettext
+getUObject
 getUObjectHub
 getVal
 getWidth
@@ -626,6 +628,7 @@ jessie
 jni
 jpeg
 jpg
+JVM
 keepEmpty
 keepSep
 keepSeparator
@@ -668,6 +671,7 @@ lexicographically
 lhs
 libboost
 libcoroutine
+libfoo
 libjpeg
 liblinphone
 libltdl
@@ -682,6 +686,7 @@ LibUObject
 libuobject
 liburbi
 liburbijava
+libxslt
 licensors
 lightCenter
 lightLeft
@@ -760,6 +765,7 @@ mkdir
 mn
 mne
 MobileSim
+modularity
 MOGS
 Monde
 monomethods
@@ -816,6 +822,7 @@ myType
 myuob
 myUObject
 myuobject
+myUvar
 myVar
 namespace
 NaN
@@ -908,7 +915,6 @@ perlre
 PGain
 php
 physicsReset
-PID
 pid
 pidChanged
 Pierron
@@ -982,9 +988,7 @@ RCS
 README
 realloc
 redBallDetected
-RedBallDetection
 redBallDetection
-RedBallTracker
 redBallTracker
 redBlink
 redefinable
