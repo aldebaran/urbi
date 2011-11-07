@@ -133,6 +133,7 @@ case $BUILDFARM_COMPILER in
     --enable-shared                             \
     --disable-static                            \
     --enable-dependency-tracking                \
+    --enable-library-suffix                     \
     host_alias=mingw32                          \
     --host=mingw32"
   ;;
