@@ -27,12 +27,20 @@ This chapter lists the user-visible changes in \usdk releases.
 \section{\usdk 2.7.4}
 \release{2.7}{2011-11-11}
 
+This release back-ports several fixes from the forthcoming next major
+release of \urbi, to the 2.7 family.
+
 \subsection{Fixes}
 \begin{itemize}
 \item Freezing an event handler could prevent other event handlers to
   function properly.
 \item The indentation of the Emacs \us mode is fixed (contributed by Jeremy
   W. Sherman).
+\item Various errors were fixed in the documentation of \UObject.
+\item Binding a single UVar several times not longer crashes.
+\item Handling of text and binary files on Windows should no longer be a
+  problem.
+\item Disconnection of remote UObjects behaves properly.
 \end{itemize}
 
 \section{\usdk 2.7.3}
