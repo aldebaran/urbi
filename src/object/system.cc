@@ -463,7 +463,7 @@ namespace urbi
     static rDictionary
     system_environ_init()
     {
-      char** env = libport::getenviron();
+      const char** env = libport::getenviron();
 
       if (!env_)
         env_ = new Dictionary;
