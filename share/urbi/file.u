@@ -19,6 +19,12 @@ do (File)
     asPath.basename
   };
 
+  function lastModifiedDate()
+  {
+    Kernel1.deprecated("lastModifiedDate", "asPath.lastModifiedDate") |
+    asPath.lastModifiedDate
+  };
+
   function '$doInto'(rhs, action, routine)
   {
     Directory.getSlotValue("$doInto").apply([this, rhs, action, routine]);

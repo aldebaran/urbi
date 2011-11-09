@@ -55,6 +55,12 @@ do (Global.Directory)
     asPath.basename
   };
 
+  function lastModifiedDate()
+  {
+    Kernel1.deprecated("lastModifiedDate", "asPath.lastModifiedDate") |
+    asPath.lastModifiedDate
+  };
+
   function copy(dirname)
   {
     var dir = Directory.createAll(dirname) |
