@@ -411,6 +411,7 @@ namespace urbi
             if (t != waiter.controlTag && t->frozen())
             {
               frozen = true;
+              ++i;
               break;
             }
           if (!frozen) // Do not trigger a frozen at.
