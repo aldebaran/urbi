@@ -207,7 +207,7 @@ namespace eval
       , current(0)
       , subscriptions()
       {}
-
+    ~WatchEventData();
     object::Event* event;
     // Same value as event, used when watching to keep it alive
     object::rEvent event_ward;
@@ -217,6 +217,14 @@ namespace eval
     object::rProfile profile;
   };
 
+
+  Visitor::WatchEventData::~WatchEventData()
+  {
+    GD_CATEGORY(Urbi.At);
+    GD_FINFO_TRACE("Stopping %s subscribers", subscriptions.size());
+    foreach(object::rSubscription& s, subscriptions)
+      s->stop();
+  }
 
   LIBPORT_SPEED_ALWAYS_INLINE object::rObject
   Visitor::watch_eval(WatchEventData* data)
