@@ -76,6 +76,9 @@ See \autoref{sec:lang:tag} for details.
 \item \refSlot[Directory]{basename} and \refSlot[File]{basename} are
   deprecated, use \lstinline|asPath.basename| instead.
 
+\item \refSlot[Directory]{lastModifiedDate} and \refSlot[File]{lastModifiedDate} are
+  deprecated, use \lstinline|asPath.lastModifiedDate| instead.
+
 \item \refSlot[InputStream]{get} (and \refSlot[InputStream]{getChar},
   \refSlot[InputStream]{getLine}) now returns \refObject{nil} instead of
   \refObject{void} when it reaches the end of file.  To provide backward
