@@ -85,6 +85,7 @@ ARNLPATH
 ary
 asBase
 asBool
+ascii
 asDerive
 asEvent
 asExecutable
@@ -657,6 +658,7 @@ IRs
 isA
 isAlnum
 isAlpha
+isAscii
 isBlank
 isCntrl
 isConnected
@@ -750,6 +752,7 @@ LibUObject
 libuobject
 liburbi
 liburbijava
+libxslt
 licensors
 lightCenter
 lightLeft
