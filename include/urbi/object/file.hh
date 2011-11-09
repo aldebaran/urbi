@@ -48,7 +48,6 @@ namespace urbi
       void init(const std::string& path);
 
       static rFile createTemp(rObject);
-      rDate last_modified_date() const;
       void remove();
       rFile rename(const std::string& dst);
       rFloat size() const;

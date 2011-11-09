@@ -53,7 +53,6 @@ namespace urbi
       void clear();
       bool empty() const;
       bool exists() const;
-      rDate last_modified_date() const;
       rDirectory parent() const;
       void remove();
       void remove_all();

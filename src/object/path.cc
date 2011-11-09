@@ -94,6 +94,7 @@ namespace urbi
       BIND(isDir, is_dir);
       BIND(isReg, is_reg);
       BIND(open);
+      BIND(lastModifiedDate, last_modified_date);
       BIND(readable);
       BIND(writable);
     }

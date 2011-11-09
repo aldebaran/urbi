@@ -238,7 +238,6 @@ namespace urbi
       BIND(createAll, create_all);
       BIND(empty);
       BIND(exists);
-      BIND(lastModifiedDate, last_modified_date);
       BIND(parent);
       BIND(remove);
       BIND(removeAll_, remove_all);
@@ -385,12 +384,6 @@ namespace urbi
     Directory::exists() const
     {
       return path_->exists();
-    }
-
-    rDate
-    Directory::last_modified_date() const
-    {
-      return path_->last_modified_date();
     }
 
     rDirectory

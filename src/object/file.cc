@@ -93,18 +93,11 @@ namespace urbi
       BIND(asString, as_string);
       BIND(content);
       BIND(create);
-      BIND(lastModifiedDate, last_modified_date);
       BIND(remove);
       BIND(rename);
       BIND(size);
 
       setSlot(SYMBOL(init), new Primitive(&file_init_bouncer));
-    }
-
-    rDate
-    File::last_modified_date() const
-    {
-      return path_->last_modified_date();
     }
 
     rFile File::create(rObject, const std::string& p)
