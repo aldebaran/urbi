@@ -131,11 +131,11 @@ override the default behavior.
 \item[URBI\_PATH] The search-path for \us source files (i.e.,
   \file{*.u} files).
 
-\item[URBI\_ROOT] The \usdk is relocatable: its components know the
-  relative location of each other.  Yet they need to ``guess'' the
-  \urbi root, i.e., the path to the directory that contains the files.
-  This variable also to override that guess.  Do not use it unless you
-  know exactly what you are doing.
+\item[URBI\_ROOT] \index{urbi-root}\usdk is relocatable: its components know
+  the relative location of each other.  Yet they need to ``guess'' the
+  \var{urbi-root}, i.e., the path to the directory that contains all the
+  files.  This variable permits to override that guess.  Do not use it
+  unless you know exactly what you are doing.
 
 \item[URBI\_TEXT\_MODE] If set in the environment of a remote urbi-launch,
   disable binary protocol and force using \us messages.
@@ -185,6 +185,7 @@ simpler to use than, \command{urbi-launch}
 \begin{options}[General Options]
 \item[h]{help} \optionHelp
 \item{version} \optionVersion
+\item{print-root} Output the \var{urbi-root} and exit successfully.
 \end{options}
 
 \begin{options}[Tuning]
@@ -415,6 +416,7 @@ specified.
 \begin{options}[Urbi-launch options]
 \item[h]{help} \optionHelp
 \item{version} \optionVersion
+\item{print-root} Output the \var{urbi-root} and exit successfully.
 \item[c]{customize=\var{file}} Start the \urbi server in
   \var{file}.  This option is mostly for developers.
 \item[d]{debug=\var{level}} \optionDebug
