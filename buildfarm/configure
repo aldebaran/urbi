@@ -91,6 +91,11 @@ if $(older "$DIR_SOURCE/configure" "$0"); then
   # record the location of the previous version of Boost we were
   # using, but really the new ones.  So really, it's costly, but
   # safer, to start anew.
+  #
+  # Beware that distcheck builds readonly hierarchies, which we need
+  # to switch back to writable before removal.  Taken from
+  # am__remove_distdir in Makefile.in.
+  find "$DIR_BUILD" -type d ! -perm -200 -exec chmod u+w {} ';'
   rm -rf "$DIR_BUILD"
   mkdir "$DIR_BUILD"
 fi
