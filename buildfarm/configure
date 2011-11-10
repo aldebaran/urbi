@@ -96,9 +96,9 @@ export PKG_CONFIG_PATH=$local/pkgconfig/$BUILDFARM_MODE:$local/pkgconfig:$PKG_CO
 
 # Boost.
 case $BUILDFARM_OS in
-  (linux_lucid) ;;                   # Use the native Boost.
-  (windows)     BOOST_VERSION=1.47;; # For some historical reason.
-  (*)           BOOST_VERSION=1.38;; # Match Naoqi's requirement.
+  (linux_lucid|macos) ;;             # Use the native Boost.
+  (windows)     BOOST_VERSION=1.47;; # Why now, actually...
+  (*)           BOOST_VERSION=1.40;; # Match Ubuntu Lucid's Boost.
 esac
 if test -n "$BOOST_VERSION"; then
   BOOST=$(pkg-config --print-errors boost-$BOOST_VERSION --variable=prefix)
