@@ -83,6 +83,16 @@ if $(older "$DIR_SOURCE/configure" "$0"); then
   cd "$DIR_SOURCE"
   ./bootstrap
   cd $here
+  test -d "$DIR_BUILD" ||
+    fatal "DIR_BUILD is not a directory: $DIR_BUILD"
+  # We have changed stuff in our configuration.  Let's completely
+  # reconfigure everything from scratch.  For instance if we change of
+  # "Boost" version, then we no longer want to have the Makefile still
+  # record the location of the previous version of Boost we were
+  # using, but really the new ones.  So really, it's costly, but
+  # safer, to start anew.
+  rm -rf "$DIR_BUILD"
+  mkdir "$DIR_BUILD"
 fi
 
 
