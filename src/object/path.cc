@@ -231,8 +231,35 @@ namespace urbi
     }
 
     void
+    Path::raise_file_exists() const
+    {
+      FRAISE("file exists: \"%s\"", as_string());
+    }
+
+    void
+    Path::raise_directory_exists() const
+    {
+      FRAISE("directory exists: \"%s\"", as_string());
+    }
+
+    void
+    Path::check_nexists() const
+    {
+      if (exists())
+      {
+        if (is_dir())
+          raise_directory_exists();
+        else
+          raise_file_exists();
+      }
+    }
+
+    void
     Path::rename(const std::string& dst)
     {
+      rPath p = new Path(dst);
+      p->check_nexists();
+      delete p;
       libport::path path = path_.value_get();
       path.rename(dst);
       path_ = path;

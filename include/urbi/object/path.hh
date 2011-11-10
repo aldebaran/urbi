@@ -37,6 +37,9 @@ namespace urbi
       ATTRIBUTE_CONST
       const value_type& value_get() const;
       void value_set(const value_type&);
+      void raise_directory_exists() const;
+      void raise_file_exists() const;
+      void check_nexists() const;
 
     /*---------------.
     | Urbi methods.  |

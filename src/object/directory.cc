@@ -68,32 +68,6 @@ namespace urbi
         FRAISE("directory does not exist: \"%s\"", path->as_string());
     }
 
-    ATTRIBUTE_NORETURN
-    static void
-    raise_file_exists(const rPath& path)
-    {
-      FRAISE("file exists: \"%s\"", path->as_string());
-    }
-
-    ATTRIBUTE_NORETURN
-    static void
-    raise_directory_exists(const rPath& path)
-    {
-      FRAISE("directory exists: \"%s\"", path->as_string());
-    }
-
-    static void
-    check_nexists(const rPath& path)
-    {
-      if (path->exists())
-      {
-        if (path->is_dir())
-          raise_directory_exists(path);
-        else
-          raise_file_exists(path);
-      }
-    }
-
     static void
     check_empty(const Directory& dir)
     {
@@ -307,7 +281,7 @@ namespace urbi
     Directory::create_directory(rPath path)
     {
       bool created = false;
-      check_nexists(path);
+      path->check_nexists();
 
       try
       {
@@ -330,7 +304,7 @@ namespace urbi
     Directory::create_all_recursive(rPath path)
     {
       if (path->exists() && !path->is_dir())
-        raise_file_exists(path);
+        path->raise_file_exists();
       if (!path->is_root())
       {
         rPath parent = path->parent();
