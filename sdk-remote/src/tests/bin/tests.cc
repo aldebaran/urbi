@@ -34,7 +34,7 @@ usage()
     "Usage: " << program_name() << " [OPTION]... TEST...\n"
     "\n"
     "Options:\n"
-    "  -h, --help            display this message and exit\n"
+    "  -h, --help            output this message and exit successfully\n"
     "  -H, --host ADDR   the host running the Urbi server"
               << " [" << urbi::UClient::default_host() << "]\n"
     "  -p, --port PORT       tcp port URBI will listen to"

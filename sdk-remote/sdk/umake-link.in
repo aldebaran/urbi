@@ -14,15 +14,15 @@ Hopefully this tool will be obsolete some day --- the day Libtool
 supports --whole-archive appropriately.
 
 General options:
-  -D, --debug         turn on shell debugging (set -x)
-  -h, --help          display this help and exit successfully
-  -q, --quiet         no output unless errors (implies --batch)
-  -V, --version       display version information and exit successfully
-  -v, --verbose       report on what is done
+  -D, --debug    turn on shell debugging (set -x)
+  -h, --help     output this help and exit successfully
+  -q, --quiet    no output unless errors (implies --batch)
+  -V, --version  output version information and exit successfully
+  -v, --verbose  report on what is done
 
 Specific options:
-  -L, --libtool=PATH    path to libtool
-  -E, --env=URBI-ENV    urbi environment name (e.g., engine)
+  -L, --libtool=PATH  path to libtool
+  -E, --env=URBI-ENV  urbi environment name (e.g., engine)
 
 Report bugs to @PACKAGE_BUGREPORT@.
 EOF

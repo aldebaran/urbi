@@ -7,9 +7,10 @@ usage: $me [OPTIONS] MODULE_NAMES ... [-- UOPTIONS...]
 Start an UObject in either remote or plugin mode.
 
 Urbi-Launch options:
-  -h, --help         display this message and exit successfully
-      --version      display version information
-  -d, --debug=LEVEL  set the debug level in NONE, LOG (default), TRACE, DEBUG, DUMP
+  -h, --help         output this message and exit successfully
+      --version      output version information and exit successfully
+  -d, --debug=LEVEL  set the debug level [LOG]
+                     (NONE, LOG, TRACE, DEBUG, DUMP)
 
 Java options:
   -c, --classpath=PATH

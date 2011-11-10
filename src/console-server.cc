@@ -317,17 +317,14 @@ namespace urbi
     LoopData data;
 #ifndef NO_OPTION_PARSER
     libport::OptionFlag
-      arg_fast("ignore system time, go as fast as possible",
-               "fast", 'F'),
-      arg_interactive("read and parse stdin in a nonblocking way",
-                      "interactive", 'i'),
+      arg_fast("ignore system time, go as fast as possible", "fast", 'F'),
+      arg_interactive("read stdin in a nonblocking way", "interactive", 'i'),
       arg_no_net("ignored for backward compatibility", "no-network", 'n'),
       arg_no_banner("do not send the Urbi banner to incoming clients",
                     "quiet", 'q');
 
     libport::OptionValue
-      arg_stack    ("set the job stack size in KB",
-                    "stack-size", 's', "SIZE");
+      arg_stack("set the job stack size in KB", "stack-size", 's', "SIZE");
 
     libport::OptionsEnd arg_remaining(true);
     {
