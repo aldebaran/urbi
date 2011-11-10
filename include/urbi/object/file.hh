@@ -49,7 +49,6 @@ namespace urbi
 
       static rFile createTemp(rObject);
       void remove();
-      rFile rename(const std::string& dst);
       rFloat size() const;
 
       // Conversions

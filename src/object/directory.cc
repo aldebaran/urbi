@@ -241,7 +241,6 @@ namespace urbi
       BIND(parent);
       BIND(remove);
       BIND(removeAll_, remove_all);
-      BIND(rename);
 
       setSlot(SYMBOL(init),   new Primitive(&directory_init_bouncer));
     }
@@ -411,16 +410,6 @@ namespace urbi
     {
       check_exists(path_);
       boostfs::remove_all(boostfs::path(path_->as_string()));
-    }
-
-    rDirectory
-    Directory::rename(const std::string& name)
-    {
-      check_nexists(new Path(name));
-      boostfs::rename(path_->as_string().c_str(),
-                      name.c_str());
-      path_ = new Path(name);
-      return this;
     }
 
     /*---------------------.

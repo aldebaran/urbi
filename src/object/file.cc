@@ -94,7 +94,6 @@ namespace urbi
       BIND(content);
       BIND(create);
       BIND(remove);
-      BIND(rename);
       BIND(size);
 
       setSlot(SYMBOL(init), new Primitive(&file_init_bouncer));
@@ -113,15 +112,6 @@ namespace urbi
     void File::remove()
     {
       path_->value_get().remove();
-    }
-
-    rFile
-    File::rename(const std::string& dst)
-    {
-      libport::path path = path_->value_get();
-      path.rename(dst);
-      path_->value_set(path);
-      return this;
     }
 
     rFloat

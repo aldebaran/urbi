@@ -56,7 +56,6 @@ namespace urbi
       rDirectory parent() const;
       void remove();
       void remove_all();
-      rDirectory rename(const std::string&);
 
     /*---------------------.
     | Global information.  |
