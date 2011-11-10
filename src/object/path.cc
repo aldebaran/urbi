@@ -96,6 +96,7 @@ namespace urbi
       BIND(open);
       BIND(lastModifiedDate, last_modified_date);
       BIND(readable);
+      BIND(rename);
       BIND(writable);
     }
 
@@ -227,6 +228,14 @@ namespace urbi
       // thrown if binding this method to Urbi.
       return new Date(boost::posix_time::from_time_t(path_.last_write_time())
                       + Date::local_time_offset());
+    }
+
+    void
+    Path::rename(const std::string& dst)
+    {
+      libport::path path = path_.value_get();
+      path.rename(dst);
+      path_ = path;
     }
 
     rPath

@@ -65,6 +65,7 @@ namespace urbi
       rPath path_concat(rPath other) const;
       rPath parent() const;
       rPath string_concat(rString other) const;
+      void rename(const std::string& dst);
 
       // Stat.
       bool absolute() const;
