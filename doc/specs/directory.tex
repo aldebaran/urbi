@@ -379,11 +379,13 @@ removeSlots("dir1", "dir2", "file1", "file2");
 
 
 \item[rename]
-  Rename or move the directory.
+  Rename or move the directory. Deprecated, use
+  \lstinline|asPath.rename| instead.
 \begin{urbiscript}
 var dir = Directory.create("dir")|;
 File.create("dir/file")|;
 dir.rename("other");
+[00000001:warning] !!! `rename(name)' is deprecated, use `asPath.rename(name)'
 [00000001] Directory("other")
 dir;
 [00000002] Directory("other")
@@ -391,6 +393,7 @@ dir.content;
 [00000003] ["file"]
 var dir2 = Directory.create("dir2")|;
 dir.rename("dir2/other2");
+[00000002:warning] !!! `rename(name)' is deprecated, use `asPath.rename(name)'
 [00000004] Directory("dir2/other2")
 dir;
 [00000005] Directory("dir2/other2")
