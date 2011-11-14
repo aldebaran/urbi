@@ -164,6 +164,8 @@ Path.cwd.isDir;
 !Path.cwd.isReg;
 \end{urbiassert}
 
+\item[lastModifiedDate]
+  last modified date of the path.
 
 \item[open]
   Open \this. Return either a \dfn{Directory} or a
@@ -176,6 +178,21 @@ Path.cwd.isDir;
 \begin{urbiassert}
 Path.new(".").readable;
 \end{urbiassert}
+
+\item[rename]
+  Rename the path.
+\begin{urbiscript}
+var dir1 = Directory.create("dir1") |
+var p = dir1.asPath |
+p.rename("renameddir");
+assert
+{
+  p.basename == "renameddir";
+};
+\end{urbiscript}
+\begin{urbicomment}
+Directory.new("renameddir").remove;
+\end{urbicomment}
 
 
 \item[writable]
