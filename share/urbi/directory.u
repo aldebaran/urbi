@@ -61,6 +61,12 @@ do (Global.Directory)
     asPath.lastModifiedDate
   };
 
+  function rename(name)
+  {
+    Kernel1.deprecated("rename(name)", "asPath.rename(name)") |
+    asPath.rename(name)
+  };
+
   function copy(dirname)
   {
     var dir = Directory.createAll(dirname) |
@@ -74,9 +80,19 @@ do (Global.Directory)
     '$doInto'(dir, "copy", "copyInto")
   };
 
-  function moveInto(dir)
+  function moveInto(directory)
   {
-    '$doInto'(dir, "rename", "moveInto")
+    var rhs = directory.asPath |
+    var dir |
+    if (rhs.isA(Directory))
+      dir = rhs
+    else if (rhs.isA(Path) || rhs.isA(String))
+      dir = Directory.new(rhs)
+    else
+      throw Exception.argumentTypeException(routine, 1, rhs,
+                                            [Directory, Path, String]) |
+    var path = Path.new(dir.asString) / Path.new(asPath.basename) |
+    Path.getSlotValue("rename").apply([asPath, path.asString]) |
   };
 
   function removeAll()

@@ -25,6 +25,12 @@ do (File)
     asPath.lastModifiedDate
   };
 
+  function rename(name)
+  {
+    Kernel1.deprecated("rename(name)", "asPath.rename(name)") |
+    asPath.rename(name)
+  };
+
   function '$doInto'(rhs, action, routine)
   {
     Directory.getSlotValue("$doInto").apply([this, rhs, action, routine]);
@@ -43,7 +49,8 @@ do (File)
 
   function moveInto(dir)
   {
-    '$doInto'(dir, "rename", "moveInto")
+    Directory.getSlotValue("moveInto").apply([this,dir]) |
+    this;
   };
 
   function save(name, content)
