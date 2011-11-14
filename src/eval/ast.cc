@@ -212,7 +212,7 @@ namespace eval
     // Same value as event, used when watching to keep it alive
     object::rEvent event_ward;
     object::rCode exp;
-    object::EventHandler* current;
+    object::rEventHandler current;
     std::vector<object::rSubscription> subscriptions;
     object::rProfile profile;
   };
@@ -338,18 +338,20 @@ namespace eval
     GD_CATEGORY(Urbi.At);
     GD_FPUSH_TRACE("Unsubscribed watch event: %s, %s",
                    data->exp->body_string(), data->event->counter_get());
-    // If this event is alive only because it's up, terminate it.
-    /* That is to say, detect the case where there is a reference loop
-     * between an event and a trigger on that event (which generates a
-     * child event and a cross-reference between them).
+    /* The watch event is not accessible directly to the user.
+     * so as soon as it is unsubscribed from, it is dead.
      */
-    if (data->current && data->event->counter_get() <= 3)
+    // Kill current trigger if event is up (ie condition is currently true)
+    if (data->current)
     {
-      GD_FINFO_TRACE("KILL %s", data->current->counter_get());
+      GD_INFO_TRACE("Killing active event handler");
       data->current->stop();
-      GD_FINFO_TRACE("KILL %s, %s", data->current->counter_get(),
-                     data->event->counter_get());
+      data->current = 0;
     }
+    GD_FINFO_TRACE("Force-stopping %s subscriptions", data->subscriptions.size());
+    foreach (object::rSubscription& s, data->subscriptions)
+      s->stop();
+    // Reset event_ward to allow destruction of the watch event.
     data->event_ward = 0;
   }
 
