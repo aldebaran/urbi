@@ -74,8 +74,9 @@ namespace urbi
         foreach (const stop_job_type& stop_job, stop_jobs_type(stop_jobs_))
         {
           rSubscription actions = stop_job.get<0>();
-          spawn_actions_job(actions,
-                            actions->leave_, stop_job.get<1>());
+          if (actions->leave_)
+            spawn_actions_job(actions,
+                              actions->leave_, stop_job.get<1>());
         }
         r.yield_until_terminated(children);
       }
