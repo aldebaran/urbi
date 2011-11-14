@@ -7,4 +7,4 @@
 ## See the LICENSE file for more information.
 
 pkgconfigdir = $(datadir)/pkgconfig
-nodist_pkgconfig_DATA = urbi.pc
+nodist_pkgconfig_DATA = share/pkgconfig/urbi.pc

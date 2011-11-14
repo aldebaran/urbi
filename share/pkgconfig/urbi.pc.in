@@ -12,7 +12,7 @@ libdir=@libdir@
 includedir=@includedir@
 
 Name: @PACKAGE_NAME@
-Description:
+Description: Urbi Software Development Kit
 Version: @VERSION@
 URL: http://www.urbiforge.org
 Libs: -L${libdir} -lport
