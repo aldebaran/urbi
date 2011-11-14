@@ -112,7 +112,7 @@ namespace urbi
     {
       rJob r = kernel::runner().as_job();
       // Prevent loopback notification on the remote who called us.
-      ufloat f = (long)(void*)this;
+      ufloat f = (unsigned long)(void*)this;
       if (!r->slot_has(SYMBOL(DOLLAR_uobjectInUpdate)))
         r->slot_set_value(SYMBOL(DOLLAR_uobjectInUpdate),
                           new Float(f));
