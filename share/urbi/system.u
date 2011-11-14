@@ -75,7 +75,7 @@ do (System)
     Job.current
   };
 
-  do (environ)
+  do (env)
   {
     var getenv = System.getSlotValue("getenv") |
     var setenv = System.getSlotValue("setenv") |
@@ -89,14 +89,14 @@ do (System)
 
     function '[]='(var key, var value)
     {
-      Dictionary.getSlotValue("[]=").apply([environ, key, value]) |
+      Dictionary.getSlotValue("[]=").apply([env, key, value]) |
       setenv(key, value);
     };
 
     function erase(var key)
     {
-      if (environ.has(key))
-        Dictionary.getSlotValue("erase").apply([environ, key]) |
+      if (env.has(key))
+        Dictionary.getSlotValue("erase").apply([env, key]) |
       unsetenv(key);
     };
   };
@@ -229,20 +229,20 @@ do (System)
 
   function getenv(var k)
   {
-    Kernel1.deprecated("System.getenv(that)", "System.environ[that]") |
-    environ[k];
+    Kernel1.deprecated("System.getenv(that)", "System.env[that]") |
+    env[k];
   };
 
   function setenv(var k, var v)
   {
     Kernel1.deprecated("System.setenv(var, value)",
-                       "System.environ[var] = value") |
-    environ[k] = v
+                       "System.env[var] = value") |
+    env[k] = v
   }|;
 
   function unsetenv(var k)
   {
-    Kernel1.deprecated("System.unsetenv(var)", "System.environ.erase(var)") |
-    environ.erase(k)
+    Kernel1.deprecated("System.unsetenv(var)", "System.env.erase(var)") |
+    env.erase(k)
   }|;
 };

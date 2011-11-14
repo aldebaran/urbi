@@ -108,7 +108,7 @@ i.close;
 
 \item \refSlot[System]{getenv}, \refSlot[System]{setenv},
   \refSlot[System]{unsetenv} are deprecated in favor of
-  \refSlot[System]{environ}.
+  \refSlot[System]{env}.
 
 \item \refSlot[System]{spawn} is deprecated in favor of
   \refSlot[Code]{spawn}.
@@ -2015,7 +2015,7 @@ echo (x);
 
 \begin{urbiscript}
 var ne = System.getenv("nonexistent");
-[00000001:warning] !!! `System.getenv(that)' is deprecated, use `System.environ[that]'
+[00000001:warning] !!! `System.getenv(that)' is deprecated, use `System.env[that]'
 if (!ne.isNil) do_something(ne);
 \end{urbiscript}
 

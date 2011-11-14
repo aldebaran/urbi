@@ -84,42 +84,42 @@ assert_(1 == 1 + 1, "one is not two");
 \end{urbiscript}
 
 
-\item[environ]
+\item[env]
   A \refObject{Dictionary} containing information about the current
   environment of \urbi.
 \begin{urbiassert}
-(environ["MyVar"] = 12) == "12";
-environ["MyVar"] == "12";
+(env["MyVar"] = 12) == "12";
+env["MyVar"] == "12";
 
 // A child process that uses the environment variable.
 System.system("exit $MyVar") >> 8 ==
        {if (Platform.isWindows) 0 else 12};
-(environ["MyVar"] = 23) == "23";
+(env["MyVar"] = 23) == "23";
 System.system("exit $MyVar") >> 8 ==
        {if (Platform.isWindows) 0 else 23};
 
 // Defining to empty is defining, unless you are on Windows.
-(environ["MyVar"] ="") == "";
-environ["MyVar"].isNil == Platform.isWindows;
+(env["MyVar"] ="") == "";
+env["MyVar"].isNil == Platform.isWindows;
 
-environ["UndefinedEnvironmentVariable"].isNil;
-!environ["PATH"].isNil;
+env["UndefinedEnvironmentVariable"].isNil;
+!env["PATH"].isNil;
 
-(environ["MyVar"] = 12) == "12";
-!environ["MyVar"].isNil;
-environ.erase("MyVar") == "12";
-environ["MyVar"].isNil;
+(env["MyVar"] = 12) == "12";
+!env["MyVar"].isNil;
+env.erase("MyVar") == "12";
+env["MyVar"].isNil;
 \end{urbiassert}
 
 
-\item[environ.init]
+\item[env.init]
   Refresh the urbi environment by fetching all the environment variables.
   Beware that environ \refObject{Dictionary} is not modified when calling
   getenv, setenv or unsetenv from the C library. Init it first and then
   manipulate your environment as a simple \refObject{Dictionary}.
 \begin{urbiassert}
-environ.init == environ;
-!environ["USER"].isNil;
+env.init == env;
+!env["USER"].isNil;
 \end{urbiassert}
 
 
@@ -209,15 +209,15 @@ eval("eval(\"eval(\\\"/\\\")\")");
 
 
 \item[getenv](<name>)%
-  Deprecated function use \var{function}.environ[\var{name}] instead.
+  Deprecated function use \var{function}.env[\var{name}] instead.
   The value of the environment variable \var{name} as a \refObject{String}
   if set, \refObject{nil} otherwise.  See also \refSlot{setenv} and
   \refSlot{unsetenv}.
 \begin{urbiassert}
 getenv("UndefinedEnvironmentVariable").isNil;
-[01234567:warning] !!! `System.getenv(that)' is deprecated, use `System.environ[that]'
+[01234567:warning] !!! `System.getenv(that)' is deprecated, use `System.env[that]'
 !getenv("PATH").isNil;
-[01234567:warning] !!! `System.getenv(that)' is deprecated, use `System.environ[that]'
+[01234567:warning] !!! `System.getenv(that)' is deprecated, use `System.env[that]'
 \end{urbiassert}
 
 
@@ -449,7 +449,7 @@ System.searchPath[0].isA(Path);
 
 
 \item[setenv](<name>, <value>)%
-  Deprecated use \var{function}.environ[\var{name}] = \var{value} instead.
+  Deprecated use \var{function}.env[\var{name}] = \var{value} instead.
   Set the environment variable \var{name} to
   \lstinline|\var{value}.asString|, and return this value.  See also
   \refSlot{getenv} and \refSlot{unsetenv}.
@@ -460,23 +460,23 @@ System.searchPath[0].isA(Path);
 
 \begin{urbiassert}
 setenv("MyVar", 12) == "12";
-[00000001:warning] !!! `System.setenv(var, value)' is deprecated, use `System.environ[var] = value'
+[00000001:warning] !!! `System.setenv(var, value)' is deprecated, use `System.env[var] = value'
 getenv("MyVar") == "12";
-[00000002:warning] !!! `System.getenv(that)' is deprecated, use `System.environ[that]'
+[00000002:warning] !!! `System.getenv(that)' is deprecated, use `System.env[that]'
 
 // A child process that uses the environment variable.
 System.system("exit $MyVar") >> 8 ==
        {if (Platform.isWindows) 0 else 12};
 setenv("MyVar", 23) == "23";
-[00000005:warning] !!! `System.setenv(var, value)' is deprecated, use `System.environ[var] = value'
+[00000005:warning] !!! `System.setenv(var, value)' is deprecated, use `System.env[var] = value'
 System.system("exit $MyVar") >> 8 ==
        {if (Platform.isWindows) 0 else 23};
 
 // Defining to empty is defining, unless you are on Windows.
 setenv("MyVar", "") == "";
-[00000007:warning] !!! `System.setenv(var, value)' is deprecated, use `System.environ[var] = value'
+[00000007:warning] !!! `System.setenv(var, value)' is deprecated, use `System.env[var] = value'
 getenv("MyVar").isNil == Platform.isWindows;
-[00000008:warning] !!! `System.getenv(that)' is deprecated, use `System.environ[that]'
+[00000008:warning] !!! `System.getenv(that)' is deprecated, use `System.env[that]'
 \end{urbiassert}
 
 
@@ -505,7 +505,7 @@ getenv("MyVar").isNil == Platform.isWindows;
 // Be sure not to depend on the user environment.
 for (var i : ["ALL", "COLLATE", "CTYPE", "MESSAGES", "MONETARY",
               "NUMERIC", "TIME"])
-  environ.erase("LC_" + i);
+  env.erase("LC_" + i);
 \end{urbicomment}
 \begin{urbiassert}
 // Initially they are all set to "C".
@@ -518,7 +518,7 @@ getLocale("LC_NUMERIC") == "C";
 var fr_FR =
   { if (System.Platform.isWindows) "French_France.1252" else "fr_FR" };
 // Changing one via the environment does not affect the others.
-(environ["LC_CTYPE"] = fr_FR) == fr_FR;
+(env["LC_CTYPE"] = fr_FR) == fr_FR;
 getLocale("LC_CTYPE")   == "C";
 setLocale("LC_CTYPE").isVoid;
 getLocale("LC_CTYPE")   == fr_FR;
@@ -530,7 +530,7 @@ getLocale("LC_CTYPE")   == "C";
 getLocale("LC_NUMERIC") == "C";
 
 // The environment variable LC_ALL overrides all the others.
-environ["LC_ALL"] = fr_FR;
+env["LC_ALL"] = fr_FR;
 setLocale("LC_ALL").isVoid;
 getLocale("LC_ALL")     == fr_FR;
 getLocale("LC_CTYPE")   == fr_FR;
@@ -548,7 +548,7 @@ getLocale("LC_NUMERIC") == "C";
 setLocale("LC_IMAGINARY");
 [00006328:error] !!! setLocale: invalid category: LC_IMAGINARY
 
-environ["LC_ALL"] = "elfic"|;
+env["LC_ALL"] = "elfic"|;
 setLocale("LC_ALL");
 [00024950:error] !!! setLocale: cannot set locale LC_ALL to elfic
 
@@ -669,16 +669,16 @@ System.system("exit 23") >> 8
 
 
 \item[unsetenv](<name>)%
-  Deprecated use \var{function}.environ.erase (\var{name}) instead.
+  Deprecated use \var{function}.env.erase (\var{name}) instead.
   Undefine the environment variable \var{name}, return its previous value.
   See also \refSlot{getenv} and \refSlot{setenv}.
 
 \begin{urbiassert}
-(environ["MyVar"] = 12) == "12";
-!environ["MyVar"].isNil;
+(env["MyVar"] = 12) == "12";
+!env["MyVar"].isNil;
 unsetenv("MyVar") == "12";
-[01234567:warning] !!! `System.unsetenv(var)' is deprecated, use `System.environ.erase(var)'
-environ["MyVar"].isNil;
+[01234567:warning] !!! `System.unsetenv(var)' is deprecated, use `System.env.erase(var)'
+env["MyVar"].isNil;
 \end{urbiassert}
 
 

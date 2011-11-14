@@ -31,7 +31,7 @@ class Global.camera: Loadable
 
   var sharedir =
     {
-      if (var s = System.environ["URBI_SHARE"])
+      if (var s = System.env["URBI_SHARE"])
         Path.new(s)
       else
         System.urbiRoot / "share" / "gostai"
@@ -146,7 +146,7 @@ do (Global)
 
   function skipIfHostName (var host)
   {
-    var hostname = { if (System.environ["HOSTNAME"].isNil) "" else System.environ["HOSTNAME"] }|
+    var hostname = { if (System.env["HOSTNAME"].isNil) "" else System.env["HOSTNAME"] }|
     clog << "Hostname: %s" % hostname |
     if (hostname == host)
       testSkip("cannot run on this host (%s)" % host);
@@ -172,7 +172,7 @@ do (Global)
 }|;
 
 // Too verbose when we launch another urbi from urbi.
-System.environ.erase("GD_LEVEL")|;
+System.env.erase("GD_LEVEL")|;
 
 /*---------.
 | Object.  |

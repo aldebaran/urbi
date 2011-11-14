@@ -698,7 +698,6 @@ namespace urbi
       DECLARE(arguments);
       DECLARE(breakpoint);
       DECLARE(cycle);
-      DECLARE(environ);
       DECLARE(getLocale);
       DECLARE(getenv);
       DECLARE(hostName);
@@ -733,6 +732,7 @@ namespace urbi
 
 #undef DECLARE
 
+      system_class->bind(SYMBOL(env), &system_environ);
       system_class->bind(SYMBOL(initenv), &system_environ_init);
       system_class->bind(SYMBOL(sleep), &system_sleep);
       system_class->bind(SYMBOL(sleep), &system_sleep_inf);
