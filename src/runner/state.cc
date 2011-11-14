@@ -28,7 +28,9 @@ namespace runner
 {
 
   State::State(rLobby lobby)
-    : priority_cache_valid_(false)
+    : frozen_tag_cache_step_(0)
+    , frozen_tag_cache_(false)
+    , priority_cache_valid_(false)
     , priority_cache_(sched::UPRIO_DEFAULT)
     , frozen_(false)
     , tag_stack_()
@@ -51,7 +53,9 @@ namespace runner
   }
 
   State::State(const State& base)
-    : priority_cache_valid_(base.priority_cache_valid_)
+    : frozen_tag_cache_step_(0)
+    , frozen_tag_cache_(false)
+    , priority_cache_valid_(base.priority_cache_valid_)
     , priority_cache_(base.priority_cache_)
     , frozen_(false)
     , tag_stack_(base.tag_stack_)
