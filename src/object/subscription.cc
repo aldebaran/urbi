@@ -106,14 +106,21 @@ namespace urbi
 
     Subscription::~Subscription()
     {
+      GD_FINFO_TRACE("~Subscription %s", this);
       foreach (boost::signals::connection& c, connections)
         c.disconnect();
+      delete cb_;
     }
 
     void
     Subscription::stop()
     {
       disconnected_set(true);
+      lobby = 0;
+      delete cb_;
+      cb_ = 0;
+      enter_ = leave_ = 0;
+      guard = 0;
     }
 
     void
@@ -133,6 +140,8 @@ namespace urbi
       // those now.
       event_ = 0;
       lobby = 0;
+      enter_ = leave_ = 0;
+      guard = 0;
       // We must handle unsubscribed_ now or watch condition will be evaluated
       foreach(rSubscription& s, e->callbacks_)
         if (!s->disconnected_get())
