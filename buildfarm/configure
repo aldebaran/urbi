@@ -27,6 +27,21 @@ older ()
   test ! -e "$1" || test "$1" -ot "$2"
 }
 
+pkg_config_require ()
+{
+  pkg-config --print-errors --exists "$@" ||
+    fatal "cannot find pkg-config support for $*"
+}
+
+# Set pkg_config_prefix_res to the prefix.  Die on errors.
+pkg_config_prefix ()
+{
+  pkg_config_require "$@"
+  pkg_config_prefix_res=$(pkg-config --print-errors --variable=prefix "$@")
+  test -n "$pkg_config_prefix_res" ||
+    fatal "cannot get prefix from pkg-config for $*"
+}
+
 set -ex
 
 ## --------------------- ##
@@ -111,12 +126,13 @@ export PKG_CONFIG_PATH=$local/pkgconfig/$BUILDFARM_MODE:$local/pkgconfig:$PKG_CO
 
 # Boost.
 case $BUILDFARM_OS in
-  (linux_lucid|macos) ;;             # Use the native Boost.
+  (linux_lucid|macos) ;;             # Use the native Boost, so no --with-boost.
   (windows)     BOOST_VERSION=1.47;; # Why not, actually...
   (*)           BOOST_VERSION=1.40;; # Match Ubuntu Lucid's Boost.
 esac
 if test -n "$BOOST_VERSION"; then
-  BOOST=$(pkg-config --print-errors boost-$BOOST_VERSION --variable=prefix)
+  pkg_config_prefix boost-$BOOST_VERSION
+  BOOST=$pkg_config_prefix_res
   with_boost=--with-boost=$BOOST
 fi
 
@@ -125,8 +141,9 @@ case $BUILDFARM_OS in
   (windows)     ;;
   (*)           ROS_VERSION=diamondback;;
 esac
-if pkg-config --print-errors --exists ros-$ROS_VERSION; then
-  ROS_PREFIX=$(pkg-config --print-errors ros-$ROS_VERSION --variable=prefix)
+if test -n "$ROS_VERSION"; then
+  pkg_config_prefix_res ros-$ROS_VERSION
+  ROS_PREFIX=$pkg_config_prefix_res
   ROS_ROOT=$ROS_PREFIX/ros
   with_ros="ROS_ROOT=$ROS_ROOT"
 else
