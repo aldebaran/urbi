@@ -122,9 +122,8 @@ fi
 
 # ROS.
 case $BUILDFARM_OS in
-  (linux_lucid) ROS_VERSION=diamondback;;
   (windows)     ;;
-  (*)           ROS_VERSION=cturtle;;
+  (*)           ROS_VERSION=diamondback;;
 esac
 if pkg-config --print-errors --exists ros-$ROS_VERSION; then
   ROS_PREFIX=$(pkg-config --print-errors ros-$ROS_VERSION --variable=prefix)
