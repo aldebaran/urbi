@@ -143,7 +143,7 @@ case $BUILDFARM_OS in
 esac
 if test -n "$ROS_VERSION"; then
   pkg_config_prefix ros-$ROS_VERSION
-  ROS_PREFIX=$pkg_config_prefix
+  ROS_PREFIX=$pkg_config_prefix_res
   ROS_ROOT=$ROS_PREFIX/ros
   with_ros="ROS_ROOT=$ROS_ROOT"
 else
