@@ -40,7 +40,8 @@ check -C tests TESTS_DIRS=1.x
 check -C tests TESTS_DIRS=uob/plug
 check -C tests TESTS_DIRS=uob/remote
 check -C tests TESTS_DIRS=uob/rtp
-check -C tests TESTS_DIRS=uob/java
+test "$BUILDFARM_OS" != "windows" ||
+  check -C tests TESTS_DIRS=uob/java
 check -C tests TESTS_DIRS=demo
 check -C tests TESTS_DIRS=@ros
 
