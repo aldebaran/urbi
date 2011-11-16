@@ -10,7 +10,8 @@ make_()
 }
 
 # Sometimes the load is responsible for failures.  Try in parallel,
-# then sequential.
+# then sequential, and VERBOSE so that log of failed tests are
+# displayed.
 make_twice_()
 {
   make_ -j$JOBS "$@" || make_ VERBOSE=1 "$@"
@@ -21,14 +22,28 @@ check ()
   make_twice_ installcheck "$@"
 }
 
-case $BUILDFARM_HOSTNAME in
-  (bf-2)
-     # Spell check.  One machine is enough.
-     make_ spell-check
-     # This is Ubuntu release, it should be fast enough to handle a a
-     # distcheck.  Ubuntu debug (bf-3) compiles the documentation.
-     make_ distcheck
-     ;;
+case $BUILDFARM_HOSTNAME in (bf-2)
+  # Spell check.  One machine is enough.
+  make_ spell-check
+  ;;
+esac
+
+# Libport.
+check -C sdk-remote/libport
+# SDK-Remote
+check -C sdk-remote/src/tests
+# Urbi.
+check -C tests TESTS_DIRS=0.x
+check -C doc
+check -C tests TESTS_DIRS=2.x
+check -C tests TESTS_DIRS=1.x
+check -C tests TESTS_DIRS=uob/plug
+check -C tests TESTS_DIRS=uob/remote
+check -C tests TESTS_DIRS=uob/rtp
+test "$BUILDFARM_OS" != "windows" ||
+  check -C tests TESTS_DIRS=uob/java
+check -C tests TESTS_DIRS=demo
+check -C tests TESTS_DIRS=@ros
 
   (*)
      # Libport.
@@ -54,4 +69,11 @@ case $BUILDFARM_HOSTNAME in
        (*) make_twice_ check -C tests TESTS_DIRS=@fsm;;
      esac
      ;;
+esac
+
+case $BUILDFARM_HOSTNAME in (bf-2)
+  # This is Ubuntu release, it should be fast enough to handle a
+  # distcheck.  Ubuntu debug (bf-3) compiles the documentation.
+  make_ distcheck-buildfarm
+  ;;
 esac

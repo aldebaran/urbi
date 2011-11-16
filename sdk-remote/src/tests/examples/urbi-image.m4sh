@@ -64,17 +64,17 @@ spawn_urbi_server
 ## ------ ##
 
 xrun "server init"                              \
-   urbi-send --port-file server.port            \
+  urbi-send$EXEEXT --port-file server.port      \
              -e 'load("urbi/test-suite.u");'    \
              -e 'camera.load = true;'           \
              -e 'sleep(1s);'                    \
              -e 'quit;'
 
 xrun "urbi-image"                                       \
-     urbi-image -o camera.jpg --port $(cat server.port)
+  urbi-image$EXEEXT -o camera.jpg --port $(cat server.port)
 
 xrun "shutdown"                                 \
-  urbi-send --port-file server.port             \
+  urbi-send$EXEEXT --port-file server.port      \
             -e 'shutdown;'                      \
             --quit
 

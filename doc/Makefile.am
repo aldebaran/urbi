@@ -183,7 +183,6 @@ CLEANFILES += $(pdf_DATA)
 urbi_sdk_tex := $(call ls_files,*.tex)
 urbi_sdk_sources =				\
   $(urbi_sdk_tex)				\
-  $(FROM_GEN)					\
   $(call ls_files,*.sty tables/*.txt tables/*.bnf)
 CLEANFILES += config.sty
 
@@ -245,8 +244,9 @@ $(FROM_GEN): %: %.gen
 
 
 EXTRA_DIST += $(urbi_sdk_sources)
-urbi_sdk_deps = 				\
+urbi_sdk_deps =					\
   config.sty					\
+  $(FROM_GEN)					\
   $(urbi_sdk_sources)
 
 $(MASTERS:.tex=.pdf): $(urbi_sdk_deps) $(PDF_IMAGES)	\

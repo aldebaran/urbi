@@ -57,8 +57,7 @@ namespace urbi
     for (unsigned i = 0; i < cardinality_of(formats); ++i)
       if (s == formats[i])
         return static_cast<UImageFormat>(i);
-    GD_FINFO_TRACE("Parse image format failed on %s (scanned %s)", s,
-             cardinality_of(formats));
+    GD_FINFO_TRACE("unknown image format: %s", s);
     return IMAGE_UNKNOWN;
   }
 

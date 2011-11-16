@@ -1,0 +1,19 @@
+## Copyright (C) 2011, Gostai S.A.S.
+##
+## This software is provided "as is" without warranty of any kind,
+## either expressed or implied, including but not limited to the
+## implied warranties of fitness for a particular purpose.
+##
+## See the LICENSE file for more information.
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: @PACKAGE_NAME@
+Description: Urbi Software Development Kit
+Version: @VERSION@
+URL: http://www.urbiforge.org
+Libs: -L${libdir} -lport
+Cflags: -I${includedir}

@@ -118,6 +118,7 @@ urbi_launch_(int argc, const char* argv[], UrbiRoot& urbi_root)
   libport::OptionFlag
     arg_plugin("start as a plugin uobject on a running server", "plugin", 'p'),
     arg_remote("start as a remote uobject", "remote", 'r'),
+    arg_root("output Urbi root and exit", "print-root"),
     arg_start("start an urbi server and connect as plugin", "start", 's');
   libport::OptionsEnd arg_end;
 
@@ -126,6 +127,7 @@ urbi_launch_(int argc, const char* argv[], UrbiRoot& urbi_root)
     << "Urbi-Launch options:"
     << libport::opts::help
     << libport::opts::version
+    << arg_root
     << arg_custom
 #ifndef LIBPORT_DEBUG_DISABLE
     << libport::opts::debug
@@ -156,6 +158,8 @@ urbi_launch_(int argc, const char* argv[], UrbiRoot& urbi_root)
     version();
   if (libport::opts::help.get())
     usage(opt_parser);
+  if (arg_root.get())
+    std::cout << urbi_root.root() << std::endl << libport::exit(0);
 
   // Connection mode.
   enum ConnectMode

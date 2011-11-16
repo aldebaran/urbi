@@ -315,17 +315,14 @@ namespace urbi
     LoopData data;
 #ifndef NO_OPTION_PARSER
     libport::OptionFlag
-      arg_fast("ignore system time, go as fast as possible",
-               "fast", 'F'),
-      arg_interactive("read and parse stdin in a nonblocking way",
-                      "interactive", 'i'),
+      arg_fast("ignore system time, go as fast as possible", "fast", 'F'),
+      arg_interactive("read stdin in a nonblocking way", "interactive", 'i'),
       arg_no_net("ignored for backward compatibility", "no-network", 'n'),
-      arg_no_banner("do not send the Urbi banner to incoming clients",
-                    "quiet", 'q');
+      arg_no_banner("do not send the banner to incoming clients", "quiet", 'q'),
+      arg_root("output Urbi root and exit", "print-root");
 
     libport::OptionValue
-      arg_stack    ("set the job stack size in KB",
-                    "stack-size", 's', "SIZE");
+      arg_stack("set the job stack size in KB", "stack-size", 's', "SIZE");
 
     libport::OptionsEnd arg_remaining(true);
     {
@@ -334,6 +331,7 @@ namespace urbi
         << "Options:"
         << libport::opts::help
         << libport::opts::version
+        << arg_root
         << "Tuning:"
 # ifndef LIBPORT_DEBUG_DISABLE
         << libport::opts::debug
@@ -366,6 +364,9 @@ namespace urbi
         help(parser);
       if (libport::opts::version.get())
         version();
+      if (arg_root.get())
+        std::cout << urbi_root.root() << std::endl << libport::exit(0);
+
 #endif
       data.interactive = IF_OPTION_PARSER(arg_interactive.get(),
                                           getenv("URBI_INTERACTIVE"));

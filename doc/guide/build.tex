@@ -147,7 +147,7 @@ export PYTHONPATH="\
 \label{sec:build:req:build}
 
 \begin{description}
-\item[Boost 1.38 or later] Don't try to build it yourself, ask your
+\item[Boost 1.40 or later] Don't try to build it yourself, ask your
   distribution's management to install it.
 \begin{package}
 deb: libboost-all-dev
@@ -222,7 +222,8 @@ deb: sun-java6-jdk
   common version, 3.81, behaves improperly on our Makefiles, so be sure to
   use GNU Make 3.82.
 \begin{package}
-package: make
+deb: make
+MacPorts: gmake
 \end{package}
 
 \item[oRTP] The UObject middleware can use the RTP protocol to provide
@@ -379,8 +380,16 @@ specific options.
 \item{enable-examples} Whether to build the sample programs
   (\command{urbi-ball-tracking} and so forth).  Disabling is fine:
   \option{--disable-examples}.
+\item{enable-library-suffix=\var{suffix}} Specify that libraries should be
+  named \file{libfoo\var{suffix}.*} instead of \file{libfoo.*}.  If
+  \var{suffix} is \code{auto} (or \code{yes}, or if no argument is passed),
+  then use the same suffix as Boost (e.g., \file{-vc80-d} for Visual 2005,
+  debug libraries).  If \var{suffix} is \code{autodebug}, then just append
+  \file{-d} for debug builds.
 \item{enable-sdk-remote} Whether to build the Urbi SDK Remote libraries.
-  Disabling is fine: \option{--disable-sdk-remote}.
+  Disabling is fine: \option{--disable-sdk-remote}.  Some of the components
+  that are shared between \urbi and SDK Remote will be built anyway, so
+  there will be compilations to perform in \file{sdk-remote}.
 \item{enable-ufloat=\var{kind}} Do not use this option, it is experimental
   and unreliable.
 \end{options}
@@ -401,7 +410,7 @@ It might fail.  The most important part is
 $ perl -MCPAN -e 'install DBD::SQLite'
 \end{shell}
 
-It might suffice, I don't know...
+It might suffice\ldots
 
 \subsection{Building For Windows}
 
@@ -451,7 +460,7 @@ $ ../configure                                          \
   --enable-shared                                       \
   --disable-static                                      \
   --enable-dependency-tracking                          \
-  --with-boost=/cygdrive/c/gt-win32-2/d/boost_1_39      \
+  --with-boost=/cygdrive/c/gt-win32-2/d/boost_1_40      \
   AR=lib.exe                                            \
   CC='ccache cl.exe'                                    \
   CC_FOR_BUILD=gcc                                      \

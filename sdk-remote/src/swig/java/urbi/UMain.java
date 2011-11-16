@@ -88,7 +88,7 @@ public class UMain
 	System.out.println("<java command line> [OPTIONS] MODULES_NAMES ... [-- [urbi-launch options]]");
 	System.out.println();
 	System.out.println("Options:");
-	System.out.println("\t-h, --help            display this message and exit");
+	System.out.println("  -h, --help  output this message and exit successfully");
 	System.out.println();
 	System.out.println("MODULE_NAMES is a list of JAR and ZIP archives containings UObjects.");
 	System.exit(0);

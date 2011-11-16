@@ -407,6 +407,68 @@ Math.round(1.2) == 1.2.round;
 \end{itemize}
 
 
+\section{\usdk 2.7.4}
+\release{2.7}{2011-11-11}
+
+This release back-ports several fixes from the forthcoming next major
+release of \urbi, to the 2.7 family.
+
+\subsection{Fixes}
+\begin{itemize}
+\item Freezing an event handler could prevent other event handlers to
+  function properly.
+\item The indentation of the Emacs \us mode is fixed (contributed by Jeremy
+  W. Sherman).
+\item Binding a single UVar several times not longer crashes.
+\item Handling of text and binary files on Windows should no longer be a
+  problem.
+\item Disconnection of remote UObjects behaves properly.
+\item In Windows packages, the suffixes of the library (e.g.,
+  \samp{-vc90-d}) are restored.
+\end{itemize}
+
+\subsection{Changes}
+\begin{itemize}
+\item Boost requirement is now 1.40 instead of 1.38.
+\item The binary packages for GNU/Linux (both Ubuntu Lucid and Debian Etch)
+  are built with the same version of Boost as Ubuntu Lucid: 1.40.
+\item The binary packages for Windows and Mac OS X are built with Boost 1.47
+  (from Boost Pro and MacPorts).
+\item All the binary packages are now built with ROS Diamondback instead of
+  ROS CTurtle.
+\item We now provide pkg-config files: \file{libport.pc} and
+  \file{urbi.pc}.  Since binary packages are relocatable, it should be noted
+  that the \var{prefix} is most probably wrong, so it should be defined at
+  runtime as the output of the \command{urbi}'s (and
+  \command{urbi-launch}'s) new option \option{print-root}:
+\begin{shell}
+$ pkg-config urbi --cflags
+-I/prefix/include
+# But urbi was installed in /usr/local, not in /prefix.
+# There is nothing there.
+$ ls /prefix/include
+ls: /prefix/include: No such file or directory
+
+# Let urbi give urbi-root (or urbi-prefix) to pkg-config:
+pkg-config --define-variable=prefix=$(urbi --print-root) urbi --cflags
+-I/usr/local/bin/../include
+# This time, it exists.
+$ ls /usr/local/bin/../include
+boost   jconfig.h  jmorecfg.h  libport    urbi
+gostai  jerror.h   jpeglib.h   serialize
+\end{shell}
+\end{itemize}
+
+\subsection{Documentation}
+\begin{itemize}
+\item Instructions to build \usdk are more precise.  The requirements should
+  be easier to find (\autoref{sec:build:req}).
+\item Formatting of the naming standard is improved (\autoref{sec:naming}).
+\item Instruction for exchanging UObject between UObjects have been
+  clarified (\autoref{sec:uob:api:direct}).
+\item Various errors in the documentation of \UObject were fixed.
+\end{itemize}
+
 \section{\usdk 2.7.3}
 \release{2.7}{2011-10-07}
 

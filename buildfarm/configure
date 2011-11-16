@@ -27,6 +27,21 @@ older ()
   test ! -e "$1" || test "$1" -ot "$2"
 }
 
+pkg_config_require ()
+{
+  pkg-config --print-errors --exists "$@" ||
+    fatal "cannot find pkg-config support for $*"
+}
+
+# Set pkg_config_prefix_res to the prefix.  Die on errors.
+pkg_config_prefix ()
+{
+  pkg_config_require "$@"
+  pkg_config_prefix_res=$(pkg-config --print-errors --variable=prefix "$@")
+  test -n "$pkg_config_prefix_res" ||
+    fatal "cannot get prefix from pkg-config for $*"
+}
+
 set -ex
 
 ## --------------------- ##
@@ -83,6 +98,21 @@ if $(older "$DIR_SOURCE/configure" "$0"); then
   cd "$DIR_SOURCE"
   ./bootstrap
   cd $here
+  test -d "$DIR_BUILD" ||
+    fatal "DIR_BUILD is not a directory: $DIR_BUILD"
+  # We have changed stuff in our configuration.  Let's completely
+  # reconfigure everything from scratch.  For instance if we change of
+  # "Boost" version, then we no longer want to have the Makefile still
+  # record the location of the previous version of Boost we were
+  # using, but really the new ones.  So really, it's costly, but
+  # safer, to start anew.
+  #
+  # Beware that distcheck builds readonly hierarchies, which we need
+  # to switch back to writable before removal.  Taken from
+  # am__remove_distdir in Makefile.in.
+  find "$DIR_BUILD" -type d ! -perm -200 -exec chmod u+w {} ';'
+  rm -rf "$DIR_BUILD"
+  mkdir "$DIR_BUILD"
 fi
 
 
@@ -96,23 +126,24 @@ export PKG_CONFIG_PATH=$local/pkgconfig/$BUILDFARM_MODE:$local/pkgconfig:$PKG_CO
 
 # Boost.
 case $BUILDFARM_OS in
-  (linux_lucid) ;;                   # Use the native Boost.
-  (windows)     BOOST_VERSION=1.39;; # For some historical reason.
-  (*)           BOOST_VERSION=1.38;; # Match Naoqi's requirement.
+  (linux_lucid|macos) ;;             # Use the native Boost, so no --with-boost.
+  (windows)     BOOST_VERSION=1.47;; # Why not, actually...
+  (*)           BOOST_VERSION=1.40;; # Match Ubuntu Lucid's Boost.
 esac
 if test -n "$BOOST_VERSION"; then
-  BOOST=$(pkg-config --print-errors boost-$BOOST_VERSION --variable=prefix)
+  pkg_config_prefix boost-$BOOST_VERSION
+  BOOST=$pkg_config_prefix_res
   with_boost=--with-boost=$BOOST
 fi
 
 # ROS.
 case $BUILDFARM_OS in
-  (linux_lucid) ROS_VERSION=diamondback;;
   (windows)     ;;
-  (*)           ROS_VERSION=cturtle;;
+  (*)           ROS_VERSION=diamondback;;
 esac
-if pkg-config --print-errors --exists ros-$ROS_VERSION; then
-  ROS_PREFIX=$(pkg-config --print-errors ros-$ROS_VERSION --variable=prefix)
+if test -n "$ROS_VERSION"; then
+  pkg_config_prefix ros-$ROS_VERSION
+  ROS_PREFIX=$pkg_config_prefix_res
   ROS_ROOT=$ROS_PREFIX/ros
   with_ros="ROS_ROOT=$ROS_ROOT"
 else
@@ -133,6 +164,7 @@ case $BUILDFARM_COMPILER in
     --enable-shared                             \
     --disable-static                            \
     --enable-dependency-tracking                \
+    --enable-library-suffix                     \
     host_alias=mingw32                          \
     --host=mingw32"
   ;;

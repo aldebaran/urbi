@@ -123,6 +123,7 @@ AudioIn
 AudioOut
 autocompletion
 autoconf
+autodebug
 automain
 automake
 autopoint
@@ -409,7 +410,6 @@ epsilontilde
 eq
 eration
 errlog
-ESSID
 essid
 et
 ev
@@ -535,6 +535,7 @@ ghi
 GHz
 gl
 GLIBC
+gmake
 gnulib
 gnuplot
 goDuring
@@ -687,11 +688,15 @@ Iwconfig
 javac
 javalibrarypath
 JavaScript
+jconfig
 jdk
 je
+jerror
 jessie
+jmorecfg
 jni
 jpeg
+jpeglib
 jpg
 JVM
 keepEmpty
@@ -738,6 +743,7 @@ lexicographically
 lhs
 libboost
 libcoroutine
+libfoo
 libjpeg
 liblinphone
 libltdl
@@ -893,6 +899,7 @@ myType
 myuob
 myUObject
 myuobject
+myUvar
 myVar
 namespace
 NaN
@@ -990,7 +997,6 @@ perlre
 PGain
 php
 physicsReset
-PID
 pid
 pidChanged
 Pierron
@@ -1066,9 +1072,7 @@ RCS
 README
 realloc
 redBallDetected
-RedBallDetection
 redBallDetection
-RedBallTracker
 redBallTracker
 redBlink
 redefinable

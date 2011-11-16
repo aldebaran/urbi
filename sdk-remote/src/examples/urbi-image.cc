@@ -154,20 +154,21 @@ main (int argc, char *argv[])
             "reconstruct", 'r');
 
   libport::OptionParser opt_parser;
-  opt_parser << "Options:"
-	     << libport::opts::help
-	     << libport::opts::version
-	     << libport::opts::host
-	     << libport::opts::port
-	     << libport::opts::port_file
-	     << arg_period
-	     << arg_form
-	     << arg_rec
-	     << arg_jpeg
-	     << arg_dev
-	     << arg_out
-	     << arg_resolution
-	     << arg_scale;
+  opt_parser
+    << "Options:"
+    << libport::opts::help
+    << libport::opts::version
+    << libport::opts::host
+    << libport::opts::port
+    << libport::opts::port_file
+    << arg_period
+    << arg_form
+    << arg_rec
+    << arg_jpeg
+    << arg_dev
+    << arg_out
+    << arg_resolution
+    << arg_scale;
 
   opt_parser(libport::program_arguments());
 
@@ -208,15 +209,15 @@ main (int argc, char *argv[])
 
   if (arg_out.filled())
   {
-    const char *file = arg_out.value().c_str();
-    FILE *f = fopen(file, "w");
+    const std::string file = arg_out.value();
+    FILE *f = fopen(file.c_str(), "w");
     if (!f)
       std::cerr << program_name() << ": cannot create file " << file
                 << ": " << strerror(errno)
                 << libport::exit(EX_OSERR);
 
     int fmt = format(arg_format);
-    /* Use syncGetImage to save one image to a file. */
+    // Use syncGetImage to save one image to a file.
     char buff[1000000];
     size_t sz = sizeof buff;
     size_t w, h;
