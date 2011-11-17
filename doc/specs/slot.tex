@@ -1,0 +1,355 @@
+%% Copyright (C) 2010, 2011, Gostai S.A.S.
+%%
+%% This software is provided "as is" without warranty of any kind,
+%% either expressed or implied, including but not limited to the
+%% implied warranties of fitness for a particular purpose.
+%%
+%% See the LICENSE file for more information.
+
+\section{Slot}
+
+A slot is an intermediate object that embodies the concept of 'variable' or
+'field' in urbiscript. It contains an underlying value, meta-information
+about this value, and slots to alter the behavior of read and
+write operations.
+
+\subsection{Accessing the slot object}
+Section \autoref{sec:lang:slots} describes how to access a slot object.
+
+\subsection{Key features}
+
+The contained value returned by default when \refSlot[Object]{getSlotValue}
+is called is stored in the \refSlot{value} slot.
+
+The \refSlot{changed} slot is an \refObject{Event} that is triggered each time
+the slot is written to.
+
+Setters and getters to modify the slot behaviors can be installed by
+writing to \refSlot{set}, \refSlot{get}, \refSlot{oset} and \refSlot{oget}.
+
+Two slots can be linked together to build dataflows using operator \refSlot{>>}
+
+\subsection{Split mode}
+\label{sec:lang:slot:split}
+
+It can sometimes be convenient to store two values in one slot, one which is
+read, and the other written. For instance, the \lstinline|val| slot of
+a rotational motor Object can be the current motor position when reading, and
+a target position to reach when writing.
+
+This behavior is controlled by the \refSlot{split} slot.
+
+\subsection{Construction}
+
+Slots are automatically created when \refSlot[Object]{setSlot} is called.
+
+\subsection{Prototypes}
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
+
+\subsection{Slots}
+
+\begin{urbiscriptapi}
+
+\item[changed]%
+  Contains an \refObject{Event} which is emitted each time the slot value
+  is written to. It is used by the system to implement the
+  \lstinline{watch}-expression (\autoref{sec:lang:watch}).
+
+\begin{urbiscript}[firstnumber=1]
+var x = []|;
+
+at (x->changed?) // Same thing as &x.changed
+  echo("x->changed");
+
+x = [1]|;
+[00092656] *** x->changed
+x = [1, 2]|;
+[00092756] *** x->changed
+\end{urbiscript}
+
+Even if the slot is assigned to the very same value, the
+\lstinline|x->changed| event is emitted.
+
+\begin{urbiscript}
+x = x|;
+[00092856] *** x->changed
+\end{urbiscript}
+
+This is different from checking value \emph{updates}.  In the following
+example, \lstinline{x} is not rebound to another list, it is the content of
+the list that changes, therefore the \lstinline{changed} event is \emph{not}
+fired:
+
+\begin{urbiscript}
+x << 3;
+[00092866] [1, 2, 3]
+\end{urbiscript}
+
+To monitor changes of value, use the \lstinline{watch}-construct
+(\autoref{sec:lang:watch}).
+
+
+
+\item[constant]
+
+Defines whether a slot can be assigned a new value.
+
+\begin{urbiscript}
+var c = 0;
+[00000000] 0
+c = 1;
+[00000000] 1
+
+c->constant = true;
+[00000000] true
+c = 2;
+[00000000:error] !!! cannot modify const slot
+
+c->constant = false;
+[00000000] false
+c = 3;
+[00000000] 3
+\end{urbiscript}
+
+A new slot can be declared constant when first defined, in which case the
+initial value is required.
+
+\begin{urbiscript}
+const var two;
+[00000030:error] !!! syntax error: const declaration without a value
+const var two = 2;
+[00000036] 2
+two = 3;
+[00000037:error] !!! cannot modify const slot
+two->constant;
+[00000038] true
+\end{urbiscript}
+
+When a slot is declared constant, copy-on-write does not apply (see
+\refSlot[Object]{updateSlot}).
+
+\begin{urbiscript}
+class Top
+{
+  const var x = 1;
+}|;
+var t = Top.new|;
+t.x = 2;
+[00000047:error] !!! cannot modify const slot
+\end{urbiscript}
+
+
+\item[copy](<targetObject>, <targetName>)%
+  Duplicate the \lstinline|Slot| to the slot \var{targetName} of object
+  \var{targetObject}.
+
+\item[copyOnWrite]%
+  If set to false, disables copy on write behavior for this slot
+  (see \autoref{sec:lang:cow}).
+
+\begin{urbiscript}
+class a {
+  var x = 0;
+  var y = 0;
+}|;
+var b = a.new|;
+a.&x.copyOnWrite = false|;
+b.x = 1| b.y = 1|;
+assert
+{
+  a.x == 1;
+  a.y == 0;
+};
+\end{urbiscript}
+
+\item[notifyAccess](<onAccess>)%
+  Similar to the \Cxx \lstinline|UNotifyAccess|, calls \var{onAccess} each
+  time the \lstinline|Slot| is accessed (read).
+
+\begin{urbiscript}
+var Global.counter = 0|
+var Global.access = 0|
+var accessHandle = &access.notifyAccess(closure() {
+  Global.access = ++Global.counter
+})|
+assert
+{
+  access == 1;
+  access == 2;
+  access == 3;
+};
+&access.removeNotifyAccess(accessHandle)|;
+assert
+{
+  access == 3;
+  access == 3;
+};
+\end{urbiscript}
+
+
+\item[notifyChange](<onChange>)%
+  Similar to the \Cxx \lstinline|UNotifyChange| (see
+  \autoref{sec:uobject:uvar-notify}), register \var{onChange} and call it
+  each time this \lstinline|Slot| is written to.  Return an identifier that
+  can be passed to \refSlot{removeNotifyChange} to unregister the callback.
+  Subscribing to the \refSlot{changed} event has a similar effect.
+
+\begin{urbiscript}
+var Global.y = 0|
+var handle = Global.&y.notifyChange(closure() {
+  echo("The value is now " + Global.y)
+})|
+Global.y = 12;
+[00000001] *** The value is now 12
+[00000002] 12
+Global.&y.removeNotifyChange(handle)|;
+Global.y = 13;
+[00000003] 13
+\end{urbiscript}
+
+
+\item[notifyChangeOwned](<onChangeOwned>)%
+  Deprecated, this call now just set the \refSlot{set} slot.
+  Similar to the \Cxx \lstinline|UNotifyChange| for a split Slot (see
+  \autoref{sec:uobject:uvar-notify}), register \var{onChange} and call it
+  each time this \lstinline|UVar| is written to.  Return an identifier that
+  can be passed to \refSlot{removeNotifyChangeOwned} to unregister the
+  callback.
+
+
+\item[owned]%
+  True if the \lstinline|Slot| is in \dfn{split mode}, that is if it
+  contains both a sensor and a command value. This name is for backward
+  compatibility.
+
+
+\item[removeNotifyAccess](<id>)%
+  Disable the notification installed as \var{id} by \refSlot{notifyAccess}.
+
+
+\item[removeNotifyChange](<id>)%
+  Disable the notification installed as \var{id} by \refSlot{notifyChange}.
+
+
+\item[removeNotifyChangeOwned](<id>)%
+  Disable the notification installed as \var{id} by
+  \refSlot{notifyChangeOwned}.
+
+\item[setOutputValue](<val>)%
+  In \refSlot{split} mode, update output value slot \refSlot{outputValue} and
+  trigger \refSlot{changed}.
+
+\item[split]%
+  Indicates that the slot has both an input value and an output value.
+  The input value is written to by external code, and the slot will act on it.
+  The output value is updated by the slot itself and made visible to external
+  code.
+
+  This feature's intended use is to have both a sensor value and an effector
+  command accessible on the same slot.
+
+  More formally, once activated by setting the \refSlot{split} slot to true:
+\begin{itemize}
+\item Writing to the slot no longer triggers \refSlot{changed}, but still
+  updates \refSlot{value} and calls \refSlot{set}.
+\item Reading the slot returns \refSlot{outputValue}  instead of \refSlot{value}
+\end{itemize}
+
+Practically, code external to the slot owner continue to use the slot as usual.
+The object owning the slot must:
+\begin{itemize}
+\item Directly access \refSlot{value}, or use a setter to read the value
+  written by external code.
+\item Call \refSlot{setOutputValue} to update the value visible to external call.
+  This call will trigger the \refSlot{changed} event.
+\end{itemize}
+
+\begin{urbiscript}
+class Motor
+{
+  function init()
+  {
+    // our val is both motor command, and motor current position
+    var this.val = 0;
+    var this.running = false;
+    var this.runTag = Tag.new;
+    &val.owned = true;
+    // Initialize current position
+    &val.outputValue = 0;
+    // Install a setter, that will be called when 'val' is written to.
+    // Use oset, so that the 'this' passed to oset is the motor.
+    &val.oset = getSlotValue("setCommand");
+  };
+  function setCommand(command, slot)
+  { // This function is called when someone writes 'command' to 'val'.
+    // Since a setter is present, value was not updated, so do it
+    &val.value = command;
+    var same = (command == &val.outputValue);
+    echo("Motor command is now " + &val.value);
+    if (same && running)
+    { // Target reached, stop motor control loop
+      runTag.stop;
+      running = false;
+    }
+    else if (!same && !running)
+    { // Start motor control loop
+        detach({runMotor()});
+    }
+  };
+  function runMotor()
+  { // Move current motor position toward target, one unit per second.
+    running = true;
+    runTag: while(&val.outputValue != &val.value)
+    {
+      &val.setOutputValue(
+        &val.outputValue + 1 * (&val.value -&val.outputValue).sign);
+      sleep(1s);
+    };
+    running = false;
+  }
+}|;
+var m = Motor.new;
+[00000001] Motor_0xADDR
+// Send a command to motor by writing to val
+m.val = 5|;
+[00000002] *** Motor command is now 5
+sleep(1.5s);
+// Read motor current position by reading val.
+m.val;
+[00000003] 2
+// Changed triggers when current position is updated by the Motor object.
+at(m.val->changed?) echo("Motor position is " + m.val);
+sleep(10s);
+[00000004] *** Motor position is 3
+[00000005] *** Motor position is 4
+[00000006] *** Motor position is 5
+\end{urbiscript}
+
+\item[outputValue]%
+  The value that is returned when a read occurs, if in \refSlot{split} mode.
+
+\item[value]%
+  The underlying value.
+\begin{urbiscript}
+var z = 2;
+[00000001] 2
+&z.value;
+[00000001] 2
+&z.value = 3;
+[00000002] 3
+z;
+[00000002] 3
+\end{urbiscript}
+
+\end{urbiscriptapi}
+
+%%% Local Variables:
+%%% coding: utf-8
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% ispell-dictionary: "american"
+%%% ispell-personal-dictionary: "../urbi.dict"
+%%% fill-column: 76
+%%% End:
