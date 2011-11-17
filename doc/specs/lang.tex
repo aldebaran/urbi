@@ -431,7 +431,7 @@ sequences are defined in \autoref{tab:escapes}.
     \lstinline|\t| & tabulation            \\
     \lstinline|\v| & vertical tabulation   \\
 
-    \lstinline|\[0-7]{1,3}|
+    \lstinline|\[0-7\]{1,3}|
     & eight-bit character corresponding to a one-, two- or three-digit
     octal number.  For instance, \lstinline|\0|, \lstinline|\000| and
     \lstinline|177|.  The matching is greedy: as many digits as
@@ -1148,7 +1148,7 @@ whose semantics is ``return the successor of \this''.
 
 Beware that the function \lstinline|'++'| should \emph{not} modify its
 target, but rather return a fresh value.  Indeed, if it alters \this, the
-copy made in \lstinline|'$save'| will also have its value updated.  In other
+copy made in \lstinline|'\$save'| will also have its value updated.  In other
 words, the value of \lstinline|\var{a}++| would be its new one, not its
 former one.
 
@@ -1870,10 +1870,14 @@ Any \us value is an object. Objects contain:
 \end{itemize}
 
 \subsection{Slots}
+\label{sec:lang:slots}
 
 \dfn{Objects} can contain any number of \dfn{slots}, every slot has a name
 and a value. Slots are often called ``fields'', ``attributes'' or
 ``members'' in other object-oriented languages.
+
+In \us, a slot is itself an object, and stores meta-information about the value
+it contains, such as its constness, setter and getter function...
 
 \subsubsection{Manipulation}
 
@@ -1911,11 +1915,11 @@ There is some syntactic sugar for slot methods:
 \item \lstinline|var \var{o}.\var{name}| is equivalent to
   \lstinline[style=varInString]|\var{o}.createSlot("\var{name}")|.
 \item \lstinline|var \var{o}.\var{name} = \var{value}| is equivalent to
-  \lstinline[style=varInString]|\var{o}.setSlot("\var{name}", \var{value})|.
+  \lstinline[style=varInString]|\var{o}.setSlotValue("\var{name}", \var{value})|.
 \item \lstinline|\var{o}.\var{name} = \var{value}| is equivalent to
   \lstinline[style=varInString]|\var{o}.updateSlot("\var{name}", \var{value})|.
 \item \lstinline|\var{o}.&\var{name}| is equivalent to
-  \lstinline[style=varInString]|\var{o}.getSlot("\var{name}")| (\var{o} can
+  \lstinline[style=varInString]|\var{o}.getSlotValue("\var{name}")| (\var{o} can
   be omitted, like for regular method invocations: \lstinline|&\var{name}|
   is equivalent to \lstinline[style=varInString]|getSlot("\var{name}")|).
 \end{itemize}
@@ -1950,109 +1954,66 @@ There is also syntactic sugar for some of them:
   \lstinline[style=varInString]|setProperty("\var{slot}", "\var{name}", \var{value})|.
 \end{itemize}
 
-\subsubsection{Standard Properties}
-\label{sec:lang:prop:std}
 
-Some properties are handled by the system itself.
+\subsection{Direct slot access}
 
+\subsubsection{Getting and setting slots}
 
-\paragraph{The \lstinline{changed} property}
-
-This property is used by the system to implement the
-\lstinline{watch}-expression (\autoref{sec:lang:watch}).  It allows to
-monitor when a slot is bound to new values: each time a new value is
-assigned to the monitored slot, an event \lstinline{changed} is emitted:
-
-\begin{urbiscript}[firstnumber=1]
-var x = []|;
-
-at (x->changed?)
-  echo("x->changed");
-
-x = [1]|;
-[00092656] *** x->changed
-x = [1, 2]|;
-[00092756] *** x->changed
-\end{urbiscript}
-
-Even if the slot is assigned to the very same value, the
-\lstinline|x->changed| event is emitted.
+Slots are themselves objects that can be accessed using
+\refSlot[Object]{getSlot}. Slots of a known name can be accessed by the
+\lstinline|&| alias.
 
 \begin{urbiscript}
-x = x|;
-[00092856] *** x->changed
-\end{urbiscript}
-
-This is different from checking value \emph{updates}.  In the following
-example, \lstinline{x} is not rebound to another list, it is the content of
-the list that changes, therefore the \lstinline{changed} event is \emph{not}
-fired:
-
-\begin{urbiscript}
-x << 3;
-[00092866] [1, 2, 3]
-\end{urbiscript}
-
-To monitor changes of value, use the \lstinline{watch}-construct
-(\autoref{sec:lang:watch}).
-
-
-
-\paragraph{The \lstinline{constant} property}
-It defines whether a slot can be assigned a new value.
-
-\begin{urbiscript}
-var c = 0;
-[00000000] 0
-c = 1;
-[00000000] 1
-
-c->constant = true;
-[00000000] true
-c = 2;
-[00000000:error] !!! cannot modify const slot
-
-c->constant = false;
-[00000000] false
-c = 3;
-[00000000] 3
-\end{urbiscript}
-
-A new slot can be declared constant when first defined, in which case the
-initial value is required.
-
-\begin{urbiscript}
-const var two;
-[00000030:error] !!! syntax error: const declaration without a value
-const var two = 2;
-[00000036] 2
-two = 3;
-[00000037:error] !!! cannot modify const slot
-two->constant;
-[00000038] true
-\end{urbiscript}
-
-When a slot is declared constant, copy-on-write does not apply (see
-\refSlot[Object]{updateSlot}).
-
-\begin{urbiscript}
-class Top
-{
-  const var x = 1;
+class a {
+  var c = 0;
 }|;
-var t = Top.new|;
-t.x = 2;
-[00000047:error] !!! cannot modify const slot
+var s = a.getSlot("c");
+[00000001] Slot_0xADDR
+a.c = 1;
+[00000002] 1
+assert
+{
+  /// The slot content has changed, but the slot itself remains the same
+  a.getSlot("c") === s;
+  /// Alias for getSlot.
+  a.&c === s;
+};
 \end{urbiscript}
 
+\refSlot[Object]{setSlot} can be used to set the Slot in its owning object.
+One possible use is to share a Slot between multiple objects.
 
+\begin{urbiscript}
+var c = 1;
+[00000000] 1
+setSlot("d", getSlot("c"));
+[00000001] Slot_0xADDR
+c=2;
+[00000002] 2
+assert
+{
+  // The same slot is reached through 'c' and 'd'
+  d === c
+};
+
+\end{urbiscript}
+
+\subsubsection{Properties}
+
+Properties are stored as slots of slots, so \lstinline|\var{obj}->\var{prop}|
+is equivalent to \lstinline|getSlot(obj).prop|.
+
+\subsection{Other features}
+
+All the features offered by slot are listed in the documentation section
+dedicated to the \autorefObject{Slot} Object.
 
 \subsection{Prototypes}
 
 \subsubsection{Manipulation}
 
 \us is a prototype-based language, unlike most classical object oriented
-language, which are class-based. In prototype-based languages, objects have
+languages, which are class-based. In prototype-based languages, objects have
 no type, only \dfn{prototypes}, from which they inherit behavior.
 
 \us objects can have several prototypes. The list of prototypes is given by
@@ -2118,7 +2079,7 @@ c.getSlotValue("x");
 \end{urbiscript}
 
 \subsubsection{Copy on write}
-
+\label{sec:lang:cow}
 The \refSlot[Object]{updateSlot} method has a particular behavior with
 respect to prototypes. Although performing an \refSlot[Object]{updateSlot}
 on a non existent slot is an error, it is valid if the slot is inherited
@@ -2143,6 +2104,10 @@ p.slot;
 d.slot;
 [00000000] 1
 \end{urbiscript}
+
+This behavior can be inhibited by setting the \lstinline|copyOnWrite| property
+of a slot to false.
+
 
 \subsection{Sending messages}
 
@@ -4215,6 +4180,18 @@ sleep(1.5s) | assert(!x_was_two_for_two_seconds);
 x = 3|; x = 2|; sleep (1s) | assert(!x_was_two_for_two_seconds);
 \end{urbiscript}
 
+Your expression inside the \lstinline{at} should not have any side effect,
+or use any code that will delay execution (for instance sleep, waituntil...).
+
+\begin{urbiunchecked}
+// Do not do this, when and how many times the at condition will be evaluated
+// is not specified.
+at( x++ | y==2) {};
+// Avoid this also, result is unspecified.
+at (sleep(1s) | y==2) {};
+\end{urbiunchecked
+
+}
 \subsubsection{Synchronous and asynchronous \lstinline{at}}
 \label{sec:lang:at:sync-async}
 

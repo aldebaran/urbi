@@ -250,10 +250,12 @@ connectionTag
 connectSerial
 const
 Constness
+constness
 continueInWhile
 controllerArgs
 convertedData
 copyInto
+copyOnWrite
 copyrightable
 copyrightHolder
 copyrightYears
@@ -525,6 +527,7 @@ getStackFrame
 getStats
 getTarget
 getter
+getters
 gettext
 getUObject
 getUObjectHub
@@ -566,6 +569,7 @@ hasNot
 hasProperty
 hasSame
 hasSlot
+hasSubscribers
 headLed
 headPan
 headPitch
@@ -968,12 +972,14 @@ OptimizedImageSource
 Orderable
 oRTP
 os
+oset
 osx
 otherkeywords
 otool
 outlog
 OutputStream
 OutputStreams
+outputValue
 ownsSlot
 p's
 PackageInfo
@@ -1149,9 +1155,11 @@ rPGain
 rshift
 rst
 rtp
+runMotor
 runnable
 runningcommands
 runServer
+runTag
 runtime
 runTo
 rw
@@ -1200,6 +1208,7 @@ setAbsolutePosition
 setAdHoc
 setAngle
 setBypass
+setCommand
 setConfigValue
 setConstSlot
 setConstSlotValue
@@ -1211,6 +1220,7 @@ setLocal
 setLocale
 setModuleDescription
 setNth
+setOutputValue
 setPID
 setPosition
 setPositions

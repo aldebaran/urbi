@@ -296,6 +296,20 @@ and \refSlot{syncEmit} for details about the synchronicity of the handling.
   %% \lstinline|emit| call before all the watchers have finished their
   %% execution.
 
+\item[hasSubscribers]()%
+  Return true if at least one subscriber is registered to this event.
+
+\begin{urbiscript}
+var ev = Event.new|;
+ev.hasSubscribers;
+[00000000] false
+tag: at(ev?) echo(1);
+ev.hasSubscribers;
+[00000000] true
+tag.stop;
+ev.hasSubscribers;
+[00000000] false
+\end{urbiscript}
 
 \item[onEvent](<guard>, <enter>, <leave>, <sync>)%
   This is the low-level routine used to implement the \lstindex|at|
@@ -352,8 +366,8 @@ This function is internal and it might change in the future.
 
 
 \item[onSubscribe]%
-  This slot is not set by default. You can optionally assign an event to
-  it. In this case, it is triggered each time some code starts watching this
+  You can optionally assign an event to this slot.
+  In this case, it is triggered each time some code starts watching this
   event (by setting up an \lstinline|at| or a \lstinline|waituntil| on it
   for instance).
 
@@ -361,6 +375,32 @@ This function is internal and it might change in the future.
   to react to this event have returned.  This function can have the same
   arguments as \refSlot{emit}.
 
+  Note that this slot cannot be inherited.
+
+\begin{urbiscript}
+var clock = Event.new|;
+clock.onSubscribe = Event.new|;
+at(clock.onSubscribe? if clock.subscribers.size == 1)
+{
+  echo("arming clock event");
+  disown({ every|(1s) clock!});
+};
+echo("ready");
+[00000000] *** ready
+at(clock?) echo("tick");
+sleep(1.5s);
+[00000001] *** arming clock event
+[00000002] *** tick
+[00000003] *** tick
+\end{urbiscript}
+
+\item[subscribe](subscription)%
+  Register a \refObject{Subscription} to be called each time the event triggers.
+  Using a subscription object gives you more control on on often and how
+  your code will be evaluated.
+
+\item[subscribers]
+  The list of subscriptions attached to this event.
 
 \item[syncEmit](<args>[])%
   Same as \refSlot{emit} but require a synchronous handling.  See
