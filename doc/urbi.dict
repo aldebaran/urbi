@@ -440,8 +440,8 @@ FunctionProfile
 gatewayAddress
 gcc
 gdb
-ge
 generateALBindings
+GeSHi
 getActualPoseAndTime
 getAll
 getChar
