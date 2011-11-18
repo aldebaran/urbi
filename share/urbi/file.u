@@ -31,9 +31,9 @@ do (File)
     asPath.rename(name)
   };
 
-  function '$doInto'(rhs, action, routine)
+  function '$doInto'(slot, rhs, action, routine)
   {
-    Directory.getSlotValue("$doInto").apply([this, rhs, action, routine]);
+    Directory.getSlotValue("$doInto").apply([slot, rhs, action, routine]);
   };
 
   function copy(filename)
@@ -44,12 +44,12 @@ do (File)
 
   function copyInto(dir)
   {
-    '$doInto'(dir, "copy", "copyInto")
+    '$doInto'(this, dir, "copy", "copyInto")
   };
 
   function moveInto(dir)
   {
-    Directory.getSlotValue("moveInto").apply([this,dir]) |
+    '$doInto'(asPath, dir, "rename", "moveInto") |
     this;
   };
 

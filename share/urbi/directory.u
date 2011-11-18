@@ -82,17 +82,7 @@ do (Global.Directory)
 
   function moveInto(directory)
   {
-    var rhs = directory.asPath |
-    var dir |
-    if (rhs.isA(Directory))
-      dir = rhs
-    else if (rhs.isA(Path) || rhs.isA(String))
-      dir = Directory.new(rhs)
-    else
-      throw Exception.argumentTypeException(routine, 1, rhs,
-                                            [Directory, Path, String]) |
-    var path = Path.new(dir.asString) / Path.new(asPath.basename) |
-    Path.getSlotValue("rename").apply([asPath, path.asString]) |
+    '$doInto'(dir, "rename", "moveInto")
   };
 
   function removeAll()
