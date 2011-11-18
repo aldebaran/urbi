@@ -86,7 +86,7 @@ assert_(1 == 1 + 1, "one is not two");
 
 \item[env]
   A \refObject{Dictionary} containing information about the current
-  environment of \urbi.
+  environment of \urbi.  See also \refSlot{env.init}.
 \begin{urbiassert}
 (env["MyVar"] = 12) == "12";
 env["MyVar"] == "12";
@@ -112,11 +112,12 @@ env["MyVar"].isNil;
 \end{urbiassert}
 
 
-\item[env.init]
-  Refresh the urbi environment by fetching all the environment variables.
-  Beware that environ \refObject{Dictionary} is not modified when calling
-  getenv, setenv or unsetenv from the C library. Init it first and then
-  manipulate your environment as a simple \refObject{Dictionary}.
+\item[env.init]%
+  Refresh the \urbi environment by fetching all the environment variables.
+  Beware that \refSlot{env} is not updated when calling \lstinline{getenv},
+  \lstinline{setenv} or \lstinline{unsetenv} from the C library.  Initialize
+  it first and then manipulate your environment as a simple
+  \refObject{Dictionary}.
 \begin{urbiassert}
 env.init == env;
 !env["USER"].isNil;

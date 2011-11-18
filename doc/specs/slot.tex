@@ -8,10 +8,10 @@
 
 \section{Slot}
 
-A slot is an intermediate object that embodies the concept of 'variable' or
-'field' in urbiscript. It contains an underlying value, meta-information
-about this value, and slots to alter the behavior of read and
-write operations.
+A slot is an intermediate object that embodies the concept of ``variable''
+or ``field'' in \us.  It contains an underlying value, meta-information
+about this value, and slots to alter the behavior of read and write
+operations.
 
 \subsection{Accessing the slot object}
 Section \autoref{sec:lang:slots} describes how to access a slot object.
@@ -21,13 +21,14 @@ Section \autoref{sec:lang:slots} describes how to access a slot object.
 The contained value returned by default when \refSlot[Object]{getSlotValue}
 is called is stored in the \refSlot{value} slot.
 
-The \refSlot{changed} slot is an \refObject{Event} that is triggered each time
-the slot is written to.
+The \refSlot{changed} slot is an \refObject{Event} that is triggered each
+time the slot is written to.
 
-Setters and getters to modify the slot behaviors can be installed by
-writing to \refSlot{set}, \refSlot{get}, \refSlot{oset} and \refSlot{oget}.
+Setters and getters to modify the slot behaviors can be installed by writing
+to \refSlot{set}, \refSlot{get}, \refSlot{oset} and \refSlot{oget}.
 
-Two slots can be linked together to build dataflows using operator \refSlot{>>}
+Two slots can be linked together to build dataflows using operator
+\refSlot{>>}
 
 \subsection{Split mode}
 \label{sec:lang:slot:split}
@@ -242,28 +243,29 @@ Global.y = 13;
   trigger \refSlot{changed}.
 
 \item[split]%
-  Indicates that the slot has both an input value and an output value.
-  The input value is written to by external code, and the slot will act on it.
-  The output value is updated by the slot itself and made visible to external
-  code.
+  Indicates that the slot has both an input value and an output value.  The
+  input value is written to by external code, and the slot will act on it.
+  The output value is updated by the slot itself and made visible to
+  external code.
 
-  This feature's intended use is to have both a sensor value and an effector
+  This feature's intended use is to have both a sensor value and an actuator
   command accessible on the same slot.
 
   More formally, once activated by setting the \refSlot{split} slot to true:
 \begin{itemize}
 \item Writing to the slot no longer triggers \refSlot{changed}, but still
   updates \refSlot{value} and calls \refSlot{set}.
-\item Reading the slot returns \refSlot{outputValue}  instead of \refSlot{value}
+\item Reading the slot returns \refSlot{outputValue} instead of
+  \refSlot{value}
 \end{itemize}
 
-Practically, code external to the slot owner continue to use the slot as usual.
-The object owning the slot must:
+Practically, code external to the slot owner continue to use the slot as
+usual.  The object owning the slot must:
 \begin{itemize}
 \item Directly access \refSlot{value}, or use a setter to read the value
   written by external code.
-\item Call \refSlot{setOutputValue} to update the value visible to external call.
-  This call will trigger the \refSlot{changed} event.
+\item Call \refSlot{setOutputValue} to update the value visible to external
+  call.  This call will trigger the \refSlot{changed} event.
 \end{itemize}
 
 \begin{urbiscript}
