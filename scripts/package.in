@@ -38,29 +38,6 @@ case $MODE in
   (*)           release_mode=false;;
 esac
 
-check_equal ()
-{
-  local lhs
-  local rhs
-  eval "lhs=\$$1"
-  eval "rhs=\$$2"
-  if test "$lhs" != "$rhs"; then
-    stderr "*******************"                \
-           "$1 != $2"                           \
-           "($lhs != $rhs)"                     \
-           "proceeding with $1 = $rhs"
-    eval "$1=\$$2"
-  fi
-}
-
-check_equal ARCH         URBI_HOST_CPU
-check_equal COMP         URBI_HOST_COMP
-# check_equal OS           URBI_HOST_OS
-check_equal builddir     abs_top_builddir
-check_equal prefix       buildprefix
-check_equal release_mode COMPILATION_MODE_RELEASE
-check_equal srcdir       abs_top_srcdir
-
 # Determine the version from the latest component of the tag. This will
 # ease ordering.
 version=$(cd "$srcdir" && git describe | sed -e "s,^preview/,,;s,/,-,g")
