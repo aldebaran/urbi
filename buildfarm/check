@@ -38,38 +38,17 @@ check -C doc
 check -C tests TESTS_DIRS=2.x
 check -C tests TESTS_DIRS=1.x
 check -C tests TESTS_DIRS=uob/plug
-if test "$BUILDFARM_OS" != "windows"; then
-  check -C tests TESTS_DIRS=uob/remote
-  check -C tests TESTS_DIRS=uob/rtp
-  check -C tests TESTS_DIRS=uob/java
-fi
+check -C tests TESTS_DIRS=uob/remote
+check -C tests TESTS_DIRS=uob/rtp
+check -C tests TESTS_DIRS=uob/java
 check -C tests TESTS_DIRS=demo
 check -C tests TESTS_DIRS=@ros
 
-  (*)
-     # Libport.
-     check -C sdk-remote/libport
-     # SDK-Remote
-     check -C sdk-remote/src/tests
-     # Urbi.
-     check -C tests TESTS_DIRS=0.x
-     check -C doc
-     check -C tests TESTS_DIRS=2.x
-     check -C tests TESTS_DIRS=1.x
-     check -C tests TESTS_DIRS=uob/plug
-     check -C tests TESTS_DIRS=uob/remote
-     check -C tests TESTS_DIRS=uob/rtp
-     check -C tests TESTS_DIRS=uob/java
-     check -C tests TESTS_DIRS=demo
-     check -C tests TESTS_DIRS=@ros
-
-     # fsm.u is not installed, cannot installcheck.  Windows cannot run
-     # properly with non-installed libraries.
-     case $BUILDFARM_OS in
-       (windows);;
-       (*) make_twice_ check -C tests TESTS_DIRS=@fsm;;
-     esac
-     ;;
+# fsm.u is not installed, cannot installcheck.  Windows cannot run
+# properly with non-installed libraries.
+case $BUILDFARM_OS in
+  (windows);;
+  (*) make_twice_ check -C tests TESTS_DIRS=@fsm;;
 esac
 
 case $BUILDFARM_HOSTNAME in (bf-2)
