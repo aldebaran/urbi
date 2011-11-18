@@ -461,7 +461,7 @@ namespace urbi
     }
 
     static rDictionary
-    system_environ_init()
+    system_env_init()
     {
       const char** env = libport::getenviron();
 
@@ -481,10 +481,10 @@ namespace urbi
     }
 
     static rDictionary
-    system_environ()
+    system_env()
     {
       if (!env_)
-        system_environ_init();
+        system_env_init();
       return env_;
     }
 
@@ -732,8 +732,8 @@ namespace urbi
 
 #undef DECLARE
 
-      system_class->bind(SYMBOL(env), &system_environ);
-      system_class->bind(SYMBOL(initenv), &system_environ_init);
+      system_class->bind(SYMBOL(env), &system_env);
+      system_class->bind(SYMBOL(initenv), &system_env_init);
       system_class->bind(SYMBOL(sleep), &system_sleep);
       system_class->bind(SYMBOL(sleep), &system_sleep_inf);
       system_class->bind(SYMBOL(searchPath), &system_searchPath,
