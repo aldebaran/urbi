@@ -165,7 +165,146 @@ assert
 };
 \end{urbiscript}
 
+\item[get, oget]%
+  These slots can be set with a function that will be called each time the slot
+  is accessed. If one exists, the \refSlot{value} slot is ignored, and the
+  value returned from \refSlot{get} or \refSlot{oget} is used instead.
+  Only one of them can be set. \refSlot{get} is called on the slot itself with
+  no other argument, whereas \refSlot{oget} is called on the object who first
+  owned the slot, with the slot as argument.
+
+  Use \refSlot{get} when all the information needed to compute the value are
+  in the slot itself.
+
+\begin{urbiscript}
+var counter = 0|;
+var &counter.increment = 2|;
+counter->get = function()
+{ value += increment | value}|;
+counter;
+[00000001] 2
+counter;
+[00000002] 4
+counter->increment = 3|;
+counter;
+[00000003] 7
+\end{urbiscript}
+
+Use \refSlot{oget} when the computation needs information in the object
+owning the slot. Using \refSlot{oget} is better than using \refSlot{get} with
+a closure.
+
+\begin{urbiscript}
+class Vector
+{
+  var x;
+  var y;
+  function init(x_, y_)
+  {
+    x = x_;
+    y = y_;
+  };
+  var length;
+  length->oget = function(slot)
+  {
+    ((x*x)+(y*y)).sqrt
+  };
+}|;
+var v = Vector.new(2, 0)|;
+v.length;
+[00000001] 2
+\end{urbiscript}
+
+\begin{urbicomment}
+removeSlot("Vector")|;
+removeSlot("v")|;
+\end{urbicomment}
+
+\item[set, oset]
+  These slots can be set with a function that will be called each time the
+  slot is written to. If one exists, the default behavior that simply writes
+  the value to \refSlot{value} is disabled.
+  \refSlot{set} is called on the slot itself, with the value as its sole
+  argument. \refSlot{oset} is called on the object owning the slot, with
+  the value and the slot as arguments.
+
+  Use \refSlot{set} when the operation performed by your function needs no
+  information outside the slot.
+
+  Only the object owning the slot should use \refSlot{set} and \refSlot{oset}.
+  Other objects should use \refSlot{changed}, watch constructs
+  ((\autoref{sec:lang:watch})) or \refSlot{>>}.
+
+\begin{urbiscript}
+var integer = 0|;
+integer->set = function(v) { value = v.round}|;
+integer = 1.6 | integer;
+[00000001] 2
+\end{urbiscript}
+
+  Use \refSlot{oset} when you need access to the object from your function.
+
+\begin{urbiscript}
+class Vector
+{
+  var x;
+  var y;
+  function init(x_, y_)
+  {
+    x = x_;
+    y = y_;
+  };
+  var length;
+  length->oget = function(slot) { ((x*x)+(y*y)).sqrt };
+  /// Change the vector length, keeping the same direction
+  length->oset = function(value, slot)
+  {
+    var ratio = value / length;
+    x *= ratio;
+    y *= ratio;
+  };
+}|;
+var v = Vector.new(2, 0)|;
+v.length *= 2|;
+v.x;
+[00000001] 4
+v.y;
+[00000002] 0
+\end{urbiscript}
+
+\item[>>](<slot>)%
+  The \refSlot{>>} operator connects two \refSlot{Slot} together through a
+  \refSlot{Subscription}. Each time the source Slot is updated, its new value
+  is written to the target Slot.
+  This function should be used to bridge a component producing an output value
+  to a component expecting an input value.
+  It returns a \refSlot{Subscription} that can be used to configure the link,
+  and gather statistics.
+
+\begin{urbiscript}
+var tick = 0|;
+var tack = 0|;
+var sub = &tick >> &tack;
+[00000001] Slot_0xADDR >> Slot_0xADDR
+tack->set = function(v) { echo("tack " + v)}|;
+timeout(10.5s) every|(1s) tick++,
+sleep(1.5s) | sub.callCount;
+[00000002] *** tack 1
+[00000003] *** tack 2
+[00000004] 2
+sub.enabled = false| sleep(1s)| sub.enabled = true|;
+sleep(2s);
+[00000002] *** tack 4
+[00000003] *** tack 5
+sub.disconnect();
+sleep(2s);
+\end{urbiscript}
+
+\item[<<](<slot>)%
+  Bounces to \refSlot{>>} reversing the two Slots.
+
 \item[notifyAccess](<onAccess>)%
+  Deprecated, use \refSlot{get} or \refSlot{oget}.
   Similar to the \Cxx \lstinline|UNotifyAccess|, calls \var{onAccess} each
   time the \lstinline|Slot| is accessed (read).
 
@@ -191,6 +330,7 @@ assert
 
 
 \item[notifyChange](<onChange>)%
+  Deprecated, use \refSlot{>>} or \refSlot{changed}.
   Similar to the \Cxx \lstinline|UNotifyChange| (see
   \autoref{sec:uobject:uvar-notify}), register \var{onChange} and call it
   each time this \lstinline|Slot| is written to.  Return an identifier that
