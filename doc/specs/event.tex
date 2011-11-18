@@ -379,8 +379,8 @@ This function is internal and it might change in the future.
 
 \begin{urbiscript}
 var clock = Event.new|;
-clock.onSubscribe = Event.new|;
-at(clock.onSubscribe? if clock.subscribers.size == 1)
+var clock.onSubscribe = Event.new|;
+at (clock.onSubscribe? if clock.subscribers.size == 1)
 {
   echo("arming clock event");
   disown({ every|(1s) clock!});
