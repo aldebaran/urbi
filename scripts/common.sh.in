@@ -85,29 +85,15 @@ else
 fi
 
 
-# OS and URBI_HOST_OS.
+# OS (macos, windows, linux, linux_lucid, etc.).
 #
-# The bf passes the OS name as an envvar: "$osyst".
-: ${OS=${osyst-$URBI_HOST_OS}}
-
-# OS might be different from URBI_HOST_OS.  For instance
-# URBI_HOST_OS=linux, but OS=linux-bleeding-edge.  If we drop the
-# bleeding-edge part, we will make bleeding-edge tarballs not labeled
-# as such, so we might ship bleeding-edge tarballs instead of the old
-# Debian etch.
-#
+: ${OS=$BUILDFARM_OS}
 # Don't accept - in the OS.
 OS=$(echo "$OS" | sed -e 's/-/_/g')
-# bleeding-edge actually means Ubuntu Lucid.
-OS=$(echo "$OS" | sed -e 's/bleeding_edge/lucid/g')
-# and actually, the debug package is made on lucid too.
-case $OS:$COMPILATION_MODE_DEBUG in
-  (linux:true) OS="${OS}_lucid";;
-esac
-stderr "OS = $OS" "URBI_HOST_OS = $URBI_HOST_OS"
+stderr "OS = $OS"
 
 # The kind of package: OS-CPU-COMPILER.
-CONFIGURATION=$OS-$URBI_HOST_CPU-$URBI_HOST_COMP
+CONFIGURATION=$OS-$BUILDFARM_ARCH-$BUILDFARM_COMPILER
 
 : ${TMPDIR=/tmp}
 
