@@ -165,8 +165,9 @@ assert
 };
 \end{urbiscript}
 
-\item[get, oget]%
-  These slots can be set with a function that will be called each time the slot
+\item[get]%
+  Together with \refSlot{oset}, this slot can be set with a function that will
+  be called each time the slot
   is accessed. If one exists, the \refSlot{value} slot is ignored, and the
   value returned from \refSlot{get} or \refSlot{oget} is used instead.
   Only one of them can be set. \refSlot{get} is called on the slot itself with
@@ -220,8 +221,14 @@ removeSlot("Vector")|;
 removeSlot("v")|;
 \end{urbicomment}
 
-\item[set, oset]
-  These slots can be set with a function that will be called each time the
+\item[oget]%
+  Similar to \refSlot{get}, but with a different signature: the callback
+  function is called on the object owning the slot, instead of the slot
+  itself.
+
+\item[set]%
+  Together with \refSlot{oset}, this slot can be set with a function that will
+  be called each time the
   slot is written to. If one exists, the default behavior that simply writes
   the value to \refSlot{value} is disabled.
   \refSlot{set} is called on the slot itself, with the value as its sole
@@ -271,6 +278,10 @@ v.x;
 v.y;
 [00000002] 0
 \end{urbiscript}
+
+\item[oset]%
+  Similar to \refSlot{set} but with a different signature: the function is
+  called on the object owning the slot instead of the slot itself.
 
 \item[>>](<slot>)%
   The \refSlot{>>} operator connects two \refSlot{Slot} together through a
