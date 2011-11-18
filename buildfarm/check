@@ -38,10 +38,11 @@ check -C doc
 check -C tests TESTS_DIRS=2.x
 check -C tests TESTS_DIRS=1.x
 check -C tests TESTS_DIRS=uob/plug
-check -C tests TESTS_DIRS=uob/remote
-check -C tests TESTS_DIRS=uob/rtp
-test "$BUILDFARM_OS" != "windows" ||
+if test "$BUILDFARM_OS" != "windows"; then
+  check -C tests TESTS_DIRS=uob/remote
+  check -C tests TESTS_DIRS=uob/rtp
   check -C tests TESTS_DIRS=uob/java
+fi
 check -C tests TESTS_DIRS=demo
 check -C tests TESTS_DIRS=@ros
 
