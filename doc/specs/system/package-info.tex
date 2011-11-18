@@ -101,7 +101,7 @@ System.PackageInfo.components["Urbi SDK"].revision.isA(String);
 
 
 \item[string] Name and version concatenated, for instance
-  \lstinline|"Urbi SDK 2.7.3"|.
+  \lstinline|"Urbi SDK 2.7.4"|.
 \begin{urbiassert}
 System.PackageInfo.components["Urbi SDK"].string.isA(String);
 \end{urbiassert}
@@ -109,9 +109,9 @@ System.PackageInfo.components["Urbi SDK"].string.isA(String);
 
 \item[subMinor] The sub-minor version component (see \refSlot{version}).
 \begin{urbiassert}
-// Urbi 2.7.3.
+// Urbi 2.7.4.
 System.PackageInfo.components["Urbi SDK"].subMinor
-  == 3;
+  == 4;
 \end{urbiassert}
 
 
@@ -129,7 +129,7 @@ System.PackageInfo.components["Urbi SDK"].tarname
 
 
 \item[version] The version string, such as \lstinline|"2.7"| or
-  \lstinline|"2.7.3"|.
+  \lstinline|"2.7.4"|.
 \begin{urbiscript}
 do (System.PackageInfo.components["Urbi SDK"])
 {
@@ -161,7 +161,8 @@ do (System.PackageInfo.components["Urbi SDK"])
 \end{urbiscript}
 
 
-\item[versionValue] The version as an integer, for instance 2007001.
+\item[versionValue] The version as an integer, for instance 2007004 for
+  2.7.4.
 \begin{urbiscript}
 do (System.PackageInfo.components["Urbi SDK"])
 {
