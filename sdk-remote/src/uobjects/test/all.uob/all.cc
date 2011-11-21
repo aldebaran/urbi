@@ -235,26 +235,46 @@ public:
             const std::string& conversion)
   {
     size_t res = 0;
-    size_t len = img1.size();
-    for (size_t i = 0; i < len; ++i)
-    {
-      if (img1[i] != img2[i])
-      {
-        int i1 = (unsigned char)img1[i];
-        int i2 = (unsigned char)img2[i];
-        // Ugly ugly cast but didn't manage to print correctly.
-        size_t d = abs(i2 - i1);
-        GD_FERROR("error while comparing images at the %d byte "
-                  "for the %s conversion, diff:"
-                  "reference : %d source %d, distance %d.",
-                  i, conversion, i1, i2, d);
-        if (res < d)
-          res = d;
-      }
+#define COMPARE(Feature)                                        \
+    if (img1.Feature() != img2.Feature())                       \
+    {                                                           \
+      ++res;                                                    \
+      GD_FWARN("imageDiff (%s): "                               \
+               "incompatible image " #Feature ": %d, %d",       \
+               conversion, img1.Feature(), img2.Feature());     \
     }
-    if (res)
-      GD_FERROR("largest diff is %d for %s conversion.",
-                res, conversion);
+    COMPARE(size);
+#undef COMPARE
+
+    // No need to go further if we already have differences.
+    if (!res)
+    {
+      // They have the same size.
+      size_t len = img1.size();
+      // Number of errors.
+      size_t num = 0;
+      for (size_t i = 0; i < len; ++i)
+      {
+        int i1 = (unsigned char) img1[i];
+        int i2 = (unsigned char) img2[i];
+        if (size_t d = abs(i2 - i1))
+        {
+          ++num;
+          enum { max_errors = 5 };
+          if (num <= max_errors)
+            GD_FERROR("imageDiff (%s): at %d, %d != %d (d = %d)",
+                      conversion, i, i1, i2, d);
+          if (num == max_errors)
+            GD_FERROR("imageDiff (%s): too many errors, won't report others",
+                      conversion);
+          if (res < d)
+            res = d;
+        }
+      }
+      if (res)
+        GD_FERROR("imageDiff (%s): %d diffs, largest: %d",
+                  conversion, num, res);
+    }
     return res;
   }
 
