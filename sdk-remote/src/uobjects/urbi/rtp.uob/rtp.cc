@@ -883,7 +883,7 @@ void URTP::sendGrouped(const std::string& name, const UValue& val,
   {
     static bool synchronous_commit = false;
     if (!synchronous_commit)
-      std::cerr <<"synchronous commitgroup" << std::endl;
+      GD_SINFO_DUMP("synchronous commitgroup");
     synchronous_commit = true;
     commitGroup();
   }

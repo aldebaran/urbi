@@ -1812,14 +1812,15 @@ namespace urbi
     {
       if (server().isAnotherThread())
       {
-        server().schedule_fast(boost::bind(
-                                 &KernelUGenericCallbackImpl::registerCallback, this));
+        server()
+          .schedule_fast
+          (boost::bind(&KernelUGenericCallbackImpl::registerCallback,
+                       this));
         return;
       }
       if (registered_)
       {
-        std::cerr << "###UGenericcallback on " << owner_->name
-                  << " already registered" << std::endl;
+        GD_INFO_DUMP("UGenericcallback on %s already registered", owner_->name);
         return;
       }
       registered_ = true;
@@ -2101,7 +2102,7 @@ namespace urbi
         ObjectLinks::iterator i = object_links.find(name);
         if (i == object_links.end())
         {
-          std::cerr <<"pushing " << name << " " << res << std::endl;
+          GD_FINFO_TRACE("pushing %s %s", name, res);
           object_links[name] = urbi::impl::Link(res.get(), false, 0);
           assert(get_base(name));
         }
