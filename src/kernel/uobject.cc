@@ -1820,7 +1820,8 @@ namespace urbi
       }
       if (registered_)
       {
-        GD_INFO_DUMP("UGenericcallback on %s already registered", owner_->name);
+        GD_FINFO_DUMP("UGenericcallback on %s already registered",
+                      owner_->name);
         return;
       }
       registered_ = true;
