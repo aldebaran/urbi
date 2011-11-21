@@ -23,7 +23,6 @@ Exception.Lookup.fixSpelling = false|;
 `---------*/
 class Global.camera: Loadable
 {
-  var count = 0;
   UVar.new(this, "val");
   // In order to avoid the "unexpected void" messages if we forget to
   // start the camera.
@@ -54,6 +53,7 @@ class Global.camera: Loadable
 
   // When the camera is active, loop on the images.
   var load = false;
+  var count = 0;
   at (load)
   {
     loadImages;
