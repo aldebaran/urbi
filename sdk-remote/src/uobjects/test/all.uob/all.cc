@@ -240,7 +240,7 @@ public:
     size_t num = 0;
     for (size_t i = 0; i < size; ++i)
     {
-      if (size_t d = abs(b2[i] - b1[1]))
+      if (size_t d = abs(b2[i] - b1[i]))
       {
         ++num;
         enum { max_errors = 5 };
