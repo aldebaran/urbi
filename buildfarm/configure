@@ -163,7 +163,6 @@ case $BUILDFARM_COMPILER in
     RANLIB=:                                    \
     --enable-shared                             \
     --disable-static                            \
-    --enable-dependency-tracking                \
     --enable-library-suffix                     \
     host_alias=mingw32                          \
     --host=mingw32"
@@ -198,6 +197,8 @@ if $(older "$DIR_BUILD/Makefile" "$0"); then
     "$with_ros"                                 \
     "$enable_doc"                               \
     --enable-headers-install                    \
+    --enable-dependency-tracking                \
+    --enable-maintainer-mode                    \
     $CONFIGUREFLAGS                             \
   ||
   {
