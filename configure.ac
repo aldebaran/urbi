@@ -284,8 +284,8 @@ AC_CONFIG_SUBDIRS([sdk-remote/jpeg])
 # If we use a specific runtime for MSVC, tell it to libjpeg, which
 # does not use the compilation-mode macros.
 if test -n "$urbi_msvc_runtime"; then
-  URBI_APPEND_CONFIGUREFLAGS([--enable-cflags=$urbi_msvc_runtime_compilerflags])
-  URBI_APPEND_CONFIGUREFLAGS([--enable-ldflags=$urbi_msvc_runtime_ldflags])
+  URBI_APPEND_CONFIGUREFLAGS([--with-cflags=$urbi_msvc_runtime_compilerflags])
+  URBI_APPEND_CONFIGUREFLAGS([--with-ldflags=$urbi_msvc_runtime_ldflags])
 fi
 
 ## ----------------- ##
