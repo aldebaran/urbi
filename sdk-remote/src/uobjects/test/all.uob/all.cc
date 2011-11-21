@@ -230,6 +230,36 @@ public:
   }
 
   size_t
+  bufDiff(const unsigned char* b1, const unsigned char* b2,
+          size_t size,
+          const std::string& ctx)
+  {
+    size_t res = 0;
+
+    // Number of errors.
+    size_t num = 0;
+    for (size_t i = 0; i < size; ++i)
+    {
+      if (size_t d = abs(b2[i] - b1[1]))
+      {
+        ++num;
+        enum { max_errors = 5 };
+        if (num <= max_errors)
+          GD_FERROR("%s: at %d, %d != %d (d = %d)%s",
+                    ctx, i, int(b1[i]), int(b2[i]), d,
+                    num == max_errors
+                    ? " (too many errors, won't report others)"
+                    : "");
+        if (res < d)
+          res = d;
+      }
+    }
+    if (res)
+      GD_FERROR("%s: %d diffs, largest: %d", ctx, num, res);
+    return res;
+  }
+
+  size_t
   imageDiff(const std::string& img1,
             const std::string& img2,
             const std::string& conversion)
@@ -239,7 +269,7 @@ public:
     if (img1.Feature() != img2.Feature())                       \
     {                                                           \
       ++res;                                                    \
-      GD_FWARN("imageDiff (%s): "                               \
+      GD_FWARN("imageDiff: %s: "                                \
                "incompatible image " #Feature ": %d, %d",       \
                conversion, img1.Feature(), img2.Feature());     \
     }
@@ -249,31 +279,11 @@ public:
     // No need to go further if we already have differences.
     if (!res)
     {
-      // They have the same size.
-      size_t len = img1.size();
-      // Number of errors.
-      size_t num = 0;
-      for (size_t i = 0; i < len; ++i)
-      {
-        int i1 = (unsigned char) img1[i];
-        int i2 = (unsigned char) img2[i];
-        if (size_t d = abs(i2 - i1))
-        {
-          ++num;
-          enum { max_errors = 5 };
-          if (num <= max_errors)
-            GD_FERROR("imageDiff (%s): at %d, %d != %d (d = %d)",
-                      conversion, i, i1, i2, d);
-          if (num == max_errors)
-            GD_FERROR("imageDiff (%s): too many errors, won't report others",
-                      conversion);
-          if (res < d)
-            res = d;
-        }
-      }
-      if (res)
-        GD_FERROR("imageDiff (%s): %d diffs, largest: %d",
-                  conversion, num, res);
+      // The have the same size.
+      res += bufDiff(reinterpret_cast<const unsigned char*>(img1.c_str()),
+                     reinterpret_cast<const unsigned char*>(img2.c_str()),
+                     img1.size(),
+                     "imageDiff: " + conversion);
     }
     return res;
   }
