@@ -64,6 +64,7 @@ namespace urbi
       s->oget_set(primitive(getter));
       s->constant_set(true);
     }
+
     rObject
     Slot::property_get(libport::Symbol k)
     {

@@ -35,13 +35,15 @@ namespace urbi
 
     Primitive::Primitive(rPrimitive model)
       : content_(model->value_get())
+      , default_()
     {
       proto_add(proto);
       proto_remove(Object::proto);
     }
 
     Primitive::Primitive(const value_type& p)
-      : default_(p)
+      : content_()
+      , default_(p)
     {
       if (!proto)
         proto = new Primitive(FirstPrototypeFlag());
@@ -55,6 +57,7 @@ namespace urbi
 
     URBI_CXX_OBJECT_INIT(Primitive)
       : content_()
+      , default_()
     {
       Ward w(this);
       // Hack to avoid proto = 0,

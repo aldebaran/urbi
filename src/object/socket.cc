@@ -83,9 +83,8 @@ namespace urbi
 
     URBI_CXX_OBJECT_INIT(Socket)
       : libport::Socket(*get_default_io_service().get())
+      , io_service_(get_default_io_service())
     {
-      io_service_ = get_default_io_service();
-
       // Uncomment the line below when overloading works.
       //BIND(connectSerial,
       //     connectSerial, void, (const std::string&, unsigned int))

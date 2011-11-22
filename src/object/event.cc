@@ -45,6 +45,8 @@ namespace urbi
     `--------*/
 
     Event::Event()
+      : waiters_()
+      , callbacks_()
     {
       proto_add(proto);
       slot_set_value(SYMBOL(active), to_urbi(false));
@@ -59,6 +61,8 @@ namespace urbi
     }
 
     URBI_CXX_OBJECT_INIT(Event)
+      : waiters_()
+      , callbacks_()
     {
       BIND(hasSubscribers);
       BIND(subscribe);

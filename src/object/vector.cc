@@ -87,6 +87,7 @@ namespace urbi
     }
 
     URBI_CXX_OBJECT_INIT(Vector)
+      : value_()
     {
       BIND(PLUS, operator+, Vector*, ());
       BIND(PLUS, operator+, value_type, (const rObject&) const);

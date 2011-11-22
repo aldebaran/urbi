@@ -64,6 +64,11 @@ namespace urbi
     }
 
     URBI_CXX_OBJECT_INIT(Code)
+      : ast_(0)
+      , call_(0)
+      , captures_(0)
+      , lobby_(0)
+      , this_(0)
     {
       PARAMETRIC_AST(ast, "function () {}");
       ast_ = ast.result<const ast::Routine>();
@@ -75,7 +80,6 @@ namespace urbi
       BIND(bodyString, body_string);
       BIND(spawn);
     }
-
 
 
     Code::ast_type Code::ast_get() const

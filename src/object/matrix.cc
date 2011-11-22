@@ -432,6 +432,7 @@ namespace urbi
 #undef OP
 
     URBI_CXX_OBJECT_INIT(Matrix)
+      : value_()
     {
       BIND_VARIADIC(MINUS, minus);
       BIND_VARIADIC(MINUS_EQ, minus_assign);

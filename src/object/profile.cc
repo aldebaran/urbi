@@ -71,6 +71,11 @@ namespace urbi
     }
 
     URBI_CXX_OBJECT_INIT(Profile)
+      : yields_(0)
+      , wall_clock_time_(0)
+      , total_time_(0)
+      , function_calls_(0)
+      , function_call_depth_max_(0)
     {
       proto_add(Object::proto);
 
@@ -107,6 +112,9 @@ namespace urbi
     {}
 
     URBI_CXX_OBJECT_INIT(FunctionProfile)
+      : calls_(0)
+      , self_time_(0)
+      , time_(0)
     {
       proto_add(Object::proto);
 

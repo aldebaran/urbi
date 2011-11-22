@@ -41,16 +41,12 @@ namespace urbi
     }
 
     URBI_CXX_OBJECT_INIT(Semaphore)
+      : value_()
     {
-#define DECLARE(Name, Cxx)                \
-      bind(SYMBOL_(Name), &Semaphore::Cxx)
-
-      DECLARE(new,             _new);
-      DECLARE(criticalSection, criticalSection);
-      DECLARE(acquire,         acquire);
-      DECLARE(release,         release);
-
-#undef DECLARE
+      BIND(acquire);
+      BIND(criticalSection);
+      BIND(new, _new);
+      BIND(release);
     }
 
     rSemaphore

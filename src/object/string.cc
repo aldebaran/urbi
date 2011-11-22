@@ -118,6 +118,7 @@ namespace urbi
       );
 
     URBI_CXX_OBJECT_INIT(String)
+      : content_()
     {
       proto = this;
       Ward w(this);

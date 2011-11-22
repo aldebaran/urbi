@@ -48,6 +48,7 @@ namespace urbi
     }
 
     URBI_CXX_OBJECT_INIT(Job)
+      : value_(0)
     {
       BIND(DOLLAR_backtrace, backtrace);
       BIND(current);

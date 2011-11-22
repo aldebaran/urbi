@@ -46,6 +46,7 @@ namespace urbi
     }
 
     URBI_CXX_OBJECT_INIT(UValue)
+      : bypassMode_(false)
     {
       BIND(extract);
       BIND(extractAsToplevelPrintable);

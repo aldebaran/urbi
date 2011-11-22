@@ -38,6 +38,9 @@ namespace urbi
     }
 
     URBI_CXX_OBJECT_INIT(EventHandler)
+      : source_(0)
+      , payload_(0)
+      , detach_(false)
     {
       BIND(payload);
       BIND(source);

@@ -44,6 +44,8 @@ namespace urbi
     }
 
     URBI_CXX_OBJECT_INIT(Barrier)
+      : value_()
+      , rest_()
     {
       BIND(new, _new);
       BIND(signal);

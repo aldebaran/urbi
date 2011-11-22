@@ -35,6 +35,7 @@ namespace urbi
     }
 
     URBI_CXX_OBJECT_INIT(Formatter)
+      : data_(0)
     {
       BIND(init);
       BIND(data, data_get);
