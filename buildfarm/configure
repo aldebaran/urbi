@@ -22,9 +22,22 @@ fatal ()
   exit 1
 }
 
+# older REFERENCE FILE...
+# -----------------------
+# Whether REFERENCE is older than all the FILEs.
 older ()
 {
-  test ! -e "$1" || test "$1" -ot "$2"
+  local ref=$1
+  shift
+  test -e "$ref" || return 0
+  local i
+  for i
+  do
+    if test "$ref" -ot "$i"; then
+      return 0
+    fi
+  done
+  return 1
 }
 
 pkg_config_require ()
@@ -94,7 +107,7 @@ fi
 find . -type l -print | perl -nle '-e || print' | xargs -t rm -f
 
 here=$(pwd)
-if $(older "$DIR_SOURCE/configure" "$0"); then
+if $(older "$DIR_SOURCE/configure" "$0" "from-scratch"); then
   cd "$DIR_SOURCE"
   ./bootstrap
   cd $here
