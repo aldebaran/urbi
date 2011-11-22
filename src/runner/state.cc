@@ -27,6 +27,10 @@
 namespace runner
 {
 
+  // The call stack is a circular buffer.  Keep only that many most
+  // recent items.
+  enum { call_stack_capacity = 256 };
+
   State::State(rLobby lobby)
     : frozen_tag_cache_step_(0)
     , frozen_tag_cache_(false)
@@ -35,7 +39,7 @@ namespace runner
     , frozen_(false)
     , tag_stack_()
     , scope_tags_()
-    , call_stack_()
+    , call_stack_(call_stack_capacity)
     , stacks_(lobby)
     , lobby_(lobby)
     , redefinition_mode_(false)

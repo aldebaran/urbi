@@ -136,9 +136,9 @@ namespace urbi
       GD_FPUSH_TRACE("%s: New registration %s.", this, actions);
       runner::Job& r = ::kernel::runner();
       actions->call_stack = r.state.call_stack_get();
-      actions->call_stack <<
-        std::make_pair(SYMBOL(MINUS_MINUS_MINUS_MINUS_SP_event_SP_handler_SP_backtrace_COLON),
-                       boost::optional<ast::loc>());
+      const libport::Symbol& sep =
+        SYMBOL(MINUS_MINUS_MINUS_MINUS_SP_event_SP_handler_SP_backtrace_COLON);
+      actions->call_stack << std::make_pair(sep, boost::optional<ast::loc>());
 
       actions->profile = r.profile_get();
       actions->tag_stack = r.state.tag_stack_get();

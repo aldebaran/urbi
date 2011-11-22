@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010, Gostai S.A.S.
+ * Copyright (C) 2007-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -21,9 +21,12 @@
 # include <libport/ufloat.hh>
 # include <libport/symbol.hh>
 
+# include <boost/circular_buffer.hpp>
+
 # include <ast/loc.hh>
 # include <urbi/object/fwd.hh>
 # include <sched/exception.hh>
+
 
 namespace urbi
 {
@@ -34,7 +37,7 @@ namespace urbi
                       boost::optional<ast::loc> > call_type;
 
     /// Call stack.
-    typedef std::vector<call_type> call_stack_type;
+    typedef boost::circular_buffer<call_type> call_stack_type;
 
     /// Urbi-visible exceptions.
     class UrbiException: public sched::exception
