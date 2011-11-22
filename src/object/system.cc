@@ -15,7 +15,6 @@
 
 #include <memory>
 #include <sstream>
-#include <map>
 
 #include <libport/asio.hh>
 #include <libport/cerrno>
@@ -464,12 +463,12 @@ namespace urbi
     static rDictionary
     system_env_init()
     {
-      std::map<std::string, std::string> env = libport::getenviron();
+      libport::environ_type env = libport::getenviron();
       if (!env_)
         env_ = new Dictionary;
       else
         env_->clear();
-      for (std::map<std::string, std::string>::iterator it = env.begin(); it != env.end(); ++it)
+      for (libport::environ_type::iterator it = env.begin(); it != env.end(); ++it)
         env_->set (to_urbi(it->first), to_urbi(it->second));
       return env_;
     }
