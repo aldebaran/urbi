@@ -163,11 +163,7 @@ namespace urbi
     bool
     Path::exists() const
     {
-      if (!::access(path_.to_string().c_str(), F_OK))
-        return true;
-      if (errno == ENOENT)
-        return false;
-      handle_any_error();
+      return path_.exists();
     }
 
     bool
