@@ -253,12 +253,7 @@ namespace urbi
     void
     Path::rename(const std::string& dst)
     {
-      rPath p = new Path(dst);
-      p->check_nexists();
-      delete p;
-      libport::path path = path_.value_get();
-      path.rename(dst);
-      path_ = path;
+      path_.rename(dst);
     }
 
     rPath
