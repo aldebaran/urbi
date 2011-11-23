@@ -99,7 +99,7 @@ do (Global)
   // Skip this test.
   function testSkip(var why)
   {
-    testExit(176, "Skipping this test: " + why)
+    testExit(176, "SKIP: " + why)
   }|;
 
   /// Generate a stub for the LaTeX documentation of this.
