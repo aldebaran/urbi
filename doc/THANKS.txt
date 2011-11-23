@@ -1,5 +1,6 @@
-Contributors to Urbi SDK:
+Contributors to Urbi:
 
+ - Adam Oleksy <adam.oleksy@pwr.wroc.pl>
  - Alexandre Morgand
  - Bastien Saltel
  - Benoît Sigoure
