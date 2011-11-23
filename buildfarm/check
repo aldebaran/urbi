@@ -17,7 +17,7 @@ make_twice_()
   make_ -j$JOBS "$@" || make_ VERBOSE=1 "$@"
 }
 
-check ()
+check()
 {
   make_twice_ installcheck "$@"
 }
@@ -28,8 +28,8 @@ case $BUILDFARM_HOSTNAME in (bf-2)
   ;;
 esac
 
-# Libport.
-check -C sdk-remote/libport
+# Libport.  Not for install-check.
+make_twice_ check -C sdk-remote/libport
 # SDK-Remote
 check -C sdk-remote/src/tests
 # Urbi.
