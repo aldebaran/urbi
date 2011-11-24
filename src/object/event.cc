@@ -64,6 +64,7 @@ namespace urbi
       : waiters_()
       , callbacks_()
     {
+      BIND(onSubscribe, onSubscribe_);
       BIND(hasSubscribers);
       BIND(subscribe);
       BIND(subscribers, callbacks_);
@@ -108,8 +109,11 @@ namespace urbi
       aver(s);
       GD_FINFO_TRACE("%s: New subscription %s", this, s);
       callbacks_ << s;
-      if (slot_has(SYMBOL(onSubscribe)))
-        slot_get_value(SYMBOL(onSubscribe))->call(SYMBOL(syncEmit));
+      if (onSubscribe_)
+      {
+        objects_type args;
+        onSubscribe_->syncEmit(args);
+      }
     }
 
     rSubscription
@@ -119,8 +123,11 @@ namespace urbi
       rSubscription res = new Subscription(new callback_type(cb));
       res->asynchronous_ = false;
       callbacks_ << res;
-      if (slot_has(SYMBOL(onSubscribe)))
-        slot_get_value(SYMBOL(onSubscribe))->call(SYMBOL(syncEmit));
+      if (onSubscribe_)
+      {
+        objects_type args;
+        onSubscribe_->syncEmit(args);
+      }
       return res;
     }
 
@@ -174,16 +181,22 @@ namespace urbi
           active->register_stop_job(EventHandler::stop_job_type(actions, args, true));
         active->trigger_job(actions, true, args);
       }
-      if (slot_has(SYMBOL(onSubscribe)))
-        slot_get_value(SYMBOL(onSubscribe))->call(SYMBOL(syncEmit));
+      if (onSubscribe_)
+      {
+        objects_type args;
+        onSubscribe_->syncEmit(args);
+      }
       subscribed_();
     }
 
     void
     Event::waituntil(rObject pattern)
     {
-      if (slot_has(SYMBOL(onSubscribe)))
-        slot_get_value(SYMBOL(onSubscribe))->call(SYMBOL(syncEmit));
+      if (onSubscribe_)
+      {
+        objects_type args;
+        onSubscribe_->syncEmit(args);
+      }
       // Check whether there's already a matching instance.
       foreach (const actives_type::value_type& active, active_)
         if (pattern == nil_class

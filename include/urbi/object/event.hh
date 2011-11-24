@@ -113,7 +113,7 @@ namespace urbi
       /// Active instances of this event (handler => payload).
       typedef boost::unordered_set<rEventHandler> actives_type;
       ATTRIBUTE_R(actives_type, active);
-
+      ATTRIBUTE_RW(rEvent, onSubscribe);
     private:
       friend class Subscription;
       /// C++ callbacks
