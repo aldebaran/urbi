@@ -131,27 +131,16 @@ namespace urbi
       return path_.absolute_get();
     }
 
-    struct stat
-    Path::stat() const
-    {
-      struct stat res;
-
-      if (::stat(path_.to_string().c_str(), &res))
-        handle_any_error();
-
-      return res;
-    }
-
     bool
     Path::is_dir() const
     {
-      return stat().st_mode & S_IFDIR;
+      return path_.is_dir();
     }
 
     bool
     Path::is_reg() const
     {
-      return stat().st_mode & S_IFREG;
+      return path_.is_reg();
     }
 
     bool

@@ -95,9 +95,6 @@ namespace urbi
       void handle_any_error() const;
 
       friend class Directory;
-
-      // Stat the file and handle all errors
-      struct stat stat() const;
     };
 
 
