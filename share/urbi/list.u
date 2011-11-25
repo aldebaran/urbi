@@ -20,6 +20,7 @@ requireFile("urbi/range-iterable.u");
 do (List)
 {
   protos = [Global.RangeIterable, Global.Container];
+  var tree = "";
 
   function '<'(var that)
   {
@@ -212,5 +213,32 @@ do (List)
   {
     Kernel1.deprecated("list.append(that)", "list += that")|
     '+='(rhs)
-  }
+  };
+
+  function asTree()
+  {
+    if (tree == "")
+    {
+      var indent = "" |
+      tree += buildTree(indent);
+    };
+  };
+
+  function buildTree(indent)
+  {
+    // Add a level of indentation.
+    var indent_local = indent + "  " |
+    var res = "\n%s[" % indent |
+    for| (var t: this)
+    {
+      if (t.type == "Dictionary" || t.type == "List")
+        res += "%s%s" % [indent, t.buildTree(indent_local)]
+      else
+        res += "\n%s%s," % [indent_local, t] |
+    };
+    if (indent == "")
+      res += "\n]"
+    else
+      res += "\n%s]" % indent;
+  };
 };
