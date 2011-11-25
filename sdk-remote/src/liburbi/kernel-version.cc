@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -22,14 +22,14 @@ namespace urbi
   int kernelMajor()
   {
     int res = getDefaultClient()->kernelMajor();
-    passert(res, res != -1);
+    aver_ne(res, -1);
     return res;
   }
 
   int kernelMinor()
   {
     int res = getDefaultClient()->kernelMinor();
-    passert(res, res != -1);
+    aver_ne(res, -1);
     return res;
   }
 

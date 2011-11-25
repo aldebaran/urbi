@@ -33,7 +33,7 @@ namespace parser
   MetavarMap<Data>::~MetavarMap ()
   {
     // All the values must have been used.
-    passert (map_, empty_ ());
+    aver(empty_(), map_);
   }
 
   template <typename Data>
@@ -57,9 +57,9 @@ namespace parser
   Data
   MetavarMap<Data>::take_ (unsigned key) throw (std::range_error)
   {
-    passert("Missing meta-variable in " << name_ << " map: " << key,
-            libport::has(map_, key));
-    return map_.take (key);
+    aver(libport::has(map_, key),
+         "Missing meta-variable in %s map: %s", name_, key);
+    return map_.take(key);
   }
 
 

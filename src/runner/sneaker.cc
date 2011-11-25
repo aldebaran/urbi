@@ -46,7 +46,7 @@ namespace dbg
   {
     if (kernel::scheduler().is_current_job(0))
     {
-      passert(sneaker, sneaker);
+      aver(sneaker);
       return *sneaker;
     }
     return ::kernel::runner();

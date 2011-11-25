@@ -140,7 +140,7 @@ namespace transform
   void ProxyVisitor1<VoyagerType>::operator() (const ast::Ast&)
   {
     // FIXME: Better error message.
-    pabort("should not be here");
+    abort("should not be here");
   }
 """
 # FIXME: Factor.
@@ -189,7 +189,7 @@ print """
   ProxyVisitor2<FirstType, VoyagerType>::operator() (const ast::Ast&)
   {
     // FIXME: Better error message.
-    pabort("should not be here");
+    abort("should not be here");
   }
 """
 # FIXME: Factor.

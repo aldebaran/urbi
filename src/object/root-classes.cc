@@ -268,9 +268,9 @@ namespace urbi
         void_class->slot_set_value(SYMBOL(asString), new String(SYMBOL(void)));
         void_class->slot_set_value(SYMBOL(DOLLAR_id), new String(SYMBOL(void)));
         // void prints nothing in the toplevel
-        passert("void must be initialized after nil", nil_class);
+        aver(nil_class, "void must be initialized after nil");
         void_class->slot_set_value(SYMBOL(asTopLevelPrintable), nil_class);
-        passert("void must be initialized after true", true_class);
+        aver(true_class, "void must be initialized after true");
         void_class->slot_set_value(SYMBOL(isVoid), true_class);
         void_class->slot_set_value
           (SYMBOL(acceptVoid), new Primitive(void_class_acceptVoid));
@@ -280,7 +280,7 @@ namespace urbi
       accepted_void_class_initialize()
       {
         accepted_void_class->proto_remove(Object::proto);
-        passert("void must be initialized before acceptedVoid", void_class);
+        aver(void_class, "void must be initialized before acceptedVoid");
         accepted_void_class->proto_add(void_class);
       }
     }

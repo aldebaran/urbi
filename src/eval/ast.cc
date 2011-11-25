@@ -554,7 +554,7 @@ namespace eval
     rSlot slot = this_.state.rget(e);
     rObject value = slot->value();
 
-    passert("Local variable read before being set", value);
+    aver(value, "Local variable read before being set");
 
     if (e->arguments_get())
       return call_msg(this_,

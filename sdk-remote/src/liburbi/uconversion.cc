@@ -146,8 +146,9 @@ namespace urbi
                   UImageFormat dest_format,
                   byte** dest, size_t& size, size_t& w, size_t& h)
   {
-    passert(dest_format,
-            dest_format == IMAGE_RGB || dest_format == IMAGE_YCbCr);
+    aver(dest_format == IMAGE_RGB || dest_format == IMAGE_YCbCr,
+         dest_format);
+
     if (!dest)
       return 0;
 

@@ -557,7 +557,7 @@ namespace eval
       // invocation).
       if (val == object::void_class)
 	runner::raise_unexpected_void_error();
-      passert (*arg, val);
+      aver(val, *arg);
       args << val;
     }
   }

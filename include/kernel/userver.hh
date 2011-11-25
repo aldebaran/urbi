@@ -33,6 +33,7 @@
 # include <libport/ufloat.hh>
 # include <libport/utime.hh>
 # include <libport/pthread.h>
+# include <libport/preproc.hh>
 # include <libport/synchronizer.hh>
 
 # include <sched/fwd.hh>
@@ -341,7 +342,7 @@ namespace kernel
     )
 #else
 # define KERNEL_PACIFY_ALLOCATOR()              \
-  LIBPORT_NOP
+  LIBPORT_NOP()
 #endif
 
 // Require the big kernel lock, and pacify the allocator.

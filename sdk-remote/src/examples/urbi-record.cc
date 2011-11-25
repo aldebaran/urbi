@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2010, Gostai S.A.S.
+ * Copyright (C) 2005-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -98,8 +98,8 @@ command(const urbi::UMessage &msg)
       UCommand uc;
       uc.timestamp=msg.timestamp;
       uc.id=i;
-      passert (msg.type, msg.type == urbi::MESSAGE_DATA);
-      passert (msg.value->type, msg.value->type == urbi::DATA_DOUBLE);
+      enforce_eq(msg.type, urbi::MESSAGE_DATA);
+      enforce_eq(msg.value->type, urbi::DATA_DOUBLE);
       uc.value.angle=msg.value->val;
 
       ignore = fwrite(&uc,sizeof (UCommand),1,f);

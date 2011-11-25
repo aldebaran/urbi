@@ -41,7 +41,7 @@ namespace rewrite
     libport::Finally finally;
     finally << libport::scoped_set(allow_subdecl_, true);
     super_type::visit(s);
-    passert(*s, result_);
+    aver(result_, *s);
     typedef typename boost::remove_const<T>::type T_no_const;
     return result_.unsafe_cast<T_no_const>();
   }

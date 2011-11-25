@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -41,14 +41,14 @@ namespace ast
     ast::rConstNary nary = ast_.unchecked_cast<const ast::Nary>();
     if (desugar)
       nary = rewrite::rewrite(nary);
-    passert("ParametricAst result is not a Nary", nary);
+    aver(nary, "ParametricAst result is not a Nary");
 
     // Remove useless nary and statement if there's only one child.
     if (nary->children_get().size() == 1)
     {
       ast::rConstStmt stmt =
         nary->children_get().front().unsafe_cast<const ast::Stmt>();
-      passert("ParametricAst's Nary child isn't a statement", stmt);
+      aver(stmt, "ParametricAst's Nary child isn't a statement");
       ast_ = stmt->expression_get();
     }
   }
@@ -76,7 +76,7 @@ namespace ast
 
   ParameterizedAst::~ParameterizedAst()
   {
-    passert(*this, empty());
+    aver(empty(), *this);
   }
 
   void
@@ -133,7 +133,7 @@ namespace ast
   void
   ParameterizedAst::reset()
   {
-    passert(*this, empty());
+    aver(empty(), *this);
 #ifndef NDEBUG
     unique_.clear();
 #endif
@@ -210,7 +210,7 @@ namespace ast
   ParameterizedAst::operator% (ast::exps_type* exps)
   {
 #ifndef NDEBUG
-    passert(libport::deref << exps, unique_(exps));
+    aver(unique_(exps), *exps);
 #endif
     exps_map_type::append_(count_, exps);
     return *this;

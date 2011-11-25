@@ -42,11 +42,10 @@ namespace ast
         return;
       operator()(ptr.get());
 # ifndef NDEBUG
-      if (!result_.unsafe_cast<T>())
-        pabort("invalid transformation, expected a"
-               << libport::TypeInfo(typeid(T))
-               << ", got a "
-               << libport::TypeInfo(typeid(*result_)));
+      aver(result_.unsafe_cast<T>(),
+           "invalid transformation, expected a %%s, got a %%s",
+           libport::TypeInfo(typeid(T)),
+           libport::TypeInfo(typeid(*result_)));
 # endif
       ptr = result_.unchecked_cast<T>();
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2010, Gostai S.A.S.
+ * Copyright (C) 2005-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -23,13 +23,9 @@ static int starttime = 0;
 static urbi::UCallbackAction
 bw(const urbi::UMessage &msg)
 {
-  passert (msg.type,
-	   msg.type == urbi::MESSAGE_DATA);
-  passert (msg.value->type,
-	   msg.value->type == urbi::DATA_BINARY);
-  passert (msg.value->binary->type,
-	   msg.value->binary->type == urbi::BINARY_IMAGE);
-
+  enforce_eq(msg.type, urbi::MESSAGE_DATA);
+  enforce_eq(msg.value->type, urbi::DATA_BINARY);
+  enforce_eq(msg.value->binary->type, urbi::BINARY_IMAGE);
   //aproximately, but since bsz is more or less 400k...
   totalsize += (msg.value->binary->image.size
 		+ msg.tag.size ()

@@ -69,8 +69,7 @@ namespace urbi
     for (int i = 0; is_blendtype (i); ++i)
       if (libport::streq (UBlendNames[i], cp))
 	return static_cast<UBlendType> (i);
-    pabort ("unknown blendtype: " << cp);
-
+    fabort("unknown blendtype: %s", cp);
   }
 
 } // end namespace urbi

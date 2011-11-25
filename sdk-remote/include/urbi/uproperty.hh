@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2009, 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -69,7 +69,7 @@ namespace urbi
     for (int i = 0; is_propertytype (i); ++i)
       if (libport::streq (UPropertyNames[i], cp))
 	return static_cast<UProperty> (i);
-    pabort ("unknown uproperty: " << cp);
+    fabort("unknown uproperty: %s", cp);
   }
 
 }
