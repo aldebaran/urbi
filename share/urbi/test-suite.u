@@ -385,7 +385,6 @@ do (System)
 
   function memCheck(var f, var loc = nil)
   {
-    var checker = Tag.new;
     var judge_mode = false;
     var location = nil;
 
@@ -395,27 +394,30 @@ do (System)
 
     function mode() { if (judge_mode) "judge" else "bench" };
 
-    var checker.onEnter = function ()
-    {
-      begMem = Global.System.status.stat("VmData");
-      clog << "%s: %s: start with %d kB" % [location, mode(), begMem];
-    };
-
-    var checker.onLeave = function ()
-    {
-      // FIXME: trigger the garbage collection
-      // sleep(100ms);
-
-      var endMem = Global.System.status.stat("VmData");
-      clog << "%s: %s: leak %d kB" % [location, mode(), endMem - begMem];
-      if (judge_mode)
+    var checker = do (Tag.new)
       {
-        endJudgeMem = endMem;
-        assert { endJudgeMem <= endBenchMem; };
-      }
-      else
-        endBenchMem = endMem;
-    };
+        function onEnter()
+        {
+          begMem = Global.System.status.stat("VmData");
+          clog << "%s: %s: start with %d kB" % [location, mode(), begMem];
+        };
+
+        function onLeave()
+        {
+          // FIXME: trigger the garbage collection
+          // sleep(100ms);
+
+          var endMem = Global.System.status.stat("VmData");
+          clog << "%s: %s: leak %d kB" % [location, mode(), endMem - begMem];
+          if (judge_mode)
+          {
+            endJudgeMem = endMem;
+            assert { endJudgeMem <= endBenchMem; };
+          }
+          else
+            endBenchMem = endMem;
+        };
+      };
 
     System.memCheck = function (var f, var loc = nil)
     {
