@@ -23,9 +23,9 @@ def diff(old, new):
   "Display the diffs (possibly in colors) from old to new."
   color = os.getenv('AM_COLOR_TESTS') is 'always' \
       or ((os.getenv('AM_COLOR_TESTS') is None \
-            or os.getenv('AM_COLOR_TESTS') == 'no')\
+            or os.getenv('AM_COLOR_TESTS') != 'no')\
           and (os.getenv('TERM') is None \
-               or os.getenv('TERM') == 'dumb')\
+               or os.getenv('TERM') != 'dumb')\
           and os.getenv('BUILDFARM_PROJECT') is None \
           and os.getenv('INSIDE_EMACS') is None)
   cmd = "diff -uw " + new + " " + old
