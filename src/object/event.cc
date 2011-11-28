@@ -161,7 +161,7 @@ namespace urbi
             bind(&Subscription::unfreeze, actions));
       }
 
-      callbacks_ << actions;
+      subscribe(actions);
       foreach (const actives_type::value_type& active, active_)
       {
         objects_type args;
@@ -180,8 +180,6 @@ namespace urbi
             (EventHandler::stop_job_type(actions, args, true));
         active->trigger_job(actions, true, args);
       }
-      if (onSubscribe_)
-        onSubscribe_->syncEmit();
       subscribed_();
     }
 
