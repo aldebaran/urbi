@@ -227,7 +227,6 @@ p.exists;
 File.save("file.txt", "1\n2\n");
 File.new("file.txt").rename("bar.txt");
 [00000001:warning] !!! `rename(name)' is deprecated, use `asPath.rename(name)'
-[00000001] File("bar.txt")
 assert
 {
   !Path.new("file.txt").exists;

@@ -80,7 +80,7 @@ do (Global.Directory)
     '$doInto'(dir, "copy", "copyInto")
   };
 
-  function moveInto(directory)
+  function moveInto(dir)
   {
     '$doInto'(dir, "rename", "moveInto")
   };
@@ -96,11 +96,9 @@ do (Global.Directory)
 
   function size()
   {
-    var s = 0;
+    var res = 0;
     for (var item: content)
-    {
-      s += (this / item).size
-    };
-    s
+      res += (this / item).size;
+    res
   };
 };

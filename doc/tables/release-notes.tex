@@ -696,12 +696,12 @@ variadic(1, 2, 3, 4, 5);
   This is faster than using lazy functions and call messages.
 \item \refObject{Directory} objects have new features for creation,
   modification and deletion.
-\begin{urbiscript}
+\begin{urbiunchecked}
 Directory.createAll("dir1/dir2/dir3")|;
 Directory.new("dir1").rename("dir")|;
 Directory.new("dir/dir2").copy("dir/dir4")|;
 Directory.new("dir").removeAll;
-\end{urbiscript}
+\end{urbiunchecked}
 \item \refSlot[Directory]{size}, \refSlot[File]{size},
   \refSlot[Directory]{lastModifiedDate}, \refSlot[File]{lastModifiedDate}.
 \end{itemize}
