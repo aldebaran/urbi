@@ -46,6 +46,7 @@ namespace urbi
 
     Event::Event()
       : waiters_()
+      , onSubscribe_(0)
       , callbacks_()
     {
       proto_add(proto);
@@ -54,6 +55,7 @@ namespace urbi
 
     Event::Event(rEvent model)
       : waiters_()
+      , onSubscribe_(0)
       , callbacks_(model->callbacks_)
     {
       proto_add(model);
@@ -62,13 +64,14 @@ namespace urbi
 
     URBI_CXX_OBJECT_INIT(Event)
       : waiters_()
+      , onSubscribe_(0)
       , callbacks_()
     {
-      BIND(onSubscribe, onSubscribe_);
       BIND(hasSubscribers);
+      BIND(onEvent, onEvent, on_event_type);
+      BIND(onSubscribe, onSubscribe_);
       BIND(subscribe);
       BIND(subscribers, callbacks_);
-      BIND(onEvent, onEvent, on_event_type);
       BIND(waituntil);
       BIND_VARIADIC(emit);
       BIND_VARIADIC(syncEmit);
