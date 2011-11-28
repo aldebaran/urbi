@@ -133,7 +133,7 @@ Path.new("relative/path/file.u").basename  == "file.u";
 \end{urbiscript}
 
 
-\item[dirname]
+\item[dirname]%
   Directory name of the path.
 \begin{urbiassert}
 Path.new("/abs/path/file.u").dirname == Path.new("/abs/path");
@@ -141,7 +141,7 @@ Path.new("rel/path/file.u").dirname  == Path.new("rel/path");
 \end{urbiassert}
 
 
-\item[exists]
+\item[exists]%
   Whether something (a file, a directory, \ldots) exists where
   \this points to.
 \begin{urbiassert}
@@ -151,26 +151,25 @@ Path.new("/").exists;
 \end{urbiassert}
 
 
-\item[isDir]
+\item[isDir]%
   Whether \this is a directory.
 \begin{urbiassert}
 Path.cwd.isDir;
 \end{urbiassert}
 
 
-\item[isReg]
+\item[isReg]%
   Whether \this is a regular file.
 \begin{urbiassert}
 !Path.cwd.isReg;
 \end{urbiassert}
 
-\item[lastModifiedDate]
-  last modified date of the path.
+\item[lastModifiedDate]%
+  Last modified date of the path.
 
-\item[open]
-  Open \this. Return either a \dfn{Directory} or a
-  \dfn{File} according the type of \this. See
-  \refObject{File} and \refObject{Directory}.
+\item[open] Open \this. Return either a \dfn{Directory} or a \dfn{File}
+  according the type of \this. See \refObject{File} and
+  \refObject{Directory}.
 
 
 \item[readable]
@@ -179,11 +178,12 @@ Path.cwd.isDir;
 Path.new(".").readable;
 \end{urbiassert}
 
-\item[rename]
-  Rename the path.
+\item[rename](<name>)%
+  Rename the file-system object (directory, file, etc.) pointed to by \this,
+  as \var{name}.
 \begin{urbiscript}
-var dir1 = Directory.create("dir1") |
-var p = dir1.asPath |
+var dir1 = Directory.create("dir1")|;
+var p = dir1.asPath|;
 p.rename("dir2");
 assert
 {
