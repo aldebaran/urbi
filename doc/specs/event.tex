@@ -361,25 +361,36 @@ var h = e.trigger|;
 h.stop;
 [00001621] *** leave 1
 \end{urbiscript}
-
+\begin{urbicomment}
+removeSlots("e", "h");
+\end{urbicomment}
 This function is internal and it might change in the future.
 
 
 \item[onSubscribe]%
-  You can optionally assign an event to this slot.
-  In this case, it is triggered each time some code starts watching this
-  event (by setting up an \lstinline|at| or a \lstinline|waituntil| on it
-  for instance).
-
-  Throw a synchronized event. This call awaits that all functions that have
-  to react to this event have returned.  This function can have the same
-  arguments as \refSlot{emit}.
-
-  Note that this slot cannot be inherited.
+  You can optionally assign an \refObject{Event} to this slot.  In this
+  case, it is triggered each time some code starts watching this event (by
+  setting up an \lstinline|at| or a \lstinline|waituntil| on it for
+  instance).  This slot cannot be inherited; it defaults to
+  \refObject{void}.
 
 \begin{urbiscript}
+var e = Event.new|;
+assert (e.onSubscribe.isVoid);
+e.onSubscribe = Event.new|;
+at (e.onSubscribe?)
+  echo("new subscriber");
+at (e?(12)) {};
+[00000001] *** new subscriber
+waituntil(e?(15)),
+[00000002] *** new subscriber
+\end{urbiscript}
+
+  The following example shows how to set up a \lstinline|clock| event that
+  is triggered only on the first ``use'' (subscription).
+\begin{urbiscript}
 var clock = Event.new|;
-var clock.onSubscribe = Event.new|;
+clock.onSubscribe = Event.new|;
 at (clock.onSubscribe? if clock.subscribers.size == 1)
 {
   echo("arming clock event");
@@ -387,7 +398,8 @@ at (clock.onSubscribe? if clock.subscribers.size == 1)
 };
 echo("ready");
 [00000000] *** ready
-at(clock?) echo("tick");
+at (clock?)
+  echo("tick");
 sleep(1.5s);
 [00000001] *** arming clock event
 [00000002] *** tick
@@ -405,7 +417,6 @@ sleep(1.5s);
 \item[syncEmit](<args>[])%
   Same as \refSlot{emit} but require a synchronous handling.  See
   \autoref{sec:event:sync} for details.
-
 
 \item[syncTrigger](<args>[])%
   Same as \refSlot{trigger} but the call will be synchronous (see
