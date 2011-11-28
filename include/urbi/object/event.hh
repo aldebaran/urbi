@@ -61,11 +61,10 @@ namespace urbi
 
       void subscribe(rSubscription s);
       /// Synchronous emission.
-      void syncEmit(const objects_type& args);
+      void syncEmit(const objects_type& args = objects_type());
 
       /// Asynchronous emission.
-      void emit(const objects_type& args);
-      void emit();
+      void emit(const objects_type& args = objects_type());
 
       /// Asynchronous trigger.
       rEventHandler trigger(const objects_type& args);

@@ -110,10 +110,7 @@ namespace urbi
       GD_FINFO_TRACE("%s: New subscription %s", this, s);
       callbacks_ << s;
       if (onSubscribe_)
-      {
-        objects_type args;
-        onSubscribe_->syncEmit(args);
-      }
+        onSubscribe_->syncEmit();
     }
 
     rSubscription
@@ -124,10 +121,7 @@ namespace urbi
       res->asynchronous_ = false;
       callbacks_ << res;
       if (onSubscribe_)
-      {
-        objects_type args;
-        onSubscribe_->syncEmit(args);
-      }
+        onSubscribe_->syncEmit();
       return res;
     }
 
@@ -178,14 +172,13 @@ namespace urbi
         }
         args << pattern;
         if (actions->leave_)
-          active->register_stop_job(EventHandler::stop_job_type(actions, args, true));
+          active
+            ->register_stop_job
+            (EventHandler::stop_job_type(actions, args, true));
         active->trigger_job(actions, true, args);
       }
       if (onSubscribe_)
-      {
-        objects_type args;
-        onSubscribe_->syncEmit(args);
-      }
+        onSubscribe_->syncEmit();
       subscribed_();
     }
 
@@ -193,10 +186,7 @@ namespace urbi
     Event::waituntil(rObject pattern)
     {
       if (onSubscribe_)
-      {
-        objects_type args;
-        onSubscribe_->syncEmit(args);
-      }
+        onSubscribe_->syncEmit();
       // Check whether there's already a matching instance.
       foreach (const actives_type::value_type& active, active_)
         if (pattern == nil_class
@@ -215,7 +205,7 @@ namespace urbi
     void
     Event::waituntil_remove(rTag what)
     {
-      for(unsigned i=0; i < waiters_.size(); ++i)
+      for (unsigned i = 0; i < waiters_.size(); ++i)
         if (waiters_[i].controlTag == what)
         {
           waiters_[i] = waiters_[waiters_.size()-1];
@@ -380,11 +370,6 @@ namespace urbi
       emit_backend(args, true);
     }
 
-    void
-    Event::emit()
-    {
-      emit(objects_type());
-    }
 
     /*----------.
     | Trigger.  |
