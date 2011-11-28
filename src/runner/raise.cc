@@ -26,12 +26,10 @@
 
 #include <eval/raise.hh>
 
-#define assert_user_mode(Exn, Msg)                              \
-  __passert((::kernel::urbiserver->mode_get()                   \
-             == kernel::UServer::mode_user),                    \
-            Exn << " exception thrown in kernel mode: "         \
-            << Msg                                              \
-            << dbg::runner_or_sneaker_get().backtrace_get())
+#define assert_user_mode(Exn, Msg)                                      \
+  aver(::kernel::urbiserver->mode_get() == kernel::UServer::mode_user,  \
+       "%s exception thrown in kernel mode: %s %s",                     \
+       Exn, Msg, dbg::runner_or_sneaker_get().backtrace_get())
 
 GD_CATEGORY(Urbi.Error);
 
