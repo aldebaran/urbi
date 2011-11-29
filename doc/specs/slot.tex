@@ -52,6 +52,38 @@ Slots are automatically created when \refSlot[Object]{setSlot} is called.
 \subsection{Slots}
 
 \begin{urbiscriptapi}
+\item[<<](<slot>)%
+  Bounces to \refSlot{>>} reversing the two Slots.
+
+
+\item[>>](<slot>)%
+  The \refSlot{>>} operator connects two \refSlot{Slot} together through a
+  \refSlot{Subscription}. Each time the source Slot is updated, its new value
+  is written to the target Slot.
+  This function should be used to bridge a component producing an output value
+  to a component expecting an input value.
+  It returns a \refSlot{Subscription} that can be used to configure the link,
+  and gather statistics.
+
+\begin{urbiscript}
+var tick = 0|;
+var tack = 0|;
+var sub = &tick >> &tack;
+[00000001] Slot_0xADDR >> Slot_0xADDR
+tack->set = function(v) { echo("tack " + v)}|;
+timeout(10.5s) every|(1s) tick++,
+sleep(1.5s) | sub.callCount;
+[00000002] *** tack 1
+[00000003] *** tack 2
+[00000004] 2
+sub.enabled = false| sleep(1s)| sub.enabled = true|;
+sleep(2s);
+[00000002] *** tack 4
+[00000003] *** tack 5
+sub.disconnect();
+sleep(2s);
+\end{urbiscript}
+
 
 \item[changed]%
   Contains an \refObject{Event} which is emitted each time the slot value
@@ -284,36 +316,6 @@ v.y;
   Similar to \refSlot{set} but with a different signature: the function is
   called on the object owning the slot instead of the slot itself.
 
-\item[>>](<slot>)%
-  The \refSlot{>>} operator connects two \refSlot{Slot} together through a
-  \refSlot{Subscription}. Each time the source Slot is updated, its new value
-  is written to the target Slot.
-  This function should be used to bridge a component producing an output value
-  to a component expecting an input value.
-  It returns a \refSlot{Subscription} that can be used to configure the link,
-  and gather statistics.
-
-\begin{urbiscript}
-var tick = 0|;
-var tack = 0|;
-var sub = &tick >> &tack;
-[00000001] Slot_0xADDR >> Slot_0xADDR
-tack->set = function(v) { echo("tack " + v)}|;
-timeout(10.5s) every|(1s) tick++,
-sleep(1.5s) | sub.callCount;
-[00000002] *** tack 1
-[00000003] *** tack 2
-[00000004] 2
-sub.enabled = false| sleep(1s)| sub.enabled = true|;
-sleep(2s);
-[00000002] *** tack 4
-[00000003] *** tack 5
-sub.disconnect();
-sleep(2s);
-\end{urbiscript}
-
-\item[<<](<slot>)%
-  Bounces to \refSlot{>>} reversing the two Slots.
 
 \item[notifyAccess](<onAccess>)%
   Deprecated, use \refSlot{get} or \refSlot{oget}.
@@ -370,6 +372,10 @@ Global.y = 13;
   each time this \lstinline|UVar| is written to.  Return an identifier that
   can be passed to \refSlot{removeNotifyChangeOwned} to unregister the
   callback.
+
+
+\item[outputValue]%
+  The value that is returned when a read occurs, if in \refSlot{split} mode.
 
 
 \item[owned]%
@@ -482,8 +488,6 @@ sleep(10s);
 [00000006] *** Motor position is 5
 \end{urbiscript}
 
-\item[outputValue]%
-  The value that is returned when a read occurs, if in \refSlot{split} mode.
 
 \item[value]%
   The underlying value.
