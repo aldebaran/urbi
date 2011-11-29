@@ -1,5 +1,42 @@
 #! /usr/bin/perl -w
 
+=head1 NAME
+
+  api-sort - manipulate urbiscriptapi sections
+
+=head1 SYNOPSIS
+
+  api-sort [OPTIONS...] FILE...
+
+=head1 DESCRIPTION
+
+Read LaTeX files, looking for urbiscriptapi environments, and their
+items.  Sort them in a consistent alphabetical order.
+
+At the end, report what slots were documented in the file
+C<documented.txt>.
+
+=head1 OPTIONS
+
+General options:
+
+=over 4
+
+=item B<-n>, B<--dry-run>
+
+Do not modify the input files, just gather the documented slots.
+
+=item B<-q>, B<--quiet>
+
+Be less verbose.  Accumulates.
+
+=item B<-v>, B<--verbose>
+
+Be more verbose.  Accumulates.
+
+=back
+
+=cut
 BEGIN
 {
   use File::Basename;
@@ -12,6 +49,9 @@ use BuildAux::FileUtils;
 use BuildAux::Utils;
 use BuildAux::Verbose;
 use BuildAux::XFile;
+
+# Whether not to sort.
+my $dry_run = 0;
 
 
 =item C<getopt()>
@@ -26,9 +66,15 @@ sub getopt ()
   $message = "Sort urbiscriptapi entries";
   BuildAux::Getopt::getopt
     (
+     "n|dry-run" => \$dry_run,
     );
 }
 
+=item C<getopt()>
+
+Process the command line options.
+
+=cut
 sub normalize($)
 {
   my ($s) = @_;
@@ -181,9 +227,9 @@ sub transform ($)
 =item C<transform_file ($file, &transform)>
 
 Apply C<&transform> on the contents of C<$file>.  If there is no
-difference, do nothing.  Otherwise, back-up the original C<$file> into
-C<$file.bak>, save the new contents in C<$file>, and show the
-differences.  Preserve permissions.
+difference, or if C<$dry_run>, do nothing.  Otherwise, back-up the
+original C<$file> into C<$file.bak>, save the new contents in
+C<$file>, and show the differences.  Preserve permissions.
 
 =cut
 
@@ -191,7 +237,9 @@ sub transform_file ($$)
 {
   my ($file, $transform_ref) = @_;
   my $contents = contents ($file);
-  file_update($file, $transform_ref->($file));
+  my $res = $transform_ref->($file);
+  file_update($file, $transform_ref->($file))
+    unless $dry_run;
 }
 
 
