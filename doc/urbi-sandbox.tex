@@ -1,4 +1,4 @@
-%% Copyright (C) 2010, Gostai S.A.S.
+%% Copyright (C) 2010, 2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -52,54 +52,9 @@ Last example.
 1+2 == 3;
 \end{urbiassert}
 
-% \release{Release}{Date}
-% -----------------------
-\newcommand{\release}[2]{%
-  \ifx\ifHtml\undefined%
-    Released on #2.
-    \marginpar{%
-      \includegraphics[width=\marginparwidth]{figs/urbi-sdk/#1/cube}
-
-      #2.
-    }%
-  \else
-    \includegraphics[width=.2\textwidth]{figs/urbi-sdk/#1/cube},
-    released on #2.
-  \fi%
-}
-
-\section{\usdk 2.5}
-\release{2.5}{2010-11-xx}
-
-\subsection{New Features}
-\begin{itemize}
-\item More types of empty statements are warned about.  For instance \urbi
-  used to accept silently \lstinline|if (foo);|.  It now warns about the empty
-  body, and recommends writing \lstinline|if (foo) {};|.
-\end{itemize}
-
-\section{\usdk 2.4}
-\release{2.4}{2010-11-xx}
-
-\subsection{New Features}
-\begin{itemize}
-\item More types of empty statements are warned about.  For instance \urbi
-  used to accept silently \lstinline|if (foo);|.  It now warns about the empty
-  body, and recommends writing \lstinline|if (foo) {};|.
-\end{itemize}
-
-\section{\usdk 2.3}
-\release{2.3}{2010-11-xx}
-
-\subsection{New Features}
-\begin{itemize}
-\item More types of empty statements are warned about.  For instance \urbi
-  used to accept silently \lstinline|if (foo);|.  It now warns about the empty
-  body, and recommends writing \lstinline|if (foo) {};|.
-\end{itemize}
-
-
 \sectionObject{Bar}
+
+See also \refObject{Foo}.
 
 \begin{urbiscriptapi}
 \item[bar] This is Bar.bar.
@@ -114,6 +69,8 @@ Last example.
 \end{urbiscriptapi}
 
 \sectionObject{Foo}
+
+See also \refObject{Bar}.
 
 \begin{urbiscriptapi}
 \item[bar] This is Foo.bar.
