@@ -463,20 +463,20 @@ the \urbi properties of an \UVar by reading and writing the appropriate
 
 The \lstinline{send} function sends \urbi code to the server:
 
-\begin{urbiunchecked}
-send ("myTag:1+1;");
-\end{urbiunchecked}
+\begin{java}
+send("myTag:1+1;");
+\end{java}
 
-\indexJava{call}
-You can also use the \lstinline{call} method to make an urbiscript function
-call:
+\noindent
+\indexJava{call}%
+You can also use the \lstinline{call} method to make an \us function call:
 
-\begin{urbiunchecked}
+\begin{java}
 // Java equivalent of urbiscript 'System.someFunc(12, "foo");'
 call("System", "someFunc", new UValue(12), new UValue("foo"));
-\end{urbiunchecked}
+\end{java}
 
-These functions are member functions of the UObject class.
+They are member functions of the UObject class.
 
 
 % \section{Loading the native code}

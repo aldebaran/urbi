@@ -545,7 +545,7 @@ parenthesized expression, the extra comma must be added.  See
 \label{sec:lang:class}
 
 Objects meant to serve as prototypes are best defined using the
-\lstindex{class} construct.  See also the tutorial, \autoref{sec:tut:class}.
+\lstindexMain{class} construct.  See also the tutorial, \autoref{sec:tut:class}.
 
 \grammar{class-exp, lvalue-end, block-exp}
 
@@ -1531,7 +1531,7 @@ floats and strings, and can be handled as such.  This is different from most
 \grammar{function-end, block-exp, return-stm}
 
 In words: One can create an anonymous function thanks to the
-\lstindex{function} keyword (or \lstindex{closure}, see
+\lstindexMain{function} keyword (or \lstindexMain{closure}, see
 \autoref{sec:lang:closure}), followed by the list of formal arguments and a
 block representing the body of the function.  Formal arguments are a
 possibly-empty comma-separated list of identifiers.  Non-empty lists of
@@ -1645,9 +1645,9 @@ Avoid useless \lstinline{return}s, see \autoref{sec:guideline:return}.
 
 Functions can access meta-information about how they were called, via a
 \refObject{CallMessage} object. The \dfn{call message} associated with a
-function can be accessed with the \lstindex{call} keyword. It contains
-several information such as not-yet evaluated arguments, the name of the
-function, the target \ldots
+function can be accessed with the \lstindexMain{call} keyword.  It contains
+information such as not-yet evaluated arguments, the name of the function,
+the target\ldots
 
 \subsection{Strictness}
 
@@ -2430,7 +2430,7 @@ See \autoref{tab:keywords:flavors}.
 \label{sec:lang:break}
 
 When encountered within a loop (\lstinline{every}, \lstinline{for},
-\lstinline{loop}, \lstinline{while}), \lstindex{break} makes the execution
+\lstinline{loop}, \lstinline{while}), \lstindexMain{break} makes the execution
 jump after the loop.
 
 \begin{urbiscript}
@@ -2492,7 +2492,7 @@ for (var i : 10)
 \label{sec:lang:continue}
 
 When encountered in a loop (\lstinline{every}, \lstinline{for},
-\lstinline{loop}, \lstinline{while}), \lstindex{continue} short-circuits the
+\lstinline{loop}, \lstinline{while}), \lstindexMain{continue} short-circuits the
 remainder of the body of the loop, and runs the next iteration (if there
 remains one).
 
@@ -2549,7 +2549,7 @@ for (var i : 10)
 \subsection{\lstinline{do}}
 \label{sec:lang:do}
 
-The \lstindex{do} construct changes the target (\this) when evaluating an
+The \lstindexMain{do} construct changes the target (\this) when evaluating an
 expression.  In some programming languages it is also named
 \lstinline{with}.  It is a convenient means to avoid repeating the same
 target several times.
@@ -2575,7 +2575,7 @@ do (1024)
 \label{sec:lang:for}
 \grammar{forc-stm,foreach-stm,forn-stm}
 
-There are several kinds of \lstindex{for} loops:
+There are several kinds of \lstindexMain{for} loops:
 \begin{description}
 \item[C-like for] such as
   \lstinline|for (var i = 0; i < n; ++i) echo(i);|, see
@@ -2813,7 +2813,7 @@ the argument needs not being an integer, any iterable value can be used.
 \label{sec:lang:if}
 \lstIndexTwo{else}{if}
 As in most programming languages, conditionals are expressed with
-\lstindex{if}.
+\lstindexMain{if}.
 
 \grammar{if-stm,else-clause}
 
@@ -2873,7 +2873,7 @@ visible in both the then-clause and the else-clause, but do not escape the
 \subsection{\lstinline{loop}}
 \label{sec:lang:loop}
 
-Endless loops can be created with \lstindex{loop}, which is equivalent to
+Endless loops can be created with \lstindexMain{loop}, which is equivalent to
 \lstinline|while (true)|.  The loop evaluates to \lstinline{void}.
 
 \grammar{loop-stm}
@@ -2927,7 +2927,7 @@ There are two flavors: \lstinline{loop;} (default) and \lstinline{loop|}.
 \lstIndexTwo{case}{switch}
 \lstIndexTwo{default}{switch}
 
-The \lstindex{switch} statement in \us is similar to \langC's one.
+The \lstindexMain{switch} statement in \us is similar to \langC's one.
 
 \begin{urbiunchecked}
 switch (\var{value})
@@ -2987,7 +2987,7 @@ sw("foobar");
 
 \grammar{while-stm}
 
-The \lstindex{while} loop is similar to \langC's one.
+The \lstindexMain{while} loop is similar to \langC's one.
 
 \begin{urbiunchecked}
 while (\var{condition})
@@ -3104,7 +3104,7 @@ removeSlots("i");
 \subsection{Throwing exceptions}
 \label{sec:lang:throw}
 
-Use the \lstindex{throw} keyword to \dfn[exception!throwing]{throw
+Use the \lstindexMain{throw} keyword to \dfn[exception!throwing]{throw
   exceptions}, as shown below. Thrown exceptions will break the execution
 upward until they are caught, or until they reach the top-level --- as in
 \Cxx.  Contrary to \Cxx, exceptions reaching the top-level are printed, and
@@ -3418,7 +3418,7 @@ run-time cost of verifying every single assertion might be prohibitive.
 Therefore, as in \langC-like languages, assertions are disabled when
 \refSlot[System]{ndebug} is true, see \refObject{System}.
 
-The \lstindex{assert} features two constructs: with a function-like syntax,
+The \lstindexMain{assert} features two constructs: with a function-like syntax,
 which is adequate for single claims, and a block-like syntax, to group
 claims together.
 
@@ -3592,7 +3592,7 @@ Foo.f;
 See the documentation of \refObject{Tag} for more information about the job
 control.  See \autoref{sec:tut:tags} for a tutorial on tags.
 
-\subsection{\lstindex{every}}
+\subsection{\lstindexMain{every}}
 \label{sec:lang:every}
 The \lstinline{every} statement enables to execute a block of code
 repeatedly, with the given period.
@@ -4086,7 +4086,7 @@ removeSlots("i");
 \subsection{\lstinline{at}}
 \label{sec:lang:at}
 \lstIndexTwo{onleave}{at}
-Using the \lstindex{at} construct, one can arm code that will be
+Using the \lstindexMain{at} construct, one can arm code that will be
 triggered each time some condition is true.
 
 The \lstinline{at} construct is as follows:
@@ -4287,7 +4287,7 @@ x = 2 | assert(!x_is_two);
 \subsection{\lstinline{waituntil}}
 \label{sec:lang:waituntil}
 
-The \lstindex{waituntil} construct is used to hold the execution until some
+The \lstindexMain{waituntil} construct is used to hold the execution until some
 condition is verified.  Similarly to \lstinline{at} (\autoref{sec:lang:at})
 and the other event-based constructs, \lstinline{waituntil} may work on
 events, or on Boolean expressions.
@@ -4393,7 +4393,7 @@ to \lstinline{waituntil}.
 
 \grammar{watch-exp}
 
-The \lstindex{watch} construct is similar in spirit to using the
+The \lstindexMain{watch} construct is similar in spirit to using the
 \lstinline{at} construct to monitor expressions, except it enables you to be
 notified when an arbitrary expression changed, not only when it becomes true
 or false. This makes \lstinline{watch} a more primitive tool than
@@ -4457,7 +4457,7 @@ x = 3;
 \subsection{\lstinline{whenever}}
 \label{sec:lang:whenever}
 
-The \lstindex{whenever} construct really behaves like a never-ending
+The \lstindexMain{whenever} construct really behaves like a never-ending
 \lstinline|loop if| construct.  It also works on events and Boolean
 expressions, and triggers each time the condition \emph{becomes} verified.
 
