@@ -1278,10 +1278,7 @@ The \usdk provides a few support \us classes to help you build the component
 hierarchy.  You can access to those classes by including the files
 \file{urbi/naming-standard.u} and \file{urbi/component.h}.
 
-{
-\let\subsection\subsectionObject
-
-\subsection{Interface}
+\subsectionObject{Interface}
 
 The \lstinline{Interface} class contains \us objects for all the interfaces
 defined in this document. Implementations must inherit from the correct
@@ -1297,7 +1294,7 @@ cam.addProto(Interface.VideoIn);
 The \lstinline{Interface.interfaces} method can be called to get a list of
 all the interfaces an object implements.
 
-\subsection{Component}
+\subsectionObject{Component}
 
 This class can be used to create intermediate nodes of the hierarchy. It
 provides the following methods:
@@ -1330,7 +1327,7 @@ provides the following methods:
   \refObject{Global} object.
 \end{urbiscriptapi}
 
-\subsection{Localizer}
+\subsectionObject{Localizer}
 
 The \lstinline{Localizer} class is a special type of \refObject{Component}
 that stores other components based on their localization. It provides a
@@ -1382,8 +1379,6 @@ robot.flatDump;
 [00010130] *** VideoIn: camera
 \end{urbiunchecked}
 
-%% Restore the definition of \section.
-}
 
 %%% Local Variables:
 %%% coding: utf-8

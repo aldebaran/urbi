@@ -88,7 +88,8 @@ loading a file actually means sending its content as if it were typed in the
 network session, in order to provide the user with meaningful locations in
 error messages, \us features \dfn[syncline]{synclines}, a means to change
 the ``current location'', similarly to \lstinline[language=C]|#line| in
-\langC-like languages.  This is achieved using special \lstinline|//#| comments.
+\langC-like languages.  This is achieved using special \lstinline|//#|
+comments.
 
 The following special comments are recognized only as a whole line.
 If some component does not match exactly the expected syntax, or if
@@ -1456,7 +1457,7 @@ expressions, nested, and so forth.
 \end{urbiscript}
 
 \subsection{Local variables}
-
+\label{sec:lang:var}
 \dfn{Local variables} are introduced with the \lstinline{var} keyword,
 followed by an identifier (see \autoref{sec:lang:id}) and an optional
 initialization value assignment. If the initial value is omitted, it

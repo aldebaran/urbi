@@ -25,6 +25,8 @@ const_cast: Reserved
 continue: \autoref{sec:lang:continue}
 default: \autoref{sec:lang:switch}
 delete: Reserved
+detach:
+disown:
 do: \autoref{sec:lang:do}
 double: Reserved
 dynamic_cast: Reserved
@@ -82,7 +84,7 @@ typename: Reserved
 union: Reserved
 unsigned: Reserved
 using: Reserved
-var:
+var: \autoref{sec:lang:var}, \autoref{sec:lang:slots}
 virtual: Reserved
 volatile: Reserved
 waituntil: \autoref{sec:lang:waituntil}

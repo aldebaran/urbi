@@ -212,7 +212,7 @@ sub transform ($)
     }
     else
     {
-      if (/\s*\\section(?:Object)?\{(.*)\}/)
+      if (/\s*\\(?:section(?:Object)?|subsectionObject)\{(.*)\}/)
       {
         $object = $1;
       }

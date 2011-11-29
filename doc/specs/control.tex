@@ -21,7 +21,7 @@ are not expected to use it, much less change it.
 \subsection{Slots}
 
 \begin{urbiscriptapi}
-\item[detach](<exp>)%
+\item['detach'](<exp>)%
   Detach the evaluation of the expression \var{exp} from the current
   evaluation.  The \var{exp} is evaluated in parallel to the current code
   and keep the current tag which are attached to it.  Return the spawned
@@ -48,7 +48,7 @@ are not expected to use it, much less change it.
 \end{urbiscript}
 
 
-\item[disown](<exp>)%%
+\item['disown'](<exp>)%%
   Same as \refSlot{detach} except that tags used to tag the
   \lstinline|disown| call are not inherited inside the expression.  Return
   the spawned \refObject{Job}.  Same as calling \refSlot[Code]{spawn}:
