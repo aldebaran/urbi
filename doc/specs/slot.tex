@@ -92,7 +92,6 @@ To monitor changes of value, use the \lstinline{watch}-construct
 (\autoref{sec:lang:watch}).
 
 
-
 \item[constant]
 
 Defines whether a slot can be assigned a new value.
@@ -146,6 +145,7 @@ t.x = 2;
   Duplicate the \lstinline|Slot| to the slot \var{targetName} of object
   \var{targetObject}.
 
+
 \item[copyOnWrite]%
   If set to false, disables copy on write behavior for this slot
   (see \autoref{sec:lang:cow}).
@@ -164,6 +164,7 @@ assert
   a.y == 0;
 };
 \end{urbiscript}
+
 
 \item[get]%
   Together with \refSlot{oset}, this slot can be set with a function that will
@@ -393,6 +394,7 @@ Global.y = 13;
   In \refSlot{split} mode, update output value slot \refSlot{outputValue} and
   trigger \refSlot{changed}.
 
+
 \item[split]%
   Indicates that the slot has both an input value and an output value.  The
   input value is written to by external code, and the slot will act on it.
@@ -495,7 +497,6 @@ var z = 2;
 z;
 [00000002] 3
 \end{urbiscript}
-
 \end{urbiscriptapi}
 
 %%% Local Variables:

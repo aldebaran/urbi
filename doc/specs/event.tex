@@ -296,6 +296,7 @@ and \refSlot{syncEmit} for details about the synchronicity of the handling.
   %% \lstinline|emit| call before all the watchers have finished their
   %% execution.
 
+
 \item[hasSubscribers]()%
   Return true if at least one subscriber is registered to this event.
 
@@ -310,6 +311,7 @@ tag.stop;
 ev.hasSubscribers;
 [00000000] false
 \end{urbiscript}
+
 
 \item[onEvent](<guard>, <enter>, <leave>, <sync>)%
   This is the low-level routine used to implement the \lstindex|at|
@@ -406,17 +408,21 @@ sleep(1.5s);
 [00000003] *** tick
 \end{urbiscript}
 
+
 \item[subscribe](subscription)%
   Register a \refObject{Subscription} to be called each time the event triggers.
   Using a subscription object gives you more control on on often and how
   your code will be evaluated.
 
+
 \item[subscribers]
   The list of subscriptions attached to this event.
+
 
 \item[syncEmit](<args>[])%
   Same as \refSlot{emit} but require a synchronous handling.  See
   \autoref{sec:event:sync} for details.
+
 
 \item[syncTrigger](<args>[])%
   Same as \refSlot{trigger} but the call will be synchronous (see

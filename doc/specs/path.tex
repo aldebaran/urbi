@@ -164,8 +164,10 @@ Path.cwd.isDir;
 !Path.cwd.isReg;
 \end{urbiassert}
 
+
 \item[lastModifiedDate]%
   Last modified date of the path.
+
 
 \item[open] Open \this. Return either a \dfn{Directory} or a \dfn{File}
   according the type of \this. See \refObject{File} and
@@ -177,6 +179,7 @@ Path.cwd.isDir;
 \begin{urbiassert}
 Path.new(".").readable;
 \end{urbiassert}
+
 
 \item[rename](<name>)%
   Rename the file-system object (directory, file, etc.) pointed to by \this,
