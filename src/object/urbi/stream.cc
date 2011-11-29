@@ -48,9 +48,11 @@ namespace urbi
 
     Stream::Stream(int fd, bool own)
     {
+#if defined F_GETFL
       // Check that we have a valid fd.
       if (fcntl(fd, F_GETFL) == -1)
         FRAISE("cannot create stream: %s", libport::strerror(errno));
+#endif
 
       int fd2 = fd;
       if (!own)
