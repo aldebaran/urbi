@@ -8,9 +8,8 @@
 
 \section{Object}
 
-All objects in \us must have \refObject{Object} in their
-parents. \refObject{Object} is design to this end, it comes with primitives
-that are mandatory for all objects in \us.
+\refObject{Object} includes the mandatory primitives for all objects in \us.
+All objects in \us must inherit (directly or indirectly) from it.
 
 \subsection{Prototypes}
 
@@ -21,7 +20,7 @@ that are mandatory for all objects in \us.
 
 \subsection{Construction}
 
-A fresh object can be instantiated by cloning Object itself.
+A fresh object can be instantiated by cloning \slot{Object} itself.
 
 \begin{urbiscript}[firstnumber=1]
 Object.new;
@@ -305,8 +304,8 @@ assert
 \end{urbiscript}
 
 \item[hasLocalSlot](<slot>)%
-  Whether \this features a slot \var{slot}, locally, not
-  from some ancestor.  See also \refSlot{hasSlot}.
+  Whether \this features a slot \var{slot}, locally (not from some
+  ancestor).  See also \refSlot{hasSlot}.
 \begin{urbiscript}
 class Base         { var this.base = 23; } |;
 class Derive: Base { var this.derive = 43 } |;
@@ -399,8 +398,8 @@ assert
 \end{urbiscript}
 
 \item[locateSlot](<slot>)%
-  The Object that provides \var{slot} to \this, or \lstinline|nil| if \this
-  does not feature \var{slot}.
+  The \slot{Object} that provides \var{slot} to \this, or \lstinline|nil| if
+  \this does not feature \var{slot}.
 \begin{urbiassert}
 locateSlot("locateSlot") == Object;
 locateSlot("doesNotExist").isNil;
