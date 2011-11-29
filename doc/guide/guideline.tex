@@ -40,12 +40,12 @@ cmd =
 \subsection{Avoid \lstinline{return}}
 \label{sec:guideline:return}
 
-The \lstinline|return| statement is actually costly, because it also in
-charge of stopping all the event-handlers, detached code, and code sent into
-background (via \samp{,} or \samp{\&}).
+The \lstindex{return} statement (\autoref{sec:lang:rv}) is actually costly,
+because it is also in charge of stopping all the event-handlers, detached
+code, and code sent into background (via \samp{,} or \samp{\&}).
 
-In a large number of cases, \lstinline|return| is actually used uselessly.
-For instance instead of:
+In a large number of cases, \lstinline|return| is actually useless.  For
+instance instead of:
 
 \begin{urbiscript}
 function inBounds1(var x, var low, var high)
