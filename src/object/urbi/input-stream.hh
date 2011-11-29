@@ -36,11 +36,15 @@ namespace urbi
       InputStream(rInputStream stream);
       ~InputStream();
 
+    private:
+      // Post-ctor.
+      void init_receive_();
+      void init_on_error_();
+
       /*--------------.
       | Data access.  |
       `--------------*/
 
-    private:
       /// Get a byte.
       /// \return the next available byte, or -1 if none available.
       int get_();

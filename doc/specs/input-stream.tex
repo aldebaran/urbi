@@ -30,9 +30,12 @@ An InputStream is a reading-interface to a file, so its constructor
 requires a \refObject{File}.
 
 \begin{urbiscript}[firstnumber=1]
+InputStream.new(0);
+[00000919:error] !!! new: argument 1: unexpected 0, expected a File
+
 File.save("file.txt", "1\n2\n");
 var is = InputStream.new(File.new("file.txt"));
-[00000001] InputStream_0x827000
+[00001001] InputStream_0x827000
 \end{urbiscript}
 
 Bear in mind that open streams should be closed
@@ -41,6 +44,8 @@ Bear in mind that open streams should be closed
 \begin{urbiscript}
 is.close;
 \end{urbiscript}
+
+
 
 \subsection{Slots}
 
