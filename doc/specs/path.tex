@@ -167,13 +167,11 @@ Path.cwd.isDir;
 
 \item[lastModifiedDate]%
   Last modified date of the path.
-\begin{urbiscript}
-assert
-{
-  var f = File.create("test");
-  -5 <= f.asPath.lastModifiedDate.second - Date.now.second <= 0;
-};
-\end{urbiscript}
+\begin{urbiassert}
+  var p = Path.new("test");
+  File.create(p);
+  0 <= Date.now - p.lastModifiedDate <= 5s;
+\end{urbiassert}
 
 
 \item[open] Open \this. Return either a \dfn{Directory} or a \dfn{File}
