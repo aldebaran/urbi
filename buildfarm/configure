@@ -152,7 +152,8 @@ fi
 # ROS.
 case $BUILDFARM_OS in
   (windows)     ;;
-  (*)           ROS_VERSION=diamondback;;
+  (linux)       ROS_VERSION=diamondback;; # This is Etch, not Lucid.
+  (*)           ROS_VERSION=electric;;
 esac
 if test -n "$ROS_VERSION"; then
   pkg_config_prefix ros-$ROS_VERSION
