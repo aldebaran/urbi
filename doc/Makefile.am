@@ -98,6 +98,8 @@ imagedir = $(docdir)/images
 nodist_image_DATA = $(call ls_files,@$(logodir)/*)
 endif
 
+include trajectories/local.mk
+
 
 ## ----------- ##
 ## LaTeX doc.  ##
@@ -263,9 +265,6 @@ view: $(pdf_DATA)
 sandbox: urbi-sandbox.htmldir urbi-sandbox.pdf
 	open urbi-sandbox.pdf
 	open urbi-sandbox.htmldir/index.html
-
-include trajectories/local.mk
-
 
 ## ------------------------------- ##
 ## Additional text documentation.  ##

@@ -55,6 +55,8 @@ CLEANFILES +=					\
 # how to go from utraj to pdf with an intermediate step in $(srcdir).
 .SECONDARY: $(addprefix $(srcdir)/,$(TRAJECTORIES:.utraj=.dat))
 
-PDF_IMAGES += $(TRAJECTORIES:.utraj=.pdf)
-urbi-sdk.pdf: $(TRAJECTORIES:.utraj=.pdftex_t)
+# We could add $(TRAJECTORIES:.utraj=.pdf) to PDF_IMAGES,
+# unfortunately we have an issue with the order in which Automake
+# issues the := definitions.
+urbi-sdk.pdf: $(TRAJECTORIES:.utraj=.pdf) $(TRAJECTORIES:.utraj=.pdftex_t)
 urbi-sdk.htmldir: $(TRAJECTORIES:.utraj=.eps)
