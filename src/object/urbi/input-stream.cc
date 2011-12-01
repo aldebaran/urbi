@@ -142,6 +142,7 @@ namespace urbi
     void
     InputStream::init_receive_()
     {
+      aver(socket_);
       socket_
         ->slot_set_value
         (SYMBOL(receive),
@@ -151,6 +152,7 @@ namespace urbi
     void
     InputStream::init_on_error_()
     {
+      aver(socket_);
       on_error_subscription_ =
         socket_
         ->slot_get(SYMBOL(disconnected))

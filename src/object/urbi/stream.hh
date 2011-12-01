@@ -46,8 +46,9 @@ namespace urbi
       void close();
 
     protected:
+      void open_(int fd, bool own);
       // (re)initialize socket to a new Socket.
-      void newSocket();
+      void new_socket_();
       rSocket socket_;
     };
   }

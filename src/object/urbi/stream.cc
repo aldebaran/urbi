@@ -48,6 +48,44 @@ namespace urbi
 
     Stream::Stream(int fd, bool own)
     {
+      open_(fd, own);
+    }
+
+    Stream::Stream(rStream model)
+      : socket_(model->socket_)
+    {
+    }
+
+    Stream::~Stream()
+    {
+      // When destructed, close the file descriptor owned by this class if
+      // this is not already done by the user.
+      if (!closed())
+        close();
+    }
+
+    void
+    Stream::new_socket_()
+    {
+      if (socket_ && socket_->isConnected())
+        socket_->close();
+      socket_ = new Socket();
+      socket_->init();
+      socket_->setAutoRead(false);
+    }
+
+    void
+    Stream::open(rFile f, libport::Socket::OpenMode mode, int extraFlags,
+                 int createMode)
+    {
+      new_socket_();
+      libport::path path = f->value_get()->value_get();
+      socket_->open_file(path.to_string(), mode, extraFlags, createMode);
+    }
+
+    void
+    Stream::open_(int fd, bool own)
+    {
 #if defined F_GETFL
       // Check that we have a valid fd.
       if (fcntl(fd, F_GETFL) == -1)
@@ -61,41 +99,8 @@ namespace urbi
         if (fd2 == -1)
           FRAISE("cannot create stream: %s", libport::strerror(errno));
       }
-      newSocket();
+      new_socket_();
       socket_->setNativeFD(fd2);
-    }
-
-    Stream::Stream(rStream model)
-      : socket_(model->socket_)
-    {
-      aver(model);
-    }
-
-    Stream::~Stream()
-    {
-      // When destructed, close the file descriptor owned by this class if
-      // this is not already done by the user.
-      if (!closed())
-        close();
-    }
-
-    void
-    Stream::newSocket()
-    {
-      if (socket_ && socket_->isConnected())
-        socket_->close();
-      socket_ = new Socket();
-      socket_->init();
-      socket_->setAutoRead(false);
-    }
-
-    void
-    Stream::open(rFile f, libport::Socket::OpenMode mode, int extraFlags,
-                 int createMode)
-    {
-      newSocket();
-      libport::path path = f->value_get()->value_get();
-      socket_->open_file(path.to_string(), mode, extraFlags, createMode);
     }
 
     void
