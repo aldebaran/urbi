@@ -69,7 +69,7 @@ Slots are automatically created when \refSlot[Object]{setSlot} is called.
 var tick = 0|;
 var tack = 0|;
 var sub = &tick >> &tack;
-[00000001] Slot_0xADDR >> Slot_0xADDR
+[00000001] Slot_0x42389d88 >> Slot_0x42387c88
 tack->set = function(v) { echo("tack " + v)}|;
 timeout(10.5s) every|(1s) tick++,
 sleep(1.5s) | sub.callCount;
@@ -472,7 +472,7 @@ class Motor
   }
 }|;
 var m = Motor.new;
-[00000001] Motor_0xADDR
+[00000001] Motor_0x42347788
 // Send a command to motor by writing to val
 m.val = 5|;
 [00000002] *** Motor command is now 5

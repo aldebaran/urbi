@@ -122,13 +122,13 @@ object.
 
 \begin{urbiscript}
 var o1 = Object.clone;
-[00000000] Object_0x100000
+[00000000] Object_0x423a0708
 var o1.one = 1;
 [00000000] 1
 var o1.two = 2;
 [00000000] 2
 echo(o1.uid);
-[00000000] *** 0x100000
+[00000000] *** 0x423a0708
 \end{urbiscript}
 
 The same result can be obtained with a short \lstinline|do| scope,
@@ -139,7 +139,7 @@ below. This is similar to the \Pascal
 
 \begin{urbiscript}
 var o2 = Object.clone;
-[00000000] Object_0x100000
+[00000000] Object_0x42339e08
 // All the message in this scope are destined to o.
 do (o2)
 {
@@ -147,8 +147,8 @@ do (o2)
   var two = 2; // message, so it applies on obj too.
   echo(uid);
 };
-[00000000] *** 0x100000
-[00000000] Object_0x100000
+[00000000] *** 0x42339e08
+[00000000] Object_0x42339e08
 \end{urbiscript}
 
 

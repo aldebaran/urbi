@@ -450,15 +450,15 @@ do (2) { var this.attr = "foo"; this.attr->prop = "bar" }.dump(0);
 [00015137] ***   attr = String_0x23a750 <...>
 [00015137] ***     /* Properties */
 [00015137] ***     prop = String_0x23a7a0 <...>
-[00015137] ***     value = String_0xADDR <...>
+[00015137] ***     value = String_0x23a750 <...>
 [00015137] ***   }
 do (2) { var this.attr = "foo"; this.attr->prop = "bar" }.dump(1);
-[00020505] *** Float_0x240550 {
+[00020505] *** Float_0x42389f08 {
 [00020505] ***   /* Special slots */
 [00020505] ***   protos = Float
 [00020505] ***   value = 2
 [00020505] ***   /* Slots */
-[00020505] ***   attr = String_0x23a750 {
+[00020505] ***   attr = String_0x42392b48 {
 [00020505] ***     /* Special slots */
 [00020505] ***     protos = String
 [00020505] ***     /* Slots */
@@ -469,7 +469,7 @@ do (2) { var this.attr = "foo"; this.attr->prop = "bar" }.dump(1);
 [01234567] ***       protos = String
 [01234567] ***       /* Slots */
 [01234567] ***       }
-[01234567] ***     value = String_0xADDR {
+[01234567] ***     value = String_0x42392b48 {
 [00020505] ***       /* Special slots */
 [00020505] ***       protos = String
 [00020505] ***       /* Slots */
@@ -904,7 +904,7 @@ assert
   Example.type == "Example";
 };
 Example.new;
-[00000081] Example_0x6fb2720
+[00000081] Example_0x423740c8
 \end{urbiscript}
 
 

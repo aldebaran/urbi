@@ -1969,7 +1969,7 @@ class a {
   var c = 0;
 }|;
 var s = a.getSlot("c");
-[00000001] Slot_0xADDR
+[00000001] Slot_0x42339508
 a.c = 1;
 [00000002] 1
 assert
@@ -1988,7 +1988,7 @@ One possible use is to share a Slot between multiple objects.
 var c = 1;
 [00000000] 1
 setSlot("d", getSlot("c"));
-[00000001] Slot_0xADDR
+[00000001] Slot_0x42340648
 c=2;
 [00000002] 2
 assert
@@ -4202,7 +4202,7 @@ job that triggered it.
 
 \begin{urbiscript}[firstnumber=1]
 var e = Event.new;
-[00000001] Event_0xADDR
+[00000001] Event_0x42389008
 
 at (e?)
 {
@@ -4235,7 +4235,7 @@ executed synchronously before the triggering statement returns.
 
 \begin{urbiscript}[firstnumber=1]
 var e = Event.new;
-[00000001] Event_0xADDR
+[00000001] Event_0x42389008
 
 at sync (e?)
 {
