@@ -26,12 +26,12 @@ ALLS += backward
 
 urbi_package_infodir = $(urbidir)/package-info
 nodist_urbi_package_info_DATA =			\
-  share/urbi/package-info/urbi-sdk.u		\
+  share/urbi/package-info/urbi.u		\
   share/urbi/package-info/libport.u
 
-VERSIONIFY_CACHE_RUN +=							\
-  --prefix='Urbi SDK' --urbiscript=share/urbi/package-info/urbi-sdk.u
-share/urbi/package-info/urbi-sdk.u: | $(VERSIONIFY_CACHE)
+VERSIONIFY_CACHE_RUN +=						\
+  --prefix='Urbi' --urbiscript=share/urbi/package-info/urbi.u
+share/urbi/package-info/urbi.u: | $(VERSIONIFY_CACHE)
 
 share/urbi/package-info/libport.u: $(top_srcdir)/sdk-remote/libport/.version $(VERSIONIFY)
 	$(AM_V_GEN)$(VERSIONIFY)			\

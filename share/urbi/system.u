@@ -219,7 +219,7 @@ do (System)
 
   function version()
   {
-    PackageInfo.components["Urbi SDK"].version
+    PackageInfo.components["Urbi"].version
   };
 
   System.removeSlot("getenv");

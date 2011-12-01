@@ -20,7 +20,7 @@ namespace urbi
   check_sdk_version(const std::string& where,
                     const libport::PackageInfo& compiler)
   {
-    GD_FINFO_TRACE("Checking Urbi SDK version for: %s", where);
+    GD_FINFO_TRACE("Checking Urbi version for: %s", where);
     const libport::PackageInfo& loader = urbi::package_info();
     GD_FINFO_TRACE("Compiler: %s", compiler.name_version_revision());
     GD_FINFO_TRACE("Loader  : %s", loader.name_version_revision());

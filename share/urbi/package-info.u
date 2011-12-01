@@ -57,10 +57,12 @@ class System.PackageInfo
   };
 };
 
-load("urbi/package-info/urbi-sdk.u");
+load("urbi/package-info/urbi.u");
 load("urbi/package-info/libport.u");
 
 do (System.PackageInfo)
 {
-  components["Urbi SDK"].depend(components["Libport"]);
+  components["Urbi"].depend(components["Libport"]);
+  // Backward compat.
+  components["Urbi SDK"] = components["Urbi"];
 };
