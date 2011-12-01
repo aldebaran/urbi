@@ -182,6 +182,9 @@ namespace urbi
          "System.timeReference.month,"
          "System.timeReference.day,"
          "System.timeReference.us,"
+        // New versions of Urbi register "Urbi" as a component name,
+        // but keep backward compatibility on "Urbi SDK".  So use the
+        // latter for a good while.
          "PackageInfo.components[\"Urbi SDK\"].major,"
          "PackageInfo.components[\"Urbi SDK\"].minor,"
          "PackageInfo.components[\"Urbi SDK\"].subMinor,"

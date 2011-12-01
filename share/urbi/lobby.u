@@ -43,7 +43,7 @@ do (Lobby)
   {
     echoEach(System
              .PackageInfo
-             .components["Urbi SDK"]
+             .components["Urbi"]
              .banner)
   };
 
@@ -52,7 +52,7 @@ do (Lobby)
   {
     echoEach(System
              .PackageInfo
-             .components["Urbi SDK"]
+             .components["Urbi"]
              .copyright(deep))
   };
 
