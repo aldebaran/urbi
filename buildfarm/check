@@ -30,10 +30,21 @@ esac
 
 # Libport.  Not for install-check.
 make_twice_ check -C sdk-remote/libport
+
 # SDK-Remote
 check -C sdk-remote/src/tests
+
 # Urbi.
-check -C tests TESTS_DIRS=0.x
+# bf-1 is known to fail 0.x/3-network, which shadows too many other
+# tests.  So in the case of bf-1, proceed anyway. FIXME: fix the
+# failure (issue #5037)!
+check -C tests TESTS_DIRS=0.x || sta=$?
+case $BUILDFARM_HOSTNAME:$sta in
+  (bf-1:1) stderr "0.x failed on bf-1: proceeding anyway";;
+  (bf-1:0) fatal "0.x passed on bf-1: fix me accordingly";;
+  (*:1)    fatal "0.x failed";;
+esac
+
 check -C doc
 check -C tests TESTS_DIRS=2.x
 check -C tests TESTS_DIRS=1.x
