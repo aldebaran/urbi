@@ -139,7 +139,7 @@ namespace urbi
     Process::~Process()
     {
       if (handle_)
-        GD_WARN("Memory leak: Did you forgot to join with a process?");
+        GD_WARN("memory leak: did you call Process.join?");
     }
 
     std::string
@@ -167,7 +167,7 @@ namespace urbi
     void Process::run_(boost::optional<std::string> outFile)
     {
       if (pid_ || handle_)
-        RAISE("Process was already run");
+        RAISE("process was already run");
 
       int stdin_fd[2];
       if (pipe(stdin_fd))
@@ -327,7 +327,7 @@ namespace urbi
       if (status_ == -1)
       {
         res->slot_set_value(SYMBOL(asString),
-                      to_urbi(pid_ ? "running" : "not started"));
+                            to_urbi(pid_ ? "running" : "not started"));
       }
       else
       {
@@ -341,7 +341,8 @@ namespace urbi
           int rv = WEXITSTATUS(status);
           res->slot_set_value(SYMBOL(exitStatus), to_urbi(rv));
           res->slot_set_value(SYMBOL(asString),
-                        to_urbi(libport::format("exited with status %s", rv)));
+                              to_urbi(libport::format("exited with status %s",
+                                                      rv)));
         }
         else
         {
@@ -350,7 +351,8 @@ namespace urbi
           int sig = WTERMSIG(status);
           res->slot_set_value(SYMBOL(exitSignal), to_urbi(sig));
           res->slot_set_value(SYMBOL(asString),
-                        to_urbi(libport::format("killed by signal %s", sig)));
+                              to_urbi(libport::format("killed by signal %s",
+                                                      sig)));
         }
       }
 
