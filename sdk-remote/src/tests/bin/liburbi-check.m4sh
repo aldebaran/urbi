@@ -94,7 +94,8 @@ mkcd $me.dir
 export GD_LEVEL=DUMP
 
 # Help debugging
-set | rst_pre "$me variables"
+set |
+  rst_pre "$me variables"
 
 # Leaves trailing files, so run it in subdir.
 find_urbi_server
@@ -187,11 +188,17 @@ children_wait 10
 # because on OS X, when instrumenting, valgrind might call dsymutil
 # which dumps this message on stdout (!)  if the executable does not
 # have debug symbols.
-sed -e '/^E End of file/d'                                              \
-    -e '/^E client_error End of file/d'                                 \
-    -e '/^E client_error Operation canceled/d'                          \
-    -e '/^E __gostai_private__connection_timeout /d'                    \
-    -e '/^warning: no debug symbols in executable (-arch i386)/d'       \
+#
+# I don't know what Unknown Errors are, but they are really a PITA
+# on Wine.
+sed                                                             \
+  -e '/^E End of file/d'                                        \
+  -e '/^E __gostai_private__connection_timeout /d'              \
+  -e '/^E client_error Connection reset by peer/d'              \
+  -e '/^E client_error End of file/d'                           \
+  -e '/^E client_error Operation canceled/d'                    \
+  -e '/^E client_error Unknown error/d'                         \
+  -e '/^warning: no debug symbols in executable (-arch i386)/d' \
   remote.out.raw >remote.out.eff
 
 # Compare expected output with actual output.
