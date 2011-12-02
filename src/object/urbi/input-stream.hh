@@ -37,9 +37,8 @@ namespace urbi
       ~InputStream();
 
     private:
-      // Post-ctor.
-      void init_receive_();
-      void init_on_error_();
+      // Set up onReceive/onError on Stream::socket_.
+      void init_socket_();
 
       /*--------------.
       | Data access.  |

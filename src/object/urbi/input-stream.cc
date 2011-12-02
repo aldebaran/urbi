@@ -40,8 +40,7 @@ namespace urbi
       , sem_(new Semaphore())
     {
       proto_add(proto ? rObject(proto) : Object::proto);
-      init_receive_();
-      init_on_error_();
+      init_socket_();
     }
 
     InputStream::InputStream(rInputStream model)
@@ -51,23 +50,15 @@ namespace urbi
       , sem_(new Semaphore())
     {
       proto_add(model);
-      // We share the Socket of model, don't init_receive_.
-      init_on_error_();
     }
 
     URBI_CXX_OBJECT_INIT(InputStream)
-#if defined WIN32
       : Stream()
-#else
-      : Stream(STDIN_FILENO, false)
-#endif
       , pos_(0)
       , size_(0)
       , sem_(new Semaphore())
     {
       proto_add(Stream::proto);
-      init_receive_();
-      init_on_error_();
       BIND(get);
       BIND(getChar);
       BIND(getLine);
@@ -81,7 +72,8 @@ namespace urbi
       // the event will call back our onError_ method, which will
       // access our already destroyed members and make the whole thing
       // die painfully.
-      on_error_subscription_->stop();
+      if (on_error_subscription_)
+        on_error_subscription_->stop();
     }
 
     /*--------------.
@@ -140,19 +132,14 @@ namespace urbi
 
 
     void
-    InputStream::init_receive_()
+    InputStream::init_socket_()
     {
       aver(socket_);
       socket_
         ->slot_set_value
         (SYMBOL(receive),
          new Primitive(boost::bind(&InputStream::receive_, this, _1)));
-    }
 
-    void
-    InputStream::init_on_error_()
-    {
-      aver(socket_);
       on_error_subscription_ =
         socket_
         ->slot_get(SYMBOL(disconnected))
@@ -168,8 +155,7 @@ namespace urbi
     InputStream::init(rFile f)
     {
       open(f, libport::Socket::READ);
-      init_receive_();
-      init_on_error_();
+      init_socket_();
     }
 
     rObject

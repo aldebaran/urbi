@@ -52,8 +52,9 @@ namespace urbi
     }
 
     Stream::Stream(rStream model)
-      : socket_(model->socket_)
     {
+      if (model->socket_)
+        FRAISE("cannot clone opened Streams");
     }
 
     Stream::~Stream()

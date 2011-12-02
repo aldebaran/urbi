@@ -76,6 +76,11 @@ See \autoref{sec:lang:tag} for details.
 \item \refSlot[Directory]{basename} and \refSlot[File]{basename} are
   deprecated, use \lstinline|asPath.basename| instead.
 
+\item Opened Streams (\refObject{InputStream} and \refObject{OutputStream})
+  can no longer be cloned.
+
+\item \refObject{InputStream} and \refObject{OutputStream} are no longer
+  pre-opened (to standard input and output).
 \item \refSlot[Directory]{lastModifiedDate} and \refSlot[File]{lastModifiedDate} are
   deprecated, use \lstinline|asPath.lastModifiedDate| instead.
 

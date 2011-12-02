@@ -25,22 +25,30 @@ override its content.
 
 \begin{urbiscript}
 var o1 = OutputStream.new(File.create("file.txt"));
-[00000001] OutputStream_0x423881c8
+[00001379] OutputStream_0x10808a300
 
 var o2 = OutputStream.new(File.new("file.txt"));
-[00000002] OutputStream_0x42373f48
+[00001396] OutputStream_0x1080872e0
 \end{urbiscript}
 
-When a stream (\refObject{OutputStream} or \refObject{InputStream}) is
-opened on a File, that File cannot be removed.  On Unix systems, this is
-handled gracefully (the references to the file are removed, but the content
-is still there for the streams that were already bound to this file); so in
-practice, the File appears to be removable.  On Windows, the File cannot be
-removed at all.  Therefore, do not forget to close the streams you opened.
+Cloning a closed \refSlot{Stream} is valid, but it is forbidden to clone an
+opened one.
+
+\begin{urbiscript}
+var o3 = OutputStream.clone.new(File.new("file.txt"));
+[00001399] OutputStream_0x10803e7a0
+
+o1.clone;
+[00001401:error] !!! clone: cannot clone opened Streams
+\end{urbiscript}
+
+Do not forget to close the streams you opened
+(\autoref{sec:specs:Stream:ctor}).
 
 \begin{urbiscript}
 o1.close;
 o2.close;
+o3.close;
 \end{urbiscript}
 
 \subsection{Slots}
