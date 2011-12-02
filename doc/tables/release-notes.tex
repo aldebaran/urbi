@@ -73,16 +73,16 @@ Foo.f;
 \noindent
 See \autoref{sec:lang:tag} for details.
 
-\item \refSlot[Directory]{basename} and \refSlot[File]{basename} are
-  deprecated, use \lstinline|asPath.basename| instead.
+\item Features (\slot{basename}, \slot{lastModifiedDate}) of
+  \refObject{Directory} and \refObject{File} which are actually related to
+  \refObject{Path} are deprecated: use \lstinline|\var{f}.asPath.basename|
+  or \lstinline|\var{f}.asPath.lastModifiedDate| instead.
 
 \item Opened Streams (\refObject{InputStream} and \refObject{OutputStream})
   can no longer be cloned.
 
 \item \refObject{InputStream} and \refObject{OutputStream} are no longer
   pre-opened (to standard input and output).
-\item \refSlot[Directory]{lastModifiedDate} and \refSlot[File]{lastModifiedDate} are
-  deprecated, use \lstinline|asPath.lastModifiedDate| instead.
 
 \item \refSlot[InputStream]{get} (and \refSlot[InputStream]{getChar},
   \refSlot[InputStream]{getLine}) now returns \refObject{nil} instead of
