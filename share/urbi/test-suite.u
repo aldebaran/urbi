@@ -184,6 +184,20 @@ do (Object)
   overrideSlot("localSlotNames",
     function () { 'localSlotNames$old'.sort });
 
+  // Remove files and directories.
+  function removeFs(var names[])
+  {
+    for| (var s : names)
+    {
+      var p = Path.new(s)|
+      if (p.isDir)
+        Directory.new(p).removeAll
+      else
+        File.new(p).remove
+    }|
+    {}
+  };
+
   function removeSlots(var names[])
   {
     for| (var s : names)
@@ -194,6 +208,7 @@ do (Object)
         clog << Exception.Lookup.new(s, this, false)|
     {}
   };
+
 }|;
 
 
