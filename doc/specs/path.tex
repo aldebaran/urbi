@@ -234,7 +234,6 @@ File.create(p);
   \refObject{Directory}.
 \begin{urbiassert}
 Path.new("/").open.isA(Directory);
-
 \end{urbiassert}
 
 
@@ -242,21 +241,28 @@ Path.new("/").open.isA(Directory);
   Whether \this is readable.  Throw if does not even exist.
 \begin{urbiassert}
 Path.new(".").readable;
+var p = Path.new("file.txt");
+File.create(p);
+p.readable;
+System.system("chmod a-r %s" % p) == 0;
+!p.readable;
+System.system("chmod a+r %s" % p) == 0;
+p.readable;
 \end{urbiassert}
+\begin{urbicomment}
+File.new("file.txt").remove;
+\end{urbicomment}
 
 
 \item[rename](<name>)%
   Rename the file-system object (directory, file, etc.) pointed to by \this,
-  as \var{name}.
-\begin{urbiscript}
-var dir1 = Directory.create("dir1")|;
-var p = dir1.asPath|;
-p.rename("dir2");
-assert
-{
-  p.basename == "dir2";
-};
-\end{urbiscript}
+  as \var{name}.  Return \refObject{void}.
+\begin{urbiassert}
+var dir1 = Directory.create("dir1");
+var p = dir1.asPath;
+p.rename("dir2").isVoid;
+p.basename == "dir2";
+\end{urbiassert}
 \begin{urbicomment}
 Directory.new("dir2").remove;
 \end{urbicomment}
@@ -266,7 +272,17 @@ Directory.new("dir2").remove;
   Whether \this is writable.  Throw if does not even exist.
 \begin{urbiassert}
 Path.new(".").writable;
+var p = Path.new("file.txt");
+File.create(p);
+p.writable;
+System.system("chmod a-w %s" % p) == 0;
+!p.writable;
+System.system("chmod a+w %s" % p) == 0;
+p.writable;
 \end{urbiassert}
+\begin{urbicomment}
+File.new("file.txt").remove;
+\end{urbicomment}
 \end{urbiscriptapi}
 
 
