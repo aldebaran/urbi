@@ -51,7 +51,13 @@ check -C tests TESTS_DIRS=1.x
 check -C tests TESTS_DIRS=uob/plug
 check -C tests TESTS_DIRS=uob/remote
 check -C tests TESTS_DIRS=uob/rtp
-check -C tests TESTS_DIRS=uob/java
+# Java is portable, of course.  But we use JNI, i.e., components
+# compiled from C++, in a DLL.  We need a JVM running under Wine for
+# this to work, which is not the case currently.
+case $BUILDFARM_OS in
+  (windows);;
+  (*) check -C tests TESTS_DIRS=uob/java;;
+esac
 check -C tests TESTS_DIRS=demo
 check -C tests TESTS_DIRS=@ros
 
