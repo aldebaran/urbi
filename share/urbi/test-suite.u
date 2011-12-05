@@ -185,15 +185,26 @@ do (Object)
     function () { 'localSlotNames$old'.sort });
 
   // Remove files and directories.
+  //
+  // It has nothing to do this "Object", but that's for symmetry
+  // with removeSlots.
   function removeFs(var names[])
   {
     for| (var s : names)
     {
-      var p = Path.new(s)|
-      if (p.isDir)
-        Directory.new(p).removeAll
+      // Map Strings and Paths to Directory/File.
+      if (s.isA(String))
+        s = Path.new(s)|
+      if (s.isA(Path))
+        if (s.isDir)
+          s = Directory.new(s)
+        else
+          s = File.new(s) |
+      // Remove File/Directory.
+      if (s.isA(Directory))
+        s.removeAll
       else
-        File.new(p).remove
+        s.remove
     }|
     {}
   };

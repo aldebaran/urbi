@@ -1094,6 +1094,7 @@ removeAllSlots
 removeBack
 removeById
 removeFront
+removeFs
 removeLocalSlot
 removeNotifyAccess
 removeNotifyChange

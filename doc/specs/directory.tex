@@ -46,7 +46,7 @@ dir1 / "file";
 [00000002] File("dir1/file")
 \end{urbiscript}
 \begin{urbicomment}
-dir1.removeAll;
+removeFs(dir1);
 removeSlots("dir1", "dir2", "file");
 \end{urbicomment}
 
@@ -71,9 +71,7 @@ file;
 [00000005] File("file")
 \end{urbiscript}
 \begin{urbicomment}
-dir1.removeAll;
-dir2.removeAll;
-file.remove;
+removeFs(dir1, dir2, file);
 removeSlots("dir1", "dir2", "file");
 \end{urbicomment}
 
@@ -105,7 +103,7 @@ dir2.basename == dir2.asPath.basename == "dir2";
 [00000811:warning] !!! `basename' is deprecated, use `asPath.basename'
 \end{urbiassert}
 \begin{urbicomment}
-Directory.new("dir1").removeAll;
+removeFs("dir1");
 \end{urbicomment}
 
 
@@ -125,7 +123,7 @@ dir1.clear.isVoid;
 dir1.empty;
 \end{urbiassert}
 \begin{urbicomment}
-Directory.new("dir1").remove;
+removeFs("dir1");
 \end{urbicomment}
 
 
@@ -149,8 +147,7 @@ directory1.content;
 [00000003] ["dir2", "file"]
 \end{urbiscript}
 \begin{urbicomment}
-dir1.removeAll;
-directory1.removeAll;
+removeFs(dir1, directory1);
 removeSlots("dir1", "dir2", "file", "directory1");
 \end{urbicomment}
 
@@ -176,8 +173,7 @@ Directory.new("dir/dir1").content;
 [00000005] ["dir2", "file"]
 \end{urbiscript}
 \begin{urbicomment}
-dir.removeAll;
-dir1.removeAll;
+removeFs(dir, dir1);
 removeSlots("dir1", "dir2", "file", "dir");
 \end{urbicomment}
 
@@ -197,7 +193,7 @@ dir.content;
 [00000003] []
 \end{urbiscript}
 \begin{urbicomment}
-dir.remove;
+removeFs(dir);
 removeSlots("dir");
 \end{urbicomment}
 
@@ -217,7 +213,7 @@ Directory.createAll("dir1/dir2/dir3");
 [00000002] Directory("dir1/dir2/dir3")
 \end{urbiscript}
 \begin{urbicomment}
-dir1.removeAll;
+removeFs(dir1);
 removeSlots("dir1");
 \end{urbicomment}
 
@@ -231,7 +227,7 @@ File.create("dir/file");
 !dir.empty;
 \end{urbiassert}
 \begin{urbicomment}
-Directory.new("dir").removeAll;
+removeFs("dir");
 \end{urbicomment}
 
 
@@ -327,7 +323,7 @@ assert
 };
 \end{urbiscript}
 \begin{urbicomment}
-dir.removeAll;
+removeFs(dir);
 removeSlots("dir1", "dir2", "file", "dir");
 \end{urbicomment}
 
@@ -342,12 +338,12 @@ dir.parent;
 assert(dir.parent.parent.asString == Directory.current.asString);
 \end{urbiscript}
 \begin{urbicomment}
-dir.parent.removeAll;
+removeFs(dir.parent);
 removeSlots("dir");
 \end{urbicomment}
 
 
-\item[remove]
+\item[remove]%
   Remove \this directory if it is empty.
 \begin{urbiscript}
 var dir = Directory.create("dir")|;
@@ -398,8 +394,7 @@ dir.content;
 [00000006] ["file"]
 \end{urbiscript}
 \begin{urbicomment}
-dir.removeAll;
-dir2.removeAll;
+removeFs(dir, dir2);
 removeSlots("dir", "dir2");
 \end{urbicomment}
 
@@ -419,7 +414,7 @@ var file2 = File.create("dir/dir/file")|;
 assert(dir.size() == file1.size() + file2.size());
 \end{urbiscript}
 \begin{urbicomment}
-dir.removeAll;
+removeFs(dir);
 removeSlots("dir", "file1", "file2");
 \end{urbicomment}
 \end{urbiscriptapi}

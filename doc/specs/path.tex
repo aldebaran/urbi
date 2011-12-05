@@ -129,7 +129,7 @@ Path.new("../..").cd == cwd;
 Path.cwd == cwd;
 \end{urbiassert}
 \begin{urbicomment}
-Directory.new("a").removeAll;
+removeFs("a");
 \end{urbicomment}
 
 Exceptions are thrown on cases of error.
@@ -147,8 +147,7 @@ f.asPath.cd;
 [00099415:error] !!! cd: Not a directory: file.txt
 \end{urbiscript}
 \begin{urbicomment}
-d.removeAll;
-f.remove;
+removeFs(d, f);
 removeSlots("f", "d");
 \end{urbicomment}
 
@@ -190,7 +189,7 @@ File.create(p);
 p.exists;
 \end{urbiassert}
 \begin{urbicomment}
-File.new("file.txt").remove;
+removeFs("file.txt");
 \end{urbicomment}
 
 
@@ -203,7 +202,7 @@ var f = File.create("file.txt");
 !Path.new("does/not/exist").isDir;
 \end{urbiassert}
 \begin{urbicomment}
-File.new("file.txt").remove;
+removeFs("file.txt");
 \end{urbicomment}
 
 
@@ -216,7 +215,7 @@ var f = File.create("file.txt");
 !Path.new("does/not/exist").isReg;
 \end{urbiassert}
 \begin{urbicomment}
-File.new("file.txt").remove;
+removeFs("file.txt");
 \end{urbicomment}
 
 
@@ -250,7 +249,7 @@ System.system("chmod a+r %s" % p) == 0;
 p.readable;
 \end{urbiassert}
 \begin{urbicomment}
-File.new("file.txt").remove;
+removeFs("file.txt");
 \end{urbicomment}
 
 
@@ -264,7 +263,7 @@ p.rename("dir2").isVoid;
 p.basename == "dir2";
 \end{urbiassert}
 \begin{urbicomment}
-Directory.new("dir2").remove;
+removeFs("dir2");
 \end{urbicomment}
 
 
@@ -281,7 +280,7 @@ System.system("chmod a+w %s" % p) == 0;
 p.writable;
 \end{urbiassert}
 \begin{urbicomment}
-File.new("file.txt").remove;
+removeFs("file.txt");
 \end{urbicomment}
 \end{urbiscriptapi}
 

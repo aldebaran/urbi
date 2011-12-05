@@ -104,9 +104,7 @@ assert
 [00000811:warning] !!! `basename' is deprecated, use `asPath.basename'
 \end{urbiscript}
 \begin{urbicomment}
-file1.remove;
-file2.remove;
-dir.removeAll;
+removeFs(file1, file2, dir);
 removeSlots("file1", "file2", "dir");
 \end{urbicomment}
 
@@ -133,8 +131,7 @@ var file2 = file.copy("file2");
 assert(file2.content == file.content);
 \end{urbiscript}
 \begin{urbicomment}
-file.remove;
-file2.remove;
+removeFs(file, file2);
 removeSlots("file", "file2");
 \end{urbicomment}
 
@@ -154,7 +151,7 @@ dir.content;
 [00000003] ["file"]
 \end{urbiscript}
 \begin{urbicomment}
-dir.removeAll;
+removeFs(dir);
 removeSlots("file", "dir");
 \end{urbicomment}
 
@@ -208,27 +205,23 @@ dir.content;
 [00000001] ["file"]
 \end{urbiscript}
 \begin{urbicomment}
-dir.removeAll;
+removeFs(dir);
 removeSlots("dir", "file");
 \end{urbicomment}
 
 
-\item[remove]
+\item[remove]%
   Remove the current file.  Returns void.
-\begin{urbiscript}[firstnumber=1]
-var p = Path.new("foo.txt") |
-p.exists;
-[00000002] false
+\begin{urbiassert}[firstnumber=1]
+var p = Path.new("file.txt");
+!p.exists;
 
 var f = File.create(p);
-[00000003] File("foo.txt")
 p.exists;
-[00000004] true
 
-f.remove;
-p.exists;
-[00000006] false
-\end{urbiscript}
+f.remove.isVoid;
+!p.exists;
+\end{urbiassert}
 
 
 \item[rename](<name>)%
@@ -258,11 +251,10 @@ File.new("file.txt").content.data == "1\n2\n";
 
 \item[size]
   The size of the file, in number of bytes.
-\begin{urbiscript}
-File.save("file.txt", "1234");
-File.new("file.txt").size;
-[00000001] 4
-\end{urbiscript}
+\begin{urbiassert}
+File.save("file.txt", "1234").isVoid;
+File.new("file.txt").size == 4;
+\end{urbiassert}
 \end{urbiscriptapi}
 
 
