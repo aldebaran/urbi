@@ -51,28 +51,14 @@ namespace urbi
     static void
     raise_boost_fs_error(boostfs::filesystem_error& e)
     {
-      FRAISE("%s", libport::format_boost_fs_error(e.what()));
-    }
-
-    static void
-    check_directory(const rPath& path)
-    {
-      if (!path->is_dir())
-        FRAISE("not a directory: \"%s\"", path->as_string());
-    }
-
-    static void
-    check_exists(const rPath& path)
-    {
-      if (!path->exists())
-        FRAISE("directory does not exist: \"%s\"", path->as_string());
+      RAISE(libport::format_error(e));
     }
 
     static void
     check_empty(const Directory& dir)
     {
       if (!dir.empty())
-        FRAISE("directory not empty: \"%s\"", dir.as_string());
+        FRAISE("directory not empty: %s", dir.as_string());
     }
 
     /*--------------.
@@ -221,8 +207,7 @@ namespace urbi
 
     void Directory::init(rPath path)
     {
-      check_exists(path);
-      check_directory(path);
+      path->check_directory();
 
       path_ = path;
 
@@ -281,7 +266,7 @@ namespace urbi
     Directory::create_directory(rPath path)
     {
       bool created = false;
-      path->check_nexists();
+      path->check_directory(false);
 
       try
       {
@@ -294,7 +279,7 @@ namespace urbi
 
       // Should not be raised as check is done before creating directory.
       if (!created)
-        FRAISE("no directory was effectively created: \"%s\"",
+        FRAISE("no directory was effectively created: %s",
                path->as_string());
 
       return instanciate_directory(path->as_string());
@@ -303,8 +288,8 @@ namespace urbi
     void
     Directory::create_all_recursive(rPath path)
     {
-      if (path->exists() && !path->is_dir())
-        path->raise_file_exists();
+      if (path->exists())
+        path->check_directory();
       if (!path->is_root())
       {
         rPath parent = path->parent();
@@ -382,7 +367,7 @@ namespace urbi
     void
     Directory::remove_all()
     {
-      check_exists(path_);
+      path_->check_exists();
       boostfs::remove_all(boostfs::path(path_->as_string()));
     }
 

@@ -199,6 +199,7 @@ namespace urbi
     rObject
     Path::open() const
     {
+      check_exists();
       if (is_dir())
         return new Directory(path_);
       if (is_reg())
@@ -216,26 +217,46 @@ namespace urbi
     }
 
     void
-    Path::raise_file_exists() const
-    {
-      FRAISE("file exists: \"%s\"", as_string());
-    }
-
-    void
-    Path::raise_directory_exists() const
-    {
-      FRAISE("directory exists: \"%s\"", as_string());
-    }
-
-    void
-    Path::check_nexists() const
+    Path::check_exists(bool wanted) const
     {
       if (exists())
       {
-        if (is_dir())
-          raise_directory_exists();
-        else
-          raise_file_exists();
+        if (!wanted)
+          FRAISE("file or directory already exists: %s", as_string());
+      }
+      else if (wanted)
+        FRAISE("no such file or directory: %s", as_string());
+    }
+
+    void
+    Path::check_file(bool wanted) const
+    {
+      if (is_reg())
+      {
+        if (!wanted)
+          FRAISE("file already exists: %s", as_string());
+      }
+      else
+      {
+        check_exists(wanted);
+        if (wanted)
+          FRAISE("not a file: %s", as_string());
+      }
+    }
+
+    void
+    Path::check_directory(bool wanted) const
+    {
+      if (is_dir())
+      {
+        if (!wanted)
+          FRAISE("directory already exists: %s", as_string());
+      }
+      else
+      {
+        check_exists(wanted);
+        if (wanted)
+          FRAISE("not a directory: %s", as_string());
       }
     }
 

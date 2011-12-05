@@ -23,6 +23,12 @@ A \lstinline|Path| is constructed with the string that points to the
 file system entity. This path can be relative or absolute.
 
 \begin{urbiscript}[firstnumber=1]
+Path;
+[00000001] Path("/")
+
+Path.new("foo");
+[00000002] Path("foo")
+
 Path.new("/path/file.u");
 [00000001] Path("/path/file.u")
 \end{urbiscript}
@@ -99,42 +105,73 @@ Path.new("file.txt").asString == "file.txt";
 \end{urbiassert}
 
 
-\item[basename]
-  Base name of the path.
+\item[basename]%
+  Base name of the path.  See also \refSlot{dirname}.
 \begin{urbiassert}
 Path.new("/absolute/path/file.u").basename == "file.u";
 Path.new("relative/path/file.u").basename  == "file.u";
 \end{urbiassert}
 
 
-\item[cd]
-  Change current working directory to \this. Return the new
-  current working directory as a \lstinline|Path|.
+\item[cd]%
+  Change the current working directory to \this. Return the new current
+  working directory as a \lstinline|Path|.
+\begin{urbiassert}
+var a = Directory.create("a").asPath;
+var b = Directory.create("a/b").asPath;
+var cwd = Path.cwd;     // Current location.
+cwd.isA(Path);
+// cd returns the new current working directory.
+b.cd == cwd / b == cwd / "a" / "b";
+Path.cwd == cwd / b;
+// Go back to the original location.
+Path.new("../..").cd == cwd;
+Path.cwd == cwd;
+\end{urbiassert}
+\begin{urbicomment}
+Directory.new("a").removeAll;
+\end{urbicomment}
 
+Exceptions are thrown on cases of error.
+\begin{urbiscript}
+Path.new("does/not/exist").cd;
+[00003991:error] !!! cd: No such file or directory: does/not/exist
 
-\item[cwd]
+var d = Directory.create("forbidden")|;
+System.system("chmod 444 %s" % d)|;
+d.asPath.cd;
+[00040753:error] !!! cd: Permission denied: forbidden
+
+var f = File.create("file.txt")|;
+f.asPath.cd;
+[00099415:error] !!! cd: Not a directory: file.txt
+\end{urbiscript}
+\begin{urbicomment}
+d.removeAll;
+f.remove;
+removeSlots("f", "d");
+\end{urbicomment}
+
+\item[cwd]%
   The current working directory.
 % We used to write
 % assert(Path.new("/").cd == Path.new("/"));
 % assert(Path.cwd         == Path.new("/"));
 % which is wrong on Windows, because cwd (like cd) returns Z:/ instead
 % of /.
-\begin{urbiscript}
-{
-  // Save current directory.
-  var pwd = Path.cwd|
-  // Go into ``/''.
-  var root = Path.new("/").cd;
-  // Current working directory is ``/''.
-  assert(Path.cwd == root);
-  // Go back to the directory we were in.
-  assert(pwd.cd == pwd);
-};
-\end{urbiscript}
-
+\begin{urbiassert}
+// Save current directory.
+var pwd = Path.cwd;
+// Go into "/".
+var root = Path.new("/").cd;
+// Current working directory is "/".
+Path.cwd == root;
+// Go back to the directory we were in.
+pwd.cd == pwd;
+\end{urbiassert}
 
 \item[dirname]%
-  Directory name of the path.
+  Directory name of the path.  See also \refSlot{basename}.
 \begin{urbiassert}
 Path.new("/abs/path/file.u").dirname == Path.new("/abs/path");
 Path.new("rel/path/file.u").dirname  == Path.new("rel/path");
@@ -142,41 +179,63 @@ Path.new("rel/path/file.u").dirname  == Path.new("rel/path");
 
 
 \item[exists]%
-  Whether something (a file, a directory, \ldots) exists where
-  \this points to.
+  Whether something (a \refSlot{File}, a \refSlot{Directory}, \ldots) exists
+  where \this points to.
 \begin{urbiassert}
 Path.cwd.exists;
 Path.new("/").exists;
-!Path.new("/this/path/does/not/exists").exists;
+var p = Path.new("file.txt");
+!p.exists;
+File.create(p);
+p.exists;
 \end{urbiassert}
+\begin{urbicomment}
+File.new("file.txt").remove;
+\end{urbicomment}
 
 
 \item[isDir]%
   Whether \this is a directory.
 \begin{urbiassert}
 Path.cwd.isDir;
+var f = File.create("file.txt");
+!f.asPath.isDir;
+!Path.new("does/not/exist").isDir;
 \end{urbiassert}
+\begin{urbicomment}
+File.new("file.txt").remove;
+\end{urbicomment}
 
 
 \item[isReg]%
   Whether \this is a regular file.
 \begin{urbiassert}
+var f = File.create("file.txt");
+ f.asPath.isReg;
 !Path.cwd.isReg;
+!Path.new("does/not/exist").isReg;
 \end{urbiassert}
+\begin{urbicomment}
+File.new("file.txt").remove;
+\end{urbicomment}
 
 
 \item[lastModifiedDate]%
   Last modified date of the path.
 \begin{urbiassert}
-  var p = Path.new("test");
-  File.create(p);
-  0 <= Date.now - p.lastModifiedDate <= 5s;
+var p = Path.new("test");
+File.create(p);
+0 <= Date.now - p.lastModifiedDate <= 5s;
 \end{urbiassert}
 
 
 \item[open] Open \this. Return either a \dfn{Directory} or a \dfn{File}
   according the type of \this. See \refObject{File} and
   \refObject{Directory}.
+\begin{urbiassert}
+Path.new("/").open.isA(Directory);
+
+\end{urbiassert}
 
 
 \item[readable]

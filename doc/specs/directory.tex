@@ -55,8 +55,8 @@ removeSlots("dir1", "dir2", "file");
   \experimental{}
 
   If \var{entity} is a \refObject{Directory} or a \refObject{File},
-  \refSlot{'<<'} copies \var{entity} in the \lstinline|this| directory.
-  Return \lstinline|this| to allow chained operations.
+  \refSlot{'<<'} copies \var{entity} in the \this directory.
+  Return \this to allow chained operations.
 \begin{urbiscript}
 var dir1 = Directory.create("dir1")|;
 var dir2 = Directory.create("dir2")|;
@@ -136,7 +136,7 @@ Directory.new("dir1").remove;
 
 
 \item[copy](<dirname>)
-  Copy recursively all items of the \lstinline|this| directory
+  Copy recursively all items of the \this directory
   into the directory \var{dirname} after creating it.
 \begin{urbiscript}
 var dir1 = Directory.create("dir1")|;
@@ -158,7 +158,7 @@ removeSlots("dir1", "dir2", "file", "directory1");
 \item[copyInto](<dirname>)
   \experimental{}
 
-  Copy \lstinline|this| into \var{dirname} without creating it.
+  Copy \this into \var{dirname} without creating it.
 \begin{urbiscript}
 var dir = Directory.create("dir")|;
 var dir1 = Directory.create("dir1")|;
@@ -188,11 +188,11 @@ removeSlots("dir1", "dir2", "file", "dir");
   can occur, errors are raised if directory or file \var{name} already exists.
 \begin{urbiscript}
 Directory.new("dir");
-[00000001:error] !!! new: directory does not exist: "dir"
+[00000001:error] !!! new: no such file or directory: dir
 var dir = Directory.create("dir");
 [00000002] Directory("dir")
 dir = Directory.create("dir");
-[00000001:error] !!! create: directory exists: "dir"
+[00000001:error] !!! create: directory already exists: dir
 dir.content;
 [00000003] []
 \end{urbiscript}
@@ -210,7 +210,7 @@ removeSlots("dir");
   \refSlot{createAll} creates them all as in the Unix \samp{make -p} command.
 \begin{urbiscript}
 Directory.create("dir1/dir2/dir3");
-[00000001:error] !!! create: no such file or directory: "dir1/dir2/dir3"
+[00000001:error] !!! create: no such file or directory: dir1/dir2/dir3
 var dir1 = Directory.create("dir1");
 [00000002] Directory("dir1")
 Directory.createAll("dir1/dir2/dir3");
@@ -353,7 +353,7 @@ removeSlots("dir");
 var dir = Directory.create("dir")|;
 File.create("dir/file")|;
 dir.remove;
-[00000001:error] !!! remove: directory not empty: "dir"
+[00000001:error] !!! remove: directory not empty: dir
 dir.clear;
 dir.remove;
 assert(!dir.exists);

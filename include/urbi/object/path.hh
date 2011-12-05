@@ -37,9 +37,18 @@ namespace urbi
       ATTRIBUTE_CONST
       const value_type& value_get() const;
       void value_set(const value_type&);
-      void raise_directory_exists() const;
-      void raise_file_exists() const;
-      void check_nexists() const;
+
+      /// Check that this is a directory, raise on error.
+      /// \param wanted  whether to check that is a directory, or is not.
+      void check_directory(bool wanted = true) const;
+
+      /// Check that this is a file, raise on error.
+      /// \param wanted  whether to check that is a file, or is not.
+      void check_file(bool wanted = true) const;
+
+      /// Check that this exists, raise on error.
+      /// \param wanted  whether to check that exists, or does not.
+      void check_exists(bool wanted = true) const;
 
     /*---------------.
     | Urbi methods.  |

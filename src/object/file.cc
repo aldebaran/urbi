@@ -41,7 +41,7 @@ namespace urbi
     static void
     raise_boost_fs_error(boostfs::fserror& e)
     {
-      FRAISE("%s", libport::format_boost_fs_error(e.what()));
+      RAISE(libport::format_error(e));
     }
 
     /*--------------.
@@ -129,10 +129,7 @@ namespace urbi
 
     void File::init(rPath path)
     {
-      if (!path->exists())
-        FRAISE("does not exist: %s", *path);
-      if (path->is_dir())
-        FRAISE("is a directory: %s", *path);
+      path->check_file();
       path_ = path;
     }
 
@@ -176,7 +173,7 @@ namespace urbi
     {
       std::ifstream s(path_->as_string().c_str());
       if (!s.good())
-        FRAISE("File not readable: %s", as_string());
+        FRAISE("file not readable: %s", as_string());
 
       List::value_type res;
       std::string line;
