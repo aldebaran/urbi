@@ -1260,6 +1260,7 @@ SimulationController
 sinusoid
 sizeof
 sizeOut
+skipIfWindows
 SleepingMax
 SleepingMean
 SleepingMin

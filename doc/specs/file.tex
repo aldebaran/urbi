@@ -46,18 +46,27 @@ read or write to Files.
 \begin{urbiscript}
 File.save("file.txt", "1\n2\n"  "3\r\n4\r\n");
 assert(File.new("file.txt").asList == ["1", "2", "3", "4"]);
-
-// Make the file unreadable.
-System.system("chmod a-r file.txt")|;
-File.new("file.txt").asList;
-[00000003:error] !!! asList: file not readable: file.txt
 \end{urbiscript}
 \begin{urbicomment}
 removeFs("file.txt");
 \end{urbicomment}
 
+An error is throw if the file cannot be opened, for instance if it is
+unreadable (\refSlot[Path]{readable}).
+
+\begin{urbiscript}[firstnumber=1]
+File.save("file.txt", "1\n2\n");
+System.system("chmod a-r file.txt")|;
+File.new("file.txt").asList;
+[00000003:error] !!! asList: file not readable: file.txt
+\end{urbiscript}
+\begin{urbicomment}
+skipIfWindows;
+removeFs("file.txt");
+\end{urbicomment}
+
 \item[asPath] A \refObject{Path} being the path of the file.
-\begin{urbiassert}
+\begin{urbiassert}[firstnumber=1]
 var file1 = File.create("file");
 file1.asPath == Path.new("file");
 

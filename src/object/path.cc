@@ -185,6 +185,7 @@ namespace urbi
     rPath
     Path::cd() const
     {
+      check_directory();
       if (chdir(as_string().c_str()))
         handle_any_error();
       return cwd();

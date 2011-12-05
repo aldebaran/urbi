@@ -19,13 +19,21 @@ forth).
 
 \subsection{Construction}
 
-A \lstinline|Path| is constructed with the string that points to the
-file system entity. This path can be relative or absolute.
+Path itself is the root of the file system: \lstinline|/| on Unix, and
+\lstinline|C:\| on Windows.
 
 \begin{urbiscript}[firstnumber=1]
 Path;
 [00000001] Path("/")
+\end{urbiscript}
+\begin{urbicomment}
+skipIfWindows;
+\end{urbicomment}
 
+A \lstinline|Path| is constructed with the string that points to the file
+system entity.  This path can be relative or absolute.
+
+\begin{urbiscript}[firstnumber=1]
 Path.new("foo");
 [00000002] Path("foo")
 
@@ -135,20 +143,29 @@ removeFs("a");
 Exceptions are thrown on cases of error.
 \begin{urbiscript}
 Path.new("does/not/exist").cd;
-[00003991:error] !!! cd: No such file or directory: does/not/exist
-
-var d = Directory.create("forbidden")|;
-System.system("chmod 444 %s" % d)|;
-d.asPath.cd;
-[00040753:error] !!! cd: Permission denied: forbidden
+[00003991:error] !!! cd: no such file or directory: does/not/exist
 
 var f = File.create("file.txt")|;
 f.asPath.cd;
-[00099415:error] !!! cd: Not a directory: file.txt
+[00099415:error] !!! cd: not a directory: file.txt
 \end{urbiscript}
 \begin{urbicomment}
-removeFs(d, f);
-removeSlots("f", "d");
+removeFs(f);
+removeSlots("f");
+\end{urbicomment}
+
+Permissions are not properly handled on Windows, so the following example
+would actually fail.
+\begin{urbiscript}[firstnumber=1]
+var d = Directory.create("forbidden")|;
+System.system("chmod 444 %s" % d)|;
+d.asPath.cd;
+[00140753:error] !!! cd: Permission denied: forbidden
+\end{urbiscript}
+\begin{urbicomment}
+skipIfWindows;
+removeFs(d);
+removeSlots("d");
 \end{urbicomment}
 
 \item[cwd]%
@@ -158,7 +175,7 @@ removeSlots("f", "d");
 % assert(Path.cwd         == Path.new("/"));
 % which is wrong on Windows, because cwd (like cd) returns Z:/ instead
 % of /.
-\begin{urbiassert}
+\begin{urbiassert}[firstnumber=1]
 // Save current directory.
 var pwd = Path.cwd;
 // Go into "/".
@@ -237,8 +254,9 @@ Path.new("/").open.isA(Directory);
 
 
 \item[readable]
-  Whether \this is readable.  Throw if does not even exist.
-\begin{urbiassert}
+  Whether \this is readable.  Throw if does not even exist.  On Windows,
+  always returns true.
+\begin{urbiassert}[firstnumber=1]
 Path.new(".").readable;
 var p = Path.new("file.txt");
 File.create(p);
@@ -249,6 +267,7 @@ System.system("chmod a+r %s" % p) == 0;
 p.readable;
 \end{urbiassert}
 \begin{urbicomment}
+skipIfWindows;
 removeFs("file.txt");
 \end{urbicomment}
 
@@ -256,7 +275,7 @@ removeFs("file.txt");
 \item[rename](<name>)%
   Rename the file-system object (directory, file, etc.) pointed to by \this,
   as \var{name}.  Return \refObject{void}.
-\begin{urbiassert}
+\begin{urbiassert}[firstnumber=1]
 var dir1 = Directory.create("dir1");
 var p = dir1.asPath;
 p.rename("dir2").isVoid;
@@ -267,9 +286,10 @@ removeFs("dir2");
 \end{urbicomment}
 
 
-\item[writable]
-  Whether \this is writable.  Throw if does not even exist.
-\begin{urbiassert}
+\item[writable]%
+  Whether \this is writable.  Throw if does not even exist.  On Windows,
+  always returns true.
+\begin{urbiassert}[firstnumber=1]
 Path.new(".").writable;
 var p = Path.new("file.txt");
 File.create(p);
@@ -280,6 +300,7 @@ System.system("chmod a+w %s" % p) == 0;
 p.writable;
 \end{urbiassert}
 \begin{urbicomment}
+skipIfWindows;
 removeFs("file.txt");
 \end{urbicomment}
 \end{urbiscriptapi}
