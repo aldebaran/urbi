@@ -34,7 +34,9 @@ do (Lobby)
   // Echo the Urbi authors.
   function authors()
   {
-    echoEach(File.new(System.urbiRoot / "AUTHORS.txt").asList
+    clog << System.urbiDocDir;
+    clog << System.env;
+    echoEach(File.new(System.urbiDocDir / "AUTHORS.txt").asList
              + ["", "See also `thanks;'."]);
   };
 
@@ -59,7 +61,7 @@ do (Lobby)
   // Echo the Urbi license.
   function license()
   {
-    echoEach(File.new(System.urbiRoot / "LICENSE.txt"));
+    echoEach(File.new(System.urbiDocDir / "LICENSE.txt"));
   };
 
   // Echo \a msg "on tag" \a tag.
@@ -110,7 +112,7 @@ do (Lobby)
   // Echo the Urbi contributors.
   function thanks()
   {
-    echoEach(File.new(System.urbiRoot / "THANKS.txt").asList
+    echoEach(File.new(System.urbiDocDir / "THANKS.txt").asList
              + ["", "See also `authors;'."]);
   };
 

@@ -53,7 +53,20 @@ Lobby.create;
 
 \subsection{Slots}
 \begin{urbiscriptapi}
-\item[authors] Credit the authors of \usdk.
+\item[authors] Credit the authors of \usdk.  See also \refSlot{thanks} and
+  \autoref{sec:genesis}.
+\begin{urbiscript}
+lobby.authors;
+[00478679] *** Authors of Urbi:
+[00478679] ***  - Jean-Christophe Baillie (original designer)
+[00478679] ***
+[00478679] *** Urbi 2 and subsequent versions:
+[00478679] ***  - Akim Demaille
+[00478679] ***  - Matthieu Nottale
+[00478679] ***  - Quentin Hocquet
+[00478679] ***
+[00478679] *** See also `thanks;'.
+\end{urbiscript}
 
 
 \item[banner] Internal.  Display \usdk banner.
@@ -232,7 +245,7 @@ Lobby in Lobby.instances;
 
 \item[license]
   Display the end user license agreement of the \usdk.
-\begin{urbiunchecked}
+\begin{urbiscript}
 lobby.license;
 [00000000] ***                     GNU AFFERO GENERAL PUBLIC LICENSE
 [00000000] ***                        Version 3, 19 November 2007
@@ -241,13 +254,10 @@ lobby.license;
 [00000000] ***  Everyone is permitted to copy and distribute verbatim copies
 [00000000] ***  of this license document, but changing it is not allowed.
 [00000000] ***
-[00000000] ***                             Preamble
-[00000000] ***
-[00000000] ***   The GNU Affero General Public License is a free, copyleft license for
-[00000000] *** software and other kinds of works, specifically designed to ensure
-[00000000] *** cooperation with the community in the case of network server software.
-[00000000] *** [...]
-\end{urbiunchecked}
+[:][...]
+[00000000] *** For more information on this, and how to apply and follow the GNU AGPL, see
+[00000000] *** <http://www.gnu.org/licenses/>.
+\end{urbiscript}
 
 
 \item[lobby]
@@ -308,8 +318,20 @@ lobby.send("333");
 \end{urbiscript}
 
 
-\item[thanks] Credit the contributors of \usdk.
-
+\item[thanks] Credit the contributors of \usdk.  See also \refSlot{authors}
+  and \autoref{sec:genesis}.
+%% FIXME: Can't credit everyone because listings does not support UTF-8 in
+%% these environments... And Benoît Sigoure, for instance, has some.
+\begin{urbiscript}
+lobby.thanks;
+[00478679] *** Contributors to Urbi:
+[00478679] ***
+[00478679] ***  - Adam Oleksy <adam.oleksy@pwr.wroc.pl>
+[00478679] ***  - Alexandre Morgand
+[:][...]
+[00478679] ***
+[00478679] *** See also `authors;'.
+\end{urbiscript}
 
 \item[wall](<value>, <channel> = "")%
   Perform \lstinline|echo(\var{value}, \var{channel})| on all the

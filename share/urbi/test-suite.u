@@ -28,21 +28,12 @@ class Global.camera: Loadable
   // start the camera.
   val = "!!! the camera is not load'ed";
 
-  var sharedir =
-    {
-      if (var s = System.env["URBI_SHARE"])
-        Path.new(s)
-      else
-        System.urbiRoot / "share" / "gostai"
-    };
-
-
   var images;
   function loadImages ()
   {
     if (images.isVoid)
     {
-      var dir = sharedir / "images" / "gostai-logo" / "jpeg";
+      var dir = System.urbiShareDir / "images" / "gostai-logo" / "jpeg";
       clog << "Loading images from %s." % dir;
       images =
         Directory.new(dir)

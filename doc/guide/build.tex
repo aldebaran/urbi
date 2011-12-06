@@ -366,6 +366,13 @@ limitation of the Java VM which seems to be unable to traverse properly
 directories with UTF-8 names when the locale is set to C
 (\autoref{sec:faq:jvm}).
 
+The directory containing \file{configure} is called the \dfn{source
+  directory}, or \dfn{srcdir}, and the directory in which the compilation
+takes place (\file{\_build} in this case) is named the \dfn{build
+  directory}, or \dfn{builddir} for short.  Finally, the root in which
+everything will be installed is called by several names: \env{URBI\_ROOT},
+the \dfn{prefix}, or the \dfn{install dir}, aka \dfn{installdir}.
+
 \subsection{configuration options}
 See \samp{../configure --help} for detailed information.  Unless you
 want to do funky stuff, you probably need no option.
@@ -524,9 +531,11 @@ You may now move this tree around and expect the executable to work
 properly.
 
 \section{Run}
+\label{sec:build:run}
 
-There are some special variables in addition to the environment
-variables documented in the manual.
+In addition to the ``public'' environment variables
+(\autoref{sec:tools:env}), some other, reserved for developers, alter the
+behavior of the programs.
 
 \begin{envs}
 \item[URBI\_ACCEPT\_BINARY\_MISMATCH] As a safety net, Urbi checks that
@@ -538,6 +547,9 @@ variables documented in the manual.
 
 \item[URBI\_DESUGAR] Display the desugared ASTs instead of the
   original one.
+
+\item[URBI\_DOC] Where to find the file{doc} directory, which contains
+  \file{THANKS.txt} and so forth.
 
 \item[URBI\_IGNORE\_URBI\_U] Ignore failures (such as differences between
   kernel revision and \file{urbi.u} revision) during the initialization.
@@ -566,11 +578,35 @@ variables documented in the manual.
   \code{Urbi.Scanner} category and \env{GD\_CATEGORY} instead
   (\autoref{sec:tools:env}).
 
+\item[URBI\_SHARE] Where to find the file{share} directory, which contains
+  \file{images/gostai-logo}, \file{urbi/urbi.u} and so forth.
+
 \item[URBI\_TEXT\_MODE] Forbid binary communications with UObjects.
 
 \item[URBI\_TOPLEVEL] Force the display the result of the top-level
   evaluation into the lobby.
 \end{envs}
+
+By carefully defining these variables, it is possible to run the
+non-installed programs.  There are wrappers that do this properly:
+\begin{description}
+\item[\command{urbi}] Use \command{\var{builddir}/tests/bin/urbi}.
+\item[\command{umake}]
+  \command{\var{builddir}/sdk-remote/src/tests/bin/umake};
+\item[\command{umake-java}]
+  \command{\var{builddir}/sdk-remote/src/tests/bin/umake-java};
+\item[\command{umake-link}]
+  \command{\var{builddir}/sdk-remote/src/tests/bin/umake-link};
+\item[\command{umake-shared}]
+  \command{\var{builddir}/sdk-remote/src/tests/bin/umake-shared};
+\item[\command{urbi-launch}]
+  \command{\var{builddir}/sdk-remote/src/tests/bin/urbi-launch};
+\item[\command{urbi-launch-java}]
+  \command{\var{builddir}/sdk-remote/src/tests/bin/urbi-launch-java};
+\item[\command{urbi-send}]
+  \command{\var{builddir}/sdk-remote/src/tests/bin/urbi-send};
+\end{description}
+
 
 \section{Check}
 \label{sec:build:check}

@@ -557,10 +557,26 @@ namespace urbi
       runner().state.redefinition_mode_set(true);
     }
 
+    /// Return the URBI_ROOT path.
+    static
     rPath
     system_urbiRoot()
     {
       return new Path(::kernel::urbiserver->urbi_root_get().root());
+    }
+
+    static
+    rPath
+    system_urbiDocDir()
+    {
+      return new Path(::kernel::urbiserver->urbi_root_get().doc_dir());
+    }
+
+    static
+    rPath
+    system_urbiShareDir()
+    {
+      return new Path(::kernel::urbiserver->urbi_root_get().share_dir());
     }
 
     void
@@ -720,7 +736,9 @@ namespace urbi
       DECLARE(systemFiles);
       DECLARE(time);
       DECLARE(unsetenv);
+      DECLARE(urbiDocDir);
       DECLARE(urbiRoot);
+      DECLARE(urbiShareDir);
       DECLARE(DOLLAR_objAddr);
 
 #undef DECLARE
