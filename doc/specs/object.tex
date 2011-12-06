@@ -465,16 +465,26 @@ do (2) { var this.attr = "foo"; this.attr->prop = "bar" }.dump(1);
 [00020505] ***     }
 [00020505] ***     /* Properties */
 [00020505] ***     prop = String_0x239330 {
-[01234567] ***       /* Special slots */
-[01234567] ***       protos = String
-[01234567] ***       /* Slots */
-[01234567] ***       }
-[01234567] ***     value = String_0x42392b48 {
+[00020505] ***       /* Special slots */
+[00020505] ***       protos = String
+[00020505] ***       /* Slots */
+[00020505] ***       }
+[00020505] ***     value = String_0x42392b48 {
 [00020505] ***       /* Special slots */
 [00020505] ***       protos = String
 [00020505] ***       /* Slots */
 [00020505] ***       }
 [00020505] ***   }
+
+Object.dump(1);
+[00020555] *** Object {
+[00020555] ***   /* Special slots */
+[00020555] ***   protos = Comparable, Global
+[00020555] ***   /* Slots */
+[:][...]
+[00020555] ***     }
+[00020555] ***   }
+
 
 0.dump(1.5);
 [00020605:error] !!! dump: expected integer: 1.5

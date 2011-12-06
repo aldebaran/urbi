@@ -581,7 +581,7 @@ namespace urbi
                       int depth_max) const
     {
       rSlot slot = s.second->as<Slot>();
-      rObject val = slot ? slot->value(const_cast<Object*>(this)) : 0;
+      rObject val = slot ? slot->value(const_cast<Object*>(this)) : s.second;
       o << s.first.second << " = ";
       if (slot && slot->constant_get())
         o << "const ";
