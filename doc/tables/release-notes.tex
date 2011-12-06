@@ -51,6 +51,7 @@ user-visible changes in \usdk releases.
 \subsection{Changes}
 Please, pay attention to these changes, as your code may have to be
 adjusted.
+\subsubsection{\us}
 \begin{itemize}
 \item The implicit empty statement, which was warned about:
 \begin{urbiunchecked}
@@ -101,7 +102,10 @@ See \autoref{sec:lang:tag} for details.
 
 \item Drop support for the obsolete \lstindex{loopn} keyword, replaced by
   \lstinline{for} since \usdk 2.0 (\autoref{sec:k1:loopn}).
+\end{itemize}
 
+\subsubsection{\us Standard Library}
+\begin{itemize}
 \item Features (\slot{basename}, \slot{lastModifiedDate}) of
   \refObject{Directory} and \refObject{File} which are actually related to
   \refObject{Path} are deprecated: use \lstinline|\var{f}.asPath.basename|
@@ -259,7 +263,7 @@ sendEvent;
 [00008208] *** file.u:11.1-10: watchEvent
 \end{urbiscript}
 
-  On the same example, \usdk 2.7.1 displays only:
+  On the same example, \usdk 2.7.4 displays only:
 \begin{urbiunchecked}
 [00000030] *** file.u:5.20-42: backtrace
 \end{urbiunchecked}
@@ -2104,11 +2108,11 @@ s.criticalSection(function () { echo ("In the critical section") });
   The functions \lstinline|yield()|, \lstinline|yield_until()|, and
   \lstinline|yield_until_things_changed()| have been added to the UObject
   API. They allow the user to write plugin UObject code that behaves like
-  any other coroutine in the kernel: if yield() is called regularly, the
-  kernel can continue to work while the user code runs.  Meaningful
-  implementation for these functions is provided also in remote mode:
-  calling yield() will allow the UObject remote library to process pending
-  messages from within the user callback.
+  any other coroutine in the kernel: if \lstinline|yield()| is called
+  regularly, the kernel can continue to work while the user code runs.
+  Meaningful implementation for these functions is provided also in remote
+  mode: calling \lstinline|yield()| will allow the UObject remote library to
+  process pending messages from within the user callback.
 
 \item Remote UObject initialization.\\
   Remote UObject instantiation is now atomic: the API now ensures that all
