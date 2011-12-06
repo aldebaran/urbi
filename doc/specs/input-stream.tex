@@ -57,11 +57,27 @@ i1.close;
 i2.close;
 \end{urbiscript}
 
-
-
 \subsection{Slots}
 
 \begin{urbiscriptapi}
+\item[content]%
+  Get the content as a \refObject{String}, or \refObject{nil} if
+  the end of file was reached.  The end-of-line characters are trimmed.
+  Raise an error if the file is closed.
+\begin{urbiscript}
+var f = "file.txt" |
+File.save(f, "1\n2\n") |
+var i = InputStream.new(File.new(f)) |
+assert (File.new(f).content.data == i.content);
+i.close;
+i.content;
+[00000001:error] !!! content: stream is closed
+\end{urbiscript}
+\begin{urbicomment}
+removeSlots("i", "x");
+removeFs(f);
+\end{urbicomment}
+
 \item[get]%
   Get the next available byte as a \refObject{Float}, or \refObject{nil} if
   the end of file was reached.  Raise an error if the file is closed.
