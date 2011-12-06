@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -49,9 +49,6 @@ namespace urbi
     void system_redefinitionMode();
     /// Deactivate void errors in the current scope.
     void system_noVoidError();
-
-    /// Return the URBI_ROOT path.
-    rPath system_urbiRoot();
 
     /// Run actions registered with URBI_INITIALIZATION_REGISTER.
     void initializations_run();

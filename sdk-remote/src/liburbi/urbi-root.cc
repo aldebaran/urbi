@@ -428,9 +428,15 @@ UrbiRoot::uobjects_path() const
 }
 
 std::string
-UrbiRoot::share_path() const
+UrbiRoot::doc_dir() const
 {
-  return root() / "share" / "gostai";
+  return urbi_getenv(program_, "DOC", share_dir() / "doc");
+}
+
+std::string
+UrbiRoot::share_dir() const
+{
+  return urbi_getenv(program_, "SHARE", root() / "share" / "gostai");
 }
 
 void

@@ -532,10 +532,26 @@ namespace urbi
       runner().redefinition_mode_set(true);
     }
 
+    /// Return the URBI_ROOT path.
+    static
     rPath
     system_urbiRoot()
     {
       return new Path(::kernel::urbiserver->urbi_root_get().root());
+    }
+
+    static
+    rPath
+    system_urbiDocDir()
+    {
+      return new Path(::kernel::urbiserver->urbi_root_get().doc_dir());
+    }
+
+    static
+    rPath
+    system_urbiShareDir()
+    {
+      return new Path(::kernel::urbiserver->urbi_root_get().share_dir());
     }
 
     void
@@ -642,6 +658,7 @@ namespace urbi
                              primitive(&system_##Name))         \
 
       DECLARE(_exit);
+      DECLARE(addSystemFile);
       DECLARE(aliveJobs);
       DECLARE(arguments);
       DECLARE(backtrace);
@@ -663,6 +680,7 @@ namespace urbi
       DECLARE(redefinitionMode);
       DECLARE(resetStats);
       DECLARE(searchFile);
+      DECLARE(setSystemFiles);
       DECLARE(setenv);
       DECLARE(shiftedTime);
       DECLARE(shutdown);
@@ -670,13 +688,12 @@ namespace urbi
       DECLARE(stats);
       DECLARE(stopall);
       DECLARE(system);
+      DECLARE(systemFiles);
       DECLARE(time);
       DECLARE(unsetenv);
+      DECLARE(urbiDocDir);
       DECLARE(urbiRoot);
-
-      DECLARE(addSystemFile);
-      DECLARE(setSystemFiles);
-      DECLARE(systemFiles);
+      DECLARE(urbiShareDir);
 
 #undef DECLARE
 

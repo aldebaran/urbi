@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -70,8 +70,11 @@ public:
   const std::string& root() const;
   /// Plugin and remote libuobjects parent directory.
   std::string core_path() const;
-  /// Share location. Contains Urbi scripts in the urbi/ subdirectory.
-  std::string share_path() const;
+  /// "doc" location. Contains THANKS.txt, etc.
+  /// In a normal install, the same as share_dir.
+  std::string doc_dir() const;
+  /// "share" location. Contains urbi/, images/.
+  std::string share_dir() const;
   /// Standard uobjects directories.
   std::vector<std::string> uobjects_path() const;
 

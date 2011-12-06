@@ -145,7 +145,7 @@ namespace kernel
     : mode_(mode_kernel)
     , search_path(boost::assign::list_of
                   (std::string(libport::xgetenv("URBI_PATH")))
-                  (urbi_root.share_path()),
+                  (urbi_root.share_dir()),
                   ":")
     , opt_banner_(true)
     , fast_async_jobs_start_(false)

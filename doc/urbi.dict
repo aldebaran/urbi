@@ -163,6 +163,8 @@ boolean
 brandNewTag
 bsd
 bufferIn
+bugReport
+builddir
 bumperL
 bumperR
 buzzerIndex
@@ -580,6 +582,7 @@ insertBack
 insertFront
 insertUnique
 installcheck
+installdir
 instantiation
 instantiations
 interruptible
@@ -1182,6 +1185,7 @@ sqr
 sqrt
 srandom
 src
+srcdir
 ss
 StackFrame
 startTracker
