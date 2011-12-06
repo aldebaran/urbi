@@ -59,6 +59,7 @@ namespace urbi
       , sem_(new Semaphore())
     {
       proto_add(Stream::proto);
+      BIND(content);
       BIND(get);
       BIND(getChar);
       BIND(getLine);
@@ -150,6 +151,27 @@ namespace urbi
     /*--------------.
     | Urbi methods. |
     `--------------*/
+
+    boost::optional<std::string>
+    InputStream::content()
+    {
+      check();
+      std::string res;
+
+      do
+      {
+        if (pos_ != size_)
+        {
+          // We have a 512 byte buffer, the data could come in several cycles.
+          res.append(buffer_, pos_, size_ - pos_);
+          // We read the whole buffer.
+          pos_ = size_;
+        }
+      }
+      while (getBuffer_());
+
+      return res;
+    }
 
     void
     InputStream::init(rFile f)

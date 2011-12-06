@@ -66,6 +66,7 @@ namespace urbi
       `---------------*/
 
     public:
+      boost::optional<std::string> content();
       void init(rFile f);
       rObject get();
       boost::optional<std::string> getChar();
