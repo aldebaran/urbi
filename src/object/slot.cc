@@ -318,10 +318,10 @@ namespace urbi
         // using set_output_value and watchers(at).
         if (in_getter_ > 3)
           GD_FWARN("Possible loop detected accessing slot %s", this);
-        return split_?output_value_:value_;
+        return split_ ? output_value_ : value_;
       }
-      FINALLY(((int&, in_getter_)), in_getter_--);
-      in_getter_++;
+      FINALLY(((int&, in_getter_)), --in_getter_);
+      ++in_getter_;
       rObject res;
       if (sender && oget_)
       {
@@ -382,7 +382,7 @@ namespace urbi
     Slot::normalized()
     {
       if (!std::isfinite(rangemin_) || !std::isfinite(rangemax_))
-        FRAISE("ranges are not finite");
+        RAISE("ranges are not finite");
       rObject v = value();
       if (rFloat rf = v->as<Float>())
       {

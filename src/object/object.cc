@@ -581,11 +581,7 @@ namespace urbi
                       int depth_max) const
     {
       rSlot slot = s.second->as<Slot>();
-      rObject val;
-      if (slot)
-        val = slot->value(const_cast<Object*>(this));
-      else
-        val = slot;
+      rObject val = slot ? slot->value(const_cast<Object*>(this)) : 0;
       o << s.first.second << " = ";
       if (slot && slot->constant_get())
         o << "const ";
@@ -610,24 +606,25 @@ namespace urbi
           slot->second->dump(o, depth_max);
         started = true;
       }
-      #define CHECK(n)                                    \
-      if (slot->n ## _get())                              \
-      {                                                   \
-        if (!started)                                     \
-          o << "  /* Properties */" << libport::incendl;  \
-        else                                              \
-          o << libport::iendl;                            \
-        o << #n " = ";                                    \
-        slot->n ## _get()->dump(o, depth_max);            \
-        started = true;                                   \
-      }
       if (slot)
       {
-        CHECK(value)
-        CHECK(get)
-        CHECK(set)
-        CHECK(oget)
-        CHECK(oset)
+#define CHECK(N)                                                \
+        if (slot->N ## _get())                                  \
+        {                                                       \
+          if (!started)                                         \
+            o << "  /* Properties */" << libport::incendl;      \
+          else                                                  \
+            o << libport::iendl;                                \
+          o << #N " = ";                                        \
+          slot->N ## _get()->dump(o, depth_max);                \
+          started = true;                                       \
+        }
+        CHECK(value);
+        CHECK(get);
+        CHECK(set);
+        CHECK(oget);
+        CHECK(oset);
+#undef CHECK
       }
       if (started)
          o << libport::decendl;
@@ -685,7 +682,7 @@ namespace urbi
       o << " {" << libport::incendl
         << "/* Special slots */" << libport::iendl;
       protos_dump(o);
-      special_slots_dump (o);
+      special_slots_dump(o);
 
       o << "/* Slots */" << libport::iendl;
       for (slots_implem::const_iterator i = slots_.begin(this);
