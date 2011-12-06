@@ -345,7 +345,9 @@ namespace urbi
         rUValue bv = res->as<UValue>();
         if (bv && bv != UValue::proto)
         {
-          if (bv->bypassMode_get() && bv->extract() == nil_class)
+          if (!bv->bypassMode_get() || bv->extract() != nil_class)
+            res = bv->extract();
+          else
           {
             URBI_SCOPE_DISABLE_DEPENDENCY_TRACKER;
             // This is a read on a bypass-mode UVar, from outside any
@@ -361,20 +363,17 @@ namespace urbi
             waiter_tag()->call(SYMBOL(waitUntilStopped), new Float(0.5));
             --waiter_count_;
             // The val slot likely changed, fetch it again.
-            res = split_?output_value_:value_;
+            res = split_ ? output_value_ : value_;
             if (rUValue bv = res->as<UValue>())
             {
               res = bv->extract();
               if (res == nil_class)
                 GD_WARN("Timeout on UVar in bypass mode.");
-              return res;
             }
-            else
-              return res;
           }
-          return bv->extract();
         }
       }
+      aver(res);
       return res;
     }
 
