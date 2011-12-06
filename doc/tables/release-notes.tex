@@ -25,6 +25,27 @@ user-visible changes in \usdk releases.
 
 \item \refSlot[List]{sort} no longer crashes when the predicate is not a
   strict weak ordering.
+
+\item Don't execute the body of a \lstinline|finally| a second time when an
+  exception is raised inside the \lstinline|finally| clause.
+\item Do not emit \refSlot[Tag]{leave} events when a frozen tag waiting to
+  execute statements is stopped.
+\item Avoid unexpected execution of code caused by semaphore release and a
+  stop of the code acquiring the semaphore.  This change implies that
+  \refSlot[Semaphore]{acquire} either returns when it holds the semaphore
+  or jumps to the end of the stopped tag.
+\item Avoid unexpected execution of code caused by \refSlot[Barrier]{signal}
+  (or \refSlot[Barrier]{signalAll}) and a stop of the code waiting on the
+  barrier.
+\item Be independent of changes of locale settings (such as input/output
+  format for floats) in \Cxx user code.
+\item Restore proper behavior on closed standard input.
+\item When setting a property on an inherited slot, really duplicate the
+  slot instead of making an alias (\refSlot[Object]{setProperty}).
+\item Declaring constant variables (or slots) without an initial value is a
+  syntax error (see the constant property, \autoref{sec:lang:prop:std}).
+\item Copy-on-write does not apply to slots declared constant
+  (\refSlot[Object]{updateSlot}).
 \end{itemize}
 
 \subsection{Changes}
@@ -73,6 +94,14 @@ Foo.f;
 \noindent
 See \autoref{sec:lang:tag} for details.
 
+\item Drop support for the obsolete \usdk 1 syntax for events:
+  \lstinline{at (?e)} and \lstinline{emit e} instead of \lstinline{at (e?)}
+  and \lstinline{e!}  (\autoref{sec:k1:emit}).  As a consequence,
+  \lstinline|emit| is now a regular identifier.
+
+\item Drop support for the obsolete \lstindex{loopn} keyword, replaced by
+  \lstinline{for} since \usdk 2.0 (\autoref{sec:k1:loopn}).
+
 \item Features (\slot{basename}, \slot{lastModifiedDate}) of
   \refObject{Directory} and \refObject{File} which are actually related to
   \refObject{Path} are deprecated: use \lstinline|\var{f}.asPath.basename|
@@ -106,6 +135,17 @@ while (!(x = i.get).isNil)
 i.close;
 \end{urbiunchecked}
 
+\item \slot[Object]{asToplevelPrintable} was deprecated in favor of
+  \refSlot[Object]{asTopLevelPrintable}, for consistency (with
+  \refSlot[Channel]{topLevel} for instance).  Because this backward
+  compatibility function may also hide failures (e.g., if you refine it
+  using its former name), it is removed.
+
+\item When destroyed, \refObject[Stream]{Streams} (including
+  \refObject[InputStream]{InputStreams} and
+  \refObject[OutputStream]{OutputStreams}), are closed if not already
+  closed.
+
 \item \refObject{Subscription} replaces former \slot{UConnection}.
 
 \item The internal functions \slot[System]{backtrace}, \slot[System]{jobs},
@@ -120,145 +160,10 @@ i.close;
   \refSlot[System]{unsetenv} are deprecated in favor of
   \refSlot[System]{env}.
 
-\item \refSlot[System]{spawn} is deprecated in favor of
-  \refSlot[Code]{spawn}.
-\end{itemize}
-
-\subsection{New features}
-\begin{itemize}
-\item \refSlot[Group]{'=='}.
-\item \refSlot[Tuple]{hash}.
-
-\item \refSlot[String]{asFloat} is now on par with the syntax supported for
-  literal \refObject{Float}s, including support for underscores and
-  hexadecimal.
-\begin{urbiassert}
-"123_456_789".asFloat == 123_456_789;
-"0xFFFF_FFFF".asFloat == 0xFFFF_FFFF;
-\end{urbiassert}
-
-\item \refSlot[String]{isBlank} (spaces and horizontal tabulations)
-  completes the table of character classification functions
-  (\autoref{tab:string:ischar}).
-\end{itemize}
-
-\subsection{Documentation}
-\begin{itemize}
-\item The various flavors syntactic constructs are better documented, see
-  \autoref{tab:keywords:flavors}.
-\item Extended description of \refObject{Group}.
-\item \refSlot[String]{isAlnum}, \refSlot[String]{isAlpha},
-  \refSlot[String]{isCntrl}, \refSlot[String]{isDigit},
-  \refSlot[String]{isGraph}, \refSlot[String]{isLower},
-  \refSlot[String]{isPrint}, \refSlot[String]{isPunct},
-  \refSlot[String]{isSpace}, \refSlot[String]{isUpper} and
-  \refSlot[String]{isXdigit}.
-\end{itemize}
-
-
-\section{\usdk 2.8}
-\release{2.8}{2011-XX-YY}
-
-\subsection{Fixes}
-\begin{itemize}
-\item Don't execute the body of a \lstinline|finally| a second time when an
-  exception is raised inside the \lstinline|finally| clause.
-\item Do not emit \refSlot[Tag]{leave} events when a frozen tag waiting to
-  execute statements is stopped.
-\item Avoid unexpected execution of code caused by semaphore release and a
-  stop of the code acquiring the semaphore.  This change implies that
-  \refSlot[Semaphore]{acquire} either returns when it holds the semaphore
-  or jumps to the end of the stopped tag.
-\item Avoid unexpected execution of code caused by \refSlot[Barrier]{signal}
-  (or \refSlot[Barrier]{signalAll}) and a stop of the code waiting on the
-  barrier.
-\item Be independent of changes of locale settings (such as input/output
-  format for floats) in \Cxx user code.
-\item Restore proper behavior on closed standard input.
-\item When setting a property on an inherited slot, really duplicate the
-  slot instead of making an alias (\refSlot[Object]{setProperty}).
-\item Declaring constant variables (or slots) without an initial value is a
-  syntax error (see the constant property, \autoref{sec:lang:prop:std}).
-\item Copy-on-write does not apply to slots declared constant
-  (\refSlot[Object]{updateSlot}).
-\end{itemize}
-
-\subsection{Changes}
-\begin{itemize}
-\item Drop support for the obsolete \usdk 1 syntax for events:
-  \lstinline{at (?e)} and \lstinline{emit e} instead of \lstinline{at (e?)}
-  and \lstinline{e!}  (\autoref{sec:k1:emit}).  As a consequence,
-  \lstinline|emit| is now a regular identifier.
-
-\item Drop support for the obsolete \lstindex{loopn} keyword, replaced by
-  \lstinline{for} since \usdk 2.0 (\autoref{sec:k1:loopn}).
-
-\item \refSlot[Job]{backtrace} now includes information about event handling
-  (both sending and receiving parts).
-
-\begin{urbiscript}
-//#push 1 "file.u"
-var f = Event.new|;
-function watchEvent()
-{
-  at (f?)
-    lobby.echoEach(Job.current.backtrace);
-}|;
-function sendEvent()
-{
-  f!;
-}|;
-watchEvent;
-sendEvent;
-[00008208] *** file.u:5.20-40: backtrace
-[00008208] *** file.u:9.3: emit
-[00008208] *** file.u:12.1-9: sendEvent
-[00008208] *** ---- event handler backtrace:
-[00008208] *** file.u:4.3-5.41: onEvent
-[00008208] *** file.u:11.1-10: watchEvent
-\end{urbiscript}
-
-  On the same example, \usdk 2.7.1 displays only:
-\begin{urbiunchecked}
-[00000030] *** file.u:5.20-42: backtrace
-\end{urbiunchecked}
-
-\item \refSlot[InputStream]{get} (and \refSlot[InputStream]{getChar},
-  \refSlot[InputStream]{getLine}) now returns \refObject{nil} instead of
-  \refObject{void} when it reaches the end of file.  To provide backward
-  compatibility with previous code such as:
-\begin{urbiunchecked}
-var i = InputStream.new(File.new("file.txt"))|;
-var x;
-while (!(x = i.get.acceptVoid).isVoid)
-  cout << x;
-i.close;
-\end{urbiunchecked}
-  \refSlot[nil]{isVoid} now returns \lstinline|true| and issues a warning:
-  eventually it will return again \lstinline|false|.  Rewrite your code as:
-\begin{urbiunchecked}
-var i = InputStream.new(File.new("file.txt"))|;
-var x;
-while (!(x = i.get).isNil)
-  cout << x;
-i.close;
-\end{urbiunchecked}
-
-\item \slot[Object]{asToplevelPrintable} was deprecated in favor of
-  \refSlot[Object]{asTopLevelPrintable}, for consistency (with
-  \refSlot[Channel]{topLevel} for instance).  Because this backward
-  compatibility function may also hide failures (e.g., if you refine it
-  using its former name), it is removed.
-
-\item When destroyed, \refObject[Stream]{Streams} (including
-  \refObject[InputStream]{InputStreams} and
-  \refObject[OutputStream]{OutputStreams}), are closed if not already
-  closed.
-
 \item \refSlot[System]{shutdown} now accepts the exit status as argument.
 
-\item The \Cxx classes \lstinline|USound| and \lstinline|UImage| now
-  properly initialize their instances to empty sound/image.
+\item \refSlot[System]{spawn} is deprecated in favor of
+  \refSlot[Code]{spawn}.
 \end{itemize}
 
 \subsection{New features}
@@ -329,6 +234,40 @@ testTimeOut(2s);
 
 \subsubsection{\us Standard Library}
 \begin{itemize}
+\item \refSlot[Job]{backtrace} now includes information about event handling
+  (both sending and receiving parts).
+
+\begin{urbiscript}
+//#push 1 "file.u"
+var f = Event.new|;
+function watchEvent()
+{
+  at (f?)
+    lobby.echoEach(Job.current.backtrace);
+}|;
+function sendEvent()
+{
+  f!;
+}|;
+watchEvent;
+sendEvent;
+[00008208] *** file.u:5.20-40: backtrace
+[00008208] *** file.u:9.3: emit
+[00008208] *** file.u:12.1-9: sendEvent
+[00008208] *** ---- event handler backtrace:
+[00008208] *** file.u:4.3-5.41: onEvent
+[00008208] *** file.u:11.1-10: watchEvent
+\end{urbiscript}
+
+  On the same example, \usdk 2.7.1 displays only:
+\begin{urbiunchecked}
+[00000030] *** file.u:5.20-42: backtrace
+\end{urbiunchecked}
+
+\item \refSlot[Group]{'=='} checks equality between group members.
+
+\item \refSlot[Tuple]{hash}, which enables using tuples as Dictionary keys.
+
 \item \refSlot[List]{unique}.
 
 \item \refObject{Logger} provides runtime control over the debug traces:
@@ -367,6 +306,14 @@ Math.round(1.2) == 1.2.round;
 "foobar"[-1] == "r";    "foobar"[-6, -3] == "foo";
 \end{urbiassert}
 
+\item \refSlot[String]{asFloat} is on par with the syntax supported for
+  literal \refObject{Float}s, including support for underscores and
+  hexadecimal.
+\begin{urbiassert}
+"123_456_789".asFloat == 123_456_789;
+"0xFFFF_FFFF".asFloat == 0xFFFF_FFFF;
+\end{urbiassert}
+
 \item \refSlot[String]{find} and  \refSlot[String]{rfind} can search a
   pattern forward or backward inside a \refObject{String}.
 \begin{urbiassert}
@@ -379,6 +326,10 @@ Math.round(1.2) == 1.2.round;
 "Hello, World!".rfind("o", 3) == -1;
 \end{urbiassert}
 
+\item \refSlot[String]{isBlank} (spaces and horizontal tabulations)
+  completes the table of character classification functions
+  (\autoref{tab:string:ischar}).
+
 \item \refSlot[System]{getLocale} and \refSlot[System]{setLocale} allow to
   change the locale settings.
 
@@ -388,15 +339,30 @@ Math.round(1.2) == 1.2.round;
 
 \subsubsection{Miscellaneous}
 \begin{itemize}
+\item The \Cxx classes \lstinline|USound| and \lstinline|UImage| now
+  properly initialize their instances to empty sound/image.
+
 \item Add \command{gdb} extensions to improve debug experience of \urbi and
   \us (\autoref{sec:build:debug}).  \urbi objects are pretty printed when
   accessed and commands are available for printing the backtrace of the
   current Job and for adding/removing breakpoints on \us.
+
+\item We now use the version 8 of the Independent JPEG Group's (IJG)
+  \file{libjpeg}.
 \end{itemize}
 
 
 \subsection{Documentation}
 \begin{itemize}
+\item The various flavors syntactic constructs are better documented, see
+  \autoref{tab:keywords:flavors}.
+\item Extended description of \refObject{Group}.
+\item \refSlot[String]{isAlnum}, \refSlot[String]{isAlpha},
+  \refSlot[String]{isCntrl}, \refSlot[String]{isDigit},
+  \refSlot[String]{isGraph}, \refSlot[String]{isLower},
+  \refSlot[String]{isPrint}, \refSlot[String]{isPunct},
+  \refSlot[String]{isSpace}, \refSlot[String]{isUpper} and
+  \refSlot[String]{isXdigit}.
 \item Extended description of bitwise operators
   (\autoref{sec:lang:op:bitwise}).
 \item Completion and fixes of the description of the operators in general
