@@ -165,7 +165,6 @@ public:
     UBindFunction(urbi::UContext, side_effect_free_set);
     UBindFunction(urbi::UContext, yield);
     UBindFunction(urbi::UContext, yield_for);
-    UBindFunction(urbi::UContext, yield_until_things_changed);
 
     UBindFunction(all, getDestructionCount);
 

@@ -83,11 +83,6 @@ namespace urbi
     /// Yield execution for \b delay.
     void yield_for(libport::utime_t delay) const;
 
-    /** Yield execution until something else is scheduled, or until a message is
-     * received in remote mode.
-     */
-    void yield_until_things_changed() const;
-
     /** If \b s is true, mark the current task as having no side effect.
      * This call has no effect in remote mode.
      */

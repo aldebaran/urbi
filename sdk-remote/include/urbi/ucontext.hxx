@@ -205,15 +205,6 @@ namespace urbi
     return ctx_->yield_for(delay);
   }
 
-  /** Yield execution until something else is scheduled, or until a message is
-  * received in remote mode.
-  */
-  inline void
-  UContext::yield_until_things_changed() const
-  {
-    return ctx_->yield_until_things_changed();
-  }
-
   /** If \b s is true, mark the current task as having no side effect.
   * This call has no effect in remote mode.
   */

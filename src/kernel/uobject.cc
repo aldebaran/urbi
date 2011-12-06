@@ -200,7 +200,6 @@ namespace urbi
       virtual void yield() const;
       virtual void yield_until(libport::utime_t deadline) const;
       virtual void yield_for(libport::utime_t delay) const;
-      virtual void yield_until_things_changed() const;
       virtual void side_effect_free_set(bool s);
       virtual bool side_effect_free_get() const;
       virtual UVarImpl* getVarImpl();
@@ -961,14 +960,6 @@ namespace urbi
       CHECK_MAINTHREAD();
       INTERRUPTIBLE;
       ::kernel::runner().yield_for(delay);
-    }
-
-    ATTRIBUTE_DEPRECATED
-    void KernelUContextImpl::yield_until_things_changed() const
-    {
-      CHECK_MAINTHREAD();
-      INTERRUPTIBLE;
-      ::kernel::runner().yield();
     }
 
 #undef INTERRUPTIBLE

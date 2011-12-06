@@ -60,7 +60,6 @@ namespace urbi
       virtual std::pair<int, int> kernelVersion() const;
       virtual void yield() const;
       virtual void yield_until(libport::utime_t deadline) const;
-      virtual void yield_until_things_changed() const;
       ATTRIBUTE_CONST
       virtual void side_effect_free_set(bool s);
       ATTRIBUTE_CONST

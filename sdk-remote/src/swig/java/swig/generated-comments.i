@@ -330,11 +330,6 @@
 %javamethodmodifiers urbi::UContext::yield_for
 "    /// Yield execution for \\b delay.
  public ";
-%javamethodmodifiers urbi::UContext::yield_until_things_changed
-"    /** Yield execution until something else is scheduled, or until a message is
-     * received in remote mode.
-     */
- public ";
 %javamethodmodifiers urbi::UContext::side_effect_free_set
 "    /** If \\b s is true, mark the current task as having no side effect.
      * This call has no effect in remote mode.
@@ -390,11 +385,6 @@
 %javamethodmodifiers urbi::impl::UContextImpl::yield_for
 "      /// Yield execution for \\b delay.
       /// Bounces to yield_until.
- public ";
-%javamethodmodifiers urbi::impl::UContextImpl::yield_until_things_changed
-"      /** Yield execution until something else is scheduled,
-       *  or until a message is received in remote mode.
-       */
  public ";
 %javamethodmodifiers urbi::impl::UContextImpl::side_effect_free_set
 "      /** If \\b s is true, mark the current task as having no side effect.

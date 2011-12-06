@@ -473,16 +473,6 @@ namespace urbi
       }
     }
 
-    void RemoteUContextImpl::yield_until_things_changed() const
-    {
-      while (true)
-      {
-        if (dynamic_cast<USyncClient*>(backend_)->processEvents(0))
-          return;
-        usleep(0);
-      }
-    }
-
     void RemoteUContextImpl::side_effect_free_set(bool)
     {}
 

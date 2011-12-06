@@ -137,7 +137,6 @@ public class All extends UObject
 	//UBindFunction(urbi::UContext, side_effect_free_set);
 	UBindFunction("yield");
 	UBindFunction("yield_for");
-	UBindFunction("yield_until_things_changed");
 
 	UBindFunction("getDestructionCount");
 
