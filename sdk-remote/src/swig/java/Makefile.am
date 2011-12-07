@@ -67,9 +67,11 @@ BUILT_SOURCES += java.cc java.cc.h
 
 lib_LTLIBRARIES += liburbijava@LIBSFX@.la
 
-liburbijava@LIBSFX@_la_SOURCES =		\
+nodist_liburbijava@LIBSFX@_la_SOURCES =		\
   java.cc					\
-  java.cc.h					\
+  java.cc.h
+
+liburbijava@LIBSFX@_la_SOURCES =		\
   src/callbacks-caller.hh			\
   src/callbacks-caller.cc			\
   src/call-macros.hh				\
