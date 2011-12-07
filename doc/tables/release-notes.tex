@@ -634,7 +634,7 @@ since \usdk 2.5.
 
 \item \refSlot[Float]{fresh} generates unique integers.
 
-\item \slot{InputStream}{close}.
+\item \slot[InputStream]{close}.
 
 \item \refSlot[List]{'+='}.
 
@@ -955,13 +955,13 @@ assert (one == two);
 \subsubsection{Changes}
 
 \begin{itemize}
-\item \slot{Global}{Tags} is renamed as \refSlot[Tag]{tags}.
+\item \slot[Global]{Tags} is renamed as \refSlot[Tag]{tags}.
 
-\item \slot{Global}{Task} is renamed as \refSlot[Global]{Job}.
+\item \slot[Global]{Task} is renamed as \refSlot[Global]{Job}.
 
-\item \slot{Global}{topLevel} is renamed as \refSlot[Channel]{topLevel}.
+\item \slot[Global]{topLevel} is renamed as \refSlot[Channel]{topLevel}.
 
-\item \slot{Global}{output}, \slot{Global}{error} are removed, they were
+\item \slot[Global]{output}, \slot[Global]{error} are removed, they were
   deprecated in favor of \refSlot[Global]{cout} and \refSlot[Global]{cerr}.
 
 \item \refSlot[Object]{getPeriod} is deprecated in favor of
@@ -1209,7 +1209,7 @@ function binList(a, b) { [a, b] } | binList(1, 2)
 
 \subsubsection{Deprecations}
 \begin{itemize}
-\item \slot{Object.ownsSlot} is deprecated in favor of
+\item \slot[Object]{ownsSlot} is deprecated in favor of
   \refSlot[Object]{hasSlot}/\refSlot[Object]{hasLocalSlot}.
 \item \refSlot[Object]{slotNames} is deprecated in favor of
   \refSlot[Object]{allSlotNames}/\refSlot[Object]{localSlotNames}.
