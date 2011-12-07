@@ -7,10 +7,13 @@ if len (sys.argv) != 2:
   tools.error("Usage: .. SRCDIR")
 srcdir = sys.argv[1]
 
-## Abstract syntax tree C++ forward declarations ------------------------------
 loader = ast.Loader ()
 nodes, ast_params = loader.load (sys.stdin)
 
+arr = nodes.values ()
+arr.sort (lambda x, y: cmp (x.name, y.name))
+
+## Abstract syntax tree C++ forward declarations ------------------------------
 all_hh = file ("all.hh.tmp", "w")
 print >>all_hh, tools.banner(ast_params,
                              "ast/all.hh",
@@ -18,8 +21,6 @@ print >>all_hh, tools.banner(ast_params,
 # include <ast/fwd.hh>
 """
 
-arr = nodes.values ()
-arr.sort (lambda x, y: cmp (x.name, y.name))
 for node in arr:
   print >>all_hh, '# include <ast/' + node.hh() + '>'
 

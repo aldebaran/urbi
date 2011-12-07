@@ -448,9 +448,9 @@ def print_serialization(node, header, inline, impl):
 ## Generate the class corresponding to node
 def class_generate(node):
   # Open destination header, inline and implementation files
-  header = file(node.fname ("hh.tmp"),  "w")
-  inline = file(node.fname ("hxx.tmp"), "w")
-  impl   = file(node.fname ("cc.tmp"),  "w")
+  header = file(node.hh()  + ".tmp", "w")
+  inline = file(node.hxx() + ".tmp", "w")
+  impl   = file(node.cc()  + ".tmp", "w")
 
   # A flag for developpers.
   # Document the file
@@ -496,11 +496,11 @@ def class_generate(node):
   sys.stdout = sys.__stdout__
 
   # Check differences between old and new files.
-  for f in [(header, "hh"),
-	    (inline, "hxx"),
-	    (impl,   "cc")]:
+  for f in [(header, node.hh()),
+	    (inline, node.hxx()),
+	    (impl,   node.cc())]:
     f[0].close ()
-    tools.lazy_install (srcdir, node.fname (f[1]))
+    tools.lazy_install (srcdir, f[1])
 
 ## Main -----------------------------------------------------------------------
 loader = ast.Loader ()

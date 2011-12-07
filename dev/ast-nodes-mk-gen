@@ -12,6 +12,9 @@ srcdir = sys.argv[1]
 loader = ast.Loader ()
 nodes, ast_params = loader.load (sys.stdin)
 
+arr = nodes.values ()
+arr.sort (lambda x, y: cmp(x.name, y.name))
+
 # Output the files in an indented way: subclasses are more indented
 # than super classes.  When there is multiple inheritance, consider
 # only the first super class.
@@ -20,8 +23,6 @@ basedir = ast_params['ast_basedir']
 
 mk = file("ast-nodes.mk.tmp",  "w")
 print >>mk, "AST_NODES =",
-arr = nodes.values ()
-arr.sort (lambda x, y: cmp(x.name, y.name))
 for node in arr:
   files =       basedir + node.fname ("hh") + \
 	  " " + basedir + node.fname ("hxx") + \
