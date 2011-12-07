@@ -380,7 +380,7 @@ URBI_CONFIG_WRAPPER([umake-shared])
 URBI_CONFIG_WRAPPER([umake-java])
 URBI_CONFIG_SCRIPTS(
   [sdk-remote/src/tests/bin/urbi-launch$EXEEXT:sdk-remote/src/tests/bin/urbi-launch.in],
-  [sdk-remote/src/tests/bin/urbi-launch-java$EXEEXT:sdk-remote/src/tests/bin/urbi-launch.in])
+  [sdk-remote/src/tests/bin/urbi-launch-java:sdk-remote/src/tests/bin/urbi-launch.in])
 
 URBI_CONFIG_SCRIPTS([sdk-remote/src/tests/bin/urbi-send])
 

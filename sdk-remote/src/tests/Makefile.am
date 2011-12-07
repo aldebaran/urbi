@@ -46,7 +46,7 @@ nodist_noinst_SCRIPTS +=                        \
   bin/umake-link                                \
   bin/umake-shared                              \
   bin/urbi-launch$(EXEEXT)                      \
-  bin/urbi-launch-java$(EXEEXT)                 \
+  bin/urbi-launch-java                          \
   bin/urbi-send
 
 # This is really painful: dependencies on config.status are handled
