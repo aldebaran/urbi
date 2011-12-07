@@ -208,7 +208,7 @@ AM_CONDITIONAL([SOUNDCARD], [$soundcard])
 ## --------- ##
 URBI_ARGLIST_ENABLE([disable-bindings],
                     [disable the SWIG bindings to other languages],
-                    [yes|no|csharp|java|perl|php|python|ruby], [yes])
+                    [yes|no|java], [java])
 AC_MSG_CHECKING([the bindings to activate])
 save_IFS=$IFS
 IFS=,
@@ -216,8 +216,8 @@ for i in $enable_bindings
 do
   IFS=$save_IFS
   case $i in
-    (yes) enable_bindings="csharp,java,lua,perl,php,python,ruby";;
-    (no | csharp | java | perl | php | python | ruby) ;;
+    (yes) enable_bindings="java";;
+    (no | java) ;;
     (*) AC_MSG_ERROR([invalid --enable-bindings argument: $i]);;
   esac
 done
@@ -225,20 +225,8 @@ IFS=$save_IFS
 AC_MSG_RESULT([$enable_bindings])
 
 AM_CONDITIONAL([BINDINGS], [test x"$enable_bindings" != xno])
-AM_CONDITIONAL([BINDING_CSHARP],
-               [echo "$enable_bindings" | grep -w csharp >/dev/null])
 AM_CONDITIONAL([BINDING_JAVA],
                [echo "$enable_bindings" | grep -w java >/dev/null])
-AM_CONDITIONAL([BINDING_LUA],
-               [echo "$enable_bindings" | grep -w lua >/dev/null])
-AM_CONDITIONAL([BINDING_PERL],
-               [echo "$enable_bindings" | grep -w perl >/dev/null])
-AM_CONDITIONAL([BINDING_PHP],
-               [echo "$enable_bindings" | grep -w php >/dev/null])
-AM_CONDITIONAL([BINDING_PYTHON],
-               [echo "$enable_bindings" | grep -w python >/dev/null])
-AM_CONDITIONAL([BINDING_RUBY],
-               [echo "$enable_bindings" | grep -w ruby >/dev/null])
 
 if test x"$enable_bindings" != xno; then
  # With the bindings, we need shared libraries.
