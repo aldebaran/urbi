@@ -111,7 +111,7 @@ namespace urbi
       ok = false;
       std::string res;
 
-      while (true)
+      do
       {
         for (; pos_ < size_; ++pos_)
         {
@@ -126,9 +126,10 @@ namespace urbi
           else
             res += buffer_[pos_];
         }
-        if (!getBuffer_())
-          return res;
       }
+      while (getBuffer_());
+
+      return res;
     }
 
 
