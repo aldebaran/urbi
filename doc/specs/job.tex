@@ -9,7 +9,7 @@
 \section{Job}
 
 Jobs are independent threads of executions.  Jobs can run concurrently.
-They can also be managed using \refObject[s]{Tag}.
+They can also be managed using \refObject[Tags]{Tag}.
 
 \subsection{Prototypes}
 
@@ -44,7 +44,7 @@ spawn (function () { sleep(10) }, false);
   the name of the job.
 
 \item[backtrace] The current backtrace of the job as a list of
-  \refObject[s]{StackFrame}.  Uses \refSlot[Traceable]{backtrace}.
+  \refObject[StackFrames]{StackFrame}.  Uses \refSlot[Traceable]{backtrace}.
 
 \begin{urbiscript}
 //#push 1 "file.u"
@@ -97,7 +97,7 @@ detach(sleep(10)).name;
   The current status of the job (starting, running, \ldots), and its
   properties (frozen, \ldots).
 
-\item[tags] The list of \refObject[s]{Tag} that manage this job.
+\item[tags] The list of \refObject[Tags]{Tag} that manage this job.
 
 \item[terminate]  Kill this job.
 \begin{urbiscript}
