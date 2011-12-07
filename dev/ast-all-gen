@@ -30,3 +30,16 @@ print >>all_hh, """
 
 all_hh.close ()
 tools.lazy_install (srcdir, "all.hh");
+
+## If demanded, all.cc includes all the foo.hcc for each Foo class.
+all_cc = file ("all.cc.tmp", "w")
+print >>all_cc, tools.banner(ast_params,
+                             "ast/all.cc",
+			     """All the AST class implementations.""") + """
+"""
+
+for node in arr:
+  print >>all_cc, '#include <ast/' + node.cc() + '>'
+
+all_cc.close ()
+tools.lazy_install (srcdir, "all.cc");

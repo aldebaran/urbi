@@ -22,14 +22,17 @@ arr.sort (lambda x, y: cmp(x.name, y.name))
 basedir = ast_params['ast_basedir']
 
 mk = file("ast-nodes.mk.tmp",  "w")
-print >>mk, "AST_NODES =",
+print >>mk, "AST_headers =",
 for node in arr:
-  files =       basedir + node.fname ("hh") + \
-	  " " + basedir + node.fname ("hxx") + \
-	  " " + basedir + node.fname ("cc")
+  print >>mk, " \\\n  " + basedir + node.hh() + " " + basedir + node.hxx(),
+print >>mk, "\n"
 
-  print >>mk, " \\\n  " + files,
-print >>mk
+print >>mk, "AST_sources =",
+for node in arr:
+  print >>mk, " \\\n  " + basedir + node.cc(),
+print >>mk, "\n"
+
+print >>mk, "AST_NODES = $(AST_headers) $(AST_sources)"
 
 mk.close()
 tools.lazy_install (srcdir, "ast-nodes.mk")

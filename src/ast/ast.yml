@@ -12,6 +12,12 @@
 # parent Makefile.am, define to 'ast/'.
 ast_basedir: 'ast/'
 
+# Whether we should generate a all.cc file.  By default, we generate a
+# foo.cc for every class Foo.  This is costly for compilation cycles.
+# If set to true, then generate *.hcc instead, and a all.cc which
+# includes all the *.hcc files.
+all: true
+
 # The name of the directory/namespace that contains our auxiliary C++
 # library.
 auxlib: 'libport'

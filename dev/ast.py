@@ -261,7 +261,10 @@ class Node:
     return self.fname ("hxx")
 
   def cc (self):
-    return self.fname ("cc")
+    if self.ast_params['all']:
+      return self.fname ("hcc")
+    else:
+      return self.fname ("cc")
 
   def need_duplicate (self):
     """Do we need a hidden ctor in addition of the public one?
