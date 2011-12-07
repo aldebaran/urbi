@@ -89,7 +89,7 @@ do
       break
       ;;
     (-*)
-      error 2 "Unknown or ambiguous option \`$1'." \
+      error EX_USAGE "Unknown or ambiguous option \`$1'." \
 	      "Try \`--help' for more information."
       ;;
     (*) set dummy ${1+"$@"} "$1"; shift;;
