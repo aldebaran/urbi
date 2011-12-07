@@ -29,8 +29,17 @@ This chapter lists the user-visible changes in \usdk releases.
 
 \subsection{Fixes}
 \begin{itemize}
-\item The source tarballs are smaller; they incorrectly contained generated
-  sources.
+\item Generated sources are no longer included in the source tarballs.
+\item The test suite properly skips Java tests when Java support is not
+  compiled in.
+\end{itemize}
+
+\subsection{Changes}
+\begin{itemize}
+\item \command{urbi-launch-java} is documented,
+  \autoref{sec:tools:urbi-launch-java}.
+\item \command{urbi-launch-java} supports the new option \option[C]{check}
+  which checks if Java support is available.
 \end{itemize}
 
 \section{\usdk 2.7.4}

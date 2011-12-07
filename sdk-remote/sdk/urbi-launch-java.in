@@ -6,18 +6,20 @@ usage ()
 usage: $me [OPTIONS] MODULE_NAMES ... [-- UOPTIONS...]
 Start an UObject in either remote or plugin mode.
 
-Urbi-Launch options:
+Options:
   -h, --help         output this message and exit successfully
       --version      output version information and exit successfully
   -d, --debug=LEVEL  set the debug level [LOG]
                      (NONE, LOG, TRACE, DEBUG, DUMP)
+  -C, --check        exit successfully if support for Java is usable;
+                     otherwise exit 72
 
-Java options:
+Java:
   -c, --classpath=PATH
         A colon-separated list of directories, JAR archives, and ZIP archives
         to search for class files.
 
-Urbi-Launch options for plugin mode:
+Networking:
   -H, --host=HOST       address to connect to
   -P, --port=PORT       port to connect to
       --port-file=FILE  file containing the port to listen to
@@ -80,6 +82,7 @@ get_options ()
       (-V | --version) version;;
 
       (-c | --classpath)   shift; classpath="$classpath:$1";;
+      (-C | --check) check=true;;
       (-H | --host)
         shift; host=$1
 	append urbi_launch_args "--host $host";;
@@ -113,9 +116,9 @@ get_options ()
   done
 }
 
-
+# Whether to check if we can run properly rather than really run.
+check=false
 prefix=$(cd $(dirname $0)/.. && pwd)
-
 urbi_launch_args=
 uob_archives=
 main=urbi.UMain
@@ -124,14 +127,19 @@ main=urbi.UMain
 
 get_options "$@"
 
-classpath="$classpath:$liburbi_jar"
-# Add standart location to uobject path
-export URBI_UOBJECT_PATH="$URBI_UOBJECT_PATH:.:$prefix/share/sdk-remote/java"
-
-exec java -Djava.library.path="$library_path"   \
-  -classpath "$classpath"  "$main"              \
-  $uob_archives                                 \
-  -- $urbi_launch_args
+if $check; then
+  test -f "$liburbi_jar" ||
+    error EX_OSFILE "cannot find liburbijava.jar: $liburbi_jar" \
+       "is Java support compiled?"
+else
+  classpath="$classpath:$liburbi_jar"
+  # Add standart location to uobject path
+  export URBI_UOBJECT_PATH="$URBI_UOBJECT_PATH:.:$prefix/share/sdk-remote/java"
+  exec java -Djava.library.path="$library_path" \
+      -classpath "$classpath"  "$main"          \
+      $uob_archives                             \
+      -- $urbi_launch_args
+fi
 
 
 # Local variables:

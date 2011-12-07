@@ -82,7 +82,6 @@ usage(libport::OptionParser& parser)
     " [OPTIONS] MODULE_NAMES ... [-- UOPTIONS...]\n"
     "Start an UObject in either remote or plugin mode.\n"
               << parser <<
-    "\n"
     "MODULE_NAMES is a list of modules.\n"
     "UOPTIONS are passed to urbi::main in remote and start modes.\n"
     "\n"
@@ -127,7 +126,7 @@ urbi_launch_(int argc, const char* argv[], UrbiRoot& urbi_root)
   libport::OptionsEnd arg_end;
 
   libport::OptionParser opt_parser;
-  opt_parser << "Urbi-Launch options:"
+  opt_parser << "Options:"
 	     << libport::opts::help
 	     << libport::opts::version
              << arg_root
@@ -139,7 +138,7 @@ urbi_launch_(int argc, const char* argv[], UrbiRoot& urbi_root)
 	     << arg_plugin
 	     << arg_remote
 	     << arg_start
-	     << "Urbi-Launch options for plugin mode:"
+	     << "Networking:"
 	     << libport::opts::host
 	     << libport::opts::port
 	     << arg_pfile
