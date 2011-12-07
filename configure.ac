@@ -206,7 +206,8 @@ AM_CONDITIONAL([SOUNDCARD], [$soundcard])
 ## --------- ##
 ## Bindings  ##
 ## --------- ##
-URBI_ARGLIST_ENABLE([enable-bindings], [disable the bindings],
+URBI_ARGLIST_ENABLE([disable-bindings],
+                    [disable the SWIG bindings to other languages],
                     [yes|no|csharp|java|perl|php|python|ruby], [yes])
 AC_MSG_CHECKING([the bindings to activate])
 save_IFS=$IFS
