@@ -71,7 +71,7 @@ assert (["1", "2"] == i.asList);
 assert ([] == i.asList);
 i.close;
 i.asList;
-[00000001:error] !!! content: stream is closed
+[00000001:error] !!! asList: stream is closed
 \end{urbiscript}
 \begin{urbicomment}
 removeFs(f);
@@ -83,7 +83,7 @@ removeSlots("i", "f");
   there is nothing left in the stream. Raise an error if the file is closed.
 \begin{urbiscript}
 var f = "file.txt" |
-File.save(f, "1\n2\n") |
+File.save(f, "1\000\n2\n") |
 var i = InputStream.new(File.new(f)) |
 assert (File.new(f).content.data == i.content);
 assert ("" == i.content);
