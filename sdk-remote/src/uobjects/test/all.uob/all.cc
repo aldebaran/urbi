@@ -185,7 +185,7 @@ public:
     UBindFunctions(all, setLocale, getLocale);
 
     // Image conversion.
-    UBindFunctions(all, convert, imageDiff);
+    UBindFunctions(all, convert, imageDiff, removeAlpha);
 
     UBindCacheVar(all, writeLastChangeVal, bool);
     writeLastChangeVal = true;
@@ -219,6 +219,20 @@ public:
     res.make();
     res.imageFormat = urbi::parse_image_format(id);
     urbi::convert(source, res);
+    return res;
+  }
+
+  // Used by MORSE.
+  urbi::UImage
+  removeAlpha(const urbi::UImage source)
+  {
+    urbi::UImage res = urbi::UImage(source);
+    res.data = (unsigned char*) malloc(res.size);
+    size_t j = 0;
+    for (size_t i = 0; i < source.size; ++i)
+      if (i % 4 != 3)
+        res.data[j++] = source.data[i];
+
     return res;
   }
 
