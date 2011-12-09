@@ -541,6 +541,7 @@ namespace urbi
     }
 
     URBI_ROOT_BOUNCE(Path,   urbiDocDir,        doc_dir);
+    URBI_ROOT_BOUNCE(String, urbiLibrarySuffix, library_suffix);
     URBI_ROOT_BOUNCE(Path,   urbiRoot,          root);
     URBI_ROOT_BOUNCE(Path,   urbiShareDir,      share_dir);
 #undef URBI_ROOT_BOUNCE
@@ -683,6 +684,7 @@ namespace urbi
       DECLARE(time);
       DECLARE(unsetenv);
       DECLARE(urbiDocDir);
+      DECLARE(urbiLibrarySuffix);
       DECLARE(urbiRoot);
       DECLARE(urbiShareDir);
 
