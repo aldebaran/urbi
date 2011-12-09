@@ -21,8 +21,10 @@ include document-aux/make/pdf-figs.mk
 # needed.
 EXTRA_DIST +=					\
   document-aux/bin/texi2dvi			\
-  $(call ls_files,@{document-aux}/figs/* 	\
-	          @{document-aux}/styles/ldf/*)	\
+  $(call ls_files,				\
+    @{document-aux}/figs/gostai.*		\
+    @{document-aux}/figs/urbi-sdk/*/cube.*	\
+    @{document-aux}/styles/ldf/*)		\
   document-aux/styles/fixme.sty			\
   document-aux/styles/gostai-documentation.sty	\
   document-aux/styles/gostai-report.sty		\
