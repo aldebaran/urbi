@@ -694,6 +694,7 @@ LibUObject
 libuobject
 liburbi
 liburbijava
+libx
 libxslt
 licensors
 lightCenter
@@ -1349,6 +1350,7 @@ undefall
 Undefine
 UndefinedEnvironmentVariable
 UnexpectedVoid
+unix
 Unix's
 unnotify
 unordered
