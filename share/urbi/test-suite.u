@@ -112,6 +112,12 @@ do (Global)
       testSkip("cannot run on this host (%s)" % host);
   }|;
 
+  function skipIfRoot ()
+  {
+    if (System.system("test \"$(id -u)\" != 0") != 0)
+      testSkip("running as root (not a good idea, really)");
+  }|;
+
   function skipIfSpace ()
   {
     if (System.Platform.compilationModeSpace)
