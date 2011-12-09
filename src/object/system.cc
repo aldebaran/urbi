@@ -532,27 +532,18 @@ namespace urbi
       runner().redefinition_mode_set(true);
     }
 
-    /// Return the URBI_ROOT path.
-    static
-    rPath
-    system_urbiRoot()
-    {
-      return new Path(::kernel::urbiserver->urbi_root_get().root());
+#define URBI_ROOT_BOUNCE(Type, Name, Function)                          \
+    static                                                              \
+    r ## Type                                                           \
+    system_ ## Name()                                                   \
+    {                                                                   \
+      return new Type(::kernel::urbiserver->urbi_root_get().Function()); \
     }
 
-    static
-    rPath
-    system_urbiDocDir()
-    {
-      return new Path(::kernel::urbiserver->urbi_root_get().doc_dir());
-    }
-
-    static
-    rPath
-    system_urbiShareDir()
-    {
-      return new Path(::kernel::urbiserver->urbi_root_get().share_dir());
-    }
+    URBI_ROOT_BOUNCE(Path,   urbiDocDir,        doc_dir);
+    URBI_ROOT_BOUNCE(Path,   urbiRoot,          root);
+    URBI_ROOT_BOUNCE(Path,   urbiShareDir,      share_dir);
+#undef URBI_ROOT_BOUNCE
 
     void
     system_noVoidError()
