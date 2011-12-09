@@ -78,6 +78,10 @@ public:
   /// Standard uobjects directories.
   std::vector<std::string> uobjects_path() const;
 
+  /// The library suffix (e.g., -vc90 or -vc90-d for Visual.)
+  /// Typically empty.
+  std::string library_suffix() const;
+
 private:
   /// Load the library "${libdir}/${base}${ext}", unless the envvar
   /// named "URBI_ROOT_LIB${BASE}" points to another location.
