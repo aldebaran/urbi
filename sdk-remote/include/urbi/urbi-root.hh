@@ -81,7 +81,9 @@ public:
 private:
   /// Load the library "${libdir}/${base}${ext}", unless the envvar
   /// named "URBI_ROOT_LIB${BASE}" points to another location.
-  RTLD_HANDLE library_load(const std::string& base, const std::string& env_suffix = "");
+  RTLD_HANDLE
+  library_load(const std::string& base, const std::string& env_suffix = "");
+
   std::string program_;
   std::string root_;
   RTLD_HANDLE handle_libjpeg_;

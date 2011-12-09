@@ -417,16 +417,6 @@ UrbiRoot::core_path() const
   return root() / LIBPORT_LIBDIRNAME / "gostai";
 }
 
-std::vector<std::string>
-UrbiRoot::uobjects_path() const
-{
-  std::vector<std::string> res;
-  if (*LIBPORT_LIBSFX)
-    res.push_back(core_path() / "uobjects" LIBPORT_LIBSFX);
-  res.push_back(core_path() / "uobjects");
-  return res;
-}
-
 std::string
 UrbiRoot::doc_dir() const
 {
@@ -437,6 +427,16 @@ std::string
 UrbiRoot::share_dir() const
 {
   return urbi_getenv(program_, "SHARE", root() / "share" / "gostai");
+}
+
+std::vector<std::string>
+UrbiRoot::uobjects_path() const
+{
+  std::vector<std::string> res;
+  if (*LIBPORT_LIBSFX)
+    res.push_back(core_path() / "uobjects" LIBPORT_LIBSFX);
+  res.push_back(core_path() / "uobjects");
+  return res;
 }
 
 void
