@@ -27,11 +27,12 @@ This chapter lists the user-visible changes in \usdk releases.
 \section{\usdk 2.7.5}
 \release{2.7}{2011-12-XX}
 
+This release fixes some packaging-related minor issues.
 \subsection{Fixes}
 \begin{itemize}
 \item The source tarballs are significantly smaller.
-\item The test suite properly skips Java tests when Java support is not
-  compiled in.
+\item The test suite properly skips tests when some preconditions are not
+  met (e.g., Java support not compiled in, or running as root).
 \item Windows packages with the installer now have some \us files (namely
   \file{platform.u}) which properly depend on whether you are using the
   debug or release flavor.
@@ -43,6 +44,8 @@ This chapter lists the user-visible changes in \usdk releases.
   \autoref{sec:tools:urbi-launch-java}.
 \item \command{urbi-launch-java} supports the new option \option[C]{check}
   which checks if Java support is available.
+\item We now use the version 8 of the Independent JPEG Group's (IJG)
+  \file{libjpeg}.
 \end{itemize}
 
 \section{\usdk 2.7.4}
