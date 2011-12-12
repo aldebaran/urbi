@@ -388,9 +388,7 @@ For the records, here are some of the \option{--enable-}/\option{--disable-}
 specific options.
 
 \begin{options}
-\item{enable-bindings} Whether to generate the bindings to other languages,
-  such as UObject Java support.  Disabling is
-  fine:\option{--disable-bindings}.
+\item{disable-bindings} Whether to disable UObject Java support.
 \item{enable-compilation-mode=\var{mode}} Specify the flavor of the build.
   You should use \option{--enable-compilation-mode=speed}.
 \item{enable-doc=\var{formats}} Specify what formats of the documentation
@@ -577,6 +575,9 @@ behavior of the programs.
 \item[URBI\_SCANNER] Enable Flex scanner traces.  Obsolete, use the
   \code{Urbi.Scanner} category and \env{GD\_CATEGORY} instead
   (\autoref{sec:tools:env}).
+
+\item[URBI\_SHARE] Where to find the file{share} directory, which contains
+  \file{images/gostai-logo}, \file{urbi/urbi.u} and so forth.
 
 \item[URBI\_SHARE] Where to find the file{share} directory, which contains
   \file{images/gostai-logo}, \file{urbi/urbi.u} and so forth.

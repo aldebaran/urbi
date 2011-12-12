@@ -206,8 +206,9 @@ AM_CONDITIONAL([SOUNDCARD], [$soundcard])
 ## --------- ##
 ## Bindings  ##
 ## --------- ##
-URBI_ARGLIST_ENABLE([enable-bindings], [disable the bindings],
-                    [yes|no|csharp|java|perl|php|python|ruby], [yes])
+URBI_ARGLIST_ENABLE([disable-bindings],
+                    [disable the SWIG bindings to other languages],
+                    [yes|no|java], [java])
 AC_MSG_CHECKING([the bindings to activate])
 save_IFS=$IFS
 IFS=,
@@ -215,8 +216,8 @@ for i in $enable_bindings
 do
   IFS=$save_IFS
   case $i in
-    (yes) enable_bindings="csharp,java,lua,perl,php,python,ruby";;
-    (no | csharp | java | perl | php | python | ruby) ;;
+    (yes) enable_bindings="java";;
+    (no | java) ;;
     (*) AC_MSG_ERROR([invalid --enable-bindings argument: $i]);;
   esac
 done
@@ -224,20 +225,8 @@ IFS=$save_IFS
 AC_MSG_RESULT([$enable_bindings])
 
 AM_CONDITIONAL([BINDINGS], [test x"$enable_bindings" != xno])
-AM_CONDITIONAL([BINDING_CSHARP],
-               [echo "$enable_bindings" | grep -w csharp >/dev/null])
 AM_CONDITIONAL([BINDING_JAVA],
                [echo "$enable_bindings" | grep -w java >/dev/null])
-AM_CONDITIONAL([BINDING_LUA],
-               [echo "$enable_bindings" | grep -w lua >/dev/null])
-AM_CONDITIONAL([BINDING_PERL],
-               [echo "$enable_bindings" | grep -w perl >/dev/null])
-AM_CONDITIONAL([BINDING_PHP],
-               [echo "$enable_bindings" | grep -w php >/dev/null])
-AM_CONDITIONAL([BINDING_PYTHON],
-               [echo "$enable_bindings" | grep -w python >/dev/null])
-AM_CONDITIONAL([BINDING_RUBY],
-               [echo "$enable_bindings" | grep -w ruby >/dev/null])
 
 if test x"$enable_bindings" != xno; then
  # With the bindings, we need shared libraries.
@@ -353,8 +342,10 @@ case $URBI_HOST_OS in
 esac
 
 AC_CONFIG_HEADERS([src/kernel/config.h])
-AC_CONFIG_FILES([share/pkgconfig/urbi.pc
-                 share/urbi/platform.u])
+AC_CONFIG_FILES([
+  share/pkgconfig/urbi.pc
+  share/urbi/platform$LIBSFX.u:share/urbi/platform.u.in],
+  [], [LIBSFX=$LIBSFX])
 URBI_APPEND_CONFIGUREFLAGS([LIBSFX=$LIBSFX])
 AC_CONFIG_SUBDIRS([sdk-remote/libport])
 
@@ -379,7 +370,7 @@ URBI_CONFIG_WRAPPER([umake-shared])
 URBI_CONFIG_WRAPPER([umake-java])
 URBI_CONFIG_SCRIPTS(
   [sdk-remote/src/tests/bin/urbi-launch$EXEEXT:sdk-remote/src/tests/bin/urbi-launch.in],
-  [sdk-remote/src/tests/bin/urbi-launch-java$EXEEXT:sdk-remote/src/tests/bin/urbi-launch.in])
+  [sdk-remote/src/tests/bin/urbi-launch-java:sdk-remote/src/tests/bin/urbi-launch.in])
 
 URBI_CONFIG_SCRIPTS([sdk-remote/src/tests/bin/urbi-send])
 

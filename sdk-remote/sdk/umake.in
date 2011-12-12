@@ -162,7 +162,7 @@ get_options ()
 	break
 	;;
       (-*)
-	error 2 "Unknown or ambiguous option \`$1'." \
+	error EX_USAGE "unknown or ambiguous option \`$1'." \
 	      "Try \`--help' for more information."
 	;;
       (*) set dummy ${1+"$@"} "$1"; shift;;
@@ -175,7 +175,8 @@ get_options ()
   # Interpret remaining command line args as filenames.
   case $#:$oname in
    ([01]:* | *:);;
-   (*) error 2 "Can't use option \`--output' with more than one argument.";;
+   (*) error EX_USAGE \
+       "cannot use option \`--output' with more than one argument.";;
   esac
 
   while test x"$1" != x || test $havearg = false

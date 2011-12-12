@@ -396,14 +396,14 @@ in remote mode.  Since UObjects can also accept options, the command
 line features two parts, separated by \samp{--}:
 
 \begin{shell}
-urbi-launch [\var{urbi-launch-option}...] \var{module}... [-- \var{module-option}...]
+urbi-launch [\var{option}...] \var{module}... [-- \var{module-option}...]
 \end{shell}
 
 The \var{module}s are looked for in the \env{URBI\_UOBJECT\_PATH}.  The
 \var{module} extension (\samp{.so}, or \samp{.dll}) does not need to be
 specified.
 
-\begin{options}[Urbi-launch options]
+\begin{options}[Options]
 \item[h]{help} \optionHelp
 \item{version} \optionVersion
 \item{print-root} Output the \var{urbi-root} and exit successfully.
@@ -500,6 +500,48 @@ are supported.
   No separator is added, you have to pass yours.
 \item[m]{module=\var{module}} Load the \UObject \var{module}.
 \end{options}
+
+\section{\command{urbi-launch-java} --- Running a Java UObject}
+\label{sec:tools:urbi-launch-java}
+
+Java UObjects can only be run remotely, they cannot be ``plugged''.  So,
+while \command{urbi-launch-java} is really alike \command{urbi-launch}, it
+is not the same either.  See also \autoref{sec:java:tools} for a more
+tutorial-like introduction to \command{urbi-launch-java}.
+
+\subsection{Invoking \command{urbi-launch-java}}
+
+\command{urbi-launch-java} launches Java UObjects, either in plugged-in
+mode, or in remote mode.  Since UObjects can also accept options, the
+command line features two parts, separated by \samp{--}:
+
+\begin{shell}
+urbi-launch-java [\var{option}...] \var{module}... [-- \var{module-option}...]
+\end{shell}
+
+The \var{module}s are looked for in the \env{URBI\_UOBJECT\_PATH}.  The
+\var{module} extension (\samp{.so}, or \samp{.dll}) does not need to be
+specified.
+
+\begin{options}[Options]
+\item[h]{help} \optionHelp
+\item{version} \optionVersion
+\item{print-root} Output the \var{urbi-root} and exit successfully.
+\item[C]{check} Exit successfully if and only if Java UObject is usable (it
+  might not be compiled or installed).
+\item[d]{debug=\var{level}} \optionDebug
+\end{options}
+
+\begin{options}[Java]
+\item[c]{classpath=\var{path}} Pass a colon-separated list of directories,
+  JAR archives, and ZIP archives to search for class files.
+\end{options}
+
+\paragraph{Networking}
+\command{urbi-launch-java} supports the same networking options
+(\option{--host}, \option{--port}, \option{--port-file}) as \command{urbi},
+see \autoref{sec:tools:urbi}.
+
 
 \section{\command{urbi-ping} --- Checking the Delays with a Server}
 \label{sec:tools:urbi-ping}

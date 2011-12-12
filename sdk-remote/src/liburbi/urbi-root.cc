@@ -407,7 +407,7 @@ UrbiRoot::library_load(const std::string& base)
     xdlopen(program_,
             base,
             urbi_getenv(program_, envvar,
-                        root() / libdir / "lib" + base + LIBPORT_LIBSFX));
+                        root() / libdir / "lib" + base + library_suffix()));
 }
 
 const std::string&
@@ -422,16 +422,6 @@ UrbiRoot::core_path() const
   return root() / LIBPORT_LIBDIRNAME / "gostai";
 }
 
-std::vector<std::string>
-UrbiRoot::uobjects_path() const
-{
-  std::vector<std::string> res;
-  if (*LIBPORT_LIBSFX)
-    res.push_back(core_path() / "uobjects" LIBPORT_LIBSFX);
-  res.push_back(core_path() / "uobjects");
-  return res;
-}
-
 std::string
 UrbiRoot::doc_dir() const
 {
@@ -444,6 +434,22 @@ UrbiRoot::share_dir() const
   return urbi_getenv(program_, "SHARE", root() / "share" / "gostai");
 }
 
+std::vector<std::string>
+UrbiRoot::uobjects_path() const
+{
+  std::vector<std::string> res;
+  if (!library_suffix().empty())
+    res.push_back(core_path() / "uobjects" + library_suffix());
+  res.push_back(core_path() / "uobjects");
+  return res;
+}
+
+std::string
+UrbiRoot::library_suffix() const
+{
+  return LIBPORT_LIBSFX;
+}
+
 void
 UrbiRoot::load_plugin()
 {
@@ -451,7 +457,7 @@ UrbiRoot::load_plugin()
     xdlopen(program_,
             "plugin UObject implementation",
             urbi_getenv(program_, "ROOT_LIBPLUGIN",
-                        core_path() / "engine" / "libuobject" LIBPORT_LIBSFX),
+                        core_path() / "engine" / "libuobject"+library_suffix()),
             // This exit status is understood by the test suite.  It
             // helps it skipping SDK Remote tests that cannot run
             // without Urbi SDK.
@@ -466,7 +472,7 @@ UrbiRoot::load_remote()
     xdlopen(program_,
             "remote UObject implementation",
             urbi_getenv(program_, "ROOT_LIBREMOTE",
-                        core_path() / "remote" / "libuobject" LIBPORT_LIBSFX),
+                        core_path() / "remote" / "libuobject"+library_suffix()),
             EX_OSFILE);
 }
 

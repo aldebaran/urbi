@@ -101,6 +101,27 @@ run ()
 error ()
 {
   local s="$1"
+  # FIXME: use m4sh to factor.
+  case ${s#EX_} in
+    (OK)          s=0;;
+    (USAGE)       s=64;;
+    (DATAERR)     s=65;;
+    (NOINPUT)     s=66;;
+    (NOUSER)      s=67;;
+    (NOHOST)      s=68;;
+    (UNAVAILABLE) s=69;;
+    (SOFTWARE)    s=70;;
+    (OSERR)       s=71;;
+    (OSFILE)      s=72;;
+    (CANTCREAT)   s=73;;
+    (IOERR)       s=74;;
+    (TEMPFAIL)    s=75;;
+    (PROTOCOL)    s=76;;
+    (NOPERM)      s=77;;
+    (CONFIG)      s=78;;
+    (SKIP)        s=176;;
+    (HARD)        s=177;;
+  esac
   shift
   stderr "$@"
   exit $s

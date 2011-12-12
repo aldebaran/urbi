@@ -35,7 +35,8 @@ BUILT_SOURCES_ast_libuobject =			\
   ast/serializer.cc	                        \
   ast/transformer.cc				\
   ast/transformer.hh				\
-  $(AST_NODES)
+  $(AST_NODES)					\
+  ast/all.cc
 
 
 BUILT_SOURCES_ast = 				\

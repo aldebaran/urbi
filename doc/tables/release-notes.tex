@@ -390,6 +390,27 @@ Math.round(1.2) == 1.2.round;
 \end{itemize}
 
 
+\section{\usdk 2.7.5}
+\release{2.7}{2011-12-XX}
+
+\subsection{Fixes}
+\begin{itemize}
+\item The source tarballs are significantly smaller.
+\item The test suite properly skips Java tests when Java support is not
+  compiled in.
+\item Windows packages with the installer now have some \us files (namely
+  \file{platform.u}) which properly depend on whether you are using the
+  debug or release flavor.
+\end{itemize}
+
+\subsection{Changes}
+\begin{itemize}
+\item \command{urbi-launch-java} is documented,
+  \autoref{sec:tools:urbi-launch-java}.
+\item \command{urbi-launch-java} supports the new option \option[C]{check}
+  which checks if Java support is available.
+\end{itemize}
+
 \section{\usdk 2.7.4}
 \release{2.7}{2011-11-17}
 
@@ -1565,7 +1586,7 @@ function binList(a, b) { [a, b] } | binList(1, 2)
 
 \subsubsection{Deprecations}
 \begin{itemize}
-\item \slot{Object.ownsSlot} is deprecated in favor of
+\item \slot[Object]{ownsSlot} is deprecated in favor of
   \refSlot[Object]{hasSlot}/\refSlot[Object]{hasLocalSlot}.
 \item \refSlot[Object]{slotNames} is deprecated in favor of
   \refSlot[Object]{allSlotNames}/\refSlot[Object]{localSlotNames}.

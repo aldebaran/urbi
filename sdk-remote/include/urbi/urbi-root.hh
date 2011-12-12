@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2011, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -78,6 +78,10 @@ public:
   std::string share_dir() const;
   /// Standard uobjects directories.
   std::vector<std::string> uobjects_path() const;
+
+  /// The library suffix (e.g., -vc90 or -vc90-d for Visual.)
+  /// Typically empty.
+  std::string library_suffix() const;
 
 private:
   /// Load the library "${libdir}/${base}${ext}", unless the envvar
