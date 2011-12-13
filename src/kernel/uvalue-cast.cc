@@ -151,7 +151,7 @@ object::rObject
 object_cast(const urbi::UValue& v)
 {
   object::rObject res;
-  switch(v.type)
+  switch (v.type)
   {
     case urbi::DATA_DOUBLE:
       return new object::Float(v.val);
@@ -240,7 +240,8 @@ object_cast(const urbi::UValue& v)
 }
 
 
-object::rObject uvalue_deserialize(object::rObject s)
+object::rObject
+uvalue_deserialize(object::rObject s)
 {
   using namespace object;
   CAPTURE_GLOBAL(Serializables);
@@ -249,19 +250,21 @@ object::rObject uvalue_deserialize(object::rObject s)
   rObject lobby =
     ::kernel::urbiserver->getCurrentRunner().state.lobby_get();
   if (rList l = s->as<List>())
-  { // Recurse
+  {
+    // Recurse
     rList res = new List;
-    foreach(rObject& r, l->value_get())
+    foreach (rObject& r, l->value_get())
       res->insertBack(uvalue_deserialize(r));
     return res;
   }
   else if (rDictionary d = s->as<Dictionary>())
-  { // Check if this is a serialized class
+  {
+    // Check if this is a serialized class
     static object::rString sn = new object::String(SYMBOL(DOLLAR_sn));
     if (d->has(sn))
-    { // Look for the class
-      libport::Symbol cn
-        = from_urbi<libport::Symbol>(d->get(sn));
+    {
+      // Look for the class
+      libport::Symbol cn = from_urbi<libport::Symbol>(d->get(sn));
       rObject proto = lobby->slot_get_value(cn, false);
       if (!proto)
       {
@@ -269,8 +272,8 @@ object::rObject uvalue_deserialize(object::rObject s)
         if (!proto)
           proto = Object;
       }
-    rObject res = proto->call(SYMBOL(new));
-      foreach(Dictionary::value_type::value_type& v, d->value_get())
+      rObject res = proto->call(SYMBOL(new));
+      foreach (Dictionary::value_type::value_type& v, d->value_get())
       {
         libport::Symbol key = object::from_urbi<libport::Symbol>(v.first);
         if (key != SYMBOL(DOLLAR_sn))
@@ -284,13 +287,15 @@ object::rObject uvalue_deserialize(object::rObject s)
       return res;
     }
     else
-    { // Recurse
+    {
+      // Recurse
       rDictionary res = new Dictionary;
-      foreach(Dictionary::value_type::value_type& v, d->value_get())
+      foreach (Dictionary::value_type::value_type& v, d->value_get())
         res->set(v.first, uvalue_deserialize(v.second));
       return res;
     }
   }
-  else // Everything else deserializes into itself
+  else
+    // Everything else deserializes into itself
     return s;
 }
