@@ -1,5 +1,5 @@
 ;;;
-;;; Copyright (C) 2008-2010, Gostai S.A.S.
+;;; Copyright (C) 2008-2011, Gostai S.A.S.
 ;;;
 ;;; This software is provided "as is" without warranty of any kind,
 ;;; either expressed or implied, including but not limited to the
@@ -92,6 +92,16 @@
     "function\\(\\s-*\\w+\\s-*\\.\\)*\\s-*\\w+\\s-*(\\([^)]*\\))")
   "List of urbiscript variables name")
 
+;; Interactive answers.  There is no simple way to support multiple
+;; lines (for backslash terminated lines).
+(defconst urbiscript-response
+  '("^\\[\\(?:00.*?\\|:\\)\\].*")
+  "Answers from the urbiscript shell")
+(defconst urbiscript-error
+  '("^\\[\\(?:00.*?\\|:\\)\\] !!!.*")
+  "Errors from the urbiscript shell")
+
+
 ;; definition
 
 (defun urbiscript-convert (regexps face &optional nth force)
@@ -101,6 +111,9 @@
 
 (defconst urbiscript-font-lock-keywords
   (append
+   ; shell answers
+   (urbiscript-convert urbiscript-error font-lock-warning-face)
+   (urbiscript-convert urbiscript-response font-lock-preprocessor-face)
    ; functions
    (urbiscript-convert urbiscript-functions-name font-lock-constant-face 2)
    ; keywords
@@ -182,14 +195,14 @@ If POINT provided, uses the line at POINT instead."
       font-lock-comment-face))
 
 (defun urbiscript-on-whitespace-p (point)
-  "Whether POINT is in a comment"
+  "Whether POINT is on a space"
   (let ((c (char-after point)))
     (or (= (char-syntax c) ? )
         (= c ?\n))))
 
 (defun urbiscript-irrelevant-char-p (&optional point)
-  "Whether the character at POINT is irrelevant.
-Irrelevant means either a comment or whitespace character."
+  "Whether the character at POINT is irrelevant
+(i.e.,  a comment or whitespace character)."
   (or (urbiscript-in-comment-p point)
       (urbiscript-on-whitespace-p point)))
 
@@ -220,8 +233,8 @@ Irrelevant means either a comment or whitespace character."
   (urbiscript-relevant-point point -1 1 -1))
 
 (defun urbiscript-line-relevant-p (&optional point)
-  "Whether the line where \a point is is relevant.
-That is, not only comments and/or whitespaces"
+  "Whether the line where \a point is is relevant
+(i.e., not only comments and/or whitespaces)."
   (or
    (< (urbiscript-beginning-of-line-point point)
       (urbiscript-relevant-point-backward point))
