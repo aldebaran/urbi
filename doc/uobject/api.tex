@@ -823,13 +823,15 @@ namespace urbi
 
 Once done, you will be able without any other change to
 \begin{itemize}
-\item Take MyType as argument to a bound function.
-\item Return a MyType from a bound function.
-\item Write a MyType to an \UVar.
-\item Convert an \UVar to MyType using the \lstinline{UVar::as} function.
+\item Take \lstinline{MyType} as argument to a bound function.
+\item Return a \lstinline{MyType} from a bound function.
+\item Write a \lstinline{MyType} to an \UVar.
+\item Convert an \UVar to \lstinline{MyType} using the \lstinline{UVar::as}
+  function.
 \end{itemize}
 
 \subsection{Casting simple structures}
+\label{sec:api:uvalueser}
 
 The system provides facilities to serialize simple structures by value
 between \Cxx and \us. This system uses two declarations of each structure,
@@ -852,9 +854,9 @@ struct Point
 URBI_REGISTER_STRUCT(Point, x, y);
 \end{cxx}
 
-\begin{urbiunchecked}
-// Declare the urbiscript structure. It must be globally accessible, and
-// inheriting from UValueSerializable.
+Declare the \us structure. It must be globally accessible, and inheriting
+from \refObject{UValueSerializable}.
+\begin{urbiscript}
 class Global.Point: UValueSerializable
 {
   var x = 0;
@@ -870,10 +872,15 @@ class Global.Point: UValueSerializable
   {
     "<%s, %s>" % [x, y]
   };
-};
-// Add the class to Serializables to register it.
-var Serializables.Point = Point;
-\end{urbiunchecked}
+}|;
+\end{urbiscript}
+
+\noindent
+Add the class to \refObject{Serializables} to register it.
+
+\begin{urbiscript}
+var Serializables.Point = Point|;
+\end{urbiscript}
 
 Once done, you can call bound functions taking a \Cxx Point by passing them
 an \us Point and exchange Point between both worlds through \UVar

@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1666 utf-8
+personal_ws-1.1 en 1675 utf-8
 aa
 aaa
 abc
@@ -1271,6 +1271,7 @@ slotName
 slotNames
 slowMachine
 smtp
+sn
 socat
 softdevice
 someevent
@@ -1551,6 +1552,7 @@ UValue
 uvalue
 UValues
 UValueSerializable
+uvalueSerialize
 UVar
 uvar
 UVars

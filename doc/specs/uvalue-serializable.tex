@@ -1,0 +1,71 @@
+%% Copyright (C) 2010, 2011, Gostai S.A.S.
+%%
+%% This software is provided "as is" without warranty of any kind,
+%% either expressed or implied, including but not limited to the
+%% implied warranties of fitness for a particular purpose.
+%%
+%% See the LICENSE file for more information.
+
+\section{UValueSerializable}
+
+This pseudo-class is made to be derived from.  It provides support to
+exchange data between \Cxx and \us via \refSlot{uvalueSerialize}.  See
+\autoref{sec:api:uvalueser}.
+
+\subsection{Example}
+
+For the conversion to/from \Cxx to work properly, your class must be
+globally accessible and inherit from \refObject{UValueSerializable}.
+
+\begin{urbiscript}
+class Global.Point: UValueSerializable
+{
+  var x = 0;
+  var y = 0;
+
+  function init(var xx = 0, var yy = 0)
+  {
+    x = xx|
+    y = yy
+  };
+
+  function asString()
+  {
+    "<%s, %s>" % [x, y]
+  };
+}|;
+\end{urbiscript}
+
+\subsection{Prototypes}
+
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
+
+\subsection{Slots}
+
+\begin{urbiscriptapi}
+\item[uvalueSerialize]%
+  Return a \refObject{String} that corresponds to a serialization of \this.
+\begin{urbiassert}
+                 123.uvalueSerialize == 123;
+                "ab".uvalueSerialize == "ab";
+              [1, 2].uvalueSerialize == [1, 2];
+["b" => 2, "a" => 1].uvalueSerialize == ["a" => 1, "b" => 2];
+
+Point.uvalueSerialize
+   == ["$sn" => "Point", "type" => "Point", "x" => 0, "y" => 0];
+Point.new(12, 34).uvalueSerialize
+   == ["$sn" => "Point", "x" => 12, "y" => 34];
+\end{urbiassert}
+
+\end{urbiscriptapi}
+
+%%% Local Variables:
+%%% coding: utf-8
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% ispell-dictionary: "american"
+%%% ispell-personal-dictionary: "../urbi.dict"
+%%% fill-column: 76
+%%% End:
