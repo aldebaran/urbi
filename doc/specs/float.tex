@@ -134,7 +134,7 @@ Float.new == 0;
 \end{urbiassert}
 
 
-\item['<<'](<that>)%
+\item['<<'](<that>)%>>
   \this shifted by \var{that} bits towards the left.
 \begin{urbiassert}
 4 << 2 == 16;
@@ -149,7 +149,7 @@ Float.new == 0;
 \end{urbiassert}
 
 
-\item['>>'](<that>)%%>>
+\item['>>'](<that>)
   \this shifted by \var{that} bits towards the right.
 \begin{urbiassert}
 4 >> 2 == 1;
@@ -157,7 +157,7 @@ Float.new == 0;
 
 
 \item['^'](<that>)%
-  Bitwise exclusive or between \this and \var{that}.
+  Bitwise \dfn{exclusive or} between \this and \var{that}.
 \begin{urbiassert}
 3 ^ 6 == 5;
 \end{urbiassert}

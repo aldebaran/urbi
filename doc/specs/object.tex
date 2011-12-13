@@ -83,8 +83,9 @@ var o2 = Object.new;
 
 
 \item['&&'](<that>)%
-  Short-circuiting logical \dfn{and}. If \this evaluates to true evaluate
-  and return \var{that}, otherwise return \this without evaluating
+  Short-circuiting logical (Boolean) \dfn{and}. If \this evaluates to true
+  evaluate and return \var{that}, otherwise return \this without evaluating
+  \var{that}.
 \begin{urbiassert}
 (0 && "foo") == 0;
 (2 && "foo") == "foo";
@@ -174,6 +175,27 @@ var o2 = Object.new;
 \end{urbiassert}
 
 
+\item['^'](<that>)%
+  Logical \dfn{exclusive or}. If \this evaluates to false evaluate and
+  return \var{that}, otherwise return \lstinline|!\var{that}|.  Beware that
+  the semantics of \refSlot[Float]{'^'} (\emph{bitwise} exclusive or, not
+  \emph{logical} logical or) is different, so in case of doubt use
+  \lstinline|\var{a}.asBool ^ \var{b}| instead of
+  \lstinline|\var{a} ^ \var{b}|.
+\begin{urbiassert}
+"foo" ^ "" === true;
+"" ^ "foo" == "foo";
+"" ^ 1     == 1;
+
+ "" ^ ""  == "";
+"a" ^ "b" === false;
+
+// Beware of bitwise operations.
+1 ^ 2        == 3;     // As a Boolean, 3 is "true".
+1.asBool ^ 2 === false;
+\end{urbiassert}
+
+
 \item['^='](<that>)%
   Bounce to \lstinline|this ^ \var{that}| (\autoref{sec:lang:op:ass}).
 \begin{urbiassert}
@@ -184,8 +206,8 @@ x.'^='(0xffff) == 0xff00;  x == 0x00ff;
 
 
 \item \lstinline+'||'(\var{that})+%
-  Short-circuiting logical \dfn{or}. If \this evaluates to false evaluate
-  and return \var{that}, otherwise return \this without evaluating
+  Short-circuiting logical (Boolean) \dfn{or}. If \this evaluates to false
+  evaluate and return \var{that}, otherwise return \this without evaluating
   \var{that}.
 \begin{urbiassert}
 (0 || "foo") == "foo";
