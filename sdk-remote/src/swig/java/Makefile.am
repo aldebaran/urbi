@@ -37,6 +37,8 @@ override CXXFLAGS:=$(filter-out -O%,$(CXXFLAGS))
 
 EXTRA_DIST +=					\
   swig/boost_unordered_map.i			\
+  swig/generated-comments.i			\
+  swig/doc-from-header.pl			\
   swig/java.i					\
   swig/udictionary-javacode.i
 
