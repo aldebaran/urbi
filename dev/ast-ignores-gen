@@ -50,6 +50,8 @@ ignores = \
 arr = nodes.values ()
 for node in arr:
   ignores += [node.hh(), node.hxx(), node.cc()]
+if ast_params['all']:
+  ignores += ['all.cc']
 ignores.sort();
 
 f = file ("ignores.tmp", "w")
