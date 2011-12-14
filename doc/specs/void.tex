@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2009-2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -31,9 +31,8 @@ void.isVoid;
 \subsection{Slots}
 
 \begin{urbiscriptapi}
-\item[acceptVoid]
-  Trick \this so that, even if it is \lstinline|void| it
-  can be used as a value.  See also \lstinline|unacceptVoid|.
+\item[acceptVoid] Trick \this so that, even if it is \lstinline|void| it can
+  be used as a value.  See also \refSlot{unacceptVoid}.
 \begin{urbiscript}
 void.foo;
 [00096374:error] !!! unexpected void
@@ -41,8 +40,7 @@ void.acceptVoid.foo;
 [00102358:error] !!! lookup failed: foo
 \end{urbiscript}
 
-\item[isVoid]
-  Whether \this is \lstinline|void|.  Therefore, return
+\item[isVoid] Whether \this is \lstinline|void|.  Therefore, return
   \lstinline|true|.
 \begin{urbiassert}
 void.isVoid;
@@ -50,10 +48,9 @@ void.acceptVoid.isVoid;
 ! 123.isVoid;
 \end{urbiassert}
 
-\item[unacceptVoid]
-  Remove the magic from \this that allowed to manipulate it
-  as a value, even if it \lstinline|void|.  See also
-  \lstinline|acceptVoid|.
+\item[unacceptVoid] Remove the magic from \this that allowed to manipulate
+  it as a value, even if it is \lstinline|void|.  See also
+  \refSlot{acceptVoid}.
 \begin{urbiscript}
 void.acceptVoid.unacceptVoid.foo;
 [00096374:error] !!! unexpected void
