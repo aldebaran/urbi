@@ -10,11 +10,10 @@
 
 /// \file urbi/uvalue.hxx
 
-#include <libport/preproc.hh>
-#include <boost/foreach.hpp>
-#include <boost/lexical_cast.hpp>
-
 #include <libport/cassert>
+#include <libport/foreach.hh>
+#include <libport/lexical-cast.hh>
+#include <libport/preproc.hh>
 
 namespace urbi
 {
@@ -336,7 +335,7 @@ namespace urbi
       if (v.type != DATA_DICTIONARY)
         throw std::runtime_error("UValue is not a dictionary.");
       typedef UDictionary::value_type DictVal;
-      BOOST_FOREACH(UDictionary::value_type& val, *v.dictionary)
+      foreach (UDictionary::value_type& val, *v.dictionary)
         res[val.first] = uvalue_cast<V>(val.second);
       return res;
     }
@@ -351,7 +350,7 @@ namespace urbi
     v.clear();
     v.type = DATA_DICTIONARY;
     v.dictionary = new UDictionary;
-    BOOST_FOREACH(const DictVal & val, d)
+    foreach (const DictVal & val, d)
     {
       UValue nv;
       nv, val.second;
@@ -368,7 +367,7 @@ namespace urbi
   {
     array.clear();
     typedef const typename T::value_type constv;
-    BOOST_FOREACH(constv& v, container)
+    foreach (constv& v, container)
     {
       UValue val;
       val,v;
@@ -383,7 +382,7 @@ namespace urbi
   UList::as()
   {
     T res;
-    BOOST_FOREACH(UValue* v, array)
+    foreach (UValue* v, array)
       res.push_back(uvalue_caster<typename T::value_type>()(*v));
     return res;
   }
@@ -422,8 +421,7 @@ namespace urbi
     UBinary& b = *v.binary;
     b.common.size = sizeof(T)*d.size();
     b.common.data = malloc(b.common.size);
-    b.message = "packed " + boost::lexical_cast<std::string>(sizeof(T))
-      + " " + typeid(T).name();
+    b.message = "packed " + string_cast(sizeof(T)) + " " + typeid(T).name();
     memcpy(b.common.data, &d.front(), b.common.size);
     return v;
   }

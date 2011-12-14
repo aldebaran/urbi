@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -10,6 +10,10 @@
 
 #ifndef OBJECT_CENTRALIZED_SLOTS_HH
 # define OBJECT_CENTRALIZED_SLOTS_HH
+
+// BMI includes boost/foreach.hpp, which is troublesome (read
+// libport/foreach.hh).  Include this header to neutralize the issue.
+# include <libport/foreach.hh>
 
 # include <boost/multi_index_container.hpp>
 # include <boost/multi_index/global_fun.hpp>
