@@ -1,0 +1,59 @@
+/*
+ * Copyright (C) 2011, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+loadModule("test/all");
+
+// Command to fetch the message with ROS.
+// rostopic echo /ATRV/CameraMain
+
+class Global.camera: Loadable
+{
+  UVar.new(this, "val");
+  val = 0 |
+} |
+
+do (Morse)
+{
+  class VideoCameraSensor
+  {
+    var image = 0;
+    var data = "";
+    var cameraHeight = 0;
+    var cameraWidth = 0;
+    var subscriber;
+
+    function init()
+    {
+      // Ros receives a type "sensor_msgs/Image" message.
+      subscriber = Ros.Topic.new("/ATRV/CameraMain") |
+      subscriber.subscribe |
+      waituntil(Ros.subscriberAvailable(subscriber.name)) |
+    };
+
+    // FIXME: This is a blocking function. I don't know why.
+    function run()
+    {
+      at (subscriber.onMessage?(var msg))
+      {
+        cameraHeight = msg["height"] |
+        cameraWidth = msg["width"] |
+        data = msg["data"].data |
+        // Morse is sending a RGBA, consider it as a RGB before converting.
+        var img = Binary.new("rgb %s %s" % [cameraWidth, cameraHeight], data) |
+        image = all.removeAlpha(img) |
+      };
+
+      every(20ms)
+      {
+        camera.val = image |
+      };
+    };
+  } |
+}|
