@@ -1,0 +1,45 @@
+/*
+ * Copyright (C) 2011, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+// The command to equivalent to what we have done in Urbi.
+// rostopic pub /ATRV/Motion_Controller geometry_msgs/Twist -1 [1,0,0] [0,0,5]
+
+do (Morse)
+{
+  class MotionControllerSensor
+  {
+    var linearSpeed = ["x" => 0, "y" => 0, "z" => 0];
+    var angularSpeed = ["x" => 0, "y" => 0, "z" => 0];
+    var publisher;
+
+    function init()
+    {
+      publisher = Ros.Topic.new("/ATRV/Motion_Controller") |
+      publisher.advertise("geometry_msgs/Twist") |
+      var msg = publisher.structure.new |
+      waituntil(Ros.publisherAvailable(Ros.name)) |
+    };
+
+    function changeAngular(x, y, z)
+    {
+      angularSpeed = ["x" => x, "y" => y, "z" => z] |
+    };
+
+    function changeLinear(x, y, z)
+    {
+      linearSpeed = ["x" => x, "y" => y, "z" => z] |
+    };
+
+    function move()
+    {
+      publisher << ["linear" => linearSpeed, "angular" => angularSpeed],
+    };
+  }|
+}|
