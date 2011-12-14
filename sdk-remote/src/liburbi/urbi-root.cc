@@ -34,33 +34,8 @@
 # define APPLE_LINUX_WINDOWS(Apple, Linux, Windows) Linux
 #endif
 
-
-/*----------.
-| Helpers.  |
-`----------*/
-
 static std::string
-mygetenv(const std::string& var, const std::string& val = "")
-{
-  const char* res = getenv(var.c_str());
-  return res ? std::string(res) : val;
-}
-
-static std::string
-urbi_getenv(const std::string& self,
-            std::string var,
-            const std::string& val = "")
-{
-  var = "URBI_" + var;
-  const char* res = getenv(var.c_str());
-  if (res)
-  {
-    std::cerr << self << ": obeying to " << var << " = " << res << std::endl;
-    return res;
-  }
-  else
-    return val;
-}
+mygetenv(const std::string& var, const std::string& val = "");
 
 /*------------.
 | Reporting.  |
@@ -87,6 +62,35 @@ debug()
     URBI_ROOT_ECHO(Self << ": " << S);          \
     exit(N);                                    \
   } while (0)
+
+
+
+/*----------.
+| Helpers.  |
+`----------*/
+
+static std::string
+mygetenv(const std::string& var, const std::string& val)
+{
+  const char* res = getenv(var.c_str());
+  return res ? std::string(res) : val;
+}
+
+static std::string
+urbi_getenv(const std::string& logname,
+            std::string var,
+            const std::string& val = "")
+{
+  var = "URBI_" + var;
+  const char* res = getenv(var.c_str());
+  if (res)
+  {
+    URBI_ROOT_DEBUG(logname, "obeying to " << var << " = " << res);
+    return res;
+  }
+  else
+    return val;
+}
 
 /*-----------------.
 | File constants.  |
