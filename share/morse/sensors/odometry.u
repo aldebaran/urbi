@@ -1,0 +1,40 @@
+/*
+ * Copyright (C) 2011, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+// The command equivalent to what we have done in Urbi.
+// rostopic echo /ATRV/Odometry
+
+do (Morse)
+{
+  class OdometrySensor
+  {
+    var angularPosition = ["x" => 0, "y" => 0, "z" => 0];
+    var linearPosition = ["x" => 0, "y" => 0, "z" => 0];
+    var subscriber;
+
+    function init()
+    {
+      subscriber = Ros.Topic.new("/ATRV/Odometry") |
+      // Ros receives a type "nav_msgs/Odometry" message.
+      subscriber.subscribe |
+      waituntil(Ros.subscriberAvailable(subscriber.name)) |
+      at (subscriber.onMessage?(var msg))
+      {
+        // The position is too accurate, maybe we can round them.
+        angularPosition = ["x" => msg["angular"]["x"],
+                           "y" => msg["angular"]["y"],
+                          "z" => msg["angular"]["z"]] |
+        linearPosition = ["x" => msg["linear"]["x"],
+                          "y" => msg["linear"]["y"],
+                          "z" => msg["linear"]["z"]] |
+      };
+    };
+  }|
+}|
