@@ -1,0 +1,30 @@
+/*
+ * Copyright (C) 2011, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+// The command to equivalent to what we have done in Urbi.
+// rostopic echo /ATRV/GPS
+
+do (Morse)
+{
+  class GpsSensor
+  {
+    var data;
+    var publisher;
+    function init()
+    {
+      publisher = Ros.Topic.new("/ATRV/GPS") |
+      // Ros receives a type "std_msgs/String" message.
+      publisher.subscribe |
+      waituntil(Ros.subscriberAvailable(publisher.name)) |
+      at (publisher.onMessage?(var msg))
+        data = msg["data"] |
+    };
+  }|
+}|
