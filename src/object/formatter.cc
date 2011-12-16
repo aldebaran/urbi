@@ -93,7 +93,7 @@ namespace urbi
           if (index < max)
             str = args[index++]->call("format", c);
           else
-            RAISE("too few arguments for format");
+            RAISE("format: too few arguments");
         }
         else
           str = c;
@@ -104,12 +104,12 @@ namespace urbi
           // Need this because operator<< is not const.
           std::stringstream o;
           o << *str;
-          FRAISE("invalid argument for format: %s", o.str());
+          FRAISE("format: invalid argument: %s", o.str());
         }
         res += str->as<String>()->value_get();
       }
       if (index < max)
-        RAISE("too many arguments for format");
+        RAISE("format: too many arguments");
       return res;
     }
 

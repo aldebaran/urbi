@@ -255,8 +255,8 @@ namespace urbi
     String::format(rFormatInfo finfo) const
     {
       value_type res(!finfo->uppercase_get() ? content_
-                      : finfo->uppercase_get() > 0 ? to_upper()
-                      : to_lower());
+                     : finfo->uppercase_get() > 0 ? to_upper()
+                     : to_lower());
 
       // Number of padding chars to add.
       size_t size = res.size();
