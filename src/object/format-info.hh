@@ -66,9 +66,9 @@ namespace urbi
       };
 
 
+    private:
       ATTRIBUTE_R(Align::position, alignment);
       ATTRIBUTE_R(bool, alt);
-    private:
       mutable bool consistent_;
       ATTRIBUTE_R(std::string, group);
       ATTRIBUTE_R(std::string, pad);
@@ -81,14 +81,15 @@ namespace urbi
 
     private:
       void compute_pattern() const;
+
       void alignment_set(Align::position v);
+      void alt_set(bool v);
       void group_set(std::string s);
       void pad_set(std::string v);
+      void precision_set(size_t v);
       void prefix_set(std::string v);
       void spec_set(std::string v);
       void uppercase_set(int v);
-      void alt_set(bool v);
-      void precision_set(size_t v);
       void width_set(size_t v);
     };
 

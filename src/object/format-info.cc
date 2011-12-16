@@ -101,6 +101,8 @@ namespace urbi
       if (pattern.size() == 1)
         RAISE("format: trailing `%'");
 
+      const char* digits = "0123456789";
+
       // Cursor inside pattern.
       size_t cursor = 1;
 
@@ -135,7 +137,7 @@ namespace urbi
       }
 
       // Parsing width.
-      if (size_t w = pattern.find_first_not_of("0123456789", cursor) - cursor)
+      if (size_t w = pattern.find_first_not_of(digits, cursor) - cursor)
       {
         width_ = lexical_cast<size_t>(pattern.substr(cursor, w));
         cursor += w;
@@ -145,7 +147,7 @@ namespace urbi
       if (cursor < pattern.size() && pattern[cursor] == '.')
       {
         ++cursor;
-        if (size_t w = pattern.find_first_not_of("0123456789", cursor) - cursor)
+        if (size_t w = pattern.find_first_not_of(digits, cursor) - cursor)
         {
           precision_ = lexical_cast<size_t>(pattern.substr(cursor, w));
           cursor += w;
