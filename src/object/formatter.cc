@@ -70,7 +70,7 @@ namespace urbi
         }
         // Fetch format string.
         rFormatInfo f = new FormatInfo();
-        f->init(format.substr(cursor));
+        f->init_(format.substr(cursor), false);
         data_->insertBack(f);
         cursor += f->pattern_get().size();
       }

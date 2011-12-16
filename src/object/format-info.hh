@@ -35,6 +35,11 @@ namespace urbi
       FormatInfo();
       FormatInfo(rFormatInfo model);
 
+      /// \param check_end  whether to reject trailing characters
+      /// after a format string (e.g., reject "%ss").
+      void init_(const std::string& pattern, bool check_end);
+
+      /// Initialize, with check_end enabled.
       void init(const std::string& pattern);
 
       virtual std::string as_string() const;

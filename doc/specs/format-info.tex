@@ -107,6 +107,15 @@ FormatInfo.new("%20m");
 
 FormatInfo.new("%");
 [00000003:error] !!! new: format: trailing `%'
+
+FormatInfo.new("%ss");
+[00062475:error] !!! new: format: spurious characters after format: s
+
+FormatInfo.new("%.ss");
+[00071153:error] !!! new: format: invalid width after `.': s
+
+FormatInfo.new("%|-8.2f|%%");
+[00034983:error] !!! new: format: spurious characters after format: %%
 \end{urbiscript}
 
 

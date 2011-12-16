@@ -88,7 +88,12 @@ namespace urbi
     void
     FormatInfo::init(const std::string& pattern)
     {
+      init_(pattern, true);
+    }
 
+    void
+    FormatInfo::init_(const std::string& pattern, bool check_end)
+    {
       if (pattern.empty())
         RAISE("format: empty pattern");
       if (pattern[0] != '%')
@@ -165,6 +170,11 @@ namespace urbi
           ++cursor;
         else
           RAISE("format: missing closing '|'");
+
+      if (check_end && cursor < pattern.size())
+        FRAISE("format: spurious characters after format: %s",
+               pattern.substr(cursor));
+
       pattern_ = pattern.substr(0, cursor);
     }
 

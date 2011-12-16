@@ -74,13 +74,17 @@ Formatter.new("Name:%s, Surname:%s;") % ["Foo", "Bar"]
 The arity of the Formatter (i.e., the number of expected arguments) and the
 size of \var{args} must match exactly.
 
-\begin{urbiassert}
-Formatter.new("=> %s") % [];
+\begin{urbiscript}
+var f = Formatter.new("%s")|;
+f % [];
 [00000002:error] !!! %: too few arguments for format
 
-Formatter.new(=> %s") % ["foo", "bar"];
+f% ["foo", "bar"];
 [00000004:error] !!! %: too many arguments for format
-\end{urbiassert}
+\end{urbiscript}
+\begin{urbicomment}
+removeSlots("f");
+\end{urbicomment}
 
   If \var{args} is not a \refObject{List}, then the call is equivalent
   to calling \lstinline|'%'([\var{args}])|.
