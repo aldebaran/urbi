@@ -235,11 +235,8 @@ namespace urbi
       if (format_manual(value_, manual, finfo->prefix_get()))
         return manual;
 
-      std::string pattern(finfo->pattern_get());
+      std::string pattern = finfo->compute_pattern(true);
 
-      replace(pattern.begin(), pattern.end(), 's', 'g');
-      replace(pattern.begin(), pattern.end(), 'd', 'g');
-      replace(pattern.begin(), pattern.end(), 'D', 'G');
       if (is_integer())
         return libport::format(pattern, as_integer());
       if (finfo->spec_get() == "x" || finfo->spec_get() == "o")

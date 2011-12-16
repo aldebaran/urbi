@@ -48,6 +48,10 @@ namespace urbi
       size_t cursor = 0;
       size_t end = format.size();
       std::string str;
+      // Consistency check: all the FormatInfos must be positional, or
+      // non-positional.  Keep a pointer to the later FormatInfo in
+      // order to compare to it.
+      FormatInfo* prev = 0;
       while (cursor < end)
       {
         // Fetch non-format string prefix.
@@ -71,8 +75,15 @@ namespace urbi
         // Fetch format string.
         rFormatInfo f = new FormatInfo();
         f->init_(format.substr(cursor), false);
+        if (prev
+            && (prev->rank_get() == 0 && f->rank_get() != 0
+                || f->rank_get() == 0 && prev->rank_get() != 0))
+          FRAISE("format: cannot mix positional and "
+                 "non-positional arguments: %s vs. %s",
+                 *prev, *f);
         data_->insertBack(f);
         cursor += f->pattern_get().size();
+        prev = f;
       }
       if (!str.empty())
         data_->insertBack(to_urbi(str));
@@ -83,17 +94,20 @@ namespace urbi
     {
       size_t index = 0;
       size_t max = args.size();
-
+      // Final argument used, to check that we used them all.
+      size_t final = 0;
       std::string res;
       foreach (const rObject& c, data_->value_get())
       {
         rObject str;
-        if (c->as<FormatInfo>())
+        if (rFormatInfo f = c->as<FormatInfo>())
         {
-          if (index < max)
-            str = args[index++]->call("format", c);
+          size_t i = f->rank_get() ? f->rank_get() - 1 : index++;
+          if (i < max)
+            str = args[i]->call("format", c);
           else
             RAISE("format: too few arguments");
+          final = std::max(final, i);
         }
         else
           str = c;
@@ -108,7 +122,7 @@ namespace urbi
         }
         res += str->as<String>()->value_get();
       }
-      if (index < max)
+      if (max && final < max - 1)
         RAISE("format: too many arguments");
       return res;
     }
