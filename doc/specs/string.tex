@@ -35,13 +35,18 @@ String == "";
 \begin{urbiscriptapi}
 \item \lstinline|'%'(\var{args})|\\
   It is an equivalent of \lstinline|Formatter.new(this) % \var{args}|.
-  See \refObject{Formatter}.
+  See \refObject{Formatter} and \refObject{FormatInfo}, which provide more
+  examples.
 %  This construct is actually more
 %  powerful than this, since it relies on
 %  \href{http://www.boost.org/doc/libs/1_39_0/libs/format/doc/format.html,
 %    Boost.Format}.  For instance:
 \begin{urbiassert}
 "%s + %s = %s" % [1, 2, 3] == "1 + 2 = 3";
+
+var f = "%10s level: %-4.1f%%";
+f % ["Battery", 83.3] == "   Battery level: 83.3%";
+f % [  "Sound", 60  ] == "     Sound level: 60  %";
 \end{urbiassert}
 
 

@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2009-2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -19,17 +19,30 @@ used in \code{printf} in the C library or in \code{boost::format}.
 
 \subsection{Construction}
 
-Formatters are created with the format string. It cuts the string to
-separate regular parts of string and formatting patterns, and stores
-them.
+Formatters are created from format strings: they are split into regular
+strings and formatting patterns (\refObject{FormatInfo}), and stores them.
 
 \begin{urbiscript}[firstnumber=1]
 Formatter.new("Name:%s, Surname:%s;");
 [00000001] Formatter ["Name:", %s, ", Surname:", %s, ";"]
 \end{urbiscript}
 
-Actually, formatting patterns are translated into
-\refObject{FormatInfo}.
+All the patterns are introduced with the percent character (\lstinline|%|),
+and they must conform to a specific syntax, detailed in the section on the
+construction of the \refObject{FormatInfo}.  To denote the percent character
+instead of introducing a formatting-specification, use two percent
+characters.
+
+\begin{urbiscript}
+var f = Formatter.new("%10s level: %-4.1f%%");
+[00039525] Formatter [%10s, " level: ", %-4.1f, "%"]
+
+for (var d: ["Battery" => 83.3, "Sound" => 60])
+  echo (f % d.asList);
+[00041133] ***    Battery level: 83.3%
+[00041138] ***      Sound level: 60  %
+\end{urbiscript}
+
 
 \subsection{Slots}
 
@@ -42,18 +55,29 @@ Formatter.new("Name:%s, Surname:%s;").asList.asString
        == "[\"Name:\", %s, \", Surname:\", %s, \";\"]";
 \end{urbiassert}
 
--\item \lstinline|'%'(\var{args})|\\
-  Use \this as format string and \var{args} as the list of
-  arguments, and return the result (a \refObject{String}).  The arity
-  of the Formatter (i.e., the number of expected arguments) and the
-  size of \var{args} must match exactly.
+\item \lstinline|'%'(\var{args})|\\
+  Use \this as format string and \var{args} as the list of arguments, and
+  return the result (a \refObject{String}).
 
-  This operator concatenates regular strings and the strings that are
-  result of \lstinline|asString| called on members of \var{args} with
-  the appropriate \refObject{FormatInfo}.
+  This operator concatenates regular strings and the strings that are result
+  of \lstinline|asString| called on members of \var{args} with the
+  appropriate \refObject{FormatInfo}.
 \begin{urbiassert}
+Formatter.new("=>") % [] == "=>";
+Formatter.new("=> %s") % [1] == "=> 1";
 Formatter.new("Name:%s, Surname:%s;") % ["Foo", "Bar"]
        == "Name:Foo, Surname:Bar;";
+\end{urbiassert}
+
+The arity of the Formatter (i.e., the number of expected arguments) and the
+size of \var{args} must match exactly.
+
+\begin{urbiassert}
+Formatter.new("=> %s") % [];
+[00000002:error] !!! %: too few arguments for format
+
+Formatter.new(=> %s") % ["foo", "bar"];
+[00000004:error] !!! %: too many arguments for format
 \end{urbiassert}
 
   If \var{args} is not a \refObject{List}, then the call is equivalent
@@ -72,16 +96,15 @@ Formatter.new("%06.3f") % Math.pi
   It is nevertheless interesting to use the Formatter for performance
   reasons if the format is reused many times.
 \begin{urbiscript}
-{
-  // Some large database of people.
-  var people =
-    [["Foo", "Bar" ],
-     ["One", "Two" ],
-     ["Un",  "Deux"],];
-  var f = Formatter.new("Name:%7s, Surname:%7s;");
-  for (var p: people)
-    echo (f % p);
-};
+// Some large database of people.
+var people =
+  [["Foo", "Bar" ],
+   ["One", "Two" ],
+   ["Un",  "Deux"],]|;
+
+var f = Formatter.new("Name:%7s, Surname:%7s;")|;
+for (var p: people)
+  echo (f % p);
 [00031939] *** Name:    Foo, Surname:    Bar;
 [00031940] *** Name:    One, Surname:    Two;
 [00031941] *** Name:     Un, Surname:   Deux;
