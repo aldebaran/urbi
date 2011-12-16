@@ -90,97 +90,82 @@ namespace urbi
     {
 
       if (pattern.empty())
-        RAISE("format: pattern is empty");
+        RAISE("format: empty pattern");
       if (pattern[0] != '%')
-        RAISE("format: pattern \"" + pattern + "\" doesn't begin with %");
+        FRAISE("format: pattern does not begin with %%: %s", pattern);
       if (pattern.size() == 1)
         RAISE("format: trailing `%'");
 
       // Cursor inside pattern.
-      size_t cursor = 0;
-      bool piped;
-      if ((piped = pattern[1] == '|'))
-      {
-        size_t pos = pattern.find_first_of('|', 2);
-        if (pos == pattern.npos)
-          RAISE("format: format begins with '|' but "
-                "does not end with '|'");
-        pattern_ = pattern.substr(0, pos + 1);
-        cursor++;
-      }
+      size_t cursor = 1;
+
+      // Whether between `|'.
+      bool piped = pattern[cursor] == '|';
+      if (piped)
+        ++cursor;
 
       // Parsing flags.
-      std::string flags("-=+#0 '");
-      std::string excludes("");
-      char current;
-      while ((++cursor < pattern.size())
-             && flags.find(current = pattern[cursor]) != flags.npos)
       {
-        if (excludes.find(current) != excludes.npos)
-          FRAISE("format: '%s' conflicts with one of these flags: \"%s\".",
-                 current, excludes);
-        switch (current)
-        {
-          case '-': alignment_ = Align::LEFT;   excludes += "-="; break;
-          case '=': alignment_ = Align::CENTER; excludes += "-="; break;
-          case '+': prefix_ = "+";              excludes += " +"; break;
-          case ' ': prefix_ = " ";              excludes += " +"; break;
-          case '0': pad_ = "0"; break;
-          case '#': alt_ = true; break;
-          case '\'': group_ = " "; break;
-        };
+        std::string flags("-=+#0 '");
+        std::string excludes;
+        char current;
+        for (;
+             cursor < pattern.size()
+               && libport::has(flags, current = pattern[cursor]);
+             ++cursor)
+          if (libport::has(excludes, current))
+            FRAISE("format: '%s' conflicts with one of these flags: \"%s\"",
+                   current, excludes);
+          else
+            switch (current)
+            {
+            case '-': alignment_ = Align::LEFT;   excludes += "-="; break;
+            case '=': alignment_ = Align::CENTER; excludes += "-="; break;
+            case '+': prefix_ = "+";              excludes += " +"; break;
+            case ' ': prefix_ = " ";              excludes += " +"; break;
+            case '0': pad_ = "0"; break;
+            case '#': alt_ = true; break;
+            case '\'': group_ = " "; break;
+            };
       }
 
       // Parsing width.
+      if (size_t w = pattern.find_first_not_of("0123456789", cursor) - cursor)
       {
-        std::string substr =
-          pattern
-          .substr(cursor,
-                  pattern.find_first_not_of("0123456789", cursor) - cursor);
-        if (!substr.empty())
-        {
-          width_ = lexical_cast<size_t>(substr);
-          cursor += substr.size();
-        }
+        width_ = lexical_cast<size_t>(pattern.substr(cursor, w));
+        cursor += w;
       }
 
       // Parsing precision.
       if (cursor < pattern.size() && pattern[cursor] == '.')
       {
         ++cursor;
-        std::string substr = pattern.substr
-          (cursor, pattern.find_first_not_of("0123456789", cursor) - cursor);
-        if (substr.empty())
-          FRAISE("format: unexpected \"%s\", expected width ([1-9][0-9]*).",
-                 pattern[cursor]);
-        else
+        if (size_t w = pattern.find_first_not_of("0123456789", cursor) - cursor)
         {
-          precision_ = lexical_cast<unsigned int>(substr);
-          cursor += substr.size();
+          precision_ = lexical_cast<size_t>(pattern.substr(cursor, w));
+          cursor += w;
         }
+        else
+          FRAISE("format: invalid width after `.': %s", pattern[cursor]);
       }
 
       // Parsing spec.
-      if (cursor < pattern_.size() - piped)
+      if (cursor < pattern.size())
       {
         spec_ = tolower(pattern[cursor]);
-        if (!strchr("sdbxoefEDX", spec_[0]))
-          FRAISE("format: \"%s\" is not a valid conversion type character",
-                 spec_);
+        if (!strchr("sdbxoef", spec_[0]))
+          FRAISE("format: invalid conversion type character: %s", spec_);
         else if (spec_ != "s")
           uppercase_ = (islower(pattern[cursor])) ? Case::LOWER : Case::UPPER;
+        ++cursor;
       }
-
 
       if (piped)
-      {
-        int overflow = pattern_.size() - 1 - ++cursor;
-        if (0 < overflow)
-          FRAISE("format: too many characters between pipes and \"%s\"",
-                 pattern_.substr(cursor, overflow));
-      }
-      else
-        pattern_ = pattern.substr(0, ++cursor);
+        if (cursor < pattern.size())
+          ++cursor;
+        else
+          RAISE("format: missing closing '|'");
+      pattern_ = pattern.substr(0, cursor);
     }
 
     std::string

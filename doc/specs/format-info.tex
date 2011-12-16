@@ -100,10 +100,10 @@ Formats that do not conform raise errors.
 
 \begin{urbiscript}
 FormatInfo.new("foo");
-[00000001:error] !!! new: format: pattern "foo" doesn't begin with %
+[00000001:error] !!! new: format: pattern does not begin with %: foo
 
-FormatInfo.new("%mgh");
-[00000002:error] !!! new: format: "m" is not a valid conversion type character
+FormatInfo.new("%20m");
+[00000002:error] !!! new: format: invalid conversion type character: m
 
 FormatInfo.new("%");
 [00000003:error] !!! new: format: trailing `%'
@@ -143,7 +143,7 @@ FormatInfo.new("%'s").group == " ";
 \item[pad]
   The padding character to use for alignment requests.  Defaults to space.
 \begin{urbiassert}
-FormatInfo.new("%s").pad == " ";
+FormatInfo.new("%s") .pad == " ";
 FormatInfo.new("%0s").pad == "0";
 \end{urbiassert}
 
