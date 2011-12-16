@@ -1,0 +1,44 @@
+/*
+ * Copyright (C) 2011, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+// Command to fetch the message.
+// rostopic echo /ATRV/Sick
+
+do (Morse)
+{
+  class SickSensor
+  {
+    var angleMin = 0;
+    var angleMax = 0;
+    var rangeMin = 0;
+    var rangeMax = 0;
+    var ranges = [];
+    var intensities = [];
+    var publisher;
+
+    function init()
+    {
+      publisher = Ros.Topic.new("/ATRV/Sick") |
+      // Ros receives a type "sensor_msgs/LaserScan" message.
+
+      publisher.subscribe |
+      waituntil(Ros.subscriberAvailable(publisher.name)) |
+      at (publisher.onMessage?(var msg))
+      {
+        angleMin = msg["angle_min"] |
+        angleMax = msg["angle_max"] |
+        rangeMin = msg["range_min"] |
+        rangeMax = msg["range_max"] |
+        ranges = msg["ranges"] |
+        intensities = msg["intensities"] |
+      };
+    };
+  }|
+}|
