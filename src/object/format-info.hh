@@ -68,14 +68,13 @@ namespace urbi
       ATTRIBUTE_R(std::string, group);
       ATTRIBUTE_R(std::string, pad);
       ATTRIBUTE_r(std::string, pattern, , , , mutable);
-      ATTRIBUTE_R(unsigned int, precision);
+      ATTRIBUTE_R(size_t, precision);
       ATTRIBUTE_R(std::string, prefix);
       ATTRIBUTE_R(std::string, spec);
       ATTRIBUTE_R(Case::mode, uppercase);
       ATTRIBUTE_R(size_t, width);
 
     private:
-
       void compute_pattern() const;
       void alignment_set(Align::position v);
       void group_set(std::string s);
@@ -84,8 +83,8 @@ namespace urbi
       void spec_set(std::string v);
       void uppercase_set(int v);
       void alt_set(bool v);
-      void precision_set(int v);
-      void width_set(int v);
+      void precision_set(size_t v);
+      void width_set(size_t v);
     };
 
   } // namaspace object

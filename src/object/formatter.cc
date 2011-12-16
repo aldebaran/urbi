@@ -47,9 +47,10 @@ namespace urbi
     {
       size_t cursor = 0;
       size_t end = format.size();
-      std::string str("");
+      std::string str;
       while (cursor < end)
       {
+        // Fetch non-format string prefix.
         std::string buf =
           format.substr(cursor, format.find_first_of('%', cursor) - cursor);
         str += buf;
@@ -67,6 +68,7 @@ namespace urbi
           data_->insertBack(to_urbi(str));
           str.erase();
         }
+        // Fetch format string.
         rFormatInfo f = new FormatInfo();
         f->init(format.substr(cursor));
         data_->insertBack(f);

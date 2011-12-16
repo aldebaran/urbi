@@ -69,9 +69,8 @@ namespace urbi
       BIND(asString, as_string);
       BIND(pattern, pattern_get);
 
-# define DECLARE(Name)                         \
-      bind(#Name, &FormatInfo::Name ##_get,     \
-           &FormatInfo::Name ##_set);
+# define DECLARE(Name)                                                  \
+      bind(#Name, &FormatInfo::Name ##_get, &FormatInfo::Name ##_set);
 
       DECLARE(alignment);
       DECLARE(alt);
@@ -89,8 +88,6 @@ namespace urbi
     void
     FormatInfo::init(const std::string& pattern)
     {
-      size_t cursor = 0;
-      bool piped;
 
       if (pattern.empty())
         RAISE("format: pattern is empty");
@@ -98,6 +95,10 @@ namespace urbi
         RAISE("format: pattern \"" + pattern + "\" doesn't begin with %");
       if (pattern.size() == 1)
         RAISE("format: trailing `%'");
+
+      // Cursor inside pattern.
+      size_t cursor = 0;
+      bool piped;
       if ((piped = pattern[1] == '|'))
       {
         size_t pos = pattern.find_first_of('|', 2);
@@ -112,10 +113,10 @@ namespace urbi
       std::string flags("-=+#0 '");
       std::string excludes("");
       char current;
-      while ((pattern.size() > ++cursor)
-             && flags.npos != flags.find(current = pattern[cursor]))
+      while ((++cursor < pattern.size())
+             && flags.find(current = pattern[cursor]) != flags.npos)
       {
-        if (excludes.npos != excludes.find(current))
+        if (excludes.find(current) != excludes.npos)
           FRAISE("format: '%s' conflicts with one of these flags: \"%s\".",
                  current, excludes);
         switch (current)
@@ -131,19 +132,23 @@ namespace urbi
       }
 
       // Parsing width.
-      std::string substr =
-        pattern.substr(cursor,
-                       pattern.find_first_not_of("0123456789", cursor) - cursor);
-      if (!substr.empty())
       {
-        width_ = lexical_cast<size_t>(substr);
-        cursor += substr.size();
+        std::string substr =
+          pattern
+          .substr(cursor,
+                  pattern.find_first_not_of("0123456789", cursor) - cursor);
+        if (!substr.empty())
+        {
+          width_ = lexical_cast<size_t>(substr);
+          cursor += substr.size();
+        }
       }
 
       // Parsing precision.
-      if (cursor < pattern.size() && pattern[cursor] == '.' && cursor++)
+      if (cursor < pattern.size() && pattern[cursor] == '.')
       {
-        substr = pattern.substr
+        ++cursor;
+        std::string substr = pattern.substr
           (cursor, pattern.find_first_not_of("0123456789", cursor) - cursor);
         if (substr.empty())
           FRAISE("format: unexpected \"%s\", expected width ([1-9][0-9]*).",
@@ -156,10 +161,9 @@ namespace urbi
       }
 
       // Parsing spec.
-      if ((piped && cursor < pattern_.size() - 1)
-          || (!piped && cursor < pattern.size()))
+      if (cursor < pattern_.size() - piped)
       {
-        spec_ = tolower(current = pattern[cursor]);
+        spec_ = tolower(pattern[cursor]);
         if (!strchr("sdbxoefEDX", spec_[0]))
           FRAISE("format: \"%s\" is not a valid conversion type character",
                  spec_);
@@ -284,14 +288,14 @@ namespace urbi
     }
 
     void
-    FormatInfo::precision_set(int v)
+    FormatInfo::precision_set(size_t v)
     {
       precision_ = v;
       consistent_ = false;
     }
 
     void
-    FormatInfo::width_set(int v)
+    FormatInfo::width_set(size_t v)
     {
       width_ = v;
       consistent_ = false;
