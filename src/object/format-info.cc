@@ -29,6 +29,7 @@ namespace urbi
       , pattern_("%s")
       , precision_(6)
       , prefix_("")
+      , rank_(0)
       , spec_("s")
       , uppercase_(Case::UNDEFINED)
       , width_(0)
@@ -45,6 +46,7 @@ namespace urbi
       , pattern_(model->pattern_)
       , precision_(model->precision_)
       , prefix_(model->prefix_)
+      , rank_(model->rank_)
       , spec_(model->spec_)
       , uppercase_(model->uppercase_)
       , width_(model->width_)
@@ -61,6 +63,7 @@ namespace urbi
       , pattern_("%s")
       , precision_(6)
       , prefix_("")
+      , rank_(0)
       , spec_("s")
       , uppercase_(Case::UNDEFINED)
       , width_(0)
@@ -78,6 +81,7 @@ namespace urbi
       DECLARE(pad);
       DECLARE(precision);
       DECLARE(prefix);
+      DECLARE(rank);
       DECLARE(spec);
       DECLARE(uppercase);
       DECLARE(width);
@@ -110,6 +114,26 @@ namespace urbi
       bool piped = pattern[cursor] == '|';
       if (piped)
         ++cursor;
+
+      // Whether there is a positional argument: <NUM>$.
+      {
+        // First non digit.
+        size_t dollar = pattern.find_first_not_of(digits, cursor);
+        // If there are digits, and then a $, then we have a
+        // positional argument.
+        if (dollar != cursor
+            && dollar < pattern.size()
+            && pattern[dollar] == '$')
+        {
+          rank_ = lexical_cast<size_t>(pattern.substr(cursor, dollar - cursor));
+          if (!rank_)
+            FRAISE("format: invalid positional argument: %s",
+                   pattern.substr(cursor, dollar - cursor));
+          cursor = dollar + 1;
+        }
+        else
+          rank_ = 0;
+      }
 
       // Parsing flags.
       {
@@ -190,25 +214,39 @@ namespace urbi
     FormatInfo::pattern_get() const
     {
       if (!consistent_)
-        compute_pattern();
+      {
+        pattern_ = compute_pattern();
+        consistent_ = true;
+      }
       return pattern_;
     }
 
-    void
-    FormatInfo::compute_pattern() const
+    std::string
+    FormatInfo::compute_pattern(bool for_float) const
     {
-      pattern_ = std::string("%|")
-        + (alignment_ == Align::RIGHT ? ""
-           : (alignment_ == Align::LEFT) ? "-" : "=")
+      // To format floats, we rely on Boost.Format.
+      size_t rank = rank_;
+      char spec = spec_[0];
+      if (for_float)
+      {
+        rank = 0;
+        if (spec == 's' || spec == 'd') spec = 'g';
+        if (spec == 'D') spec = 'G';
+      }
+
+      return std::string("%|")
+        + (rank == 0 ? "" : (string_cast(rank) + "$"))
+        + ((alignment_ == Align::RIGHT) ? ""
+           : (alignment_ == Align::LEFT) ? "-"
+           : "=")
         + (alt_ ? "#" : "")
         + (group_ == "" ? "" : "'")
         + (pad_ == " " ? "" : "0")
         + prefix_
         + (width_ == 0 ? "" : string_cast(width_))
         + (precision_ == 6 ? "" : "." + string_cast(precision_))
-        + (uppercase_ == Case::UPPER ? char(toupper(spec_[0])): spec_[0])
+        + (uppercase_ == Case::UPPER ? char(toupper(spec)) : spec)
         + '|';
-      consistent_ = true;
     }
 
     void
@@ -288,6 +326,13 @@ namespace urbi
     FormatInfo::precision_set(size_t v)
     {
       precision_ = v;
+      consistent_ = false;
+    }
+
+    void
+    FormatInfo::rank_set(size_t v)
+    {
+      rank_ = v;
       consistent_ = false;
     }
 

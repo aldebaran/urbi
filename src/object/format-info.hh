@@ -44,6 +44,11 @@ namespace urbi
 
       virtual std::string as_string() const;
 
+      /// \param for_float whether to return a form suitable to format
+      /// floats with Boost.Format.
+      std::string compute_pattern(bool for_float = false) const;
+
+
     public:
       struct Align
       {
@@ -75,19 +80,21 @@ namespace urbi
       ATTRIBUTE_r(std::string, pattern, , , , mutable);
       ATTRIBUTE_R(size_t, precision);
       ATTRIBUTE_R(std::string, prefix);
+      // For positional arguments, such as %2%.
+      // Applies if non-null.
+      ATTRIBUTE_R(size_t, rank);
       ATTRIBUTE_R(std::string, spec);
       ATTRIBUTE_R(Case::mode, uppercase);
       ATTRIBUTE_R(size_t, width);
 
     private:
-      void compute_pattern() const;
-
       void alignment_set(Align::position v);
       void alt_set(bool v);
       void group_set(std::string s);
       void pad_set(std::string v);
       void precision_set(size_t v);
       void prefix_set(std::string v);
+      void rank_set(size_t v);
       void spec_set(std::string v);
       void uppercase_set(int v);
       void width_set(size_t v);

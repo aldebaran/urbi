@@ -186,6 +186,19 @@ FormatInfo.new("%+s").prefix == "+";
 \end{urbiassert}
 
 
+\item[rank]%
+  In the case of a positional argument, its number, otherwise 0.
+\begin{urbiassert}
+FormatInfo.new("%s")   .rank == 0;
+FormatInfo.new("%2$s") .rank == 2;
+FormatInfo.new("%03$s").rank == 3;
+\end{urbiassert}
+Cannot be null.
+\begin{urbiscript}
+FormatInfo.new("%00$s").rank;
+[00001243:error] !!! new: format: invalid positional argument: 00
+\end{urbiscript}
+
 \item[spec]
   The specification character, regardless of the case conversion
   requests.
