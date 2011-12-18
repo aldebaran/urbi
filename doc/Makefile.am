@@ -20,6 +20,9 @@ include document-aux/make/pdf-figs.mk
 # Ship what we need from document-aux.  Something more automatic is
 # needed.
 EXTRA_DIST +=					\
+  bin/api-sort					\
+  bin/local-words				\
+  bin/toassert					\
   document-aux/bin/texi2dvi			\
   $(call ls_files,				\
     @{document-aux}/figs/gostai.*		\
@@ -42,7 +45,6 @@ EXTRA_DIST +=					\
   document-aux/styles/mylistings.sty		\
   document-aux/styles/texi.hva			\
   document-aux/styles/texi.sty
-
 
 ## -------- ##
 ## Images.  ##
