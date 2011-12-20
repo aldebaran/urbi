@@ -896,7 +896,7 @@ assert (one == two);
 \item \refObject{Directory} events were not launched if a
   \refObject{Directory} had already been created on the same
   \refObject{Path}.
-\item \lstinline"waituntil" no longer ignores pattern guards.
+\item \lstinline{waituntil} no longer ignores pattern guards.
 \end{itemize}
 
 \subsection{Documentation}
@@ -1234,7 +1234,7 @@ function binList(a, b) { [a, b] } | binList(1, 2)
 \subsubsection{Changes}
 \begin{itemize}
 \item empty strings, dictionaries and lists are now evaluated as
-  "false" in conditions.
+  \lstinline{false} in conditions.
 \item \refSlot[Dictionary]{asString} does not sort the keys.
 \item \refSlot[Dictionary]{'[]='} returns the assigned value, not the
   dictionary.
@@ -1277,8 +1277,8 @@ detach({ every (1s) echo("foo"); });
 
 \item Bound functions using UBindFunction can now take arguments of type
   \lstinline|UVar&| and \lstinline|UObject*|. The recommended method to pass
-  UVars from urbiscript is now to use \samp{camera.getSlot("val")} instead
-  of \samp{"camera.val"}.
+  UVars from urbiscript is now to use \lstinline{camera.getSlot("val")}
+  instead of \lstinline{camera.val}.
 
 \item Add a 0-copy mode for UVars: If \samp{UVar::enableBypass(true)} is
   called on an UVar, notifyChange on this UVar can recover the not-copied
@@ -1412,8 +1412,8 @@ also improved.  Changes include, but are not limited to:
 
 \subsubsection{Fixes}
 \begin{itemize}
-\item Under some circumstances successful runs could report "at job
-  handler exited with exception TerminateException".  This is fixed.
+\item Under some circumstances successful runs could report ``at job
+  handler exited with exception TerminateException''.  This is fixed.
 
 \item Using waituntil on an event with no payload (i.e.,
   \lstinline|waituntil(e?) ...;)| will not cause an internal error
@@ -1689,8 +1689,9 @@ echo (x);
   or \file{URBI.INI} by using \refSlot[System]{searchPath}.
 
 \item \refSlot[System]{getenv}.\\
-  Now returns "nil" if a variable cannot be found in the environment instead
-  of "void". This allows you do to things such as:
+  Now returns \lstinline{nil} if a variable cannot be found in the
+  environment instead of \lstinline{void}. This allows you do to things such
+  as:
 
 \begin{urbiscript}
 var ne = System.getenv("nonexistent");
