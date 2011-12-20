@@ -610,25 +610,25 @@ public class All extends UObject
 	return res;
     }
 
-    public UImage transmitI(UImage im)
-    {
-	UImage res = new UImage(im);
-	byte[] data = res.getData();
-	for (int i = 0; i < data.length; ++i)
-	    data[i] -= 1;
-        res.setData(data);
-	return im;
-    }
-
-    public USound transmitSnd(USound im)
-    {
-	USound res = new USound(im);
-	byte[] data = res.getData();
-	for (int i = 0; i < data.length; ++i)
-	    data[i] -= 1;
-        res.setData(data);
-	return im;
-    }
+   //  public UImage transmitI(UImage im)
+   //  {
+   //      UImage res = new UImage(im);
+   //      byte[] data = res.getData();
+   //      for (int i = 0; i < data.length; ++i)
+   //          data[i] -= 1;
+   //      res.setData(data);
+   //      return im;
+   //  }
+   //
+   //  public USound transmitSnd(USound im)
+   //  {
+   //      USound res = new USound(im);
+   //      byte[] data = res.getData();
+   //      for (int i = 0; i < data.length; ++i)
+   //          data[i] -= 1;
+   //      res.setData(data);
+   //      return im;
+   //  }
 
     /*
       urbi::UObject* transmitO(UObject* o)
