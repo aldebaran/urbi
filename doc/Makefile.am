@@ -171,8 +171,8 @@ CLEANFILES += config.sty
 # at each run of "make".  No way!
 #
 # We could remove the dependency on revision.sty from our PDF and
-# HTML, and start the rules with "$(MAKE) update-revision.pdf".  But
-# this is not good for concurrent builds, as we would have several PDF
+# HTML, and start the rules with "$(MAKE) update-revision".  But this
+# is not good for concurrent builds, as we would have several PDF
 # and/or HTML documents that try to update the same file,
 # concurrently.
 #
