@@ -147,9 +147,12 @@ endif
 
 CLEANFILES += $(pdf_DATA)
 urbi_sdk_tex = $(call ls_files,*.tex)
-urbi_sdk_sources =					\
-  $(urbi_sdk_tex)					\
-  $(call ls_files,*.sty tables/*.txt)
+# Do _not_ include revision.sty in the sources, as it is continiously
+# updated.  It would cause endless recompilations.
+urbi_sdk_sources =				\
+  $(urbi_sdk_tex)				\
+  $(filter-out revision.sty,			\
+    $(call ls_files,*.sty tables/*.txt))
 
 CLEANFILES += config.sty
 

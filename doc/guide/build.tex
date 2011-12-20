@@ -21,6 +21,11 @@
 This section is meant for people who want to \emph{build} the \usdk.  If
 you just want to install a pre-built \usdk, see \autoref{sec:installation}.
 
+A foreword that applies to any package, not just \usd: \strong{building or
+  checking as root is a bad idea}.  Build as a regular user, and run
+\samp{sudo make install} just for the install time \emph{if you need
+  privileges to install to the chosen destination}.
+
 \section{Requirements}
 \label{sec:build:req}
 
@@ -347,7 +352,7 @@ $ ./bootstrap
 \end{shell}
 
 \section{Configure}
-
+\label{sec:build:configure}
 Do not compile where the source files are (the test suite of a sub-component
 of ours, Libport, is known to fail in that situation).  So, \strong{compile
   in another directory than the one containing the sources}, for instance as
@@ -603,6 +608,13 @@ non-installed programs.  There are wrappers that do this properly:
 
 \section{Check}
 \label{sec:build:check}
+
+\paragraph{Root}
+Running the test-suite as a super-user (root) is a bad idea
+(\auroref{sec:build}): some tests check that \usdk respects file
+permissions, which of course cannot work if you are omnipotent.
+
+\paragraph{Parallel Tests}
 There are several test suites that will be run if you run \samp{make
   check} (\samp{-j4} works on most machines).
 
