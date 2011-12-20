@@ -21,6 +21,11 @@
 This section is meant for people who want to \emph{build} the \usdk.  If
 you just want to install a pre-built \usdk, see \autoref{sec:installation}.
 
+A foreword that applies to any package, not just \usdk: \strong{building or
+  checking as root is a bad idea}.  Build as a regular user, and run
+\samp{sudo make install} just for the install time \emph{if you need
+  privileges to install to the chosen destination}.
+
 \section{Requirements}
 \label{sec:build:req}
 
@@ -348,7 +353,6 @@ $ ./bootstrap
 
 \section{Configure}
 \label{sec:build:configure}
-
 Do not compile where the source files are (the test suite of a sub-component
 of ours, Libport, is known to fail in that situation).  So, \strong{compile
   in another directory than the one containing the sources}, for instance as
@@ -611,20 +615,15 @@ non-installed programs.  There are wrappers that do this properly:
 
 \section{Check}
 \label{sec:build:check}
+
+\paragraph{Root}
+Running the test-suite as a super-user (root) is a bad idea
+(\autoref{sec:build}): some tests check that \usdk respects file
+permissions, which of course cannot work if you are omnipotent.
+
+\paragraph{Parallel Tests}
 There are several test suites that will be run if you run \samp{make
   check} (\samp{-j4} works on most machines).
-
-To rerun only the tests that failed, use \samp{make recheck}.  Some tests
-have explicit dependencies, and they are not rerun if nothing was changed
-(unless they had failed the previous time).  It is therefore expected that
-after one (long) run of \samp{make check}, the second one will be
-``instantaneous'': the previous log files are reused.
-
-Note that running \samp{make} in the top-level is needed when you change
-something deep in the package.  If you forget this \samp{make} run, the
-timestamps on which the test suite depends will not be updated, and
-therefore the results of the previous state of the package will be used,
-instead of your fresh changes.
 
 Some tests are extremely ``touchy''.  Because the test suite exercises \urbi
 under extreme conditions, some tests may fail not because of a problem in
@@ -636,12 +635,17 @@ insufficiently well for the test to pass.  \strong{Do not send bug reports
   for such failures.}.  Before reporting bugs, make sure that the failures
 remain after a few \samp{make check -j1} invocations.
 
+To rerun only the tests that failed, use \samp{make recheck}.  Some tests
+have explicit dependencies, and they are not rerun if nothing was changed
+(unless they had failed the previous time).  It is therefore expected that
+after one (long) run of \samp{make check}, the second one will be
+``instantaneous'': the previous log files are reused.
 
 \subsection{Lazy test suites}
-The test suites are declared as ``lazy'', i.e., unless its
-dependencies changed, a successful test will be run only once ---
-failing tests do not ``cache'' their results.  Because spelling out
-the dependencies is painful, we rely on a few timestamps:
+The test suites are declared as ``lazy'', i.e., unless its dependencies
+changed, a successful test will be run only once --- failing tests do not
+``cache'' their results.  Because spelling out the dependencies is painful,
+we rely on a few timestamps:
 
 \begin{files}
 \item[libraries.stamp] Updated when a library is updated (libport,
@@ -656,9 +660,8 @@ the dependencies is painful, we rely on a few timestamps:
   timestamps is.
 \end{files}
 
-These timestamps are updated \strong{only} when \command{make} is run
-in the top-level.  Therefore, the following sequence does not work as
-expected:
+These timestamps are updated \strong{only} when \command{make} is run in the
+top-level.  Therefore, the following sequence does not work as expected:
 
 \begin{shell}
 $ make check -C tests     # All passes.
@@ -667,9 +670,9 @@ $ make check -C tests     # All passes again.
 \end{shell}
 
 \noindent
-because the timestamps were not given a chance to notice that some
-\urbi source changed, so Make did not notice the tests really needed to
-be rerun and \strong{the tests were not run}.
+because the timestamps were not given a chance to notice that some \urbi
+source changed, so Make did not notice the tests really needed to be rerun
+and \strong{the tests were not run}.
 
 You may either just update the timestamps:
 

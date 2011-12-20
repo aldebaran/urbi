@@ -39,8 +39,8 @@ test_tex +=					\
         $(addons))))
 
 # From each LaTeX source a test.mk is generated.  E.g.,
-# specs/string.tex => $(srcdir)/tests/specs/strings/test.mk.  This is
-# the set of these test.mk files.
+# specs/string.tex => $(srcdir)/tests/specs/strings-test.mk.  This is
+# the set of these *-test.mk files.
 test_mks =					\
   $(patsubst %.tex,$(srcdir)/tests/%-test.mk,	\
      $(test_tex))
@@ -58,10 +58,11 @@ EXTRA_DIST +=					\
 # Generating the test files.
 # We specify that it applies to $(test_mks) to take precedence over
 # the default rule for %.mk in make/init.mk
+EXTRA_DIST += bin/tex2chk
 $(srcdir)/tests/%-test.mk: %.tex $(srcdir)/bin/tex2chk
-	$(AM_V_GEN)							\
-	  srcdir=$(srcdir)						\
-	  move_if_change="$(move_if_change) $(if $(V:0=),-v,-s)"	\
+	$(AM_V_GEN)					\
+	  srcdir=$(srcdir)				\
+	  move_if_change="$(move_if_change_run)"	\
 	  $(srcdir)/bin/tex2chk $(if $(V:0=),-v,-q) $<
 
 

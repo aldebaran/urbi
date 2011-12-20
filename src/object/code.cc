@@ -160,7 +160,9 @@ namespace urbi
       if (proto == this)
         return SYMBOL(LT_Code_GT);
       return
-        string_cast(*ast_->body_get()->body_get());
+        // See https://svn.boost.org/trac/boost/ticket/6264, we cannot
+        // use string_cast here since Boost 1.48.
+        libport::format("%s", *ast_->body_get()->body_get());
     }
 
     std::ostream&

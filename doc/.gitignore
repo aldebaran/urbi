@@ -1,5 +1,7 @@
 /Makefile.in
 /addons/
+/tests/*-test.mk
+/tests/*.chk
 /tests/addons/
 /tests/getting-started/
 /tests/guide/
@@ -15,5 +17,3 @@
 /tests/urbi-sandbox/
 /tests/urbi-sdk/
 /tests/urbiscript
-/tests/*-test.mk
-/tests/*.chk

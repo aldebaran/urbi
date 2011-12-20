@@ -247,6 +247,8 @@ namespace urbi
     String::value_type
     String::as_printable() const
     {
+      // See https://svn.boost.org/trac/boost/ticket/6264, we cannot
+      // use string_cast here since Boost 1.48.
       return libport::format("\"%s\"", libport::escape(content_, '"'));
     }
 

@@ -9,7 +9,7 @@
  */
 
 #include <libport/bind.hh>
-#include <boost/foreach.hpp>
+#include <libport/foreach.hh>
 
 namespace urbi
 {
@@ -98,8 +98,7 @@ namespace urbi
     inline void
     UContextImpl::popCleanupStack()
     {
-      // I would rather not define 'foreach' in a hxx.
-      BOOST_FOREACH(boost::function0<void>& f, cleanup_list_->back())
+      foreach (boost::function0<void>& f, cleanup_list_->back())
         f();
       cleanup_list_->pop_back();
     }

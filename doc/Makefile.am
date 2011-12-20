@@ -20,6 +20,9 @@ include document-aux/make/pdf-figs.mk
 # Ship what we need from document-aux.  Something more automatic is
 # needed.
 EXTRA_DIST +=					\
+  bin/api-sort					\
+  bin/local-words				\
+  bin/toassert					\
   document-aux/bin/texi2dvi			\
   $(call ls_files,				\
     @{document-aux}/figs/gostai.*		\
@@ -45,7 +48,6 @@ EXTRA_DIST +=					\
   document-aux/styles/texi.hva			\
   document-aux/styles/texi.sty			\
   document-aux/styles/urbi-style.cfg
-
 
 ## -------- ##
 ## Images.  ##
@@ -187,9 +189,13 @@ endif
 
 CLEANFILES += $(pdf_DATA)
 urbi_sdk_tex := $(call ls_files,*.tex)
+# Do _not_ include revision.sty in the sources, as it is continiously
+# updated.  It would cause endless recompilations.
 urbi_sdk_sources =				\
   $(urbi_sdk_tex)				\
-  $(call ls_files,*.sty tables/*.txt tables/*.bnf)
+  $(filter-out revision.sty,			\
+    $(call ls_files,*.sty tables/*.bnf tables/*.txt))
+
 CLEANFILES += config.sty
 
 
@@ -210,8 +216,8 @@ CLEANFILES += config.sty
 # at each run of "make".  No way!
 #
 # We could remove the dependency on revision.sty from our PDF and
-# HTML, and start the rules with "$(MAKE) update-revision.pdf".  But
-# this is not good for concurrent builds, as we would have several PDF
+# HTML, and start the rules with "$(MAKE) update-revision".  But this
+# is not good for concurrent builds, as we would have several PDF
 # and/or HTML documents that try to update the same file,
 # concurrently.
 #
@@ -235,8 +241,12 @@ $(REVISION_FILE):
 ## Generated source files.  ##
 ## ------------------------ ##
 
+# Generate in the source tree and keep under revision control, so that
+# we don't have to require from tarball users that they have to run
+# maintainer tools such as tex2chk.  Not to mention that there are
+# then many nasty issues arising with src=build builds.
 FROM_GEN =					\
-  specs/keywords.tex				\
+  $(srcdir)/specs/keywords.tex			\
   guide/requirements.tex
 BUILT_SOURCES += $(FROM_GEN)
 EXTRA_DIST += $(FROM_GEN:=.gen)
@@ -245,7 +255,7 @@ $(FROM_GEN): %: %.gen
 	$(AM_V_GEN)mkdir -p $(@D)
 	$(AM_V_at)srcdir=$(srcdir) $< > $@.tmp
 	$(AM_V_at)chmod a-w $@.tmp
-	$(AM_V_at)$(move_if_change) --verbose --color $@.tmp $@
+	$(AM_V_at)$(move_if_change_run) $@.tmp $@
 	$(AM_V_at)touch $@
 
 
