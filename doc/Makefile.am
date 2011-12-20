@@ -196,8 +196,12 @@ $(REVISION_FILE):
 ## Generated source files.  ##
 ## ------------------------ ##
 
+# Generate in the source tree and keep under revision control, so that
+# we don't have to require from tarball users that they have to run
+# maintainer tools such as tex2chk.  Not to mention that there are
+# then many nasty issues arising with src=build builds.
 FROM_GEN =					\
-  guide/requirements.tex
+  $(srcdir)/guide/requirements.tex
 BUILT_SOURCES += $(FROM_GEN)
 EXTRA_DIST += $(FROM_GEN:=.gen)
 
