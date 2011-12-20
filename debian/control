@@ -1,0 +1,31 @@
+Source: urbi
+# See http://www.debian.org/doc/debian-policy/ch-archive.html#s-subsections
+Section: unknown
+Priority: extra
+Maintainer: Adam Oleksy <adam.oleksy@gmail.com>
+Build-Depends: debhelper (>= 7.0.50~), autoconf, autotools-dev, m4, flex, libboost-all-dev (>= 1.38), libortp-dev, pkg-config, python-yaml, doxygen, graphviz, imagemagick, ghostscript, gnuplot-nox, texlive-font-utils, transfig, bc, libx11-dev, swig, libxext-dev, dos2unix
+Standards-Version: 3.9.1
+Homepage: http://www.gostai.com/
+#Vcs-Git: git://git.debian.org/collab-maint/urbi-sdk.git
+#Vcs-Browser: http://git.debian.org/?p=collab-maint/urbi-sdk.git;a=summary
+
+Package: urbi
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Urbi operating system to control robots
+ Urbi is a complete open source software platform to control robots, a kind of
+ Operating System for robotics. It includes a C++ distributed components
+ architecture called UObject, and an orchestration script language called
+ urbiscript. The urbiscript language is innovative because it integrates new
+ ways to handle parallel and event-based programming, which are two essential
+ issues in robot programming. Recently, Urbi is also integrating ROS support to
+ be able to integrate ROS nodes inside an Urbi project, and benefit from the
+ best of both worlds.
+
+Package: urbi-doc
+Architecture: any
+Description: Urbi SDK documentation.
+
+Package: urbi-dev
+Architecture: any
+Description: Urbi SDK.

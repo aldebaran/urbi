@@ -1,0 +1,8 @@
+urbi for Debian
+-------------------
+
+  [ Alexandre Morgand ]
+  * Fixes for documentation, ROS support and integration to Urbi
+    building process.
+
+ -- Alexandre Morgand <morgand@gostai.com>  Wed, 14 Dec 2011 10:12:00 +0100
