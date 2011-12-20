@@ -1395,44 +1395,17 @@ also improved.  Changes include, but are not limited to:
 
 
 \subsection{\us}
-
-\subsubsection{Syntax of events}
-
-The keyword \lstinline|emit| is deprecated in favor of \lstinline|!|.
-
-\begin{center}
-  \begin{tabular}{|c|c|}
-    \hline
-    Deprecated & Updated \\
-    \hline
-    \lstinline|emit e;| &              \lstinline|e!;| \\
-    \lstinline|emit e(a);| &           \lstinline|e!(a);| \\
-    \lstinline|emit e ~ 1s;| &         \lstinline|e! ~ 1s;| \\
-    \lstinline|emit e(a) ~ 1s;| &      \lstinline|e!(a) ~ 1s;| \\
-    \hline
-  \end{tabular}
-\end{center}
-
-The \lstinline|?| construct is changed for symmetry.
-
-\begin{center}
-  \begin{tabular}{|c|c|}
-    \hline
-    Deprecated & Updated \\
-    \hline
-   \lstinline|at (?e)|                  & \lstinline|at (e?)|\\
-   \lstinline|at (?e(var a))|           & \lstinline|at (e?(var a))|\\
-   \lstinline|at (?e(var a) if 0 <= a)| & \lstinline|at (e?(var a) if 0 <= a)|\\
-   \lstinline|at (?e(2))|               & \lstinline|at (e?(2))|\\
- \end{tabular}
-\end{center}
-
-This syntax for sending and receiving is traditional and can be found
-in various programming languages.
-
 \subsubsection{Changes}
 
 \begin{itemize}
+\item The keyword \lstinline|emit| is deprecated in favor of \lstinline|!|:
+  instead of \lstinline|emit e(a);|, write \lstinline|e!(a);|.  The
+  \lstinline|?| construct is changed for symmetry: instead of
+  \lstinline|at (?e(var a))|, write \lstinline|at (e?(var a))|.  See
+  \autoref{sec:k122:emit} for details.  This syntax for sending and
+  receiving is traditional and can be found in various programming
+  languages.
+
 \item \refObject{System.Platform} enhances former \slot[System]{platform}.
   Use \refSlot[System.Platform]{kind} instead of \slot[System]{platform}.
 \end{itemize}
