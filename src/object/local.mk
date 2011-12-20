@@ -32,26 +32,27 @@ precompiled_symbols_hh_sources =		\
 EXTRA_DIST += object/symbols-generate.pl
 
 $(precompiled_symbols_stamp): object/symbols-generate.pl $(precompiled_symbols_hh_sources)
-	@rm -f $@.tmp
-	@echo "rebuilding $(precompiled_symbols_hh) because of:"
-	@for i in $?;				\
-	do					\
-	  echo "       $$i";			\
-	done
-	@touch $@.tmp
+	$(AM_V_GEN)rm -f $@.tmp
+	$(AM_V_at)if test "$(V)" = 1; then				\
+	  echo "rebuilding $(precompiled_symbols_hh) because of:";	\
+	  for i in $?;							\
+	  do								\
+	    echo "       $$i";						\
+	  done								\
+	fi
+	$(AM_V_at)touch $@.tmp
 # Don't use `mv' here so that even if we are interrupted, the file
 # is still available for diff in the next run.
-	@if test -f $(precompiled_symbols_hh); then	\
-	  cat $(precompiled_symbols_hh);		\
+	$(AM_V_at)if test -f $(precompiled_symbols_hh); then	\
+	  cat $(precompiled_symbols_hh);			\
 	fi >$(precompiled_symbols_hh)~
-	@(cd $(srcdir) &&				\
+	$(AM_V_at)(cd $(srcdir) &&			\
 	 ./object/symbols-generate.pl			\
 		$(precompiled_symbols_hh_sources))	\
 		>$(precompiled_symbols_hh).tmp
-	@diff -u $(precompiled_symbols_hh)~ $(precompiled_symbols_hh).tmp || true
-	@$(move_if_change)						\
+	$(AM_V_at)$(move_if_change_run)			\
 	  $(precompiled_symbols_hh).tmp $(precompiled_symbols_hh)
-	@mv -f $@.tmp $@
+	$(AM_V_at)mv -f $@.tmp $@
 
 $(precompiled_symbols_hh): $(precompiled_symbols_stamp)
 	@if test ! -f $@; then					\

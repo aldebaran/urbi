@@ -59,9 +59,9 @@ EXTRA_DIST +=					\
 # the default rule for %.mk in make/init.mk
 EXTRA_DIST += bin/tex2chk
 $(srcdir)/tests/%-test.mk: %.tex $(srcdir)/bin/tex2chk
-	$(AM_V_GEN)							\
-	  srcdir=$(srcdir)						\
-	  move_if_change="$(move_if_change) $(if $(V:0=),-v,-s)"	\
+	$(AM_V_GEN)					\
+	  srcdir=$(srcdir)				\
+	  move_if_change="$(move_if_change_run)"	\
 	  $(srcdir)/bin/tex2chk $(if $(V:0=),-v,-q) $<
 
 

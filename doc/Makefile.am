@@ -209,7 +209,7 @@ $(FROM_GEN): %: %.gen
 	$(AM_V_GEN)mkdir -p $(@D)
 	$(AM_V_at)srcdir=$(srcdir) $< > $@.tmp
 	$(AM_V_at)chmod a-w $@.tmp
-	$(AM_V_at)$(move_if_change) --verbose --color $@.tmp $@
+	$(AM_V_at)$(move_if_change_run) $@.tmp $@
 	$(AM_V_at)touch $@
 
 
