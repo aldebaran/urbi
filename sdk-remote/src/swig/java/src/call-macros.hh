@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -23,12 +23,12 @@
             std::cerr << "Error pushing local frame" << std::endl;	\
             throw std::runtime_error("Error pushing local frame");	\
           }								\
-          					\
+					\
                                                                \
 	  ret env_->Call##Type##Method(obj, mid);						\
           testForException();						\
           ret_snd;							\
-                 				\
+				\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -47,7 +47,7 @@
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_);				\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -66,7 +66,7 @@
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_);				\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -85,7 +85,7 @@
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_);				\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -104,7 +104,7 @@
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_);				\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -123,7 +123,7 @@
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_);				\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -142,7 +142,7 @@
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_);				\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -161,7 +161,7 @@
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_); arg_convert[6]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_); arg_convert[6]->destroy(env_);				\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -180,7 +180,7 @@
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_); arg_convert[6]->destroy(env_); arg_convert[7]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_); arg_convert[6]->destroy(env_); arg_convert[7]->destroy(env_);				\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -199,7 +199,7 @@
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_); arg_convert[6]->destroy(env_); arg_convert[7]->destroy(env_); arg_convert[8]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_); arg_convert[6]->destroy(env_); arg_convert[7]->destroy(env_); arg_convert[8]->destroy(env_);				\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -218,7 +218,7 @@
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_); arg_convert[6]->destroy(env_); arg_convert[7]->destroy(env_); arg_convert[8]->destroy(env_); arg_convert[9]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_); arg_convert[6]->destroy(env_); arg_convert[7]->destroy(env_); arg_convert[8]->destroy(env_); arg_convert[9]->destroy(env_);				\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -237,7 +237,7 @@
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_); arg_convert[6]->destroy(env_); arg_convert[7]->destroy(env_); arg_convert[8]->destroy(env_); arg_convert[9]->destroy(env_); arg_convert[10]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_); arg_convert[6]->destroy(env_); arg_convert[7]->destroy(env_); arg_convert[8]->destroy(env_); arg_convert[9]->destroy(env_); arg_convert[10]->destroy(env_);				\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -256,7 +256,7 @@
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_); arg_convert[6]->destroy(env_); arg_convert[7]->destroy(env_); arg_convert[8]->destroy(env_); arg_convert[9]->destroy(env_); arg_convert[10]->destroy(env_); arg_convert[11]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_); arg_convert[6]->destroy(env_); arg_convert[7]->destroy(env_); arg_convert[8]->destroy(env_); arg_convert[9]->destroy(env_); arg_convert[10]->destroy(env_); arg_convert[11]->destroy(env_);				\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -275,7 +275,7 @@
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_); arg_convert[6]->destroy(env_); arg_convert[7]->destroy(env_); arg_convert[8]->destroy(env_); arg_convert[9]->destroy(env_); arg_convert[10]->destroy(env_); arg_convert[11]->destroy(env_); arg_convert[12]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_); arg_convert[6]->destroy(env_); arg_convert[7]->destroy(env_); arg_convert[8]->destroy(env_); arg_convert[9]->destroy(env_); arg_convert[10]->destroy(env_); arg_convert[11]->destroy(env_); arg_convert[12]->destroy(env_);				\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -294,7 +294,7 @@
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_); arg_convert[6]->destroy(env_); arg_convert[7]->destroy(env_); arg_convert[8]->destroy(env_); arg_convert[9]->destroy(env_); arg_convert[10]->destroy(env_); arg_convert[11]->destroy(env_); arg_convert[12]->destroy(env_); arg_convert[13]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_); arg_convert[6]->destroy(env_); arg_convert[7]->destroy(env_); arg_convert[8]->destroy(env_); arg_convert[9]->destroy(env_); arg_convert[10]->destroy(env_); arg_convert[11]->destroy(env_); arg_convert[12]->destroy(env_); arg_convert[13]->destroy(env_);				\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -313,7 +313,7 @@
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_); arg_convert[6]->destroy(env_); arg_convert[7]->destroy(env_); arg_convert[8]->destroy(env_); arg_convert[9]->destroy(env_); arg_convert[10]->destroy(env_); arg_convert[11]->destroy(env_); arg_convert[12]->destroy(env_); arg_convert[13]->destroy(env_); arg_convert[14]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_); arg_convert[6]->destroy(env_); arg_convert[7]->destroy(env_); arg_convert[8]->destroy(env_); arg_convert[9]->destroy(env_); arg_convert[10]->destroy(env_); arg_convert[11]->destroy(env_); arg_convert[12]->destroy(env_); arg_convert[13]->destroy(env_); arg_convert[14]->destroy(env_);				\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
@@ -332,7 +332,7 @@
 	  ret env_->Call##Type##MethodA(obj, mid, argument);						\
           testForException();						\
           ret_snd;							\
-          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_); arg_convert[6]->destroy(env_); arg_convert[7]->destroy(env_); arg_convert[8]->destroy(env_); arg_convert[9]->destroy(env_); arg_convert[10]->destroy(env_); arg_convert[11]->destroy(env_); arg_convert[12]->destroy(env_); arg_convert[13]->destroy(env_); arg_convert[14]->destroy(env_); arg_convert[15]->destroy(env_);       				\
+          arg_convert[0]->destroy(env_); arg_convert[1]->destroy(env_); arg_convert[2]->destroy(env_); arg_convert[3]->destroy(env_); arg_convert[4]->destroy(env_); arg_convert[5]->destroy(env_); arg_convert[6]->destroy(env_); arg_convert[7]->destroy(env_); arg_convert[8]->destroy(env_); arg_convert[9]->destroy(env_); arg_convert[10]->destroy(env_); arg_convert[11]->destroy(env_); arg_convert[12]->destroy(env_); arg_convert[13]->destroy(env_); arg_convert[14]->destroy(env_); arg_convert[15]->destroy(env_);				\
           env_->PopLocalFrame(NULL);                                    \
           ret_ter;							\
 	}
