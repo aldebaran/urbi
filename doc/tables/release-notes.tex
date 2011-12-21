@@ -416,6 +416,7 @@ This release fixes some packaging-related minor issues.
 
 \subsection{Changes}
 \begin{itemize}
+\item Compatibility with Clang++ 2.1.
 \item Compatibility with Boost 1.48.  Beware that because of bugs in
   \Href{http://www.boost.org/doc/libs/release/libs/foreach/}{Boost.Foreach}
   (see \Href{https://svn.boost.org/trac/boost/ticket/6131}{Ticket 6131}),
@@ -1276,7 +1277,7 @@ assert (one == two);
 \item \refObject{Directory} events were not launched if a
   \refObject{Directory} had already been created on the same
   \refObject{Path}.
-\item \lstinline"waituntil" no longer ignores pattern guards.
+\item \lstinline{waituntil} no longer ignores pattern guards.
 \end{itemize}
 
 \subsection{Documentation}
@@ -1614,7 +1615,7 @@ function binList(a, b) { [a, b] } | binList(1, 2)
 \subsubsection{Changes}
 \begin{itemize}
 \item empty strings, dictionaries and lists are now evaluated as
-  "false" in conditions.
+  \lstinline{false} in conditions.
 \item \refSlot[Dictionary]{asString} does not sort the keys.
 \item \refSlot[Dictionary]{'[]='} returns the assigned value, not the
   dictionary.
@@ -1657,8 +1658,8 @@ detach({ every (1s) echo("foo"); });
 
 \item Bound functions using UBindFunction can now take arguments of type
   \lstinline|UVar&| and \lstinline|UObject*|. The recommended method to pass
-  UVars from urbiscript is now to use \samp{camera.getSlot("val")} instead
-  of \samp{"camera.val"}.
+  UVars from urbiscript is now to use \lstinline{camera.getSlot("val")}
+  instead of \lstinline{camera.val}.
 
 \item Add a 0-copy mode for UVars: If \samp{UVar::enableBypass(true)} is
   called on an UVar, notifyChange on this UVar can recover the not-copied
@@ -1775,52 +1776,25 @@ also improved.  Changes include, but are not limited to:
 
 
 \subsection{\us}
-
-\subsubsection{Syntax of events}
-
-The keyword \lstinline|emit| is deprecated in favor of \lstinline|!|.
-
-\begin{center}
-  \begin{tabular}{|c|c|}
-    \hline
-    Deprecated & Updated \\
-    \hline
-    \lstinline|emit e;| &              \lstinline|e!;| \\
-    \lstinline|emit e(a);| &           \lstinline|e!(a);| \\
-    \lstinline|emit e ~ 1s;| &         \lstinline|e! ~ 1s;| \\
-    \lstinline|emit e(a) ~ 1s;| &      \lstinline|e!(a) ~ 1s;| \\
-    \hline
-  \end{tabular}
-\end{center}
-
-The \lstinline|?| construct is changed for symmetry.
-
-\begin{center}
-  \begin{tabular}{|c|c|}
-    \hline
-    Deprecated & Updated \\
-    \hline
-   \lstinline|at (?e)|                  & \lstinline|at (e?)|\\
-   \lstinline|at (?e(var a))|           & \lstinline|at (e?(var a))|\\
-   \lstinline|at (?e(var a) if 0 <= a)| & \lstinline|at (e?(var a) if 0 <= a)|\\
-   \lstinline|at (?e(2))|               & \lstinline|at (e?(2))|\\
- \end{tabular}
-\end{center}
-
-This syntax for sending and receiving is traditional and can be found
-in various programming languages.
-
 \subsubsection{Changes}
 
 \begin{itemize}
+\item The keyword \lstinline|emit| is deprecated in favor of \lstinline|!|:
+  instead of \lstinline|emit e(a);|, write \lstinline|e!(a);|.  The
+  \lstinline|?| construct is changed for symmetry: instead of
+  \lstinline|at (?e(var a))|, write \lstinline|at (e?(var a))|.  See
+  \autoref{sec:k1:emit} for details.  This syntax for sending and
+  receiving is traditional and can be found in various programming
+  languages.
+
 \item \refObject{System.Platform} enhances former \slot[System]{platform}.
   Use \refSlot[System.Platform]{kind} instead of \slot[System]{platform}.
 \end{itemize}
 
 \subsubsection{Fixes}
 \begin{itemize}
-\item Under some circumstances successful runs could report "at job
-  handler exited with exception TerminateException".  This is fixed.
+\item Under some circumstances successful runs could report ``at job
+  handler exited with exception TerminateException''.  This is fixed.
 
 \item Using waituntil on an event with no payload (i.e.,
   \lstinline|waituntil(e?) ...;)| will not cause an internal error

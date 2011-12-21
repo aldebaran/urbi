@@ -44,7 +44,10 @@ public:
   /// We cast it to 'long'.
   //          (Name,        Type,    JavaType,          error_val,           ret,                    ret_snd,                                                                               ret_ter)
   CALL_METHODS(UBinary,     Object,  urbi::UBinary,     urbi::UBinary(),     jobject res = ,         jobject ret_no_pop = res; const urbi::UBinary& r = getUBinaryFromObject(res);,         return r);
-  CALL_METHODS(UDictionary, Object,  urbi::UDictionary, urbi::UDictionary(), jobject res = ,         jobject ret_no_pop = res; const urbi::UDictionary& r = getUDictionaryFromObject(res);, return r);
+  // FIXME: making r a const-ref should be enough, but it seems to
+  // trigger a bug between Apple G++ 4.2 and Boost 1.48.
+  // (https://svn.boost.org/trac/boost/ticket/6311).
+  CALL_METHODS(UDictionary, Object,  urbi::UDictionary, urbi::UDictionary(), jobject res = ,         jobject ret_no_pop = res; urbi::UDictionary r = getUDictionaryFromObject(res);,        return r);
   CALL_METHODS(UImage,      Object,  urbi::UImage,      urbi::UImage(),      jobject res = ,         jobject ret_no_pop = res; const urbi::UImage& r = getUImageFromObject(res);,           return r);
   CALL_METHODS(UList,       Object,  urbi::UList,       urbi::UList(),       jobject res = ,         jobject ret_no_pop = res; const urbi::UList& r = getUListFromObject(res);,             return r);
   CALL_METHODS(UMatrix,     Object,  urbi::UMatrix,     urbi::UMatrix(),     jobject res = ,         jobject ret_no_pop = res; const urbi::UMatrix& r = getUMatrixFromObject(res);,         return r);

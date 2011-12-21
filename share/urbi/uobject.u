@@ -1234,8 +1234,15 @@ function List.uvalueSerialize()
 function Dictionary.uvalueSerialize()
 {
   var res = Dictionary.new |
-  for|(var e: this)
-    res[e.first] = e.second.uvalueSerialize()|
+  for| (var e: this)
+  {
+    var k = e.first |
+    if (!k.isA(String))
+      throw Exception.new("Dictionaries exchanged with UObjects can"
+                          " only have String keys: %s (%s)"
+                          % [k, k.type]) |
+    res[k] = e.second.uvalueSerialize()|
+  }|
   res
 };
 

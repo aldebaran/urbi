@@ -258,6 +258,7 @@ namespace urbi
       {
         e.raise(filename);
       }
+      unreachable(); // Help clang++ 2.1.
     }
 
     static rObject

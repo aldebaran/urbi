@@ -465,12 +465,10 @@ namespace urbi
 
   %extend UList {
 
-    std::string toString()
-      {
-	std::ostringstream os;
-	os << *self;
-	return os.str();
-      }
+    std::string toString ()
+    {
+      return string_cast(*self);
+    }
 
   }
 }
@@ -695,9 +693,7 @@ namespace urbi
 
     std::string toString()
     {
-      std::ostringstream os;
-      self->print(os);
-      return os.str();
+      return string_cast(*self);
     }
   }
 

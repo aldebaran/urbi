@@ -8,8 +8,8 @@
  * See the LICENSE file for more information.
  */
 
-// Java code to be inserted in UDictionary generated class. This code
-// render UDictionary iterable. The code is inspired from
+// Java code to be inserted in UDictionary generated class. It makes
+// UDictionary iterable.  Inspired by
 // http://chadretz.wordpress.com/2009/11/27/stl-collections-with-java-and-swig/
 
 %typemap(javaimports) boost::unordered_map<std::string, urbi::UValue> %{
@@ -127,7 +127,8 @@ import java.util.Set;
     @Override
     public boolean retainAll(Collection<?> collection) {
       //best way?
-      List<Entry<String, UValue>> toRemove = new ArrayList<Entry<String, UValue>>(this.size());
+      List<Entry<String, UValue>> toRemove =
+          new ArrayList<Entry<String, UValue>>(this.size());
       for (Entry<String, UValue> item : this) {
 	if (!collection.contains(item)) {
 	  toRemove.add(item);
@@ -142,7 +143,8 @@ import java.util.Set;
     }
   }
 
-  protected class UDictionarySetIterator implements Iterator<Entry<String, UValue>> {
+  protected class UDictionarySetIterator
+      implements Iterator<Entry<String, UValue>> {
 
     private UDictionary dict;
     private UDictionaryCPPIterator iterator;
@@ -158,7 +160,8 @@ import java.util.Set;
 
     @SuppressWarnings("unchecked")
     public UDictionaryEntry next() {
-      UDictionaryEntry res = new UDictionaryEntry(dict, iterator.getKey(), iterator.getValue());
+      UDictionaryEntry res =
+          new UDictionaryEntry(dict, iterator.getKey(), iterator.getValue());
       iterator.next();
       return res;
     }
