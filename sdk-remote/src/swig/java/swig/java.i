@@ -577,6 +577,11 @@ namespace boost
     {
       return (int) ((*self)[key] = v);
     }
+
+    std::string toString ()
+    {
+      return string_cast(*self);
+    }
   }
 }
 
