@@ -846,10 +846,11 @@ namespace runner
       while (true)
       {
         if (must_yield)
+        {
           if (!first)
             yield();
-          else
-            first = false;
+          first = false;
+        }
         if (!operator()(e->test_get().get())->as_bool())
           break;
         if (e->flavor_get() == ast::flavor_comma)
