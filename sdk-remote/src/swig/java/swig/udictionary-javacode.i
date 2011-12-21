@@ -127,7 +127,8 @@ import java.util.Set;
     @Override
     public boolean retainAll(Collection<?> collection) {
       //best way?
-      List<Entry<String, UValue>> toRemove = new ArrayList<Entry<String, UValue>>(this.size());
+      List<Entry<String, UValue>> toRemove =
+          new ArrayList<Entry<String, UValue>>(this.size());
       for (Entry<String, UValue> item : this) {
 	if (!collection.contains(item)) {
 	  toRemove.add(item);
@@ -142,7 +143,8 @@ import java.util.Set;
     }
   }
 
-  protected class UDictionarySetIterator implements Iterator<Entry<String, UValue>> {
+  protected class UDictionarySetIterator
+      implements Iterator<Entry<String, UValue>> {
 
     private UDictionary dict;
     private UDictionaryCPPIterator iterator;
@@ -158,7 +160,8 @@ import java.util.Set;
 
     @SuppressWarnings("unchecked")
     public UDictionaryEntry next() {
-      UDictionaryEntry res = new UDictionaryEntry(dict, iterator.getKey(), iterator.getValue());
+      UDictionaryEntry res =
+          new UDictionaryEntry(dict, iterator.getKey(), iterator.getValue());
       iterator.next();
       return res;
     }

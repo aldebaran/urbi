@@ -575,7 +575,7 @@ public class All extends UObject
     /** Test function parameter and return value **/
     public double transmitD(double v)
     {
-	return -(double)v;
+	return -v;
     }
 
     public UList transmitL(UList l)
