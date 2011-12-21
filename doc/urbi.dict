@@ -269,6 +269,7 @@ cygcheck
 cygdrive
 Cygwin
 Damerau
+darwin
 dataSource
 DBA
 DBD
@@ -707,6 +708,7 @@ LinearMotor
 LinearSpeedMotor
 linphone
 linux
+llvm
 ln
 loadFile
 loadLibrary
