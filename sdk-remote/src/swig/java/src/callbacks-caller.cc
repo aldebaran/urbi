@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -210,7 +210,7 @@ CallbacksCaller::getUObjectFromObject(jobject obj, JNIEnv* env)
   if (obj)
   {
     jlong ptr = env->GetLongField(obj, uobject_swigptr_id);
-    if (ptr)  /// Java alocated memory, prefer allocate mine
+    if (ptr)  /// Java allocated memory, prefer allocate mine
       return (urbi::UObject*) ptr;
     else
       return 0;
@@ -225,7 +225,7 @@ CallbacksCaller::getUVarFromObject(jobject obj)
   if (obj)
   {
     jlong ptr = env_->GetLongField(obj, uobject_swigptr_id);
-    if (ptr)  /// Java alocated memory, prefer allocate mine
+    if (ptr)  /// Java allocated memory, prefer allocate mine
       return (urbi::UVar*) ptr;
     else
       return 0;
@@ -240,7 +240,7 @@ CallbacksCaller::getUValueFromObject(jobject obj)
   if (obj)
   {
     jlong ptr = env_->GetLongField(obj, uvalue_swigptr_id);
-    if (ptr)  /// Java alocated memory, prefer allocate mine
+    if (ptr)  /// Java allocated memory, prefer allocate mine
       return *(urbi::UValue*) ptr;
     else
       return urbi::UValue();
@@ -255,7 +255,7 @@ CallbacksCaller::getUDictionaryFromObject(jobject obj)
   if (obj)
   {
     jlong ptr = env_->GetLongField(obj, udictionary_swigptr_id);
-    if (ptr)  /// Java alocated memory, prefer allocate mine
+    if (ptr)  /// Java allocated memory, prefer allocate mine
       return *(urbi::UDictionary*) ptr;
     else
       return urbi::UDictionary();
@@ -270,7 +270,7 @@ CallbacksCaller::getUBinaryFromObject(jobject obj)
   if (obj)
   {
     jlong ptr = env_->GetLongField(obj, ubinary_swigptr_id);
-    if (ptr)  /// Java alocated memory, prefer allocate mine
+    if (ptr)  /// Java allocated memory, prefer allocate mine
       return *(urbi::UBinary*) ptr;
     else
       return urbi::UBinary();
@@ -285,7 +285,7 @@ CallbacksCaller::getUImageFromObject(jobject obj)
   if (obj)
   {
     jlong ptr = env_->GetLongField(obj, uimage_swigptr_id);
-    if (ptr)  /// Java alocated memory, prefer allocate mine
+    if (ptr)  /// Java allocated memory, prefer allocate mine
       return *(urbi::UImage*) ptr;
     else
       return urbi::UImage();
@@ -300,7 +300,7 @@ CallbacksCaller::getUSoundFromObject(jobject obj)
   if (obj)
   {
     jlong ptr = env_->GetLongField(obj, usound_swigptr_id);
-    if (ptr)  /// Java alocated memory, prefer allocate mine
+    if (ptr)  /// Java allocated memory, prefer allocate mine
       return *(urbi::USound*) ptr;
     else
       return urbi::USound();
@@ -315,7 +315,7 @@ CallbacksCaller::getUListFromObject(jobject obj)
   if (obj)
   {
     jlong ptr = env_->GetLongField(obj, ulist_swigptr_id);
-    if (ptr)  /// Java alocated memory, prefer allocate mine
+    if (ptr)  /// Java allocated memory, prefer allocate mine
       return *(urbi::UList*) ptr;
     else
       return urbi::UList();

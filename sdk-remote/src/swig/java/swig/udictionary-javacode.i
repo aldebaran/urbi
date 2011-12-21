@@ -8,8 +8,8 @@
  * See the LICENSE file for more information.
  */
 
-// Java code to be inserted in UDictionary generated class. This code
-// render UDictionary iterable. The code is inspired from
+// Java code to be inserted in UDictionary generated class. It makes
+// UDictionary iterable.  Inspired by
 // http://chadretz.wordpress.com/2009/11/27/stl-collections-with-java-and-swig/
 
 %typemap(javaimports) boost::unordered_map<std::string, urbi::UValue> %{

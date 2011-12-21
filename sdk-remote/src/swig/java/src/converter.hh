@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -96,7 +96,7 @@ protected:
 };
 
 // Convert simple types that only need casting
-# define CAST_CONVERTER(name, type, precast)   			\
+# define CAST_CONVERTER(name, type, precast)			\
   class name##Converter : public Converter			\
   {								\
   protected:							\
@@ -275,7 +275,7 @@ protected:
   DECLARE_STATIC_ATTR_(UList);			\
   DECLARE_STATIC_ATTR_(USound);			\
   DECLARE_STATIC_ATTR_(UValue);			\
-  DECLARE_STATIC_ATTR_(UVarBase);      		\
+  DECLARE_STATIC_ATTR_(UVarBase);		\
   DECLARE_STATIC_ATTR_(Boolean);		\
   DECLARE_STATIC_ATTR_(Byte);			\
   DECLARE_STATIC_ATTR_(Character);		\
@@ -292,7 +292,7 @@ protected:
   STATIC_ATTR_INIT_(UList, env);		\
   STATIC_ATTR_INIT_(USound, env);		\
   STATIC_ATTR_INIT_(UValue, env);		\
-  STATIC_ATTR_INIT_(UVarBase, env);    		\
+  STATIC_ATTR_INIT_(UVarBase, env);		\
   STATIC_ATTR_INIT_(Boolean, env);		\
   STATIC_ATTR_INIT_(Byte, env);			\
   STATIC_ATTR_INIT_(Character, env);		\
