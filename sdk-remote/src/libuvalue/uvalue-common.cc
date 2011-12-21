@@ -125,25 +125,26 @@ namespace urbi
   }
 
 // Works on message[pos].
-#define EXPECT(Char)                                    \
-  do {                                                  \
-    if (message[pos] != Char)                           \
-    {                                                   \
-      GD_FERROR("unexpected `%s', expected `%s'",       \
-                message[pos], Char);                    \
-      return -pos;                                      \
-    }                                                   \
-  } while(0)
+#define EXPECT(Char)                                            \
+  do {                                                          \
+    if (message[pos] != Char)                                   \
+    {                                                           \
+      GD_FERROR("parse error: unexpected `%s', expected `%s'"   \
+                " in `%s' at %s",                               \
+                message[pos], Char, message, pos);              \
+      return -pos;                                              \
+    }                                                           \
+  } while (false)
 
 // Works on message[p] (not pos).
 #define CHECK_NEOF()                                            \
   do {                                                          \
     if (!message[p])                                            \
     {                                                           \
-      GD_ERROR("unexpected end of file");                       \
+      GD_ERROR("parse error: unexpected end of file");          \
       return -p;                                                \
     }                                                           \
-  } while (0)
+  } while (false)
 
   int
   UValue::parse(const char* message, int pos,
@@ -170,13 +171,13 @@ namespace urbi
     {
       // List or Dictionary message.
       ++pos;
-      bool hasElt = 0;
+      bool hasElt = false;
       while (message[pos])
       {
 	SKIP_SPACES();
+        // Detect empty dictionaries.
         if (!hasElt && !::strncmp(message + pos, "=>", 2))
         {
-          // Detect empty dictionaries.
           type = DATA_DICTIONARY;
           dictionary = new UDictionary();
           pos += 2;
@@ -299,7 +300,7 @@ namespace urbi
     }
 
     // Anything else is an error, but be resilient and ignore it.
-    GD_FWARN("syntax error (ignored): \"%s\"", libport::escape(message + pos));
+    GD_FWARN("parse error (ignored): \"%s\"", libport::escape(message + pos));
     return -pos;
   }
 
