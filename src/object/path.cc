@@ -174,6 +174,7 @@ namespace urbi
       if (errno == ENOENT)
         return false;
       handle_any_error();
+      unreachable(); // Help clang++ 2.1.
     }
 
     bool
@@ -184,6 +185,7 @@ namespace urbi
       if (errno == EACCES)
         return false;
       handle_any_error();
+      unreachable(); // Help clang++ 2.1.
     }
 
     bool
@@ -194,6 +196,7 @@ namespace urbi
       if (errno == EACCES || errno == EROFS)
         return false;
       handle_any_error();
+      unreachable(); // Help clang++ 2.1.
     }
 
     // Operations.

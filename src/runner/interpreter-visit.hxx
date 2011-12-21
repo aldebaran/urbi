@@ -514,7 +514,7 @@ namespace runner
     // contain only comma-terminated statements.
     rObject res = object::void_class;
 
-    bool tail = false;
+    bool first = true;
     try
     {
       foreach (const ast::rConstExp& c, e->children_get())
@@ -524,8 +524,9 @@ namespace runner
         // |-operator because it would always start to execute its RHS
         // immediately. However, we don't want to do it before the first
         // statement or if we only have one statement in the scope.
-        if (tail++)
+        if (!first)
           yield();
+        first = false;
 
         const ast::Stmt* stmt = dynamic_cast<const ast::Stmt*>(c.get());
         const ast::Exp* exp = stmt ? stmt->expression_get().get() : c.get();
@@ -836,7 +837,7 @@ namespace runner
   Interpreter::visit(const ast::While* e)
   {
     const bool must_yield = e->flavor_get() != ast::flavor_pipe;
-    bool tail = false;
+    bool first = true;
 
     Job::Collector collector(this);
 
@@ -844,8 +845,11 @@ namespace runner
     {
       while (true)
       {
-        if (must_yield && tail++)
-          yield();
+        if (must_yield)
+          if (!first)
+            yield();
+          else
+            first = false;
         if (!operator()(e->test_get().get())->as_bool())
           break;
         if (e->flavor_get() == ast::flavor_comma)
