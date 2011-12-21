@@ -47,7 +47,10 @@ public:
   CALL_METHODS(UList, Object, urbi::UList, urbi::UList(), jobject res = , jobject ret_no_pop = res; const urbi::UList& r = getUListFromObject(res);, return r);
   CALL_METHODS(USound, Object, urbi::USound, urbi::USound(), jobject res = , jobject ret_no_pop = res; const urbi::USound& r = getUSoundFromObject(res);, return r);
   CALL_METHODS(UImage, Object, urbi::UImage, urbi::UImage(), jobject res = , jobject ret_no_pop = res; const urbi::UImage& r = getUImageFromObject(res);, return r);
-  CALL_METHODS(UDictionary, Object, urbi::UDictionary, urbi::UDictionary(), jobject res = , jobject ret_no_pop = res; const urbi::UDictionary& r = getUDictionaryFromObject(res);, return r);
+  // FIXME: making r a const-ref should be enough, but it seems to
+  // trigger a bug between Apple G++ 4.2 and Boost 1.48.
+  // (https://svn.boost.org/trac/boost/ticket/6311).
+  CALL_METHODS(UDictionary, Object, urbi::UDictionary, urbi::UDictionary(), jobject res = , jobject ret_no_pop = res; urbi::UDictionary r = getUDictionaryFromObject(res); , return r);
   CALL_METHODS(String, Object, std::string, std::string(), jstring res =(jstring), jobject ret_no_pop = res; const std::string& r = getStringFromJString(res);, return r);
   CALL_METHODS(Void, Void, void, , , jobject ret_no_pop = NULL;,);
   CALL_METHODS(Boolean, Boolean, jboolean, 0, jboolean res = , jobject ret_no_pop = NULL;, return res;);
