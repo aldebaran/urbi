@@ -28,7 +28,7 @@ def diff(old, new):
                or os.getenv('TERM') != 'dumb')\
           and os.getenv('BUILDFARM_PROJECT') is None \
           and os.getenv('INSIDE_EMACS') is None)
-  cmd = "diff -uw " + new + " " + old
+  cmd = "diff -uw " + old + " " + new
   if color:
     cmd = 'color' + cmd
   os.system(cmd)
@@ -39,21 +39,19 @@ def lazy_overwrite (old, new):
   of generated files."""
   verbose = os.getenv(key='BUILDFARM') is None
   if not os.path.isfile (old):
-    if verbose:
-      print "> Create: " + old
     shutil.move (new, old)
     if verbose:
-      os.system("colordiff -uw /dev/null " + old)
+      print "> Create: " + old
+      diff("/dev/null", old)
   elif not filecmp.cmp (old, new):
-    if verbose:
-      print "> Overwrite: " + old
     # Change the file modes to write the file
     file_modes = os.stat (old) [stat.ST_MODE]
     os.chmod (old, file_modes | 0666);
     shutil.move (old, old + "~")
     shutil.move (new, old)
     if verbose:
-      os.system("colordiff -uw " + old + "~ " + old)
+      print "> Overwrite: " + old
+      diff(old + "~ ", old)
   else:
     os.remove (new)
   # Prevent generated file modifications
