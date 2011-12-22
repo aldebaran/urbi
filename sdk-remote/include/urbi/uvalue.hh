@@ -147,6 +147,7 @@ namespace urbi
 
   typedef boost::unordered_map<std::string, UValue> UDictionary;
 
+  URBI_SDK_API
   std::ostream& operator<<(std::ostream& s, const UDictionary& d);
 
 
