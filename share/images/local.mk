@@ -7,7 +7,7 @@
 ## See the LICENSE file for more information.
 
 imagesdir = $(brandsharedir)/images
-images_DATA = share/images/README.txt
+dist_images_DATA = share/images/README.txt
 
 jpegdir = $(imagesdir)/gostai-logo/jpeg
 dist_jpeg_DATA := $(call ls_files, share/images/gostai-logo/jpeg/*)
@@ -17,4 +17,3 @@ dist_sources_DATA := $(call ls_files, share/images/gostai-logo/sources/*)
 
 converteddir = $(imagesdir)/gostai-logo/converted
 dist_converted_DATA := $(call ls_files, share/images/gostai-logo/converted/*)
-
