@@ -419,12 +419,19 @@ namespace urbi
  *  serialized efficiently in a Binary, whereas std::vector is converted in
  *  an urbiscript list.
  */
-template<typename T> class UPackedData: public std::vector<T>
+template<typename T>
+class UPackedData: public std::vector<T>
 {
 public:
-  UPackedData() {};
-  UPackedData(const std::vector<T>& src): std::vector<T>(src) {};
-  template<typename I> UPackedData(I begin, I end):std::vector<T>(begin, end){};
+  UPackedData()
+    {};
+  UPackedData(const std::vector<T>& src)
+    : std::vector<T>(src)
+    {};
+  template<typename I>
+  UPackedData(I begin, I end)
+    : std::vector<T>(begin, end)
+  {};
 };
 
 # include <urbi/uvalue.hxx>
