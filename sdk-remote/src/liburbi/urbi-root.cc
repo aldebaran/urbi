@@ -430,7 +430,7 @@ UrbiRoot::core_path() const
 std::string
 UrbiRoot::doc_dir() const
 {
-  return urbi_getenv(program_, "DOC", share_dir() / "doc");
+  return urbi_getenv(program_, "DOC", root() / "share" / "doc" / "urbi-sdk");
 }
 
 std::string

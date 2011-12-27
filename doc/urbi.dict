@@ -305,6 +305,7 @@ cygdrive
 Cygwin
 Damerau
 dataflows
+darwin
 dataSource
 DBA
 DBD
@@ -780,6 +781,7 @@ linphone
 linux
 listList
 listVector
+llvm
 ln
 loadFile
 loadLibrary

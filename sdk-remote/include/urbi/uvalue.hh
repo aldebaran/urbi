@@ -85,6 +85,7 @@ namespace urbi
 
   typedef boost::unordered_map<std::string, UValue> UDictionary;
 
+  URBI_SDK_API
   std::ostream& operator<<(std::ostream& s, const UDictionary& d);
 
 
@@ -355,7 +356,8 @@ namespace urbi
  *  serialized efficiently in a Binary, whereas std::vector is converted in
  *  an urbiscript list.
  */
-template<typename T> class UPackedData: public std::vector<T>
+template<typename T>
+class UPackedData: public std::vector<T>
 {
 public:
   UPackedData()
