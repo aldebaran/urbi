@@ -124,6 +124,12 @@ do (Global)
       testSkip("cannot run in space compilation-mode");
   }|;
 
+  function skipIfUrbi2 ()
+  {
+    if (PackageInfo.components["Urbi SDK"].versionValue <= 2008000)
+      testSkip("requires Urbi 3");
+  }|;
+
   function skipIfWindows ()
   {
     if (System.Platform.isWindows)
