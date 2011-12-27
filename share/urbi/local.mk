@@ -14,10 +14,15 @@ nodist_urbi_DATA =				\
   share/urbi/platform$(LIBSFX).u
 BUILT_SOURCES += $(nodist_urbi_DATA)
 
+# For some reasons, Automake does not issue a build rule for this one.
+share/urbi/platform$(LIBSFX).u: $(top_builddir)/config.status $(top_srcdir)/share/urbi/package-info.u.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+
 
 ## -------------- ##
 ## PackageInfos.  ##
 ## -------------- ##
+
 
 urbi_package_infodir = $(urbidir)/package-info
 nodist_urbi_package_info_DATA =			\
