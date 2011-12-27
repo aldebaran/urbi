@@ -137,7 +137,7 @@ do (Global)
 
   function skipIfHostName (var host)
   {
-    var hostname = { if (System.env["HOSTNAME"].isNil) "" else System.env["HOSTNAME"] }|
+    var hostname = env["BUILDFARM_HOSTNAME"] || "" |
     clog << "Hostname: %s" % hostname |
     if (hostname == host)
       testSkip("cannot run on this host (%s)" % host);
