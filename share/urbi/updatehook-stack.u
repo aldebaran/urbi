@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -47,16 +47,16 @@ do (&UpdateHookStack)
 function Global.installUpdateHookStack(o, slot)
 {
   if (o === Object)
-    throw Exception.new("Cannot install updateHookStack on Object!");
-  var old;
+    throw Exception.new("Cannot install updateHookStack on Object!")|
+  var old|
   if (o.hasProperty(slot, "updateHook"))
   {
-    old = o.getProperty(slot, "updateHook");
+    old = o.getProperty(slot, "updateHook")|
     if (old.isA(&UpdateHookStack))
       return;
-  };
+  }|
 
-  o.setProperty(slot, "updateHook", &UpdateHookStack.new);
+  o.setProperty(slot, "updateHook", &UpdateHookStack.new)|
 
   function setProperty(name, prop, v)
   {
@@ -65,13 +65,13 @@ function Global.installUpdateHookStack(o, slot)
         && getProperty(name, prop).isA(&UpdateHookStack))
       getProperty(name, prop).addHook(v)
     else
-      Object.&setProperty.apply([this, name, prop, v]);
-  };
+      Object.&setProperty.apply([this, name, prop, v])
+  }|
 
-  o.setProperty = setProperty;
+  o.setProperty = setProperty|
 
   if (!old.isVoid)
-    o.setProperty(slot, "updateHook", old);
+    o.setProperty(slot, "updateHook", old)|
 
   void;
 }

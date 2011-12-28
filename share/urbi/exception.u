@@ -385,7 +385,7 @@ class Exception.Lookup: Exception
 
   function message()
   {
-    var res = "lookup failed: %s" % msg;
+    var res = "lookup failed: %s" % msg |
     if (suggested)
       res += " (possible misspelling of %s)" % suggested |
     res
@@ -411,7 +411,7 @@ class Exception.PropertyLookup: Exception
 
   function message()
   {
-    "property lookup failed: %s->%s" % [slotName, prop];
+    "property lookup failed: %s->%s" % [slotName, prop]
   };
 };
 

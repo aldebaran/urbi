@@ -82,7 +82,7 @@ do (List)
   function foldl(action, value)
   {
     var res = value|
-    for (var i : size)
+    for| (var i : size)
       res = action(res, this[i])|
     res
   };

@@ -27,8 +27,8 @@ do (Global.Dictionary)
   {
     function init(name)
     {
-      var this.key = name;
-      Exception.&init.apply([this, "missing key: %s" % name]);
+      var this.key = name |
+      Exception.&init.apply([this, "missing key: %s" % name])
     }
   };
 
