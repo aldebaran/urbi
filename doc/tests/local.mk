@@ -62,7 +62,7 @@ $(srcdir)/tests/%-test.mk: %.tex $(srcdir)/bin/tex2chk
 	$(AM_V_GEN)					\
 	  srcdir=$(srcdir)				\
 	  move_if_change="$(move_if_change_run)"	\
-	  $(srcdir)/bin/tex2chk $(if $(V:0=),-v,-q) $<
+	  $(srcdir)/bin/tex2chk $(if $(V:0=),-vv,-q) $<
 
 
 include $(top_srcdir)/build-aux/make/check.mk
@@ -84,7 +84,6 @@ $(TEST_LOGS): $(top_builddir)/all.stamp
 
 
 TESTS_ENVIRONMENT +=						\
-  URBI_PATH=$$URBI_PATH						\
   srcdir=$(srcdir)						\
   PATH=$(abs_top_builddir)/sdk-remote/src/tests/bin:$$PATH
 
@@ -136,3 +135,6 @@ CHECK_BUILDFARM_FLAGS = AM_COLOR_TESTS=no VERBOSE=1 # INSTRUMENTATION=1
 	$(MAKE) $(AM_MAKEFLAGS) $*heck-html $(CHECK_BUILDFARM_FLAGS)
 
 check-TESTS: clean-semaphores
+
+
+include $(top_srcdir)/tests-local.mk
