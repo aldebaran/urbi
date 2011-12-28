@@ -115,6 +115,7 @@ it in C<%chk> and C<%by_name>.
 sub register ($$\%)
 {
   my ($file, $line, $lst) = @_;
+  verbose 3, "$file:$line: register {{ $lst->{_contents} }}";
   # If this listing has a name which is already used, append to
   # this existing listing.
   my $name = $$lst{name};
@@ -140,6 +141,7 @@ sub register ($$\%)
       && (!exists $lst->{firstnumber}
           || $lst->{firstnumber} ne "1"))
   {
+    verbose 3, "$file:$line: appended test case";
     # Extension of the previous listing.
     $previous_test->{_contents} .= "\n";
 
@@ -156,6 +158,7 @@ sub register ($$\%)
   }
   else
   {
+    verbose 3, "$file:$line: new test case";
     my $name = sprintf "%02d", $count++;
     $lst->{name} = $name;
     $chk{$name} = $lst;
@@ -176,6 +179,7 @@ sub process_listing ($$$)
   my ($file, $line, $lst) = @_;
 
   my $loc = sprintf "%s:%04d", $file, $line;
+  verbose 3, "$file:$line: processing";
   my %res;
   $res{'_file'} = $file;
   $res{'_line'} = $line;
@@ -239,6 +243,7 @@ sub process_file ($)
   my $base = $file;
   $base =~ s,^$ENV{srcdir},doc,
     if defined $ENV{srcdir};
+  verbose 3, "BASE=$base from FILE=$file";
 
   local $_;
   my $test;
