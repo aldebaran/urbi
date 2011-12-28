@@ -33,6 +33,7 @@ k2-check:
 
 # Uobject tests that we fail because features are not implemented
 XFAIL_TESTS +=					\
+  2.x/at/tags.chk				\
   2.x/derive.chk				\
   2.x/uob/group.chk
 
