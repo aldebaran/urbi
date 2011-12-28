@@ -254,7 +254,7 @@ sub process_file ($)
   while ($_ = $in->getline)
   {
     if (!defined $environment
-        && /^\\begin{(urbiassert|urbicomment|urbiscript)}/)
+        && /^\\begin{(urbi(?:assert|comment|script))}/)
       {
         $environment = $1;
         # Issue a #line for the first line of Urbi, not the LaTeX line.
