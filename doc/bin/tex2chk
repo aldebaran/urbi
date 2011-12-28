@@ -241,7 +241,7 @@ sub process_file ($)
   # part.  (../../doc/tests/specs/boolean/boolean-24.chk ->
   # doc/tests/specs/boolean/boolean-24.chk with srcdir = ../../doc).
   my $base = $file;
-  $base =~ s,^$ENV{srcdir},doc,
+  $base =~ s,^$ENV{srcdir}/*,doc/,
     if defined $ENV{srcdir};
   verbose 3, "BASE=$base from FILE=$file";
 
