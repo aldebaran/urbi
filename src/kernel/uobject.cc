@@ -85,18 +85,20 @@ namespace urbi
     {
     public:
       Link()
-      : norefPtr(0)
-      , isRef (false)
-      , uobject(0)
+        : norefPtr(0)
+        , isRef (false)
+        , uobject(0)
       {
       }
+
       Link(object::Object* target, bool refCount, urbi::UObject* uob)
-      : norefPtr(0)
-      , isRef (refCount)
-      , uobject(uob)
+        : norefPtr(0)
+        , isRef (refCount)
+        , uobject(uob)
       {
         set(target, refCount);
       }
+
       void set(object::Object* target, bool refCount)
       {
         isRef = refCount;
@@ -105,19 +107,23 @@ namespace urbi
         else
           norefPtr = target;
       }
+
       void setUObject(UObject* o)
       {
         uobject = o;
       }
+
       void operator = (const Link& b)
       {
         set(b.isRef?b.refPtr.get():b.norefPtr, b.isRef);
         uobject = b.uobject;
       }
+
       bool operator == (const Link& b) const
       {
         return uobject->__name == b.uobject->__name;
       }
+
       // Downgrade from refcounted to not-refcounted.
       void deref()
       {
@@ -128,6 +134,7 @@ namespace urbi
           isRef = false;
         }
       }
+
       void ref()
       {
         if (!isRef)
@@ -137,23 +144,28 @@ namespace urbi
           isRef = true;
         }
       }
+
       void resetPtr()
       {
         norefPtr = 0;
         refPtr = 0;
       }
+
       void resetUObject()
       {
         uobject = 0;
       }
+
       UObject* getUObject()
       {
         return uobject;
       }
+
       object::Object* getRef()
       {
-        return isRef?refPtr.get():norefPtr;
+        return isRef ? refPtr.get() : norefPtr;
       }
+
     private:
       object::Object* norefPtr;
       object::rObject refPtr;
