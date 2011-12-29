@@ -66,7 +66,7 @@ urbi::UValue uvalue_cast(const object::rObject& o, int recursionLevel)
   CAPTURE_GLOBAL(UVar);
   urbi::UValue res;
   if (object::rUValue bv = o->as<object::UValue>())
-    return bv->value_get();
+    res = bv->value_get();
   else if (object::rFloat f = o->as<object::Float>())
     res = f->value_get();
   else if (o == object::true_class)
@@ -83,7 +83,7 @@ urbi::UValue uvalue_cast(const object::rObject& o, int recursionLevel)
     res.list = new urbi::UList;
     object::List::value_type& t = o.cast<object::List>()->value_get();
     foreach (const object::rObject& co, t)
-      res.list->array.push_back(new urbi::UValue(uvalue_cast(co)));
+      res.list->array << new urbi::UValue(uvalue_cast(co));
   }
   else if (object::rDictionary s = o->as<object::Dictionary>())
   {
@@ -101,20 +101,19 @@ urbi::UValue uvalue_cast(const object::rObject& o, int recursionLevel)
     std::string keywords =
       o->slot_get_value(SYMBOL(keywords))->as<object::String>()->value_get();
     std::list<urbi::BinaryData> l;
-    l.push_back(urbi::BinaryData(const_cast<char*>(data.c_str()), data.size()));
+    l << urbi::BinaryData(const_cast<char*>(data.c_str()), data.size());
     std::list<urbi::BinaryData>::const_iterator i = l.begin();
     res.type = urbi::DATA_BINARY;
     res.binary = new urbi::UBinary();
-    res.binary->parse((boost::lexical_cast<std::string>(data.size())
-                       + (keywords.empty() ? "" : " ")
-                       + keywords + '\n').c_str(),
+    res.binary->parse(libport::format("%s%s%s\n",
+                                      data.size(),
+                                      keywords.empty() ? "" : " ",
+                                      keywords).c_str(),
                       0, l, i);
   }
   else if (is_a(o, UObject))
-  {
     res = o->slot_get_value(SYMBOL(__uobjectName))
       ->as<object::String>()->value_get();
-  }
   else if (is_a(o, UVar))
   {
     // Storing the address is Safe: either the callback will use it, in
@@ -125,17 +124,11 @@ urbi::UValue uvalue_cast(const object::rObject& o, int recursionLevel)
     res = ss.str();
   }
   else if (object::rVector ov = o->as<object::Vector>())
-  {
     res, ov->value_get();
-  }
   else if (object::rMatrix om = o->as<object::Matrix>())
-  {
     res, om->value_get();
-  }
   else if (o->slot_has(SYMBOL(uvalueSerialize)))
-  {
     res = uvalue_cast(o->call(SYMBOL(uvalueSerialize)), recursionLevel+1);
-  }
   else // We could not find how to cast this value
   {
     const object::rString& rs =
@@ -174,7 +167,7 @@ object_cast(const urbi::UValue& v)
     {
       object::rList l = new object::List();
       foreach (urbi::UValue *cv, v.list->array)
-	l->value_get().push_back(object_cast(*cv));
+	l->value_get() << object_cast(*cv);
       res = l;
       break;
     }
@@ -206,11 +199,11 @@ object_cast(const urbi::UValue& v)
       {
         if (count2 == -1)
           return new object::Vector(
-            urbi::uvalue_caster<boost::numeric::ublas::vector<ufloat> >()
+            urbi::uvalue_caster<libport::vector_type>()
                                     (const_cast<urbi::UValue&>(v)));
         else
           return new object::Matrix(
-            urbi::uvalue_caster<boost::numeric::ublas::matrix<ufloat> >()
+            urbi::uvalue_caster<libport::matrix_type>()
                                     (const_cast<urbi::UValue&>(v)));
       }
       // The rest goes into a generic Binary.
