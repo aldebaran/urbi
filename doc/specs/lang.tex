@@ -3441,7 +3441,8 @@ assert (fail);
 
 function lazyFail { call.evalArgAt(0); false }|;
 assert (lazyFail(1+2, "+" * 2));
-[00010241:error] !!! failed assertion: lazyFail(1.'+'(2), "+".'*'(2)) (lazyFail(3, ?) == false)
+[00010241:error] !!! failed assertion: lazyFail(1.'+'(2), "+".'*'(2)) \
+[:]                  (lazyFail(3, ?) == false)
 \end{urbiscript}
 
 The following example is more realistic.
@@ -3466,9 +3467,11 @@ assert (areEqual);
 assert (areEqual(1));
 assert (areEqual(1, 0 + 1));
 assert (areEqual(1, 1, 1+1));
-[00001388:error] !!! failed assertion: areEqual(1, 1, 1.'+'(1)) (areEqual(1, 1, 2) == false)
+[00001388:error] !!! failed assertion: areEqual(1, 1, 1.'+'(1)) \
+[:]              (areEqual(1, 1, 2) == false)
 assert (areEqual(1*2, 1+2));
-[00001393:error] !!! failed assertion: areEqual(1.'*'(2), 1.'+'(2)) (areEqual(2, 3) == false)
+[00001393:error] !!! failed assertion: areEqual(1.'*'(2), 1.'+'(2)) \
+[:]              (areEqual(2, 3) == false)
 \end{urbiscript}
 
 Comparison operators are recognized, and displayed specially:
