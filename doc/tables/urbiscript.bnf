@@ -113,7 +113,8 @@
 
 #:stm
 <statement>
-  ::= <every-statement>
+  ::= <at-statement>
+    | <every-statement>
     | <for-statement>
     | <loop-statement>
     | <tag-statement>
@@ -121,6 +122,23 @@
     | <try-statement>
     | <while-statement>
 #:end
+
+#:at
+<at-statement>
+   ::= "at" ("async" | "sync")? "(" <expression> ("~" <expression>)? ")"
+       <statement> <onleave-clause>?
+     | "at" ("async" | "sync")? "(" <event-clause> ")"
+       <statement> <onleave-clause>?
+
+<event-clause>
+    ::= <expression> "?" <arguments>? ("~" <expression>)? ("if" <expression>)?
+
+<arguments>
+    ::= "(" (<expression> ("," <expression>)* ","?)? ")"
+
+<onleave-clause>
+  ::= "onleave" <statement>
+#:stm
 
 #:forc
 <for-statement>

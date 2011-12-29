@@ -368,9 +368,9 @@ namespace eval
     if (dynamic_cast<object::Event*>(res.get()))
     {
       CAPTURE_GLOBAL(Global);
-      Global->call("warn", new object::String(
-                     "at (<event>) without a '?', "
-                     "this is probably not what you meant."));
+      Global->call("warn",
+                   new object::String("at (<event>) without a '?', "
+                                      "probably not what you mean"));
     }
 
     bool v = object::from_urbi<bool>(res);

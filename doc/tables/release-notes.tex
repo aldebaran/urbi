@@ -640,7 +640,7 @@ logger.err << "something really bad happened!"|;
 
 \item A new construct, \lstinline{watch}, creates an event that allows to
   monitor any change of an expression (\autoref{sec:lang:watch}).
-\begin{urbiscript}[firstnumber=1]
+\begin{urbiscript}
 var x = 0|;
 var y = 0|;
 var e = watch(x + y)|;
@@ -651,6 +651,16 @@ x = 1|;
 y = 2|;
 [00000000] *** x + y = 3
 \end{urbiscript}
+\begin{urbicomment}
+removeSlots("e", "x", "y");
+// Killing slots monitored by a "at" is bad.
+[01234567:error] !!! lookup failed: x
+[01234567:error] !!!    called from: removeSlots
+[01234567:error] !!! lookup failed: x
+[01234567:error] !!!    called from: removeSlots
+[01234567:error] !!! lookup failed: x
+[01234567:error] !!!    called from: removeSlots
+\end{urbicomment}
 
 \item Gostai Editor for Windows was updated to 2.5.  It now includes
   advanced search and replace features with regular expression support and a
@@ -840,18 +850,25 @@ removeSlot("doesNotExist")|;
   \lstinline|at| statement yields an Event and no question mark was used,
   since this is most likely an oversight.
 
-\begin{urbiunchecked}
-var e = Event.new;
-[00000001] Event_0xADDR
+\begin{urbiscript}
+var e = Event.new|;
 
 // This is not the correct way to match an event.
 at (e) echo("Oops.");
-[00000002:warning] !!! at (<event>) without a '?', this is probably not what you meant.
+[00000002:warning] !!! at (<event>) without a '?', probably not what you mean
 [00000003] *** Oops.
 
 // This is.
 at (e?) echo("Okay.");
-\end{urbiunchecked}
+\end{urbiscript}
+\begin{urbicomment}
+removeSlots("e");
+// Killing slots monitored by an "at".
+[01234567:error] !!! lookup failed: x
+[01234567:error] !!!    called from: removeSlots
+[01234567:error] !!! lookup failed: e
+[01234567:error] !!!    called from: removeSlots
+\end{urbicomment}
 
 \item \refSlot[File]{rename} returns \lstinline|this|.
 \end{itemize}
@@ -966,8 +983,8 @@ for (var suit : Suit)
 \end{urbiscript}
 
 \noindent
-They still need to evaluate into String values. Note: this is no longer true
-since \usdk 2.5.
+They still need to evaluate into String values (no longer true since \usdk
+2.5).
 
 \begin{urbiunchecked}
 [12 => "12"];

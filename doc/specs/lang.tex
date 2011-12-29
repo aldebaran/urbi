@@ -4093,27 +4093,43 @@ removeSlots("i");
 Using the \lstindexMain{at} construct, one can arm code that will be
 triggered each time some condition is true.
 
-The \lstinline{at} construct is as follows:
+\grammar{at-stm}
 
-\begin{urbiunchecked}
-at (\var{condition})
-  \var{statement1}
-onleave
-  \var{statement2}
-\end{urbiunchecked}
-
-The \var{condition} can be of two different kinds:
-\lstinline|\var{e}?(\var{args})| to catch when events are sent, or
-\lstinline|\var{exp}| to catch each time a Boolean \var{exp} becomes true.
+There are two different kinds of \lstinline{at} statements, depending on the
+type of the ``condition'':
+\begin{itemize}
+\item \lstinline|\var{e}?(\var{args})| to catch when events are sent
+  (\autoref{sec:lang:at:ev}),
+\item \lstinline|\var{exp}| to catch each time a Boolean \var{exp} becomes
+  true (\autoref{sec:lang:at:exp}).
+\end{itemize}
 
 The \lstinline{onleave}-clause is optional.  Note that, as is the case for
 the \lstinline{if} statement, there must \emph{not} be a semicolon after
 \var{statement1} if there is an \lstinline{onleave} clause.
 
 \subsubsection{\lstinline{at} on Events}
+\label{sec:lang:at:ev}
+
 %% FIXME: More details are needed.  Don't bounce elsewhere.
 See \autoref{sec:tut:events} for an example of using \lstinline{at}
 statements to watch events.
+
+Be cautious not to forget the question-mark, as when it is forgotten it
+means that you mean to monitor changes to \var{e}, not its activations.
+In the following example \lstinline{e} is ``true'', so the \lstinline{at}
+statement fires immediately, but remains still on later activations of the
+event.
+
+\begin{urbiscript}
+var e = Event.new|;
+at (e) echo("w00t");
+[00000002:warning] !!! at (<event>) without a '?', probably not what you mean
+[00000003] *** w00t
+
+e!;
+e!;
+\end{urbiscript}
 
 \paragraph{Durations}
 
@@ -4143,6 +4159,7 @@ e!(time) ~ 2s;
 
 
 \subsubsection{\lstinline{at} on Boolean Expressions}
+\label{sec:lang:at:exp}
 
 The \lstinline{at} construct can be used to watch a given Boolean
 expression.
@@ -4162,8 +4179,8 @@ x = 3|;  assert(!x_is_two);
 \end{urbiscript}
 
 It can also wait for some condition to hold long enough:
-\lstinline|\var{exp} ~ \var{duration}|, as a condition, denotes the
-fact that \var{exp} was true for \var{duration} seconds.
+\lstinline|\var{exp} ~ \var{duration}|, as a condition, denotes the fact
+that \var{exp} was true for \var{duration} seconds.
 
 \begin{urbiscript}[firstnumber=1]
 var x = 0 |
