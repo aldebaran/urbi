@@ -31,13 +31,19 @@ FormatInfo.new("%+2.3d");
 A formatting pattern must one of the following (brackets denote
 optional arguments):
 \begin{itemize}
-\item \verb&%&\var{options} \var{spec}
-\item \verb&%|&\var{options}[\var{spec}]\verb&|&
+\item \lstinline&%\var{rank}%&
+\item \lstinline&%[\var{rank}$]\var{options} \var{spec}&
+\item \lstinline&%|[\var{rank}$]\var{options}[\var{spec}]|&
 \end{itemize}
 
 \noindent
-\var{options} is a sequence of 0 or several of the following
-characters:
+where:
+\begin{itemize}
+\item \var{rank} is an non-null integer which denotes a positional argument:
+  a means to output arguments in a different order.
+
+\item \var{options} is a sequence of 0 or several of the following
+  characters:
 
 \begin{center}
   \begin{tabular}{|c|l|}
@@ -54,9 +60,9 @@ characters:
   \end{tabular}
 \end{center}
 
-\noindent
-\var{spec} is the conversion character and must be one of the
-following:
+
+\item \var{spec} is the conversion character and must be one of the
+  following:
 
 \begin{center}
   \begin{tabular}{|c|l|}
@@ -74,24 +80,26 @@ following:
     \hline
   \end{tabular}
 \end{center}
+\end{itemize}
 
 When accepted, the format string is decoded, and its features are made
 available as separate slots of the FormatInfo object.
 
 \begin{urbiscript}
-do (FormatInfo.new("%+'=#06.12X"))
+do (FormatInfo.new("%5$+'=#06.12X"))
 {
   assert
   {
-    width     == 6;
-    precision == 12;
-    alt       == true;
-    prefix    == "+";
-    alignment == 0;
-    group     == " ";
-    pad       == "0";
-    uppercase == 1;
-    spec      == "x";
+    rank      == 5;    // 5$
+    prefix    == "+";  // +
+    group     == " ";  // '
+    alignment == 0;    // =
+    alt       == true; // #
+    pad       == "0";  // 0
+    width     == 6;    // 6
+    precision == 12;   // .12
+    uppercase == 1;    // X
+    spec      == "x";  // X
   };
 }|;
 \end{urbiscript}
@@ -129,6 +137,10 @@ FormatInfo.new("%|-8.2f|%%");
 FormatInfo.new("%s") .alignment == 1;
 FormatInfo.new("%=s").alignment == 0;
 FormatInfo.new("%-s").alignment == -1;
+
+ "%5s" % 1 == "    1";
+"%=5s" % 2 == "  2  ";
+"%-5s" % 3 == "3    ";
 \end{urbiassert}
 
 
@@ -137,15 +149,22 @@ FormatInfo.new("%-s").alignment == -1;
 \begin{urbiassert}
 FormatInfo.new("%s") .alt == false;
 FormatInfo.new("%#s").alt == true;
+
+ "%s" % 12.3 == "12.3";
+"%#s" % 12.3 == "12.3000";
+ "%x" % 12 == "c";
+"%#x" % 12 == "0xc";
 \end{urbiassert}
 
 
 \item[group]%
   Separator to use for thousands as a \refObject{String}.  Corresponds to
-  the \samp{'} \var{option}.
+  the \samp{'} \var{option}.  Currently produces no effect at all.
 \begin{urbiassert}
 FormatInfo.new("%s") .group == "";
 FormatInfo.new("%'s").group == " ";
+
+"%d" % 123456 == "%'d" % 123456 == "123456";
 \end{urbiassert}
 
 
@@ -154,6 +173,9 @@ FormatInfo.new("%'s").group == " ";
 \begin{urbiassert}
 FormatInfo.new("%s") .pad == " ";
 FormatInfo.new("%0s").pad == "0";
+
+ "%5s" % 1 == "    1";
+"%05s" % 1 == "00001";
 \end{urbiassert}
 
 
@@ -174,6 +196,11 @@ FormatInfo.new("%#'12.8s").pattern == "%#'12.8s";
 \begin{urbiassert}
 FormatInfo.new("%s")    .precision == 6;
 FormatInfo.new("%23.3s").precision == 3;
+
+  "%f" % 12.3 == "12.300000";
+"%.0f" % 12.3 == "12";
+"%.2f" % 12.3 == "12.30";
+"%.8f" % 12.3 == "12.30000000";
 \end{urbiassert}
 
 
@@ -192,6 +219,10 @@ FormatInfo.new("%+s").prefix == "+";
 FormatInfo.new("%s")   .rank == 0;
 FormatInfo.new("%2$s") .rank == 2;
 FormatInfo.new("%03$s").rank == 3;
+FormatInfo.new("%4%")  .rank == 4;
+
+ "%3$s%2$s%2$s%1$s" % ["bar", "o", "f"]
+  == "%3%%2%%2%%1%" % ["bar", "o", "f"] == "foobar";
 \end{urbiassert}
 Cannot be null.
 \begin{urbiscript}
@@ -215,11 +246,11 @@ FormatInfo.new("%'X")   .spec == "x";
   The value depends on the case of specification character, except for
   \samp{\%s} which corresponds to \lstinline|0|.
 \begin{urbiassert}
-FormatInfo.new("%s")  .uppercase == 0;
+FormatInfo.new("%s")  .uppercase ==  0;
 FormatInfo.new("%d")  .uppercase == -1;
-FormatInfo.new("%D")  .uppercase == 1;
+FormatInfo.new("%D")  .uppercase ==  1;
 FormatInfo.new("%x")  .uppercase == -1;
-FormatInfo.new("%X")  .uppercase == 1;
+FormatInfo.new("%X")  .uppercase ==  1;
 FormatInfo.new("%|D|").uppercase ==  1;
 FormatInfo.new("%|d|").uppercase == -1;
 \end{urbiassert}

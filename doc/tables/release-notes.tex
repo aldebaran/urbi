@@ -111,6 +111,11 @@ See \autoref{sec:lang:tag} for details.
   \refObject{Path} are deprecated: use \lstinline|\var{f}.asPath.basename|
   or \lstinline|\var{f}.asPath.lastModifiedDate| instead.
 
+\item \refObject{FormatInfo} supports positional arguments:
+\begin{urbiassert}
+"%2%, %|1$10|!" % ["world", "Hello"] == "Hello,      world!";
+\end{urbiassert}
+
 \item Opened Streams (\refObject{InputStream} and \refObject{OutputStream})
   can no longer be cloned.
 

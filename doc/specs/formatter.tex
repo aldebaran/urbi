@@ -46,6 +46,20 @@ for (var d: ["Battery" => 83.3, "Sound" => 60])
 removeSlots("f");
 \end{urbicomment}
 
+Patterns can either all be non-positional (e.g., \lstinline|%s%s|), or all
+positional (e.g., \lstinline|%1$s%2$s|).
+
+\begin{urbiscript}
+Formatter.new("%s%s");
+[00371506] Formatter [%s, %s]
+Formatter.new("%1$s%2$s");
+[00385602] Formatter [%1$s, %2$s]
+
+Formatter.new("%1$s%s");
+[00409657:error] !!! new: format: cannot mix positional and non-positional \
+[:]                 arguments: %1$s vs. %s
+\end{urbiscript}
+
 \subsection{Slots}
 
 \begin{urbiscriptapi}

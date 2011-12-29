@@ -115,27 +115,35 @@ namespace urbi
       if (piped)
         ++cursor;
 
-      // Whether there is a positional argument: <NUM>$.
+      // Whether a simple positional request: %<rank>%, in which case,
+      // no flags admitted.
+      bool percented = false;
+
+      // Whether there is a positional argument: <NUM>$, or if
+      // it's a %<rank>% (but then, no pipe accepted).
       {
         // First non digit.
-        size_t dollar = pattern.find_first_not_of(digits, cursor);
+        size_t sep = pattern.find_first_not_of(digits, cursor);
         // If there are digits, and then a $, then we have a
         // positional argument.
-        if (dollar != cursor
-            && dollar < pattern.size()
-            && pattern[dollar] == '$')
+        if (sep != cursor
+            && sep < pattern.size()
+            && (pattern[sep] == '$'
+                || !piped && pattern[sep] == '%'))
         {
-          rank_ = lexical_cast<size_t>(pattern.substr(cursor, dollar - cursor));
+          percented = pattern[sep] == '%';
+          rank_ = lexical_cast<size_t>(pattern.substr(cursor, sep - cursor));
           if (!rank_)
             FRAISE("format: invalid positional argument: %s",
-                   pattern.substr(cursor, dollar - cursor));
-          cursor = dollar + 1;
+                   pattern.substr(cursor, sep - cursor));
+          cursor = sep + 1;
         }
         else
           rank_ = 0;
       }
 
       // Parsing flags.
+      if (!percented)
       {
         std::string flags("-=+#0 '");
         std::string excludes;
@@ -161,14 +169,16 @@ namespace urbi
       }
 
       // Parsing width.
-      if (size_t w = pattern.find_first_not_of(digits, cursor) - cursor)
-      {
-        width_ = lexical_cast<size_t>(pattern.substr(cursor, w));
-        cursor += w;
-      }
+      if (!percented)
+        if (size_t w = pattern.find_first_not_of(digits, cursor) - cursor)
+        {
+          width_ = lexical_cast<size_t>(pattern.substr(cursor, w));
+          cursor += w;
+        }
 
       // Parsing precision.
-      if (cursor < pattern.size() && pattern[cursor] == '.')
+      if (!percented
+          && cursor < pattern.size() && pattern[cursor] == '.')
       {
         ++cursor;
         if (size_t w = pattern.find_first_not_of(digits, cursor) - cursor)
@@ -180,8 +190,10 @@ namespace urbi
           FRAISE("format: invalid width after `.': %s", pattern[cursor]);
       }
 
-      // Parsing spec.
-      if (cursor < pattern.size())
+      // Parsing spec.  Optional if piped.
+      if (!percented
+          && cursor < pattern.size()
+          && (!piped || pattern[cursor] != '|'))
       {
         spec_ = tolower(pattern[cursor]);
         if (!strchr("sdbxoef", spec_[0]))
