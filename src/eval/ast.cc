@@ -222,7 +222,7 @@ namespace eval
   {
     GD_CATEGORY(Urbi.At);
     GD_FINFO_TRACE("Stopping %s subscribers", subscriptions.size());
-    foreach(object::rSubscription& s, subscriptions)
+    foreach (object::rSubscription& s, subscriptions)
       s->stop();
   }
 
@@ -239,15 +239,14 @@ namespace eval
     // dependencies below.
     {
       object::objects_type args;
-      args.push_back(data->exp);
+      args << data->exp;
       bool profiled = false;
       bool interruptible = r.non_interruptible_get();
       try
       {
-        const ast::Routine* ast = dynamic_cast<const ast::Routine*>
-          (data->exp->ast_get().get());
-        assert(ast);
-        libport::Symbol name(libport::format("at: %s", *ast->body_get()));
+        const ast::Routine& ast = dynamic_cast<const ast::Routine&>
+          (*data->exp->ast_get().get());
+        libport::Symbol name(libport::format("at: %s", *ast.body_get()));
         if (!r.is_profiling() && data->profile)
         {
           profiled = true;
@@ -348,7 +347,8 @@ namespace eval
       data->current->stop();
       data->current = 0;
     }
-    GD_FINFO_TRACE("Force-stopping %s subscriptions", data->subscriptions.size());
+    GD_FINFO_TRACE("Force-stopping %s subscriptions",
+                   data->subscriptions.size());
     foreach (object::rSubscription& s, data->subscriptions)
       s->stop();
     // Reset event_ward to allow destruction of the watch event.
@@ -361,7 +361,7 @@ namespace eval
     GD_CATEGORY(Urbi.At);
 
     // FIXME: what is the kernel main interpreter in the new
-    // implementation ?!
+    // implementation?!
     Job& r = ::kernel::runner();
 
     rObject res = watch_eval(data);
@@ -375,8 +375,7 @@ namespace eval
 
     bool v = object::from_urbi<bool>(res);
     foreach (object::Event* evt, r.dependencies())
-      data->subscriptions <<
-      evt->onEvent(boost::bind(at_run, data, _1));
+      data->subscriptions << evt->onEvent(boost::bind(at_run, data, _1));
     r.dependencies_clear();
 
     // Check for different evaluation of the condition.
