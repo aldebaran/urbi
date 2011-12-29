@@ -168,9 +168,9 @@ namespace urbi
                && args[1]->as<Float>()
                && args[2]->as<Float>())
       {
-        self->value_ =
-          boost::numeric::ublas::zero_matrix<ufloat>
-          (from_urbi<unsigned>(args[1]), from_urbi<unsigned>(args[2]));
+        self->value_ = create_zeros(self,
+                                    from_urbi<unsigned>(args[1]),
+                                    from_urbi<unsigned>(args[2]));
         return self;
       }
 
@@ -181,19 +181,19 @@ namespace urbi
     Matrix::value_type
     Matrix::create_zeros(rObject, size_t size1, size_t size2)
     {
-      return boost::numeric::ublas::zero_matrix<ufloat>(size1, size2);
+      return ublas::zero_matrix<ufloat>(size1, size2);
     }
 
     Matrix::value_type
     Matrix::create_identity(rObject, size_t size)
     {
-      return boost::numeric::ublas::identity_matrix<ufloat>(size);
+      return ublas::identity_matrix<ufloat>(size);
     }
 
     Matrix::value_type
     Matrix::create_scalars(rObject, size_t size1, size_t size2, ufloat v)
     {
-      return boost::numeric::ublas::scalar_matrix<ufloat>(size1, size2, v);
+      return ublas::scalar_matrix<ufloat>(size1, size2, v);
     }
 
     Matrix::value_type
@@ -408,23 +408,21 @@ namespace urbi
 
 #undef OP
 
-#define OP(Op)                                          \
-    Matrix::value_type                                  \
-    Matrix::operator Op(ufloat s) const                 \
-    {                                                   \
-      value_type copy(value_);                          \
-      value_type ones =                                 \
-        boost::numeric::ublas::scalar_matrix<ufloat>    \
-        (size1(), size2(), s);                          \
-      value_type res = copy Op ones;                    \
-      return res;                                       \
-    }                                                   \
-                                                        \
-    Matrix*                                             \
-    Matrix::operator Op##=(ufloat s)                    \
-    {                                                   \
-      value_ = operator Op(s);                          \
-      return this;                                      \
+#define OP(Op)                                                  \
+    Matrix::value_type                                          \
+    Matrix::operator Op(ufloat s) const                         \
+    {                                                           \
+      value_type copy(value_);                                  \
+      value_type ones = create_scalars(0, size1(), size2(), s); \
+      value_type res = copy Op ones;                            \
+      return res;                                               \
+    }                                                           \
+                                                                \
+    Matrix*                                                     \
+    Matrix::operator Op##=(ufloat s)                            \
+    {                                                           \
+      value_ = operator Op(s);                                  \
+      return this;                                              \
     }
 
     OP(+)
