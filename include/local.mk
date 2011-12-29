@@ -56,6 +56,7 @@ dist_kernelinclude_urbi_object_HEADERS =        \
   include/urbi/object/hash.hh                   \
   include/urbi/object/job.hh                    \
   include/urbi/object/list.hh                   \
+  include/urbi/object/list.hxx                  \
   include/urbi/object/lobby.hh                  \
   include/urbi/object/lobby.hxx                 \
   include/urbi/object/location.hh               \

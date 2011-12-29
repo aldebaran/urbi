@@ -410,10 +410,10 @@ namespace Stats
     foreach (Values::value_type &v, hash)
     {
       object::rList l = new object::List();
-      l->insertBack(new Float(v.second.sum / v.second.count));
-      l->insertBack(new Float(v.second.min));
-      l->insertBack(new Float(v.second.max));
-      l->insertBack(new Float(v.second.count));
+      *l << new Float(v.second.sum / v.second.count)
+         << new Float(v.second.min)
+         << new Float(v.second.max)
+         << new Float(v.second.count);
       res->set(new object::String(v.first), l);
       /*
       size_t sep = v.first.find_first_of(' ');

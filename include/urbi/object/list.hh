@@ -60,6 +60,8 @@ namespace urbi
       rObject removeBack();
       rList insert(libport::ufloat idx, const rObject& elt);
       rList insertBack(const rObject& elt);
+      /// Equivalent to insertBack.
+      List& operator<<(const rObject& elt);
       rList insertFront(const rObject& elt);
 
       virtual std::string as_string() const;
@@ -93,5 +95,6 @@ namespace urbi
 }
 
 # include <urbi/object/cxx-object.hxx>
+# include <urbi/object/list.hxx>
 
 #endif // !OBJECT_LIST_HH
