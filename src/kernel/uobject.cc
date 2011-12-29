@@ -407,7 +407,7 @@ namespace Stats
   {
     using object::Float;
     object::rDictionary res = new object::Dictionary();
-    foreach(Values::value_type &v, hash)
+    foreach (Values::value_type &v, hash)
     {
       object::rList l = new object::List();
       l->insertBack(new Float(v.second.sum / v.second.count));

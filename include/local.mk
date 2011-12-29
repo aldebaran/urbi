@@ -12,73 +12,73 @@
 
 if INSTALL_KERNEL_HEADERS
 kernelinclude_kerneldir = $(brandincludedir)/kernel
-dist_kernelinclude_kernel_HEADERS =		\
-  include/kernel/fwd.hh				\
-  include/kernel/uconnection.hh			\
-  include/kernel/uconnection.hxx		\
-  include/kernel/userver.hh			\
-  include/kernel/userver.hxx			\
+dist_kernelinclude_kernel_HEADERS =             \
+  include/kernel/fwd.hh                         \
+  include/kernel/uconnection.hh                 \
+  include/kernel/uconnection.hxx                \
+  include/kernel/userver.hh                     \
+  include/kernel/userver.hxx                    \
   include/kernel/utypes.hh
 
 kernelinclude_urbidir = $(brandincludedir)/urbi
-dist_kernelinclude_urbi_HEADERS =		\
-  include/urbi/sdk.hh				\
+dist_kernelinclude_urbi_HEADERS =               \
+  include/urbi/sdk.hh                           \
   include/urbi/sdk.hxx
 
 kernelinclude_urbi_objectdir = $(brandincludedir)/urbi/object
-dist_kernelinclude_urbi_object_HEADERS =	\
-  include/urbi/object/any-to-boost-function.hh	\
-  include/urbi/object/barrier.hh		\
-  include/urbi/object/centralized-slots.hh	\
-  include/urbi/object/centralized-slots.hxx	\
-  include/urbi/object/code.hh			\
-  include/urbi/object/cxx-conversions.hh	\
-  include/urbi/object/cxx-conversions.hxx	\
-  include/urbi/object/cxx-object.hh		\
-  include/urbi/object/cxx-object.hxx		\
-  include/urbi/object/cxx-primitive.hh		\
-  include/urbi/object/date.hh			\
-  include/urbi/object/date.hxx			\
-  include/urbi/object/dictionary.hh		\
-  include/urbi/object/directory.hh		\
-  include/urbi/object/duration.hh		\
-  include/urbi/object/duration.hxx		\
-  include/urbi/object/enumeration.hh		\
-  include/urbi/object/equality-comparable.hh	\
-  include/urbi/object/equality-comparable.hxx	\
-  include/urbi/object/event.hh			\
+dist_kernelinclude_urbi_object_HEADERS =        \
+  include/urbi/object/any-to-boost-function.hh  \
+  include/urbi/object/barrier.hh                \
+  include/urbi/object/centralized-slots.hh      \
+  include/urbi/object/centralized-slots.hxx     \
+  include/urbi/object/code.hh                   \
+  include/urbi/object/cxx-conversions.hh        \
+  include/urbi/object/cxx-conversions.hxx       \
+  include/urbi/object/cxx-object.hh             \
+  include/urbi/object/cxx-object.hxx            \
+  include/urbi/object/cxx-primitive.hh          \
+  include/urbi/object/date.hh                   \
+  include/urbi/object/date.hxx                  \
+  include/urbi/object/dictionary.hh             \
+  include/urbi/object/directory.hh              \
+  include/urbi/object/duration.hh               \
+  include/urbi/object/duration.hxx              \
+  include/urbi/object/enumeration.hh            \
+  include/urbi/object/equality-comparable.hh    \
+  include/urbi/object/equality-comparable.hxx   \
+  include/urbi/object/event.hh                  \
   include/urbi/object/event-handler.hh          \
-  include/urbi/object/file.hh			\
-  include/urbi/object/float.hh			\
-  include/urbi/object/float.hxx			\
-  include/urbi/object/fwd.hh			\
-  include/urbi/object/global.hh			\
-  include/urbi/object/hash.hh			\
-  include/urbi/object/job.hh			\
-  include/urbi/object/list.hh			\
-  include/urbi/object/lobby.hh			\
-  include/urbi/object/lobby.hxx			\
-  include/urbi/object/location.hh		\
-  include/urbi/object/location.hxx		\
-  include/urbi/object/matrix.hh			\
-  include/urbi/object/matrix.hxx		\
-  include/urbi/object/object.hh			\
-  include/urbi/object/object.hxx		\
-  include/urbi/object/path.hh			\
-  include/urbi/object/position.hh		\
-  include/urbi/object/position.hxx		\
-  include/urbi/object/primitive.hh		\
-  include/urbi/object/slot.hh			\
-  include/urbi/object/slot.hxx			\
-  include/urbi/object/string.hh			\
+  include/urbi/object/file.hh                   \
+  include/urbi/object/float.hh                  \
+  include/urbi/object/float.hxx                 \
+  include/urbi/object/fwd.hh                    \
+  include/urbi/object/global.hh                 \
+  include/urbi/object/hash.hh                   \
+  include/urbi/object/job.hh                    \
+  include/urbi/object/list.hh                   \
+  include/urbi/object/lobby.hh                  \
+  include/urbi/object/lobby.hxx                 \
+  include/urbi/object/location.hh               \
+  include/urbi/object/location.hxx              \
+  include/urbi/object/matrix.hh                 \
+  include/urbi/object/matrix.hxx                \
+  include/urbi/object/object.hh                 \
+  include/urbi/object/object.hxx                \
+  include/urbi/object/path.hh                   \
+  include/urbi/object/position.hh               \
+  include/urbi/object/position.hxx              \
+  include/urbi/object/primitive.hh              \
+  include/urbi/object/slot.hh                   \
+  include/urbi/object/slot.hxx                  \
+  include/urbi/object/string.hh                 \
   include/urbi/object/subscription.hh           \
-  include/urbi/object/tag.hh			\
-  include/urbi/object/tag.hxx			\
-  include/urbi/object/vector.hh			\
+  include/urbi/object/tag.hh                    \
+  include/urbi/object/tag.hxx                   \
+  include/urbi/object/vector.hh                 \
   include/urbi/object/vector.hxx
 
 kernelinclude_urbi_runnerdir = $(brandincludedir)/urbi/runner
-dist_kernelinclude_urbi_runner_HEADERS =	\
+dist_kernelinclude_urbi_runner_HEADERS =        \
   include/urbi/runner/raise.hh
 endif INSTALL_KERNEL_HEADERS
 
@@ -87,9 +87,9 @@ endif INSTALL_KERNEL_HEADERS
 ## Generated source files.  ##
 ## ------------------------ ##
 
-FROM_GEN =					\
-  include/urbi/object/any-to-boost-function.hxx	\
-  include/urbi/object/cxx-primitive.hxx		\
+FROM_GEN =                                      \
+  include/urbi/object/any-to-boost-function.hxx \
+  include/urbi/object/cxx-primitive.hxx         \
   include/urbi/object/executable.hh
 BUILT_SOURCES += $(FROM_GEN)
 

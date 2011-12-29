@@ -170,7 +170,8 @@ namespace urbi
       return content_.size();
     }
 
-    rList List::remove_by_id(const rObject& elt)
+    rList
+    List::remove_by_id(const rObject& elt)
     {
       bool mutated = false;
       value_type::iterator it = content_.begin();
@@ -210,7 +211,8 @@ namespace urbi
       return true;
     }
 
-    rList List::operator+=(const rList& rhs)
+    rList
+    List::operator+=(const rList& rhs)
     {
       URBI_AT_HOOK(contentChanged);
       // Copy the list to make a += a work
@@ -225,7 +227,8 @@ namespace urbi
       return this;
     }
 
-    rList List::operator+(const rList& rhs)
+    rList
+    List::operator+(const rList& rhs)
     {
       URBI_AT_HOOK(contentChanged);
       rList res = new List(this->value_get());
@@ -233,7 +236,8 @@ namespace urbi
       return res;
     }
 
-    rList List::operator*(unsigned int times) const
+    rList
+    List::operator*(unsigned int times) const
     {
       URBI_AT_HOOK(contentChanged);
       List::value_type res;
@@ -247,13 +251,14 @@ namespace urbi
 
     /// Binary predicates used to sort lists.
     static bool
-    compareListItems (const rObject& a, const rObject& b)
+    compareListItems(const rObject& a, const rObject& b)
     {
       return a->call(SYMBOL(LT), b)->as_bool();
     }
+
     static bool
-    compareListItemsLambda (const rObject& f, const rObject& l,
-                            const rObject& a, const rObject& b)
+    compareListItemsLambda(const rObject& f, const rObject& l,
+                           const rObject& a, const rObject& b)
     {
       rExecutable fun = from_urbi<rExecutable>(f);
 
@@ -406,9 +411,7 @@ namespace urbi
       URBI_AT_HOOK(contentChanged);
       rHash res = new Hash(boost::hash_value(proto));
       foreach (const rObject& o, content_)
-      {
         res->combine(o);
-      }
       return res;
     }
 

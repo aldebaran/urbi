@@ -89,7 +89,7 @@ namespace urbi
       static bool list_added;
     };
 
-  }; // namespace object
+  } // namespace object
 }
 
 # include <urbi/object/cxx-object.hxx>
