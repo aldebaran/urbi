@@ -99,7 +99,6 @@ l.receive("1234;");
 [00000023] 1234
 assert (l.bytesReceived == 15);
 \end{urbiscript}
-
 \begin{urbicomment}
 removeSlot("l")|;
 \end{urbicomment}
@@ -107,6 +106,12 @@ removeSlot("l")|;
 
 \item[bytesSent] The number of bytes that were ``output'' by \this.  See
   also \refSlot{send} and \refSlot{write}.
+\begin{urbicomment}
+// We used to have a non deterministic bug in Urbi 2 in the assert below.
+// It does not seem to exist with Urbi 3.  It is probably related to
+// some issues with Lazy (as it reported an error about "code"
+// being an already defined slot).
+\end{urbicomment}
 \begin{urbiscript}
 var l = Lobby.create|;
 assert (l.bytesSent == 0);
@@ -125,6 +130,9 @@ l.write("[01234567]\n");
 [01234567]
 assert (l.bytesSent == 53);
 \end{urbiscript}
+\begin{urbicomment}
+removeSlots("l");
+\end{urbicomment}
 
 
 \item[connected]

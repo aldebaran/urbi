@@ -160,9 +160,9 @@ sleep(2.2s);
 \subsubsection{Scope tags}
 \label{sec:specs:tag:scope}
 
-Scopes feature a \lstindex{scopeTag}, i.e., a tag which will be stop
-when the execution reaches the end of the current scope.  This is
-handy to implement cleanups, how ever the scope was exited from.
+Scopes feature a \lstindex{scopeTag}, i.e., a tag which will be stopped when
+the execution reaches the end of the current scope.  This is handy to
+implement cleanups, however the scope was exited from.
 
 \begin{urbiscript}[firstnumber=1]
 {
@@ -193,7 +193,7 @@ sleep(2s);
 \label{sec:specs:tag:enter-leave}
 
 Tags provide two events, \refSlot{enter} and \refSlot{leave}, that trigger
-whenever flow control enters or leaves statements the tag.
+whenever flow control enters or leaves tagged statements.
 
 \begin{urbiscript}[firstnumber=1]
 var t = Tag.new("t");

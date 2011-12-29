@@ -19,8 +19,7 @@ class Global.Lazy : Global.Comparable
   function init(value)
   {
     var this.code = value |
-    var this.val |
-    this
+    var this.val
   };
 
   function '=='(other)

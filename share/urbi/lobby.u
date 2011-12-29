@@ -116,7 +116,7 @@ do (Lobby)
 
   function wall(var msg, var tag = "")
   {
-    for (var l in lobbies - [Lobby])
+    for| (var l in lobbies - [Lobby])
       l.echo(msg, tag);
   };
 

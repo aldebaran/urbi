@@ -31,7 +31,7 @@ do (Profile)
   {
     var max = values.filter(function (var v){ v != 0 }).max |
     var order = 0|
-    for (var i : [0, 3, 6])
+    for| (var i : [0, 3, 6])
       if (1 <= max * 10 ** i)
       {
         order = i|
@@ -79,7 +79,7 @@ do (Profile)
     % [timeUnit[1], timeUnit[1], selfTimePerUnit[1]] |
 
     var cumulative = 0 |
-    for (var c: calls)
+    for| (var c: calls)
     {
       var selfTime = c.selfTime * timeUnit[0] |
       var selfTimePer = c.selfTimePer * selfTimePerUnit[0] |

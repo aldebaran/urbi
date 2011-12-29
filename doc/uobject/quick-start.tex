@@ -260,8 +260,11 @@ The following example shows how one can easily interface UObjects into the
 assembly machines, a fast one, and a slow one.  This class demonstrates
 usual object-oriented, sequential, features.
 
-\begin{urbiscript}[firstnumber=1]
+\begin{urbicomment}
 //#plug test/machine
+//#no-fast
+\end{urbicomment}
+\begin{urbiscript}
 class TwoMachineFactory
 {
   // A shorthand common to all the Two Machine factories.

@@ -128,9 +128,9 @@ class Global.Tuple : Global.RangeIterable, Global.Container
           function (name, val) {
             // Copy members if needed before altering it
             if (!hasLocalSlot("members"))
-              members = members.clone;
-            members[n] = val;
-            void;
+              members = members.clone |
+            members[n] = val|
+            void
           });
         idx++;
       };
