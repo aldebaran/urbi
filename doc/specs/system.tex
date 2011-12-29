@@ -592,9 +592,13 @@ System.spawn(closure () { echo(1) }, true).isA(Job);
 
 
 \item[stats]%
-  A \refObject{Dictionary} containing information about the execution
-  cycles of \urbi.  This is an internal feature made for developers, it
-  might be changed without notice.  See also \refSlot{resetStats}.
+  A \refObject{Dictionary} containing information about the execution cycles
+  of \urbi.  This is an internal feature made for developers, it might be
+  changed without notice.  See also \refSlot{resetStats}.  These statistics
+  make no sense in \option{--fast} mode (\autoref{sec:tools:urbi:opt}).
+\begin{urbicomment}
+//#no-fast
+\end{urbicomment}
 \begin{urbiassert}
 var stats = System.stats;
 

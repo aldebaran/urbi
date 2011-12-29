@@ -169,6 +169,7 @@ interactive, or network-based executions.  It is subsumed by, but simpler to
 use than, \command{urbi-launch} (\autoref{sec:tools:urbi-launch}).
 
 \subsection{Options}
+\label{sec:tools:urbi:opt}
 
 \begin{options}[General Options]
 \item[h]{help} \optionHelp
@@ -182,10 +183,10 @@ use than, \command{urbi-launch} (\autoref{sec:tools:urbi-launch}).
   Ignore system time, go as fast as possible.  Do not use this option
   unless you know exactly what you are doing.
 
-  The \option{--fast} flag makes the kernel run the program in
-  ``simulated time'', as fast as possible. A \lstinline|sleep| in fast
-  mode will not actually wait (from the wall-clock point of view), but
-  the kernel will internally increase its simulated time.
+  The \option{--fast} flag makes the kernel run the program in ``simulated
+  time'', as fast as possible.  A \refSlot[System]{sleep} in fast mode will
+  not actually wait (from the wall-clock point of view), but the kernel will
+  internally increase its simulated time.
 
   For instance, the following session behaves equally in fast and
   non-fast mode:
