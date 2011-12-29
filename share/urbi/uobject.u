@@ -1238,6 +1238,7 @@ function Dictionary.uvalueSerialize()
   {
     var k = e.first |
     if (!k.isA(String))
+      // Keep msg sync with src/kernel/uvalue-cast.cc (uvalue_cast).
       throw Exception.new("Dictionaries exchanged with UObjects can"
                           " only have String keys: %s (%s)"
                           % [k, k.type]) |

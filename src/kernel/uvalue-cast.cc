@@ -60,7 +60,7 @@ urbi::UValue uvalue_cast(const object::rObject& o, int recursionLevel)
       maxRecursionLevel = strtol(getenv("URBI_MAX_CAST_RECURSION_LEVEL"), 0,0);
   }
   if (recursionLevel > maxRecursionLevel)
-    FRAISE("Maximum level of recursion reached while casting to uvalue. Loop?");
+    FRAISE("maximum level of recursion reached while casting to uvalue. Loop?");
   CAPTURE_GLOBAL(Binary);
   CAPTURE_GLOBAL(UObject);
   CAPTURE_GLOBAL(UVar);
@@ -89,10 +89,20 @@ urbi::UValue uvalue_cast(const object::rObject& o, int recursionLevel)
   {
     res.type = urbi::DATA_DICTIONARY;
     res.dictionary = new urbi::UDictionary;
-    object::Dictionary::value_type& r = s->value_get();
-    foreach (const object::Dictionary::value_type::value_type& d, r)
-      (*res.dictionary)[object::from_urbi<libport::Symbol>(d.first)]
-      = uvalue_cast(d.second);
+    urbi::UDictionary& r = *res.dictionary;
+    typedef object::Dictionary::value_type::value_type value_type;
+    foreach (const value_type& p, s->value_get())
+    {
+      // Currently, only strings are valid keys.
+      if (const object::rString s = p.first->as<object::String>())
+        r[s->value_get()] = uvalue_cast(p.second);
+      else
+        // Keep message sync with share/urbi/uobject.u
+        // (Dictionary.uvalueSerialize).
+        FRAISE("Dictionaries exchanged with UObjects can"
+               " only have String keys: %s (%s)",
+               *p.first, *p.first->getSlotValue(SYMBOL(type)));
+    }
   }
   else if (is_a(o, Binary))
   {
