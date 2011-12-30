@@ -46,7 +46,7 @@ namespace runner
     , profile_info_()
     , dependencies_log_(false)
     , dependencies_()
-    , state(lobby)
+    , state(lobby ? lobby.get() : kernel::runner().state.lobby_get())
     , worker_()
     , result_cache_()
     , job_cache_()

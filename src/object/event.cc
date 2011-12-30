@@ -229,8 +229,6 @@ namespace urbi
                       rProfile profile, const objects_type& args)
     {
       runner::Job& r = ::kernel::runner();
-      if (!lobby)
-        lobby = r.state.lobby_get();
       runner::Job* res =
         e->make_job(lobby, r.scheduler_get(), args, SYMBOL(event));
       // Append the back-trace of the event handler (the "at") below
@@ -339,11 +337,8 @@ namespace urbi
               eval::exec(boost::bind(&Subscription::run_sync,
                                      s, this, pl, h, detach, false, args),
                          this);
-            rLobby l =
-              s->lobby ? s->lobby.get()
-              : kernel::runner().state.lobby_get();
             runner::rJob j =
-              new runner::Job(l, kernel::runner().scheduler_get());
+              new runner::Job(s->lobby, kernel::runner().scheduler_get());
             j->set_action(a);
             j->state.tag_stack_set(s->tag_stack);
             GD_FINFO_DUMP("Subscriber will run in job %s", j);

@@ -104,6 +104,7 @@ namespace runner
     /// Create a new job.
     ///
     /// \param lobby The lobby attached to the current job.
+    ///  If null, used the main Lobby.
     ///
     /// \param scheduler The scheduler to which this job will be attached.
     Job(rLobby lobby,
@@ -114,7 +115,7 @@ namespace runner
 
   public:
 
-    /// Urbiscript evaluation
+    /// urbiscript evaluation
     /// \{
 
     /// Urbiscript is evaluated in this function, whatever the
