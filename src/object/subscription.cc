@@ -173,32 +173,45 @@ namespace urbi
     }
 
     void
-    Subscription::run_(rExecutable e, const objects_type& args)
+    Subscription::run_(rExecutable action, const objects_type& args,
+                       bool detach)
     {
-      aver(e);
-      runner::Job& r = kernel::runner();
-      call_stack_type cs = r.state.call_stack_get();
-      FINALLY(((call_stack_type, cs))((runner::Job&, r)),
-              r.state.call_stack_get() = cs);
-      r.state
-        .call_stack_get()
-        .insert(r.state.call_stack_get().begin(),
-                call_stack.begin(), call_stack.end());
-      (*e)(args);
+      aver(action);
+      if (detach)
+      {
+        runner::rJob job =
+          Event::action_job(lobby, call_stack,
+                            action, profile, args);
+        job->start_job();
+      }
+      else
+      {
+        runner::Job& r = kernel::runner();
+        call_stack_type cs = r.state.call_stack_get();
+        FINALLY(((call_stack_type, cs))((runner::Job&, r)),
+                r.state.call_stack_get() = cs);
+        r.state
+          .call_stack_get()
+          .insert(r.state.call_stack_get().begin(),
+                  call_stack.begin(), call_stack.end());
+        (*action)(args);
+      }
     }
 
     void
-    Subscription::enter(const objects_type& args)
+    Subscription::enter(const objects_type& args,
+                        bool detach)
     {
       if (enter_)
-        run_(enter_, args);
+        run_(enter_, args, detach);
     }
 
     void
-    Subscription::leave(const objects_type& args)
+    Subscription::leave(const objects_type& args,
+                        bool detach)
     {
       if (leave_)
-        run_(leave_, args);
+        run_(leave_, args, detach);
     }
 
     void
@@ -235,21 +248,15 @@ namespace urbi
             GD_FPUSH_TRACE("%s: Trigger registration %s.", src, this);
             if (detach && asynchronous_)
             {
-              sched::rJob leaveJob;
               // We are already in a child job, so just spawn for one of the
               // two tasks.  Start jobs simultaneously.
-              if (leave_)
-              {
-                leaveJob = src->action_job(lobby, call_stack,
-                                           leave_, profile, args);
-                leaveJob->start_job();
-              }
-              enter(args);
+              leave(args, true);
+              enter(args, false);
             }
             else
             {
-              enter(args);
-              leave(args);
+              enter(args, false);
+              leave(args, false);
             }
           }
         } // (event)

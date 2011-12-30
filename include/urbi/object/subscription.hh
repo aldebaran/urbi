@@ -101,15 +101,15 @@ namespace urbi
     void freeze();
     void unfreeze();
     /// Run the enter_ hook if defined.
-    void enter(const objects_type& args);
+    void enter(const objects_type& args, bool detach);
     /// Run the leave_ hook if defined.
-    void leave(const objects_type& args);
+    void leave(const objects_type& args, bool detach);
     // Event is only set for mode-two. We need it to call unsubscribed_.
     rEvent event_;
 
   private:
     /// Factor the execution of enter_ or leave_.
-    void run_(rExecutable e, const objects_type& args);
+    void run_(rExecutable e, const objects_type& args, bool detach);
     rExecutable guard, enter_, leave_;
 
   public:

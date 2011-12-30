@@ -48,16 +48,6 @@ namespace urbi
     }
 
 
-    static
-    void
-    spawn_actions_job(rSubscription sub,
-                      rExecutable action, const objects_type& args)
-    {
-      runner::rJob job = Event::action_job(sub->lobby, sub->call_stack,
-                                           action, sub->profile, args);
-      job->start_job();
-    }
-
     /*-------.
     | Stop.  |
     `-------*/
@@ -67,16 +57,7 @@ namespace urbi
       slot_update(SYMBOL(active), to_urbi(false));
       // Copy container to avoid in-place modification problems.
       foreach (const stop_job_type& stop_job, stop_jobs_type(stop_jobs_))
-      {
-        rSubscription sub = stop_job.subscription;
-        if (sub->leave_)
-        {
-          if (detach_)
-            spawn_actions_job(sub, sub->leave_, stop_job.args);
-          else
-            sub->leave(stop_job.args);
-        }
-      }
+        stop_job.subscription->leave(stop_job.args, detach_);
       stop_jobs_.clear();
       source()->active_.erase(this);
     }
@@ -105,13 +86,7 @@ namespace urbi
     EventHandler::trigger_job(const rSubscription& sub, bool detach,
                               const objects_type& args)
     {
-      if (sub->enter_)
-      {
-        if (detach && sub->asynchronous_get())
-          spawn_actions_job(sub, sub->enter_, args);
-        else
-          sub->enter(args);
-      }
+      sub->enter(args, detach && sub->asynchronous_get());
     }
 
     void
