@@ -46,16 +46,17 @@ namespace urbi
       typedef std::vector<stop_job_type> stop_jobs_type;
 
       /// Listener jobs execution function.
-      void trigger_job(const rSubscription& actions, bool detach, objects_type& args
-);
+      void
+      trigger_job(const rSubscription& actions,
+                  bool detach, objects_type& args);
       /// Register the stop job.
       void register_stop_job(const stop_job_type& stop_job);
       /// The parent Event of this handler.
       rEvent source_;
       /// The payload given to handler constructor.
       rList payload_;
-      /// Copy of boolean given to trigger, used for stop synchronicity.
-      bool   detach_;
+      /// Copy of Boolean given to trigger, used for stop synchronicity.
+      bool detach_;
       stop_jobs_type stop_jobs_;
       friend class Subscription;
     };
