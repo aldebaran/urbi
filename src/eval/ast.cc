@@ -636,11 +636,9 @@ namespace eval
         {
           // The new runners are attached to the same tags as we are.
           sched::rJob subrunner =
-            this_.spawn_child(
-              call(ast(this_, exp)),
-              collector)
-            ->name_set(
-              libport::fresh_string(this_.name_get()));
+            this_.spawn_child(call(ast(this_, exp)),
+                              collector)
+            ->name_set(libport::fresh_string(this_.name_get()));
           subrunner->start_job();
         }
         else
