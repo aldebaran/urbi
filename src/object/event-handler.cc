@@ -65,20 +65,18 @@ namespace urbi
     EventHandler::stop()
     {
       slot_update(SYMBOL(active), to_urbi(false));
-      if (detach_)
+      // Copy container to avoid in-place modification problems.
+      foreach (const stop_job_type& stop_job, stop_jobs_type(stop_jobs_))
       {
-        // Copy container to avoid in-place modification problems.
-        foreach (const stop_job_type& stop_job, stop_jobs_type(stop_jobs_))
+        rSubscription sub = stop_job.subscription;
+        if (sub->leave_)
         {
-          rSubscription sub = stop_job.subscription;
-          if (sub->leave_)
+          if (detach_)
             spawn_actions_job(sub, sub->leave_, stop_job.args);
+          else
+            sub->leave(stop_job.args);
         }
       }
-      else
-        foreach (const stop_job_type& stop_job, stop_jobs_type(stop_jobs_))
-          (*stop_job.subscription->leave_)(stop_job.args);
-
       stop_jobs_.clear();
       source()->active_.erase(this);
     }
@@ -107,10 +105,9 @@ namespace urbi
     EventHandler::trigger_job(const rSubscription& sub, bool detach,
                               const objects_type& args)
     {
-      detach = detach && sub->asynchronous_get();
       if (sub->enter_)
       {
-        if (detach)
+        if (detach && sub->asynchronous_get())
           spawn_actions_job(sub, sub->enter_, args);
         else
           sub->enter(args);
