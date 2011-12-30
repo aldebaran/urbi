@@ -224,9 +224,9 @@ namespace urbi
     `-------*/
 
     runner::rJob
-    Event::spawn_actions_job(rLobby lobby, const call_stack_type& stack,
-                             rExecutable e,
-                             rProfile profile, const objects_type& args)
+    Event::action_job(rLobby lobby, const call_stack_type& stack,
+                      rExecutable e,
+                      rProfile profile, const objects_type& args)
     {
       runner::Job& r = ::kernel::runner();
       if (!lobby)

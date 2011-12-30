@@ -53,12 +53,8 @@ namespace urbi
     spawn_actions_job(rSubscription sub,
                       rExecutable action, const objects_type& args)
     {
-      rLobby l = sub->lobby;
-      if (!l)
-        l = ::kernel::runner().state.lobby_get();
-      runner::rJob job =
-        Event::spawn_actions_job(l, sub->call_stack,
-                                 action, sub->profile, args);
+      runner::rJob job = Event::action_job(sub->lobby, sub->call_stack,
+                                           action, sub->profile, args);
       job->start_job();
     }
 

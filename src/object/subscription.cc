@@ -240,8 +240,8 @@ namespace urbi
               // two tasks.  Start jobs simultaneously.
               if (leave_)
               {
-                leaveJob = src->spawn_actions_job(lobby, call_stack,
-                                                  leave_, profile, args);
+                leaveJob = src->action_job(lobby, call_stack,
+                                           leave_, profile, args);
                 leaveJob->start_job();
               }
               enter(args);

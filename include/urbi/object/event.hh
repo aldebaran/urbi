@@ -77,9 +77,9 @@ namespace urbi
 
       static
       runner::rJob
-      spawn_actions_job(rLobby lobby, const call_stack_type& stack,
-                        rExecutable e,
-                        rProfile profile, const objects_type& args);
+      action_job(rLobby lobby, const call_stack_type& stack,
+                 rExecutable e,
+                 rProfile profile, const objects_type& args);
 
     private:
       /** Handle synchronous/asynchronous invokation of subscribers for
