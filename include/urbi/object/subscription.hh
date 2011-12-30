@@ -56,7 +56,7 @@ namespace urbi
      * @param sync true if run_sync was called from the emitter job.
      */
     void run_sync(rEvent src, const objects_type& payload, EventHandler* h,
-                  bool detach, bool sync, objects_type& args);
+                  bool detach, bool sync, const objects_type& args);
   private:
     friend class Event;
     friend class EventHandler;
@@ -101,15 +101,15 @@ namespace urbi
     void freeze();
     void unfreeze();
     /// Run the enter_ hook if defined.
-    void enter(objects_type& args);
+    void enter(const objects_type& args);
     /// Run the leave_ hook if defined.
-    void leave(objects_type& args);
+    void leave(const objects_type& args);
     // Event is only set for mode-two. We need it to call unsubscribed_.
     rEvent event_;
 
   private:
     /// Factor the execution of enter_ or leave_.
-    void run_(rExecutable e, objects_type& args);
+    void run_(rExecutable e, const objects_type& args);
     rExecutable guard, enter_, leave_;
 
   public:

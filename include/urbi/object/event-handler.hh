@@ -56,7 +56,7 @@ namespace urbi
       /// Listener jobs execution function.
       void
       trigger_job(const rSubscription& actions,
-                  bool detach, objects_type& args);
+                  bool detach, const objects_type& args);
       /// Register the stop job.
       void register_stop_job(const stop_job_type& stop_job);
       /// The parent Event of this handler.

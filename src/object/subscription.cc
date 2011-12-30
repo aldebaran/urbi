@@ -173,7 +173,7 @@ namespace urbi
     }
 
     void
-    Subscription::run_(rExecutable e, objects_type& args)
+    Subscription::run_(rExecutable e, const objects_type& args)
     {
       aver(e);
       runner::Job& r = kernel::runner();
@@ -188,14 +188,14 @@ namespace urbi
     }
 
     void
-    Subscription::enter(objects_type& args)
+    Subscription::enter(const objects_type& args)
     {
       if (enter_)
         run_(enter_, args);
     }
 
     void
-    Subscription::leave(objects_type& args)
+    Subscription::leave(const objects_type& args)
     {
       if (leave_)
         run_(leave_, args);
@@ -204,7 +204,7 @@ namespace urbi
     void
     Subscription::run_sync(rEvent src,
                            const objects_type& pl, EventHandler* h,
-                           bool detach, bool sync, objects_type& args)
+                           bool detach, bool sync, const objects_type& args)
     {
       GD_FPUSH_TRACE("Subscriber %s running synchronously in %s", this,
                      kernel::runner());

@@ -105,7 +105,7 @@ namespace urbi
 
     void
     EventHandler::trigger_job(const rSubscription& sub, bool detach,
-                              objects_type& args)
+                              const objects_type& args)
     {
       detach = detach && sub->asynchronous_get();
       if (sub->enter_)
