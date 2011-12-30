@@ -67,8 +67,6 @@ namespace urbi
       slot_update(SYMBOL(active), to_urbi(false));
       if (detach_)
       {
-        runner::Job& r = ::kernel::runner();
-        sched::jobs_type children;
         // Copy container to avoid in-place modification problems.
         foreach (const stop_job_type& stop_job, stop_jobs_type(stop_jobs_))
         {
@@ -76,7 +74,6 @@ namespace urbi
           if (sub->leave_)
             spawn_actions_job(sub, sub->leave_, stop_job.args);
         }
-        r.yield_until_terminated(children);
       }
       else
         foreach (const stop_job_type& stop_job, stop_jobs_type(stop_jobs_))
