@@ -76,16 +76,16 @@ namespace urbi
         // Copy container to avoid in-place modification problems.
         foreach (const stop_job_type& stop_job, stop_jobs_type(stop_jobs_))
         {
-          rSubscription actions = stop_job.get<0>();
+          rSubscription actions = stop_job.subscription;
           if (actions->leave_)
             spawn_actions_job(actions,
-                              actions->leave_, stop_job.get<1>());
+                              actions->leave_, stop_job.args);
         }
         r.yield_until_terminated(children);
       }
       else
         foreach (const stop_job_type& stop_job, stop_jobs_type(stop_jobs_))
-          (*stop_job.get<0>()->leave_)(stop_job.get<1>());
+          (*stop_job.subscription->leave_)(stop_job.args);
 
       stop_jobs_.clear();
       source()->active_.erase(this);
