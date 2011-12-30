@@ -120,19 +120,19 @@ at (e?(var v))
 onleave
   { echo("c"+v); sleep(20ms); echo("d"+v) };
 
-var handler = e.trigger("1") | echo("?");
-[00000001] *** ?
+var handler = e.trigger(1) | echo("triggered");
+[00000001] *** triggered
 [00000002] *** a1
 [00000102] *** b1
 sleep(200ms);
-handler.stop | echo("?");
-[00000301] *** ?
+handler.stop | echo("stopped");
+[00000301] *** stopped
 sleep(25ms);
 [00000302] *** c1
 [00000402] *** d1
 
 // at and onleave clauses may overlap.
-handler = e.trigger("2") | handler.stop;
+handler = e.trigger(2) | handler.stop;
 sleep(25ms);
 [00000001] *** a2
 [00000002] *** c2
@@ -140,14 +140,14 @@ sleep(25ms);
 [00000201] *** b2
 [00000202] *** d2
 
-handler = e.syncTrigger("3") | echo("?");
+handler = e.syncTrigger(3) | echo("triggered");
 [00000002] *** a3
 [00000102] *** b3
-[00000001] *** ?
-handler.stop | echo("?");
+[00000001] *** triggered
+handler.stop | echo("stopped");
 [00000302] *** c3
 [00000402] *** d3
-[00000301] *** ?
+[00000301] *** stopped
 \end{urbiscript}
 \columnbreak
 
@@ -163,33 +163,34 @@ at sync (e?(var v))
 onleave
   { echo("c"+v); sleep(20ms); echo("d"+v) };
 
-var handler = e.trigger("1") | echo("?");
+var handler = e.trigger(1) | echo("triggered");
 // No need to sleep.
 [00000002] *** a1
 [00000102] *** b1
-[00000001] *** ?
-handler.stop | echo("?");
-[00000301] *** ?
+[00000001] *** triggered
+handler.stop | echo("stopped");
+[00000301] *** stopped
 sleep(25ms);
 [00000302] *** c1
 [00000402] *** d1
 
 // at and onleave clauses don't overlap.
-handler = e.trigger("2") | handler.stop;
+handler = e.trigger(2) | handler.stop;
 sleep(25ms);
 [00000001] *** a2
 [00000201] *** b2
 [00000002] *** c2
 [00000202] *** d2
 
-handler = e.syncTrigger("3") | echo("?");
+
+handler = e.syncTrigger(3) | echo("triggered");
 [00000002] *** a3
 [00000102] *** b3
-[00000001] *** ?
-handler.stop | echo("?");
+[00000001] *** triggered
+handler.stop | echo("stopped");
 [00000302] *** c3
 [00000402] *** d3
-[00000301] *** ?
+[00000301] *** stopped
 \end{urbiscript}
 \end{multicols}
 
