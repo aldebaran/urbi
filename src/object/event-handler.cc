@@ -76,10 +76,9 @@ namespace urbi
         // Copy container to avoid in-place modification problems.
         foreach (const stop_job_type& stop_job, stop_jobs_type(stop_jobs_))
         {
-          rSubscription actions = stop_job.subscription;
-          if (actions->leave_)
-            spawn_actions_job(actions,
-                              actions->leave_, stop_job.args);
+          rSubscription sub = stop_job.subscription;
+          if (sub->leave_)
+            spawn_actions_job(sub, sub->leave_, stop_job.args);
         }
         r.yield_until_terminated(children);
       }
@@ -112,16 +111,16 @@ namespace urbi
     }
 
     void
-    EventHandler::trigger_job(const rSubscription& actions, bool detach,
+    EventHandler::trigger_job(const rSubscription& sub, bool detach,
                               objects_type& args)
     {
-      detach = detach && actions->asynchronous_get();
-      if (actions->enter_)
+      detach = detach && sub->asynchronous_get();
+      if (sub->enter_)
       {
         if (detach)
-          spawn_actions_job(actions, actions->enter_, args);
+          spawn_actions_job(sub, sub->enter_, args);
         else
-          actions->enter(args);
+          sub->enter(args);
       }
     }
 

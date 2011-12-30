@@ -136,49 +136,46 @@ namespace urbi
     Event::onEvent(rExecutable guard, rExecutable enter, rExecutable leave,
                    bool sync)
     {
-      rSubscription actions(new Subscription(this, guard, enter, leave, sync));
-      GD_FPUSH_TRACE("%s: New registration %s.", this, actions);
+      rSubscription sub(new Subscription(this, guard, enter, leave, sync));
+      GD_FPUSH_TRACE("%s: New registration %s.", this, sub);
       runner::Job& r = ::kernel::runner();
-      actions->call_stack = r.state.call_stack_get();
+      sub->call_stack = r.state.call_stack_get();
       const libport::Symbol& sep =
         SYMBOL(MINUS_MINUS_MINUS_MINUS_SP_event_SP_handler_SP_backtrace_COLON);
-      actions->call_stack << std::make_pair(sep, boost::optional<ast::loc>());
+      sub->call_stack << std::make_pair(sep, boost::optional<ast::loc>());
 
-      actions->profile = r.profile_get();
-      actions->tag_stack = r.state.tag_stack_get();
-      actions->lobby = r.state.lobby_get();
-      foreach (object::rTag& tag, actions->tag_stack)
+      sub->profile = r.profile_get();
+      sub->tag_stack = r.state.tag_stack_get();
+      sub->lobby = r.state.lobby_get();
+      foreach (object::rTag& tag, sub->tag_stack)
       {
         GD_FINFO_DEBUG("%s: Hook tag %s.", this, tag->name());
         sched::rTag t = tag->value_get();
         using boost::bind;
-        actions->connections
-          << t->stop_hook_get().connect(
-            bind(&Subscription::unregister, actions))
-          << t->freeze_hook_get().connect(
-            bind(&Subscription::freeze, actions))
-          << t->unfreeze_hook_get().connect(
-            bind(&Subscription::unfreeze, actions));
+        sub->connections
+          << t->stop_hook_get().connect(bind(&Subscription::unregister, sub))
+          << t->freeze_hook_get().connect(bind(&Subscription::freeze, sub))
+          << t->unfreeze_hook_get().connect(bind(&Subscription::unfreeze, sub));
       }
 
-      subscribe(actions);
+      subscribe(sub);
       foreach (const actives_type::value_type& active, active_)
       {
         objects_type args;
         args << this << this << active->payload();
         rObject pattern = nil_class;
-        if (actions->guard)
+        if (sub->guard)
         {
-          pattern = (*actions->guard)(args);
+          pattern = (*sub->guard)(args);
           if (pattern == void_class)
             continue;
         }
         args << pattern;
-        if (actions->leave_)
+        if (sub->leave_)
           active
             ->register_stop_job
-            (EventHandler::stop_job_type(actions, args, true));
-        active->trigger_job(actions, true, args);
+            (EventHandler::stop_job_type(sub, args, true));
+        active->trigger_job(sub, true, args);
       }
       subscribed_();
     }
@@ -256,10 +253,9 @@ namespace urbi
         slot_update(SYMBOL(active), to_urbi(false));
       waituntil_release(payload);
       bool empty = callbacks_.empty();
-      objects_type apl;
       callbacks_type cbcopy;
       // Copy active subscriptions, cleanup list
-      for (unsigned i= 0; i<callbacks_.size(); ++i)
+      for (unsigned i = 0; i < callbacks_.size(); ++i)
       {
         rSubscription& s = callbacks_[i];
         if (s->disconnected_get())
@@ -305,8 +301,8 @@ namespace urbi
                  && (!s->maxParallelEvents_
                      || s->maxParallelEvents_ > s->processing_))
         {
-          // FIXME CRAP if we honor the event emit sync/at sync rule, no way
-          // to catch changed asynchronously
+          // FIXME: CRAP if we honor the event emit sync/at sync rule,
+          // no way to catch changed asynchronously
           bool async =
             (s->event_ && (detach && s->asynchronous_get()))
             || (!s->event_ && (detach || s->asynchronous_get()));
@@ -326,7 +322,7 @@ namespace urbi
             pattern = (*s->guard)(args);
             if (pattern == void_class)
             {
-              GD_FINFO_TRACE("%s: Skip patters mismatch %s.", this, s);
+              GD_FINFO_TRACE("%s: Skip pattern mismatch %s.", this, s);
               continue;
             }
           }
