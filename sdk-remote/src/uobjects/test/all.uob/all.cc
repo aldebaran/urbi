@@ -16,6 +16,7 @@
 #include <libport/locale.hh>
 #include <libport/ufloat.hh>
 #include <libport/unistd.h>
+#include <libport/utime.hh>
 #include <sstream>
 #include <stdexcept>
 
@@ -152,11 +153,13 @@ public:
        transmitI, transmitSnd, transmitO,
        transmitVector, transmitMatrix);
     UBindFunction(all, emitO);
-    UBindFunction(all, loop_yield);
+    UBindFunctions
+      (all,
+       loop_yield, yield_for);
     UBindFunctions
       (urbi::UContext,
        side_effect_free_get, side_effect_free_set,
-       yield, yield_for);
+       yield);
 
     UBindFunction(all, getDestructionCount);
 
@@ -907,14 +910,20 @@ public:
     return 0;
   }
 
-  void loop_yield(long duration)
+  void loop_yield(urbi::ufloat duration)
   {
-    libport::utime_t end = libport::utime() + duration;
-    while (libport::utime() < end)
-    {
+    using namespace libport;
+    for (utime_t end = utime() + seconds_to_utime(duration);
+         utime() < end;
+         usleep(1000))
       yield();
-      usleep(1000);
-    }
+  }
+
+  // Override from UContext.
+  // Not polymorphic, as we change the signature (ufloat).
+  void yield_for(urbi::ufloat duration)
+  {
+    urbi::UContext::yield_for(libport::seconds_to_utime(duration));
   }
 
   int getDestructionCount() const
