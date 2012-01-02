@@ -174,7 +174,7 @@ namespace urbi
         args << pattern;
         if (sub->leave_)
           *active << EventHandler::stop_job_type(sub, args, true);
-        active->trigger_job(sub, true, args);
+        active->trigger_job(sub, args, true);
       }
       subscribed_();
     }

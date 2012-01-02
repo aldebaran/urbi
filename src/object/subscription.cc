@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, Gostai S.A.S.
+ * Copyright (C) 2011-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -132,7 +132,7 @@ namespace urbi
       stop();
       GD_FINFO_TRACE("Unregister registration %s on %s.", this, event_);
 
-      foreach(boost::signals::connection& c, connections)
+      foreach (boost::signals::connection& c, connections)
         c.disconnect();
       connections.clear();
       rEvent e = event_;
@@ -143,7 +143,7 @@ namespace urbi
       enter_ = leave_ = 0;
       guard = 0;
       // We must handle unsubscribed_ now or watch condition will be evaluated
-      foreach(rSubscription& s, e->callbacks_)
+      foreach (rSubscription& s, e->callbacks_)
         if (!s->disconnected_get())
           return;
       if (!e->callbacks_.empty())
@@ -241,7 +241,7 @@ namespace urbi
         {
           if (h)
             // emit with duration case (trigger).
-            h->trigger_job(this, detach, args);
+            h->trigger_job(this, args, detach);
           else
           {
             // Dirac emit case (not trigger)
