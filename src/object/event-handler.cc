@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, Gostai S.A.S.
+ * Copyright (C) 2010-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -89,10 +89,5 @@ namespace urbi
       sub->enter(args, detach && sub->asynchronous_get());
     }
 
-    void
-    EventHandler::register_stop_job(const stop_job_type& stop_job)
-    {
-      stop_jobs_ << stop_job;
-    }
   }
 }

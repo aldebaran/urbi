@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, Gostai S.A.S.
+ * Copyright (C) 2010-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -58,7 +58,7 @@ namespace urbi
       trigger_job(const rSubscription& actions,
                   bool detach, const objects_type& args);
       /// Register the stop job.
-      void register_stop_job(const stop_job_type& stop_job);
+      EventHandler& operator<<(const stop_job_type& stop_job);
       /// The parent Event of this handler.
       rEvent source_;
       /// The payload given to handler constructor.
@@ -70,5 +70,7 @@ namespace urbi
     };
   }
 }
+
+# include <urbi/object/event-handler.hxx>
 
 #endif

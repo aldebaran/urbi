@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, Gostai S.A.S.
+ * Copyright (C) 2010, 2011, 2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -157,10 +157,11 @@ namespace urbi
           << t->freeze_hook_get().connect(bind(&Subscription::freeze, sub))
           << t->unfreeze_hook_get().connect(bind(&Subscription::unfreeze, sub));
       }
-
       subscribe(sub);
-      foreach (const actives_type::value_type& active, active_)
+
+      foreach (const rEventHandler& active, active_)
       {
+        // FIXME: duplication with emit_backend.
         objects_type args;
         args << this << this << active->payload();
         rObject pattern = nil_class;
@@ -172,9 +173,7 @@ namespace urbi
         }
         args << pattern;
         if (sub->leave_)
-          active
-            ->register_stop_job
-            (EventHandler::stop_job_type(sub, args, true));
+          *active << EventHandler::stop_job_type(sub, args, true);
         active->trigger_job(sub, true, args);
       }
       subscribed_();
@@ -312,6 +311,7 @@ namespace urbi
             GD_FINFO_TRACE("%s: Skip frozen registration %s.", this, s);
             continue;
           }
+          // FIXME: duplication with onEvent.
           objects_type args;
           args << this << this << payload;
           rObject pattern = nil_class;
@@ -326,7 +326,7 @@ namespace urbi
           }
           args << pattern;
           if (h && s->leave_)
-            h->register_stop_job(EventHandler::stop_job_type(s, args, detach));
+            *h << EventHandler::stop_job_type(s, args, detach);
           if (async)
           {
             // If we create a job, it can die before executing a single line

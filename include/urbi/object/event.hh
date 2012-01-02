@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, Gostai S.A.S.
+ * Copyright (C) 2010-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -82,7 +82,7 @@ namespace urbi
                  rProfile profile, const objects_type& args);
 
     private:
-      /** Handle synchronous/asynchronous invokation of subscribers for
+      /** Handle synchronous/asynchronous invocation of subscribers for
        * emit and trigger
        * @param pl the emit payload
        * @param detach true if the emitter requested asynchronous notification

@@ -1,4 +1,4 @@
-## Copyright (C) 2008-2011, Gostai S.A.S.
+## Copyright (C) 2008-2012, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -48,6 +48,7 @@ dist_kernelinclude_urbi_object_HEADERS =        \
   include/urbi/object/equality-comparable.hxx   \
   include/urbi/object/event.hh                  \
   include/urbi/object/event-handler.hh          \
+  include/urbi/object/event-handler.hxx         \
   include/urbi/object/file.hh                   \
   include/urbi/object/float.hh                  \
   include/urbi/object/float.hxx                 \
