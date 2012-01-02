@@ -49,7 +49,7 @@ find_prog ()
   done
 }
 
-stderr "$me: this is $(hostname): $BUILDFARM_PROJECT-$BUILDFARM_NAME-$BUILDFARM_MODE"
+stderr "$me: this is $(BUILDFARM_HOSTNAME): $BUILDFARM_PROJECT-$BUILDFARM_NAME-$BUILDFARM_MODE"
 
 ## --------------------- ##
 ## Basic sanity checks.  ##
@@ -86,3 +86,6 @@ fi
 if colordiff /dev/null $readme >/dev/null 2>&1; then
   fatal "colordiff exits successfully on different files"
 fi
+
+# define BUILDFARM_HOSTNAME used for test skipping purposes.
+export BUILDFARM_HOSTNAME=$(hostname | sed -e 's/\..*//')
