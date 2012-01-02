@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2011, Gostai S.A.S.
+ * Copyright (C) 2008-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -107,8 +107,8 @@ public:
     UBindFunctions(all, multiRead, multiWrite);
 
     /** BYPASS check **/
-    UBindFunction(all, setBypassNotifyChangeBinary);
-    UBindFunction(all, setBypassNotifyChangeImage);
+    UBindFunctions(all,
+                   setBypassNotifyChangeBinary, setBypassNotifyChangeImage);
     UBindFunctions(all, markBypass, markRTP);
     UBindFunctions(all, selfWriteB, selfWriteI, selfWriteVD);
 
@@ -119,20 +119,12 @@ public:
        sendEvent8Args,
        unnotify,
        setThreadedNotifyChange, setThreadedNotifyChangeByUVar);
-    UBindFunction(all, read);
-    UBindFunction(all, write);
-    UBindFunction(all, readByName);
-    UBindFunction(all, readValByName);
-    UBindFunction(all, writeByName);
-    UBindFunction(all, writeByUVar);
-    UBindFunction(all, writeOwnByName);
-    UBindFunction(all, urbiWriteOwnByName);
-    UBindFunction(all, sendString);
-    UBindFunction(all, sendBuf);
-    UBindFunction(all, sendPar);
-    UBindFunction(all, typeOf);
-    UBindFunction(all, uobjectName);
-    UBindFunction(all, allUObjectName);
+    UBindFunctions
+      (all,
+       read, write,
+       readByName, readValByName, writeByName, writeByUVar,
+       writeOwnByName, urbiWriteOwnByName, sendString,
+       sendBuf, sendPar, typeOf, uobjectName, allUObjectName);
     UBindVar(all,a);
     UBindVar(all,a);
     UBindVars(all, b, c, d);
@@ -161,25 +153,25 @@ public:
        transmitVector, transmitMatrix);
     UBindFunction(all, emitO);
     UBindFunction(all, loop_yield);
-    UBindFunction(urbi::UContext, side_effect_free_get);
-    UBindFunction(urbi::UContext, side_effect_free_set);
-    UBindFunction(urbi::UContext, yield);
-    UBindFunction(urbi::UContext, yield_for);
+    UBindFunctions
+      (urbi::UContext,
+       side_effect_free_get, side_effect_free_set,
+       yield, yield_for);
 
     UBindFunction(all, getDestructionCount);
 
-    UBindFunction(all, invalidRead);
-    UBindFunction(all, invalidWrite);
+    UBindFunctions(all, invalidRead, invalidWrite);
 
     UBindEvent(all, ev);
-    UBindFunction(all, sendEvent);
-    UBindFunction(all, sendEvent2Args);
-    UBindFunction(all, sendNamedEvent);
+    UBindFunctions
+      (all,
+       sendEvent, sendEvent2Args, sendNamedEvent);
 
     UBindFunction(all, throwException);
     UBindFunction(all, socketStats);
     UBindFunction(all, instanciate);
-    UBindFunctions(all, area, translate, makeRect, multiTranslate,
+    UBindFunctions(all,
+                   area, translate, makeRect, multiTranslate,
                    transmitPointOfInterest, writePointOfInterest,
                    readPointOfInterest);
     UBindFunctionRename(all, area, "rectArea");
@@ -190,8 +182,7 @@ public:
     UBindFunctions(all, setLocale, getLocale);
 
     // Image conversion.
-    UBindFunctions(all, convert);
-    UBindFunctions(all, imageDiff);
+    UBindFunctions(all, convert, imageDiff);
 
     UBindCacheVar(all, writeLastChangeVal, bool);
     writeLastChangeVal = true;
