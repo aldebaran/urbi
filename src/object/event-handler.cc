@@ -51,6 +51,7 @@ namespace urbi
     /*-------.
     | Stop.  |
     `-------*/
+
     void
     EventHandler::stop()
     {
@@ -60,18 +61,6 @@ namespace urbi
         stop_job.subscription->leave(stop_job.args, detach_);
       stop_jobs_.clear();
       source()->active_.erase(this);
-    }
-
-    rList
-    EventHandler::payload()
-    {
-      return payload_;
-    }
-
-    rEvent
-    EventHandler::source()
-    {
-      return source_;
     }
 
     void

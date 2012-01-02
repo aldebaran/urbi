@@ -19,5 +19,20 @@ namespace urbi
       stop_jobs_ << j;
       return *this;
     }
+
+    inline
+    rList
+    EventHandler::payload()
+    {
+      return payload_;
+    }
+
+    inline
+    rEvent
+    EventHandler::source()
+    {
+      return source_;
+    }
+
   }
 }
