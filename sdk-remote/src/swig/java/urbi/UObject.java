@@ -134,11 +134,11 @@ public class UObject extends UObjectCPP
 
     protected void UNotifyOnRequest (String var_name,
 				     String method_name,
-				     String[] parameters_name)
+				     String[] arguments_name)
     {
 	Method m;
 	try {
-	    Class[] params = stringTypeToClassType (parameters_name);
+	    Class[] params = stringTypeToClassType (arguments_name);
 	    Class obj_class = getClass ();
 	    m = obj_class.getMethod (method_name, params);
 	}
@@ -160,11 +160,11 @@ public class UObject extends UObjectCPP
 
     protected void UNotifyOnRequest (UVar v,
 				     String method_name,
-				     String[] parameters_name)
+				     String[] arguments_name)
     {
 	Method m;
 	try {
-	    Class[] params = stringTypeToClassType (parameters_name);
+	    Class[] params = stringTypeToClassType (arguments_name);
 	    Class obj_class = getClass ();
 	    m = obj_class.getMethod (method_name, params);
 	}
@@ -236,11 +236,11 @@ public class UObject extends UObjectCPP
 
     protected void UNotifyChange (String var_name,
 				  String method_name,
-				  String[] parameters_name)
+				  String[] arguments_name)
     {
 	Method m;
 	try {
-	    Class[] params = stringTypeToClassType (parameters_name);
+	    Class[] params = stringTypeToClassType (arguments_name);
 	    Class obj_class = getClass ();
 	    m = obj_class.getMethod (method_name, params);
 	}
@@ -262,11 +262,11 @@ public class UObject extends UObjectCPP
 
     protected void UNotifyChange (UVar v,
 				  String method_name,
-				  String[] parameters_name)
+				  String[] arguments_name)
     {
 	Method m;
 	try {
-	    Class[] params = stringTypeToClassType (parameters_name);
+	    Class[] params = stringTypeToClassType (arguments_name);
 	    Class obj_class = getClass ();
 	    m = obj_class.getMethod (method_name, params);
 	}
@@ -347,11 +347,11 @@ public class UObject extends UObjectCPP
 
     protected void UBindFunction (Object obj,
 				  String method_name,
-				  String[] parameters_name)
+				  String[] arguments_name)
     {
 	Method m;
 	try {
-	    Class[] params = stringTypeToClassType (parameters_name);
+	    Class[] params = stringTypeToClassType (arguments_name);
 	    Class obj_class = obj.getClass ();
 	    m = obj_class.getMethod (method_name, params);
 	}
@@ -411,11 +411,11 @@ public class UObject extends UObjectCPP
     protected String USetTimer (double period,
 				Object obj,
 				String method_name,
-				String[] parameters_name)
+				String[] arguments_name)
     {
 	Method m;
 	try {
-	    Class[] params = stringTypeToClassType (parameters_name);
+	    Class[] params = stringTypeToClassType (arguments_name);
 	    Class obj_class = obj.getClass ();
 	    m = obj_class.getMethod (method_name, params);
 	}

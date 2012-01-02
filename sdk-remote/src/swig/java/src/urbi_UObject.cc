@@ -144,9 +144,7 @@ getMethodIdAndUrbiName(JNIEnv *env,
 
   const char* obj_name_ = env->GetStringUTFChars(obj_name, 0);
 
-  res.urbi_method_name = obj_name_;
-  res.urbi_method_name += ".";
-  res.urbi_method_name += method_name_;
+  res.urbi_method_name = libport::format("%s.%s", obj_name_, method_name_);
 
   env->ReleaseStringUTFChars(method_name, method_name_);
   env->ReleaseStringUTFChars(method_signature, method_signature_);
