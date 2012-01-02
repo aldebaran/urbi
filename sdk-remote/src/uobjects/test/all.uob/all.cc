@@ -934,10 +934,7 @@ public:
   std::string uobjectName(UObject* n)
   {
     threadCheck();
-    if (!n)
-      return std::string();
-    else
-      return n->__name;
+    return n ? n->__name : std::string();
   }
 
   std::string allUObjectName(all* n)
