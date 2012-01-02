@@ -4108,6 +4108,14 @@ The \lstinline{onleave}-clause is optional.  Note that, as is the case for
 the \lstinline{if} statement, there must \emph{not} be a semicolon after
 \var{statement1} if there is an \lstinline{onleave} clause.
 
+Event-programming constructs actually set up monitors that become
+``back-ground jobs''.  As a result:
+\begin{itemize}
+\item they return void;
+\item they escape the traditional flow-control evaluation scheme.  Use
+  \refObject[Tag]{Tags} to control them (\autoref{sec:lang:at:tag}).
+\end{itemize}
+
 \subsubsection{\lstinline{at} on Events}
 \label{sec:lang:at:ev}
 
@@ -4283,6 +4291,62 @@ removeSlots("e");
 Alternatively, the event emission may request a synchronous handling, see
 \autoref{sec:event:sync}.
 
+\subsubsection{Execution Context}
+When a body of an \lstinline{at}-construct is executed (be it the enter- or
+the leave-clause), its context is that of the whole construct.
+
+\paragraph{Context: \this}
+The current object, \this, when executing a sub-clause, is the current
+object when the \lstinline{at}-construct was evaluated.
+
+\begin{urbiscript}
+class Global.Foo
+{
+  function event()
+  {
+    var res = Event.new;
+    at sync (res?) { assert(this === Foo) | echo(1) }
+    onleave        { assert(this === Foo) | echo(2) };
+
+    at (res?)      { assert(this === Foo) | echo(3) }
+    onleave        { assert(this === Foo) | echo(4) };
+    res;
+  };
+}|;
+
+class Global.Bar
+{
+  var event = Foo.event;
+}|;
+
+Bar.event!;
+[00003017] *** 1
+[00003017] *** 2
+[00003017] *** 3
+[00003017] *** 4
+\end{urbiscript}
+
+\paragraph{Context: Tags}
+The tags that apply to the execution of enter- and leave-clauses include
+that of the whole \lstinline{at}-construct:
+\begin{urbiscript}
+var t = Tag.new("t")|;
+var e = Event.new|;
+t: at sync (e?) { assert(t in Job.current.tags) | echo(1) }
+      onleave   { assert(t in Job.current.tags) | echo(2) };
+
+t: at (e?)      { assert(t in Job.current.tags) | echo(3) }
+   onleave      { assert(t in Job.current.tags) | echo(4) };
+e!;
+[00004898] *** 1
+[00004898] *** 2
+[00004898] *** 3
+[00004898] *** 4
+\end{urbiscript}
+\begin{urbicomment}
+removeSlots("e", "t");
+\end{urbicomment}
+
 \subsubsection{Tags and \lstinline{at}}
 \label{sec:lang:at:tag}
 
@@ -4368,26 +4432,6 @@ e!("b");
 removeSlots("e", "t");
 \end{urbicomment}
 
-All this can be summarized as follows: the tag stack that applies to the
-execution of enter- and leave-clauses include that of the whole
-\lstinline{at}-construct:
-\begin{urbiscript}
-var t = Tag.new("t")|;
-var e = Event.new|;
-t: at sync (e?) { assert(t in Job.current.tags) | echo(1) }
-   onleave      { assert(t in Job.current.tags) | echo(2) };
-
-t: at (e?)      { assert(t in Job.current.tags) | echo(3) }
-   onleave      { assert(t in Job.current.tags) | echo(4) };
-e!;
-[00004898] *** 1
-[00004898] *** 2
-[00004898] *** 3
-[00004898] *** 4
-\end{urbiscript}
-\begin{urbicomment}
-removeSlots("e", "t");
-\end{urbicomment}
 
 \subsubsection{Scoped \lstinline{at}}
 
@@ -4402,13 +4446,9 @@ function Event.newVerbose()
     echo(x);
   res
 }|;
-var e = Event.newVerbose|;
-e!(12);
+Event.newVerbose!(12);
 [00001202] *** 12
 \end{urbiscript}
-\begin{urbicomment}
-removeSlots("e");
-\end{urbicomment}
 
 Using a \refObject{Tag}, one can control them (\autoref{sec:lang:at:tag}).
 In the following example, \refSlot[Tag]{scope} is used to label the
@@ -4424,8 +4464,7 @@ function Event.newScoped()
       echo(x);
   res
 }|;
-var e = Event.newScoped|;
-e!(23);
+Event.newScoped!(23);
 // Nothing happens.
 \end{urbiscript}
 \begin{urbicomment}
