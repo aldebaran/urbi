@@ -177,11 +177,15 @@ namespace urbi
                        bool detach)
     {
       aver(action);
+      // FIXME: This is too hairy: there are parts dealing with the
+      // state which are hidden in action_job, but explicit in the
+      // "else" clause below.  Something cleaner must exist.
       if (detach)
       {
         runner::rJob job =
           Event::action_job(lobby, call_stack,
                             action, profile, args);
+        job->state.tag_stack_set(tag_stack);
         job->start_job();
       }
       else

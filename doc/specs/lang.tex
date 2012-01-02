@@ -1,4 +1,4 @@
-%% Copyright (C) 2008-2011, Gostai S.A.S.
+%% Copyright (C) 2008-2012, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -4276,34 +4276,142 @@ echo("Blocked");
 [00000003] *** out
 [00000004] *** Blocked
 \end{urbiscript}
+\begin{urbicomment}
+removeSlots("e");
+\end{urbicomment}
 
 Alternatively, the event emission may request a synchronous handling, see
 \autoref{sec:event:sync}.
 
-\subsubsection{Scoping at \lstinline{at}}
+\subsubsection{Tags and \lstinline{at}}
+\label{sec:lang:at:tag}
 
-\lstinline{at} statements are not scoped.  But, using a \refObject{Tag}
-object, one can control them.  In the following example,
-\refSlot[Tag]{scope} is used to label the \lstinline{at} statement.  When
-the function ends, the \lstinline{at} is no longer active.
+Event programming constructs such as \lstinline{at} install background jobs
+that monitor the events.  They are not submitted to the usual rules of
+control-flow.  To control them, use \refObject[Tag]{Tags}.
 
-\begin{urbiscript}[firstnumber=1]
-var x = 0 |
-var x_is_two = false |;
+Tags allow to disable, temporarily or momentarily, event monitors.
+\begin{urbiscript}
+var t = Tag.new|;
+var e = Event.new|;
+t: at (e?(var x))      echo("enter" + x)     onleave echo("leave" + x);
+t: at sync (e?(var x)) echo("syncEnter" + x) onleave echo("syncLeave" + x);
+e!(1);
+[00001822] *** syncEnter1
+[00001822] *** syncLeave1
+[00001822] *** enter1
+[00001822] *** leave1
 
-{
-  Tag.scope:
-    at (x == 2)
-      x_is_two = true
-    onleave
-      x_is_two = false;
-  sleep(2s);
-},
-x = 2 |; assert(x_is_two);
-x = 1 |; assert(!x_is_two);
-sleep(3s);
-x = 2 | assert(!x_is_two);
+// Nothing happens when the code is frozen.
+t.freeze;
+e!(2);
+e!(3);
+t.unfreeze;
+
+// Back on line!
+e!(4);
+[00001843] *** syncEnter4
+[00001843] *** syncLeave4
+[00001843] *** enter4
+[00001843] *** leave4
+
+// Dead, for ever.
+t.stop;
+e!(5);
 \end{urbiscript}
+\begin{urbicomment}
+removeSlots("e", "t");
+\end{urbicomment}
+
+Tags not only control the monitor part (the part checking whether the event
+is triggered), but also the execution of the body.  And Tags can be
+used from the event-handler itself.
+
+\begin{urbiscript}
+var t = Tag.new|;
+var e = Event.new|;
+t: at (e?(var x))
+{
+  echo(x+1) | t.stop | echo(x+2)
+}
+onleave
+{
+  echo(x+3)
+};
+e!("a");
+[00001843] *** a1
+e!("b");
+\end{urbiscript}
+\begin{urbicomment}
+removeSlots("e", "t");
+\end{urbicomment}
+
+The same applies when the monitor is interrupted from the
+\lstinline{onleave} clause.
+\begin{urbiscript}
+var t = Tag.new|;
+var e = Event.new|;
+t: at (e?(var x))
+{
+  echo(x+1)
+}
+onleave
+{
+  echo(x+2) | t.stop | echo(x+3)
+};
+e!("a");
+[00001843] *** a1
+[00001843] *** a2
+e!("b");
+\end{urbiscript}
+\begin{urbicomment}
+removeSlots("e", "t");
+\end{urbicomment}
+
+
+
+\subsubsection{Scoped \lstinline{at}}
+
+\lstinline{at} statements are not ``scoped'': they install event-handlers
+that escape the scope in which they are defined:
+
+\begin{urbiscript}
+function Event.newVerbose()
+{
+  var res = Event.new;
+  at (res?(var x))
+    echo(x);
+  res
+}|;
+var e = Event.newVerbose|;
+e!(12);
+[00001202] *** 12
+\end{urbiscript}
+\begin{urbicomment}
+removeSlots("e");
+\end{urbicomment}
+
+Using a \refObject{Tag}, one can control them (\autoref{sec:lang:at:tag}).
+In the following example, \refSlot[Tag]{scope} is used to label the
+\lstinline{at} statement.  When the function ends, the \lstinline{at} is no
+longer active.
+
+\begin{urbiscript}
+function Event.newScoped()
+{
+  var res = Event.new;
+  Tag.scope:
+    at (res?(var x))
+      echo(x);
+  res
+}|;
+var e = Event.newScoped|;
+e!(23);
+// Nothing happens.
+\end{urbiscript}
+\begin{urbicomment}
+removeSlots("e");
+\end{urbicomment}
 
 \subsection{\lstinline{waituntil}}
 \label{sec:lang:waituntil}

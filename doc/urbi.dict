@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1675 utf-8
+personal_ws-1.1 en 1683 utf-8
 aa
 aaa
 abc
@@ -933,7 +933,9 @@ netcat
 netMask
 NetworkSetup
 newImage
+newScoped
 NewSingleton
+newVerbose
 Nivault
 nJobs
 noncommercially
@@ -1353,6 +1355,8 @@ svn
 sw
 syncClient
 syncEmit
+syncEnter
+syncLeave
 syncline
 synclines
 syncTrigger
