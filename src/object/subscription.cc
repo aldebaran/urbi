@@ -192,12 +192,18 @@ namespace urbi
       {
         runner::Job& r = kernel::runner();
         call_stack_type cs = r.state.call_stack_get();
-        FINALLY(((call_stack_type, cs))((runner::Job&, r)),
-                r.state.call_stack_get() = cs);
+        runner::tag_stack_type ts = r.state.tag_stack_get_all();
+        FINALLY(((runner::Job&, r))
+                ((call_stack_type, cs))
+                ((runner::tag_stack_type, ts)),
+                r.state.call_stack_get() = cs;
+                r.state.tag_stack_set(ts));
         r.state
           .call_stack_get()
           .insert(r.state.call_stack_get().begin(),
                   call_stack.begin(), call_stack.end());
+        r.state
+          .tag_stack_set(tag_stack);
         (*action)(args);
       }
     }

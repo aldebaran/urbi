@@ -4368,7 +4368,26 @@ e!("b");
 removeSlots("e", "t");
 \end{urbicomment}
 
+All this can be summarized as follows: the tag stack that applies to the
+execution of enter- and leave-clauses include that of the whole
+\lstinline{at}-construct:
+\begin{urbiscript}
+var t = Tag.new("t")|;
+var e = Event.new|;
+t: at sync (e?) { assert(t in Job.current.tags) | echo(1) }
+   onleave      { assert(t in Job.current.tags) | echo(2) };
 
+t: at (e?)      { assert(t in Job.current.tags) | echo(3) }
+   onleave      { assert(t in Job.current.tags) | echo(4) };
+e!;
+[00004898] *** 1
+[00004898] *** 2
+[00004898] *** 3
+[00004898] *** 4
+\end{urbiscript}
+\begin{urbicomment}
+removeSlots("e", "t");
+\end{urbicomment}
 
 \subsubsection{Scoped \lstinline{at}}
 
