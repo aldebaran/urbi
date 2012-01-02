@@ -33,8 +33,8 @@ setter member functions for all types known to \urbi: \lstinline{double},
 \lstinline{urbi.UValue} class. The API provides methods to set up callbacks
 functions that will be notified when a variable is modified or read from \us
 code. Instance methods of any prototype can be made accessible from \us,
-providing all the parameter types and the return type can be converted
-to/from urbi.UValue.
+providing all the argument types and the return type can be converted
+to/from \lstinline{urbi.UValue}.
 
 The UObject Java API has the following limitations:
 \begin{itemize}
@@ -197,10 +197,9 @@ To bind the variables to Urbi, we use the function:
 void UBindVar (UVar v, String name)
 \end{java}
 
-This function takes as parameter the UVar variables, and the name of the
-UVar (because \urbi need to know what is the name of your variable).  Once
-your variable is bound with \lstinline{UBindVar} it will be accessible in
-\urbi.
+This function takes as argument the UVar variables, and the name of the UVar
+(because \urbi need to know what is the name of your variable).  Once your
+variable is bound with \lstinline{UBindVar} it will be accessible in \urbi.
 
 \item Each UObject needs to be registered within urbi using the code
 \begin{java}
@@ -304,11 +303,11 @@ public class Adder extends UObject // must extends UObject
 }
 \end{java}
 
-Now 'v' and 'add' are bound only when instance of the Adder object are
-constructed. We have added an 'init' constructor with one parameter that
-we use to initialize the value of v. You can run this UObject and test
-it in \urbi to see the difference with the previous example. Here is what
-it gives:
+Now \lstinline{v} and \lstinline{add} are bound only when instance of the
+Adder object are constructed.  We have added an \lstinline{init} constructor
+with one argument that we use to initialize the value of \lstinline{v}.  You
+can run this UObject and test it in \urbi to see the difference with the
+previous example:
 
 \begin{urbiunchecked}
 [00000097] *** ********************************************************
@@ -351,17 +350,21 @@ void UBindFunction (Object obj, String method_name)
 void UBindFunctions (Object obj, String ... method_names)
 \end{java}
 
-The first function takes as parameter the object containing the function
-(for now it is only possible to bind instance method, we do not handle static
-methods). The second parameter is the name of the function you want to bind.
-The third parameter is a list of the names if the types of the arguments.
-For example for the function add, in the previous Adder example, we could have
+The first function takes as argument the object containing the function
+(currently static methods cannot be bound). The second argument is the name
+of the function you want to bind.  The third argument is a list of the names
+if the types of the arguments.  For example for the function
+\lstinline{add}, in the previous \lstinline{Adder} example, we could have
 used:
 
 \begin{java}
-String[] params = { "double" };
-UBindFunction (this, "add", params);
+String[] args = { "java.lang.Double" };
+UBindFunction (this, "add", args);
 \end{java}
+
+\noindent
+provided that, of course, the signature of the function was fixed to use an
+\lstinline{java.lang.Double} instead of a simple \lstinline{double}.
 
 If in your UObject you have different names for each of your methods, then
 you can use the shorter versions of \lstinline{UBindFunction}.
@@ -412,7 +415,7 @@ You can register a function that will be called each time a variable is
 modified by calling \lstinline{UNotifyChange}, passing either an \UVar or a
 variable name as first argument, and a member function of your \UObject as
 second argument (and optionally a String array containing the name of the
-types of the parameters). The prototype for \lstinline{UNotifyChange} is:
+types of the arguments). The prototype for \lstinline{UNotifyChange} is:
 
 \begin{java}
 void UNotifyChange(String var_name, String method_name, String[] args_name);

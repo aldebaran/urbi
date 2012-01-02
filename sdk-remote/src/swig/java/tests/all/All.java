@@ -136,7 +136,17 @@ public class All extends UObject
 	//UBindFunction(urbi::UContext, side_effect_free_get);
 	//UBindFunction(urbi::UContext, side_effect_free_set);
 	UBindFunction("yield");
-	UBindFunction("yield_for");
+
+        // We are not hidding the previous version of the function,
+        // since the argument types are different.  So we need to
+        // specify which flavor we want to bind into urbiscript.
+        // Unfortunately, there is no support for urbiscript-name
+        // vs. Java-name, so we rather need to specify the list of
+        // arguments.  Unfortunately again, UObject.java does not
+        // support "double" as argument type name, it needs class
+        // names.
+        String[] yield_for_args = { "java.lang.Double" };
+	UBindFunction(this, "yield_for", yield_for_args);
 
 	UBindFunction("getDestructionCount");
 
@@ -686,6 +696,11 @@ public class All extends UObject
     //	    usleep(1000);
     //	}
     //    }
+
+    public void yield_for(java.lang.Double duration)
+    {
+        super.yield_for((long)(duration * 1000 * 1000));
+    }
 
     public int getDestructionCount()
     {
