@@ -1,4 +1,4 @@
-## Copyright (C) 2008-2011, Gostai S.A.S.
+## Copyright (C) 2006-2012, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -11,21 +11,21 @@
 ## -------------------------- ##
 
 if INSTALL_KERNEL_HEADERS
-kernelinclude_kerneldir = $(brandincludedir)/kernel
-dist_kernelinclude_kernel_HEADERS =		\
-  include/kernel/fwd.hh				\
-  include/kernel/uconnection.hh			\
-  include/kernel/uconnection.hxx		\
-  include/kernel/userver.hh			\
-  include/kernel/userver.hxx			\
-  include/kernel/utypes.hh
-
 kernelinclude_urbidir = $(brandincludedir)/urbi
 dist_kernelinclude_urbi_HEADERS =		\
   include/urbi/sdk.hh				\
   include/urbi/sdk.hxx
 
-kernelinclude_urbi_objectdir = $(brandincludedir)/urbi/object
+kernelinclude_kerneldir = $(kernelinclude_urbidir)/kernel
+dist_kernelinclude_kernel_HEADERS =		\
+  include/urbi/kernel/fwd.hh			\
+  include/urbi/kernel/uconnection.hh		\
+  include/urbi/kernel/uconnection.hxx		\
+  include/urbi/kernel/userver.hh		\
+  include/urbi/kernel/userver.hxx		\
+  include/urbi/kernel/utypes.hh
+
+kernelinclude_urbi_objectdir = $(brandincludedir)/object
 dist_kernelinclude_urbi_object_HEADERS =	\
   include/urbi/object/any-to-boost-function.hh	\
   include/urbi/object/barrier.hh		\
@@ -72,7 +72,7 @@ dist_kernelinclude_urbi_object_HEADERS =	\
   include/urbi/object/tag.hh			\
   include/urbi/object/tag.hxx
 
-kernelinclude_urbi_runnerdir = $(brandincludedir)/urbi/runner
+kernelinclude_urbi_runnerdir = $(kernelinclude_urbidir)/runner
 dist_kernelinclude_urbi_runner_HEADERS =	\
   include/urbi/runner/raise.hh
 endif INSTALL_KERNEL_HEADERS

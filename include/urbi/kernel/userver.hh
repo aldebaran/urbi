@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2011, Gostai S.A.S.
+ * Copyright (C) 2005-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -8,7 +8,7 @@
  * See the LICENSE file for more information.
  */
 
-/// \file kernel/userver.hh
+/// \file urbi/kernel/userver.hh
 /// \brief Definition of the UServer class.
 
 #ifndef KERNEL_USERVER_HH
@@ -37,8 +37,8 @@
 
 # include <sched/scheduler.hh>
 
-# include <kernel/fwd.hh>
-# include <kernel/utypes.hh>
+# include <urbi/kernel/fwd.hh>
+# include <urbi/kernel/utypes.hh>
 # include <urbi/export.hh>
 # include <urbi/object/object.hh>
 # include <urbi/urbi-root.hh>
@@ -330,6 +330,6 @@ namespace kernel
   libport::Synchronizer::SynchroPoint                                 \
   lock(kernel::server().big_kernel_lock_get())
 
-# include <kernel/userver.hxx>
+# include <urbi/kernel/userver.hxx>
 
 #endif // !KERNEL_USERVER_HH

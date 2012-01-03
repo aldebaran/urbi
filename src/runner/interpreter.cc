@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2011, Gostai S.A.S.
+ * Copyright (C) 2007-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -28,7 +28,7 @@
 #include <ast/call.hh>
 #include <ast/exp.hh>
 
-#include <kernel/uconnection.hh>
+#include <urbi/kernel/uconnection.hh>
 
 #include <object/profile.hh>
 #include <object/symbols.hh>

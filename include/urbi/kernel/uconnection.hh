@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2005-2010, 2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -8,7 +8,7 @@
  * See the LICENSE file for more information.
  */
 
-/// \file kernel/uconnection.hh
+/// \file urbi/kernel/uconnection.hh
 /// \brief Declaration of UConnection.
 
 #ifndef KERNEL_UCONNECTION_HH
@@ -26,10 +26,10 @@
 #  define WIN32_LEAN_AND_MEAN
 # endif
 
-# include <kernel/fwd.hh>
+# include <urbi/kernel/fwd.hh>
 # include <urbi/export.hh>
 # include <urbi/iostream.hh>
-# include <kernel/utypes.hh>
+# include <urbi/kernel/utypes.hh>
 # ifdef _MSC_VER
 #  include <urbi/object/lobby.hh>
 #  include <runner/shell.hh>
@@ -222,8 +222,8 @@ namespace kernel
       has returned.
 
       \return  the number of bytes effectively sent.
-	     -1 upon error.
-	     FIXME: How can -1 be returned in a size_t? Type is wrong.
+             -1 upon error.
+             FIXME: How can -1 be returned in a size_t? Type is wrong.
      */
     virtual size_t effective_send(const char*, size_t length) = 0;
 
@@ -280,5 +280,6 @@ namespace kernel
 
 }
 
-# include <kernel/uconnection.hxx>
+# include <urbi/kernel/uconnection.hxx>
+
 #endif // !KERNEL_UCONNECTION_HH

@@ -1,4 +1,4 @@
-## Copyright (C) 2006-2011, Gostai S.A.S.
+## Copyright (C) 2006-2012, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -124,4 +124,3 @@ dist_libuobject@LIBSFX@_la_SOURCES +=			\
 # there is no occurrence of remote in param.mk.  Yet MN insists on
 # installing this guy.
 nodist_engine_DATA = $(top_builddir)/sdk-remote/sdk/param.mk
-

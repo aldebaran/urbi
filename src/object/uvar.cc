@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2011, Gostai S.A.S.
+ * Copyright (C) 2009-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -15,9 +15,9 @@
 
 # include <libport/debug.hh>
 
-# include <kernel/uconnection.hh>
+# include <urbi/kernel/uconnection.hh>
 # include <kernel/uobject.hh>
-# include <kernel/userver.hh>
+# include <urbi/kernel/userver.hh>
 # include <kernel/uvalue-cast.hh>
 
 # include <object/symbols.hh>

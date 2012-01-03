@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2011, Gostai S.A.S.
+ * Copyright (C) 2007-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -8,13 +8,13 @@
  * See the LICENSE file for more information.
  */
 
-/// \file kernel/userver.hxx
+/// \file urbi/kernel/userver.hxx
 /// \brief Inline implementation of UServer.
 
 #ifndef KERNEL_USERVER_HXX
 # define KERNEL_USERVER_HXX
 
-# include <kernel/userver.hh>
+# include <urbi/kernel/userver.hh>
 
 # include <sched/scheduler.hh>
 

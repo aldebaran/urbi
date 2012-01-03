@@ -44,7 +44,7 @@ atomic_types:
 # license.
 file_prologue: |2
   /*
-   * Copyright (C) 2007-2011, Gostai S.A.S.
+   * Copyright (C) 2006-2012, Gostai S.A.S.
    *
    * This software is provided "as is" without warranty of any kind,
    * either expressed or implied, including but not limited to the
@@ -155,7 +155,7 @@ printer_cc_prologue: |2
   #include <libport/indent.hh>
   #include <libport/pair.hh>
 
-  #include <kernel/userver.hh>
+  #include <urbi/kernel/userver.hh>
 ---
 
 # ----------- #

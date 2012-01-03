@@ -51,8 +51,8 @@
 #include <sched/coroutine-local-storage.hh>
 
 // Inclusion order matters for windows. Leave userver.hh after network.hh.
-#include <kernel/userver.hh>
-#include <kernel/uconnection.hh>
+#include <urbi/kernel/userver.hh>
+#include <urbi/kernel/uconnection.hh>
 
 #include <sched/configuration.hh>
 #include <sched/scheduler.hh>

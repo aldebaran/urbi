@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, Gostai S.A.S.
+ * Copyright (C) 2010-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -10,7 +10,7 @@
 
 #include <libport/containers.hh>
 
-#include <kernel/userver.hh>
+#include <urbi/kernel/userver.hh>
 #include <runner/exception.hh>
 #include <urbi/runner/raise.hh>
 

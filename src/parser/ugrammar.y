@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2011, Gostai S.A.S.
+ * Copyright (C) 2005-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -37,7 +37,7 @@
 #include <ast/fwd.hh>
 #include <ast/nary.hh>
 #include <ast/symbols-type.hh>
-#include <kernel/fwd.hh>
+#include <urbi/kernel/fwd.hh>
 #include <libport/hash.hh>
 #include <libport/ufloat.hh>
 #include <list>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, Gostai S.A.S.
+ * Copyright (C) 2010-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -13,7 +13,7 @@
 #include <libport/debug.hh>
 #include <libport/escape.hh>
 
-#include <kernel/userver.hh>
+#include <urbi/kernel/userver.hh>
 #include <urbi/sdk.hh>
 #include <urbi/iostream.hh>
 

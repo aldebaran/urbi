@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2011, Gostai S.A.S.
+ * Copyright (C) 2005-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -23,7 +23,7 @@
 #include <fcntl.h>
 
 // Include our header first to avoid duplicating some of its tricks.
-#include <kernel/userver.hh>
+#include <urbi/kernel/userver.hh>
 
 #include <boost/assign/list_of.hpp>
 #include <libport/bind.hh>
@@ -51,8 +51,8 @@
 #include <urbi/exit.hh>
 #include <urbi/uobject.hh>
 
-#include <kernel/userver.hh>
-#include <kernel/utypes.hh>
+#include <urbi/kernel/userver.hh>
+#include <urbi/kernel/utypes.hh>
 
 #include <ast/ast.hh>
 #include <ast/nary.hh>
