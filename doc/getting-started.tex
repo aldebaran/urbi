@@ -1,4 +1,4 @@
-%% Copyright (C) 2010, Gostai S.A.S.
+%% Copyright (C) 2010, 2012, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -26,11 +26,11 @@ encounter problems, please see the frequently asked questions
 \begin{shell}
 # Make sure urbi is properly installed.
 $ urbi --version
-Urbi SDK version 2.5 rev. e6168d1
-Copyright (C) 2004-2010 Gostai S.A.S..
+Urbi version 2.7.4 rev. 268868e
+Copyright (C) 2004-2012 Gostai S.A.S..
 
-Libport version urbi-sdk-2.5 rev. 86ba121
-Copyright (C) 2005-2010 Gostai S.A.S..
+Libport version urbi-sdk-2.7.4 rev. f870ce6
+Copyright (C) 2005-2012 Gostai S.A.S..
 \end{shell}%$
 
 There are several means to interact with a server spawned by \command{urbi},
@@ -66,16 +66,16 @@ To run an interactive session, use option
 
 \begin{shell}[alsolanguage={[interactive]urbiscript},caption={An interactive session under Unix.}]
 $ urbi -i
-[00000987] *** ********************************************************
-[00000990] *** Urbi SDK version 2.0.3 rev. d6a568d
-[00001111] *** Copyright (C) 2004-2010 Gostai S.A.S.
-[00001111] ***
-[00001111] *** This program comes with ABSOLUTELY NO WARRANTY.  It can
-[00001112] *** be used under certain conditions.  Type `license;',
-[00001112] *** `authors;', or `copyright;' for more information.
-[00001112] ***
-[00001112] *** Check our community site: http://www.urbiforge.org.
-[00001112] *** ********************************************************
+[00000825] *** ********************************************************
+[00000825] *** Urbi version 2.7.4 rev. 268868e
+[00000825] *** Copyright (C) 2004-2012 Gostai S.A.S.
+[00000825] ***
+[00000825] *** This program comes with ABSOLUTELY NO WARRANTY.  It can
+[00000825] *** be used under certain conditions.  Type `license;',
+[00000825] *** `authors;', or `copyright;' for more information.
+[00000825] ***
+[00000825] *** Check our community site: http://www.urbiforge.org.
+[00000825] *** ********************************************************
 1+2;
 [00001200] 3
 shutdown;
@@ -105,19 +105,20 @@ $ telnet localhost 54000
 Trying 127.0.0.1...
 Connected to localhost.
 Escape character is '^]'.
-[00000987] *** ********************************************************
-[00000990] *** Urbi SDK version 2.0.3 rev. d6a568d
-[00001111] *** Copyright (C) 2004-2010 Gostai S.A.S.
-[00001111] ***
-[00001111] *** This program comes with ABSOLUTELY NO WARRANTY.  It can
-[00001112] *** be used under certain conditions.  Type `license;',
-[00001112] *** `authors;', or `copyright;' for more information.
-[00001112] ***
-[00001112] *** Check our community site: http://www.urbiforge.org.
-[00001112] *** ********************************************************
+[00004816] *** ********************************************************
+[00004816] *** Urbi version 2.7.4 rev. 268868e
+[00004816] *** Copyright (C) 2004-2012 Gostai S.A.S.
+[00004816] ***
+[00004816] *** This program comes with ABSOLUTELY NO WARRANTY.  It can
+[00004816] *** be used under certain conditions.  Type `license;',
+[00004816] *** `authors;', or `copyright;' for more information.
+[00004816] ***
+[00004816] *** Check our community site: http://www.urbiforge.org.
+[00004816] *** ********************************************************
 12345679*8;
 [00018032] 98765432
 quit;
+Connection closed by foreign host.
 \end{shell}%$
 
 Under Windows, instead of using \command{telnet}, you may use
