@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2011, Gostai S.A.S.
+ * Copyright (C) 2007-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -19,8 +19,6 @@
 # include <libport/symbol.hh>
 
 # include <parser/location.hh>
-
-# include <kernel/config.h>
 
 // If you have an error from here, it probably means that you used
 // LOCATION_HERE without first calling DECLARE_LOCATION_FILE (alone,
