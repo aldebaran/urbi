@@ -236,10 +236,35 @@ assert (f == [0, 420, 20]);
 
 \item[asTree]%
 Display the content of the List as a tree representation.
-\begin{urbiassert}
-["a", "b", ["d", "e", "f", "g"]].asTree ==
-  "\n[\n  a,\n  b,\n  [\n    d,\n    e,\n    f,\n    g,\n  ]\n]";
-\end{urbiassert}
+\begin{urbiscript}
+echo("simple list:" + ["a", "b", ["d", "e", "f", "g"]].asTree);
+[:][00000004] *** simple list:
+[:][
+[:]  a,
+[:]  b,
+[:]  [
+[:]    d,
+[:]    e,
+[:]    f,
+[:]    g,
+[:]  ]
+[:]]
+echo("list with dictionary:" +
+  ["a", "b", ["c" => ["d", "e"], "f" => "g"]].asTree);
+[:][00000005] *** list with dictionary:
+[:][
+[:]  a,
+[:]  b,
+[:]  [
+[:]    c =>
+[:]    [
+[:]      d,
+[:]      e,
+[:]    ]
+[:]    f => g,
+[:]  ]
+[:]]
+\end{urbiscript}
 
 \item[append](<that>)%
   Deprecated alias for \refSlot{'+='}.

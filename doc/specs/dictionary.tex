@@ -190,10 +190,31 @@ d["one"] == 1;
 
 \item[asTree]%
 Display the content of the List as a tree representation.
-\begin{urbiassert}
-["key1" => "elt1", "key2" => ["key3" => "elt3"]].asTree ==
-  "\n[\n  key1 => elt1,\n  key2 => \n  [\n    key3 => elt3,\n  ]\n]"
-\end{urbiassert}
+\begin{urbiscript}
+echo("simple dictionary:" + ["key1" => "elt1", "key2" => ["key3" => "elt3"]].asTree);
+[:][00000001] *** simple dictionary:
+[:][
+[:]  key1 => elt1,
+[:]  key2 =>
+[:]  [
+[:]    key3 => elt3,
+[:]  ]
+[:]]
+echo("dictionary with list:" +
+  ["key1" => "elt1", "key2" => ["key3" => ["key4", "key5"]]].asTree);
+[:][00000002] *** dictionary with list:
+[:][
+[:]  key1 => elt1,
+[:]  key2 =>
+[:]  [
+[:]    key3 =>
+[:]    [
+[:]      key4,
+[:]      key5,
+[:]    ]
+[:]  ]
+[:]]
+\end{urbiscript}
 
 \item[clear]
   Empty the dictionary.
