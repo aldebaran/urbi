@@ -8,6 +8,9 @@
 
 PACKAGE_NAME = urbi_$(PACKAGE_VERSION)
 
+.PHONY: packages deb rpm
+packages: deb rpm
+
 deb: debian/changelog
 	$(MAKE) distdir
 	mv $(distdir) $(PACKAGE_NAME)
@@ -15,11 +18,10 @@ deb: debian/changelog
 	cp $(PACKAGE_NAME).tar.bz2 $(PACKAGE_NAME).orig.tar.bz2
 	cd $(PACKAGE_NAME) && dpkg-buildpackage -j2
 
-rpm: deb
-	fakeroot
-	sudo alien -r urbi_$(PACKAGE_VERSION)
-	sudo alien -r urbi-doc_$(PACKAGE_VERSION)
-	sudo alien -r urbi-dev_$(PACKAGE_VERSION)
+rpm:
+	fakeroot -- alien -r urbi_$(PACKAGE_VERSION)
+	fakeroot -- alien -r urbi-doc_$(PACKAGE_VERSION)
+	fakeroot -- alien -r urbi-dev_$(PACKAGE_VERSION)
 
 .PHONY: debian/changelog
 debian/changelog: $(srcdir)/debian/changelog.in
