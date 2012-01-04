@@ -105,6 +105,7 @@ namespace runner
   {
     foreach (const object::rTag& tag, tag_stack_)
       if (tag->value_get()->frozen())
+        return true;
     return frozen_;
   }
 

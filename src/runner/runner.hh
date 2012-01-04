@@ -59,6 +59,7 @@ namespace runner
     /// know its \a scheduler.  The new runner has no parent.
     Runner(rLobby lobby,
            sched::Scheduler& scheduler,
+           const std::string& name);
 
     explicit Runner(const Runner&, const std::string& name);
 
