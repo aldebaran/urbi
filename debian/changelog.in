@@ -1,4 +1,4 @@
-urbi (2.7.4) natty; urgency=low
+urbi (@VERSION@) natty; urgency=low
 
   [ Adam Oleksy ]
   * Initial release

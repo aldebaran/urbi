@@ -6,15 +6,31 @@
 ##
 ## See the LICENSE file for more information.
 
-deb:
+PACKAGE_NAME = urbi_$(PACKAGE_VERSION)
+
+deb: debian/changelog
 	$(MAKE) distdir
-	tardir=$(distdir) && $(am__tar) | bzip2 -9 -c >$(distdir).tar.bz2
-	cp $(distdir).tar.bz2 $(PACKAGE)_$(VERSION).orig.tar.bz2
-	cd $(distdir) && dpkg-buildpackage -j2
+	mv $(distdir) $(PACKAGE_NAME)
+	tardir=$(PACKAGE_NAME) && $(am__tar) | bzip2 -9 -c >$(PACKAGE_NAME).tar.bz2
+	cp $(PACKAGE_NAME).tar.bz2 $(PACKAGE_NAME).orig.tar.bz2
+	cd $(PACKAGE_NAME) && dpkg-buildpackage -j2
+
+rpm: deb
+	fakeroot
+	sudo alien -r urbi_$(PACKAGE_VERSION)
+	sudo alien -r urbi-doc_$(PACKAGE_VERSION)
+	sudo alien -r urbi-dev_$(PACKAGE_VERSION)
+
+.PHONY: debian/changelog
+debian/changelog: $(srcdir)/debian/changelog.in
+	$(AM_V_GEN)mkdir -p $(@D)
+	$(AM_V_at)sed -e 's/[@]VERSION@/$(PACKAGE_VERSION)/' $< > $@.tmp
+	$(AM_V_at)mv $@.tmp $@
 
 EXTRA_DIST +=					\
   debian/README.Debian				\
   debian/README.source				\
+  debian/changelog.in				\
   debian/changelog				\
   debian/compat					\
   debian/control				\
