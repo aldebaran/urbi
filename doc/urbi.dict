@@ -724,6 +724,7 @@ locateSlot
 locFailureEvent
 lockMode
 LockSpec
+lof
 login
 logService
 logTopic
