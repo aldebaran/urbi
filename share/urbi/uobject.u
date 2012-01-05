@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, Gostai S.A.S.
+ * Copyright (C) 2011-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -190,7 +190,7 @@ do (Global.UObject)
       var cnt = lobby.__bindingCount.getWithDefault(fullname, -1) |
       if (cnt <= 0)
       {
-        logger.warn << "Error, unnotify on unknown variable " + fullname
+        logger.warn << "error: unnotify on unknown variable " + fullname
       }
       else
       {
@@ -690,7 +690,7 @@ class Global.'external'
       uobjectInit |
     }|
     if (!lobby.hasLocalSlot(objname))
-      logger.err << "ERROR: lobby " + lobby + " has no slot " + objname
+      logger.err << "error: lobby " + lobby + " has no slot " + objname
     else
       for| (var s: lobby.getSlot(objname).localSlotNames)
         uobjects.getSlot(objname).setSlot(s, lobby.getSlot(objname).getSlot(s))|
@@ -785,7 +785,7 @@ class Global.'external'
     {
       if (varname == "load")
         return|
-      logger.err << "Error: external var called for "+objname+"."+varname
+      logger.err << "error: external var called for "+objname+"."+varname
     }|
     if (!lobby.hasSlot("handle"))
     {
@@ -884,7 +884,7 @@ class Global.'external'
         }
         catch(var e)
         {
-          logger.err << "Fatal error setting rtp: " + e
+          logger.err << "fatal error setting rtp: " + e
         }|
       }|
       lobby.__bindingFunc[fullname] = lobby.sharedRTP|
