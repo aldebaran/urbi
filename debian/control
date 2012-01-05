@@ -3,7 +3,7 @@ Source: urbi
 Section: unknown
 Priority: extra
 Maintainer: Adam Oleksy <adam.oleksy@gmail.com>
-Build-Depends: debhelper (>= 7.0.50~), autoconf, autotools-dev, m4, flex, libboost-all-dev (>= 1.38), libortp-dev, pkg-config, python-yaml, doxygen, graphviz, imagemagick, ghostscript, gnuplot-nox, texlive-font-utils, transfig, bc, libx11-dev, swig, libxext-dev, dos2unix
+Build-Depends: debhelper (>= 7.0.50~), autoconf, autotools-dev, m4, flex, libboost-all-dev (>= 1.38), libortp-dev, pkg-config, python-yaml, doxygen, graphviz, imagemagick, ghostscript, gnuplot-nox, texlive-font-utils, transfig, bc, libx11-dev, swig, libxext-dev
 Standards-Version: 3.9.1
 Homepage: http://www.gostai.com/
 #Vcs-Git: git://git.debian.org/collab-maint/urbi-sdk.git
