@@ -9,7 +9,7 @@
  */
 
 // FIXME: remove these (frozen_set)
-#include <kernel/userver.hh>
+#include <urbi/kernel/userver.hh>
 #include <runner/job.hh>
 
 #include <runner/state.hh>

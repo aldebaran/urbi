@@ -10,7 +10,7 @@
 
 #include <algorithm>
 
-#include <kernel/userver.hh>
+#include <urbi/kernel/userver.hh>
 #include <object/symbols.hh>
 #include <runner/job.hh>
 #include <urbi/object/event.hh>
