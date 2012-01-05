@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2011, Gostai S.A.S.
+ * Copyright (C) 2008-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -26,9 +26,9 @@
 #include <object/system.hh>
 
 #include <ast/print.hh>
-#include <kernel/uconnection.hh>
+#include <urbi/kernel/uconnection.hh>
 #include <kernel/uobject.hh>
-#include <kernel/userver.hh>
+#include <urbi/kernel/userver.hh>
 #include <parser/transform.hh>
 #include <parser/uparser.hh>
 #include <runner/exception.hh>

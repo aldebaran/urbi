@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2011, Gostai S.A.S.
+ * Copyright (C) 2006-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -19,8 +19,8 @@
 
 #include <kernel/config.h>
 
-#include <kernel/uconnection.hh>
-#include <kernel/userver.hh>
+#include <urbi/kernel/uconnection.hh>
+#include <urbi/kernel/userver.hh>
 #include <kernel/uvalue-cast.hh>
 #include <kernel/uobject.hh>
 

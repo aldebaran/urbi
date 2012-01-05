@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2011, Gostai S.A.S.
+ * Copyright (C) 2009-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -19,7 +19,7 @@
 # include <libport/compiler.hh>
 # include <libport/instance-tracker.hh>
 
-# include <kernel/fwd.hh>
+# include <urbi/kernel/fwd.hh>
 
 # include <urbi/object/cxx-object.hh>
 # include <urbi/object/fwd.hh>

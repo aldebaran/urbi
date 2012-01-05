@@ -188,6 +188,12 @@ d["one"] == 1;
 ["a" => 1, "b" => 2].asString == "[\"a\" => 1, \"b\" => 2]";
 \end{urbiassert}
 
+\item[asTree]%
+Display the content of the List as a tree representation.
+\begin{urbiassert}
+["key1" => "elt1", "key2" => ["key3" => "elt3"]].asTree ==
+  "\n[\n  key1 => elt1,\n  key2 => \n  [\n    key3 => elt3,\n  ]\n]"
+\end{urbiassert}
 
 \item[clear]
   Empty the dictionary.

@@ -213,6 +213,7 @@ ccc
 cccc
 ccwLimit
 cd
+ce
 ceil
 cerr
 CEST
@@ -797,6 +798,7 @@ locateSlot
 locFailureEvent
 lockMode
 LockSpec
+lof
 login
 logService
 logTopic

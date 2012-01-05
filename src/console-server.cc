@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2011, Gostai S.A.S.
+ * Copyright (C) 2007-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -49,8 +49,8 @@
 #include <sched/coroutine-local-storage.hh>
 
 // Inclusion order matters for windows. Leave userver.hh after network.hh.
-#include <kernel/userver.hh>
-#include <kernel/uconnection.hh>
+#include <urbi/kernel/userver.hh>
+#include <urbi/kernel/uconnection.hh>
 
 #include <sched/configuration.hh>
 #include <sched/scheduler.hh>
@@ -185,7 +185,8 @@ namespace
   void
   version()
   {
-    throw urbi::Exit(EX_OK, urbi::package_info().signature());
+    std::cout << urbi::package_info() << std::endl
+              << libport::exit(EX_OK);
   }
 
   static

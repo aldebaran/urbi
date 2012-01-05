@@ -1,5 +1,5 @@
 # This file is part of Urbi SDK.
-# Copyright (C) 2006-2011, Gostai S.A.S.
+# Copyright (C) 2006-2012, Gostai S.A.S.
 #
 # This software is provided "as is" without warranty of any kind,
 # either expressed or implied, including but not limited to the
@@ -14,7 +14,7 @@ AC_PREREQ([2.60])
 AC_INIT([Urbi], [2.8],
         [kernel-bugs@lists.gostai.com], [urbi-sdk])
 URBI_PACKAGE_VERSION
-URBI_PACKAGE_COPYRIGHT([Gostai S.A.S.], [2004-2011])
+URBI_PACKAGE_COPYRIGHT([Gostai S.A.S.], [2004-2012])
 URBI_DISTCHECK_CONFIGURE_FLAGS
 
 # Libtoolize needs to see this invocation...

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2007-2010, 2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -8,14 +8,14 @@
  * See the LICENSE file for more information.
  */
 
-/// \file kernel/uconnection.hxx
+/// \file urbi/kernel/uconnection.hxx
 /// \brief Inline implementation of kernel::UConnection.
 
 #ifndef KERNEL_UCONNECTION_HXX
 # define KERNEL_UCONNECTION_HXX
 
 # include <sstream>
-# include <kernel/uconnection.hh>
+# include <urbi/kernel/uconnection.hh>
 
 namespace kernel
 {

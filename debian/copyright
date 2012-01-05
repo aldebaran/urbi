@@ -1,0 +1,7 @@
+Format: http://dep.debian.net/deps/dep5
+Upstream-Name: urbi
+Source: http://www.gostai.com/
+
+Files: *
+Copyright: 2011 GOSTAI S.A.S
+License: AGPL
