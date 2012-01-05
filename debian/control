@@ -13,14 +13,15 @@ Package: urbi
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Urbi operating system to control robots
- Urbi is a complete open source software platform to control robots, a kind of
- Operating System for robotics. It includes a C++ distributed components
- architecture called UObject, and an orchestration script language called
- urbiscript. The urbiscript language is innovative because it integrates new
- ways to handle parallel and event-based programming, which are two essential
- issues in robot programming. Recently, Urbi is also integrating ROS support to
- be able to integrate ROS nodes inside an Urbi project, and benefit from the
- best of both worlds.
+ Urbi is an open source robotics software platform.  It is
+ cross-platform: it supports several robots (Gostai Jazz, Segway RMP,
+ Pioneer 3-DX, LEGO Mindstorms NXT, Aldebaran Nao...) and simulators
+ (Webots...).  It runs on top of all the major operating systems.  It
+ features a C++/Java middleware, UObject, to interface components such
+ as motors, cameras, and algorithms; and an innovative scripting
+ language, urbiscript, with built-in support for parallel and
+ event-based programming.  It is compatible with ROS, the Robotic
+ Operating System.
 
 Package: urbi-doc
 Architecture: any
