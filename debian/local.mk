@@ -7,6 +7,7 @@
 ## See the LICENSE file for more information.
 
 PACKAGE_NAME = urbi_$(PACKAGE_VERSION)
+DEB_ARCH = `dpkg-architecture -qDEB_BUILD_ARCH`
 
 .PHONY: packages deb rpm
 packages: deb rpm
@@ -19,9 +20,9 @@ deb: debian/changelog
 	cd $(PACKAGE_NAME) && dpkg-buildpackage -j2
 
 rpm:
-	fakeroot -- alien -r urbi_$(PACKAGE_VERSION)
-	fakeroot -- alien -r urbi-doc_$(PACKAGE_VERSION)
-	fakeroot -- alien -r urbi-dev_$(PACKAGE_VERSION)
+	fakeroot -- alien -r urbi_$(PACKAGE_VERSION)_$(DEB_ARCH).deb
+	fakeroot -- alien -r urbi-doc_$(PACKAGE_VERSION)_$(DEB_ARCH).deb
+	fakeroot -- alien -r urbi-dev_$(PACKAGE_VERSION)_$(DEB_ARCH).deb
 
 .PHONY: debian/changelog
 debian/changelog: $(srcdir)/debian/changelog.in
