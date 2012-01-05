@@ -131,6 +131,12 @@ class Attribute:
       res = res[:-1]
     return res
 
+  def class_type (self):
+    """Same as root_type, but besides we elimitate the reference-counting
+    typedefs, and return the true class name: rAst -> Ast, rConstExp -> Exp."""
+    # Remove the refcounting mark.
+    return re.sub("^r(Const)?([A-Z])", "\\2", self.root_type ())
+
   def deep_clear_p (self):
     "Whether this type requires a deep clear."
     return self.ast_params['deep_clear_p'].match (self.root_type ()) != None
