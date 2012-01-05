@@ -69,35 +69,6 @@ do (Global.Dictionary)
     }
   };
 
-
-  function asTree()
-  {
-    if (tree == "")
-    {
-      var indent = "" |
-      tree += buildTree(indent);
-    };
-  };
-
-  function buildTree(indent)
-  {
-    // Add a level of indentation.
-    var indent_local = indent + "  " |
-    var res = "\n%s[" % indent |
-    for| (var k: keys)
-    {
-      if (get(k).type == "Dictionary" || get(k).type == "List")
-        res += "\n%s%s => %s" % [indent_local, k,
-                                 get(k).buildTree(indent_local)]
-      else
-        res += "\n%s%s => %s," % [indent_local, k, get(k)] |
-    };
-    if (indent == "")
-      res += "\n]"
-    else
-      res += "\n%s]" % indent;
-  };
-
   function getWithDefault(name, otherwise, insert = false)
   {
     if (has(name))
@@ -151,5 +122,4 @@ do (Global.Dictionary)
       true
     }
   };
-
 };

@@ -14,4 +14,40 @@ class Global.Container
 {
   function has(var e) { ! hasNot(e) };
   function hasNot(var e) { ! has(e) };
+  function asTree()
+  {
+    var tree = "" |
+    var indent = "" |
+    tree += buildTree(tree, indent, type);
+  };
+
+  function buildTree(tree, indent, type)
+  {
+    // Add a level of indentation.
+    var indent_local = indent + "  " |
+    var res = "\n%s[" % indent |
+    for| (var t: this)
+    {
+      if (type == "Dictionary")
+      {
+        if (t.second.type == "Dictionary" || t.second.type == "List")
+          res += "\n%s%s =>%s" % [indent_local, t.first,
+                                 t.second.buildTree(tree, indent_local,
+                                 t.second.type)]
+        else
+          res += "\n%s%s => %s," % [indent_local, t.first, t.second] |
+      }
+      else
+      {
+        if (t.type == "Dictionary" || t.type == "List")
+          res += "%s%s" % [indent, t.buildTree(tree, indent_local, t.type)]
+        else
+          res += "\n%s%s," % [indent_local, t] |
+      };
+    };
+    if (indent == "")
+      res += "\n]"
+    else
+      res += "\n%s]" % indent;
+  };
 };
