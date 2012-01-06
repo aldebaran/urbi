@@ -12,7 +12,7 @@ DEB_ARCH = `dpkg-architecture -qDEB_BUILD_ARCH`
 .PHONY: packages deb rpm
 packages: deb rpm
 
-deb: debian/changelog
+deb: debian/changelog debian/rules
 	$(MAKE) distdir
 	mv $(distdir) $(PACKAGE_NAME)
 	tardir=$(PACKAGE_NAME) && $(am__tar) | bzip2 -9 -c >$(PACKAGE_NAME).tar.bz2
@@ -30,6 +30,13 @@ debian/changelog: $(srcdir)/debian/changelog.in
 	$(AM_V_at)sed -e 's/[@]VERSION@/$(PACKAGE_VERSION)/' $< > $@.tmp
 	$(AM_V_at)mv $@.tmp $@
 
+.PHONY: debian/rules
+debian/rules: $(srcdir)/debian/rules.in
+	$(AM_V_GEN)mkdir -p $(@D)
+	$(AM_V_at)sed -e 's/[@]PACKAGE_NAME@/$(PACKAGE_NAME)/' $< > $@.tmp
+	$(AM_V_at)mv $@.tmp $@
+	chmod +x $(builddir)/debian/rules
+
 EXTRA_DIST +=					\
   debian/README.Debian				\
   debian/README.source				\
@@ -40,7 +47,8 @@ EXTRA_DIST +=					\
   debian/copyright				\
   debian/docs					\
   debian/info					\
-  debian/rules					\
+  debian/rules.in				\
+  debian/rules	         			\
   debian/source/format				\
   debian/urbi-dev.install			\
   debian/urbi-doc.docs				\
