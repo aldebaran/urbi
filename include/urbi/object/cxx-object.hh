@@ -20,6 +20,13 @@
 # include <urbi/object/object.hh>
 # include <urbi/version-check.hh>
 
+#ifdef WIN32
+      #define URBI_AS_CHECK_IMPL_(Name, Parent) return typeid(Name) == *req || Parent::as_check_(req);
+#else
+      #define URBI_AS_CHECK_IMPL_(Name, Parent)  return &typeid(Name) == req || Parent::as_check_(req);
+#endif
+
+
 #define URBI_CXX_OBJECT(Name, Parent)                                   \
   private:                                                              \
     Name(const ::urbi::object::FirstPrototypeFlag&);                    \
@@ -36,7 +43,7 @@
     bool                                                                \
     as_check_(const std::type_info* req)                                \
     {                                                                   \
-      return typeid(Name) == *req || Parent::as_check_(req);            \
+      URBI_AS_CHECK_IMPL_(Name, Parent)                                 \
     }
 
 #define URBI_CXX_OBJECT_REGISTER(Name, ...)                   \
