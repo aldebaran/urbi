@@ -20,7 +20,7 @@ deb: debian/changelog
 	cd $(PACKAGE_NAME) && dpkg-buildpackage -j2
 
 rpm:
-	fakeroot -- alien -r urbi_$(PACKAGE_VERSION)_$(DEB_ARCH).deb
+	fakeroot -- alien -r $(PACKAGE_NAME)_$(DEB_ARCH).deb
 	fakeroot -- alien -r urbi-doc_$(PACKAGE_VERSION)_$(DEB_ARCH).deb
 	fakeroot -- alien -r urbi-dev_$(PACKAGE_VERSION)_$(DEB_ARCH).deb
 
