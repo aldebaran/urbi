@@ -202,7 +202,9 @@ namespace urbi
       /// \param o	The new value
       /// \param hook	Whether to trigger the potential updateHook
       rObject slot_update(key_type k, const rObject& o, bool hook = true);
-
+      /// Similar to slot_update(), but with knowledge of the slot location
+      rObject slot_update_with_cow(key_type k, const rObject& o,
+        bool hook, location_type& r);
 
       /// \brief Update value in slot.
       ///

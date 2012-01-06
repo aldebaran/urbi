@@ -1016,6 +1016,11 @@ Routine:
         type: bool
         init: 'false'
         access: rW
+    - has_imports:
+        type: bool
+        init: 'false'
+        access: rwW
+        desc: 'Whether an import directive is present inside'
   inline:
     header inside: |2
         public:

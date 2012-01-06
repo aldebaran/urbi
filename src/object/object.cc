@@ -344,6 +344,12 @@ namespace urbi
       location_type r = slot_locate(k, true);
        if (!r.first)
         runner::raise_lookup_error(k, const_cast<Object*>(this));
+      return slot_update_with_cow(k, o, hook, r);
+    }
+    rObject
+    Object::slot_update_with_cow(key_type k, const rObject& o,
+                        bool hook, location_type& r)
+    {
       // Value to write to the slot.
       rSlot s = r.second->as<Slot>();
       rObject v = o;

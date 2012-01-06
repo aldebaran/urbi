@@ -125,6 +125,10 @@ namespace eval
                    const ::ast::exps_type* input_ast_args,
                    boost::optional< ::ast::loc> loc);
 
+  void
+  strict_args(Job& job,
+              object::objects_type& args,
+              const ::ast::exps_type& exp_args);
 } // namespace eval
 
 # if defined LIBPORT_COMPILATION_MODE_SPEED

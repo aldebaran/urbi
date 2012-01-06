@@ -70,6 +70,8 @@ namespace urbi
 
       virtual std::ostream& special_slots_dump (std::ostream& o) const;
 
+      std::vector<rObject>& imports_get() { return imports_;}
+      void import_add(rObject& v) { imports_.push_back(v); }
     private:
       /// Body of the function.
       ast_type ast_;
@@ -81,6 +83,8 @@ namespace urbi
       rLobby lobby_;
       /// Captured 'this'. Only for closures.
       rObject this_;
+      /// Captured imports.
+      std::vector<rObject> imports_;
     };
 
   } // namespace object

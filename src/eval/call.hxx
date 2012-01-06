@@ -74,12 +74,6 @@ namespace eval
 
   static inline
   void
-  strict_args(Job& job,
-              object::objects_type& args,
-              const ::ast::exps_type& exp_args);
-
-  static inline
-  void
   lazy_args(Job& job,
             object::objects_type& args,
             const object::objects_type& exp_args);
@@ -310,9 +304,16 @@ namespace eval
       ((rLobby, caller_lobby))                          \
       ((rSlot*, local_stack))                           \
       ((rSlot*, captured_stack))                        \
+      ((runner::State::import_captured_type, import_captured))  \
+      ((rCode, function))                               \
+      ((bool, prev_has_import_stack))                   \
     ,                                                   \
      job.state.pop_frame(msg, previous_frame);          \
      job.state.lobby_set(caller_lobby);                 \
+     std::swap(job.state.import_captured, import_captured); \
+     job.state.has_import_stack = prev_has_import_stack;  \
+     if (function->ast_get()->has_imports_get())        \
+       job.state.import_stack.pop_back();               \
      BOOST_PP_IF(URBI_DYNAMIC_STACK_NONE,               \
                  {                                      \
                    delete [] local_stack;               \
@@ -397,6 +398,17 @@ namespace eval
       job.state.push_frame(
         msg, var_frame_type(local_stack, captured_stack),
         self, call);
+    // Save import capture for this frame
+    runner::State::import_captured_type import_captured;
+    std::swap(import_captured, job.state.import_captured);
+    // Push the one to come.
+    job.state.import_captured = function->imports_get();
+    // If binder says we will need an import stack, push it
+    if (function->ast_get()->has_imports_get())
+      job.state.import_stack.push_back(std::vector<rObject>());
+    bool prev_has_import_stack = job.state.has_import_stack;
+    job.state.has_import_stack = function->ast_get()->has_imports_get();
+
     // GD_INFO_DEBUG("Push frame");
     FINALLY_Frame(USE);
 

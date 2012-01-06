@@ -455,6 +455,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "freezeif"      RETURN(FREEZEIF);
 "function"      RETURN(FUNCTION);
 "if"            RETURN(IF);
+"import"        RETURN(IMPORT);
 "in"            RETURN(IN);
 "isdef"         RETURN(ISDEF);
   /*<no-space< New.*/

@@ -522,6 +522,14 @@ stmt:
   }
 ;
 
+%token IMPORT "import";
+
+stmt:
+  "import" exp[what]
+  {
+    $$ = new ast::LocalDeclaration(@$, SYMBOL(DOLLAR_IMPORT), $what);
+  }
+;
 
 /*---------.
 | Events.  |

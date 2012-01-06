@@ -47,6 +47,7 @@ namespace runner
     , void_error_(true)
     , innermost_node_(0)
     , current_exception_()
+    , has_import_stack(true)
       // When creating a new stack, "this" is the current lobby.
   {
     if (runner::Job* r = ::kernel::server().getCurrentRunnerOpt())
@@ -55,6 +56,8 @@ namespace runner
     // toplevel.
     create_scope_tag();
     apply_tag(lobby->tag_get());
+    if (has_import_stack)
+      import_stack.push_back(std::vector<rObject>());
   }
 
   State::State(const State& base)
@@ -72,10 +75,14 @@ namespace runner
     , void_error_(true)
     , innermost_node_(base.innermost_node_)
     , current_exception_()
+    , has_import_stack(base.has_import_stack)
   {
     // Push a dummy scope tag, in case we do have an "at" at the
     // toplevel.
     create_scope_tag();
+    import_stack = base.import_stack;
+    import_captured = base.import_captured;
+    import_stack_size = base.import_stack_size;
   }
 
   // Handle tags.

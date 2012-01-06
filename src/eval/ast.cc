@@ -427,10 +427,90 @@ namespace eval
     // The invoked slot (probably a function).
     const ast::rConstExp& ast_tgt = e->target_get();
     rObject tgt = ast(this_, ast_tgt.get());
-    return call_msg(this_,
-                    tgt, e->name_get(),
-                    e->arguments_get(),
-                    e->location_get());
+    bool implicit = e->target_implicit();
+    if (implicit)
+    { // If target is implicit, we can use our imports.
+      rObject res;
+      libport::Symbol s = e->name_get();
+      // FIXME: this sucks, but since a=b is desugared into updateSlot, no
+      // way to make the difference.
+      bool updateMode = (s == SYMBOL(updateSlot));
+      object::objects_type args;
+      if (updateMode)
+      {
+        // Retarget the slot we are looking for
+        strict_args(this_, args, *e->arguments_get());
+        if (args.size() != 2)
+          runner::raise_arity_error(2, args.size());
+        object::rString rs = args[0]->as<object::String>();
+        if (!rs)
+          runner::raise_argument_type_error(1, args[0], object::String::proto);
+        s = libport::Symbol(rs->value_get());
+      }
+      object::Object::location_type loc;
+      // Try looking up on this first
+      loc = tgt->slot_locate(s);
+      if (!loc.first)
+      {
+        // Try the import stack
+        if (!this_.state.import_stack.empty() && this_.state.has_import_stack)
+        rforeach(rObject& o, this_.state.import_stack.back())
+        {
+          loc = o->slot_locate(s);
+          if (loc.first)
+          {
+            tgt = o;
+            break;
+          }
+        }
+      }
+      if (!loc.first)
+      {
+        // try the captured import stack
+        rforeach(rObject& o, this_.state.import_captured)
+        {
+          loc = o->slot_locate(s);
+          if (res)
+          {
+            tgt = o;
+            break;
+          }
+        }
+      }
+      if (!loc.first)
+      {
+        runner::raise_lookup_error(s, tgt);
+      }
+      if (updateMode)
+      {
+        tgt->slot_update_with_cow(s, args[1], true, loc);
+        return args[1];
+      }
+      else
+      {
+        rObject val = loc.second;
+        if (object::rSlot sl = val->as<object::Slot>())
+          val = sl->value(tgt);
+        else
+        {
+          // We bypassed slot_get, so we muste handle slot creation if
+          // dependency tracking is on.
+          if (this_.dependencies_log_get())
+          {
+            val = tgt->slot_get(s).unsafe_cast<object::Slot>()->value(tgt);
+          }
+        }
+        return call_msg(this_, tgt, val, s, e->arguments_get(),
+        e->location_get());
+      }
+    }
+    else
+    {
+      return call_msg(this_,
+        tgt, e->name_get(),
+        e->arguments_get(),
+        e->location_get());
+    }
   }
 
   LIBPORT_SPEED_ALWAYS_INLINE rObject
@@ -453,7 +533,13 @@ namespace eval
     rObject res = v ? ast(this_, v.get()) : object::void_class;
     if (v)
       check_void(res);
-    this_.state.def(d, res, d->constant_get());
+    if (d->what_get() == SYMBOL(DOLLAR_IMPORT))
+    {
+      this_.state.import_stack.back().push_back(res);
+      this_.state.import_stack_size.back()++;
+    }
+    else
+      this_.state.def(d, res, d->constant_get());
     return res;
   }
 
@@ -511,6 +597,12 @@ namespace eval
       res->lobby_set(this_.state.lobby_get());
     }
 
+    // Capture imports.
+    if (this_.state.has_import_stack)
+      foreach(rObject& v, this_.state.import_stack.back())
+        res->import_add(v);
+    foreach(rObject&v , this_.state.import_captured)
+      res->import_add(v);
     return res;
   }
 
@@ -736,6 +828,10 @@ namespace eval
     bool non_interruptible = this_.non_interruptible_get();
     bool redefinition_mode = this_.state.redefinition_mode_get();
     bool void_error = this_.state.void_error_get();
+    // Populate using_stack
+    rObject o(new object::Object);
+    if (this_.state.has_import_stack)
+      this_.state.import_stack_size.push_back(0);
     FINALLY(((Job&, this_))
             ((bool, non_interruptible))
             ((bool, redefinition_mode))
@@ -744,6 +840,13 @@ namespace eval
             this_.non_interruptible_set(non_interruptible);
             this_.state.redefinition_mode_set(redefinition_mode);
             this_.state.void_error_set(void_error);
+            if (this_.state.has_import_stack)
+            {
+              if (this_.state.import_stack_size.back())
+              this_.state.import_stack.back().resize(
+                this_.state.import_stack.back().size()-this_.state.import_stack_size.back());
+              this_.state.import_stack_size.pop_back();
+            }
       );
 
     this_.state.create_scope_tag();

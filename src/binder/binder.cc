@@ -202,7 +202,13 @@ namespace binder
   {
     super_type::visit(input);
     ast::rLocalDeclaration dec = result_.unsafe_cast<ast::LocalDeclaration>();
-    bind(dec);
+    if (dec->what_get() != SYMBOL(DOLLAR_IMPORT))
+      bind(dec);
+    else
+    {
+      if (!routine_stack_.empty())
+        routine_stack_.back()->has_imports_set(true);
+    }
   }
 
   void
@@ -436,6 +442,7 @@ namespace binder
     // Clone and push the function, without filling its body and arguments
     ast::rRoutine res =
       new ast::Routine(input->location_get(), input->closure_get(), 0, 0);
+    res->has_imports_set(input->has_imports_get());
     res->local_variables_set(new ast::local_declarations_type());
     routine_push(res);
     finally << boost::bind(&Binder::routine_pop, this);

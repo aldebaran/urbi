@@ -315,6 +315,20 @@ namespace runner
     /// The current exception when executing a "catch" block
     ATTRIBUTE_RW(rObject, current_exception);
     /// \}
+
+
+  public:
+    /// import stack. One level per frame. Does not include captured imports.
+    std::vector<std::vector<rObject> > import_stack;
+    /// Number of imports appended by last scope
+    std::vector<unsigned> import_stack_size;
+    /// Ignore import stack stuff if false (used when a function makes no import)
+    bool has_import_stack;
+    typedef std::vector<rObject> import_captured_type;
+    /** Captured imports active for current function call.
+    * No stack since we can correctly reset it upon exit.
+    */
+    import_captured_type import_captured;
   };
 
 
