@@ -10,7 +10,7 @@
 
 /**
  ** \file object/urbi-exception.hh
- ** \brief Definition of Exception
+ ** \brief Definition of UrbiException.
  */
 
 #ifndef OBJECT_URBI_EXCEPTION_HH

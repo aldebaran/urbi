@@ -33,11 +33,11 @@ namespace urbi
     typedef libport::intrusive_ptr<Object> rObject;
     static const unsigned objects_type_floor = 8;
     typedef libport::FlooredAllocator<rObject, objects_type_floor>
-    objects_type_allocator;
+      objects_type_allocator;
     typedef libport::Constructor<rObject>
-    objects_type_constructor;
+      objects_type_constructor;
     typedef libport::FlooredExponentialCapacity<objects_type_floor>
-    objects_type_capacity;
+      objects_type_capacity;
     typedef libport::Vector<rObject,
                             objects_type_allocator,
                             objects_type_constructor,
