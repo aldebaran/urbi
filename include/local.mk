@@ -10,13 +10,24 @@
 ## Installed kernel headers.  ##
 ## -------------------------- ##
 
+## Handling INSTALL_KERNEL_HEADERS this way ensures that $(HEADERS)
+## contains all the headers.
 if INSTALL_KERNEL_HEADERS
 kernelinclude_urbidir = $(brandincludedir)/urbi
+kernelinclude_kerneldir = $(kernelinclude_urbidir)/kernel
+kernelinclude_urbi_objectdir = $(kernelinclude_urbidir)/object
+kernelinclude_urbi_runnerdir = $(kernelinclude_urbidir)/runner
+else !INSTALL_KERNEL_HEADERS
+kernelinclude_urbidir =
+kernelinclude_kerneldir =
+kernelinclude_urbi_objectdir =
+kernelinclude_urbi_runnerdir =
+endif !INSTALL_KERNEL_HEADERS
+
 dist_kernelinclude_urbi_HEADERS =		\
   include/urbi/sdk.hh				\
   include/urbi/sdk.hxx
 
-kernelinclude_kerneldir = $(kernelinclude_urbidir)/kernel
 dist_kernelinclude_kernel_HEADERS =		\
   include/urbi/kernel/fwd.hh			\
   include/urbi/kernel/uconnection.hh		\
@@ -25,7 +36,6 @@ dist_kernelinclude_kernel_HEADERS =		\
   include/urbi/kernel/userver.hxx		\
   include/urbi/kernel/utypes.hh
 
-kernelinclude_urbi_objectdir = $(kernelinclude_urbidir)/object
 dist_kernelinclude_urbi_object_HEADERS =	\
   include/urbi/object/any-to-boost-function.hh	\
   include/urbi/object/barrier.hh		\
@@ -72,10 +82,8 @@ dist_kernelinclude_urbi_object_HEADERS =	\
   include/urbi/object/tag.hh			\
   include/urbi/object/tag.hxx
 
-kernelinclude_urbi_runnerdir = $(kernelinclude_urbidir)/runner
 dist_kernelinclude_urbi_runner_HEADERS =	\
   include/urbi/runner/raise.hh
-endif INSTALL_KERNEL_HEADERS
 
 
 ## ------------------------ ##
@@ -88,9 +96,7 @@ FROM_GEN =					\
   include/urbi/object/executable.hh
 BUILT_SOURCES += $(FROM_GEN)
 
-if INSTALL_KERNEL_HEADERS
 dist_kernelinclude_urbi_object_HEADERS += $(FROM_GEN)
-endif INSTALL_KERNEL_HEADERS
 EXTRA_DIST += $(FROM_GEN:=.gen)
 
 %: %.gen
@@ -99,3 +105,15 @@ EXTRA_DIST += $(FROM_GEN:=.gen)
 	$(AM_V_at)chmod a-w $@.tmp
 	$(AM_V_at)$(move_if_change_run) $@.tmp $@
 	$(AM_V_at)touch $@
+
+
+
+## ------------------ ##
+## Maintainer check.  ##
+## ------------------ ##
+
+
+.PHONY maintainer-check: maintainer-check-includes
+
+maintainer-check-includes: $(HEADERS)
+	perl -ne '/#\s*include\s*<(.*?)>/ and $$include{$$1} = 1; END { print join ("\n", (sort (keys %include), "")) }' $^ | grep -Ev '^((boost|libport|sched|urbi)/|(deque|iomanip|iosfwd|iostream|memory|ostream|set|sstream|typeinfo|vector))'
