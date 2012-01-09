@@ -11,6 +11,7 @@
 #include <object/symbols.hh>
 #include <urbi/object/event.hh>
 #include <urbi/object/event-handler.hh>
+#include <object/profile.hh>
 
 namespace urbi
 {

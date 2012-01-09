@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, Gostai S.A.S.
+ * Copyright (C) 2010, 2011, 2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -16,7 +16,6 @@
 
 # include <libport/attributes.hh>
 
-# include <object/profile.hh>
 # include <runner/interpreter.hh>
 # include <urbi/object/cxx-object.hh>
 # include <urbi/object/lobby.hh>
@@ -95,18 +94,10 @@ namespace urbi
        */
       struct Actions: public libport::RefCounted
       {
-        Actions(rExecutable g, rExecutable e, rExecutable l, bool s)
-          : guard(g), enter(e), leave(l), frozen(0), sync(s)
-        {}
+        Actions(rExecutable g, rExecutable e, rExecutable l, bool s);
 	~Actions();
 
-        bool
-        operator==(const Actions& other)
-        {
-          return (guard == other.guard
-                  && enter == other.enter
-                  && leave == other.leave);
-        }
+        bool operator==(const Actions& other) const;
 
         rExecutable guard, enter, leave;
         rProfile profile;

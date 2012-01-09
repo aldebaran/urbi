@@ -10,18 +10,39 @@
 
 #include <algorithm>
 
-#include <urbi/kernel/userver.hh>
 #include <object/symbols.hh>
 #include <runner/interpreter.hh>
-#include <urbi/object/event.hh>
+#include <urbi/kernel/userver.hh>
 #include <urbi/object/event-handler.hh>
+#include <urbi/object/event.hh>
 #include <urbi/object/lobby.hh>
+#include <object/profile.hh>
 #include <urbi/sdk.hh>
 
 namespace urbi
 {
   namespace object
   {
+
+    /*-----------------.
+    | Event::Actions.  |
+    `-----------------*/
+
+    Event::Actions::Actions(rExecutable g, rExecutable e, rExecutable l, bool s)
+      : guard(g), enter(e), leave(l), frozen(0), sync(s)
+    {}
+
+    bool
+    Event::Actions::operator==(const Actions& other) const
+    {
+      return (guard == other.guard
+              && enter == other.enter
+              && leave == other.leave);
+    }
+
+    /*--------.
+    | Event.  |
+    `--------*/
     Event::Event()
       : listeners_()
       , waiters_()

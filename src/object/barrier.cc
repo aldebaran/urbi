@@ -19,6 +19,8 @@
 #include <urbi/object/float.hh>
 #include <object/symbols.hh>
 
+# include <runner/runner.hh>
+
 namespace urbi
 {
   namespace object

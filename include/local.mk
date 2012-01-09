@@ -116,4 +116,4 @@ EXTRA_DIST += $(FROM_GEN:=.gen)
 .PHONY maintainer-check: maintainer-check-includes
 
 maintainer-check-includes: $(HEADERS)
-	perl -ne '/#\s*include\s*<(.*?)>/ and $$include{$$1} = 1; END { print join ("\n", (sort (keys %include), "")) }' $^ | grep -Ev '^((boost|libport|sched|urbi)/|(deque|iomanip|iosfwd|iostream|memory|ostream|set|sstream|typeinfo|vector))'
+	@perl -ne '/#\s*include\s*<(.*?)>/ and $$include{$$1} = 1; END { print join ("\n", (sort (keys %include), "")) }' $^ | grep -Ev '^((boost|libport|sched|urbi)/|(deque|iomanip|iosfwd|iostream|memory|ostream|set|sstream|typeinfo|vector))'
