@@ -37,7 +37,7 @@
 #include <urbi/object/object.hh>
 #include <object/root-classes.hh>
 #include <urbi/object/symbols.hh>
-#include <object/urbi-exception.hh>
+#include <urbi/object/urbi-exception.hh>
 
 #include <urbi/runner/raise.hh>
 #include <runner/runner.hh>

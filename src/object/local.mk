@@ -66,8 +66,6 @@ dist_libuobject@LIBSFX@_la_SOURCES +=		\
   object/uconnection.cc				\
   object/uconnection.hh				\
   object/urbi-exception.cc			\
-  object/urbi-exception.hh			\
-  object/urbi-exception.hxx			\
   object/uvalue.cc				\
   object/uvalue.hh				\
   object/uvar.cc				\

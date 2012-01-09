@@ -25,7 +25,7 @@
 # include <ast/fwd.hh>
 # include <ast/exps-type.hh>
 
-# include <object/urbi-exception.hh>
+# include <urbi/object/urbi-exception.hh>
 
 # include <runner/runner.hh>
 # include <runner/stacks.hh>

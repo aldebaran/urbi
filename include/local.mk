@@ -81,7 +81,9 @@ dist_kernelinclude_urbi_object_HEADERS =	\
   include/urbi/object/string.hh			\
   include/urbi/object/symbols.hh		\
   include/urbi/object/tag.hh			\
-  include/urbi/object/tag.hxx
+  include/urbi/object/tag.hxx                   \
+  include/urbi/object/urbi-exception.hh         \
+  include/urbi/object/urbi-exception.hxx
 
 dist_kernelinclude_urbi_runner_HEADERS =	\
   include/urbi/runner/raise.hh
@@ -174,5 +176,11 @@ BUILT_SOURCES += $(precompiled_symbols_hh)
 
 .PHONY maintainer-check: maintainer-check-includes
 
+cxx_headers = \
+  deque|iomanip|iosfwd|iostream|memory|ostream|set|sstream|string|typeinfo|vector
+PERL = perl
 maintainer-check-includes: $(HEADERS)
-	@perl -ne '/#\s*include\s*<(.*?)>/ and $$include{$$1} = 1; END { print join ("\n", (sort (keys %include), "")) }' $^ | grep -Ev '^((boost|libport|sched|urbi)/|(deque|iomanip|iosfwd|iostream|memory|ostream|set|sstream|typeinfo|vector))'
+	$(AM_V_GEN)! $(PERL) -n						  \
+	  -e '/#\s*include\s*<(.*?)>/ and $$include{$$1} = 1;'		  \
+	  -e 'END { print join ("\n", (sort (keys %include), "")) }' $^ | \
+	  grep -Ev '^((boost|libport|sched|urbi)/|($(cxx_headers)))'

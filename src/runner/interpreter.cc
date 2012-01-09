@@ -33,7 +33,7 @@
 #include <object/profile.hh>
 #include <urbi/object/symbols.hh>
 #include <object/system.hh>
-#include <object/urbi-exception.hh>
+#include <urbi/object/urbi-exception.hh>
 
 #include <parser/uparser.hh>
 

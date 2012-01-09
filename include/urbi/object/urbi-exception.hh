@@ -9,12 +9,14 @@
  */
 
 /**
- ** \file object/urbi-exception.hh
+ ** \file urbi/object/urbi-exception.hh
  ** \brief Definition of UrbiException.
  */
 
-#ifndef OBJECT_URBI_EXCEPTION_HH
-# define OBJECT_URBI_EXCEPTION_HH
+// FIXME: Not an Urbi object, so the presence in here is dubious.
+
+#ifndef URBI_OBJECT_EXCEPTION_HH
+# define URBI_OBJECT_EXCEPTION_HH
 
 # include <string>
 
@@ -65,6 +67,6 @@ namespace std
   ostream& operator<<(ostream& o, const urbi::object::call_stack_type& c);
 }
 
-# include <object/urbi-exception.hxx>
+# include <urbi/object/urbi-exception.hxx>
 
-#endif //! OBJECT_URBI_EXCEPTION_HH
+#endif //! URBI_OBJECT_EXCEPTION_HH

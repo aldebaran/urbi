@@ -15,7 +15,7 @@
 
 #include <object/finalizable.hh>
 #include <urbi/object/symbols.hh>
-#include <object/urbi-exception.hh>
+#include <urbi/object/urbi-exception.hh>
 
 #include <runner/runner.hh>
 

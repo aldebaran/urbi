@@ -39,7 +39,7 @@
 #include <urbi/object/symbols.hh>
 #include <object/system.hh>
 #include <object/uconnection.hh>
-#include <object/urbi-exception.hh>
+#include <urbi/object/urbi-exception.hh>
 #include <object/uvalue.hh>
 #include <object/uvar.hh>
 #include <urbi/runner/raise.hh>

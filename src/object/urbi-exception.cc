@@ -12,7 +12,7 @@
 #include <urbi/object/object.hh>
 #include <urbi/object/string.hh>
 #include <urbi/object/symbols.hh>
-#include <object/urbi-exception.hh>
+#include <urbi/object/urbi-exception.hh>
 
 namespace std
 {

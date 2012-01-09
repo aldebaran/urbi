@@ -18,7 +18,7 @@
 # include <libport/path.hh>
 # include <libport/symbol.hh>
 
-# include <object/urbi-exception.hh>
+# include <urbi/object/urbi-exception.hh>
 
 # include <urbi/object/cxx-object.hh>
 # include <urbi/object/float.hh>
