@@ -14,6 +14,7 @@ packages: deb rpm
 
 deb: debian/changelog debian/rules
 	$(MAKE) distdir
+	rm -rf $(PACKAGE_NAME)
 	mv $(distdir) $(PACKAGE_NAME)
 	tardir=$(PACKAGE_NAME) && $(am__tar) | bzip2 -9 -c >$(PACKAGE_NAME).tar.bz2
 	cp $(PACKAGE_NAME).tar.bz2 $(PACKAGE_NAME).orig.tar.bz2
