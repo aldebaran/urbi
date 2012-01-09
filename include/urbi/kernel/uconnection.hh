@@ -30,11 +30,6 @@
 # include <urbi/export.hh>
 # include <urbi/iostream.hh>
 # include <urbi/kernel/utypes.hh>
-# ifdef _MSC_VER
-#  include <urbi/object/lobby.hh>
-#  include <runner/shell.hh>
-# endif
-
 
 namespace kernel
 {
