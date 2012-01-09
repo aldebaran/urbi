@@ -59,7 +59,7 @@ namespace object
 {
 
 # define SYMBOL_DECLARE(Name, Value)		\
-  extern libport::Symbol symbol_ ## Name
+  URBI_SDK_API extern libport::Symbol symbol_ ## Name
 
   SYMBOLS_APPLY(SYMBOL_DECLARE);
 
