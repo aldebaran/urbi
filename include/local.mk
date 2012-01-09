@@ -25,7 +25,7 @@ dist_kernelinclude_kernel_HEADERS =		\
   include/urbi/kernel/userver.hxx		\
   include/urbi/kernel/utypes.hh
 
-kernelinclude_urbi_objectdir = $(brandincludedir)/object
+kernelinclude_urbi_objectdir = $(kernelinclude_urbidir)/object
 dist_kernelinclude_urbi_object_HEADERS =	\
   include/urbi/object/any-to-boost-function.hh	\
   include/urbi/object/barrier.hh		\
