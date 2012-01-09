@@ -34,12 +34,12 @@ namespace urbi
       const value_type& value_get() const;
 
       rList backtrace();
-      const std::string& name();
+      const std::string& name() const;
       void setSideEffectFree(rObject);
       std::string status();
       tag_stack_type tags() const;
       void terminate();
-      rFloat timeShift();
+      rFloat timeShift() const;
       void waitForChanges();
       void waitForTermination();
 

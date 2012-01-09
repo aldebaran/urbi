@@ -73,7 +73,7 @@ namespace urbi
     }
 
     const std::string&
-    Job::name()
+    Job::name() const
     {
       static std::string otherwise("Job");
       return value_ ? value_->name_get() : otherwise;
@@ -180,7 +180,7 @@ namespace urbi
     }
 
     rFloat
-    Job::timeShift()
+    Job::timeShift() const
     {
       if (!value_)
         return new Float(0);
