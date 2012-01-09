@@ -16,7 +16,6 @@
 
 # include <libport/attributes.hh>
 
-# include <runner/interpreter.hh>
 # include <urbi/object/cxx-object.hh>
 # include <urbi/object/lobby.hh>
 
