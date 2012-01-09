@@ -53,7 +53,7 @@
 
 #  define SYMBOL_(Sym) ::object::symbol_ ## Sym
 
-#  include <object/precompiled-symbols.hh>
+#  include <urbi/object/precompiled-symbols.hh>
 
 namespace object
 {

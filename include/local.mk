@@ -79,6 +79,7 @@ dist_kernelinclude_urbi_object_HEADERS =	\
   include/urbi/object/slot.hh			\
   include/urbi/object/slot.hxx			\
   include/urbi/object/string.hh			\
+  include/urbi/object/symbols.hh		\
   include/urbi/object/tag.hh			\
   include/urbi/object/tag.hxx
 
