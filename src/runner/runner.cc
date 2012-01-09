@@ -141,7 +141,7 @@ namespace runner
     return 0;
   }
 
-  tag_stack_type
+  Runner::tag_stack_type
   Runner::tag_stack_get() const
   {
     tag_stack_type res;

@@ -106,7 +106,7 @@ namespace urbi
         /// Whether this onEvent is synchronous
         bool sync;
         std::vector<boost::signals::connection> connections;
-        runner::tag_stack_type tag_stack;
+        tag_stack_type tag_stack;
         /// Create job with this lobby when executing actions if set.
         rLobby lobby;
       };

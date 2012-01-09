@@ -79,12 +79,12 @@ namespace urbi
       return value_ ? value_->name_get() : otherwise;
     }
 
-    const runner::tag_stack_type
-    Job::tags()
+    tag_stack_type
+    Job::tags() const
     {
       return value_
         ? dynamic_cast<runner::Interpreter*>(value_.get())->tag_stack_get()
-        : runner::tag_stack_type();
+        : tag_stack_type();
     }
 
     std::string

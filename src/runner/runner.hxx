@@ -108,7 +108,7 @@ namespace runner
     tag_stack_.clear();
   }
 
-  LIBPORT_SPEED_INLINE const tag_stack_type&
+  LIBPORT_SPEED_INLINE const Runner::tag_stack_type&
   Runner::tag_stack_get_all() const
   {
     return tag_stack_;

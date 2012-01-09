@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2011, Gostai S.A.S.
+ * Copyright (C) 2009-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -121,6 +121,9 @@ namespace urbi
 
     template<typename M>
     rPrimitive primitive(rPrimitive extend, M f);
+
+    /// Stack of Urbi tags, to control execution.
+    typedef std::vector<object::rTag> tag_stack_type;
 
   } // namespace object
 }

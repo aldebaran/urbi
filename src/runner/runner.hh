@@ -35,9 +35,6 @@
 namespace runner
 {
 
-  /// Stack of Urbi tags.
-  typedef std::vector<object::rTag> tag_stack_type;
-
   /// Ast executor.
   class Runner : public sched::Job
   {
@@ -163,6 +160,7 @@ namespace runner
     /// Retrieve the tags currently tagging the runned code.
     /// This does not include the flow control tags and is only
     /// intended for user consumption.
+    typedef urbi::object::tag_stack_type tag_stack_type;
     tag_stack_type tag_stack_get() const;
 
     /// Clear the tag stack.
