@@ -1,0 +1,9 @@
+@PREFIX@/bin/urbi
+@PREFIX@/bin/urbi*
+@PREFIX@/lib/*.so
+@PREFIX@/lib/gostai/engine/*.so
+@PREFIX@/lib/gostai/remote/*.so
+@PREFIX@/lib/gostai/uobjects/urbi/*.so
+@PREFIX@/share/gostai/urbi/*
+@PREFIX@/share/gostai/urbi/package-info/*
+

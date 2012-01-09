@@ -8,11 +8,12 @@
 
 PACKAGE_NAME = urbi_$(PACKAGE_VERSION)
 DEB_ARCH = `dpkg-architecture -qDEB_BUILD_ARCH`
+PREFIX = echo $(prefix) | sed -e "s/\\//\\\\\//g"
 
 .PHONY: packages deb rpm
 packages: deb rpm
 
-deb: debian/changelog debian/rules
+deb: debian/changelog debian/rules debian/urbi-doc.install debian/urbi.install debian/urbi-dev.install
 	$(MAKE) distdir
 	rm -rf $(PACKAGE_NAME)
 	mv $(distdir) $(PACKAGE_NAME)
@@ -38,6 +39,24 @@ debian/rules: $(srcdir)/debian/rules.in
 	$(AM_V_at)mv $@.tmp $@
 	chmod +x $(builddir)/debian/rules
 
+.PHONY: debian/urbi-doc.install
+debian/urbi-doc.install: $(srcdir)/debian/urbi-doc.install.in
+	$(AM_V_GEN)mkdir -p $(@D)
+	$(AM_V_at)sed -e 's/[@]PREFIX@/$(shell $(PREFIX))/' $< > $@.tmp
+	$(AM_V_at)mv $@.tmp $@
+
+.PHONY: debian/urbi-dev.install
+debian/urbi-dev.install: $(srcdir)/debian/urbi-dev.install.in
+	$(AM_V_GEN)mkdir -p $(@D)
+	$(AM_V_at)sed -e 's/[@]PREFIX@/$(shell $(PREFIX))/' $< > $@.tmp
+	$(AM_V_at)mv $@.tmp $@
+
+.PHONY: debian/urbi.install
+debian/urbi.install: $(srcdir)/debian/urbi.install.in
+	$(AM_V_GEN)mkdir -p $(@D)
+	$(AM_V_at)sed -e 's/[@]PREFIX@/$(shell $(PREFIX))/' $< > $@.tmp
+	$(AM_V_at)mv $@.tmp $@
+
 EXTRA_DIST +=					\
   debian/README.Debian				\
   debian/README.source				\
@@ -51,7 +70,10 @@ EXTRA_DIST +=					\
   debian/rules.in				\
   debian/rules	         			\
   debian/source/format				\
+  debian/urbi-dev.install.in			\
   debian/urbi-dev.install			\
   debian/urbi-doc.docs				\
+  debian/urbi-doc.install.in			\
   debian/urbi-doc.install			\
+  debian/urbi.install.in			\
   debian/urbi.install
