@@ -12,7 +12,7 @@
 
 #include <urbi/object/cxx-object.hh>
 #include <urbi/object/global.hh>
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 
 #include <runner/runner.hh>
 

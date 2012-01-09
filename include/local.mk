@@ -100,12 +100,70 @@ dist_kernelinclude_urbi_object_HEADERS += $(FROM_GEN)
 EXTRA_DIST += $(FROM_GEN:=.gen)
 
 %: %.gen
-	$(AM_V_GEN)mkdir -p $(dir $@)
+	$(AM_V_GEN)mkdir -p $(@D)
 	$(AM_V_at)$< > $@.tmp
 	$(AM_V_at)chmod a-w $@.tmp
 	$(AM_V_at)$(move_if_change_run) $@.tmp $@
 	$(AM_V_at)touch $@
 
+
+## ---------------------- ##
+## List of used symbols.  ##
+## ---------------------- ##
+
+nodist_kernelinclude_urbi_object_HEADERS = 		\
+  $(precompiled_symbols_hh)
+
+# Generate this file in builddir so that a single srcdir can produce
+# several builddirs with different configuration-options that may
+# result in different sets of precompiled symbols.
+precompiled_symbols_hh = include/urbi/object/precompiled-symbols.hh
+precompiled_symbols_stamp = $(precompiled_symbols_hh:.hh=.stamp)
+# filter-out generated files, and precompiled_symbols_hh itself to
+# avoid circular dependencies.
+precompiled_symbols_hh_sources =		\
+  $(top_srcdir)/src/parser/utoken.l		\
+  $(top_srcdir)/src/parser/ugrammar.y		\
+  $(filter-out $(precompiled_symbols_hh)	\
+               $(FROM_UGRAMMAR_Y)		\
+               $(FROM_UTOKEN_L)			\
+	       parser/keywords.hh		\
+	       ast/ignores,			\
+        $(call ls_files,			\
+           src/*.hh		\
+           src/*.hxx		\
+           src/*.cc))
+EXTRA_DIST += $(precompiled_symbols_hh).gen
+
+$(precompiled_symbols_stamp): $(precompiled_symbols_hh).gen $(precompiled_symbols_hh_sources)
+	$(AM_V_GEN)mkdir -p $(@D)
+	$(AM_V_at)rm -f $@.tmp
+	$(AM_V_at)if test "$(V)" = 1; then				\
+	  echo "rebuilding $(precompiled_symbols_hh) because of:";	\
+	  for i in $?;							\
+	  do								\
+	    echo "       $$i";						\
+	  done								\
+	fi
+	$(AM_V_at)touch $@.tmp
+# Don't use `mv' here so that even if we are interrupted, the file
+# is still available for diff in the next run.
+	$(AM_V_at)if test -f $(precompiled_symbols_hh); then	\
+	  cat $(precompiled_symbols_hh);			\
+	fi >$(precompiled_symbols_hh)~
+	$(AM_V_at)$(srcdir)/$(precompiled_symbols_hh).gen		\
+		$(filter-out %$(precompiled_symbols_hh).gen, $^)	\
+		>$(precompiled_symbols_hh).tmp
+	$(AM_V_at)$(move_if_change_run)			\
+	  $(precompiled_symbols_hh).tmp $(precompiled_symbols_hh)
+	$(AM_V_at)mv -f $@.tmp $@
+
+$(precompiled_symbols_hh): $(precompiled_symbols_stamp)
+	@if test ! -f $@; then					\
+	  rm -f $(precompiled_symbols_stamp);			\
+	  $(MAKE) $(AM_MAKEFLAGS) $(precompiled_symbols_stamp);	\
+	fi
+BUILT_SOURCES += $(precompiled_symbols_hh)
 
 
 ## ------------------ ##

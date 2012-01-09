@@ -29,7 +29,7 @@
 #include <urbi/object/directory.hh>
 #include <urbi/object/global.hh>
 #include <urbi/object/path.hh>
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 
 #include <urbi/runner/raise.hh>
 

@@ -6,61 +6,6 @@
 ##
 ## See the LICENSE file for more information.
 
-## ---------------------- ##
-## List of used symbols.  ##
-## ---------------------- ##
-
-nodist_libuobject@LIBSFX@_la_SOURCES += 		\
-  $(precompiled_symbols_hh)
-
-# Generate this file in builddir so that a single srcdir can produce
-# several builddirs with different configuration-options that may
-# result in different sets of precompiled symbols.
-precompiled_symbols_hh = object/precompiled-symbols.hh
-precompiled_symbols_stamp = $(precompiled_symbols_hh:.hh=.stamp)
-# filter-out generated files, and precompiled_symbols_hh itself to
-# avoid circular dependencies.
-precompiled_symbols_hh_sources =		\
-  parser/utoken.l				\
-  parser/ugrammar.y				\
-  $(filter-out $(precompiled_symbols_hh)	\
-               $(FROM_UGRAMMAR_Y)		\
-               $(FROM_UTOKEN_L)			\
-	       parser/keywords.hh		\
-	       ast/ignores,			\
-        $(SOURCES))
-EXTRA_DIST += object/symbols-generate.pl
-
-$(precompiled_symbols_stamp): object/symbols-generate.pl $(precompiled_symbols_hh_sources)
-	$(AM_V_GEN)rm -f $@.tmp
-	$(AM_V_at)if test "$(V)" = 1; then				\
-	  echo "rebuilding $(precompiled_symbols_hh) because of:";	\
-	  for i in $?;							\
-	  do								\
-	    echo "       $$i";						\
-	  done								\
-	fi
-	$(AM_V_at)touch $@.tmp
-# Don't use `mv' here so that even if we are interrupted, the file
-# is still available for diff in the next run.
-	$(AM_V_at)if test -f $(precompiled_symbols_hh); then	\
-	  cat $(precompiled_symbols_hh);			\
-	fi >$(precompiled_symbols_hh)~
-	$(AM_V_at)(cd $(srcdir) &&			\
-	 ./object/symbols-generate.pl			\
-		$(precompiled_symbols_hh_sources))	\
-		>$(precompiled_symbols_hh).tmp
-	$(AM_V_at)$(move_if_change_run)			\
-	  $(precompiled_symbols_hh).tmp $(precompiled_symbols_hh)
-	$(AM_V_at)mv -f $@.tmp $@
-
-$(precompiled_symbols_hh): $(precompiled_symbols_stamp)
-	@if test ! -f $@; then					\
-	  rm -f $(precompiled_symbols_stamp);			\
-	  $(MAKE) $(AM_MAKEFLAGS) $(precompiled_symbols_stamp);	\
-	fi
-BUILT_SOURCES += $(precompiled_symbols_hh)
-
 ## ----------------- ##
 ## Regular sources.  ##
 ## ----------------- ##
@@ -115,7 +60,6 @@ dist_libuobject@LIBSFX@_la_SOURCES +=		\
   object/sorted-vector-slots.hxx		\
   object/string.cc				\
   object/symbols.cc				\
-  object/symbols.hh				\
   object/system.cc				\
   object/system.hh				\
   object/tag.cc					\

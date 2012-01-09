@@ -19,7 +19,7 @@
 #include <urbi/object/global.hh>
 #include <urbi/object/object.hh>
 #include <urbi/object/string.hh>
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 
 #include <runner/interpreter.hh>
 #include <runner/runner.hh>

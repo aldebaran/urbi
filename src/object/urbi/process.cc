@@ -30,7 +30,7 @@
 #include <object/urbi/input-stream.hh>
 #include <object/urbi/output-stream.hh>
 #include <object/urbi/process.hh>
-#include <object/urbi/symbols.hh>
+#include <urbi/object/symbols.hh>
 #include <urbi/sdk.hh>
 
 

@@ -11,7 +11,7 @@
 #include <sstream>
 #include <urbi/object/object.hh>
 #include <urbi/object/string.hh>
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 #include <object/urbi-exception.hh>
 
 namespace std

@@ -17,7 +17,7 @@
 #include <libport/foreach.hh>
 #include <libport/windows.hh>
 
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 
 #include <urbi/object/job.hh>
 #include <urbi/object/lobby.hh>

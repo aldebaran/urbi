@@ -16,7 +16,7 @@
 # include <urbi/kernel/userver.hh>
 # include <kernel/uvalue-cast.hh>
 
-# include <object/symbols.hh>
+# include <urbi/object/symbols.hh>
 # include <object/uvalue.hh>
 
 # include <urbi/object/list.hh>

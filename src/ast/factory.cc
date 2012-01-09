@@ -16,7 +16,7 @@
 #include <ast/all.hh>
 #include <ast/new-clone.hh>
 #include <ast/parametric-ast.hh>
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 #include <urbi/object/object.hh>
 #include <ast/factory.hh>
 #include <ast/event-match.hh>

@@ -16,7 +16,7 @@
 #include <libport/containers.hh>
 
 #include <urbi/kernel/userver.hh>
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 #include <runner/runner.hh>
 #include <urbi/object/dictionary.hh>
 #include <urbi/object/event.hh>

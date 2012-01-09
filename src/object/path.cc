@@ -19,7 +19,7 @@
 #include <libport/sys/types.h>
 #include <libport/unistd.h> // For stat, getcwd
 
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 #include <urbi/object/date.hh>
 #include <urbi/object/directory.hh>
 #include <urbi/object/file.hh>

@@ -67,7 +67,7 @@
 #include <urbi/object/tag.hh>
 #include <object/root-classes.hh>
 #include <object/socket.hh>
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 #include <object/system.hh>
 
 #include <runner/runner.hh>

@@ -20,7 +20,7 @@
 
 #include <ast/ast.hh>
 #include <urbi/object/tag.hh>
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 
 namespace runner
 {

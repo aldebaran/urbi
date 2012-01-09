@@ -17,8 +17,7 @@ urbi_uobjects_LIBADD = libuobject@LIBSFX@.la
 endif WIN32
 
 EXTRA_DIST +=					\
-  object/urbi/export.hh				\
-  object/urbi/symbols.hh
+  object/urbi/export.hh
 
 urbi_uobjects_LTLIBRARIES =
 

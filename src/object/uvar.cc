@@ -20,7 +20,7 @@
 # include <urbi/kernel/userver.hh>
 # include <kernel/uvalue-cast.hh>
 
-# include <object/symbols.hh>
+# include <urbi/object/symbols.hh>
 # include <object/uconnection.hh>
 # include <object/urbi-exception.hh>
 # include <object/uvalue.hh>

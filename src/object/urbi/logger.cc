@@ -10,7 +10,7 @@
 
 #include <urbi/object/enumeration.hh>
 
-#include <object/urbi/symbols.hh>
+#include <urbi/object/symbols.hh>
 #include <object/urbi/logger.hh>
 
 namespace urbi

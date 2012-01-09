@@ -18,7 +18,7 @@
 #include <ast/print.hh>
 #include <ast/exp.hh>
 
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 #include <object/system.hh>
 
 #include <runner/sneaker.hh>

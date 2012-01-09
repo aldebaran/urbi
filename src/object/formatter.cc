@@ -11,7 +11,7 @@
 #include <sstream>
 #include <object/format-info.hh>
 #include <object/formatter.hh>
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 
 namespace urbi
 {

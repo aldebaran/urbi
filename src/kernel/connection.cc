@@ -12,7 +12,7 @@
 #include <urbi/kernel/userver.hh>
 
 #include <urbi/object/lobby.hh>
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 
 namespace kernel
 {

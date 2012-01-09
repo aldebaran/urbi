@@ -10,7 +10,7 @@
 
 #include <libport/lexical-cast.hh>
 
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 #include <urbi/object/duration.hh>
 
 namespace urbi

@@ -20,7 +20,7 @@
 #include <urbi/object/lobby.hh>
 #include <urbi/object/dictionary.hh>
 #include <urbi/object/string.hh>
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 #include <object/uvalue.hh>
 #include <object/uvar.hh>
 #include <urbi/runner/raise.hh>

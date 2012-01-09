@@ -22,7 +22,7 @@
 #include <urbi/object/lobby.hh>
 #include <urbi/object/object.hh>
 #include <urbi/object/string.hh>
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 #include <urbi/object/tag.hh>
 
 #include <urbi/runner/raise.hh>

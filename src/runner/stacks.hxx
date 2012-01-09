@@ -18,7 +18,7 @@
 # include <ast/local-assignment.hh>
 # include <ast/local-declaration.hh>
 # include <ast/local.hh>
-# include <object/symbols.hh>
+# include <urbi/object/symbols.hh>
 # include <runner/stacks.hh>
 # include <urbi/object/slot.hh>
 # include <urbi/object/slot.hxx>

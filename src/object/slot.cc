@@ -11,7 +11,7 @@
 #include <urbi/object/global.hh>
 #include <urbi/object/slot.hh>
 #include <urbi/object/slot.hxx>
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 
 namespace urbi
 {

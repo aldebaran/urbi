@@ -52,7 +52,7 @@
 #include <object/semaphore.hh>
 #include <object/server.hh>
 #include <object/socket.hh>
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 #include <object/system.hh>
 #include <object/uvalue.hh>
 #include <object/uvar.hh>

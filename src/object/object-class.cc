@@ -25,7 +25,7 @@
 #include <urbi/kernel/uconnection.hh>
 #include <urbi/kernel/userver.hh>
 #include <object/object-class.hh>
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 #include <runner/runner.hh>
 #include <urbi/object/cxx-primitive.hh>
 #include <urbi/object/dictionary.hh>

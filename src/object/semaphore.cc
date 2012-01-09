@@ -12,7 +12,7 @@
 #include <urbi/object/code.hh>
 #include <urbi/object/float.hh>
 #include <object/semaphore.hh>
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 #include <runner/runner.hh>
 #include <sched/fwd.hh>
 #include <libport/debug.hh>

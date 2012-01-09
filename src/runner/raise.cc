@@ -12,7 +12,7 @@
 
 #include <urbi/kernel/userver.hh>
 
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 
 #include <urbi/runner/raise.hh>
 #include <runner/runner.hh>

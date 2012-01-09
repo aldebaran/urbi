@@ -32,7 +32,7 @@
 
 #include <urbi/object/lobby.hh>
 #include <urbi/object/object.hh>
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 #include <urbi/object/tag.hh>
 #include <object/urbi-exception.hh>
 

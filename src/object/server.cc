@@ -12,7 +12,7 @@
 #include <object/ioservice.hh>
 #include <object/server.hh>
 #include <object/socket.hh>
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 
 namespace urbi
 {

@@ -26,7 +26,7 @@
 # include <urbi/kernel/userver.hh>
 
 # include <object/profile.hh>
-# include <object/symbols.hh>
+# include <urbi/object/symbols.hh>
 
 # include <runner/interpreter.hh>
 # include <urbi/runner/raise.hh>
