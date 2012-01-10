@@ -163,12 +163,6 @@ $(SOURCES_FROM_UGRAMMAR_Y): parser/ugrammar.stamp
 	  fi;							\
 	fi
 
-# We tried several times to run make from ast/ to build position.hh
-# and location.hh.  Unfortunately, because of different, but
-# equivalent, paths, BSD Make was unable to build them.  The following
-# hook is here to address this.
-.PHONY: generate-parser
-generate-parser: $(FROM_UGRAMMAR_Y)
 
 
 ## ------------------------------------ ##
