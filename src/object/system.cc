@@ -27,7 +27,7 @@
 #include <kernel/uobject.hh>
 #include <urbi/kernel/userver.hh>
 
-#include <urbi/object/code.hh>
+#include <object/code.hh>
 #include <urbi/object/cxx-primitive.hh>
 #include <urbi/object/dictionary.hh>
 #include <urbi/object/urbi-exception.hh>

@@ -11,6 +11,7 @@
 #include <libport/cassert>
 
 #include <runner/interpreter.hh>
+#include <object/code.hh>
 #include <urbi/object/executable.hh>
 
 namespace urbi

@@ -9,7 +9,7 @@
  */
 
 #include <urbi/kernel/userver.hh>
-#include <urbi/object/code.hh>
+#include <object/code.hh>
 #include <urbi/object/float.hh>
 #include <object/semaphore.hh>
 #include <urbi/object/symbols.hh>

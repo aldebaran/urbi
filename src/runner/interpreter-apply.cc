@@ -31,7 +31,7 @@
 #include <object/system.hh>
 
 #include <urbi/kernel/userver.hh>
-#include <urbi/object/code.hh>
+#include <object/code.hh>
 #include <urbi/object/event.hh>
 #include <urbi/object/global.hh>
 #include <urbi/object/list.hh>

@@ -13,6 +13,7 @@
 dist_libuobject@LIBSFX@_la_SOURCES +=		\
   object/barrier.cc				\
   object/centralized-slots.cc			\
+  object/code.hh			        \
   object/code.cc				\
   object/cxx-helper.hh				\
   object/cxx-object.cc				\

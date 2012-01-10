@@ -41,7 +41,6 @@ dist_kernelinclude_urbi_object_HEADERS =	\
   include/urbi/object/barrier.hh		\
   include/urbi/object/centralized-slots.hh	\
   include/urbi/object/centralized-slots.hxx	\
-  include/urbi/object/code.hh			\
   include/urbi/object/cxx-conversions.hh	\
   include/urbi/object/cxx-conversions.hxx	\
   include/urbi/object/cxx-object.hh		\
