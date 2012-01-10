@@ -28,6 +28,9 @@ rpm:
 	fakeroot -- alien -r urbi_$(URBI_VERSION_SHA1)_$(DEB_ARCH).deb
 	fakeroot -- alien -r urbi-doc_$(URBI_VERSION_SHA1)_$(DEB_ARCH).deb
 	fakeroot -- alien -r urbi-dev_$(URBI_VERSION_SHA1)_$(DEB_ARCH).deb
+	mv urbi-$(URBI_VERSION_SHA1)-2.$(DEB_ARCH).rpm urbi-$(URBI_VERSION_SHA1)_$(DEB_ARCH).rpm
+	mv urbi-doc-$(URBI_VERSION_SHA1)-2.$(DEB_ARCH).rpm urbi-doc-$(URBI_VERSION_SHA1)_$(DEB_ARCH).rpm
+	mv urbi-dev-$(URBI_VERSION_SHA1)-2.$(DEB_ARCH).rpm urbi-dev-$(URBI_VERSION_SHA1)_$(DEB_ARCH).rpm
 
 .PHONY: debian/changelog
 debian/changelog: $(srcdir)/debian/changelog.in
