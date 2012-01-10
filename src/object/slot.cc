@@ -18,6 +18,7 @@
 #include <object/uvalue.hh>
 #include <runner/job.hh>
 #include <urbi/kernel/uconnection.hh>
+#include <eval/call.hh>
 
 GD_CATEGORY(Urbi.Slot);
 namespace urbi

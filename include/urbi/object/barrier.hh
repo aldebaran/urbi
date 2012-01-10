@@ -18,7 +18,7 @@
 
 # include <urbi/object/cxx-object.hh>
 # include <urbi/object/fwd.hh>
-# include <runner/fwd.hh>
+# include <urbi/runner/fwd.hh>
 
 namespace urbi
 {

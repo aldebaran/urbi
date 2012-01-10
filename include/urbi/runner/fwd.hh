@@ -9,12 +9,12 @@
  */
 
 /**
- ** \file runner/fwd.hh
+ ** \file urbi/runner/fwd.hh
  ** \brief Forward declarations for the namespace runner.
  */
 
-#ifndef RUNNER_FWD_HH
-# define RUNNER_FWD_HH
+#ifndef URBI_RUNNER_FWD_HH
+# define URBI_RUNNER_FWD_HH
 
 # include <vector>
 # include <libport/intrusive-ptr.hh>
@@ -26,7 +26,7 @@ namespace runner
   class State;
   class Job;
 
-  /// Smart pointer shorthand
+  /// Smart pointer shorthand.
   typedef libport::intrusive_ptr<Job> rJob;
 
   /// Stack of Urbi tags.
@@ -34,4 +34,4 @@ namespace runner
 
 } // namespace runner
 
-#endif // !RUNNER_FWD_HH
+#endif // !URBI_RUNNER_FWD_HH

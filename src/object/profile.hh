@@ -17,7 +17,7 @@
 # include <libport/symbol.hh>
 # include <libport/utime.hh>
 
-# include <runner/fwd.hh>
+# include <urbi/runner/fwd.hh>
 # include <urbi/object/cxx-object.hh>
 
 namespace urbi

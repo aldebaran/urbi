@@ -20,7 +20,7 @@
 # include <boost/function.hpp>
 
 # include <urbi/object/fwd.hh>
-# include <runner/fwd.hh>
+# include <urbi/runner/fwd.hh>
 
 namespace eval
 {

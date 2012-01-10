@@ -9,19 +9,16 @@
  */
 
 /**
- ** \file object/job.hh
+ ** \file urbi/object/job.hh
  ** \brief Definition of the Urbi object job.
  */
 
-#ifndef OBJECT_JOB_HH
-# define OBJECT_JOB_HH
+#ifndef URBI_OBJECT_JOB_HH
+# define URBI_OBJECT_JOB_HH
 
 # include <urbi/object/cxx-object.hh>
 # include <urbi/object/fwd.hh>
-# include <sched/job.hh>
-
-// FIXME: This link to headers which are not installed.
-# include <runner/fwd.hh>
+# include <urbi/runner/fwd.hh>
 
 namespace urbi
 {
@@ -59,4 +56,4 @@ namespace urbi
   }; // namespace object
 }
 
-#endif // !OBJECT_JOB_HH
+#endif // !URBI_OBJECT_JOB_HH

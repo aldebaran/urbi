@@ -11,7 +11,6 @@
 #ifndef OBJECT_SLOT_HXX
 # define OBJECT_SLOT_HXX
 
-# include <eval/fwd.hh>
 # include <urbi/object/slot.hh>
 # include <urbi/object/cxx-conversions.hh>
 # include <urbi/runner/raise.hh>

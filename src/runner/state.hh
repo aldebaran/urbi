@@ -23,7 +23,7 @@
 # include <sched/fwd.hh> // sched::rTag.
 # include <sched/tag.hh> // sched::prio_type & sched::Tag.
 
-# include <runner/fwd.hh>
+# include <urbi/runner/fwd.hh>
 # include <runner/stacks.hh>// runner::Stacks.
 
 namespace runner

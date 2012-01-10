@@ -98,6 +98,7 @@ nodist_parser_include_HEADERS =                 \
   include/urbi/parser/position.hh
 
 dist_runner_include_HEADERS =			\
+  include/urbi/runner/fwd.hh			\
   include/urbi/runner/raise.hh
 
 

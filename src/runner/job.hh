@@ -30,7 +30,7 @@
 # include <eval/action.hh>
 
 // Avoid post-declaration of runner::Job
-# include <runner/fwd.hh>
+# include <urbi/runner/fwd.hh>
 
 // Register events used to watch for future changes of the evaluation
 // result.  \a Name corresponds to an attribute which of the object

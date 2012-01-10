@@ -9,7 +9,6 @@
 dist_libuobject@LIBSFX@_la_SOURCES +=		\
   runner/exception.cc				\
   runner/exception.hh				\
-  runner/fwd.hh					\
   runner/job.cc					\
   runner/job.hh					\
   runner/job.hxx				\

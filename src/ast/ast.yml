@@ -266,7 +266,7 @@ Ast:
 
       # include <ast/fwd.hh>
       # include <urbi/object/fwd.hh>
-      # include <runner/fwd.hh>
+      # include <urbi/runner/fwd.hh>
 
       # include <kernel/config.h>
       # if defined ENABLE_SERIALIZATION

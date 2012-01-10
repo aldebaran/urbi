@@ -19,7 +19,6 @@
 # include <urbi/object/cxx-object.hh>
 # include <urbi/object/lobby.hh>
 # include <urbi/object/subscription.hh>
-# include <runner/state.hh>
 
 namespace urbi
 {

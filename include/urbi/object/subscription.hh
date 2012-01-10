@@ -15,7 +15,7 @@
 # include <boost/signal.hpp>
 
 # include <urbi/object/cxx-object.hh>
-# include <runner/state.hh>
+# include <urbi/runner/fwd.hh>
 
 namespace urbi
 {
@@ -117,7 +117,7 @@ namespace urbi
     std::vector<boost::signals::connection> connections;
     /// Number of frozen tags this Subscription is marked with.
     unsigned int frozen;
-    runner::State::tag_stack_type tag_stack;
+    runner::tag_stack_type tag_stack;
 
     /// Create job with this lobby when executing actions if set.
     rLobby lobby;
