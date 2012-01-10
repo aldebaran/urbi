@@ -23,6 +23,7 @@ DEBIAN_GENERATED =				\
 
 deb:
 	$(AM_V_GEN)$(MAKE) distdir
+	$(AM_V_at)mkdir -p debian
 	$(AM_V_at)for i in $(DEBIAN_GENERATED);			\
 	do							\
 	  sed							\
@@ -55,6 +56,5 @@ EXTRA_DIST +=					\
   debian/copyright				\
   debian/docs					\
   debian/info					\
-  debian/rules					\
   debian/source/format				\
   debian/urbi-doc.docs
