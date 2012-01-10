@@ -40,10 +40,10 @@ deb:
 
 rpm:
 	fakeroot -- alien -r urbi_$(URBI_VERSION)_$(DEB_ARCH).deb
-	fakeroot -- alien -r urbi-doc_$(URBI_VERSION)_$(DEB_ARCH).deb
-	fakeroot -- alien -r urbi-dev_$(URBI_VERSION)_$(DEB_ARCH).deb
 	mv urbi-$(URBI_VERSION)-2.$(DEB_ARCH).rpm urbi-$(URBI_VERSION)_$(DEB_ARCH).rpm
+	fakeroot -- alien -r urbi-doc_$(URBI_VERSION)_$(DEB_ARCH).deb
 	mv urbi-doc-$(URBI_VERSION)-2.$(DEB_ARCH).rpm urbi-doc-$(URBI_VERSION)_$(DEB_ARCH).rpm
+	fakeroot -- alien -r urbi-dev_$(URBI_VERSION)_$(DEB_ARCH).deb
 	mv urbi-dev-$(URBI_VERSION)-2.$(DEB_ARCH).rpm urbi-dev-$(URBI_VERSION)_$(DEB_ARCH).rpm
 
 EXTRA_DIST +=					\
