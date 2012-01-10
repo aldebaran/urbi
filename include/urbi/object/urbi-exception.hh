@@ -23,8 +23,8 @@
 # include <libport/ufloat.hh>
 # include <libport/symbol.hh>
 
-# include <ast/loc.hh>
 # include <urbi/object/fwd.hh>
+# include <urbi/parser/location.hh>
 # include <sched/exception.hh>
 
 namespace urbi
@@ -33,7 +33,7 @@ namespace urbi
   {
     /// One call.
     typedef std::pair<libport::Symbol,
-                      boost::optional<ast::loc> > call_type;
+                      boost::optional< ::yy::location> > call_type;
 
     /// Call stack.
     typedef std::vector<call_type> call_stack_type;

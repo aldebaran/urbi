@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, Gostai S.A.S.
+ * Copyright (C) 2010-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -11,9 +11,8 @@
 #ifndef OBJECT_POSITION_HH
 # define OBJECT_POSITION_HH
 
-# include <parser/position.hh>
-
 # include <urbi/object/cxx-object.hh>
+# include <urbi/parser/position.hh>
 
 namespace urbi
 {

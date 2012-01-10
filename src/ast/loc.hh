@@ -18,7 +18,7 @@
 
 # include <libport/symbol.hh>
 
-# include <parser/location.hh>
+# include <urbi/parser/location.hh>
 
 // If you have an error from here, it probably means that you used
 // LOCATION_HERE without first calling DECLARE_LOCATION_FILE (alone,

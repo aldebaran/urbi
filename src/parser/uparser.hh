@@ -19,7 +19,7 @@
 # include <libport/path.hh>
 
 # include <parser/fwd.hh>
-# include <parser/location.hh>
+# include <urbi/parser/location.hh>
 
 namespace parser
 {

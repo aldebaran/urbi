@@ -16,11 +16,13 @@ if INSTALL_KERNEL_HEADERS
 urbi_includedir =   $(brandincludedir)/urbi
 kernel_includedir = $(urbi_includedir)/kernel
 object_includedir = $(urbi_includedir)/object
+parser_includedir = $(urbi_includedir)/parser
 runner_includedir = $(urbi_includedir)/runner
 else !INSTALL_KERNEL_HEADERS
 urbi_includedir =
 kernel_includedir =
 object_includedir =
+parser_includedir =
 runner_includedir =
 endif !INSTALL_KERNEL_HEADERS
 
@@ -84,7 +86,11 @@ dist_object_include_HEADERS =	                \
   include/urbi/object/urbi-exception.hh         \
   include/urbi/object/urbi-exception.hxx
 
-dist_runner_include_HEADERS =	\
+nodist_parser_include_HEADERS =                 \
+  include/urbi/parser/location.hh               \
+  include/urbi/parser/position.hh
+
+dist_runner_include_HEADERS =			\
   include/urbi/runner/raise.hh
 
 
@@ -176,7 +182,7 @@ BUILT_SOURCES += $(precompiled_symbols_hh)
 .PHONY maintainer-check: maintainer-check-includes
 
 cxx_headers = \
-  deque|iomanip|iosfwd|iostream|memory|ostream|set|sstream|string|typeinfo|vector
+  algorithm|deque|iomanip|iosfwd|iostream|memory|ostream|set|sstream|string|typeinfo|vector
 PERL = perl
 maintainer-check-includes: $(HEADERS)
 	$(AM_V_GEN)! $(PERL) -n						  \

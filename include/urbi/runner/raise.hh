@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2009, 2010, 2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -17,7 +17,7 @@
 # include <libport/ufloat.hh>
 
 # include <urbi/object/fwd.hh>
-# include <parser/location.hh>
+# include <urbi/parser/location.hh>
 
 // Do not leak yy::loc in K2 headers.
 namespace yy

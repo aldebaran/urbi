@@ -16,7 +16,7 @@
 # include <memory>
 
 # include <parser/fwd.hh>
-# include <parser/location.hh>
+# include <urbi/parser/location.hh>
 # include <urbi/export.hh>
 
 namespace parser
