@@ -147,8 +147,10 @@ esac
 
 if $(older "$DIR_BUILD/Makefile" "$0"); then
   cd "$DIR_BUILD"
+  ## The prefix, /usr, is chosen so that the Debian packages
+  ## can use our builds.
   run "$DIR_SOURCE/configure"                   \
-    --prefix=/prefix                            \
+    --prefix=/usr                               \
     --enable-compilation-mode=$COMPILATION_MODE \
     "$with_boost"                               \
     "$with_ros"                                 \
