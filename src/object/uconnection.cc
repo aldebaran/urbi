@@ -9,9 +9,9 @@
  */
 
 # include <urbi/object/event.hh>
-# include <object/symbols.hh>
+# include <urbi/object/symbols.hh>
 # include <object/uconnection.hh>
-# include <object/urbi-exception.hh>
+# include <urbi/object/urbi-exception.hh>
 # include <object/uvalue.hh>
 # include <urbi/object/slot.hh>
 

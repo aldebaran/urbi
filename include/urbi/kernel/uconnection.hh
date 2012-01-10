@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2010, 2012, Gostai S.A.S.
+ * Copyright (C) 2005-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -30,11 +30,6 @@
 # include <urbi/export.hh>
 # include <urbi/iostream.hh>
 # include <urbi/kernel/utypes.hh>
-# ifdef _MSC_VER
-#  include <urbi/object/lobby.hh>
-#  include <runner/shell.hh>
-# endif
-
 
 namespace kernel
 {

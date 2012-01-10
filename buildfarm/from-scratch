@@ -2,3 +2,5 @@ Update this file when you feel a build from scratch should be
 performed by the buildfarm.
 
 * 2011-11-22: change libjpeg build system
+* 2012-01-09: remove local.mk in libport
+* 2012-01-10: location.hh and position.hh have moved.

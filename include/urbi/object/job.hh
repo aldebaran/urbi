@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, Gostai S.A.S.
+ * Copyright (C) 2009-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -18,6 +18,7 @@
 
 # include <urbi/object/cxx-object.hh>
 # include <urbi/object/fwd.hh>
+# include <sched/job.hh>
 
 // FIXME: This link to headers which are not installed.
 # include <runner/fwd.hh>

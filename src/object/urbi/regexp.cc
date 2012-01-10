@@ -15,7 +15,7 @@
 #include <libport/lexical-cast.hh>
 
 #include <object/urbi/regexp.hh>
-#include <object/urbi/symbols.hh>
+#include <urbi/object/symbols.hh>
 
 namespace urbi
 {

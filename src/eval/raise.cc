@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, Gostai S.A.S.
+ * Copyright (C) 2011-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -18,11 +18,13 @@
 
 #include <eval/raise.hh>
 
+#include <ast/ast.hh>
+
 #include <urbi/object/global.hh>
 #include <urbi/object/location.hh>
 #include <urbi/object/job.hh>
 
-#include <object/urbi-exception.hh>
+#include <urbi/object/urbi-exception.hh>
 
 #include <runner/job.hh>
 #include <runner/state.hh>

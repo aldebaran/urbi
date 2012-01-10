@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, Gostai S.A.S.
+ * Copyright (C) 2011-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -16,7 +16,7 @@
 #ifndef RUNNER_STATE_HH
 # define RUNNER_STATE_HH
 
-# include <object/urbi-exception.hh> // object::call_stack_type.
+# include <urbi/object/urbi-exception.hh> // object::call_stack_type.
 
 # include <urbi/object/fwd.hh> // object::rTag & object::rLobby.
 

@@ -8,7 +8,7 @@
  * See the LICENSE file for more information.
  */
 
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 #include <urbi/object/hash.hh>
 
 namespace urbi

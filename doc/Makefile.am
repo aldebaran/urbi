@@ -1,4 +1,4 @@
-## Copyright (C) 2006, 2008-2011, Gostai S.A.S.
+## Copyright (C) 2006, 2008-2012, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -248,6 +248,7 @@ $(REVISION_FILE):
 FROM_GEN =					\
   $(srcdir)/specs/keywords.tex			\
   guide/requirements.tex
+guide/requirements.tex: $(srcdir)/guide/build.tex
 BUILT_SOURCES += $(FROM_GEN)
 EXTRA_DIST += $(FROM_GEN:=.gen)
 

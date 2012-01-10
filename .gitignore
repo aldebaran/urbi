@@ -8,7 +8,6 @@
 /bootstrap.stamp
 /configure
 /dev/*.pyc
-/share/urbi/tutorial-content.u
 /src/Makefile.in
 /src/ast/transformer.cc
 /src/ast/transformer.cc~
@@ -17,4 +16,3 @@
 /src/ast/transformer.stamp
 /src/kernel/config.h.in
 /src/kernel/config.h.in~
-/src/object/symbols.hh.old

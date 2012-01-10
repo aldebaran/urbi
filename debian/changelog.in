@@ -3,10 +3,8 @@ urbi (@VERSION@) natty; urgency=low
   [ Adam Oleksy ]
   * Initial release
 
- -- Adam Oleksy <adam.oleksy@gmail.com>  Wed, 16 Nov 2011 21:39:34 +0100
-
   [ Alexandre Morgand ]
   * Fixes for ROS Support, documentation and integration in the Urbi building
     process.
 
- -- Adam Oleksy <adam.oleksy@gmail.com>  Tue, 21 Dec 2011 10:49:27 +0100
+ -- Adam Oleksy <adam.oleksy@gmail.com>  Wed, 05 Dec 2012 15:55:03 +0100

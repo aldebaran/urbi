@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2012, Gostai S.A.S.
+ * Copyright (C) 2006-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -56,7 +56,7 @@
 #include <sched/scheduler.hh>
 
 #include <kernel/connection.hh>
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 #include <urbi/object/global.hh>
 #include <urbi/object/object.hh>
 #include <urbi/object/float.hh>

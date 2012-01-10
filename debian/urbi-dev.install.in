@@ -1,0 +1,14 @@
+@PREFIX@/bin/umake*
+@PREFIX@/include/urbi/*
+@PREFIX@/include/libport/*
+@PREFIX@/include/libport/arpa/*
+@PREFIX@/include/libport/sys/*
+@PREFIX@/include/serialize/*
+@PREFIX@/lib/*.la
+@PREFIX@/lib/gostai/uobjects/urbi/*.la
+@PREFIX@/lib/gostai/engine/*.la
+@PREFIX@/lib/gostai/engine/*.mk
+@PREFIX@/lib/gostai/remote/*.la
+@PREFIX@/lib/gostai/remote/*.mk
+@PREFIX@/lib/gostai/remote/java/*.mk
+

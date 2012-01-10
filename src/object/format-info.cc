@@ -14,7 +14,7 @@
 
 #include <object/format-info.hh>
 #include <urbi/object/global.hh>
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 
 namespace urbi
 {

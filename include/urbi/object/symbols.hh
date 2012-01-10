@@ -9,19 +9,15 @@
  */
 
 /**
- ** \file object/symbols.hh
+ ** \file urbi/object/symbols.hh
  ** \brief Frequently used symbol names.
  */
 
 #ifndef OBJECT_SYMBOLS_HH
 # define OBJECT_SYMBOLS_HH
 
-# include <boost/preprocessor/cat.hpp>
-# include <boost/preprocessor/stringize.hpp>
-
+# include <libport/config.h>
 # include <libport/symbol.hh>
-
-# include <kernel/config.h>
 # include <urbi/export.hh>
 
 /* Symbols are internalized, that is to say, we keep a single
@@ -49,7 +45,7 @@
 # define SYMBOL_EXPAND(Sym) SYMBOL_(Sym)
 
 
-# if defined SYMBOLS_PRECOMPILED
+# if defined LIBPORT_SYMBOLS_PRECOMPILED
 
 /*----------------------.
 | Symbols Precompiled.  |
@@ -57,13 +53,13 @@
 
 #  define SYMBOL_(Sym) ::object::symbol_ ## Sym
 
-#  include <object/precompiled-symbols.hh>
+#  include <urbi/object/precompiled-symbols.hh>
 
 namespace object
 {
 
 # define SYMBOL_DECLARE(Name, Value)		\
-  extern libport::Symbol symbol_ ## Name
+  URBI_SDK_API extern libport::Symbol symbol_ ## Name
 
   SYMBOLS_APPLY(SYMBOL_DECLARE);
 
@@ -71,7 +67,7 @@ namespace object
 
 } // namespace object
 
-# else // ! SYMBOLS_PRECOMPILED
+# else // ! LIBPORT_SYMBOLS_PRECOMPILED
 
 
 /*--------------------------.
@@ -85,6 +81,6 @@ namespace object
 
 #  define SYMBOL_(Sym) ::object::symbol_get(#Sym)
 
-# endif // ! SYMBOLS_PRECOMPILED
+# endif // ! LIBPORT_SYMBOLS_PRECOMPILED
 
 #endif // !OBJECT_SYMBOLS_HH

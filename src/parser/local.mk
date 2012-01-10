@@ -34,7 +34,14 @@ dist_libuobject@LIBSFX@_la_SOURCES +=		\
 BISONXX = $(top_builddir)/build-aux/bin/bison++
 BISONXX_IN = $(top_srcdir)/build-aux/bin/bison++.in
 $(BISONXX): $(BISONXX_IN)
-	$(MAKE) -C $(top_builddir) $(AM_MAKEFLAGS) build-aux/bison++
+	$(MAKE) -C $(top_builddir) $(AM_MAKEFLAGS) build-aux/bin/bison++
+# Where the includes will find location.hh and position.hh.
+parserprefix = urbi/parser
+# Where to create them.
+parserdir = $(top_builddir)/include/$(parserprefix)
+BISONXXFLAGS = 					\
+  --location-prefix=$(parserprefix)		\
+  --location-dir=$(parserdir)
 
 # A Flex wrapper for C++.
 FLEXXX = $(top_builddir)/build-aux/bin/flex++
@@ -80,8 +87,8 @@ endif
 # We do not use Automake features here.
 SOURCES_FROM_UGRAMMAR_Y =			\
   parser/stack.hh				\
-  parser/position.hh				\
-  parser/location.hh				\
+  $(top_srcdir)/include/urbi/parser/position.hh	\
+  $(top_srcdir)/include/urbi/parser/location.hh	\
   parser/ugrammar.hh				\
   parser/ugrammar.cc
 nodist_libuobject@LIBSFX@_la_SOURCES += $(SOURCES_FROM_UGRAMMAR_Y)
@@ -126,7 +133,9 @@ parser/ugrammar.stamp: parser/ugrammar.y $(ugrammar_deps)
 	$(AM_V_at)$(MAKE) -C $(top_builddir)/bison MAKEFLAGS=
 	$(AM_V_at)$(PRUNE_FOR_SPACE) -o parser/ugrammar-pruned.y $<
 	$(AM_V_at)chmod a-w parser/ugrammar-pruned.y
-	$(AM_V_at)$(BISONXX) parser/ugrammar-pruned.y parser/ugrammar.cc \
+	$(AM_V_at)$(BISONXX) $(BISONXXFLAGS)	\
+	  parser/ugrammar-pruned.y		\
+	  parser/ugrammar.cc			\
 	  $(AM_BISONFLAGS) $(BISONFLAGS)
 	$(AM_V_at)mv -f $@.tmp $@
 
@@ -162,12 +171,6 @@ $(SOURCES_FROM_UGRAMMAR_Y): parser/ugrammar.stamp
 	  fi;							\
 	fi
 
-# We tried several times to run make from ast/ to build position.hh
-# and location.hh.  Unfortunately, because of different, but
-# equivalent, paths, BSD Make was unable to build them.  The following
-# hook is here to address this.
-.PHONY: generate-parser
-generate-parser: $(FROM_UGRAMMAR_Y)
 
 
 ## ------------------------------------ ##

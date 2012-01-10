@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2011, Gostai S.A.S.
+ * Copyright (C) 2007-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -33,11 +33,11 @@ namespace urbi
     typedef libport::intrusive_ptr<Object> rObject;
     static const unsigned objects_type_floor = 8;
     typedef libport::FlooredAllocator<rObject, objects_type_floor>
-    objects_type_allocator;
+      objects_type_allocator;
     typedef libport::Constructor<rObject>
-    objects_type_constructor;
+      objects_type_constructor;
     typedef libport::FlooredExponentialCapacity<objects_type_floor>
-    objects_type_capacity;
+      objects_type_capacity;
     typedef libport::Vector<rObject,
                             objects_type_allocator,
                             objects_type_constructor,
@@ -111,6 +111,9 @@ namespace urbi
 
     template<typename M>
     rPrimitive primitive(rPrimitive extend, M f);
+
+    /// Stack of Urbi tags, to control execution.
+    typedef std::vector<object::rTag> tag_stack_type;
 
   } // namespace object
 }

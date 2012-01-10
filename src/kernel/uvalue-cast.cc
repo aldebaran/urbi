@@ -23,7 +23,7 @@
 #include <urbi/object/matrix.hh>
 #include <urbi/object/string.hh>
 #include <urbi/object/vector.hh>
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 #include <object/uvalue.hh>
 #include <runner/job.hh>
 #include <urbi/runner/raise.hh>

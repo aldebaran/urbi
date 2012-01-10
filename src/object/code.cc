@@ -20,12 +20,12 @@
 
 #include <urbi/kernel/userver.hh>
 
-#include <urbi/object/code.hh>
+#include <object/code.hh>
 #include <urbi/object/job.hh>
 #include <urbi/object/list.hh>
 #include <urbi/object/string.hh>
 #include <urbi/object/object.hh>
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 
 #include <urbi/runner/raise.hh>
 #include <runner/job.hh>

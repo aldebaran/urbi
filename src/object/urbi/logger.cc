@@ -9,9 +9,12 @@
  */
 
 #include <object/urbi/logger.hh>
-#include <object/urbi/symbols.hh>
+#include <urbi/object/symbols.hh>
 #include <urbi/object/dictionary.hh>
 #include <urbi/object/enumeration.hh>
+
+#include <urbi/object/symbols.hh>
+#include <object/urbi/logger.hh>
 
 namespace urbi
 {

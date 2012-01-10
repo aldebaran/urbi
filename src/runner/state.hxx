@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, Gostai S.A.S.
+ * Copyright (C) 2011-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -18,12 +18,15 @@
 # include <ast/local-assignment.hh>
 # include <ast/local-declaration.hh>
 # include <ast/local.hh>
-# include <object/symbols.hh>
+
 # include <runner/stacks.hh>
-# include <urbi/object/slot.hh>
-# include <urbi/object/slot.hxx>
 
 # include <urbi/kernel/userver.hh>
+
+# include <urbi/object/slot.hh>
+# include <urbi/object/slot.hxx>
+# include <urbi/object/symbols.hh>
+# include <urbi/object/tag.hh>
 
 namespace runner
 {

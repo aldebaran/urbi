@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010, 2012, Gostai S.A.S.
+ * Copyright (C) 2007-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -9,12 +9,14 @@
  */
 
 /**
- ** \file object/urbi-exception.hh
- ** \brief Definition of Exception
+ ** \file urbi/object/urbi-exception.hh
+ ** \brief Definition of UrbiException.
  */
 
-#ifndef OBJECT_URBI_EXCEPTION_HH
-# define OBJECT_URBI_EXCEPTION_HH
+// FIXME: Not an Urbi object, so the presence in here is dubious.
+
+#ifndef URBI_OBJECT_EXCEPTION_HH
+# define URBI_OBJECT_EXCEPTION_HH
 
 # include <string>
 
@@ -23,8 +25,8 @@
 
 # include <boost/circular_buffer.hpp>
 
-# include <ast/loc.hh>
 # include <urbi/object/fwd.hh>
+# include <urbi/parser/location.hh>
 # include <sched/exception.hh>
 
 
@@ -34,7 +36,7 @@ namespace urbi
   {
     /// One call.
     typedef std::pair<libport::Symbol,
-                      boost::optional<ast::loc> > call_type;
+                      boost::optional< ::yy::location> > call_type;
 
     /// Call stack.
     typedef boost::circular_buffer<call_type> call_stack_type;
@@ -68,6 +70,6 @@ namespace std
   ostream& operator<<(ostream& o, const urbi::object::call_stack_type& c);
 }
 
-# include <object/urbi-exception.hxx>
+# include <urbi/object/urbi-exception.hxx>
 
-#endif //! OBJECT_URBI_EXCEPTION_HH
+#endif //! URBI_OBJECT_EXCEPTION_HH

@@ -111,6 +111,7 @@ AST
 asTimeout
 asTopLevelPrintable
 asToplevelPrintable
+asTree
 ASTs
 asuobjects
 asUValue

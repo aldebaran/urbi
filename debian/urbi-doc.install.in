@@ -1,0 +1,4 @@
+@PREFIX@/share/doc/urbi-sdk/*
+@PREFIX@/share/doc/urbi-sdk/sdk-remote.htmldir/*
+@PREFIX@/share/doc/urbi-sdk/sdk-remote.htmldir/search/*
+

@@ -101,12 +101,12 @@ my %symbol =
 
 print <<'EOF';
 /**
- ** \file object/precompiled-symbols.hh
+ ** \file urbi/object/precompiled-symbols.hh
  ** \brief Predefined symbols.
  */
 
-#ifndef OBJECT_PRECOMPILED_SYMBOLS_HH
-# define OBJECT_PRECOMPILED_SYMBOLS_HH
+#ifndef URBI_OBJECT_PRECOMPILED_SYMBOLS_HH
+# define URBI_OBJECT_PRECOMPILED_SYMBOLS_HH
 
 # define SYMBOLS_APPLY(Macro)			  \
 EOF
@@ -117,7 +117,7 @@ printf "  %-48s\\\n", "Macro($_, \"$symbol{$_}\");"
 print <<'EOF';
   /* Backslash terminator. */
 
-#endif // !OBJECT_PRECOMPILED_SYMBOLS_HH
+#endif // !URBI_OBJECT_PRECOMPILED_SYMBOLS_HH
 EOF
 
 

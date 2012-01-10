@@ -11,6 +11,8 @@
 #include <libport/cassert>
 
 #include <runner/job.hh>
+#include <object/code.hh>
+#include <urbi/object/job.hh>
 #include <urbi/object/executable.hh>
 
 #include <eval/exec.hh>

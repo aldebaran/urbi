@@ -27,7 +27,7 @@
 #if !defined COMPILATION_MODE_SPACE
 # include <object/format-info.hh>
 #endif
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 
 #include <urbi/object/float.hh>
 #include <urbi/object/hash.hh>

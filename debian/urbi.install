@@ -1,9 +1,0 @@
-usr/bin/urbi
-usr/bin/urbi*
-usr/lib/*.so
-usr/lib/gostai/engine/*.so
-usr/lib/gostai/remote/*.so
-usr/lib/gostai/uobjects/urbi/*.so
-usr/share/gostai/urbi/*
-usr/share/gostai/urbi/package-info/*
-

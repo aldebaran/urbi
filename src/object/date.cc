@@ -10,7 +10,7 @@
 
 #include <boost/date_time/local_time/local_time.hpp>
 
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 #include <urbi/object/date.hh>
 #include <urbi/object/duration.hh>
 #include <urbi/object/global.hh>

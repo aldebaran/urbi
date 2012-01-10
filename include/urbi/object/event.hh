@@ -16,7 +16,6 @@
 
 # include <libport/attributes.hh>
 
-# include <object/profile.hh>
 # include <urbi/object/cxx-object.hh>
 # include <urbi/object/lobby.hh>
 # include <urbi/object/subscription.hh>

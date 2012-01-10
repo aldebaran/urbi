@@ -18,14 +18,14 @@
 #include <boost/any.hpp>
 
 #include <urbi/kernel/userver.hh>
+#include <urbi/object/dictionary.hh>
 #include <urbi/object/float.hh>
+#include <urbi/object/job.hh>
 #include <urbi/object/list.hh>
+#include <urbi/object/lobby.hh>
 #include <urbi/object/object.hh>
 #include <urbi/object/string.hh>
-#include <urbi/object/dictionary.hh>
-#include <object/symbols.hh>
-#include <urbi/object/lobby.hh>
-#include <urbi/object/job.hh>
+#include <urbi/object/symbols.hh>
 #include <urbi/object/tag.hh>
 
 #include <runner/job.hh>

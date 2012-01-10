@@ -13,9 +13,9 @@
  ** \brief Frequently used symbol names.
  */
 
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 
-#if defined SYMBOLS_PRECOMPILED
+#if defined LIBPORT_SYMBOLS_PRECOMPILED
 
 namespace object
 {
@@ -27,12 +27,12 @@ namespace object
 
 } // namespace object
 
-#else // ! SYMBOLS_PRECOMPILED
+#else // ! LIBPORT_SYMBOLS_PRECOMPILED
 
 # include <boost/unordered_map.hpp>
 # include <libport/debug.hh>
 # include <string>
-# include <object/precompiled-symbols.hh>
+# include <urbi/object/precompiled-symbols.hh>
 
 namespace object
 {
@@ -85,4 +85,4 @@ namespace object
 
 } // namespace object
 
-#endif // ! SYMBOLS_PRECOMPILED
+#endif // ! LIBPORT_SYMBOLS_PRECOMPILED

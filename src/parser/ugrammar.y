@@ -40,7 +40,7 @@
 #include <libport/hash.hh>
 #include <libport/ufloat.hh>
 #include <list>
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 #include <parser/fwd.hh>
 }
 

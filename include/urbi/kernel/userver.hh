@@ -41,12 +41,9 @@
 # include <urbi/kernel/fwd.hh>
 # include <urbi/kernel/utypes.hh>
 # include <urbi/export.hh>
+# include <urbi/parser/location.hh>
 # include <urbi/object/object.hh>
 # include <urbi/urbi-root.hh>
-
-# include <runner/fwd.hh>
-
-# include <ast/loc.hh>
 
 namespace kernel
 {
@@ -62,7 +59,7 @@ namespace kernel
   /// Convenience wrapper for Logger objects, to avoid having to
   /// export the symbols of Interpreter.
   URBI_SDK_API std::string current_function_name();
-  URBI_SDK_API ast::loc current_location();
+  URBI_SDK_API yy::location current_location();
 
   /// Convenience wrapper to get urbiserver's current scheduler.
   sched::Scheduler& scheduler();

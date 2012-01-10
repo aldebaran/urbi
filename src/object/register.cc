@@ -14,7 +14,8 @@
 #include <libport/thread.hh>
 #include <urbi/object/any-to-boost-function.hh>
 #include <urbi/object/barrier.hh>
-#include <urbi/object/code.hh>
+#include <urbi/object/centralized-slots.hh>
+#include <object/code.hh>
 #include <urbi/object/cxx-conversions.hh>
 #include <urbi/object/cxx-object.hh>
 #include <urbi/object/cxx-primitive.hh>
@@ -52,7 +53,7 @@
 #include <object/semaphore.hh>
 #include <object/server.hh>
 #include <object/socket.hh>
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 #include <object/system.hh>
 #include <object/uvalue.hh>
 

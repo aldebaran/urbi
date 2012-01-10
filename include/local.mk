@@ -10,28 +10,39 @@
 ## Installed kernel headers.  ##
 ## -------------------------- ##
 
+## Handling INSTALL_KERNEL_HEADERS this way ensures that $(HEADERS)
+## contains all the headers.
 if INSTALL_KERNEL_HEADERS
-kernelinclude_urbidir = $(brandincludedir)/urbi
-dist_kernelinclude_urbi_HEADERS =               \
-  include/urbi/sdk.hh                           \
+urbi_includedir =   $(brandincludedir)/urbi
+kernel_includedir = $(urbi_includedir)/kernel
+object_includedir = $(urbi_includedir)/object
+parser_includedir = $(urbi_includedir)/parser
+runner_includedir = $(urbi_includedir)/runner
+else !INSTALL_KERNEL_HEADERS
+urbi_includedir =
+kernel_includedir =
+object_includedir =
+parser_includedir =
+runner_includedir =
+endif !INSTALL_KERNEL_HEADERS
+
+dist_urbi_include_HEADERS =			\
+  include/urbi/sdk.hh				\
   include/urbi/sdk.hxx
 
-kernelinclude_kerneldir = $(kernelinclude_urbidir)/kernel
-dist_kernelinclude_kernel_HEADERS =             \
-  include/kernel/fwd.hh                         \
-  include/kernel/uconnection.hh                 \
-  include/kernel/uconnection.hxx                \
-  include/kernel/userver.hh                     \
-  include/kernel/userver.hxx                    \
-  include/kernel/utypes.hh
+dist_kernel_include_HEADERS =		        \
+  include/urbi/kernel/fwd.hh			\
+  include/urbi/kernel/uconnection.hh		\
+  include/urbi/kernel/uconnection.hxx		\
+  include/urbi/kernel/userver.hh		\
+  include/urbi/kernel/userver.hxx		\
+  include/urbi/kernel/utypes.hh
 
-kernelinclude_urbi_objectdir = $(kernelinclude_urbidir)/object
-dist_kernelinclude_urbi_object_HEADERS =        \
+dist_object_include_HEADERS =                   \
   include/urbi/object/any-to-boost-function.hh  \
   include/urbi/object/barrier.hh                \
   include/urbi/object/centralized-slots.hh      \
   include/urbi/object/centralized-slots.hxx     \
-  include/urbi/object/code.hh                   \
   include/urbi/object/cxx-conversions.hh        \
   include/urbi/object/cxx-conversions.hxx       \
   include/urbi/object/cxx-object.hh             \
@@ -74,15 +85,20 @@ dist_kernelinclude_urbi_object_HEADERS =        \
   include/urbi/object/slot.hxx                  \
   include/urbi/object/string.hh                 \
   include/urbi/object/subscription.hh           \
+  include/urbi/object/symbols.hh                \
   include/urbi/object/tag.hh                    \
   include/urbi/object/tag.hxx                   \
+  include/urbi/object/urbi-exception.hh         \
+  include/urbi/object/urbi-exception.hxx        \
   include/urbi/object/vector.hh                 \
   include/urbi/object/vector.hxx
 
-kernelinclude_urbi_runnerdir = $(kernelinclude_urbidir)/runner
-dist_kernelinclude_urbi_runner_HEADERS =        \
+nodist_parser_include_HEADERS =                 \
+  include/urbi/parser/location.hh               \
+  include/urbi/parser/position.hh
+
+dist_runner_include_HEADERS =			\
   include/urbi/runner/raise.hh
-endif INSTALL_KERNEL_HEADERS
 
 
 ## ------------------------ ##
@@ -95,14 +111,88 @@ FROM_GEN =                                      \
   include/urbi/object/executable.hh
 BUILT_SOURCES += $(FROM_GEN)
 
-if INSTALL_KERNEL_HEADERS
-dist_kernelinclude_urbi_object_HEADERS += $(FROM_GEN)
-endif INSTALL_KERNEL_HEADERS
+dist_object_include_HEADERS += $(FROM_GEN)
 EXTRA_DIST += $(FROM_GEN:=.gen)
 
 %: %.gen
-	$(AM_V_GEN)mkdir -p $(dir $@)
+	$(AM_V_GEN)mkdir -p $(@D)
 	$(AM_V_at)$< > $@.tmp
 	$(AM_V_at)chmod a-w $@.tmp
 	$(AM_V_at)$(move_if_change_run) $@.tmp $@
 	$(AM_V_at)touch $@
+
+
+## ---------------------- ##
+## List of used symbols.  ##
+## ---------------------- ##
+
+nodist_object_include_HEADERS = 		\
+  $(precompiled_symbols_hh)
+
+# Generate this file in builddir so that a single srcdir can produce
+# several builddirs with different configuration-options that may
+# result in different sets of precompiled symbols.
+precompiled_symbols_hh = include/urbi/object/precompiled-symbols.hh
+precompiled_symbols_stamp = $(precompiled_symbols_hh:.hh=.stamp)
+# filter-out generated files, and precompiled_symbols_hh itself to
+# avoid circular dependencies.
+precompiled_symbols_hh_sources =		\
+  $(top_srcdir)/src/parser/utoken.l		\
+  $(top_srcdir)/src/parser/ugrammar.y		\
+  $(filter-out $(precompiled_symbols_hh)	\
+               $(FROM_UGRAMMAR_Y)		\
+               $(FROM_UTOKEN_L)			\
+	       parser/keywords.hh		\
+	       ast/ignores,			\
+        $(call ls_files,			\
+           src/*.hh		\
+           src/*.hxx		\
+           src/*.cc))
+EXTRA_DIST += $(precompiled_symbols_hh).gen
+
+$(precompiled_symbols_stamp): $(precompiled_symbols_hh).gen $(precompiled_symbols_hh_sources)
+	$(AM_V_GEN)mkdir -p $(@D)
+	$(AM_V_at)rm -f $@.tmp
+	$(AM_V_at)if test "$(V)" = 1; then				\
+	  echo "rebuilding $(precompiled_symbols_hh) because of:";	\
+	  for i in $?;							\
+	  do								\
+	    echo "       $$i";						\
+	  done								\
+	fi
+	$(AM_V_at)touch $@.tmp
+# Don't use `mv' here so that even if we are interrupted, the file
+# is still available for diff in the next run.
+	$(AM_V_at)if test -f $(precompiled_symbols_hh); then	\
+	  cat $(precompiled_symbols_hh);			\
+	fi >$(precompiled_symbols_hh)~
+	$(AM_V_at)$(srcdir)/$(precompiled_symbols_hh).gen		\
+		$(filter-out %$(precompiled_symbols_hh).gen, $^)	\
+		>$(precompiled_symbols_hh).tmp
+	$(AM_V_at)$(move_if_change_run)			\
+	  $(precompiled_symbols_hh).tmp $(precompiled_symbols_hh)
+	$(AM_V_at)mv -f $@.tmp $@
+
+$(precompiled_symbols_hh): $(precompiled_symbols_stamp)
+	@if test ! -f $@; then					\
+	  rm -f $(precompiled_symbols_stamp);			\
+	  $(MAKE) $(AM_MAKEFLAGS) $(precompiled_symbols_stamp);	\
+	fi
+BUILT_SOURCES += $(precompiled_symbols_hh)
+
+
+## ------------------ ##
+## Maintainer check.  ##
+## ------------------ ##
+
+
+.PHONY maintainer-check: maintainer-check-includes
+
+cxx_headers = \
+  algorithm|deque|iomanip|iosfwd|iostream|memory|ostream|set|sstream|string|typeinfo|vector
+PERL = perl
+maintainer-check-includes: $(HEADERS)
+	$(AM_V_GEN)! $(PERL) -n						  \
+	  -e '/#\s*include\s*<(.*?)>/ and $$include{$$1} = 1;'		  \
+	  -e 'END { print join ("\n", (sort (keys %include), "")) }' $^ | \
+	  grep -Ev '^((boost|libport|sched|urbi)/|($(cxx_headers)))'

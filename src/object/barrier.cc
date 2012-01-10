@@ -17,11 +17,11 @@
 
 #include <urbi/kernel/userver.hh>
 
-#include <urbi/object/cxx-object.hh>
 #include <urbi/object/barrier.hh>
+#include <urbi/object/cxx-object.hh>
 #include <urbi/object/float.hh>
-#include <object/symbols.hh>
 #include <runner/job.hh>
+#include <urbi/object/symbols.hh>
 
 namespace urbi
 {

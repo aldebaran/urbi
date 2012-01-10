@@ -13,7 +13,7 @@
 #include <urbi/object/slot.hxx>
 #include <urbi/object/event.hh>
 #include <urbi/object/job.hh>
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 #include <object/uconnection.hh>
 #include <object/uvalue.hh>
 #include <runner/job.hh>

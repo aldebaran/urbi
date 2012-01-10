@@ -22,7 +22,7 @@
 #include <object/urbi/regexp.hh>
 #include <object/uvalue.hh>
 #include <urbi/object/barrier.hh>
-#include <urbi/object/code.hh>
+#include <object/code.hh>
 #include <urbi/object/date.hh>
 #include <urbi/object/dictionary.hh>
 #include <urbi/object/directory.hh>

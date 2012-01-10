@@ -28,17 +28,17 @@
 #include <kernel/uobject.hh>
 #include <urbi/kernel/userver.hh>
 
-#include <urbi/object/code.hh>
+#include <object/code.hh>
 #include <urbi/object/cxx-primitive.hh>
 #include <urbi/object/dictionary.hh>
-#include <object/urbi-exception.hh>
+#include <urbi/object/urbi-exception.hh>
 #include <urbi/object/float.hh>
 #include <urbi/object/global.hh>
 #include <urbi/object/list.hh>
 #include <urbi/object/object.hh>
 #include <urbi/object/path.hh>
 #include <object/profile.hh>
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 #include <object/system.hh>
 #include <urbi/object/tag.hh>
 #include <urbi/object/job.hh>

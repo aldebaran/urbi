@@ -6,34 +6,49 @@
 ##
 ## See the LICENSE file for more information.
 
-PACKAGE_NAME = urbi_$(PACKAGE_VERSION)
+URBI_VERSION = $(shell echo $(VERSION) | sed -e 's/-/./g')
+DEBIAN_PACKAGE_NAME = urbi_$(URBI_VERSION)
+DEB_ARCH = $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
 .PHONY: packages deb rpm
 packages: deb rpm
 
-deb: debian/changelog
+DEBIAN_GENERATED =				\
+  debian/changelog				\
+  debian/rules					\
+  debian/urbi-dev.install			\
+  debian/urbi-doc.install			\
+  debian/urbi.install
+
+deb:
+	$(AM_V_GEN)for i in $(DEBIAN_GENERATED);			\
+	do								\
+	  sed								\
+	    -e 's/[@]VERSION@/$(URBI_VERSION)/'				\
+	    -e 's/[@]DEBIAN_PACKAGE_NAME@/$(DEBIAN_PACKAGE_NAME)/'	\
+	    -e 's,[@]PREFIX@,$(prefix),'				\
+	    $(srcdir)/$$i.in > $$i.tmp &&				\
+	  mv $$i.tmp $$i;						\
+	done
 	$(MAKE) distdir
-	mv $(distdir) $(PACKAGE_NAME)
-	tardir=$(PACKAGE_NAME) && $(am__tar) | bzip2 -9 -c >$(PACKAGE_NAME).tar.bz2
-	cp $(PACKAGE_NAME).tar.bz2 $(PACKAGE_NAME).orig.tar.bz2
-	cd $(PACKAGE_NAME) && dpkg-buildpackage -j2
+	rm -rf $(DEBIAN_PACKAGE_NAME)
+	mv $(distdir) $(DEBIAN_PACKAGE_NAME)
+	tardir=$(DEBIAN_PACKAGE_NAME) && $(am__tar) | bzip2 -9 -c >$(DEBIAN_PACKAGE_NAME).tar.bz2
+	cp $(DEBIAN_PACKAGE_NAME).tar.bz2 $(DEBIAN_PACKAGE_NAME).orig.tar.bz2
+	cd $(DEBIAN_PACKAGE_NAME) && dpkg-buildpackage
 
 rpm:
-	fakeroot -- alien -r urbi_$(PACKAGE_VERSION)
-	fakeroot -- alien -r urbi-doc_$(PACKAGE_VERSION)
-	fakeroot -- alien -r urbi-dev_$(PACKAGE_VERSION)
-
-.PHONY: debian/changelog
-debian/changelog: $(srcdir)/debian/changelog.in
-	$(AM_V_GEN)mkdir -p $(@D)
-	$(AM_V_at)sed -e 's/[@]VERSION@/$(PACKAGE_VERSION)/' $< > $@.tmp
-	$(AM_V_at)mv $@.tmp $@
+	fakeroot -- alien -r urbi_$(URBI_VERSION)_$(DEB_ARCH).deb
+	fakeroot -- alien -r urbi-doc_$(URBI_VERSION)_$(DEB_ARCH).deb
+	fakeroot -- alien -r urbi-dev_$(URBI_VERSION)_$(DEB_ARCH).deb
+	mv urbi-$(URBI_VERSION)-2.$(DEB_ARCH).rpm urbi-$(URBI_VERSION)_$(DEB_ARCH).rpm
+	mv urbi-doc-$(URBI_VERSION)-2.$(DEB_ARCH).rpm urbi-doc-$(URBI_VERSION)_$(DEB_ARCH).rpm
+	mv urbi-dev-$(URBI_VERSION)-2.$(DEB_ARCH).rpm urbi-dev-$(URBI_VERSION)_$(DEB_ARCH).rpm
 
 EXTRA_DIST +=					\
+  $(DEBIAN_GENERATED:=.in)			\
   debian/README.Debian				\
   debian/README.source				\
-  debian/changelog.in				\
-  debian/changelog				\
   debian/compat					\
   debian/control				\
   debian/copyright				\
@@ -41,7 +56,4 @@ EXTRA_DIST +=					\
   debian/info					\
   debian/rules					\
   debian/source/format				\
-  debian/urbi-dev.install			\
-  debian/urbi-doc.docs				\
-  debian/urbi-doc.install			\
-  debian/urbi.install
+  debian/urbi-doc.docs

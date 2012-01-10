@@ -23,9 +23,9 @@
 #include <urbi/kernel/userver.hh>
 
 #include <object/cxx-helper.hh>
-#include <object/symbols.hh>
+#include <urbi/object/symbols.hh>
 
-#include <urbi/object/code.hh>
+#include <object/code.hh>
 #include <urbi/object/event.hh>
 #include <urbi/object/float.hh>
 #include <urbi/object/hash.hh>

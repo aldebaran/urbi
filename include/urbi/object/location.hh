@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, Gostai S.A.S.
+ * Copyright (C) 2010-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -11,10 +11,9 @@
 #ifndef OBJECT_LOCATION_HH
 # define OBJECT_LOCATION_HH
 
-# include <ast/loc.hh>
-
-# include <urbi/object/position.hh>
 # include <urbi/object/cxx-object.hh>
+# include <urbi/object/position.hh>
+# include <urbi/parser/location.hh>
 
 namespace urbi
 {
@@ -30,7 +29,7 @@ namespace urbi
     `---------------*/
 
     public:
-      typedef ::ast::loc value_type;
+      typedef ::yy::location value_type;
       Location();
       Location(const value_type& loc);
       Location(rLocation model);

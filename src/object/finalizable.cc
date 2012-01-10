@@ -14,8 +14,8 @@
 #include <urbi/kernel/userver.hh>
 
 #include <object/finalizable.hh>
-#include <object/symbols.hh>
-#include <object/urbi-exception.hh>
+#include <urbi/object/symbols.hh>
+#include <urbi/object/urbi-exception.hh>
 
 #include <eval/call.hh>
 

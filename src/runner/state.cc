@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, Gostai S.A.S.
+ * Copyright (C) 2011-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -16,6 +16,7 @@
 
 // define CAPTURE_GLOBAL
 #include <urbi/object/global.hh>
+#include <urbi/object/lobby.hh>
 #include <urbi/object/location.hh>
 
 #include <libport/config.h>

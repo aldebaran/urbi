@@ -9,12 +9,12 @@
  */
 
 /**
- ** \file object/urbi-exception.hxx
- ** \brief Implementation of Exception
+ ** \file urbi/object/urbi-exception.hxx
+ ** \brief Implementation of UrbiException.
  */
 
-#ifndef OBJECT_URBI_EXCEPTION_HXX
-# define OBJECT_URBI_EXCEPTION_HXX
+#ifndef URBI_OBJECT_EXCEPTION_HXX
+# define URBI_OBJECT_EXCEPTION_HXX
 
 namespace urbi
 {
@@ -40,4 +40,4 @@ namespace urbi
   } // namespace object
 }
 
-#endif //! OBJECT_URBI_EXCEPTION_HXX
+#endif //! URBI_OBJECT_EXCEPTION_HXX

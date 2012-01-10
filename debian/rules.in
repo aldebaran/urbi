@@ -15,18 +15,22 @@
 
 # This has to be exported to make some magic below work.
 export DH_OPTIONS
-# Building in a builddir is way better for Urbi.
-%:
-	dh $@ --builddirectory=_build --parallel
 
-#FIXME: dh_auto_configure overriding is considered as empty so we force
-# it by putting configuring process as dependance of the building process.
-build: override_dh_auto_configure
-	dh build --builddirectory=_build --parallel
+# Empty on purpose. Do not erase _build.
+clean:
 
-# Tests are done before building these packages. Skip it.
-override_dh_auto_test:
+# fakeroot is used to be in the same environment as dh.
+build:
+	fakeroot -- make -C .. install DESTDIR=$(PWD)/debian/tmp -j4
+binary:
+	dh binary --parallel
 
-# Prefixed by /usr to have a /usr/include, /usr/lib, ... architecture.
+# Don't clean.
+override_dh_prep:
+
+# If the prefix is /usr/local don't clean.
+override_dh_usrlocal:
+
+
+# Empty on purpose. Don't configure.
 override_dh_auto_configure:
-	mkdir -p _build && cd _build && ../configure --enable-doc --prefix=/usr CC='ccache gcc' CXX='ccache g++'

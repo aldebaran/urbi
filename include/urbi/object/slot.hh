@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2011, Gostai S.A.S.
+ * Copyright (C) 2009-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -14,7 +14,6 @@
 # include <boost/preprocessor/seq/for_each.hpp>
 # include <boost/preprocessor/tuple/elem.hpp>
 
-
 # include <libport/allocator-static.hh>
 # include <libport/attributes.hh>
 # include <libport/cassert>
@@ -23,7 +22,7 @@
 # include <libport/ref-counted.hh>
 # include <libport/symbol.hh>
 
-# include <object/symbols.hh>
+# include <urbi/object/symbols.hh>
 # include <urbi/object/fwd.hh>
 # include <urbi/object/cxx-object.hh>
 
