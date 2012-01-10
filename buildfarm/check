@@ -28,8 +28,9 @@ check()
 cd "$DIR_BUILD"
 
 case $BUILDFARM_HOSTNAME in (bf-2)
-  # Spell check.  One machine is enough.
+  # Source checks.  One machine is enough.
   make_ spell-check
+  make_ maintainer-check
   ;;
 esac
 
