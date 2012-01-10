@@ -13,22 +13,22 @@
 ## Handling INSTALL_KERNEL_HEADERS this way ensures that $(HEADERS)
 ## contains all the headers.
 if INSTALL_KERNEL_HEADERS
-kernelinclude_urbidir = $(brandincludedir)/urbi
-kernelinclude_kerneldir = $(kernelinclude_urbidir)/kernel
-kernelinclude_urbi_objectdir = $(kernelinclude_urbidir)/object
-kernelinclude_urbi_runnerdir = $(kernelinclude_urbidir)/runner
+urbi_includedir =   $(brandincludedir)/urbi
+kernel_includedir = $(urbi_includedir)/kernel
+object_includedir = $(urbi_includedir)/object
+runner_includedir = $(urbi_includedir)/runner
 else !INSTALL_KERNEL_HEADERS
-kernelinclude_urbidir =
-kernelinclude_kerneldir =
-kernelinclude_urbi_objectdir =
-kernelinclude_urbi_runnerdir =
+urbi_includedir =
+kernel_includedir =
+object_includedir =
+runner_includedir =
 endif !INSTALL_KERNEL_HEADERS
 
-dist_kernelinclude_urbi_HEADERS =		\
+dist_urbi_include_HEADERS =			\
   include/urbi/sdk.hh				\
   include/urbi/sdk.hxx
 
-dist_kernelinclude_kernel_HEADERS =		\
+dist_kernel_include_HEADERS =		        \
   include/urbi/kernel/fwd.hh			\
   include/urbi/kernel/uconnection.hh		\
   include/urbi/kernel/uconnection.hxx		\
@@ -36,7 +36,7 @@ dist_kernelinclude_kernel_HEADERS =		\
   include/urbi/kernel/userver.hxx		\
   include/urbi/kernel/utypes.hh
 
-dist_kernelinclude_urbi_object_HEADERS =	\
+dist_object_include_HEADERS =	                \
   include/urbi/object/any-to-boost-function.hh	\
   include/urbi/object/barrier.hh		\
   include/urbi/object/centralized-slots.hh	\
@@ -84,7 +84,7 @@ dist_kernelinclude_urbi_object_HEADERS =	\
   include/urbi/object/urbi-exception.hh         \
   include/urbi/object/urbi-exception.hxx
 
-dist_kernelinclude_urbi_runner_HEADERS =	\
+dist_runner_include_HEADERS =	\
   include/urbi/runner/raise.hh
 
 
@@ -98,7 +98,7 @@ FROM_GEN =					\
   include/urbi/object/executable.hh
 BUILT_SOURCES += $(FROM_GEN)
 
-dist_kernelinclude_urbi_object_HEADERS += $(FROM_GEN)
+dist_object_include_HEADERS += $(FROM_GEN)
 EXTRA_DIST += $(FROM_GEN:=.gen)
 
 %: %.gen
@@ -113,7 +113,7 @@ EXTRA_DIST += $(FROM_GEN:=.gen)
 ## List of used symbols.  ##
 ## ---------------------- ##
 
-nodist_kernelinclude_urbi_object_HEADERS = 		\
+nodist_object_include_HEADERS = 		\
   $(precompiled_symbols_hh)
 
 # Generate this file in builddir so that a single srcdir can produce
