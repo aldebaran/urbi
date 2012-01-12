@@ -85,7 +85,7 @@ get_installer_name ()
   local f="$1"
   local nod="no-doc"
 
-  f=${f/-$MODE/}
+  f=${f/-$BUILDFARM_MODE/}
   f=${f/-$nod/}
   f=${f/.zip/.exe}
   echo "$f"
@@ -104,34 +104,30 @@ get_version()
 ## Variables.  ##
 ## ----------- ##
 
+# Check that we have all the envvars we expect.
+for v in BUILDFARM_OS BUILDFARM_MODE BUILDFARM_COMPILER \
+         DIR_SOURCE
+do
+  eval "test -n \$$v" ||
+    fatal "\$$v is not set"
+done
+
 : ${TMPDIR=/tmp}
 
-case $# in
-  (8);;
-  (*) fatal "not enough arguments: $#, expecting 8";;
-esac
+test $# = 1 ||
+  fatal "invalid argument number: $#, expecting 1"
+upname=$1
 
-# Those would best be set through configure (except "updir"
-# which sets the destination).
-
-ARCH=$1       # ARM|x86|ppc
-OS=$2         # linux|windows|macos
-COMP=$3       # ex. gcc4
-MODE=$4       # [release|debug]_[static|dynamic]
-srcdir=$5
-builddir=$6
-DESTDIR=$7
-upname=$8
 
 # Do not produce anything if we are not working on windows builds.
-case $OS in
+case $BUILDFARM_OS in
   (windows) ;;
   (*) exit 0;;
 esac
 
 tools=$HOME/share/tools
 # vcredist has name with vcxx-2005, not vcxx2005.
-vcredist=$(echo "$tools/vcredist/vcredist_x86-$COMP.exe" |
+vcredist=$(echo "$tools/vcredist/vcredist_x86-$BUILDFARM_COMPILER.exe" |
             perl -pe 's/(vcxx)(\d+)/$1-$2/')
 gostai_console="$tools/gostai-console/gostai-console-2.6-win32.exe"
 gostai_editor="$tools/gostai-editor/gostai-editor-2.5-win32.exe"
@@ -184,12 +180,12 @@ if test -r "$my_zip"                            \
   # My zip is the newest, do the merge-install.
 
   # Merge zips.
-  $srcdir/scripts/merge-install.sh -v                   \
+  $DIR_SOURCE/scripts/merge-install.sh -v               \
       --vcredist "$vcredist"                            \
-      --comp "$COMP"                                    \
+      --comp "$BUILDFARM_COMPILER"                      \
       --version "$version"                              \
-      --templateloc "$srcdir/share/templates"           \
-      --installscriptloc "$srcdir/share/installer/"     \
+      --templateloc "$DIR_SOURCE/share/templates"       \
+      --installscriptloc "$DIR_SOURCE/share/installer/" \
       --gostai-console "$gostai_console"                \
       --gostai-editor "$gostai_editor"                  \
       --output "$tmp/$installer"                        \

@@ -324,14 +324,7 @@ do
     sleep 10
     # This is the expected output from this delegate.
     exe=${dir%-$BUILDFARM_MODE}.exe
-    "$delegate" "$BUILDFARM_ARCH"               \
-                "$BUILDFARM_OS"                 \
-                "$BUILDFARM_COMPILER"           \
-                "$BUILDFARM_MODE"               \
-                "$DIR_SOURCE"                   \
-                "$DIR_BUILD"                    \
-                "$DIR_INSTALL"                  \
-                "$archivedir/$dir"
+    "$delegate" "$archivedir/$dir"
     # The delegate might not create the installer, if it was run
     # before its peer.
     if test -f "$archivedir/$exe"; then
