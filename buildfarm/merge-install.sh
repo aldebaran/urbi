@@ -37,8 +37,8 @@ Options:
                                 [$templateloc]
   --vcredist                    vcredist binary
                                 [$vcredist]
-  --comp                        version of visual studio
-                                [$comp]
+  --compiler                    version of visual studio
+                                [$BUILDFARM_COMPILER]
   --version                     version of Urbi
                                 [$version]
   --gostai-console		Gostai console installer
@@ -55,7 +55,7 @@ EOF
 files=
 verbose=false
 vcredist="/home/build/share/tools/vcredist/vcredist_x86-vcxx-2008.exe"
-comp="vcxx-2008"
+BUILDFARM_COMPILER="vcxx2008"
 version=
 installer="$HOME/.wine/drive_c/Program Files/NSIS/makensis.exe"
 installerargs="/NOCD share/installer/installer.nsh"
@@ -75,9 +75,9 @@ do
   (-s|--installscriptloc) shift; installscriptloc=$1 ;;
   (-t|--templateloc) shift; templateloc=$1;;
   (--vcredist) shift; vcredist=$1;;
-  (--comp) shift;
+  (--comp | --compiler) shift;
      # We need vcxx-2005, not vcxx2005.
-     comp=$(echo "$1" | perl -pe 's/(vcxx)(\d+)/$1-$2/');;
+     BUILDFARM_COMPILER=$(echo "$1" | perl -pe 's/(vcxx)(\d+)/$1-$2/');;
   (--version) shift; version=$1;;
   (--gostai-console) shift; gostaiconsole=$1;;
   (--gostai-editor) shift; gostaieditor=$1;;
@@ -152,8 +152,8 @@ if test -n "templateloc"; then
   ln -s $templateloc share/templates
 fi
 
-verb "running '$installer' /D$comp /DVERSION=$version $installerargs"
-wine "$installer" "/D$comp" "/DVERSION=$version" $installerargs
+verb "running '$installer' /D$BUILDFARM_COMPILER /DVERSION=$version $installerargs"
+wine "$installer" "/D$BUILDFARM_COMPILER" "/DVERSION=$version" $installerargs
 
 if test -n "$output"; then
   mv "$dir/merge/gostai-engine-runtime.exe" "$output"
