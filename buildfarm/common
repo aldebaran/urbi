@@ -50,6 +50,20 @@ find_prog ()
 }
 
 
+# tree_copy SOURCE DEST
+# ---------------------
+# Copy a file-system tree from SOURCE to DEST.  Preserve rights etc.
+# DEST is cleared first.
+tree_copy ()
+{
+  local source=$1
+  local dest=$2
+  rm -rf "$dest"
+  mkdir -p "$dest"
+  tar -C "$source" -cf - . | tar -C "$dest" -xpBf -
+}
+
+
 ## ----------- ##
 ## Variables.  ##
 ## ----------- ##
@@ -86,6 +100,8 @@ stderr "$BUILDFARM_HOSTNAME: $BUILDFARM_PROJECT-$BUILDFARM_NAME-$BUILDFARM_MODE"
 if ! ps x; then
   fatal "ps does not work, is procfs properly mounted?"
 fi
+
+set -x
 
 # We need share.
 sharedir=$HOME/share

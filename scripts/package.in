@@ -3,7 +3,7 @@
 set -e
 
 # Define before loading common.sh which uses destdir.
-DESTDIR=$4
+DESTDIR=$install/
 . $(dirname $0)/common.sh
 set -x
 
@@ -16,21 +16,12 @@ case $# in
   (*) fatal "not enough arguments: $#, expecting 10";;
 esac
 
-buildprefix='@prefix@'
-
-abs_top_builddir=$builddir
-abs_top_srcdir=$srcdir
-
 srcdir=$2
 builddir=$3
 # Directories/tarballs left in this directory (updir) will be
 # published by the buildfarm's package script.
-updir=$5
-ARCH=$6       # ARM|ppc|x86|x86_64.
-#OS=$7         # linux|macos|windows.
-COMP=$8       # ex. gcc4, vcxx2005.
-MODE=$9       # [release|debug]_[static|dynamic].
-prefix=${10}
+
+
 # Set release_mode depending on whether we are building a release version
 # or a development version.
 case $MODE in
@@ -116,7 +107,7 @@ tree_copy "$DESTDIR$prefix" "$packagedir"
 
 # 5. Source tarball.
 tarname=$PROJECT-$version.tar.bz2
-if test -f $abs_top_builddir/$tarname; then
-  cp -v $abs_top_builddir/$tarname $updir/$tarname.tmp
+if test -f $DIR_BUILD/$tarname; then
+  cp -v $DIR_BUILD/$tarname $updir/$tarname.tmp
   mv $updir/$tarname.tmp $updir/$tarname
 fi

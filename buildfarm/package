@@ -1,4 +1,4 @@
-#!/bin/sh
+#! /bin/sh
 
 set -e
 . $(dirname "$0")/common
@@ -143,23 +143,14 @@ test -n "$MD5SUM" ||
 
 : ${TMPDIR=/tmp}
 
-PROJECT=$BUILDFARM_PROJECT    # name of the project
-source=$DIR_SOURCE            # source directory
-build=$DIR_BUILD              # build directory
-install=$DIR_INSTALL          # install directory
 # Where to put the tarballs.
 dest=$sharedir/built/$BUILDFARM_PROJECT
-
-ARCH=$BUILDFARM_ARCH      # archithecture; ex. x86
-OS=$BUILDFARM_OS          # operating system; (linux|linux_lucid|macos|windows)
-COMP=$BUILDFARM_COMPILER  # compiler; ex. gcc4
-MODE=$BUILDFARM_MODE      # compile mode: (release|debug)_(static|dynamic)
 
 # Make a slight effort so that instead of 2.2-8-g9b02553 we get
 # 2.2-008-g9b02553, which is better with "ls".  Always show the sha1
 # (--long) so that when we use repeatedly the same tag, tarballs with
 # the same name are *not* stored at the same place.
-SHA1=$(cd "$source" &&
+SHA1=$(cd "$DIR_SOURCE" &&
        git describe --long |
          perl -ne '
   if (m{^(?:.*/)?(.*)-(\d+)-(g[\da-f]+)$})
@@ -170,7 +161,7 @@ SHA1=$(cd "$source" &&
   {
     printf "%s\n", $1;
   }')
-test -n "$SHA1" || SHA1=$(cd "$source" && git rev-parse HEAD)
+test -n "$SHA1" || SHA1=$(cd "$DIR_SOURCE" && git rev-parse HEAD)
 
 # Create a temporary directory where to package, and be ready to clear
 # it on success/failure.
@@ -200,28 +191,118 @@ esac
 export archivedir
 mkdir -p "$archivedir"
 
-# This part should create in the temporary directory a single
-# directory that will be archived and distributed. If the project
-# provides its own script, let it package.
-delegate="$build/scripts/package"
 
-build_type="${ARCH}-${OS}-${COMP}"
-test "$MODE" != "release" && build_type="${build_type}-${MODE}"
-unqualified_dir="${PROJECT}-${build_type}"
-qualified_dir="${PROJECT}-${SHA1}-${build_type}"
+## ----------- ##
+## Variables.  ##
+## ----------- ##
 
-if test -x "$delegate"; then
-  "$delegate" "$PROJECT" "$source" "$build" "$install/" \
-              "." "$ARCH" "$OS" "$COMP" "$MODE" "$prefix"
-  pwd
-  ls -la
-  qualified_dir=$(ls)
-  test -n "$qualified_dir" ||
-    fatal "The project's package script didn't create anything"
+# Set release_mode depending on whether we are building a release version
+# or a development version.
+case $BUILDFARM_MODE in
+  (release*)    release_mode=true;;
+  (*)           release_mode=false;;
+esac
+
+# Determine the version from the latest component of the tag. This will
+# ease ordering.
+CONFIGURATION=$BUILDFARM_OS-$BUILDFARM_ARCH-$BUILDFARM_COMPILER
+test "$BUILDFARM_MODE" != "release" &&
+  CONFIGURATION="${CONFIGURATION}-${BUILDFARM_MODE}"
+unqualified_dir="${BUILDFARM_PROJECT}-${CONFIGURATION}"
+qualified_dir="${BUILDFARM_PROJECT}-${SHA1}-${CONFIGURATION}"
+
+DESTDIR=$DIR_INSTALL/
+version=$(cd "$DIR_SOURCE" && git describe | sed -e "s,^preview/,,;s,/,-,g")
+# If we are in release mode, do not tell it, the final users won't care.
+# Otherwise, add "-debug".
+configuration=$version-$CONFIGURATION
+$release_mode || configuration=$configuration-$BUILDFARM_MODE
+
+# The SDK package.
+urbi_sdk=$BUILDFARM_PROJECT-$configuration
+# The doc only package.
+urbi_doc=${BUILDFARM_PROJECT%-sdk}-doc-$version
+# The SDK package, without the doc.
+urbi_sdk_no_doc=$urbi_sdk-no-doc
+# The runtime package, i.e., without doc etc.
+urbi_runtime=$(echo "$urbi_sdk" | sed -e 's/urbi-sdk/urbi-runtime/')
+
+# Primary target.
+name=$urbi_sdk
+
+# 1. Documentation.
+#
+# If the documentation is compiled in this package, extract it as a
+# separate directory.
+#
+# If the doc is not compiled in, then if a doc package is available,
+# inline its contents in this package.  Otherwise make a package
+# without the doc, but with a name that states it.
+docsrc="$DESTDIR$prefix/share/doc/urbi-sdk"
+updir=.
+if test -f "$docsrc/urbi-sdk.pdf"; then
+  stderr "Documentation is compiled, shipping"
+  tree_copy "$docsrc" "$updir/$urbi_doc"
+  # Do not leave the COMPONENTS.txt file, which is architecture
+  # specific.  It would override the existing one from the package
+  # into which the documentation will be copied.
+  rm "$updir/$urbi_doc/COMPONENTS.txt"
 else
-  rm -rf "$qualified_dir"
-  cp -r "$install" "$qualified_dir"
+  stderr "Documentation is NOT compiled, looking for it in $archivedir"
+  if test -f "$archivedir/$urbi_doc.tar.bz2"; then
+    stderr "Documentation found, installing"
+    # Do not remove what's in $docsrc, as we might remove architecture
+    # specific files, such as COMPONENTS.txt.
+    tar -C "$docsrc"  --strip=1 -xf "$archivedir/$urbi_doc.tar.bz2"
+    # So remove the package without doc if there is one.
+    rm -f "$archivedir/$urbi_sdk_no_doc".*
+  else
+    # We couldn't find the doc, and it's not our job to compile it.
+    # So, instead of blocking the generation of packages, generate
+    # packages without the doc, but make it clear in the tarball name.
+    stderr "Documentation NOT found"
+    name=$urbi_sdk_no_doc
+  fi
 fi
+
+# 2. Prebuilt-Urbi SDK.
+#
+# Create a fresh directory in which we put the subdirectories of the
+# $DIR_INSTALL directory.
+tree_copy "$DESTDIR$prefix" "$updir/$name"
+
+# 3. Description.
+#
+# Extract the file that describes the contents of the package.
+cp "$docsrc/COMPONENTS.txt" "$updir/$urbi_sdk.txt"
+
+# 4. Prebuilt-Urbi Runtime.
+#
+# Create a run-time version of the package.
+packagedir="$updir/$urbi_runtime"
+tree_copy "$DESTDIR$prefix" "$packagedir"
+# Keep only the bin, lib, and share/urbi directories.  Don't forget
+# bin is lib on Windows.  Leave LICENSE.txt since it is used by
+# Lobby.license.
+(cd "$packagedir" &&
+    rm -rf README.txt include libexec share/doc)
+
+# 5. Source tarball.
+tarname=$BUILDFARM_PROJECT-$version.tar.bz2
+if test -f $DIR_BUILD/$tarname; then
+  cp -v $DIR_BUILD/$tarname $updir/$tarname.tmp
+  mv $updir/$tarname.tmp $updir/$tarname
+fi
+pwd
+ls -la
+qualified_dir=$(ls)
+test -n "$qualified_dir" ||
+  fatal "The project's package script didn't create anything"
+
+
+## --------------------- ##
+## Upload the packages.  ##
+## --------------------- ##
 
 # Iterate over packaged content.
 for dir in $qualified_dir
@@ -249,13 +330,19 @@ do
   # on OS X.
   ls "$dest" >/dev/null
 
-  delegate="$source/scripts/make-installer"
+  delegate="$DIR_SOURCE/scripts/make-installer"
   if test -x "$delegate"; then
     sleep 10
     # This is the expected output from this delegate.
-    exe=${dir%-$MODE}.exe
-    "$delegate" "$ARCH" "$OS" "$COMP" "$MODE" \
-                "$source" "$build" "$install" "$archivedir/$dir"
+    exe=${dir%-$BUILDFARM_MODE}.exe
+    "$delegate" "$BUILDFARM_ARCH"               \
+                "$BUILDFARM_OS"                 \
+                "$BUILDFARM_COMPILER"           \
+                "$BUILDFARM_MODE"               \
+                "$DIR_SOURCE"                   \
+                "$DIR_BUILD"                    \
+                "$DIR_INSTALL"                  \
+                "$archivedir/$dir"
     # The delegate might not create the installer, if it was run
     # before its peer.
     if test -f "$archivedir/$exe"; then
