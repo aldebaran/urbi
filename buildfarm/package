@@ -206,20 +206,18 @@ esac
 # Determine the version from the latest component of the tag. This will
 # ease ordering.
 CONFIGURATION=$BUILDFARM_OS-$BUILDFARM_ARCH-$BUILDFARM_COMPILER
+# If we are in release mode, do not tell it, the final users won't care.
+# Otherwise, add "-debug".
 test "$BUILDFARM_MODE" != "release" &&
-  CONFIGURATION="${CONFIGURATION}-${BUILDFARM_MODE}"
+  CONFIGURATION="$CONFIGURATION-$BUILDFARM_MODE"
 unqualified_dir="${BUILDFARM_PROJECT}-${CONFIGURATION}"
 qualified_dir="${BUILDFARM_PROJECT}-${SHA1}-${CONFIGURATION}"
 
 DESTDIR=$DIR_INSTALL/
 version=$(cd "$DIR_SOURCE" && git describe | sed -e "s,^preview/,,;s,/,-,g")
-# If we are in release mode, do not tell it, the final users won't care.
-# Otherwise, add "-debug".
-configuration=$version-$CONFIGURATION
-$release_mode || configuration=$configuration-$BUILDFARM_MODE
 
 # The SDK package.
-urbi_sdk=$BUILDFARM_PROJECT-$configuration
+urbi_sdk=$BUILDFARM_PROJECT-$CONFIGURATION
 # The doc only package.
 urbi_doc=${BUILDFARM_PROJECT%-sdk}-doc-$version
 # The SDK package, without the doc.
