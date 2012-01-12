@@ -319,7 +319,7 @@ do
   # on OS X.
   ls "$dest" >/dev/null
 
-  delegate="$DIR_SOURCE/scripts/make-installer"
+  delegate="$DIR_SOURCE/buildfarm/make-installer"
   if test -x "$delegate"; then
     sleep 10
     # This is the expected output from this delegate.

@@ -180,7 +180,8 @@ if test -r "$my_zip"                            \
   # My zip is the newest, do the merge-install.
 
   # Merge zips.
-  $DIR_SOURCE/scripts/merge-install.sh -v               \
+  $DIR_SOURCE/buildfarm/merge-install.sh                \
+      -v                                                \
       --vcredist "$vcredist"                            \
       --comp "$BUILDFARM_COMPILER"                      \
       --version "$version"                              \
