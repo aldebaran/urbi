@@ -29,4 +29,5 @@ Description: Urbi SDK documentation.
 
 Package: urbi-dev
 Architecture: any
+Depends: urbi
 Description: Urbi SDK.
