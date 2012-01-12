@@ -308,31 +308,33 @@ if test -f $DIR_BUILD/$tarname; then
   mv $updir/$tarname.tmp $updir/$tarname
 fi
 pwd
-ls -la
-qualified_dir=$(ls)
-test -n "$qualified_dir" ||
-  fatal "The project's package script didn't create anything"
 
 
 ## --------------------- ##
 ## Upload the packages.  ##
 ## --------------------- ##
 
-# Iterate over packaged content.
-for dir in $qualified_dir
-do
-  publish "$dir"
+ls -la
+packs=$(ls)
+test -n "$packs" ||
+  fatal "The project's package script didn't create anything"
 
-  delegate="$DIR_SOURCE/buildfarm/make-installer"
-  if test -x "$delegate"; then
-    sleep 10
+# Iterate over packaged content.
+for pack in $packs
+do
+  publish "$pack"
+
+  # On Windows, make the installers.
+  case $BUILDFARM_OS in (windows)
+    delegate="$DIR_SOURCE/buildfarm/make-installer"
     # This is the expected output from this delegate.
     exe=${dir%-$BUILDFARM_MODE}.exe
-    "$delegate" "$archivedir/$dir"
+    "$delegate" "$archivedir/$pack"
     # The delegate might not create the installer, if it was run
     # before its peer.
     if test -f "$archivedir/$exe"; then
       check_md5 "$archivedir" "$exe"
     fi
-  fi
+    ;;
+  esac
 done
