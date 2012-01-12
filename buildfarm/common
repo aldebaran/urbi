@@ -49,14 +49,24 @@ find_prog ()
   done
 }
 
+
+## ----------- ##
+## Variables.  ##
+## ----------- ##
+
+# This --prefix, /usr, is chosen so that the Debian packages can use
+# our builds.
+prefix=/usr
+
 # Used to skip tests.
 export BUILDFARM_HOSTNAME=$(hostname | sed -e 's/\..*//')
 
-stderr "$me: this is $BUILDFARM_HOSTNAME: $BUILDFARM_PROJECT-$BUILDFARM_NAME-$BUILDFARM_MODE"
 
 ## --------------------- ##
 ## Basic sanity checks.  ##
 ## --------------------- ##
+
+stderr "$BUILDFARM_HOSTNAME: $BUILDFARM_PROJECT-$BUILDFARM_NAME-$BUILDFARM_MODE"
 
 # We really want ps to work.
 #

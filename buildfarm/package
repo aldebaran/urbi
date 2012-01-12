@@ -154,7 +154,6 @@ ARCH=$BUILDFARM_ARCH      # archithecture; ex. x86
 OS=$BUILDFARM_OS          # operating system; (linux|linux_lucid|macos|windows)
 COMP=$BUILDFARM_COMPILER  # compiler; ex. gcc4
 MODE=$BUILDFARM_MODE      # compile mode: (release|debug)_(static|dynamic)
-prefix=/prefix            # prefix as given to configure
 
 # Make a slight effort so that instead of 2.2-8-g9b02553 we get
 # 2.2-008-g9b02553, which is better with "ls".  Always show the sha1
