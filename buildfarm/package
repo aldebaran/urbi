@@ -32,9 +32,7 @@ make_tarball ()
   local dir=$1
 
   # Fix permissions on DLL that were removed through DAVfs.
-  local dlls
-  dlls=$(find "$dir" -name '*.dll')
-  test -n "$dlls" && chmod u+x $dlls
+  find "$dir" -name '*.dll' -exec chmod u+x {} ';'
 
   # MANIFEST.txt
   #
@@ -62,7 +60,7 @@ make_tarball ()
 
     (*)
       make_tarball_res=$dir.tar.bz2
-      tar --owner root -cvjf "$make_tarball_res.tmp" "$dir"
+      tar --owner root -cjf "$make_tarball_res.tmp" "$dir"
       ;;
   esac
 
