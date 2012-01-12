@@ -31,6 +31,8 @@ This release fixes some packaging-related minor issues.
 \subsection{Fixes}
 \begin{itemize}
 \item The source tarballs are significantly smaller.
+\item Some public \Cxx headers used to depend on private ones; this is
+  fixed.
 \item In-place builds from the source tarballs (i.e., when compiling in the
   same directory as the source) work.  Yet, we still discourage them
   (\autoref{sec:build:configure}).
