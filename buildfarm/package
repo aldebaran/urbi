@@ -197,13 +197,6 @@ mkdir -p "$archivedir"
 ## Variables.  ##
 ## ----------- ##
 
-# Set release_mode depending on whether we are building a release version
-# or a development version.
-case $BUILDFARM_MODE in
-  (release*)    release_mode=true;;
-  (*)           release_mode=false;;
-esac
-
 # Determine the version from the latest component of the tag. This will
 # ease ordering.
 CONFIGURATION=$BUILDFARM_OS-$BUILDFARM_ARCH-$BUILDFARM_COMPILER
@@ -211,10 +204,7 @@ CONFIGURATION=$BUILDFARM_OS-$BUILDFARM_ARCH-$BUILDFARM_COMPILER
 # Otherwise, add "-debug".
 test "$BUILDFARM_MODE" != "release" &&
   CONFIGURATION="$CONFIGURATION-$BUILDFARM_MODE"
-unqualified_dir="${BUILDFARM_PROJECT}-${CONFIGURATION}"
-qualified_dir="${BUILDFARM_PROJECT}-${SHA1}-${CONFIGURATION}"
 
-DESTDIR=$DIR_INSTALL/
 version=$(cd "$DIR_SOURCE" && git describe | sed -e "s,^preview/,,;s,/,-,g")
 
 # The SDK package.
@@ -237,7 +227,7 @@ name=$urbi_sdk
 # If the doc is not compiled in, then if a doc package is available,
 # inline its contents in this package.  Otherwise make a package
 # without the doc, but with a name that states it.
-docsrc="$DESTDIR$prefix/share/doc/urbi-sdk"
+docsrc="$DIR_INSTALL/$prefix/share/doc/urbi-sdk"
 updir=.
 if test -f "$docsrc/urbi-sdk.pdf"; then
   stderr "Documentation is compiled, shipping"
@@ -268,7 +258,7 @@ fi
 #
 # Create a fresh directory in which we put the subdirectories of the
 # $DIR_INSTALL directory.
-tree_copy "$DESTDIR$prefix" "$updir/$name"
+tree_copy "$DIR_INSTALL/$prefix" "$updir/$name"
 
 # 3. Description.
 #
@@ -279,7 +269,7 @@ cp "$docsrc/COMPONENTS.txt" "$updir/$urbi_sdk.txt"
 #
 # Create a run-time version of the package.
 packagedir="$updir/$urbi_runtime"
-tree_copy "$DESTDIR$prefix" "$packagedir"
+tree_copy "$DIR_INSTALL/$prefix" "$packagedir"
 # Keep only the bin, lib, and share/urbi directories.  Don't forget
 # bin is lib on Windows.  Leave LICENSE.txt since it is used by
 # Lobby.license.
