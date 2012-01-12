@@ -5,8 +5,6 @@ set -e
 
 set -x
 
-DIR_STAGE="$(dirname "$DIR_INSTALL")/stage"
-
 cd "$DIR_BUILD"
 rm -rf "$DIR_INSTALL" "$DIR_STAGE"
 mkdir -p "$DIR_STAGE"

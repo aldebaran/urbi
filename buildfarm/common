@@ -78,12 +78,21 @@ tree_copy ()
 ## Variables.  ##
 ## ----------- ##
 
+# Used to skip tests.
+export BUILDFARM_HOSTNAME=$(hostname | sed -e 's/\..*//')
+
+# Where we make a temporary install before going into DIR_INSTALL.
+# See buildfarm/install.
+export DIR_STAGE="$(dirname "$DIR_INSTALL")/stage"
+
+# Where to publish the result (in share/).
+sharedir=$HOME/share
+DIR_DEST=$sharedir/built/$BUILDFARM_PROJECT
+
+
 # This --prefix, /usr, is chosen so that the Debian packages can use
 # our builds.
 prefix=/usr
-
-# Used to skip tests.
-export BUILDFARM_HOSTNAME=$(hostname | sed -e 's/\..*//')
 
 
 ## --------------------- ##

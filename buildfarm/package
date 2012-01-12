@@ -144,9 +144,6 @@ test -n "$MD5SUM" ||
 
 : ${TMPDIR=/tmp}
 
-# Where to put the tarballs.
-dest=$sharedir/built/$BUILDFARM_PROJECT
-
 # Make a slight effort so that instead of 2.2-8-g9b02553 we get
 # 2.2-008-g9b02553, which is better with "ls".  Always show the sha1
 # (--long) so that when we use repeatedly the same tag, tarballs with
@@ -186,8 +183,8 @@ case $SHA1 in
   # She might want also to get rid of the sha1 part when copying for
   # archives/ to releases/.
   #
-  # (*-000-g*) archivedir="$dest/releases/$SHA1";;
-  (*)        archivedir="$dest/archives/$SHA1";;
+  # (*-000-g*) archivedir="$DIR_DEST/releases/$SHA1";;
+  (*)        archivedir="$DIR_DEST/archives/$SHA1";;
 esac
 export archivedir
 mkdir -p "$archivedir"
@@ -317,7 +314,7 @@ do
   # This looks useless, but it's an attempt to eliminate
   # nondeterministic problems of availability of shared directories
   # on OS X.
-  ls "$dest" >/dev/null
+  ls "$DIR_DEST" >/dev/null
 
   delegate="$DIR_SOURCE/buildfarm/make-installer"
   if test -x "$delegate"; then
