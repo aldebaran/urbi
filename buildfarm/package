@@ -131,6 +131,36 @@ check_md5 ()
   cd $here
 }
 
+
+# publish FILE-OR-DIR
+# -------------------
+# Publish a tarball in DIR_DEST.  Check md5sum.
+publish ()
+{
+  # $pack: the package (tarball/zip) to publish.
+  local pack=$1
+  # If this is a directory, make it a tarball.
+  if test -d "$pack"; then
+    make_tarball "$pack"
+    pack=$make_tarball_res
+  fi
+
+  # Compute the md5sum of the file.
+  $MD5SUM "$pack" >"$pack.md5"
+
+  # Publish the archive and its md5sum.
+  move_into "$archivedir" "$pack" "$pack.md5"
+
+  # Make sure we managed to publish properly.
+  check_md5 $archivedir $pack
+
+  # This looks useless, but it's an attempt to eliminate
+  # nondeterministic problems of availability of shared directories
+  # on OS X.
+  ls "$DIR_DEST" >/dev/null
+}
+
+
 ## ------ ##
 ## Main.  ##
 ## ------ ##
@@ -291,28 +321,7 @@ test -n "$qualified_dir" ||
 # Iterate over packaged content.
 for dir in $qualified_dir
 do
-  # $pack: the package (tarball/zip) to publish.
-  # If this is a directory, make it a tarball.
-  if test -d "$dir"; then
-    make_tarball "$dir"
-    pack=$make_tarball_res
-  else
-    pack=$dir
-  fi
-
-  # Compute the md5sum of the file.
-  $MD5SUM "$pack" >"$pack.md5"
-
-  # Publish the archive and its md5sum.
-  move_into "$archivedir" "$pack" "$pack.md5"
-
-  # Make sure we managed to publish properly.
-  check_md5 $archivedir $pack
-
-  # This looks useless, but it's an attempt to eliminate
-  # nondeterministic problems of availability of shared directories
-  # on OS X.
-  ls "$DIR_DEST" >/dev/null
+  publish "$dir"
 
   delegate="$DIR_SOURCE/buildfarm/make-installer"
   if test -x "$delegate"; then
