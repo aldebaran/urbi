@@ -1,54 +1,12 @@
 #! /bin/sh
 
 set -e
+. $(dirname "$0")/common
 set -x
-
-me=$(basename "$0")
 
 ## ----------- ##
 ## Functions.  ##
 ## ----------- ##
-
-stderr ()
-{
-  local i
-  for i
-  do
-    echo "$i"
-  done | sed -e "s/^/$me: /" >&2
-}
-
-error ()
-{
-  local status="$1"
-  shift
-  local first="error: $1"
-  shift
-  stderr "$first" "$@"
-  exit $status
-}
-
-fatal ()
-{
-  error 1 "$@"
-}
-
-# find_prog EXE...
-# ----------------
-# Set find_prog_exe to the first EXE found in the path, or set it to
-# empty.
-find_prog ()
-{
-  find_prog_res=
-  local i
-  for i in "$@"
-  do
-    if $i --version >/dev/null 2>&1; then
-      find_prog_res=$i
-      break
-    fi
-  done
-}
 
 # find_dual ZIP
 # -------------

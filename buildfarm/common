@@ -4,6 +4,8 @@ me=$(basename $0)
 
 env=$(set +o)
 
+# stderr LINE...
+# --------------
 stderr ()
 {
   set +xv
@@ -15,6 +17,8 @@ stderr ()
   eval "$env"
 }
 
+# error EXIT-STATUS LINE...
+# -------------------------
 error ()
 {
   set +xv
@@ -24,6 +28,8 @@ error ()
   exit $status
 }
 
+# fatal LINE...
+# -------------
 fatal ()
 {
   set +xv
@@ -36,6 +42,10 @@ run ()
   eval "$@"
 }
 
+# find_prog EXE...
+# ----------------
+# Set find_prog_res to the first EXE found in the path, or set it to
+# empty.
 find_prog ()
 {
   find_prog_res=

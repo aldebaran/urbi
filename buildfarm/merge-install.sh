@@ -2,38 +2,14 @@
 
 # Merge multiple (2) urbisdk tarballs (one debug and one release)
 # and run the installer generator.
-set -e
-set -x
 
-me=$(basename "$0")
+set -e
+. $(dirname "$0")/common
+set -x
 
 ## ----------- ##
 ## Functions.  ##
 ## ----------- ##
-
-stderr ()
-{
-  local i
-  for i
-  do
-    echo "$i"
-  done | sed -e "s/^/$me: /" >&2
-}
-
-error ()
-{
-  local status="$1"
-  shift
-  local first="error: $1"
-  shift
-  stderr "$first" "$@"
-  exit $status
-}
-
-fatal ()
-{
-  error 1 "$@"
-}
 
 verb ()
 {
@@ -113,10 +89,8 @@ do
   shift
 done
 
-if test "$(echo $files |wc -w)" -ne 2; then
-  echo "Expected exactly two files."
-  exit 1
-fi
+test "$(echo $files |wc -w)" -eq 2 ||
+  fatal "expected exactly two files"
 
 test -r "$vcredist" ||
   fatal "cannot read $vcredist"
