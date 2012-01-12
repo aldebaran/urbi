@@ -193,8 +193,7 @@ BUILT_SOURCES += 				\
   scripts/bf-post-install			\
   scripts/common.sh				\
   scripts/install-boost				\
-  scripts/install-java				\
-  scripts/package
+  scripts/install-java
 relocatable: scripts/bf-post-install
 	$<
 
