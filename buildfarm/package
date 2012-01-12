@@ -32,6 +32,7 @@ make_tarball ()
   local dir=$1
 
   # Fix permissions on DLL that were removed through DAVfs.
+  local dlls
   dlls=$(find "$dir" -name '*.dll')
   test -n "$dlls" && chmod u+x $dlls
 
@@ -53,7 +54,7 @@ make_tarball ()
 
   # Create archives.  Don't be verbose for each one, it clutters the web
   # logs (and they take too long to load).
-  case $OS in
+  case $BUILDFARM_OS in
     (windows)
       make_tarball_res=$dir.zip
       zip -r -q "$make_tarball_res.tmp" "$dir"
