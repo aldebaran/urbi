@@ -27,27 +27,27 @@ usage ()
  usage: $0 [options]
 
 Options:
-  -i, --installprogram          Name of installer generator program
-                                [$installer]
-  -a, --installarguments        Arguments for installer
-                                [$installargs]
-  -s, --installscriptloc        Directory of installer.nsh
-                                [$installscriptloc]
-  -t, --templateloc             Directory with templates
-                                [$templateloc]
-  --vcredist                    vcredist binary
-                                [$vcredist]
-  --compiler                    version of visual studio
-                                [$BUILDFARM_COMPILER]
-  --version                     version of Urbi
-                                [$version]
-  --gostai-console		Gostai console installer
-				[$gostaiconsole]
-  --gostai-editor		Gostai editor installer
-				[$gostaieditor]
-  -d, --debug                   Debug mode
-  -v, --verbose                 Verbose mode
-  -o, --output                  Output file
+  -i, --installprogram    name of installer generator program
+                          [$installer]
+  -a, --installarguments  arguments for installer
+                          [$installargs]
+  -s, --installscriptloc  directory of installer.nsh
+                          [$installscriptloc]
+  -t, --templateloc       directory with templates
+                          [$templateloc]
+  --vcredist              vcredist binary
+                          [$vcredist]
+  --compiler              version of visual studio
+                          [$BUILDFARM_COMPILER]
+  --version               version of Urbi
+                          [$version]
+  --gostai-console	  Gostai console installer
+			  [$gostaiconsole]
+  --gostai-editor	  Gostai editor installer
+			  [$gostaieditor]
+  -d, --debug             debug mode
+  -v, --verbose           verbose mode
+  -o, --output            output file
 EOF
   exit 0
 }
