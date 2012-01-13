@@ -16,11 +16,6 @@ verb ()
   if $verbose; then stderr "$@"; fi
 }
 
-ifverb ()
-{
-  if $verbose; then echo $1 ; else echo $2 ; fi
-}
-
 usage ()
 {
   cat <<EOF
@@ -38,7 +33,7 @@ Options:
   --vcredist              vcredist binary
                           [$vcredist]
   --compiler              version of visual studio
-                          [$BUILDFARM_COMPILER]
+                          [$compiler]
   --version               version of Urbi
                           [$version]
   --gostai-console	  Gostai console installer
@@ -55,7 +50,7 @@ EOF
 files=
 verbose=false
 vcredist="/home/build/share/tools/vcredist/vcredist_x86-vcxx-2008.exe"
-BUILDFARM_COMPILER="vcxx2008"
+compiler="vcxx-2008"
 version=
 installer="$HOME/.wine/drive_c/Program Files/NSIS/makensis.exe"
 installerargs="/NOCD share/installer/installer.nsh"
@@ -77,7 +72,7 @@ do
   (--vcredist) shift; vcredist=$1;;
   (--comp | --compiler) shift;
      # We need vcxx-2005, not vcxx2005.
-     BUILDFARM_COMPILER=$(echo "$1" | perl -pe 's/(vcxx)(\d+)/$1-$2/');;
+     compiler=$(echo "$1" | perl -pe 's/(vcxx)(\d+)/$1-$2/');;
   (--version) shift; version=$1;;
   (--gostai-console) shift; gostaiconsole=$1;;
   (--gostai-editor) shift; gostaieditor=$1;;
@@ -109,7 +104,7 @@ mkdir merge
 cd temp
 for f in $files; do
   verb "merging $f"
-  unzip $(ifverb "" -q) $f
+  unzip -q $f
   basedir=$(echo *)
   case $f in
     (*debug*)
@@ -152,8 +147,8 @@ if test -n "templateloc"; then
   ln -s $templateloc share/templates
 fi
 
-verb "running '$installer' /D$BUILDFARM_COMPILER /DVERSION=$version $installerargs"
-wine "$installer" "/D$BUILDFARM_COMPILER" "/DVERSION=$version" $installerargs
+verb "running '$installer' /D$compiler /DVERSION=$version $installerargs"
+wine "$installer" "/D$compiler" "/DVERSION=$version" $installerargs
 
 if test -n "$output"; then
   mv "$dir/merge/gostai-engine-runtime.exe" "$output"
