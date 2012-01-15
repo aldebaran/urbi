@@ -179,11 +179,6 @@ publish ()
 ## Main.  ##
 ## ------ ##
 
-find_prog $MD5SUM gmd5sum md5sum
-MD5SUM=$find_prog_res
-test -n "$MD5SUM" ||
-  fatal "cannot find md5sum"
-
 # The directories which will receive packages to publish.
 rm -rf $DIR_PACKAGES
 mkdir -p $DIR_PACKAGES

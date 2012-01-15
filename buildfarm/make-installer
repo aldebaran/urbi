@@ -102,11 +102,6 @@ done
 
 version=$(get_version)
 
-find_prog $MD5SUM gmd5sum md5sum
-MD5SUM=$find_prog_res
-test -n "$MD5SUM" ||
-  fatal "cannot find md5sum"
-
 cleanup ()
 {
   status=$?
