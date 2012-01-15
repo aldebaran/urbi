@@ -172,23 +172,6 @@ test -n "$MD5SUM" ||
 
 : ${TMPDIR=/tmp}
 
-# Make a slight effort so that instead of 2.2-8-g9b02553 we get
-# 2.2-008-g9b02553, which is better with "ls".  Always show the sha1
-# (--long) so that when we use repeatedly the same tag, tarballs with
-# the same name are *not* stored at the same place.
-SHA1=$(cd "$DIR_SOURCE" &&
-       git describe --long |
-         perl -ne '
-  if (m{^(?:.*/)?(.*)-(\d+)-(g[\da-f]+)$})
-  {
-    printf "%s-%03d-%s\n", $1, $2, $3;
-  }
-  elsif (m{^(?:.*/)?(.*)$})
-  {
-    printf "%s\n", $1;
-  }')
-test -n "$SHA1" || SHA1=$(cd "$DIR_SOURCE" && git rev-parse HEAD)
-
 # Create a temporary directory where to package, and be ready to clear
 # it on success/failure.
 cleanup ()
@@ -222,20 +205,16 @@ mkdir -p "$archivedir"
 ## Variables.  ##
 ## ----------- ##
 
-# Determine the version from the latest component of the tag. This will
-# ease ordering.
 CONFIGURATION=$BUILDFARM_OS-$BUILDFARM_ARCH-$BUILDFARM_COMPILER
 # If we are in release mode, do not tell it, the final users won't care.
 # Otherwise, add "-debug".
 test "$BUILDFARM_MODE" != "release" &&
   CONFIGURATION="$CONFIGURATION-$BUILDFARM_MODE"
 
-version=$(cd "$DIR_SOURCE" && git describe | sed -e "s,^preview/,,;s,/,-,g")
-
 # The SDK package.
-urbi_sdk=$BUILDFARM_PROJECT-$CONFIGURATION
+urbi_sdk=$BUILDFARM_PROJECT-$SHA1-$CONFIGURATION
 # The doc only package.
-urbi_doc=${BUILDFARM_PROJECT%-sdk}-doc-$version
+urbi_doc=${BUILDFARM_PROJECT%-sdk}-doc-$SHA1
 # The SDK package, without the doc.
 urbi_sdk_no_doc=$urbi_sdk-no-doc
 # The runtime package, i.e., without doc etc.
@@ -302,7 +281,7 @@ tree_copy "$DIR_INSTALL/$prefix" "$packagedir"
     rm -rf README.txt include libexec share/doc)
 
 # 5. Source tarball.
-tarname=$BUILDFARM_PROJECT-$version.tar.bz2
+tarname=$BUILDFARM_PROJECT-$SHA1.tar.bz2
 if test -f $DIR_BUILD/$tarname; then
   cp -v $DIR_BUILD/$tarname $updir/$tarname.tmp
   mv $updir/$tarname.tmp $updir/$tarname
@@ -328,7 +307,7 @@ do
   case $BUILDFARM_OS in (windows)
     delegate="$DIR_SOURCE/buildfarm/make-installer"
     # This is the expected output from this delegate.
-    exe=${dir%-$BUILDFARM_MODE}.exe
+    exe=${pack%-$BUILDFARM_MODE}.exe
     "$delegate" "$archivedir/$pack"
     # The delegate might not create the installer, if it was run
     # before its peer.

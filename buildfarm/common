@@ -78,22 +78,51 @@ tree_copy ()
 ## Variables.  ##
 ## ----------- ##
 
+# ------ #
+# Host.  #
+# ------ #
+
 # Used to skip tests.
 export BUILDFARM_HOSTNAME=$(hostname | sed -e 's/\..*//')
 
-# Where we make a temporary install before going into DIR_INSTALL.
-# See buildfarm/install.
-export DIR_STAGE="$(dirname "$DIR_INSTALL")/stage"
+# --------- #
+# Package.  #
+# --------- #
 
-# Where to publish the result (in share/).
-sharedir=$HOME/share
-DIR_DEST=$sharedir/built/$BUILDFARM_PROJECT
-
+# The full version of the package, with SHA1.
+#
+# Make a slight effort so that instead of 2.2-8-g9b02553 we get
+# 2.2-008-g9b02553, which is better with "ls".  Always show the sha1
+# (--long) so that when we use repeatedly the same tag, tarballs with
+# the same name are *not* stored at the same place.
+SHA1=$(cd "$DIR_SOURCE" &&
+       git describe --long |
+         perl -ne '
+  if (m{^(?:.*/)?(.*)-(\d+)-(g[\da-f]+)$})
+  {
+    printf "%s-%03d-%s\n", $1, $2, $3;
+  }
+  elsif (m{^(?:.*/)?(.*)$})
+  {
+    printf "%s\n", $1;
+  }')
+test -n "$SHA1" || SHA1=$(cd "$DIR_SOURCE" && git rev-parse HEAD)
 
 # This --prefix, /usr, is chosen so that the Debian packages can use
 # our builds.
 prefix=/usr
 
+
+# ------------- #
+# Directories.  #
+# ------------- #
+
+# Where we make a temporary install before going into DIR_INSTALL.
+# See buildfarm/install.
+export DIR_STAGE=$(dirname "$DIR_INSTALL")/stage
+
+sharedir=$HOME/share
+export DIR_DEST=$sharedir/built/$BUILDFARM_PROJECT
 
 ## --------------------- ##
 ## Basic sanity checks.  ##
