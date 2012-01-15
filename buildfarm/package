@@ -205,7 +205,7 @@ urbi_sdk=$BUILDFARM_PROJECT-$SHA1-$CONFIGURATION
 # The doc only package.
 urbi_doc=${BUILDFARM_PROJECT%-sdk}-doc-$SHA1
 # The SDK package, without the doc.
-urbi_sdk_no_doc=$urbi_sdk-no-doc
+urbi_sdk_no_doc=$(echo "$urbi_sdk" | sed -e 's/urbi-sdk/urbi-sdk-no-doc/')
 # The runtime package, i.e., without doc etc.
 urbi_runtime=$(echo "$urbi_sdk" | sed -e 's/urbi-sdk/urbi-runtime/')
 
