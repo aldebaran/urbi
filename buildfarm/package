@@ -38,31 +38,39 @@ make_tarball ()
   #
   # Build a MANIFEST.txt with the list of files to install into the
   # final destination.
+  local here
   here=$(pwd)
   cd "$dir"
     find . -type f -print |
       sed -e 's,^\./,,' |
       xargs $MD5SUM \
-      >"$tmp/MANIFEST.txt"
-  cd $here
-  xmv $tmp/MANIFEST.txt "$dir"
+      >"$DIR_PACKAGES/MANIFEST.txt"
+  cd "$here"
+  xmv $DIR_PACKAGES/MANIFEST.txt "$dir"
 
   # Force mode 755/644 on all files.
   chmod -R a+rX "$dir"
 
   # Create archives.  Don't be verbose for each one, it clutters the web
   # logs (and they take too long to load).
+  local up
+  up=$(dirname "$dir")
+  local base
+  base=$(basename "$dir")
+  cd "$up"
   case $BUILDFARM_OS in
     (windows)
-      make_tarball_res=$dir.zip
-      zip -r -q "$make_tarball_res.tmp" "$dir"
+      make_tarball_res=$base.zip
+      zip -r -q "$make_tarball_res.tmp" "$base"
       ;;
 
     (*)
-      make_tarball_res=$dir.tar.bz2
-      tar --owner root -cjf "$make_tarball_res.tmp" "$dir"
+      make_tarball_res=$base.tar.bz2
+      tar --owner root -cjf "$make_tarball_res.tmp" "$base"
       ;;
   esac
+  cd $here
+  make_tarball_res=$up/$make_tarball_res
 
   # Make the tarball in two steps to ensure atomicity: some of the
   # tarballs are to be uncompressed as soon as they exist.
@@ -134,7 +142,7 @@ check_md5 ()
 
 # publish FILE-OR-DIR
 # -------------------
-# Publish a tarball in DIR_DEST.  Check md5sum.
+# Publish a tarball in DIR_ARCHIVE.  Check md5sum.
 publish ()
 {
   # $pack: the package (tarball/zip) to publish.
@@ -146,18 +154,24 @@ publish ()
   fi
 
   # Compute the md5sum of the file.
-  $MD5SUM "$pack" >"$pack.md5"
+  local here
+  here=$(pwd)
+  local base
+  base=$(basename "$pack")
+  cd $(dirname "$pack")
+    $MD5SUM "$base" >"$base.md5"
+  cd $here
 
   # Publish the archive and its md5sum.
-  move_into "$archivedir" "$pack" "$pack.md5"
+  move_into "$DIR_ARCHIVE" "$pack" "$pack.md5"
 
   # Make sure we managed to publish properly.
-  check_md5 $archivedir $pack
+  check_md5 $DIR_ARCHIVE "$base"
 
   # This looks useless, but it's an attempt to eliminate
   # nondeterministic problems of availability of shared directories
   # on OS X.
-  ls "$DIR_DEST" >/dev/null
+  ls "$DIR_ARCHIVE" >/dev/null
 }
 
 
@@ -170,35 +184,10 @@ MD5SUM=$find_prog_res
 test -n "$MD5SUM" ||
   fatal "cannot find md5sum"
 
-: ${TMPDIR=/tmp}
-
-# Create a temporary directory where to package, and be ready to clear
-# it on success/failure.
-cleanup ()
-{
-  status=$?
-  cd /
-  rm -rf $tmp
-  exit $status
-}
-tmp=$(mktemp -d "$TMPDIR/buildfarm_package.XXXXXX")
-trap cleanup 0 1 2 13 15
-
-cd "$tmp"
-pwd
-
-# Where to install the packages.
-case $SHA1 in
-  # We could automatically install releases there, but it is feared
-  # that this is too much automation, the maintainer should do that.
-  # She might want also to get rid of the sha1 part when copying for
-  # archives/ to releases/.
-  #
-  # (*-000-g*) archivedir="$DIR_DEST/releases/$SHA1";;
-  (*)        archivedir="$DIR_DEST/archives/$SHA1";;
-esac
-export archivedir
-mkdir -p "$archivedir"
+# The directories which will receive packages to publish.
+rm -rf $DIR_PACKAGES
+mkdir -p $DIR_PACKAGES
+mkdir -p "$DIR_ARCHIVE"
 
 
 ## ----------- ##
@@ -232,23 +221,23 @@ name=$urbi_sdk
 # inline its contents in this package.  Otherwise make a package
 # without the doc, but with a name that states it.
 docsrc="$DIR_INSTALL/$prefix/share/doc/urbi-sdk"
-updir=.
 if test -f "$docsrc/urbi-sdk.pdf"; then
   stderr "Documentation is compiled, shipping"
-  tree_copy "$docsrc" "$updir/$urbi_doc"
+  tree_copy "$docsrc" "$DIR_PACKAGES/$urbi_doc"
   # Do not leave the COMPONENTS.txt file, which is architecture
   # specific.  It would override the existing one from the package
   # into which the documentation will be copied.
-  rm "$updir/$urbi_doc/COMPONENTS.txt"
+  rm "$DIR_PACKAGES/$urbi_doc/COMPONENTS.txt"
 else
-  stderr "Documentation is NOT compiled, looking for it in $archivedir"
-  if test -f "$archivedir/$urbi_doc.tar.bz2"; then
+  stderr "Documentation is NOT compiled, looking for it in $DIR_ARCHIVE"
+  ls -l "$DIR_ARCHIVE"
+  if test -f "$DIR_ARCHIVE/$urbi_doc.tar.bz2"; then
     stderr "Documentation found, installing"
     # Do not remove what's in $docsrc, as we might remove architecture
     # specific files, such as COMPONENTS.txt.
-    tar -C "$docsrc"  --strip=1 -xf "$archivedir/$urbi_doc.tar.bz2"
+    tar -C "$docsrc" --strip=1 -xf "$DIR_ARCHIVE/$urbi_doc.tar.bz2"
     # So remove the package without doc if there is one.
-    rm -f "$archivedir/$urbi_sdk_no_doc".*
+    rm -f "$DIR_ARCHIVE/$urbi_sdk_no_doc".*
   else
     # We couldn't find the doc, and it's not our job to compile it.
     # So, instead of blocking the generation of packages, generate
@@ -262,17 +251,17 @@ fi
 #
 # Create a fresh directory in which we put the subdirectories of the
 # $DIR_INSTALL directory.
-tree_copy "$DIR_INSTALL/$prefix" "$updir/$name"
+tree_copy "$DIR_INSTALL/$prefix" "$DIR_PACKAGES/$name"
 
 # 3. Description.
 #
 # Extract the file that describes the contents of the package.
-cp "$docsrc/COMPONENTS.txt" "$updir/$urbi_sdk.txt"
+cp "$docsrc/COMPONENTS.txt" "$DIR_PACKAGES/$urbi_sdk.txt"
 
 # 4. Prebuilt-Urbi Runtime.
 #
 # Create a run-time version of the package.
-packagedir="$updir/$urbi_runtime"
+packagedir="$DIR_PACKAGES/$urbi_runtime"
 tree_copy "$DIR_INSTALL/$prefix" "$packagedir"
 # Keep only the bin, lib, and share/urbi directories.  Don't forget
 # bin is lib on Windows.  Leave LICENSE.txt since it is used by
@@ -283,36 +272,36 @@ tree_copy "$DIR_INSTALL/$prefix" "$packagedir"
 # 5. Source tarball.
 tarname=$BUILDFARM_PROJECT-$SHA1.tar.bz2
 if test -f $DIR_BUILD/$tarname; then
-  cp -v $DIR_BUILD/$tarname $updir/$tarname.tmp
-  mv $updir/$tarname.tmp $updir/$tarname
+  cp -v $DIR_BUILD/$tarname $DIR_PACKAGES/$tarname.tmp
+  mv $DIR_PACKAGES/$tarname.tmp $DIR_PACKAGES/$tarname
 fi
-pwd
+
 
 
 ## --------------------- ##
 ## Upload the packages.  ##
 ## --------------------- ##
 
-ls -la
-packs=$(ls)
+ls -la $DIR_PACKAGES
+packs=$(ls $DIR_PACKAGES)
 test -n "$packs" ||
   fatal "The project's package script didn't create anything"
 
 # Iterate over packaged content.
 for pack in $packs
 do
-  publish "$pack"
+  publish "$DIR_PACKAGES/$pack"
 
   # On Windows, make the installers.
   case $BUILDFARM_OS in (windows)
     delegate="$DIR_SOURCE/buildfarm/make-installer"
     # This is the expected output from this delegate.
     exe=${pack%-$BUILDFARM_MODE}.exe
-    "$delegate" "$archivedir/$pack"
+    "$delegate" "$DIR_ARCHIVE/$pack"
     # The delegate might not create the installer, if it was run
     # before its peer.
-    if test -f "$archivedir/$exe"; then
-      check_md5 "$archivedir" "$exe"
+    if test -f "$DIR_ARCHIVE/$exe"; then
+      check_md5 "$DIR_ARCHIVE" "$exe"
     fi
     ;;
   esac

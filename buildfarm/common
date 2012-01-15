@@ -121,8 +121,24 @@ prefix=/usr
 # See buildfarm/install.
 export DIR_STAGE=$(dirname "$DIR_INSTALL")/stage
 
+# Where to put the packages that will be published.
+export DIR_PACKAGES=$(dirname "$DIR_INSTALL")/packages
+
+# Where to publish the result (in share/).
 sharedir=$HOME/share
 export DIR_DEST=$sharedir/built/$BUILDFARM_PROJECT
+
+# Where to publish the packages.
+case $SHA1 in
+  # We could automatically install releases there, but it is feared
+  # that this is too much automation, the maintainer should do that.
+  # She might want also to get rid of the sha1 part when copying for
+  # archives/ to releases/.
+  #
+  # (*-000-g*) DIR_ARCHIVE="$DIR_DEST/releases/$SHA1";;
+  (*)        export DIR_ARCHIVE="$DIR_DEST/archives/$SHA1";;
+esac
+
 
 ## --------------------- ##
 ## Basic sanity checks.  ##
