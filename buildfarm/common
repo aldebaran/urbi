@@ -13,7 +13,7 @@ stderr ()
   for i
   do
     echo "$i"
-  done | sed -e "s,^,$0: ,g" >&2
+  done | sed -e "s,^,$me: ,g" >&2
   eval "$env"
 }
 
