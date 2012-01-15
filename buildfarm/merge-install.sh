@@ -1,6 +1,6 @@
 #! /bin/sh
 
-# Merge multiple (2) urbisdk tarballs (one debug and one release)
+# Merge multiple (2) Urbi SDK tarballs (one debug and one release)
 # and run the installer generator.
 
 set -e
@@ -151,7 +151,7 @@ verb "running '$installer' /D$compiler /DVERSION=$version $installerargs"
 wine "$installer" "/D$compiler" "/DVERSION=$version" $installerargs
 
 if test -n "$output"; then
-  mv "$dir/merge/gostai-engine-runtime.exe" "$output"
+  xmv "$dir/merge/gostai-engine-runtime.exe" "$output"
 else
   verb "Result in $dir"
 fi

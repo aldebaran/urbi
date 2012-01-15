@@ -3,23 +3,6 @@
 set -e
 . $(dirname "$0")/common
 
-# xmv ARG...
-# ----------
-# Wrapper around "mv" that tries to do things three times, then forget
-# about it.  This is because sometimes we get "Input/output error"
-# with WebDAV, which is a huge loss of time on the BF.
-xmv ()
-{
-  local i
-  for i in 1 2 3
-  do
-    if mv "$@"; then
-      return 0
-    fi
-  done
-  fatal "cannot: mv $*"
-}
-
 
 # make_tarball DIRECTORY
 # ----------------------

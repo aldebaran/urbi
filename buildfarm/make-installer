@@ -50,14 +50,6 @@ get_installer_name ()
 }
 
 
-# extract the version out of the upname.
-get_version()
-{
-  echo $upname | \
-      sed 's,.*/[^0-9]*\([-0-9.]\+\)\(-g[0-9a-f]\+\)\?-.*,\1\2,'
-}
-
-
 ## ----------- ##
 ## Variables.  ##
 ## ----------- ##
@@ -82,9 +74,10 @@ case $BUILDFARM_OS in
 esac
 
 tools=$HOME/share/tools
+# We need vcxx-2005, not vcxx2005.
+compiler=$(echo "$BUILDFARM_COMPILER" | perl -pe 's/(vcxx)(\d+)/$1-$2/')
 # vcredist has name with vcxx-2005, not vcxx2005.
-vcredist=$(echo "$tools/vcredist/vcredist_x86-$BUILDFARM_COMPILER.exe" |
-            perl -pe 's/(vcxx)(\d+)/$1-$2/')
+vcredist=$tools/vcredist/vcredist_x86-$compiler.exe
 gostai_console="$tools/gostai-console/gostai-console-2.6-win32.exe"
 gostai_editor="$tools/gostai-editor/gostai-editor-2.5-win32.exe"
 for i in vcredist gostai_console gostai_editor
@@ -97,10 +90,6 @@ do
   test -s "$file" ||
     fatal "empty file $i: $val"
 done
-
-version=$(get_version)
-updir=$(dirname "$upname")
-
 
 
 ## ------ ##
@@ -122,8 +111,8 @@ if test -r "$my_zip"                            \
   $DIR_SOURCE/buildfarm/merge-install.sh                \
       -v                                                \
       --vcredist "$vcredist"                            \
-      --comp "$BUILDFARM_COMPILER"                      \
-      --version "$version"                              \
+      --compiler "$compiler"                            \
+      --version "$SHA1"                                 \
       --templateloc "$DIR_SOURCE/share/templates"       \
       --installscriptloc "$DIR_SOURCE/share/installer/" \
       --gostai-console "$gostai_console"                \
