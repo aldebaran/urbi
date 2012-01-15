@@ -63,14 +63,12 @@ get_version()
 ## ----------- ##
 
 # Check that we have all the envvars we expect.
-for v in BUILDFARM_OS BUILDFARM_MODE BUILDFARM_COMPILER \
-         DIR_SOURCE
+for v in BUILDFARM_COMPILER BUILDFARM_MODE BUILDFARM_OS \
+         DIR_PACKAGES DIR_SOURCE
 do
   eval "test -n \$$v" ||
     fatal "\$$v is not set"
 done
-
-: ${TMPDIR=/tmp}
 
 test $# = 1 ||
   fatal "invalid argument number: $#, expecting 1"
@@ -101,18 +99,6 @@ do
 done
 
 version=$(get_version)
-
-cleanup ()
-{
-  status=$?
-  cd /
-  ls -l $tmp
-  rm -rf $tmp
-  exit $?
-}
-tmp=$(mktemp -d "$TMPDIR/kernel-make-installer.XXXXXX")
-trap cleanup 0 1 2 13 15
-
 updir=$(dirname "$upname")
 
 
@@ -142,14 +128,6 @@ if test -r "$my_zip"                            \
       --installscriptloc "$DIR_SOURCE/share/installer/" \
       --gostai-console "$gostai_console"                \
       --gostai-editor "$gostai_editor"                  \
-      --output "$tmp/$installer"                        \
+      --output "$DIR_PACKAGES/$installer"               \
       "$my_zip" "$other_zip"
-
-  # Upload the installer and its MD5.  Be sure to generate an MD5sum
-  # file that does not include a path: cd into it.
-  here=$(pwd)
-  cd $tmp
-  $MD5SUM "$installer" >"$installer.md5"
-  cp "$installer" "$installer.md5" "$updir"
-  cd $here
 fi
