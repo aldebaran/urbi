@@ -3,4 +3,7 @@
 set -e
 . $(dirname "$0")/common
 
-cd "$DIR_BUILD" && make -j ${JOBS}
+# It may look stupid, but we sometimes have concurrency issues.
+cd "$DIR_BUILD"
+make -j ${JOBS}
+make
