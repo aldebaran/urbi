@@ -105,26 +105,33 @@ libs:
 
 doc_host = downloads@www.gostai.com
 doc_upload_dir = gostai.com-downloads
-doc_dir = $(doc_upload_dir)/urbi/$(PACKAGE_VERSION)
+doc_dir = $(doc_upload_dir)/urbi/$(PACKAGE_VERSION)/doc
 install-doc/%:
 	$(MAKE) $(AM_MAKEFLAGS)			\
 	  doc_host='$(doc_host)'		\
-	  doc_dir='$(doc_dir)'			\
+	  doc_dir='$(doc_dir).new'		\
 	  -C $* install-doc
+## Doxygen creates *.md5 and *.map files that serve only for
+## incremental builds.  Do not propagate them, they are not needed to
+## browse the documentation
+## (http://osdir.com/ml/text.doxygen.general/2005-04/msg00064.html).
+RSYNCFLAGS =					\
+  --verbose --checksum --recursive --compress	\
+  --exclude '*.md5' --exclude '*.map'
 install-doc:
-	ssh $(doc_host)						\
-	 'rm -rf $(doc_dir)/doc.new $(doc_dir)/doc.old &&	\
-	  if test -d $(doc_dir)/doc; then			\
-	    cp -r $(doc_dir)/doc $(doc_dir)/doc.new;		\
-	  else							\
-	    mkdir -p $(doc_dir)/doc.new;			\
-	  fi'
-	$(MAKE) $(AM_MAKEFLAGS) install-doc/doc install-doc/sdk-remote
 	ssh $(doc_host)					\
-	  'cd $(doc_dir) &&				\
-	   { test ! -e doc || mv doc doc.old; } &&	\
-	   mv doc.new doc &&				\
-	   rm -rf doc.old'
+	 'rm -rf $(doc_dir).new $(doc_dir).old &&	\
+	  if test -d $(doc_dir); then			\
+	    cp -r $(doc_dir) $(doc_dir).new;		\
+	  else						\
+	    mkdir -p $(doc_dir).new;			\
+	  fi'
+	$(MAKE) $(AM_MAKEFLAGS) RSYNCFLAGS='$(RSYNCFLAGS)'	\
+	  install-doc/doc install-doc/sdk-remote
+	ssh $(doc_host)							\
+	  '{ test ! -e $(doc_dir) || mv $(doc_dir) $(doc_dir).old; } &&	\
+	   mv $(doc_dir).new $(doc_dir) &&				\
+	   rm -rf $(doc_dir).old'
 ## FIXME: Race condition on this script.  It would be better to
 ## have the script run ssh rather that the converse.
 	scp $(build_aux_dir)/bin/symlink-to-latest $(doc_host):/tmp
@@ -218,8 +225,7 @@ BUILT_SOURCES += 				\
   scripts/bf-post-install			\
   scripts/common.sh				\
   scripts/install-boost				\
-  scripts/install-java				\
-  scripts/package
+  scripts/install-java
 relocatable: scripts/bf-post-install
 	$<
 

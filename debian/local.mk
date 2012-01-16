@@ -7,7 +7,8 @@
 ## See the LICENSE file for more information.
 
 URBI_VERSION = $(shell echo $(VERSION) | sed -e 's/-/./g')
-DEBIAN_PACKAGE_NAME = urbi_$(URBI_VERSION)
+## The root of the Debian packages.
+PACKAGE_DEBIAN = urbi_$(URBI_VERSION)
 DEB_ARCH = $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
 .PHONY: packages deb rpm
@@ -21,28 +22,29 @@ DEBIAN_GENERATED =				\
   debian/urbi.install
 
 deb:
-	$(AM_V_GEN)for i in $(DEBIAN_GENERATED);			\
-	do								\
-	  sed								\
-	    -e 's/[@]VERSION@/$(URBI_VERSION)/'				\
-	    -e 's/[@]DEBIAN_PACKAGE_NAME@/$(DEBIAN_PACKAGE_NAME)/'	\
-	    -e 's,[@]PREFIX@,$(prefix),'				\
-	    $(srcdir)/$$i.in > $$i.tmp &&				\
-	  mv $$i.tmp $$i;						\
+	$(AM_V_GEN)$(MAKE) distdir
+	$(AM_V_at)mkdir -p debian
+	$(AM_V_at)for i in $(DEBIAN_GENERATED);			\
+	do							\
+	  sed							\
+	    -e 's/[@]VERSION@/$(URBI_VERSION)/'			\
+	    -e 's/[@]PACKAGE_DEBIAN@/$(PACKAGE_DEBIAN)/'	\
+	    -e 's,[@]PREFIX@,$(prefix),'			\
+	    $(srcdir)/$$i.in > $$i.tmp &&			\
+	  mv $$i.tmp $(distdir)/$$i;				\
 	done
-	$(MAKE) distdir
-	rm -rf $(DEBIAN_PACKAGE_NAME)
-	mv $(distdir) $(DEBIAN_PACKAGE_NAME)
-	tardir=$(DEBIAN_PACKAGE_NAME) && $(am__tar) | bzip2 -9 -c >$(DEBIAN_PACKAGE_NAME).tar.bz2
-	cp $(DEBIAN_PACKAGE_NAME).tar.bz2 $(DEBIAN_PACKAGE_NAME).orig.tar.bz2
-	cd $(DEBIAN_PACKAGE_NAME) && dpkg-buildpackage
+	rm -rf $(PACKAGE_DEBIAN)
+	mv $(distdir) $(PACKAGE_DEBIAN)
+	tardir=$(PACKAGE_DEBIAN) && $(am__tar) | bzip2 -9 -c >$(PACKAGE_DEBIAN).tar.bz2
+	cp $(PACKAGE_DEBIAN).tar.bz2 $(PACKAGE_DEBIAN).orig.tar.bz2
+	cd $(PACKAGE_DEBIAN) && dpkg-buildpackage
 
 rpm:
 	fakeroot -- alien -r urbi_$(URBI_VERSION)_$(DEB_ARCH).deb
-	fakeroot -- alien -r urbi-doc_$(URBI_VERSION)_$(DEB_ARCH).deb
-	fakeroot -- alien -r urbi-dev_$(URBI_VERSION)_$(DEB_ARCH).deb
 	mv urbi-$(URBI_VERSION)-2.$(DEB_ARCH).rpm urbi-$(URBI_VERSION)_$(DEB_ARCH).rpm
+	fakeroot -- alien -r urbi-doc_$(URBI_VERSION)_$(DEB_ARCH).deb
 	mv urbi-doc-$(URBI_VERSION)-2.$(DEB_ARCH).rpm urbi-doc-$(URBI_VERSION)_$(DEB_ARCH).rpm
+	fakeroot -- alien -r urbi-dev_$(URBI_VERSION)_$(DEB_ARCH).deb
 	mv urbi-dev-$(URBI_VERSION)-2.$(DEB_ARCH).rpm urbi-dev-$(URBI_VERSION)_$(DEB_ARCH).rpm
 
 EXTRA_DIST +=					\
@@ -54,6 +56,5 @@ EXTRA_DIST +=					\
   debian/copyright				\
   debian/docs					\
   debian/info					\
-  debian/rules					\
   debian/source/format				\
   debian/urbi-doc.docs

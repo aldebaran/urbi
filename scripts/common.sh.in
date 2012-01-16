@@ -50,19 +50,6 @@ symstack_cp ()
 }
 
 
-# tree_copy SOURCE DEST
-# ---------------------
-# Copy a file-system tree from SOURCE to DEST.  Preserve rights etc.
-# DEST is cleared first.
-tree_copy ()
-{
-  local source=$1
-  local dest=$2
-  rm -rf "$dest"
-  mkdir -p "$dest"
-  tar -C "$source" -cf - . | tar -C "$dest" -xpBf -
-}
-
 ## ----------- ##
 ## Variables.  ##
 ## ----------- ##

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, Gostai S.A.S.
+ * Copyright (C) 2011-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -127,16 +127,16 @@ unsigned int Fusion::addSource(UVar& src, const std::string& dst)
   return vars.size()-1;
 }
 
-#define SETTER(name, ...)                          \
-void Fusion::name(unsigned int uid, bool enable)   \
-{                                                  \
-  if (uid >= vars.size())                          \
-    throw std::runtime_error("uid out of range");  \
-  if (vars[uid]->data().name == enable)            \
-    return;                                        \
-  vars[uid]->data().name = enable;                 \
-  __VA_ARGS__;                                     \
-}
+#define SETTER(Name, ...)                               \
+  void Fusion::Name(unsigned int uid, bool enable)      \
+  {                                                     \
+    if (uid >= vars.size())                             \
+      throw std::runtime_error("uid out of range");     \
+    if (vars[uid]->data().Name == enable)               \
+      return;                                           \
+    vars[uid]->data().Name = enable;                    \
+    __VA_ARGS__;                                        \
+  }
 SETTER(trigger,
        if (enable)
          UNotifyChange(*vars[uid], &Fusion::onChange);

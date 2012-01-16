@@ -1,48 +1,19 @@
 #! /bin/sh
 
-# Merge multiple (2) urbisdk tarballs (one debug and one release)
+# Merge multiple (2) Urbi SDK tarballs (one debug and one release)
 # and run the installer generator.
-set -e
-set -x
 
-me=$(basename "$0")
+set -e
+. $(dirname "$0")/common
+set -x
 
 ## ----------- ##
 ## Functions.  ##
 ## ----------- ##
 
-stderr ()
-{
-  local i
-  for i
-  do
-    echo "$i"
-  done | sed -e "s/^/$me: /" >&2
-}
-
-error ()
-{
-  local status="$1"
-  shift
-  local first="error: $1"
-  shift
-  stderr "$first" "$@"
-  exit $status
-}
-
-fatal ()
-{
-  error 1 "$@"
-}
-
 verb ()
 {
   if $verbose; then stderr "$@"; fi
-}
-
-ifverb ()
-{
-  if $verbose; then echo $1 ; else echo $2 ; fi
 }
 
 usage ()
@@ -51,27 +22,27 @@ usage ()
  usage: $0 [options]
 
 Options:
-  -i, --installprogram          Name of installer generator program
-                                [$installer]
-  -a, --installarguments        Arguments for installer
-                                [$installargs]
-  -s, --installscriptloc        Directory of installer.nsh
-                                [$installscriptloc]
-  -t, --templateloc             Directory with templates
-                                [$templateloc]
-  --vcredist                    vcredist binary
-                                [$vcredist]
-  --comp                        version of visual studio
-                                [$comp]
-  --version                     version of Urbi
-                                [$version]
-  --gostai-console		Gostai console installer
-				[$gostaiconsole]
-  --gostai-editor		Gostai editor installer
-				[$gostaieditor]
-  -d, --debug                   Debug mode
-  -v, --verbose                 Verbose mode
-  -o, --output                  Output file
+  -i, --installprogram    name of installer generator program
+                          [$installer]
+  -a, --installarguments  arguments for installer
+                          [$installargs]
+  -s, --installscriptloc  directory of installer.nsh
+                          [$installscriptloc]
+  -t, --templateloc       directory with templates
+                          [$templateloc]
+  --vcredist              vcredist binary
+                          [$vcredist]
+  --compiler              version of visual studio
+                          [$compiler]
+  --version               version of Urbi
+                          [$version]
+  --gostai-console	  Gostai console installer
+			  [$gostaiconsole]
+  --gostai-editor	  Gostai editor installer
+			  [$gostaieditor]
+  -d, --debug             debug mode
+  -v, --verbose           verbose mode
+  -o, --output            output file
 EOF
   exit 0
 }
@@ -79,7 +50,7 @@ EOF
 files=
 verbose=false
 vcredist="/home/build/share/tools/vcredist/vcredist_x86-vcxx-2008.exe"
-comp="vcxx-2008"
+compiler="vcxx-2008"
 version=
 installer="$HOME/.wine/drive_c/Program Files/NSIS/makensis.exe"
 installerargs="/NOCD share/installer/installer.nsh"
@@ -99,9 +70,9 @@ do
   (-s|--installscriptloc) shift; installscriptloc=$1 ;;
   (-t|--templateloc) shift; templateloc=$1;;
   (--vcredist) shift; vcredist=$1;;
-  (--comp) shift;
+  (--comp | --compiler) shift;
      # We need vcxx-2005, not vcxx2005.
-     comp=$(echo "$1" | perl -pe 's/(vcxx)(\d+)/$1-$2/');;
+     compiler=$(echo "$1" | perl -pe 's/(vcxx)(\d+)/$1-$2/');;
   (--version) shift; version=$1;;
   (--gostai-console) shift; gostaiconsole=$1;;
   (--gostai-editor) shift; gostaieditor=$1;;
@@ -113,10 +84,8 @@ do
   shift
 done
 
-if test "$(echo $files |wc -w)" -ne 2; then
-  echo "Expected exactly two files."
-  exit 1
-fi
+test "$(echo $files |wc -w)" -eq 2 ||
+  fatal "expected exactly two files"
 
 test -r "$vcredist" ||
   fatal "cannot read $vcredist"
@@ -135,7 +104,7 @@ mkdir merge
 cd temp
 for f in $files; do
   verb "merging $f"
-  unzip $(ifverb "" -q) $f
+  unzip -q $f
   basedir=$(echo *)
   case $f in
     (*debug*)
@@ -178,11 +147,11 @@ if test -n "templateloc"; then
   ln -s $templateloc share/templates
 fi
 
-verb "running '$installer' /D$comp /DVERSION=$version $installerargs"
-wine "$installer" "/D$comp" "/DVERSION=$version" $installerargs
+verb "running '$installer' /D$compiler /DVERSION=$version $installerargs"
+wine "$installer" "/D$compiler" "/DVERSION=$version" $installerargs
 
 if test -n "$output"; then
-  mv "$dir/merge/gostai-engine-runtime.exe" "$output"
+  xmv "$dir/merge/gostai-engine-runtime.exe" "$output"
 else
   verb "Result in $dir"
 fi

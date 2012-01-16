@@ -76,5 +76,4 @@ esac
 
 case $BUILDFARM_HOSTNAME in
   (bf-2) make_ distcheck-buildfarm;;
-  (bf-3) make_ packages;;
 esac

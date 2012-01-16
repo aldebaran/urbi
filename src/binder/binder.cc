@@ -299,34 +299,23 @@ namespace binder
   void
   Binder::visit(const ast::Call* input)
   {
-    libport::Symbol name = input->name_get();
     ast::loc loc = input->location_get();
+    libport::Symbol name = input->name_get();
+    unsigned depth = routine_depth_get(name);
+    bool local = depth && input->target_implicit();
 
+    // If this is a qualified call, nothing particular to do
+    if (local)
     {
-      bool implicit;
-      unsigned depth;
-      // If this is a qualified call, nothing particular to do
-      if ((implicit = input->target_implicit())
-          && (depth = routine_depth_get(name)))
-      {
-        ast::rLocal res =
-          new ast::Local(loc, name,
-			 maybe_recurse_collection(input->arguments_get()),
-			 routine_depth_ - depth);
-        link_to_declaration(input, res, name, depth);
-        result_ = res;
-      }
-      else
-        super_type::visit(input);
+      ast::rLocal res =
+        new ast::Local(loc, name,
+                       maybe_recurse_collection(input->arguments_get()),
+                       routine_depth_ - depth);
+      link_to_declaration(input, res, name, depth);
+      result_ = res;
     }
-
-    ast::exps_type* args = 0;
-    if (ast::rCall res = result_.unsafe_cast<ast::Call>())
-      args = res->arguments_get();
-    else if (ast::rLocal res = result_.unsafe_cast<ast::Local>())
-      args = res->arguments_get();
-    // FIXME: What????
-    (void) args;
+    else
+      super_type::visit(input);
   }
 
 

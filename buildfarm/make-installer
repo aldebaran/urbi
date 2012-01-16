@@ -1,54 +1,12 @@
 #! /bin/sh
 
 set -e
+. $(dirname "$0")/common
 set -x
-
-me=$(basename "$0")
 
 ## ----------- ##
 ## Functions.  ##
 ## ----------- ##
-
-stderr ()
-{
-  local i
-  for i
-  do
-    echo "$i"
-  done | sed -e "s/^/$me: /" >&2
-}
-
-error ()
-{
-  local status="$1"
-  shift
-  local first="error: $1"
-  shift
-  stderr "$first" "$@"
-  exit $status
-}
-
-fatal ()
-{
-  error 1 "$@"
-}
-
-# find_prog EXE...
-# ----------------
-# Set find_prog_exe to the first EXE found in the path, or set it to
-# empty.
-find_prog ()
-{
-  find_prog_res=
-  local i
-  for i in "$@"
-  do
-    if $i --version >/dev/null 2>&1; then
-      find_prog_res=$i
-      break
-    fi
-  done
-}
 
 # find_dual ZIP
 # -------------
@@ -85,18 +43,10 @@ get_installer_name ()
   local f="$1"
   local nod="no-doc"
 
-  f=${f/-$MODE/}
+  f=${f/-$BUILDFARM_MODE/}
   f=${f/-$nod/}
   f=${f/.zip/.exe}
   echo "$f"
-}
-
-
-# extract the version out of the upname.
-get_version()
-{
-  echo $upname | \
-      sed 's,.*/[^0-9]*\([-0-9.]\+\)\(-g[0-9a-f]\+\)\?-.*,\1\2,'
 }
 
 
@@ -104,35 +54,30 @@ get_version()
 ## Variables.  ##
 ## ----------- ##
 
-: ${TMPDIR=/tmp}
+# Check that we have all the envvars we expect.
+for v in BUILDFARM_COMPILER BUILDFARM_MODE BUILDFARM_OS \
+         DIR_PACKAGES DIR_SOURCE
+do
+  eval "test -n \$$v" ||
+    fatal "\$$v is not set"
+done
 
-case $# in
-  (8);;
-  (*) fatal "not enough arguments: $#, expecting 8";;
-esac
+test $# = 1 ||
+  fatal "invalid argument number: $#, expecting 1"
+upname=$1
 
-# Those would best be set through configure (except "updir"
-# which sets the destination).
-
-ARCH=$1       # ARM|x86|ppc
-OS=$2         # linux|windows|macos
-COMP=$3       # ex. gcc4
-MODE=$4       # [release|debug]_[static|dynamic]
-srcdir=$5
-builddir=$6
-DESTDIR=$7
-upname=$8
 
 # Do not produce anything if we are not working on windows builds.
-case $OS in
+case $BUILDFARM_OS in
   (windows) ;;
   (*) exit 0;;
 esac
 
 tools=$HOME/share/tools
+# We need vcxx-2005, not vcxx2005.
+compiler=$(echo "$BUILDFARM_COMPILER" | perl -pe 's/(vcxx)(\d+)/$1-$2/')
 # vcredist has name with vcxx-2005, not vcxx2005.
-vcredist=$(echo "$tools/vcredist/vcredist_x86-$COMP.exe" |
-            perl -pe 's/(vcxx)(\d+)/$1-$2/')
+vcredist=$tools/vcredist/vcredist_x86-$compiler.exe
 gostai_console="$tools/gostai-console/gostai-console-2.6-win32.exe"
 gostai_editor="$tools/gostai-editor/gostai-editor-2.5-win32.exe"
 for i in vcredist gostai_console gostai_editor
@@ -145,27 +90,6 @@ do
   test -s "$file" ||
     fatal "empty file $i: $val"
 done
-
-version=$(get_version)
-
-find_prog $MD5SUM gmd5sum md5sum
-MD5SUM=$find_prog_res
-test -n "$MD5SUM" ||
-  fatal "cannot find md5sum"
-
-cleanup ()
-{
-  status=$?
-  cd /
-  ls -l $tmp
-  rm -rf $tmp
-  exit $?
-}
-tmp=$(mktemp -d "$TMPDIR/kernel-make-installer.XXXXXX")
-trap cleanup 0 1 2 13 15
-
-updir=$(dirname "$upname")
-
 
 
 ## ------ ##
@@ -184,22 +108,15 @@ if test -r "$my_zip"                            \
   # My zip is the newest, do the merge-install.
 
   # Merge zips.
-  $srcdir/scripts/merge-install.sh -v                   \
+  $DIR_SOURCE/buildfarm/merge-install.sh                \
+      -v                                                \
       --vcredist "$vcredist"                            \
-      --comp "$COMP"                                    \
-      --version "$version"                              \
-      --templateloc "$srcdir/share/templates"           \
-      --installscriptloc "$srcdir/share/installer/"     \
+      --compiler "$compiler"                            \
+      --version "$SHA1"                                 \
+      --templateloc "$DIR_SOURCE/share/templates"       \
+      --installscriptloc "$DIR_SOURCE/share/installer/" \
       --gostai-console "$gostai_console"                \
       --gostai-editor "$gostai_editor"                  \
-      --output "$tmp/$installer"                        \
+      --output "$DIR_PACKAGES/$installer"               \
       "$my_zip" "$other_zip"
-
-  # Upload the installer and its MD5.  Be sure to generate an MD5sum
-  # file that does not include a path: cd into it.
-  here=$(pwd)
-  cd $tmp
-  $MD5SUM "$installer" >"$installer.md5"
-  cp "$installer" "$installer.md5" "$updir"
-  cd $here
 fi

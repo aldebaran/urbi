@@ -334,8 +334,7 @@ AC_CONFIG_FILES([Makefile src/Makefile])
 URBI_CONFIG_SCRIPTS([scripts/bf-post-install],
                     [scripts/common.sh],
                     [scripts/install-boost],
-                    [scripts/install-java],
-                    [scripts/package])
+                    [scripts/install-java])
 
 case $URBI_HOST_OS in
   (windows) URBI_CONFIG_SCRIPTS([urbi.bat]);;
@@ -356,23 +355,23 @@ AC_CONFIG_FILES([
       sdk-remote/src/tests/Makefile
 ])
 
-# URBI_CONFIG_WRAPPER(COMPONENT-NAME)
-# -----------------------------------
-# Create a testing wrapper for the COMPONENT-NAME.
+
+# URBI_CONFIG_WRAPPER(COMPONENT-NAME, TEMPLATE)
+# ---------------------------------------------
+# Create an SDK Remote testing wrapper for the COMPONENT-NAME
+# from TEMPLATE.
 m4_define([URBI_CONFIG_WRAPPER],
-[URBI_CONFIG_SCRIPTS([sdk-remote/src/tests/bin/$1:sdk-remote/src/tests/bin/wrapper.in])
-])
+[URBI_CONFIG_SCRIPTS(
+  [sdk-remote/src/tests/bin/$1:sdk-remote/src/tests/bin/$2])])
 
 # Prepare the umake wrappers.
-URBI_CONFIG_WRAPPER([umake])
-URBI_CONFIG_WRAPPER([umake-link])
-URBI_CONFIG_WRAPPER([umake-shared])
-URBI_CONFIG_WRAPPER([umake-java])
-URBI_CONFIG_SCRIPTS(
-  [sdk-remote/src/tests/bin/urbi-launch$EXEEXT:sdk-remote/src/tests/bin/urbi-launch.in],
-  [sdk-remote/src/tests/bin/urbi-launch-java:sdk-remote/src/tests/bin/urbi-launch.in])
-
-URBI_CONFIG_SCRIPTS([sdk-remote/src/tests/bin/urbi-send])
+URBI_CONFIG_WRAPPER([umake-java],         [wrapper.in])
+URBI_CONFIG_WRAPPER([umake-link],         [wrapper.in])
+URBI_CONFIG_WRAPPER([umake-shared],       [wrapper.in])
+URBI_CONFIG_WRAPPER([umake],              [wrapper.in])
+URBI_CONFIG_WRAPPER([urbi-launch$EXEEXT], [urbi-launch.in])
+URBI_CONFIG_WRAPPER([urbi-launch-java],   [urbi-launch.in])
+URBI_CONFIG_WRAPPER([urbi-send],          [urbi-send.in])
 
 
 # Show what components are used.

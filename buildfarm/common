@@ -4,6 +4,8 @@ me=$(basename $0)
 
 env=$(set +o)
 
+# stderr LINE...
+# --------------
 stderr ()
 {
   set +xv
@@ -11,10 +13,12 @@ stderr ()
   for i
   do
     echo "$i"
-  done | sed -e "s,^,$0: ,g" >&2
+  done | sed -e "s,^,$me: ,g" >&2
   eval "$env"
 }
 
+# error EXIT-STATUS LINE...
+# -------------------------
 error ()
 {
   set +xv
@@ -24,6 +28,8 @@ error ()
   exit $status
 }
 
+# fatal LINE...
+# -------------
 fatal ()
 {
   set +xv
@@ -36,6 +42,10 @@ run ()
   eval "$@"
 }
 
+# find_prog EXE...
+# ----------------
+# Set find_prog_res to the first EXE found in the path, or set it to
+# empty.
 find_prog ()
 {
   find_prog_res=
@@ -49,14 +59,118 @@ find_prog ()
   done
 }
 
+
+# tree_copy SOURCE DEST
+# ---------------------
+# Copy a file-system tree from SOURCE to DEST.  Preserve rights etc.
+# DEST is cleared first.
+tree_copy ()
+{
+  local source=$1
+  local dest=$2
+  rm -rf "$dest"
+  mkdir -p "$dest"
+  tar -C "$source" -cf - . | tar -C "$dest" -xpBf -
+}
+
+
+# xmv ARG...
+# ----------
+# Wrapper around "mv" that tries to do things three times, then fail.
+# This is because sometimes we get "Input/output error" with WebDAV,
+# which is a huge waste of time on the BF.
+xmv ()
+{
+  local i
+  for i in 1 2 3
+  do
+    if mv "$@"; then
+      return 0
+    fi
+  done
+  fatal "cannot: mv $*"
+}
+
+## ----------- ##
+## Variables.  ##
+## ----------- ##
+
+# ------- #
+# Tools.  #
+# ------- #
+find_prog $MD5SUM gmd5sum md5sum
+MD5SUM=$find_prog_res
+test -n "$MD5SUM" ||
+  fatal "cannot find md5sum"
+
+
+# ------ #
+# Host.  #
+# ------ #
+
 # Used to skip tests.
 export BUILDFARM_HOSTNAME=$(hostname | sed -e 's/\..*//')
 
-stderr "$me: this is $BUILDFARM_HOSTNAME: $BUILDFARM_PROJECT-$BUILDFARM_NAME-$BUILDFARM_MODE"
+# --------- #
+# Package.  #
+# --------- #
+
+# The full version of the package, with SHA1.
+#
+# Make a slight effort so that instead of 2.2-8-g9b02553 we get
+# 2.2-008-g9b02553, which is better with "ls".  Always show the sha1
+# (--long) so that when we use repeatedly the same tag, tarballs with
+# the same name are *not* stored at the same place.
+SHA1=$(cd "$DIR_SOURCE" &&
+       git describe --long |
+         perl -ne '
+  if (m{^(?:.*/)?(.*)-(\d+)-(g[\da-f]+)$})
+  {
+    printf "%s-%03d-%s\n", $1, $2, $3;
+  }
+  elsif (m{^(?:.*/)?(.*)$})
+  {
+    printf "%s\n", $1;
+  }')
+test -n "$SHA1" || SHA1=$(cd "$DIR_SOURCE" && git rev-parse HEAD)
+
+# This --prefix, /usr, is chosen so that the Debian packages can use
+# our builds.
+prefix=/usr
+
+
+# ------------- #
+# Directories.  #
+# ------------- #
+
+# Where we make a temporary install before going into DIR_INSTALL.
+# See buildfarm/install.
+export DIR_STAGE=$(dirname "$DIR_INSTALL")/stage
+
+# Where to put the packages that will be published.
+export DIR_PACKAGES=$(dirname "$DIR_INSTALL")/packages
+
+# Where to publish the result (in share/).
+sharedir=$HOME/share
+export DIR_DEST=$sharedir/built/$BUILDFARM_PROJECT
+
+# Where to publish the packages.
+case $SHA1 in
+  # We could automatically install releases there, but it is feared
+  # that this is too much automation, the maintainer should do that.
+  # She might want also to get rid of the sha1 part when copying for
+  # archives/ to releases/.
+  #
+  # (*-000-g*) DIR_ARCHIVE="$DIR_DEST/releases/$SHA1";;
+  (*)        export DIR_ARCHIVE="$DIR_DEST/archives/$SHA1";;
+esac
+
 
 ## --------------------- ##
 ## Basic sanity checks.  ##
 ## --------------------- ##
+
+stderr "$BUILDFARM_HOSTNAME: $BUILDFARM_PROJECT-$BUILDFARM_NAME-$BUILDFARM_MODE"
 
 # We really want ps to work.
 #
@@ -76,6 +190,8 @@ stderr "$me: this is $BUILDFARM_HOSTNAME: $BUILDFARM_PROJECT-$BUILDFARM_NAME-$BU
 if ! ps x; then
   fatal "ps does not work, is procfs properly mounted?"
 fi
+
+set -x
 
 # We need share.
 sharedir=$HOME/share

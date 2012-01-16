@@ -1161,7 +1161,7 @@ USE_PDFLATEX           = NO
 # running if errors occur, instead of asking the user for help.
 # This option is also used when generating formulas in HTML.
 
-LATEX_BATCHMODE        = NO
+LATEX_BATCHMODE        = YES
 
 # If LATEX_HIDE_INDICES is set to YES then doxygen will not
 # include the index chapters (such as File Index, Compound Index, etc.)
@@ -1384,7 +1384,7 @@ PREDEFINED             = DOXYGEN
 # The macro definition that is found in the sources will be used.
 # Use the PREDEFINED tag if you want to use a different macro definition.
 
-EXPAND_AS_DEFINED      = UVALUE_CASTER_DECLARE
+EXPAND_AS_DEFINED      = IF_VOID SETTER UVALUE_CASTER_DECLARE
 
 # If the SKIP_FUNCTION_MACROS tag is set to YES (the default) then
 # doxygen's preprocessor will remove all function-like macros that are alone
