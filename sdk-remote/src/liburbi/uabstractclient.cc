@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2011, Gostai S.A.S.
+ * Copyright (C) 2005-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -671,11 +671,6 @@ namespace urbi
   UAbstractClient::error_type
   UAbstractClient::putFile(const char* localName, const char* remoteName)
   {
-    size_t len;
-    struct stat st;
-    if (stat(localName, &st) == -1)
-      return 1;
-    len = st.st_size;
     sendBufferLock.lock();
     if (!remoteName)
       remoteName = localName;

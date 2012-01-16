@@ -224,7 +224,6 @@ namespace urbi
           {
             FINALLY(((runner::Runner*, r)), r->dependencies_log_set(true));
             r->dependencies_log_set(false);
-            GD_CATEGORY(Urbi.At);
             e = static_cast<Event*>
               (res->property_get(SYMBOL(changed)).get());
           }
