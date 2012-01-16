@@ -103,6 +103,13 @@ install-doc/%:
 	  doc_host='$(doc_host)'		\
 	  doc_dir='$(doc_dir).new'		\
 	  -C $* install-doc
+## Doxygen creates *.md5 and *.map files that serve only for
+## incremental builds.  Do not propagate them, they are not needed to
+## browse the documentation
+## (http://osdir.com/ml/text.doxygen.general/2005-04/msg00064.html).
+RSYNCFLAGS =					\
+  --verbose --checksum --recursive --compress	\
+  --exclude '*.md5' --exclude '*.map'
 install-doc:
 	ssh $(doc_host)					\
 	 'rm -rf $(doc_dir).new $(doc_dir).old &&	\
@@ -111,7 +118,8 @@ install-doc:
 	  else						\
 	    mkdir -p $(doc_dir).new;			\
 	  fi'
-	$(MAKE) $(AM_MAKEFLAGS) install-doc/doc install-doc/sdk-remote
+	$(MAKE) $(AM_MAKEFLAGS) RSYNCFLAGS='$(RSYNCFLAGS)'	\
+	  install-doc/doc install-doc/sdk-remote
 	ssh $(doc_host)							\
 	  '{ test ! -e $(doc_dir) || mv $(doc_dir) $(doc_dir).old; } &&	\
 	   mv $(doc_dir).new $(doc_dir) &&				\

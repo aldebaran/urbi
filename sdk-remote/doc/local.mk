@@ -54,7 +54,5 @@ endif BINDING_JAVA
 doc_files =					\
   doc/sdk-remote.htmldir			\
   doc/sdk-remote-java.htmldir
-RSYNCFLAGS =					\
-  --verbose --checksum --recursive --compress
 install-doc: $(doc_files)
 	$(AM_V_GEN)rsync $(RSYNCFLAGS) $(doc_files) $(doc_host):$(doc_dir)
