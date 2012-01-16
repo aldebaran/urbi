@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1683 utf-8
+personal_ws-1.1 en 1704 utf-8
 aa
 aaa
 abc
@@ -54,6 +54,7 @@ angleInterpolationWithSpeed
 angleMax
 angleMin
 angTag
+angularPosition
 animaloid
 AnklePitchAngle
 AnkleRollAngle
@@ -200,6 +201,7 @@ callNumber
 callTwice
 cameraL
 cameraLoad
+CameraMain
 cameraPitch
 cameraR
 cameraTopic
@@ -219,7 +221,9 @@ ceil
 cerr
 CEST
 cflags
+changeAngular
 changeConnections
+changeLinear
 ChangeLog
 channelName
 chargeStop
@@ -557,6 +561,7 @@ goToChargingDock
 goToChargingStation
 gotoChargingStation
 GPL
+GPS
 GraphViz
 graphviz
 greenBlink
@@ -779,6 +784,7 @@ lightRight
 LightSensor
 lim
 LinearMotor
+linearPosition
 LinearSpeedMotor
 linphone
 linux
@@ -848,6 +854,7 @@ methodToFunction
 microL
 microR
 middleware
+middlewares
 minCallTime
 Mindstorms
 minExponent
@@ -864,6 +871,8 @@ Monde
 monomethods
 mooh
 Morgand
+morse
+MotionControllerSensor
 motorsLoad
 Moulard
 Moussu
@@ -927,6 +936,7 @@ NaoQi
 naoRobocup
 naoT
 Naur
+nav
 nb
 nc
 ndebug
@@ -986,6 +996,7 @@ onSubscribe
 oo
 OpenGL
 OpenLoop
+OpenRobots
 OpenSSL
 openssl
 Oper
@@ -1010,6 +1021,7 @@ params
 parseopt
 pathPlanningEvent
 pc
+pcontroller
 pdf
 pdfcrop
 PDFLaTeX
@@ -1020,6 +1032,7 @@ php
 physicsReset
 pid
 pidChanged
+Pierrick
 Pierron
 pitchSpeed
 pkgconfig
@@ -1028,6 +1041,7 @@ plugin
 plusTwo
 pMaxSpeedFraction
 pNames
+Pocolibs
 pollFor
 pollInterval
 pollOneFor
@@ -1085,7 +1099,9 @@ radians
 radix
 raii
 RangeIterable
+rangeMax
 rangemax
+rangeMin
 rangemin
 ranlib
 rc
@@ -1155,6 +1171,7 @@ roscpp
 rosgraph
 rosImg
 roslib
+roslisp
 rosmake
 rosout
 rosrun
@@ -1665,6 +1682,7 @@ xsltproc
 xSpeed
 xvjf
 yaml
+YARP
 yawCoeff
 yawSpeed
 yawSpeedCoeff

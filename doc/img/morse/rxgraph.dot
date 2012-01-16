@@ -1,0 +1,24 @@
+digraph G {
+  rankdir=LR;
+  _morse [label="/morse", URL="node:/morse"];
+  _rosout [label="/rosout", URL="node:/rosout"];  _20_ATRV_Accelerometer [shape=box,label="/ATRV/Accelerometer",URL="topic:/ATRV/Accelerometer"];
+  _20_ATRV_GPS [shape=box,label="/ATRV/GPS",URL="topic:/ATRV/GPS"];
+  _20_ATRV_CameraMain [shape=box,label="/ATRV/CameraMain",URL="topic:/ATRV/CameraMain"];
+  _20_rosout_agg [shape=box,label="/rosout_agg",URL="topic:/rosout_agg"];
+  _20_ATRV_Proximity [shape=box,label="/ATRV/Proximity",URL="topic:/ATRV/Proximity"];
+  _20_ATRV_Pose [shape=box,label="/ATRV/Pose",URL="topic:/ATRV/Pose"];
+  _20_ATRV_Motion_Controller [shape=box,label="/ATRV/Motion_Controller",URL="topic:/ATRV/Motion_Controller"];
+  _20_rosout [shape=box,label="/rosout",URL="topic:/rosout"];
+  _20_ATRV_Odometry [shape=box,label="/ATRV/Odometry",URL="topic:/ATRV/Odometry"];
+  _20_ATRV_Sick [shape=box,label="/ATRV/Sick",URL="topic:/ATRV/Sick"];
+    _20_rosout->_rosout
+    _rosout->_20_rosout_agg
+    _morse->_20_ATRV_GPS
+    _morse->_20_ATRV_Accelerometer
+    _morse->_20_rosout
+    _morse->_20_ATRV_Pose
+    _morse->_20_ATRV_Proximity
+    _morse->_20_ATRV_Odometry
+    _morse->_20_ATRV_Sick
+    _morse->_20_ATRV_CameraMain
+    _20_ATRV_Motion_Controller->_morse}

@@ -1,4 +1,4 @@
-%% Copyright (C) 2010, 2011, Gostai S.A.S.
+%% Copyright (C) 2010, 2011, 2012, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -10,10 +10,11 @@
   {
     %
     This part covers the specific features of \urbi for some of the
-    platforms it was ported to.  Environments not described in this
-    part are covered in separate, stand-alone, documentations.
+    platforms it is ported to.  Environments not described here are covered
+    in separate, stand-alone, documentations.
     %
   }
+
 \ifthen{\boolean{nao}}{
 \item[sec:nao]
   Nao is a humanoid robot Nao from Aldebaran Robotics.
@@ -24,6 +25,11 @@
   Using the Bioloid robot construction kit with \urbi.
 }
 
+\ifthen{\boolean{jazz}}{
+\item[sec:jazz]%
+  Gostai Open Jazz is an entirely programmable robot. It is shipped with the
+  \usdk to develop with Jazz.  }
+
 \ifthen{\boolean{nxt}}{
 \item[sec:nxt] LEGO Mindstorms NXT is a programmable robotics
   kit released by Lego in July 2006, replacing the first-generation
@@ -33,10 +39,9 @@
   Brick.
 }
 
-\ifthen{\boolean{jazz}}{
-\item[sec:jazz]%
-  Gostai Open Jazz is an entirely programmable robot. It is shipped with the
-  \usdk to develop with Jazz.  }
+\ifthen{\boolean{morse}}{
+\item[sec:morse] Using MORSE, the Modular OpenRobots Simulation Engine, with
+  \urbi.  }
 
 \ifthen{\boolean{p3dx}}{
 \item[sec:p3dx] Pioneer 3-DX8 is an agile, versatile intelligent

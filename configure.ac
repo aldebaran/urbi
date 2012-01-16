@@ -34,7 +34,8 @@ URBI_PACKAGE_KIND([kernel])
 AC_SUBST([remotedir], ['${brandlibdir}/remote'])
 AC_SUBST([enginedir], ['${brandlibdir}/engine'])
 URBI_DOC
-URBI_ENABLE_DOC_SECTIONS([bioloid, jazz, nao, nxt, p3dx, rmp, spykee, webots])
+URBI_ENABLE_DOC_SECTIONS(
+  [bioloid, jazz, morse, nao, nxt, p3dx, rmp, spykee, webots])
 AC_CONFIG_FILES([doc/config.sty doc/Makefile doc/README.txt doc/COMPONENTS.txt])
 COMPONENTS_FILE=doc/COMPONENTS.txt
 AC_SUBST_FILE([COMPONENTS_FILE])
