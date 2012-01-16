@@ -304,5 +304,7 @@ images: $(nodist_image_DATA)
 	$(AM_V_at)mkdir -p $@.tmp
 	$(AM_V_at)cp $^ $@.tmp
 	$(AM_V_at)mv $@.tmp $@
+RSYNCFLAGS =					\
+  --verbose --checksum --recursive --compress
 install-doc: $(doc_files)
-	$(AM_V_GEN)rsync -vcrz $(doc_files) $(doc_host):$(doc_dir)/doc.new
+	$(AM_V_GEN)rsync $(RSYNCFLAGS) $(doc_files) $(doc_host):$(doc_dir)
