@@ -255,7 +255,8 @@ fi
 
 # 6. Distribution packages.
 case $BUILDFARM_HOSTNAME in (bf-3)
-  move_into $DIR_PACKAGES $DIR_BUILD/*.{rpm,deb}
+  make -C "$DIR_BUILD" packages
+  move_into $DIR_PACKAGES $DIR_BUILD/*$SHA1*.{rpm,deb}
 esac
 
 ## --------------------- ##
