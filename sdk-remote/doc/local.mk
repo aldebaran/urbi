@@ -1,4 +1,4 @@
-## Copyright (C) 2010, 2011, Gostai S.A.S.
+## Copyright (C) 2010-2012, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -43,7 +43,7 @@ JAVA_FILES =							\
   $(wildcard $(sdk_remote_builddir)/src/swig/java/urbi/*.java)
 doc/sdk-remote-java.htmldir: $(JAVA_FILES)
 if ENABLE_DOC_DOXYGEN
-html_DIR += doc/sdk-remote.htmldir
+html_DIR += doc/sdk-remote-java.htmldir
 endif ENABLE_DOC_DOXYGEN
 endif BINDING_JAVA
 
