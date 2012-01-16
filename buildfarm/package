@@ -250,11 +250,13 @@ tree_copy "$DIR_INSTALL/$prefix" "$packagedir"
 # 5. Source tarball.
 tarname=$BUILDFARM_PROJECT-$SHA1.tar.bz2
 if test -f $DIR_BUILD/$tarname; then
-  cp -v $DIR_BUILD/$tarname $DIR_PACKAGES/$tarname.tmp
-  mv $DIR_PACKAGES/$tarname.tmp $DIR_PACKAGES/$tarname
+  move_into $DIR_PACKAGES $DIR_BUILD/$tarname
 fi
 
-
+# 6. Distribution packages.
+case $BUILDFARM_HOSTNAME in (bf-3)
+  move_into $DIR_PACKAGES $DIR_BUILD/*.{rpm,deb}
+esac
 
 ## --------------------- ##
 ## Upload the packages.  ##
