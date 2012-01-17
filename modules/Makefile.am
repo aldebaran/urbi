@@ -1,4 +1,4 @@
-## Copyright (C) 2006-2011, Gostai S.A.S.
+## Copyright (C) 2006-2012, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -26,8 +26,6 @@ sdk_remote_builddir = $(top_builddir)/sdk-remote
 LIBUOBJECT_REMOTE_LIBS =						\
   $(sdk_remote_builddir)/src/libuobject/libuobject$(LIBSFX).la
 
-ALLS =
-all: $(ALLS)
 module_LTLIBRARIES =
 moduledir = $(urbi_uobjectsdir)
 include modules.mk
