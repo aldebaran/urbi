@@ -27,12 +27,14 @@ EXTRA_DIST +=					\
   $(call ls_files,				\
     @{document-aux}/figs/gostai.*		\
     @{document-aux}/figs/urbi-sdk/*/cube.*	\
-    @{document-aux}/styles/ldf/*)		\
+    @{document-aux}/styles/ldf/*		\
+    @{document-aux}/overlib/*)			\
   $(cube_and_disc).pdf				\
   $(cube_and_disc).png				\
   document-aux/styles/fixme.sty			\
   document-aux/styles/gostai-documentation.sty	\
-  document-aux/styles/gostai-report.sty		\
+  document-aux/styles/gostai.sty		\
+  document-aux/styles/headings.ist		\
   document-aux/styles/hevea.sty			\
   document-aux/styles/misc.hva			\
   document-aux/styles/misc.sty			\
@@ -44,53 +46,65 @@ EXTRA_DIST +=					\
   document-aux/styles/mylistings.hva		\
   document-aux/styles/mylistings.sty		\
   document-aux/styles/texi.hva			\
-  document-aux/styles/texi.sty
+  document-aux/styles/texi.sty			\
+  document-aux/styles/urbi-style.cfg
 
 ## -------- ##
 ## Images.  ##
 ## -------- ##
 
-# Images whose original is in DOT.
+# Images that simply used by the CSS of the HTML generated documents.
+# So don't convert, just copy into the htmldir directories.
+CSS_IMAGES =					\
+  $(share_dir)/figs/doc-header.jpg		\
+  $(share_dir)/figs/doc-menubarbg.jpg		\
+  $(share_dir)/figs/doc-menubarhoverbg.jpg
+
+# Images whose original is in Dot, JPEG, or PNG format.
 DOT_IMAGES := $(call ls_files,img/*.dot)
-PNG_IMAGES := $(call ls_files,img/*.png)
 JPG_IMAGES := $(call ls_files,img/*.jpg)
+PNG_IMAGES := $(call ls_files,img/*.png)
 
 logodir = document-aux/figs/urbi-sdk/$(PACKAGE_MAJOR).$(PACKAGE_MINOR)
 cube_and_disc =	$(logodir)/cube-and-disc
-cubes_pdf = $(call ls_files,@document-aux/figs/urbi-sdk/*/cube.pdf)
-PDF_IMAGES =					\
-  $(call ls_files,img/*.pdf)			\
-  document-aux/figs/gostai.pdf			\
-  $(cube_and_disc).pdf				\
-  $(cubes_pdf)					\
-  $(DOT_IMAGES:.dot=.pdf)
+# Images whose original is in PDF.
+PDF_IMAGES :=							\
+  $(call ls_files,img/*.pdf					\
+                  @document-aux/figs/urbi-sdk/*/cube.pdf)	\
+  document-aux/figs/gostai.pdf					\
+  $(cube_and_disc).pdf						\
+  $(cubes_pdf)
 EXTRA_DIST += $(call ls_files,img/*)
 
+# Images converted to EPS.
 EPS_IMAGES =					\
   $(JPG_IMAGES:.jpg=.eps)			\
-  $(PDF_IMAGES:.pdf=.eps)			\
+  $(DOT_IMAGES:.dot=.eps) 			\
+  $(PDF_IMAGES:.pdf=.eps) 			\
   $(PNG_IMAGES:.png=.eps)
 CONVERT_TO_EPS =				\
   { $(ENSURE_TARGET_DIR) ; } &&			\
   $(CONVERT) $< eps:$@.tmp &&			\
   mv $@.tmp $@
 
-CLEANFILES += $(PDF_IMAGES) $(EPS_IMAGES)
-
+# We do not need conversion from PNG to PDF.  This rule from
+# pdf-figs.mk is actually a nuisance, it should probably be removed.
+%.pdf: %.png
 %.eps: %.pdf
 	$(AM_V_GEN)$(CONVERT_TO_EPS)
 # We have png => pdf => eps, but the result is poor, and it even fails
 # with old versions of ghostscript.
 %.eps: %.png
 	$(AM_V_GEN)$(CONVERT_TO_EPS)
-CLEANFILES += $(EPS_IMAGES)
-
+CLEANFILES += $(DOT_IMAGES:.dot=.pdf) $(EPS_IMAGES)
 
 # Images to include in the documentation directory.
 if ENABLE_DOC
 imagedir = $(docdir)/images
 nodist_image_DATA = $(call ls_files,@$(logodir)/*)
 endif
+
+include trajectories/local.mk
 
 
 ## ----------- ##
@@ -104,21 +118,47 @@ TEXI2DVIFLAGS +=				\
 pdf_DATA =
 
 # Use tex4ht.
-TEX4HTFLAGS = urbi-style,2,sections+
-TEXI2HTMLFLAGS += --tex4ht --tex4ht-options=$(TEX4HTFLAGS)
+TEX4HTFLAGS = urbi-style,2
+urbi-sdk-single.htmldir : TEX4HTFLAGS = urbi-style
+TEXI2HTMLFLAGS += --tex4ht --tex4ht-options=$(TEX4HTFLAGS) --verbose --debug
 TEX4HT_POST = $(abs_top_srcdir)/build-aux/bin/tex4ht-post
-%.htmldir: %.tex $(share_tex_dependencies) urbi-style.cfg
-	$(AM_V_GEN)rm -rf $@ $@.tmp
+MAKEINDEXFLAGS = -s headings.ist
+TEX_ENVIRONMENT =				\
+  PATH=$$PATH:$(abspath $(share_bin_dir))	\
+  MAKEINDEX="makeindex $(MAKEINDEXFLAGS)"	\
+  TEXINDY="texindy $(TEXINDYFLAGS)"		\
+  TEX4HT="tex4ht -cunihtf -utf8"
+
+%.htmldir: %.tex $(share_tex_dependencies) $(share_dir)/styles/urbi-style.cfg
+	$(AM_V_GEN)rm -rf $@ $@.tmp $@.log
 	$(AM_V_at)$(mkdir_p) $@.tmp || true
-	$(AM_V_at)$(TEXI2HTML) $(TEXI2HTMLFLAGS) -o $@.tmp/$(notdir $*).html $<
-	$(AM_V_at)cd $@.tmp \
-	  && $(TEX4HT_POST) --index $(notdir $*).html $(notdir $*)*.html
-# We need to find a better means to provide our own *.png here.  I
-# have not used the name "gostai.png" because stupidly the PDF
-# compilation seems to prefer *.png to *.pdf, which is wrong here.
-	$(AM_V_at)cp $(srcdir)/$(cube_and_disc).png $@.tmp/urbi-sdk0x.png
-	$(AM_V_at)cp $(share_dir)/figs/gostai.png $@.tmp/urbi-sdk1x.png
+	$(AM_V_at)							\
+	$(if $(TEX_ENVIRONMENT), export $(TEX_ENVIRONMENT);)		\
+	if $(TEXI2HTML) $(TEXI2HTMLFLAGS) -o $@.tmp/$(*F).html $<;	\
+	then								\
+	  test ! -f $@.log ||						\
+	    $(TEXLOGANALYZER) $(TEXLOGANALYZERFLAGS) $@.log >&2;	\
+	else								\
+	  sta=$$?;							\
+	  test ! -f $@.log ||						\
+	    cat >&2 $@.log;						\
+	  exit $$sta;							\
+	fi
+	$(AM_V_at)cd $@.tmp					\
+	  && $(TEX4HT_POST) --index $(*F).html $(*F)*.html
+	$(AM_V_at)							\
+	  cp $(srcdir)/$(cube_and_disc).png  $@.tmp/$(*F)0x.png;	\
+	  cp $(share_dir)/figs/gostai.png    $@.tmp/$(*F)1x.png;	\
+	  case "$(*F)" in						\
+	    (urbi-sdk*)							\
+	    cp $(srcdir)/img/urbi-architecture.png $@.tmp/$(*F)2x.png;;	\
+	  esac
+##	$(AM_V_at)case ',$(TEX4HTFLAGS),' in
+##	  (*,mouseover,*) cp $(share_dir)/overlib/* $@.tmp;;
+##	esac
+	$(AM_V_at)cp $(CSS_IMAGES) $(share_dir)/overlib/* $@.tmp
 	$(AM_V_at)mv $@.tmp $@
+CLEANFILES += $(MASTERS:.tex=.htmldir.log)
 
 
 ## -------------- ##
@@ -129,6 +169,7 @@ TEX4HT_POST = $(abs_top_srcdir)/build-aux/bin/tex4ht-post
 MASTERS =					\
   urbi-naming.tex				\
   urbi-sandbox.tex				\
+  urbi-sdk-single.tex				\
   urbi-sdk.tex
 
 PDFS =						\
@@ -141,18 +182,19 @@ endif
 
 # We cannot simply use html_DATA here, since Automake does not
 # support installing directories.
+CLEANDIRS += $(MASTERS:.tex=.htmldir)
 if ENABLE_DOC_HTML
   html_DIR += urbi-sdk.htmldir
 endif
 
 CLEANFILES += $(pdf_DATA)
-urbi_sdk_tex = $(call ls_files,*.tex)
+urbi_sdk_tex := $(call ls_files,*.tex)
 # Do _not_ include revision.sty in the sources, as it is continiously
 # updated.  It would cause endless recompilations.
 urbi_sdk_sources =				\
   $(urbi_sdk_tex)				\
   $(filter-out revision.sty,			\
-    $(call ls_files,*.sty tables/*.txt))
+    $(call ls_files,*.sty tables/*.bnf tables/*.txt))
 
 CLEANFILES += config.sty
 
@@ -162,12 +204,12 @@ CLEANFILES += config.sty
 ## -------------- ##
 
 # The tricky part is that all our PDF and HTML outputs depend on
-# revision.sty, so it is tempting to put it as a regular
-# prerequisites.  This way we are sure it exists when we need it.  But
-# to ensure that it is always up to date (so that the PDF and HTML
-# output are always referring to the revision info at the time of
-# "make" run) we have to make "revision.sty" a PHONY target, i.e., a
-# target fired at each "make" invocation.
+# revision.sty, so it is tempting to put it as a regular prerequisite.
+# This way we are sure it exists when we need it.  But to ensure that
+# it is always up to date (so that the PDF and HTML output are always
+# referring to the revision info at the time of "make" run) we have to
+# make "revision.sty" a PHONY target, i.e., a target fired at each
+# "make" invocation.
 #
 # But then we have a problem: "make" will notice that revision.sty is
 # to be remade, and therefore that the PDF and HTML have to be remade
@@ -204,8 +246,8 @@ $(REVISION_FILE):
 # maintainer tools such as tex2chk.  Not to mention that there are
 # then many nasty issues arising with src=build builds.
 FROM_GEN =					\
-  $(srcdir)/guide/requirements.tex
-$(srcdir)/guide/requirements.tex: $(srcdir)/guide/build.tex
+  guide/requirements.tex
+guide/requirements.tex: $(srcdir)/guide/build.tex
 BUILT_SOURCES += $(FROM_GEN)
 EXTRA_DIST += $(FROM_GEN:=.gen)
 
@@ -225,7 +267,7 @@ urbi_sdk_deps =					\
 
 $(MASTERS:.tex=.pdf): $(urbi_sdk_deps) $(PDF_IMAGES)	\
                     | $(REVISION_FILE)
-
+urbi-naming.pdf urbi-sdk.pdf: $(DOT_IMAGES:.dot=.pdf)
 $(MASTERS:.tex=.dvi) $(MASTERS:.tex=.htmldir): $(urbi_sdk_deps) $(EPS_IMAGES) \
                                              | $(REVISION_FILE)
 
@@ -238,21 +280,15 @@ sandbox: urbi-sandbox.htmldir urbi-sandbox.pdf
 	open urbi-sandbox.pdf
 	open urbi-sandbox.htmldir/index.html
 
-include trajectories/local.mk
-
-
 ## ------------------------------- ##
 ## Additional text documentation.  ##
 ## ------------------------------- ##
 
 # Always install these guys.  At least because our build and package
 # process uses them (especially COMPONENTS.txt).
-dist_doc_DATA =					\
-  AUTHORS.txt					\
-  COMPONENTS.txt				\
-  LICENSE.txt					\
-  README.txt					\
-  THANKS.txt
+dist_doc_DATA   = AUTHORS.txt LICENSE.txt THANKS.txt
+nodist_doc_DATA = COMPONENTS.txt README.txt
+CLEANFILES += $(nodist_doc_DATA)
 
 ## ---------------- ##
 ## Spell-checking.  ##
@@ -265,9 +301,32 @@ EXTRA_DIST += $(build_aux_dir)/bin/spell-check urbi.dict
 RUN_SPELL_CHECK = $(SPELL_CHECK) $(AM_SPELL_CHECKFLAGS) $(SPELL_CHECKFLAGS)
 # Rely on Make to resolve the location (src or build) of the files to
 # spell-check.
-spell-check: $(urbi_sdk_tex) $(dist_doc_DATA)
+spell-check: $(urbi_sdk_tex) $(dist_doc_DATA) $(nodist_doc_DATA)
 	$(AM_V_GEN) $(RUN_SPELL_CHECK) $(if $(V:0=),-v,-q) $^
 
+
+# A program whose output is FILE:SECTIONING COMMANDS.
+# To make easy via grep to control the structure.
+latex_subsections =							\
+  perl -ne '/(.*?):\\subsection({.*})/ && { $$secs{$$1} .= $$2 };'	\
+       -e  'END { print "$$_:$$secs{$$_}\n" foreach sort keys %secs; }'
+# This is not spell-checking, but that's easier for the BF.
+# An order-only dependency so that we don't get style-check in the
+# list of dependencies of spell-check (we would try to find errors in
+# the style-check non-existing file).
+.PHONY spell-check: | style-check
+style-check: $(urbi_sdk_tex)
+## Use the {verbatim} environment, not {lstlisting}.
+	$(AM_V_GEN) ! grep '{lstlisting}' $^
+## Never indent verbatim environments, it leaves empty lines.
+	$(AM_V_at) ! grep -E \
+	  '^  *\\(begin|end){(cxx|java|urbi(comment|script|unchecked)|verbatim)}' $^
+## The stdlib sections must follow a strict pattern.
+	$(AM_V_at) ! grep -E '^\\subsection\{' $^ |		\
+	  grep '/specs/' |					\
+	  grep -Ev '(lang|naming-standard|ros|tools).tex' |	\
+	  $(latex_subsections) |				\
+	  grep -Ev '^.*:({Examples?})?.*{Prototypes}({Construction})?{Slots}$$'
 
 ## --------- ##
 ## install.  ##
@@ -298,7 +357,11 @@ install-data-hook:
 ## install-doc.  ##
 ## ------------- ##
 .PHONY: install-doc
-doc_files = $(pdf_DATA) urbi-sdk.htmldir images
+doc_files =					\
+  $(pdf_DATA)					\
+  urbi-sdk.htmldir urbi-sdk-single.htmldir	\
+  images					\
+  $(top_srcdir)/scripts/www/doc/HEADER.html
 images: $(nodist_image_DATA)
 	$(AM_V_GEN)rm -rf $@ $@.tmp
 	$(AM_V_at)mkdir -p $@.tmp
@@ -306,3 +369,4 @@ images: $(nodist_image_DATA)
 	$(AM_V_at)mv $@.tmp $@
 install-doc: $(doc_files)
 	$(AM_V_GEN)rsync $(RSYNCFLAGS) $(doc_files) $(doc_host):$(doc_dir)
+

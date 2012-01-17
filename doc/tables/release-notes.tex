@@ -11,19 +11,6 @@
 
 This chapter lists the user-visible changes in \usdk releases.
 
-% \release{Release}{Date}
-% -----------------------
-\newcommand{\release}[2]{%
-  Released on #2.
-  \ifx\ifHtml\undefined%
-    \marginpar{%
-      \includegraphics[width=\marginparwidth]{figs/urbi-sdk/#1/cube}
-
-      #2.
-    }%
-  \fi%
-}
-
 \section{\usdk 2.7.5}
 \release{2.7}{2011-12-XX}
 
@@ -533,7 +520,7 @@ echo(b);
 
 \item Enumerations.
 
-  Enumeration types can be created with the usual \C-like syntax.
+  Enumeration types can be created with the usual \langC-like syntax.
   See \autoref{sec:lang:enum} and \refObject{Enumeration}.
 \begin{urbiscript}
 enum Suit

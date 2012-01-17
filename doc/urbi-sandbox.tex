@@ -1,4 +1,4 @@
-%% Copyright (C) 2010, 2011, 2012, Gostai S.A.S.
+%% Copyright (C) 2010-2012, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -7,56 +7,86 @@
 %% See the LICENSE file for more information.
 
 \documentclass[openright,twoside,11pt]{book}
-  \usepackage{gostai-documentation}
-  \usepackage{config}
-  \usepackage{lipsum}  % to provide "filler" text
-  \usepackage[titles]{tocloft}
+%  \usepackage[svgnames]{xcolor}  \usepackage{experiment}
+  \usepackage{urbi-sdk}
+  \usepackage{lipsum}
+  \usepackage{multirow}
 
 \title{Urbi Documentation Sandbox}
+\shorttitle{Urbi Sandbox \packageVersion}
 \subtitle{Version \VcsDescription}
 \author{Gostai}
+
+\abstract{This document is not to be published, its point is to toy with
+  \LaTeX{}.  \lipsum[1]}
+
 
 \begin{document}
 
 \maketitle
-
-This document is meant to be used to toy with \LaTeX{}.
-
 \tableofcontents
-\part{First Part}
-
 \chapter{First Chapter}
 
-\begin{table}
-  \centering
-  \begin{tabular}{c}
-    Hello, World!
-  \end{tabular}
-  \caption{A Table}
-  \label{tab:tab}
-\end{table}
+A useless definition of \lstindex{return}.
 
-This is the first chapter.
+\section{\lstinline{while} \lstinline{forPipe}}
+\section{\texorpdfstring{\lstinline{for&}}{for\&}}
 
-\begin{urbiscript}
-1+2;
-[00048238] 3
+This is the first chapter\footnote{Footnotes are ugly.}.
+
+\begin{verbatim}
+for (var i: 10)
+  echo(i);
+\end{verbatim}
+
+\begin{urbiunchecked}
+'if' + 'else' + 'bitand';
+'if'+'else'+'bitand';
+'if'.'else'.'bitand';
+.'else';
+
+x xor_eq a;
+
+a.'bitand'(b);
+a' "foo";
+a'' "foo";
+a''' "foo";
+"else";
+
 "foo";
 [00048238] "foo"
-\end{urbiscript}
-
-Another example.
-
-\begin{shell}[style=varInString]
-$ export PATH="something:\var{urbi-root}/bin:$PATH"
-\end{shell}%$
-
-\begin{urbiunchecked}[style=varInString]
-"for \var{foo}" * (1+2);
-[00048238] wrong
 \end{urbiunchecked}
 
-Last example.
+% \grammar{}
+
+\begin{verbatim}
+for (var i: 10)
+  echo(i);
+\end{verbatim}
+
+\begin{verbatim}[language=gdb]
+(gdb) urbi break input.u:2 Lobby_0x7ffff7f03208.foo(["2" => 2])
+UBreakpoint 1:
+        Location: input.u:2
+        Lobby_0x7ffff7f03208.foo(["2" => 2])
+(gdb) c
+Continuing.
+
+//#push 1 "input.u"
+function foo (x) { backtrace }|;
+for(var i: [1, 2, 3]) foo([i.asString => i]);
+
+[00219506:backtrace] foo (input.u:2.23-44)
+[00219506:backtrace] each (input.u:2.12-44)
+UBreakpoint 1: [input.u:2.23-45] Lobby_0x7ffff7f03208.foo(["2" => 2])
+Inside Job 0x6a2f70
+(gdb) urbi stack
+#12 [input.u:1.20-29] Lobby_0x7ffff7f03208.backtrace()
+#16 [input.u:1.20-29] Call backtrace
+#55 [input.u:2.1-40] Stmt
+(gdb) #% comment
+\end{verbatim}
+
 
 \begin{urbiassert}
 1+2 == 3;
@@ -67,15 +97,44 @@ Last example.
 See also \refObject{Foo}.
 
 \begin{urbiscriptapi}
+\item['!'](<arg>) Another test about bang.
+
+
+\item[!] A test about bang.
+
+
+\item['!='](<arg>) Another test about bang.
+
+
+\item['!=='](<arg>) Another test about bang.
+  Short-circuiting logical or. If \this is \lstinline|false| evaluate and
+
+
+\item['&&'](<arg>) Another test about bang.
+
+
+%\item['\%'](<arg>) Another test about bang.
+
+
 \item[bar] This is Bar.bar.
+
+
 \item[foo](<x>) This is Bar.foo with arguments.
+
+
+\item|fun[foo][bar]|(<var>) a function
+
+
+\item \lstinline|I do it myself|
+\item beware (not to catch the first word)
+
+
 \item[set](<key>, <value>) Map \var{key} to \var{value} and return \this so
   that invocations to \lstinline|set| can be chained.  The possibly existing
   previous mapping is overridden.
-\item \lstinline|I do it myself|
-\item beware (not to catch the first word)
+
+
 \item|slot[foo][bar]| a slot
-\item|fun[foo][bar]|(<var>) a function
 \end{urbiscriptapi}
 
 \sectionObject{Foo}
@@ -84,10 +143,13 @@ See also \refObject{Bar}.
 
 \begin{urbiscriptapi}
 \item[bar] This is Foo.bar.
+
+
 \item[foo] This is Foo.foo.
 \end{urbiscriptapi}
 
 \section{Second Section}
+
 
 \begin{urbiunchecked}[escapeinside=<>]
 #<Été>;
@@ -100,30 +162,51 @@ See also \refObject{Bar}.
 
 \chapter{Second Chapter}
 
-This is the second chapter.
+This is the second chapter, with a useful definition of
+\lstindexMain{return}.
+
 
 \urbitrajectory{smooth}
 
 \urbitrajectory{accel}
 
 \begin{urbiscriptapi}
+\item[ccwLimit]
+  %% FIXME: Something horrible happens when the slot name starts with twice
+  %% the same letter.  I have no idea what's going on, I need to make a
+  %% small self-contained example and ask for help.
+  Set max reachable angle. When both \refSlot{cwLimit} and
+  \refSlot{ccwLimit} equal 0, the motor is put in continuous rotation
+  mode. In this mode, writing to \refSlot{val} has no effect: the motor
+  moves at the speed given by the \refSlot{speed} slot.
+
+
 \item[count] Return the count.
+
+
 \item[launch]
   Fire \this.
-\item \lstinline|launch|~\\
-  Fire \this.
 
+
+\item \lstinline|launch1|~\\
+  Fire \this.
 \end{urbiscriptapi}
 
-\part{Second Part}
-
-This is the second part.
-
-\chapter{Chapter II.1}
+\let\sectionOrig\section
+\renewcommand{\section}[1]{\clearpage\sectionObject{#1}}
+\sectionOrig{Empty section}
+\input{specs/pair}
+\input{specs/tuple}
+\let\section\sectionOrig
 
 You want to use \refSlot[Foo]{foo}, and possibly \refSlot[Bar]{foo}.
+\settocbibname{\label{sec:bib}The Bibliography}
+\setindexname{\label{sec:index}The Index}
+\bibliographystyle{plain}
+\bibliography{comp.lang.urbi}
+\nocite{*}
 
-\listoftables
+\input{tables/notation}
 \chapterIndex
 \end{document}
 

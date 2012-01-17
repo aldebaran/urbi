@@ -1,0 +1,43 @@
+%% Copyright (C) 2009-2012, Gostai S.A.S.
+%%
+%% This software is provided "as is" without warranty of any kind,
+%% either expressed or implied, including but not limited to the
+%% implied warranties of fitness for a particular purpose.
+%%
+%% See the LICENSE file for more information.
+
+%% This file helps to share experiments bw urbi-naming, urbi-sandbox, and
+%% urbi-sdk documents.  Benefits of putting these guys here include the fact
+%% that the spell-checker will not complain about these macros.  So PAY
+%% ATTENTION for spellos!
+%%
+%% Once robust, most of these guys should move to document-aux.
+
+\RequirePackage{gostai-documentation}
+\RequirePackage{nameref}
+\RequirePackage{config}
+\newcommand{\uobjectsDir}{\absTopSrcdir/sdk-remote/src/uobjects}
+
+% \release{Release}{Date}
+% -----------------------
+\newcommand{\release}[2]{%
+  Released on #2.
+  \ifx\ifHtml\undefined%
+    \marginpar{%
+      \includegraphics[width=\marginparwidth]{figs/urbi-sdk/#1/cube}
+
+      #2.
+    }%
+  \fi%
+}
+
+\newboolean[false]{urbiThree}
+
+%%% Local Variables:
+%%% mode: latex
+%%% coding: utf-8
+%%% TeX-master: t
+%%% ispell-dictionary: "american"
+%%% ispell-personal-dictionary: "urbi.dict"
+%%% fill-column: 76
+%%% End:

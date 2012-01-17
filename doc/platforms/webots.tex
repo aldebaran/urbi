@@ -194,12 +194,12 @@ minutes, thus letting you test all the features of the registered
 version during this amount of time. In evaluation mode, the \urbi
 controller will display the following message in the \webots console:
 
-\begin{lstlisting}
+\begin{verbatim}
 **************************************************
 * URBI: Invalid or missing license.
 * Urbi for Webots will quit after five minutes.
 **************************************************
-\end{lstlisting}
+\end{verbatim}
 
 In order to run \uwebots without constraints you must provide it with a
 license file, as described in the following section.
@@ -262,13 +262,13 @@ port and control the \aibo like a regular one.
 To use an urbi controller in your \webots world, first define an
 \verb+urbi-2.0+ controller for your webots node:
 
-\begin{lstlisting}
+\begin{verbatim}
 DEF MYNODE Robot
 {
   ...
   controller "urbi-2.0"
 }
-\end{lstlisting}
+\end{verbatim}
 
 This will start an \urbi server to interact with your robot. This
 server is however useless since it doesn't run any specific behavior
@@ -285,14 +285,14 @@ exact same as the \verb+urbi+ program, as described in
 \paragraph{Listening for incoming connections:} pass a \verb+--port+
 option to the controller.
 
-\begin{lstlisting}
+\begin{verbatim}
 DEF MYNODE Robot
 {
   ...
   controller "urbi-2.0"
   controllerArgs "--port 54000"
 }
-\end{lstlisting}
+\end{verbatim}
 
 \paragraph{Loading an \us file:} pass a \verb+--file+ option to the
 controller. In addition to standard directories, scripts are also
@@ -301,14 +301,14 @@ your webots installation. For instance, you could create a
 \file{my\_behavior/my\_script.u} script in this directory, and use the
 following \verb+controllerArgs+.
 
-\begin{lstlisting}
+\begin{verbatim}
 DEF MYNODE Robot
 {
   ...
   controller "urbi-2.0"
   controllerArgs "--file my_behavior/my_script.u"
 }
-\end{lstlisting}
+\end{verbatim}
 
 \subsection{Defining custom \urbi controllers}
 
@@ -417,7 +417,7 @@ the name of the corresponding node in the \webots world.
 While \webots accelerators all have three components, \urbi prefer to
 differentiate every component in one linear accelerometer.
 
-\paragraph{Gostai Standard Robotic API interface:} \refFacet{AccelerationSensor}
+\paragraph{Gostai Standard Robotic API interface:} \refInterface{AccelerationSensor}
 
 \paragraph{Constructor:} Accelerometer.new(\var{node\_name}, \var{component\_name})
 
@@ -433,7 +433,7 @@ components in \webots, disabling one of the component (by setting the
 
 \subsubsection{Camera}
 
-\paragraph{Gostai Standard Robotic API interface:} \refFacet{VideoIn}
+\paragraph{Gostai Standard Robotic API interface:} \refInterface{VideoIn}
 
 \paragraph{Constructor: } Camera.new(\var{node\_name})
 
@@ -472,7 +472,7 @@ camera Urbi Object by \webots camera device.
 Differential wheels in \webots represent a pair of wheels. They are
 represented as separated motors in \urbi.
 
-\paragraph{Gostai Standard Robotic API interface:} \refFacet{RotationalMotor}
+\paragraph{Gostai Standard Robotic API interface:} \refInterface{RotationalMotor}
 
 \paragraph{Constructor: } DifferentialWheels.new(\var{node\_name}, \var{left})
 
@@ -502,7 +502,7 @@ you instantiate both left and right objects.
 
 \subsubsection{Distance Sensor}
 
-\paragraph{Gostai Standard Robotic API interface:} \refFacet{DistanceSensor}
+\paragraph{Gostai Standard Robotic API interface:} \refInterface{DistanceSensor}
 
 \paragraph{Constructor:} DistanceSensor.new(\var{node\_name})
 
@@ -854,7 +854,7 @@ you instantiate both left and right objects.
 
 \subsubsection{Led}
 
-\paragraph{Gostai Standard Robotic API interface:} \refFacet{Led}
+\paragraph{Gostai Standard Robotic API interface:} \refInterface{Led}
 
 \paragraph{Constructor:} Led.new(\var{node\_name})
 
@@ -1146,7 +1146,7 @@ you instantiate both left and right objects.
 
 \subsubsection{Servo}
 
-\paragraph{Gostai Standard Robotic API interface:} \refFacet{RotationalMotor}
+\paragraph{Gostai Standard Robotic API interface:} \refInterface{RotationalMotor}
 
 \paragraph{Constructor:} Servo.new(\var{node\_name}, \var{force\_feedback})
 
@@ -1176,7 +1176,7 @@ you instantiate both left and right objects.
 
 \subsubsection{Touch Sensor}
 
-\paragraph{Gostai Standard Robotic API interface:} \refFacet{TouchSensor}
+\paragraph{Gostai Standard Robotic API interface:} \refInterface{TouchSensor}
 
 \paragraph{Constructor:} TouchSensor.new(\var{node\_name})
 

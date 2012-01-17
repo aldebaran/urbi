@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2009-2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -7,22 +7,24 @@
 %% See the LICENSE file for more information.
 
 \documentclass[openright,twoside,11pt]{book}
-  \usepackage{gostai-documentation}
-  \usepackage{config}
+  \usepackage{urbi-sdk}
 
 \title{The Gostai Standard Robotics API}
 \subtitle{Version \VcsDescription}
+\shorttitle{Gostai Standard Robotics API \packageVersion}
+
 \author{Gostai}
 
 % DOCUMENT
 \begin{document}
 \maketitle
 \tableofcontents
-\savesections
-\raisesections
-\let\chapter\section
-\input{specs/naming-standard}
-\restoresections
+{
+  \raisesections
+  \let\chapter\section
+  \input{specs/naming-standard}
+}
+\input{document-aux/latex/notation}
 \chapterIndex
 \end{document}
 

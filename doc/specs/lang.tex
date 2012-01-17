@@ -50,7 +50,7 @@ characters.
 \item A \lstinline|//| introduces a comment that lasts until the end
   of the line.
 \item A \lstinline|/*| introduces a comment that lasts until \lstinline|*/|
-  is encountered. Comments nest, contrary to \C/\Cxx: if two \lstinline|/*|
+  is encountered. Comments nest, contrary to \langC/\Cxx: if two \lstinline|/*|
   are encountered, the comment will end after two \lstinline|*/|, not one.
 \end{itemize}
 
@@ -86,7 +86,7 @@ messages.  Since even loading a file actually means sending its
 content as if it were typed in the network session, in order to
 provide the user with meaningful locations in error messages, \us
 features \dfn[syncline]{synclines}, a means to change the ``current
-location'', similarly to \lstinline[language=C]|#line| in \C-like
+location'', similarly to \lstinline[language=C]|#line| in \langC-like
 languages.  This is achieved using special \lstinline|//#| comments.
 
 The following special comments are recognized only as a whole line.
@@ -1003,7 +1003,7 @@ y /= 5;
 
 These operators are redefinable.  Indeed, \lstinline|\var{a} += \var{b}| is
 actually processed as \lstinline|\var{a} = \var{a}.'+='(\var{b})|.  This
-definition, which is neither that of \C
+definition, which is neither that of \langC
 (\lstinline|\var{a} = \var{a}.'+'(\var{b})|) nor that of \Cxx
 (\lstinline|\var{a}.'+='(\var{b})|), provides support for both
 \dfn{immutable} and \dfn{mutable} values.
@@ -1146,7 +1146,7 @@ mc2;
 \subsubsection{Postfix Operators}
 \label{sec:lang:postop}
 
-In the tradition of \C, \us provides postfix operators (see
+In the tradition of \langC, \us provides postfix operators (see
 \autoref{tab:postop}), e.g., \lstinline|\var{b} = \var{a}++|.  Prefix
 operators, however, are not supported.  Rather than \lstinline|++\var{a}|,
 write \lstinline|\var{a} += 1|.
@@ -1526,7 +1526,7 @@ case references refer to the innermost variable, as shown below.
 
 \dfn{Functions} in \us are first class citizens: a function is a
 value, like floats and strings, and can be handled as such.  This is
-different from most \C-like languages.  One can create a functional
+different from most \langC-like languages.  One can create a functional
 value thanks to the \lstinline|function| keyword, followed by the list
 of formal arguments and a compound statement representing the body of
 the function. Formal arguments are a possibly-empty comma-separated
@@ -2153,7 +2153,7 @@ obj.b(50);
 \label{sec:lang:enum}
 
 Enumeration types enable to create types represented by a finite set of
-values, like the \lstinline{enum} declaration in \C.
+values, like the \lstinline{enum} declaration in \langC.
 
 \begin{urbiscript}
 enum Suit
@@ -2470,10 +2470,10 @@ else
 [00000002:error] !!! syntax error: unexpected else
 \end{urbiscript}
 
-Contrary to \C/\Cxx, it has value: it also implements the
+Contrary to \langC/\Cxx, it has value: it also implements the
 \lstinline|\var{condition} ? \var{then-clause} : \var{else-clause}|
 construct.  Unfortunately, due to syntactic constraints inherited from
-\C, it is a \emph{statement}: it cannot be used directly as an
+\langC, it is a \emph{statement}: it cannot be used directly as an
 expression.  But as everywhere else in \us, to use a statement where
 an expression is expected, use braces:
 
@@ -2506,14 +2506,14 @@ if (var xx = 123) xx | xx;
 
 \subsubsection{C-like for}
 
-\us support the classical \C-like \lstinline|for| construct.
+\us support the classical \langC-like \lstinline|for| construct.
 
 \begin{urbiunchecked}
 for (\var{initialization}; \var{condition}; \var{increment})
   \var{body}
 \end{urbiunchecked}
 
-It has the exact same behavior as \C's \lstinline|for|:
+It has the exact same behavior as \langC's \lstinline|for|:
 
 \begin{enumerate}
 \item The \var{initialization} is evaluated.
@@ -2629,7 +2629,7 @@ else
 
 If the \var{condition} evaluation is true, \var{action} is
 evaluated. Otherwise, in the latter version, \var{otherwise} is
-executed.  Contrary to \C/\Cxx, there \emph{must not} be a semicolon
+executed.  Contrary to \langC/\Cxx, there \emph{must not} be a semicolon
 after the \var{action}; it would end the
 \lstinline|if|/\lstinline|else| construct prematurely.
 
@@ -2677,7 +2677,7 @@ equivalent to \lstinline|while (true)|.  The loop evaluates to
 
 \subsection{switch}
 
-The \lstinline|switch| statement in \us is similar to \C's one.
+The \lstinline|switch| statement in \us is similar to \langC's one.
 
 \begin{urbiunchecked}
 switch (\var{value})
@@ -2704,7 +2704,7 @@ switch. The switch itself evaluates to case that was evaluated, or to
 void if no match was found and there's no default case. The listing below
 illustrates \lstinline|switch| usage.
 
-Unlike \C, there are no \lstinline|break| to end \lstinline|case|
+Unlike \langC, there are no \lstinline|break| to end \lstinline|case|
 clauses: execution will never span over several cases.  Since the
 comparisons are performed with the generic \lstinline|==| operator,
 \lstinline|switch| can be performed on any comparable data type.
@@ -2733,7 +2733,7 @@ sw("foobar");
 
 \subsection{while}
 
-The \lstinline|while| loop is similar to \C's one.
+The \lstinline|while| loop is similar to \langC's one.
 
 \begin{urbiunchecked}
 while (\var{condition})
@@ -3162,7 +3162,7 @@ finally { throw "finally" };
 code.  They are particularly useful when developing a program since
 they allow early catching of errors.  Yet, they can be costly in
 production mode: the run-time cost of verifying every single assertion
-might be prohibitive.  Therefore, as in \C-like languages, assertions
+might be prohibitive.  Therefore, as in \langC-like languages, assertions
 are disabled when \refSlot[System]{ndebug} is true, see \refObject{System}.
 
 \us supports assertions in two different ways: with a function-like
