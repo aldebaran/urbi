@@ -135,8 +135,8 @@ install-doc:
 ## FIXME: Race condition on this script.  It would be better to
 ## have the script run ssh rather that the converse.
 	scp $(build_aux_dir)/bin/symlink-to-latest $(doc_host):/tmp
-	ssh $(doc_host) 'perl -f /tmp/symlink-to-latest $(doc_dir)'
-	scp $(top_srcdir)/scripts/www/HEADER.html $(doc_host):$(doc_dir)
+	ssh $(doc_host) 'perl -f /tmp/symlink-to-latest $(dir $(doc_dir))'
+	scp $(top_srcdir)/scripts/www/HEADER.html $(doc_host):$(dir $(doc_dir))
 
 ## ------- ##
 ## Check.  ##
