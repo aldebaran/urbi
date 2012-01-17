@@ -491,6 +491,7 @@ goTo
 goto
 goToAbsolute
 goToChargingDock
+goToChargingStation
 GPL
 GraphViz
 graphviz
