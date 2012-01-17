@@ -42,9 +42,6 @@ This release fixes some packaging-related minor issues.
 \item Windows packages with the installer now have some \us files (namely
   \file{platform.u}) which properly depend on whether you are using the
   debug or release flavor.
-\item The developer documentation for Urbi SDK Remote Java is included in
-  the binary packages (as
-  \file{share/doc/urbi-sdk/doc/sdk-remote-java.htmldir}).
 \end{itemize}
 
 \subsection{Changes}
@@ -56,8 +53,7 @@ This release fixes some packaging-related minor issues.
   \usdk now defines a macro \lstinline{foreach} much more widely than
   before.  Never include \file{boost/foreach.hpp}, rather, use
   \file{libport/foreach.hh}.
-\item \command{urbi-launch-java} is documented,
-  \autoref{sec:tools:urbi-launch-java}.
+\item Thanks to Adam Oleksy, we now provide Debian and RedHat packages.
 \item \command{urbi-launch-java} supports the new option \option[C]{check}
   which checks if Java support is available.
 \item We now use the version 8 of the Independent JPEG Group's (IJG)
@@ -68,6 +64,11 @@ This release fixes some packaging-related minor issues.
 \begin{itemize}
 \item Table of figures (\autoref{sec:lof}) and table of tables
   (\autoref{sec:lot}).
+\item \command{urbi-launch-java} is documented,
+  \autoref{sec:tools:urbi-launch-java}.
+\item The developer documentation for Urbi SDK Remote Java is included in
+  the binary packages (as
+  \file{share/doc/urbi-sdk/doc/sdk-remote-java.htmldir}).
 \end{itemize}
 
 \section{\usdk 2.7.4}
