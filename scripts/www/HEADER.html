@@ -20,78 +20,92 @@
       <div class="section">
 
         <p>
-          This release is a bug fix release of the 2.7 family.
-	</p>
+          This release is another maintenance release of the 2.7
+          family.  Please see
+          the <a href="doc/urbi-sdk.htmldir/release-notes.html">release
+            notes</a> for a complete description of changes.
+
+          In addition to several fixes (in particular in source
+          tarballs and Windows packages), some of the noteworthy
+          changes include:
+        </p>
+        <ul>
+          <li>
+            Debian and RedHat packages, thanks to Adam Oleksy and
+            Alexandre Morgand.
+          </li>
+          <li>
+            Many improvements in the documentation.
+          </li>
+          <li>
+            Compatibility with Clang++2.1, GCC 4.6, Boost 1.48.
+          </li>
+        </ul>
+      </div>
+
+      <h2>Package Types</h2>
+      <div class="section">
 	<p>
-	  See
-	  the <a href="doc/urbi-sdk.htmldir/release-notes.html">release
-	  notes</a> for a more complete description of the changes.
+	  There are three kinds of packages:
+	  <dl>
+	    <dt>Urbi SDK (urbi-sdk-*)</dt>
+	    <dd>The full Software Development Kit, including the
+	      full documentation in HTML and PDF.  These packages
+	      are made for computers on which applications are
+	      developed.</dd>
+	    <dt>Urbi Runtime (urbi-runtime-*)</dt>
+	    <dd>Only what is needed to run Urbi programs.  These
+	      packages are made for robots running these
+	      applications.  They do not contain the
+	      documentation.</dd>
+	    <dt>Urbi Documentation (urbi-doc-*)</dt>
+	    <dd>The whole documentation, in HTML and PDF.</dd>
+	  </dl>
 	</p>
       </div>
 
-	<h2>Package Types</h2>
+      <h2>Architectures</h2>
+      <div class="section">
+	<h3>Source</h3>
 	<div class="section">
 	  <p>
-	    There are three kinds of packages:
-	    <dl>
-	      <dt>Urbi SDK (urbi-sdk-*)</dt>
-	      <dd>The full Software Development Kit, including the
-		full documentation in HTML and PDF.  These packages
-		are made for computers on which applications are
-		developed.</dd>
-	      <dt>Urbi Runtime (urbi-runtime-*)</dt>
-	      <dd>Only what is needed to run Urbi programs.  These
-		packages are made for robots running these
-		applications.  They do not contain the
-		documentation.</dd>
-	      <dt>Urbi Documentation (urbi-doc-*)</dt>
-	      <dd>The whole documentation, in HTML and PDF.</dd>
-	    </dl>
+	    The files with no architecture specified are BZip2
+	    source tarballs
+	    (<a href="urbi-sdk-2.7.5.tar.bz2">urbi-sdk-2.7.5.tar.bz2</a>).
+	    Use them only if you are ready to compile Urbi SDK
+	    yourself.
+	  </p>
+	</div>
+	<h3>Unix</h3>
+	<div class="section">
+	  <p>
+	    GNU/Linux and Mac OS X packages are regular BZip2 tarballs.
 	  </p>
 	</div>
 
-	<h2>Architectures</h2>
+	<h3>Windows</h3>
 	<div class="section">
-	  <h3>Source</h3>
-	  <div class="section">
-	    <p>
-	      The files with no architecture specified are BZip2
-	      source tarballs
-	      (<a href="urbi-sdk-2.7.5.tar.bz2">urbi-sdk-2.7.5.tar.bz2</a>).
-	      Use them only if you are ready to compile Urbi SDK
-	      yourself.
-	    </p>
-	  </div>
-	  <h3>Unix</h3>
-	  <div class="section">
-	    <p>
-	      GNU/Linux and Mac OS X packages are regular BZip2 tarballs.
-	    </p>
-	  </div>
+	  <p>
+	    The packages depend on the version of Visual C++ you
+	    use: 2005 or 2008.
+	  </p>
 
-	    <h3>Windows</h3>
-	    <div class="section">
-	      <p>
-		The packages depend on the version of Visual C++ you
-		use: 2005 or 2008.
-	      </p>
+	  <p>
+	    Windows packages in "*.exe" contain an installer that
+	    installs both debug and release libraries, an UObject
+	    wizard for Visual C++, Gostai Editor and Gostai
+	    Console.  Using the installers is strongly
+	    recommended.
+	  </p>
 
-	      <p>
-		Windows packages in "*.exe" contain an installer that
-		installs both debug and release libraries, an UObject
-		wizard for Visual C++, Gostai Editor and Gostai
-		Console.  Using the installers is strongly
-		recommended.
-	      </p>
-
-	      <p>
-		If you know what you are doing, you might want to use
-		the "*.zip" files.  They come in two flavors: debug or
-		release.  They require that you have MS Visual C++
-		installed, or that you run "vcredist.exe" that can be
-		found <a href="http://www.gostai.com/downloads/urbi/windows/">
-		here</a>.
-	      </p>
-	  </div>
+	  <p>
+	    If you know what you are doing, you might want to use
+	    the "*.zip" files.  They come in two flavors: debug or
+	    release.  They require that you have MS Visual C++
+	    installed, or that you run "vcredist.exe" that can be
+	    found <a href="http://www.gostai.com/downloads/urbi/windows/">
+	      here</a>.
+	  </p>
 	</div>
+      </div>
     </div>
