@@ -20,9 +20,10 @@ TEST_SUITE_LOG = tests/test-suite.log
 
 # The list of LaTeX source files from the Kernel documentation that
 # will be turned into tests.
-test_tex = 					\
-  $(filter-out document-aux/%,			\
-    $(call ls_files,*.tex))
+test_tex =					\
+  $(filter-out $(FROM_GEN),			\
+    $(filter-out document-aux/%,		\
+      $(call ls_files,*.tex)))
 
 # Look in addons/ if there are additional LaTeX files that should
 # generate test cases.  To this end, we call `ls-file
@@ -135,6 +136,13 @@ CHECK_BUILDFARM_FLAGS = AM_COLOR_TESTS=no VERBOSE=1 # INSTRUMENTATION=1
 	$(MAKE) $(AM_MAKEFLAGS) $*heck-html $(CHECK_BUILDFARM_FLAGS)
 
 check-TESTS: clean-semaphores
+
+
+## -------- ##
+## XFAILS.  ##
+## -------- ##
+
+TFAIL_TESTS +=
 
 
 include $(top_srcdir)/tests-local.mk
