@@ -28,25 +28,25 @@ MORSE is available on a git repository.
 $ git clone http://github.com/laas/morse.git
 \end{shell}
 
-You can also get the latest stable version with a tarball at
-\href{https://github.com/laas/morse/tarball/0.4}
-{https://github.com/laas/morse/tarball/0.4}.
+You can also get the latest stable version,
+\Href{https://github.com/laas/morse/tarball/0.4} {MORSE 0.4 tarball}.
 
 The third solution is to use a package manager to get MORSE.  Every
-installation is detailed on the MORSE website
-(\href{http://www.openrobots.org/morse/doc/latest/user/installation.html}
-{MORSE installation}) and have a look at the FAQ
-\href{http://www.openrobots.org/morse/doc/latest/user/faq.html} {MORSE FAQ}.
+installation is detailed on
+\Href{http://www.openrobots.org/morse/doc/latest/user/installation.html}
+{MORSE installation page}, and have a look at the
+\Href{http://www.openrobots.org/morse/doc/latest/user/faq.html} {MORSE FAQ}.
 
-The first solution is strongly advise since we want to use correctly the
-MORSE-ROS binding. See the FAQ section. %FIXME: do a FAQ section.
+The first solution is recommended to use the MORSE-ROS binding. See the FAQ
+section. %FIXME: do a FAQ section.
 
 \subsubsection{Blender installation}
 
-MORSE requires a Blender 2.59 build with Python 3.2.
+MORSE requires Blender 2.59 built with Python 3.2.
 
-First, you need to install Blender. Every step of the installation can be found
-at \href{http://doc.ubuntu-fr.org/blender_compilation}{Blender compilation}.
+First, install Blender. Every step of the installation can be found at
+\Href{http://doc.ubuntu-fr.org/blender_compilation}{Blender compilation
+  page}.
 
 You can download Python 3.2 using your package manager.
 
@@ -54,12 +54,13 @@ You can download Python 3.2 using your package manager.
 $ sudo apt-get install python3.2
 \end{shell}
 
-If you want to build Python, follow this tutorial
-\href{http://wiki.blender.org/index.php/Dev:2.5/Doc/Building_Blender/Linux/Troubleshooting}
-{Python building}.  Make sure to do the user-config.py at the root directory
-of Blender to build it with the Python3.2 version.
+If you want to build Python, follow the
+\Href{http://wiki.blender.org/index.php/Dev:2.5/Doc/Building_Blender/Linux/Troubleshooting}
+{Python building tutorial}.  Make sure to do the \file{user-config.py} at
+the root directory of Blender to build it with the Python3.2 version.
 
-If everything has been done correctly, this command should to the following.
+If everything has been done correctly, \samp{morse check} should behave as
+follows.
 \begin{shell}
 $ morse check
 * Checking up your environment...
@@ -75,11 +76,11 @@ $ morse check
 
 * Setting $MORSE_ROOT environment variable to default prefix [/usr/local/]
 
-* Checking version of /home/gostai/install/linux/blender... Found v.2.60.0
+* Checking version of /usr/local/bin/blender... Found v.2.60.0
 
 * Blender found from $MORSE_BLENDER. Using it (Blender v.2.60.0)
 
-* Checking version of Python within Blender /home/gostai/install/linux/blender... Found v.3.2
+* Checking version of Python within Blender /usr/local/bin/blender... Found v.3.2
 
 * Blender is using Python 3.2. Alright.
 
@@ -94,24 +95,22 @@ middleware and YARP. \urbi has a ROS bridge to communicate with ROS world in
 
 Two versions of ROS are supported for MORSE.
 \begin{itemize}
-  \item ROS Diamondback
-  \item ROS Electric Emys
+\item ROS Diamondback
+\item ROS Electric Emys
 \end{itemize}
 
-ROS Electric Emys is strongly advised to avoid any complication but if you
-really want to use Diamondback you will have more details about the
-workaround to use it.
+ROS Electric Emys is strongly recommended, but if you really want to use
+Diamondback see
 \href{http://www.openrobots.org/morse/doc/latest/user/installation/mw/ros.html}
-{MORSE-ROS installation}
+{MORSE-ROS installation}.
 
-A lot of stacks are needed for MORSE:
+Many ROS stacks are needed for MORSE:
 \begin{itemize}
-\item morse-ros \href{git clone http://code.in.tum.de/git/morse-ros.git}
-  {morse-ros repository}
+\item \Href{git clone http://code.in.tum.de/git/morse-ros.git}
+  {morse-ros}
 \item ros-electric-roslisp-common
-\item nav\_pcontroller
-  \href{http://www.ros.org/browse/details.php?name=nav\_pcontroller}
-  {nav\_pcontroller stack}
+\item \Href{http://www.ros.org/browse/details.php?name=nav\_pcontroller}
+  {nav\_pcontroller}
 \end{itemize}
 
 Checkout the tutorials branch for morse-ros stack.
@@ -119,10 +118,13 @@ Checkout the tutorials branch for morse-ros stack.
 $ git checkout -b tutorials origin/tutorials
 \end{shell}
 
-\paragraph{Script for installation} there is a script made by Pierrick Koch to
-install all you need for MORSE-ROS.
-(\href{https://github.com/pierriko/proteus/blob/master/morse-ros.sh}{Link})
-\subsection{Osx}
+\paragraph{Script for installation}
+The \Href{https://github.com/pierriko/proteus/blob/master/morse-ros.sh}
+{morse-ros.sh} script, by Pierrick Koch, installs all you need for
+MORSE-ROS.
+
+
+\subsection{Mac OS X}
 
 The process is exactly the same for Mac OS X. Make sure your Python version
 is the expected one and your environment is well set (e.g.,
@@ -141,54 +143,58 @@ The purpose of MORSE is to build, thanks to Blender, a robot with different
 components that send or receive information. These are represented in
 different middlewares such as ROS.
 
-The following example is based on a MORSE tutorial
-(\href{http://www.openrobots.org/morse/doc/latest/user/tutorial.html} {MORSE
-  tutorial}) adapted for ROS.
+The following example file \file{test-ros.py} is based on a
+\Href{http://www.openrobots.org/morse/doc/latest/user/tutorial.html} {MORSE
+  tutorial adapted for ROS}.
 
-{\cxxPre%
-\lstinputlisting[language=Python,style=UrbiSDKEnv,firstline=11]
+{\verbatimPre%
+\lstinputlisting[language=Python,style=UrbiSDKEnv]
   {\absTopSrcdir/share/morse/test-ros.py}%
-\cxxPost}
+\verbatimPost}
 
-Every details about the components can be found here
-\href{http://www.openrobots.org/morse/doc/latest/components_library.html}
-{components description}.
+Every details about the components can be found in the
+\Href{http://www.openrobots.org/morse/doc/latest/components_library.html}
+{component library}.
 
 \section{Run the simulation}
 
-Now we will run the example to test MORSE-\urbi.
-
-Make sure your example is in
-\file{my\_morse\_root/examples/morse/scenarii}.
+Now we will run the example to test MORSE-\urbi.  Make sure your example is
+in \file{\var{morse\_root}/examples/morse/scenarii}.  Then run the following
+command, which should create the window shown in
+\autoref{fig:morse:simulation}.
 
 \begin{shell}
 $ morse exec test-ros.py
 \end{shell}
-\includegraphics[width=0.95\textwidth]{img/morse/simulation.png}
 
-To run the simulation, press \samp{p}.  Since we bound MORSE using the ROS
-middleware, you need have a roscore running.  Otherwise you will have an
-error message:
-\begin{shell}
-Unable to register with master node [http://localhost:11311]: \
-master may not be running yet. Will keep trying.
-\end{shell}
+\begin{figure}[htp]
+  \centering
+  \includegraphics[width=0.95\textwidth]{img/morse/simulation.png}
+  \caption{MORSE Simulation}
+  \label{fig:morse:simulation}
+\end{figure}
+
+To run the simulation, press \samp{p}.  Since we bound MORSE using ROS, you
+need a running \command{roscore},
 
 \begin{shell}
 $ roscore
 \end{shell}
 
+\noindent
+otherwise you would get the following error message:
+
+\begin{verbatim}
+Unable to register with master node [http://localhost:11311]: \
+master may not be running yet. Will keep trying.
+\end{verbatim}
+
 Now, MORSE will communicate with ROS.
 
 \section{Using \urbi to play with the simulation}
 
-We have several ROS topics that are running.
-
-\begin{shell}
-$ rxgraph
-\end{shell}
-
-You should have something like this.
+We have several running ROS topics, see \autoref{fig:morse:rxgraph}.  There
+are one Publisher and six Subscribers available.
 
 \begin{figure}[htp]
   \centering
@@ -196,8 +202,6 @@ You should have something like this.
   \caption{Output from \command{rxgraph}}
   \label{fig:morse:rxgraph}
 \end{figure}
-
-There is one Publisher and six Subscribers available.
 
 \paragraph{Motion Controller}
 
@@ -226,11 +230,9 @@ g.data;
 
 \paragraph{CameraMain}
 
-The camera sensor will give the video flow received by the camera set on the
-Robot.
-
-Please run a \urbi server to allow \command{urbi-image} to display
-camera's content.
+The camera sensor will give the video stream received by the camera set on
+the Robot.  To allow \command{urbi-image} to display camera's content be
+sure to have your \urbi server accept network connection, e.g.,
 
 \begin{shell}
 $ urbi -H 127.0.0.1 -P 54000
@@ -241,15 +243,15 @@ var vc = Morse.VideoCameraSensor.new |;
 vc.run;
 \end{urbiunchecked}
 
-Simply run \command{urbi-image} to view through the camera.
+Then run \command{urbi-image} to view through the camera.
 \begin{shell}
-$ urbi-image
+$ urbi-image -H 127.0.0.1 -P 54000
 \end{shell}
 
 \paragraph{Pose}
 
-The Pose sensor provides the absolute position and orientation. Do the same
-job as GPS.
+The Pose sensor provides the absolute position and orientation. Do as for
+GPS.
 
 \begin{urbiunchecked}
 var ps = Morse.PoseSensor.new |;
