@@ -1,4 +1,4 @@
-## Copyright (C) 2009-2011, Gostai S.A.S.
+## Copyright (C) 2009-2012, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -31,7 +31,12 @@ UMAKE_VERBOSE = $(UMAKE_VERBOSE_$(V))
 UMAKE_VERBOSE_ = $(UMAKE_VERBOSE_$(AM_DEFAULT_VERBOSITY))
 UMAKE_VERBOSE_0 = --quiet
 
-%$(DLMODEXT) %.la: %.uob $(UMAKE_SHARED) libuobject/libuobject$(LIBSFX).la
+UMAKE_SHARED_deps =				\
+  $(UMAKE_SHARED)				\
+  $(sdk_remote_builddir)/sdk/umake-shared	\
+  $(sdk_remote_builddir)/sdk/umake		\
+  libuobject/libuobject$(LIBSFX).la
+%$(DLMODEXT) %.la: %.uob $(UMAKE_SHARED_deps)
 	+$(umake_verbose)$(UMAKE_SHARED) $(UMAKE_VERBOSE)	\
 	  EXTRA_CXXFLAGS="$(WARNING_CXXFLAGS)"			\
 	  $(EXTRA_$(notdir $*)_cppflags)			\
@@ -56,9 +61,13 @@ clean-uobjects:
 	-rm -f $(UOBS) $(UOBS:$(DLMODEXT)=.la)
 
 # Help to restart broken builds.
+$(sdk_remote_builddir)/sdk/umake-shared $(sdk_remote_builddir)/sdk/umake \
+  : $(sdk_remote_srcdir)/sdk/umake.in
+	$(MAKE) $(AM_MAKEFLAGS) -C $(sdk_remote_builddir)	\
+	  sdk/umake-shared sdk/umake
+
 $(UMAKE_SHARED): tests/bin/wrapper.in $(sdk_remote_srcdir)/sdk/umake.in
 	$(MAKE) $(AM_MAKEFLAGS) -C tests bin/umake-shared
-	$(MAKE) $(AM_MAKEFLAGS) -C $(sdk_remote_builddir) sdk/umake-shared sdk/umake
 
 
 ## -------------- ##

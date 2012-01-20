@@ -1,5 +1,5 @@
 ;;;
-;;; Copyright (C) 2010-2012, Gostai S.A.S.
+;;; Copyright (C) 2008-2012, Gostai S.A.S.
 ;;;
 ;;; This software is provided "as is" without warranty of any kind,
 ;;; either expressed or implied, including but not limited to the
@@ -129,10 +129,10 @@
    ; shell answers
    (urbiscript-convert urbiscript-error font-lock-warning-face)
    (urbiscript-convert urbiscript-response font-lock-preprocessor-face)
-   ; functions
-   (urbiscript-convert urbiscript-functions-name font-lock-constant-face 2)
    ; keywords
    (urbiscript-convert urbiscript-keywords font-lock-keyword-face)
+   ; functions
+   (urbiscript-convert urbiscript-functions-name font-lock-constant-face 2)
    ; literals
    (urbiscript-convert urbiscript-literals font-lock-constant-face)
    ; objects

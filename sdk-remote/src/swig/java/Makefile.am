@@ -1,4 +1,4 @@
-## Copyright (C) 2010, 2011, Gostai S.A.S.
+## Copyright (C) 2010-2012, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -73,7 +73,7 @@ endif
 # not remove the directory.
 %.cc %/%.java %.cc.h: swig/%.i
 #	$(AM_V_GEN)rm -rf $(java_src_outdir)
-	$(AM_V_GEN)$(mkdir_p) $(java_src_outdir)
+	$(AM_V_GEN)$(mkdir_p) $(java_src_outdir) $(DEPDIR)
 	$(AM_V_at)test -n "$(SWIG)" || { echo "SWIG not defined"; exit 1; }
 	$(AM_V_at)$(SWIG) $(SWIGFLAGS) -o $@.tmp $<
 	$(AM_V_at)sed -e 's,$@.tmp,$@,'		\

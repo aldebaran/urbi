@@ -13,6 +13,17 @@ do (Object)
   // Syntactic sugar for setProtos.
   protos->updateHook = function(slot, value) { setProtos(value); };
 
+  function '!'()
+  {
+    if (this) false else true
+  };
+
+  // xor
+  function '^'(var that)
+  {
+    if (this) !that else that
+  };
+
   function 'class'(var name, var protos = [])
   {
     var res = Object.clone |

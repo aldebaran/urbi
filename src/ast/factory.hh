@@ -104,6 +104,11 @@ namespace ast
                  bool constant,
                  const location& exp_loc, rExp exp) /* const */;
 
+    /// Translate &&.
+    static
+    rExp
+    make_and(const location& l, rExp lhs, rExp rhs) /* const */;
+
     /// <true> or <false>.
     static
     rExp make_bool(const location& loc, bool b);
@@ -354,12 +359,17 @@ namespace ast
     /// Return the ast for "nil".
     rExp make_nil() /* const */;
 
-    static
     /// Return "do nothing".
+    static
     rNoop make_noop(const location& l);
 
+    /// Translate ||.
     static
+    rExp
+    make_or(const location& l, rExp lhs, rExp rhs) /* const */;
+
     /// Create a Position.
+    static
     rExp make_position(const location& loc) /* const */;
 
     /// (relation name, rhs), e.g., ("!=", 2).

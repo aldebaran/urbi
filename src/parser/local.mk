@@ -127,7 +127,8 @@ endif
 # This code comes from "Handling Tools that Produce Many Outputs",
 # from the Automake documentation.
 parser/ugrammar.stamp: parser/ugrammar.y $(ugrammar_deps)
-	$(AM_V_GEN)rm -f $@ $@.tmp parser/ugrammar-pruned.y
+	$(AM_V_GEN)mkdir -p $(@D)
+	$(AM_V_at)rm -f $@ $@.tmp parser/ugrammar-pruned.y
 	$(AM_V_at)echo '$@ rebuilt because of: $?' >$@.tmp
 	$(AM_V_at)$(MAKE) $(AM_MAKEFLAGS) $(BISONXX)
 	$(AM_V_at)$(MAKE) -C $(top_builddir)/bison MAKEFLAGS=
@@ -181,16 +182,16 @@ EXTRA_DIST += parser/keywords
 
 .PHONY: listings emacs
 listings: parser/utoken.l
-	$(AM_V_GEN)
+	$(AM_V_GEN)mkdir -p $(@D)
 	$(AM_V_at)KEYWORDS_MODE=$@ $(srcdir)/parser/keywords $<
 
 emacs: parser/utoken.l
-	$(AM_V_GEN)
+	$(AM_V_GEN)mkdir -p $(@D)
 	$(AM_V_at)KEYWORDS_MODE=$@ $(srcdir)/parser/keywords $<
 
 nodist_libuobject@LIBSFX@_la_SOURCES += parser/keywords.hh
 parser/keywords.hh: parser/utoken.l
-	$(AM_V_GEN)
+	$(AM_V_GEN)mkdir -p $(@D)
 	$(AM_V_at)rm -f $@
 	$(AM_V_at)KEYWORDS_MODE=c++ $(srcdir)/parser/keywords $< >$@.tmp
 	$(AM_V_at)mv $@.tmp $@
@@ -209,7 +210,8 @@ nodist_libuobject@LIBSFX@_la_SOURCES += $(FROM_UTOKEN_L)
 EXTRA_DIST += parser/utoken.l
 utoken_deps = $(FLEXXX_IN) parser/local.mk
 parser/utoken.stamp: parser/utoken.l $(utoken_deps)
-	$(AM_V_GEN)rm -f $@ $@.tmp parser/utoken-pruned.l
+	$(AM_V_GEN)mkdir -p $(@D)
+	$(AM_V_at)rm -f $@ $@.tmp parser/utoken-pruned.l
 	$(AM_V_at)echo '$@ rebuilt because of: $?' >$@.tmp
 	$(AM_V_at)$(MAKE) $(AM_MAKEFLAGS) $(FLEXXX)
 	$(AM_V_at)$(PRUNE_FOR_SPACE) -o parser/utoken-pruned.l $<

@@ -820,10 +820,13 @@ provide them.
   \operatoriass{\^}%
   % \operatoriass{\~}
 }
-\newcommand{\operatorinca}   {\operator  {++}   {++a}  {-}     {Pre-incrementation}        {a = a.'++'}}
-\newcommand{\operatordeca}   {\operator  {--}   {--a}  {-}     {Pre-decrementation}        {a = a.'--'}}
-\newcommand{\operatorainc}   {\operator  {++}   {a++}  {-}     {Post-incrementation}       {\{var '$a' = a | ++a | '$a'\}  }}
-\newcommand{\operatoradec}   {\operator  {--}   {a--}  {-}     {Post-decrementation}       {\{var '$a' = a | --a | '$a'\}  }}
+\newcommand{\operatorinca}   {\operator  {++}   {++a}  {-}     {Pre-incrementation}   {a = a.'++'}}
+\newcommand{\operatordeca}   {\operator  {--}   {--a}  {-}     {Pre-decrementation}   {a = a.'--'}}
+\newcommand{\operatorainc}   {\operator  {++}   {a++}  {-}     {Post-incrementation}  {\{var '$a' = a | ++a | '$a'\}  }}
+\newcommand{\operatoradec}   {\operator  {--}   {a--}  {-}     {Post-decrementation}  {\{var '$a' = a | --a | '$a'\}  }}
+\newcommand{\operatorand}    {\operator  {\&\&} {a\&\&b}{Left} {Logical and}          {if (a) b else a}}
+\newcommand{\operatoror}     {\operator  {||}   {a||b}  {Left} {Logical or}           {if (a) a else b}}
+
 
 \newcommand{\operatoruplus}  {\poperator {+}    {-}    {Identity}               }
 \newcommand{\operatorumin}   {\poperator {-}    {-}    {Opposite}               }
@@ -852,8 +855,6 @@ provide them.
 \newcommand{\operatorbor}    {\boperator {bitor}    {Left} {Bitwise or}   }
 \newcommand{\operatorbxor}   {\boperator {^}    {Left} {Bitwise exclusive or}   }
 \newcommand{\operatorneg}    {\poperator {!}    {Left} {Logical negation}       }
-\newcommand{\operatorand}    {\boperator {\&\&} {Left} {Logical and}            }
-\newcommand{\operatoror}     {\boperator {||}   {Left} {Logical or}             }
 
 
 % \whetherHtml{HTML OUTPUT}{NOT-HTML OUTPUT}
@@ -1209,16 +1210,48 @@ short-circuiting: their right-hand side is evaluated only if needed.
   \operatoror
 \end{operatorTable}
 
+The operator \lstinline{!} returns the Boolean that is the negation of the
+value of its operand.  See \refSlot[Object]{'!'}.
+\begin{urbiassert}
+!true == false; !false == true;
+\end{urbiassert}
+
+The operator \lstinline{&&}, the short-circuiting logical and, behaves as
+follows.  If the left-hand side operand evaluates to a ``true'' value,
+return the evaluation of the right-hand side operand; otherwise return the
+value of the left-hand side operand (not necessarily \lstinline{false}).
 \begin{urbiassert}
 true && true;  !(true && false); !(false && true); !(false && false);
-true || false; true || true; false || true; !(false || false);
 
-!true == false; !false == true;
+(0 && "foo") == 0;
+(2 && "foo") == "foo";
+
+(""    && "foo") == "";
+("foo" && "bar") == "bar";
 
 // Right hand-side is not evaluated when not needed.
-true || (1 / 0);
 (false && (1 / 0)) == false;
 \end{urbiassert}
+
+The operator \lstinline{||}, the short-circuiting logical or, behaves as
+follows. If the left-hand side operand evaluates to a ``false'' value,
+return the evaluation of the right-hand side operand; otherwise return the
+value of the left-hand side argument (not necessarily \lstinline{true}).
+\begin{urbiassert}
+true || false; true || true; false || true; !(false || false);
+
+(0 || "foo") == "foo";
+(2 ||  1/0)  == 2;
+
+(""    || "foo") == "foo";
+("foo" || 1/0)   == "foo";
+
+// Right hand-side is not evaluated when not needed.
+true || (1 / 0) == true;
+\end{urbiassert}
+
+See \autoref{sec:truth} for more information about ``true'' and ``false''
+values.
 
 \subsubsection{Comparison operators}
 \label{sec:lang:op:comparison}

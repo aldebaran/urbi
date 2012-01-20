@@ -439,12 +439,25 @@ This release fixes some packaging-related minor issues.
   which checks if Java support is available.
 \item We now use the version 8 of the Independent JPEG Group's (IJG)
   \file{libjpeg}.
+\item To improve performances, the Boolean operators \lstinline{&&} and
+  \lstinline{||} can no longer be overridden.  In other words,
+  \lstinline|\var{a} && \var{b}| no longer maps to
+  \lstinline|\var{a}.'&&'(\var{b})|, but to
+  \lstinline|if (\var{a}) \var{b} else \var{a}| (with provisions to avoid
+  multiple computations of \var{a}).
 \end{itemize}
 
 \subsection{Documentation}
 \begin{itemize}
+\item Extensive overhaul of the HTML rendering of the documentation; compare
+  \url{\downloadUrl/urbi/2.7.5/doc/urbi-sdk.htmldir/} to
+  \url{\downloadUrl/urbi/2.7.4/doc/urbi-sdk.htmldir/}.  Please, pay extra
+  attention to the ``Index'' button.
+\item The HTML documentation is also available as a single HTML document
+  (\url{\downloadUrl/urbi/2.7.5/doc/urbi-sdk-single.htmldir/}).
 \item Table of figures (\autoref{sec:lof}) and table of tables
   (\autoref{sec:lot}).
+\item Bibliography, \autoref{sec:bibliography}.
 \item \command{urbi-launch-java} is documented,
   \autoref{sec:tools:urbi-launch-java}.
 \item The developer documentation for Urbi SDK Remote Java is included in

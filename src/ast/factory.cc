@@ -166,6 +166,15 @@ namespace ast
   }
 
   rExp
+  Factory::make_and(const location&, rExp lhs, rExp rhs)
+  {
+    PARAMETRIC_AST
+      (a,
+       "{ var '$t' = %exp:1 | if ('$t') %exp:2 else '$t' }");
+    return exp(a % lhs % rhs);
+  }
+
+  rExp
   Factory::make_assert(const location&,
                        rExp cond) /* const */
   {
@@ -958,6 +967,27 @@ namespace ast
   Factory::make_noop(const location& l)
   {
     return new ast::Noop(l, 0);
+  }
+
+  rExp
+  Factory::make_or(const location&, rExp lhs, rExp rhs)
+  {
+    PARAMETRIC_AST
+      (a,
+       "{ var '$t' = %exp:1 | if ('$t') '$t' else %exp:2 }");
+    return exp(a % lhs % rhs);
+  }
+
+  /// Create a Position.
+  rExp
+  Factory::make_position(const location& loc) /* const */
+  {
+    PARAMETRIC_AST(pos, "Position.new(%exp:1, %exp:2, %exp:3)");
+    const libport::Symbol* fn = loc.begin.filename;
+    return exp(pos
+               % (fn ? make_string(loc, fn->name_get()) : make_nil())
+               % make_float(loc, loc.begin.line)
+               % make_float(loc, loc.begin.column));
   }
 
   namespace

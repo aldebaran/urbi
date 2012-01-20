@@ -1,4 +1,4 @@
-## Copyright (C) 2009-2011, Gostai S.A.S.
+## Copyright (C) 2009-2012, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -21,9 +21,9 @@ TEST_SUITE_LOG = tests/test-suite.log
 # The list of LaTeX source files from the Kernel documentation that
 # will be turned into tests.
 test_tex =					\
-  $(filter-out $(FROM_GEN),			\
-    $(filter-out document-aux/%,		\
-      $(call ls_files,*.tex)))
+  $(filter-out					\
+     $(FROM_GEN) document-aux/% tmp.t2d/%,	\
+     $(call ls_files,*.tex))
 
 # Look in addons/ if there are additional LaTeX files that should
 # generate test cases.  To this end, we call `ls-file

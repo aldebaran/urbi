@@ -1,4 +1,4 @@
-## Copyright (C) 2005-2011, Gostai S.A.S.
+## Copyright (C) 2005-2012, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -10,11 +10,14 @@ include $(top_srcdir)/build-aux/make/init.mk
 include $(top_srcdir)/build-aux/make/fix-libtool-la.mk
 include $(top_srcdir)/build-aux/make/build-farm.mk
 
+# The doc/ documentation (which is part of .) needs to process some
+# files that are generated in src/ (e.g., urbi.java for
+# sdk-remote-java's documentation).
 SUBDIRS =					\
   jpeg						\
   libport					\
-  .						\
-  src
+  src						\
+  .
 
 # Also fix libjpeg.la.
 LTLIBRARIES_TO_FIX += jpeg/libjpeg4urbi$(LIBSFX).la
