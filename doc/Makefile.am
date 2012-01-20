@@ -23,6 +23,8 @@ EXTRA_DIST +=					\
   bin/api-sort					\
   bin/local-words				\
   bin/toassert					\
+  document-aux/bib/comp.lang.urbi.bib		\
+  document-aux/bin/texloganalyser		\
   document-aux/bin/texi2dvi			\
   $(call ls_files,				\
     @{document-aux}/figs/gostai.*		\
@@ -31,6 +33,8 @@ EXTRA_DIST +=					\
     @{document-aux}/overlib/*)			\
   $(cube_and_disc).pdf				\
   $(cube_and_disc).png				\
+  document-aux/latex/notation.tex		\
+  document-aux/latex/notation-grammar.tex	\
   document-aux/styles/fixme.sty			\
   document-aux/styles/gostai-documentation.sty	\
   document-aux/styles/gostai.sty		\
@@ -68,7 +72,7 @@ PNG_IMAGES := $(call ls_files,img/*.png)
 logodir = document-aux/figs/urbi-sdk/$(PACKAGE_MAJOR).$(PACKAGE_MINOR)
 cube_and_disc =	$(logodir)/cube-and-disc
 # Images whose original is in PDF.
-PDF_IMAGES :=							\
+PDF_IMAGES =							\
   $(call ls_files,img/*.pdf					\
                   @document-aux/figs/urbi-sdk/*/cube.pdf)	\
   document-aux/figs/gostai.pdf					\
