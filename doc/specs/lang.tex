@@ -588,7 +588,7 @@ Objects meant to serve as prototypes are best defined using the
 \lstinline|class| construct.  See also the tutorial,
 \autoref{sec:tut:class}.
 
-\begin{lstlisting}[language=bnf]
+\begin{bnf}
 <class-statement>
   ::= "class" <lvalue> (: <prototypes>)? <block>
 
@@ -600,7 +600,7 @@ Objects meant to serve as prototypes are best defined using the
 
 <block>
   ::= "{" <statement>* "}"
-\end{lstlisting}
+\end{bnf}
 
 This results in the (constant) definition of the name \var{lvalue} in the
 current context (\lstinline|class| construct can be used inside a scope or
@@ -2898,7 +2898,7 @@ outer();
 Exceptions are \dfn[exception!catching]{caught} with the
 \lstinline|try|/\lstinline|catch| construct. Its syntax is as follows:
 
-\begin{lstlisting}[language=bnf]
+\begin{bnf}
 <try-statement>
   ::= "try" "{" <statement>* "}" <catch-clause>+ <else-clause>? <finally-clause>?
     | "try" "{" <statement>* "}" <finally-clause>
@@ -2912,7 +2912,7 @@ Exceptions are \dfn[exception!catching]{caught} with the
 
 <finally-clause>
   ::= "finally" "{" <statement>* "}"
-\end{lstlisting}
+\end{bnf}
 
 It consists of a first block of statements (the \dfn{try-block}), from which
 we want to catch exceptions, and one or more catch clauses to stop the

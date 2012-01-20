@@ -34,7 +34,6 @@ EXTRA_DIST +=					\
   $(cube_and_disc).pdf				\
   $(cube_and_disc).png				\
   document-aux/latex/notation.tex		\
-  document-aux/latex/notation-grammar.tex	\
   document-aux/styles/fixme.sty			\
   document-aux/styles/gostai-documentation.sty	\
   document-aux/styles/gostai.sty		\
