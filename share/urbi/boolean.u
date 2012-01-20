@@ -36,16 +36,3 @@ do (false)
 
   var '!' = true;
 };
-
-
-/*----.
-| !.  |
-`----*/
-
-do (Object)
-{
-  function '!'()
-  {
-    if (this) false else true
-  };
-};
