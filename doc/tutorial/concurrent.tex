@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2009-2012, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -90,7 +90,7 @@ function test(name)
   echo(name + ": 1");
   echo(name + ": 2");
   echo(name + ": 3");
-} | {};
+}|;
 // Run test and echo("right") in parallel,
 // and wait until both are done before continuing
 test("left") & echo("right"); echo("done");

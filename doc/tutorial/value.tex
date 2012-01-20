@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2009-2012, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -56,14 +56,14 @@ convenient short-hand to discover an object (\refObject{Object}).
 
 \begin{urbiscript}
 Foo.inspect;
-[00000009] *** Inspecting Foo
-[00000009] *** ** Prototypes:
-[00000009] ***   Object
-[00000009] *** ** Local Slots:
-[00000009] ***   a : Float
-[00000009] ***   asFoo : Code
-[00000009] ***   b : String
-[00000009] ***   type : String
+[00000000] *** Inspecting Foo
+[00000000] *** ** Prototypes:
+[00000000] ***   Object
+[00000000] *** ** Local Slots:
+[00000000] ***   a : Float
+[00000000] ***   asFoo : Code
+[00000000] ***   b : String
+[00000000] ***   type : String
 \end{urbiscript} % fix color $
 
 Let's now try to build such an object. First, we want a fresh object
@@ -157,7 +157,7 @@ function get(object, name)
 }|;
 
 var x = Object.clone;
-[00000000] Object_0x00000000
+[00000000] Object_0x42342448
 set(x, "foo", 0);
 [00000000] 0
 set(x, "bar", 1);
@@ -303,7 +303,7 @@ The \lstinline|asList| function simply bounces the task to
 "foo".size;
 [00000000] 3
 "foo".getSlot("size");
-[00000000] Primitive_0x0
+[00000000] Primitive_0x422f0908
 \end{urbiscript}
 
 The \lstinline{size} method of \refObject{String} is another type of
