@@ -862,8 +862,8 @@ documentation of the classes that provide them.
 }
 \newcommand{\operatorinc}    {\operator  {++}   {a++}  {-}     {Incrementation} {\{var '$a' = a | a = a.'++' | '$a'\}}}
 \newcommand{\operatordec}    {\operator  {--}   {a--}  {-}     {Decrementation} {\{var '$a' = a | a = a.'--' | '$a'\}}}
-\newcommand{\operatorand}    {\operator  {\&\&} {a\&\&b}{Left} {Logical and}    {if (a) b else false}}
-\newcommand{\operatoror}     {\operator  {||}   {a||b}  {Left} {Logical or}     {if (a) true else b}}
+\newcommand{\operatorand}    {\operator  {\&\&} {a\&\&b}{Left} {Logical and}    {if (a) b else a}}
+\newcommand{\operatoror}     {\operator  {||}   {a||b}  {Left} {Logical or}     {if (a) a else b}}
 
 \newcommand{\operatoruplus}  {\poperator {+}    {-}    {Identity}               }
 \newcommand{\operatorumin}   {\poperator {-}    {-}    {Opposite}               }
@@ -1225,6 +1225,16 @@ short-circuiting: their right-hand side is evaluated only if needed.
   \operatoror
 \end{operatorTable}
 
+The operator \lstinline{!} returns the Boolean that is the negation of the
+value of its operand.  See \refSlot[Object]{'!'}.
+\begin{urbiassert}
+!true     === false; !false === true;
+!42       === false; !0     === true;
+!"42"     === false; !""    === true;
+![42]     === false; ![]    === true;
+!["4"=>2] === false; ![=>]  === true;
+\end{urbiassert}
+
 The operator \lstinline{&&}, the short-circuiting logical and, behaves as
 follows.  If the left-hand side operand evaluates to a ``true'' value,
 return the evaluation of the right-hand side operand; otherwise return the
@@ -1237,10 +1247,27 @@ true && true;
 
 (""    && "foo") == "";
 ("foo" && "bar") == "bar";
-
-// Short-circuiting.
-(false && (1 / 0)) == false;
 \end{urbiassert}
+
+Its arguments are evaluated at most once.
+\begin{urbiscript}
+var zero = 0|;
+var one = 1|;
+var two = 2|;
+
+// First argument evaluated once, second is not needed.
+({ echo("lhs") | zero } && { echo("rhs") | one }) === zero;
+[00029936] *** lhs
+[00029936] true
+
+({ echo("lhs") | one }  && { echo("rhs") | two }) === two;
+[00029966] *** lhs
+[00029966] *** rhs
+[00029966] true
+\end{urbiscript}
+\begin{urbicomment}
+removeSlots("zero", "one", "two");
+\end{urbicomment}
 
 The operator \lstinline{||}, the short-circuiting logical or, behaves as
 follows. If the left-hand side operand evaluates to a ``false'' value,
@@ -1254,10 +1281,26 @@ true || false;
 
 (""    || "foo") == "foo";
 ("foo" || 1/0)   == "foo";
-
-// Short-circuiting.
-true || (1 / 0) == true;
 \end{urbiassert}
+Its arguments are evaluated at most once.
+\begin{urbiscript}
+var zero = 0|;
+var one = 1|;
+var two = 2|;
+
+// First argument evaluated once, second is not needed.
+({ echo("lhs") | one }  || { echo("rhs") | two }) === one;
+[00029936] *** lhs
+[00029936] true
+
+({ echo("lhs") | zero } || { echo("rhs") | one }) === one;
+[00029966] *** lhs
+[00029966] *** rhs
+[00029966] true
+\end{urbiscript}
+\begin{urbicomment}
+removeSlots("zero", "one", "two");
+\end{urbicomment}
 
 See \autoref{sec:truth} for more information about ``true'' and ``false''
 values.
@@ -1823,11 +1866,9 @@ assigned to the non variadic arguments in order like a classical function
 call. All remaining arguments will be passed in list as the variadic
 argument.
 
-\begin{comment}
-\begin{urbiscript}
+\begin{urbicomment}
 removeSlot("variadic")|;
-\end{urbiscript}
-\end{comment}
+\end{urbicomment}
 
 \begin{urbiscript}
 function invalid(var args[], var last)
