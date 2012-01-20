@@ -145,15 +145,14 @@ EXTRA_DIST += $(precompiled_symbols_hh).gen
 
 $(precompiled_symbols_stamp): $(precompiled_symbols_hh).gen $(precompiled_symbols_hh_sources)
 	$(AM_V_GEN)mkdir -p $(@D)
-	$(AM_V_at)rm -f $@.tmp
-	$(AM_V_at)if test "$(V)" = 1; then				\
+	$(AM_V_at){							\
 	  echo "rebuilding $(precompiled_symbols_hh) because of:";	\
 	  for i in $?;							\
 	  do								\
 	    echo "       $$i";						\
-	  done								\
-	fi
-	$(AM_V_at)touch $@.tmp
+	  done;								\
+	} >$@.tmp
+	$(AM_V_at)test "$(V)" != 1 || cat $@.tmp
 # Don't use `mv' here so that even if we are interrupted, the file
 # is still available for diff in the next run.
 	$(AM_V_at)if test -f $(precompiled_symbols_hh); then	\
