@@ -97,6 +97,11 @@ namespace ast
                  bool constant,
                  const location& exp_loc, rExp exp) /* const */;
 
+    /// Translate &&.
+    static
+    rExp
+    make_and(const location& l, rExp lhs, rExp rhs) /* const */;
+
     /// "<method>"
     static
     rCall
@@ -338,8 +343,13 @@ namespace ast
     static
     rNoop make_noop(const location& l);
 
+    /// Translate ||.
     static
+    rExp
+    make_or(const location& l, rExp lhs, rExp rhs) /* const */;
+
     /// Create a Position.
+    static
     rExp make_position(const location& loc) /* const */;
 
     /// Create a closure or a function.

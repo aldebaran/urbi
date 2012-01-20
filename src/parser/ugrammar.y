@@ -1285,8 +1285,8 @@ exp:
 | exp ">="  exp { $$ = MAKE(call, @$, $1, $2, $3); }
 | exp "~="  exp { $$ = MAKE(call, @$, $1, $2, $3); }
 
-| exp "&&" exp  { $$ = MAKE(call, @$, $1, $2, $3); }
-| exp "||" exp  { $$ = MAKE(call, @$, $1, $2, $3); }
+| exp[l] "&&" exp[r]  { $$ = MAKE(and, @$, $l, $r); }
+| exp[l] "||" exp[r]  { $$ = MAKE(or,  @$, $l, $r); }
 ;
 
 // e in c => c.has(e).

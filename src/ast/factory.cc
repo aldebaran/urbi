@@ -156,6 +156,12 @@ namespace ast
   }
 
   rExp
+  Factory::make_and(const location& l, rExp lhs, rExp rhs)
+  {
+    return make_call(l, lhs, SYMBOL(AMPERSAND_AMPERSAND), rhs);
+  }
+
+  rExp
   Factory::make_assert(const location&,
                        rExp cond) /* const */
   {
@@ -191,7 +197,6 @@ namespace ast
     res->children_set(cond);
     return res;
   }
-
 
   rExp
   Factory::make_at(const location& loc,
@@ -927,6 +932,11 @@ namespace ast
     return new ast::Noop(l, 0);
   }
 
+  rExp
+  Factory::make_or(const location& l, rExp lhs, rExp rhs)
+  {
+    return make_call(l, lhs, SYMBOL(PIPE_PIPE), rhs);
+  }
 
   /// Create a Position.
   rExp
