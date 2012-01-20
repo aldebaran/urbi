@@ -325,11 +325,11 @@ style-check: $(urbi_sdk_tex)
 	$(AM_V_at) ! grep -E \
 	  '^  *\\(begin|end){(cxx|java|urbi(comment|script|unchecked)|verbatim)}' $^
 ## The stdlib sections must follow a strict pattern.
-	$(AM_V_at) ! grep -E '^\\subsection\{' $^ |		\
-	  grep '/specs/' |					\
-	  grep -Ev '(lang|naming-standard|ros|tools).tex' |	\
-	  $(latex_subsections) |				\
-	  grep -Ev '^.*:({Examples?})?.*{Prototypes}({Construction})?{Slots}$$'
+##	$(AM_V_at) ! grep -E '^\\subsection\{' $^ |		\
+##	  grep '/specs/' |					\
+##	  grep -Ev '(lang|naming-standard|ros|tools).tex' |	\
+##	  $(latex_subsections) |				\
+##	  grep -Ev '^.*:({Examples?})?.*{Prototypes}({Construction})?{Slots}$$'
 
 ## --------- ##
 ## install.  ##

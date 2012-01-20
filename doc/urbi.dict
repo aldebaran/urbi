@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1531 utf-8
+personal_ws-1.1 en 1536 utf-8
 aa
 aaa
 abc
@@ -201,6 +201,7 @@ cerr
 CEST
 cflags
 changeConnections
+ChangeLog
 channelName
 chargeStop
 chatTag
@@ -208,6 +209,7 @@ checkMaster
 chk
 chmod
 Christophe
+chrooted
 clapCount
 classname
 classpath
@@ -307,6 +309,7 @@ devel
 df
 DGain
 DHCP
+dialogs
 DifferentialWheels
 dir
 dirlist
@@ -426,6 +429,7 @@ formatDetail
 FormatInfo
 formatter
 Formatters
+forPipe
 fortyTwo
 forwardCoeff
 forwardSpeed
@@ -666,6 +670,7 @@ LD
 ldd
 LDFLAGS
 le
+leaveChargingDock
 leaveTheKitchen
 ledL
 ledR
@@ -1205,6 +1210,7 @@ stdin
 stdlib
 stdout
 stm
+Stmt
 stopif
 stopTracker
 str
@@ -1298,6 +1304,7 @@ trunc
 tts
 tuple
 tuples
+turnAbsolute
 turnGasOff
 turnGasOn
 turtlesim
@@ -1319,6 +1326,7 @@ UBindFunctions
 UBindThreadedFunction
 UBindThreadedFunctionRename
 UBindVar
+UBreakpoint
 ubuild
 Ubuntu
 UClient
