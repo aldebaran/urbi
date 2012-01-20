@@ -927,25 +927,6 @@ namespace ast
     return new ast::Noop(l, 0);
   }
 
-  namespace
-  {
-    static local_declarations_type*
-    formals_to_decs(const loc& loc,
-                    Formals* formals)
-    {
-      if (!formals)
-        return 0;
-      local_declarations_type* res = new local_declarations_type();
-      foreach (const Formal& var, *formals)
-      {
-        LocalDeclaration* dec = new LocalDeclaration(loc, var.name_get(), var.def_get());
-        dec->list_set(var.list_get());
-        res->push_back(dec);
-      }
-      delete formals;
-      return res;
-    }
-  }
 
   /// Create a Position.
   rExp
@@ -957,6 +938,27 @@ namespace ast
                % (fn ? make_string(loc, fn->name_get()) : make_nil())
                % make_float(loc, loc.begin.line)
                % make_float(loc, loc.begin.column));
+  }
+
+  namespace
+  {
+    static local_declarations_type*
+    formals_to_decs(const loc& loc,
+                    Formals* formals)
+    {
+      if (!formals)
+        return 0;
+      local_declarations_type* res = new local_declarations_type();
+      foreach (const Formal& var, *formals)
+      {
+        LocalDeclaration* dec =
+          new LocalDeclaration(loc, var.name_get(), var.def_get());
+        dec->list_set(var.list_get());
+        res->push_back(dec);
+      }
+      delete formals;
+      return res;
+    }
   }
 
   rRoutine

@@ -334,8 +334,8 @@ namespace ast
     /// Return the ast for "nil".
     rExp make_nil() /* const */;
 
-    static
     /// Return "do nothing".
+    static
     rNoop make_noop(const location& l);
 
     static

@@ -1311,9 +1311,9 @@ exp:
   }
 ;
 
-/*---------------------.
-| Desugaring internals |
-`---------------------*/
+/*-----------------------.
+| Desugaring internals.  |
+`-----------------------*/
 
 %type <unsigned> unsigned;
 unsigned:
