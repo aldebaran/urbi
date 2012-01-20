@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010, 2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -21,8 +21,6 @@ do (true)
   var asString = "true";
   var asBool = this;
 
-  function '&&'(a) { a };
-  function '||' { true };
   var '!' = false;
 };
 
@@ -36,28 +34,16 @@ do (false)
   var asString = "false";
   var asBool = this;
 
-  function '&&' { false };
-  function '||'(a) { a };
   var '!' = true;
 };
 
 
-/*----------.
-| &&/||/!.  |
-`----------*/
+/*----.
+| !.  |
+`----*/
 
 do (Object)
 {
-  function '&&'
-  {
-    if (this) call.evalArgAt (0) else this;
-  };
-
-  function '||'
-  {
-    if (this) this else call.evalArgAt (0);
-  };
-
   function '!'()
   {
     if (this) false else true

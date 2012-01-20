@@ -1,4 +1,4 @@
-%% Copyright (C) 2008-2011, Gostai S.A.S.
+%% Copyright (C) 2008-2012, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -860,8 +860,10 @@ documentation of the classes that provide them.
   \operatoriass{\^}%
   % \operatoriass{\~}
 }
-\newcommand{\operatorinc}    {\operator  {++}   {a++}  {-}     {Incrementation}           {\{var '$a' = a | a = a.'++' | '$a'\}       }}
-\newcommand{\operatordec}    {\operator  {--}   {a--}  {-}     {Decrementation}           {\{var '$a' = a | a = a.'--' | '$a'\}       }}
+\newcommand{\operatorinc}    {\operator  {++}   {a++}  {-}     {Incrementation} {\{var '$a' = a | a = a.'++' | '$a'\}}}
+\newcommand{\operatordec}    {\operator  {--}   {a--}  {-}     {Decrementation} {\{var '$a' = a | a = a.'--' | '$a'\}}}
+\newcommand{\operatorand}    {\operator  {\&\&} {a\&\&b}{Left} {Logical and}    {if (a) b else false}}
+\newcommand{\operatoror}     {\operator  {||}   {a||b}  {Left} {Logical or}     {if (a) true else b}}
 
 \newcommand{\operatoruplus}  {\poperator {+}    {-}    {Identity}               }
 \newcommand{\operatorumin}   {\poperator {-}    {-}    {Opposite}               }
@@ -885,8 +887,6 @@ documentation of the classes that provide them.
 \newcommand{\operatorsupeq}  {\boperator {>=}   {None} {Greater than or equal to}}
 \newcommand{\operatorbxor}   {\boperator {^}    {Left} {Bitwise exclusive or}   }
 \newcommand{\operatorneg}    {\poperator {!}    {Left} {Logical negation}       }
-\newcommand{\operatorand}    {\boperator {\&\&} {Left} {Logical and}            }
-\newcommand{\operatoror}     {\boperator {||}   {Left} {Logical or}             }
 
 \subsubsection{Arithmetic operators}
 
@@ -1229,6 +1229,8 @@ short-circuiting: their right-hand side is evaluated only if needed.
 true && true;
 true || false;
 !true == false;
+
+// Short-circuiting.
 true || (1 / 0);
 (false && (1 / 0)) == false;
 \end{urbiassert}

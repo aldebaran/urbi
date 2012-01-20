@@ -48,6 +48,11 @@ This release fixes some packaging-related minor issues.
   which checks if Java support is available.
 \item We now use the version 8 of the Independent JPEG Group's (IJG)
   \file{libjpeg}.
+\item To improve performances, the Boolean operators \lstinline{&&} and
+  \lstinline{||} can no longer be overridden.  In other words,
+  \lstinline|\var{a} && \var{b}| no longer maps to
+  \lstinline|\var{a}.'&&'(\var{b})|, but to
+  \lstinline|if (\var{a}) \var{b} else false|.
 \end{itemize}
 
 \subsection{Documentation}

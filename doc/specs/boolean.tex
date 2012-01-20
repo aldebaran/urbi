@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2009-2010, 2012, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -71,24 +71,6 @@ void.asBool;
 \subsection{Slots}
 
 \begin{urbiscriptapi}
-\item['&&'](<that>)%
-  Short-circuiting logical and. If \this is \lstinline|true| evaluate and
-  return \var{that}.  If \this is \lstinline|false|, return itself without
-  evaluating \var{that}.
-\begin{urbiassert}
-(true && 2) == 2;
-(false && 1 / 0) == false;
-\end{urbiassert}
-
-\item \lstinline+'||'(\var{that})+\\
-  Short-circuiting logical or. If \this is \lstinline|false| evaluate and
-  return \var{that}.  If \this is \lstinline|true|, return itself without
-  evaluating \var{that}.
-\begin{urbiassert}
-(true || 1/0) == true;
-(false || 2)  == 2;
-\end{urbiassert}
-
 \item \lstinline|'!'|\\
   Logical negation. If \this is \lstinline|false| return \lstinline|true|
   and vice-versa.

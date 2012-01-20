@@ -156,9 +156,12 @@ namespace ast
   }
 
   rExp
-  Factory::make_and(const location& l, rExp lhs, rExp rhs)
+  Factory::make_and(const location&, rExp lhs, rExp rhs)
   {
-    return make_call(l, lhs, SYMBOL(AMPERSAND_AMPERSAND), rhs);
+    PARAMETRIC_AST
+      (a,
+       "if (%exp:1) %exp:2 else false");
+    return exp(a % lhs % rhs);
   }
 
   rExp
@@ -933,9 +936,12 @@ namespace ast
   }
 
   rExp
-  Factory::make_or(const location& l, rExp lhs, rExp rhs)
+  Factory::make_or(const location&, rExp lhs, rExp rhs)
   {
-    return make_call(l, lhs, SYMBOL(PIPE_PIPE), rhs);
+    PARAMETRIC_AST
+      (a,
+       "if (%exp:1) true else %exp:2");
+    return exp(a % lhs % rhs);
   }
 
   /// Create a Position.
