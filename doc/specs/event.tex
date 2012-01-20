@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2009-2010, 2012, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -83,8 +83,8 @@ var e = Event.new;
 \begin{urbiscript}
 var e1 = Event.new|;
 var e2 = Event.new|;
-var e_or = e1 || e2|;
-at (e_or?)
+var either = e1.'||'(e2)|;
+at (either?)
   echo("!");
 e1!;
 [00000004] *** !
