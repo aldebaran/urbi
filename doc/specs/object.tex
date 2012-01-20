@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2011, Gostai S.A.S.
+%% Copyright (C) 2009-2012, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -664,28 +664,6 @@ Example.new;
 Object.setSlot("one", 1)    == 1;
 Object.updateSlot("one", 2) == 2;
 Object.one                  == 2;
-\end{urbiassert}
-
-\item['&&'](<that>)%
-  Short-circuiting logical and. If \this evaluates to true evaluate and
-  return \var{that}, otherwise return \this without evaluating \var{that}.
-\begin{urbiassert}
-(0 && "foo") == 0;
-(2 && "foo") == "foo";
-
-(""    && "foo") == "";
-("foo" && "bar") == "bar";
-\end{urbiassert}
-
-\item['||'](<that>)%
-  Short-circuiting logical or. If \this evaluates to false evaluate and
-  return \var{that}, otherwise return \this without evaluating \var{that}.
-\begin{urbiassert}
-(0 || "foo") == "foo";
-(2 ||  1/0)  == 2;
-
-(""    || "foo") == "foo";
-("foo" || 1/0)   == "foo";
 \end{urbiassert}
 
 \item \lstinline|'!'|\\

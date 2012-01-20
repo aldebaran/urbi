@@ -160,7 +160,7 @@ namespace ast
   {
     PARAMETRIC_AST
       (a,
-       "if (%exp:1) %exp:2 else false");
+       "{ var '$t' = %exp:1 | if ('$t') %exp:2 else '$t' }");
     return exp(a % lhs % rhs);
   }
 
@@ -940,7 +940,7 @@ namespace ast
   {
     PARAMETRIC_AST
       (a,
-       "if (%exp:1) true else %exp:2");
+       "{ var '$t' = %exp:1 | if ('$t') '$t' else %exp:2 }");
     return exp(a % lhs % rhs);
   }
 

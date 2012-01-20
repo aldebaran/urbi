@@ -52,7 +52,8 @@ This release fixes some packaging-related minor issues.
   \lstinline{||} can no longer be overridden.  In other words,
   \lstinline|\var{a} && \var{b}| no longer maps to
   \lstinline|\var{a}.'&&'(\var{b})|, but to
-  \lstinline|if (\var{a}) \var{b} else false|.
+  \lstinline|if (\var{a}) \var{b} else \var{a}| (with provisions to avoid
+  multiple computations of \var{a}).
 \end{itemize}
 
 \subsection{Documentation}

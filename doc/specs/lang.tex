@@ -1225,15 +1225,42 @@ short-circuiting: their right-hand side is evaluated only if needed.
   \operatoror
 \end{operatorTable}
 
+The operator \lstinline{&&}, the short-circuiting logical and, behaves as
+follows.  If the left-hand side operand evaluates to a ``true'' value,
+return the evaluation of the right-hand side operand; otherwise return the
+value of the left-hand side operand (not necessarily \lstinline{false}).
 \begin{urbiassert}
 true && true;
-true || false;
-!true == false;
+
+(0 && "foo") == 0;
+(2 && "foo") == "foo";
+
+(""    && "foo") == "";
+("foo" && "bar") == "bar";
 
 // Short-circuiting.
-true || (1 / 0);
 (false && (1 / 0)) == false;
 \end{urbiassert}
+
+The operator \lstinline{||}, the short-circuiting logical or, behaves as
+follows. If the left-hand side operand evaluates to a ``false'' value,
+return the evaluation of the right-hand side operand; otherwise return the
+value of the left-hand side argument (not necessarily \lstinline{true}).
+\begin{urbiassert}
+true || false;
+
+(0 || "foo") == "foo";
+(2 ||  1/0)  == 2;
+
+(""    || "foo") == "foo";
+("foo" || 1/0)   == "foo";
+
+// Short-circuiting.
+true || (1 / 0) == true;
+\end{urbiassert}
+
+See \autoref{sec:truth} for more information about ``true'' and ``false''
+values.
 
 \subsubsection{Comparison operators}
 \label{sec:lang:operators:comparison}
