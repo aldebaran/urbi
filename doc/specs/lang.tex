@@ -1644,6 +1644,38 @@ f2();
 [00000000] *** hello
 \end{urbiscript}
 
+Therefore, like regular values, functions can either be plain local
+variables or slots of objects.  In the following example, initially the
+object \lstinline{Foo} features neither a \lstinline{foo} nor a
+\lstinline{bar} slot, but its \lstinline{init} function declares a
+\emph{local} \lstinline{foo} function, and a \emph{slot} \lstinline{bar}.
+The whole difference is the initial \this in the definition of
+\lstinline{bar} which makes it a slot, not a variable.
+
+\begin{urbiscript}
+class Foo
+{
+  function init()
+  {
+    // This is a function local to init().
+    function foo()      { 42 };
+    function this.bar() { 51 };
+    foo() + bar();
+  };
+}|;
+
+Foo.foo;
+[00001720:error] !!! lookup failed: foo
+Foo.bar;
+[00001750:error] !!! lookup failed: bar
+
+[00001787] 93
+Foo.init;
+Foo.foo;
+[00001787:error] !!! lookup failed: foo
+Foo.bar;
+[00001818] 51
+\end{urbiscript}
 
 \subsection{Arguments}
 
