@@ -88,8 +88,8 @@ endif
 # We do not use Automake features here.
 SOURCES_FROM_UGRAMMAR_Y =			\
   parser/stack.hh				\
-  $(top_srcdir)/include/urbi/parser/position.hh	\
-  $(top_srcdir)/include/urbi/parser/location.hh	\
+  $(parserdir)/position.hh			\
+  $(parserdir)/location.hh			\
   parser/ugrammar.hh				\
   parser/ugrammar.cc
 nodist_libuobject@LIBSFX@_la_SOURCES += $(SOURCES_FROM_UGRAMMAR_Y)
@@ -132,7 +132,8 @@ parser/ugrammar.stamp: parser/ugrammar.y $(ugrammar_deps)
 	$(AM_V_at)rm -f $@ $@.tmp parser/ugrammar-pruned.y
 	$(AM_V_at)echo '$@ rebuilt because of: $?' >$@.tmp
 	$(AM_V_at)$(MAKE) $(BISONXX)
-	$(AM_V_at)$(MAKE) -C $(top_builddir)/bison MAKEFLAGS=
+	$(AM_V_at)$(MAKE) -C $(top_builddir)/bison \
+	  MAKEFLAGS= $(if $(V:0=),V=1,V=0)
 	$(AM_V_at)$(PRUNE_FOR_SPACE) - <$< >parser/ugrammar-pruned.y
 	$(AM_V_at)chmod a-w parser/ugrammar-pruned.y
 	$(AM_V_at)$(BISONXX) $(BISONXXFLAGS) --	\
