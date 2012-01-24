@@ -17,7 +17,7 @@
 #include <sched/fwd.hh>
 #include <libport/debug.hh>
 
-GD_CATEGORY(Semaphore);
+GD_CATEGORY(Urbi.Semaphore);
 
 namespace urbi
 {
@@ -72,7 +72,7 @@ namespace urbi
           value_.second.insert(value_.second.end(), &r);
         try
         {
-          // wait until the job is unfreeze by the release.
+          // Wait until the job is unfrozen by the release.
           r.frozen_set(true);
           GD_FINFO_TRACE("%p: Waiting", &r);
           r.yield();
@@ -83,14 +83,14 @@ namespace urbi
           GD_FINFO_TRACE("%p: Caught Exception", &r);
           // If the current process had a release token and has caught an
           // exception too, then forward the release token.
-          if (r.frozen_get() == false)
-            release_and_forward(true);
-          else
+          if (r.frozen_get())
           {
             release_and_forward(false);
             value_.second.erase(i);
             r.frozen_set(false);
           }
+          else
+            release_and_forward(true);
           throw;
         }
       }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2011, Gostai S.A.S.
+ * Copyright (C) 2010-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -26,7 +26,8 @@ do (Mutex)
   function init()
   {
     var this.sem = Semaphore.new(1) |
-    var this.onEnter = function () {
+    function this.onEnter()
+    {
       if (!currentRunner.hasSlot("$mutexRelease"))
         var currentRunner.'$mutexRelease' = [] |
       var l = currentRunner.'$mutexRelease' |
@@ -38,7 +39,8 @@ do (Mutex)
       l.removeBack() |
       l.insertBack(true) |
     } |
-    var this.onLeave = function () {
+    function this.onLeave()
+    {
       var l = currentRunner.'$mutexRelease' |
       if (l.back)
         this.unlock |
@@ -74,18 +76,22 @@ do (NotMutex)
     var res = Mutex.new|
     res.protos = [NotMutex]|
 
-    res.onEnter = function () {
+    function res.onEnter()
+    {
       this.unlock |
     } |
 
-    res.onLeave = function () {
+    function res.onLeave()
+    {
       // Ensure that the lock is acquired.
       var acquired = false |
-      try {
+      try
+      {
         this.lock |
         acquired = true |
       }
-      finally {
+      finally
+      {
         if (!acquired)
           this.onLeave |
       } |
