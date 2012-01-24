@@ -35,6 +35,7 @@ namespace urbi
       typedef duration_type::hour_type hour_type;
       typedef duration_type::min_type minute_type;
       typedef duration_type::sec_type second_type;
+      typedef long microsecond_type;
 
       typedef boost::gregorian::date date_type;
       typedef boost::gregorian::greg_year year_type;
@@ -83,6 +84,7 @@ namespace urbi
     DATE_MODIFIERS(hour);
     DATE_MODIFIERS(minute);
     DATE_MODIFIERS(second);
+    DATE_MODIFIERS(microsecond);
 # undef DATE_MODIFIERS
 
 

@@ -72,6 +72,7 @@ namespace urbi
 
       DECLARE(day);
       DECLARE(hour);
+      DECLARE(microsecond);
       DECLARE(minute);
       DECLARE(month);
       DECLARE(second);
@@ -205,6 +206,22 @@ namespace urbi
 #undef TIME_SETTER
 #undef TIME_MODIFIERS
 
+#define MILLION 1000000L
+
+  Date::microsecond_type Date::microsecond_get() const
+  {
+    return time_.time_of_day().total_microseconds() % MILLION;
+  }
+
+  void Date::microsecond_set(Date::microsecond_type value)
+  {
+    Date::duration_type td = time_.time_of_day();
+    td -= boost::posix_time::microseconds(td.total_microseconds() % MILLION);
+    td += boost::posix_time::microseconds(value);
+    time_ = Date::value_type(time_.date(), td);
+  }
+
+
 #define DATE_GETTER(Unit)                        \
   Date::Unit ## _type Date::Unit ## _get() const \
   {                                              \
@@ -250,14 +267,17 @@ namespace urbi
     std::string
     Date::as_string() const
     {
-      return libport::format("%04s-%02s-%02s %02s:%02s:%02s",
-                             time_.date().year(),
-                             // Otherwise we get "Jan", "Feb", etc.
-                             int(time_.date().month()),
-                             time_.date().day(),
-                             time_.time_of_day().hours(),
-                             time_.time_of_day().minutes(),
-                             time_.time_of_day().seconds());
+      Date::duration_type td = time_.time_of_day();
+      return
+        libport::format("%04s-%02s-%02s %02s:%02s:%02s.%06s",
+                        time_.date().year(),
+                        // Otherwise we get "Jan", "Feb", etc.
+                        int(time_.date().month()),
+                        time_.date().day(),
+                        td.hours(),
+                        td.minutes(),
+                        td.seconds(),
+                        td.total_microseconds() % MILLION);
     }
 
     Date::duration_type
