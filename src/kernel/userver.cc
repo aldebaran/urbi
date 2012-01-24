@@ -59,7 +59,7 @@
 
 #include <libport/package-info.hh>
 #include <urbi/package-info.hh>
-#include <urbi/object/global.hh>
+#include <urbi/object/date.hh>
 #include <urbi/object/global.hh>
 #include <urbi/object/lobby.hh>
 #include <urbi/object/object.hh>
@@ -330,8 +330,8 @@ namespace kernel
 #endif
     // Setup the handler for Ctrl+C.
     signal(SIGINT, sigint_handler);
-    boost::posix_time::ptime now
-    (boost::posix_time::microsec_clock::local_time());
+    boost::posix_time::ptime
+      now(boost::posix_time::microsec_clock::local_time());
     libport::utime_reference_set(libport::utime());
 
     // Set the initial time to a valid value.
@@ -379,23 +379,9 @@ namespace kernel
     object::Object::proto->slot_remove(SYMBOL(loaded));
     GD_INFO_TRACE("urbi.u has been processed.");
 
-    /*----------------.
-    | timeReference.  |
-    `----------------*/
-    {
-      urbi::object::rObject ref = new urbi::object::Object;
-      ref->proto_add(urbi::object::Object::proto);
-      urbi::object::system_class->setSlot(SYMBOL(timeReference), ref);
-
-# define DECLARE(Name, Value)                                   \
-      ref->setSlot(SYMBOL_(Name), urbi::object::to_urbi(Value))
-
-      DECLARE(us,    now.time_of_day().total_microseconds());
-      DECLARE(day,   int(now.date().day()));
-      DECLARE(month, int(now.date().month()));
-      DECLARE(year,  int(now.date().year()));
-# undef DECLARE
-    }
+    urbi::object::system_class
+      ->setSlot(SYMBOL(timeReference),
+                new urbi::object::Date(now));
 
     // urbiscript is up and running.  Send local.u and the banner to
     // the ghostconnection too.
