@@ -54,6 +54,19 @@ Date.new("2003-10-10  20:10:50");
 [00001968:error] !!! new: cannot convert to date: 2003-10-10  20:10:50
 \end{urbiscript}
 
+Pay attention that the format is not strict enough either; for instance,
+below, the \samp{.} separator seem to prefix microseconds, but actually
+merely denotes the minutes.  Seconds must be spelled out in order to
+introduce microseconds.
+
+\begin{urbiscript}
+Date.new("2003-10-10 00.12");
+[00000003] 2003-10-10 00:12:00.000000
+
+Date.new("2003-10-10 00:00.12");
+[00000003] 2003-10-10 00:00:12.000000
+\end{urbiscript}
+
 \subsection{Slots}
 
 \begin{urbiscriptapi}
@@ -61,15 +74,15 @@ Date.new("2003-10-10  20:10:50");
   The date which corresponds to waiting \refObject{Duration} \var{that}
   after \this.
 \begin{urbiassert}
-Date.new("2010-08-17 12:00") + 60s == Date.new("2010-08-17 12:01");
+Date.new("2010-08-17 12:00:00.2") + 63.2s == Date.new("2010-08-17 12:01:03.4");
 \end{urbiassert}
 
 \item['-'](<that>)%
   If \var{that} is a Date, the difference between \this and \var{that} as a
   \refObject{Duration}.
 \begin{urbiassert}
-Date.new("2010-08-17 12:01") - Date.new("2010-08-17 12:00") ==  60s;
-Date.new("2010-08-17 12:00") - Date.new("2010-08-17 12:01") == -60s;
+Date.new("2010-08-17 12:01:00.50") - Date.new("2010-08-17 12:00") == 60.5s;
+Date.new("2010-08-17 12:00")       - Date.new("2010-08-17 12:01") == -60s;
 \end{urbiassert}
 
 If \var{that} is a Duration or a Float, the corresponding Date.
@@ -83,8 +96,8 @@ Date.new("2010-08-17 12:01") - 60s
 \item['=='](<that>)%
   Equality test.
 \begin{urbiassert}
-Date.new("2010-08-17 12:00") == Date.new("2010-08-17 12:00");
-Date.new("2010-08-17 12:00") != Date.new("2010-08-17 12:01");
+Date.new("2010-08-17 12:00:00.123") == Date.new("2010-08-17 12:00:00.123");
+Date.new("2010-08-17 12:00")        != Date.new("2010-08-17 12:01");
 \end{urbiassert}
 
 \item['<'](<that>)%
@@ -139,7 +152,7 @@ Date.new("2010-02-01 17:32:53").day = 29;
   A fixed value, the ``origin of times'': January 1st 1970, at
   midnight.
 \begin{urbiunchecked}
-Date.epoch == Date.new("1970-01-01 00:00");
+Date.epoch == Date.new("1970-01-01 00:00:00.00");
 \end{urbiunchecked}
 
 \item[hour]

@@ -23,13 +23,9 @@ namespace urbi
       to(const rObject& o)
       {
         type_check(o, Float::proto);
-        typedef long long time_t;
-        // Multiply the time_duration by 1000000, not the time_t,
-        // because in boost 1.38 the argument type of
-        // posix_time::microseconds is not large enough.
-        return
-          boost::posix_time::microseconds(time_t(o->as<Float>()->value_get()))
-          * 1000000;
+        // Keep the fractional part: compute with doubles.
+        return boost::posix_time::microseconds(o->as<Float>()->value_get()
+                                               * 1000000);
       }
 
       static rObject

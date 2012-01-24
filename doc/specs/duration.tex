@@ -54,7 +54,8 @@ Duration.new(1000).asString == "1000s";
 \item[seconds]
   Return the duration as a \refObject{Float}.
 \begin{urbiassert}
-Duration.new(1000).seconds == 1000;
+Duration.new(1000)   .seconds == 1000;
+Duration.new(1000.52).seconds == 1000.52;
 \end{urbiassert}
 \end{urbiscriptapi}
 
