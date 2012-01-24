@@ -1,4 +1,4 @@
-## Copyright (C) 2008-2011, Gostai S.A.S.
+## Copyright (C) 2008-2012, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -7,7 +7,7 @@
 ## See the LICENSE file for more information.
 
 urbidir = $(brandsharedir)/urbi
-dist_urbi_DATA := $(call ls_files,share/urbi/*.u)
+dist_urbi_DATA := $(call ls_files,share/urbi/*.u @{share/urbi/ros}/*)
 
 nodist_urbi_DATA =				\
   share/urbi/package-info.u			\
