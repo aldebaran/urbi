@@ -38,6 +38,8 @@ function this.foo() { echo("foo"); }|;
 this.foo();
 [00016170] *** foo
 \end{urbiscript}
+\item Timestamps now use a monotonic clock, insensitive to wall clock
+  changes (fired by \command{ntpdate} for instance).
 \end{itemize}
 
 \subsection{Changes}
