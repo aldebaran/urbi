@@ -173,8 +173,25 @@ gostai  jerror.h   jpeglib.h   serialize
 \section{\usdk 2.7.2}
 \release{2.7}{2011-05-13}
 
-There was no public release of \usdk 2.7.2, which contained only a simple
-change for a single architecture for a customer of ours.
+There was no public release of \usdk 2.7.2.
+
+\subsection{Fixes}
+\begin{itemize}
+\item Avoid unexpected execution of code caused by \refObject{Semaphore}
+  release and a stop of the code acquiring the semaphore.  This caused
+  pieces of code such as the following not to end.
+\begin{urbiscript}
+var m = Mutex.new|;
+for& (10)
+  { m.stop | m: { sleep(1) } };
+"done";
+[00016170] "done"
+\end{urbiscript}
+
+  Now \refSlot[Semaphore]{acquire} either returns when it holds the
+  semaphore or it jumps to the end of the stopped tag.
+\end{itemize}
+
 
 \section{\usdk 2.7.1}
 \release{2.7}{2011-03-17}
