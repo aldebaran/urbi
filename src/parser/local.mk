@@ -39,9 +39,10 @@ $(BISONXX): $(BISONXX_IN)
 parserprefix = urbi/parser
 # Where to create them.
 parserdir = $(top_builddir)/include/$(parserprefix)
-BISONXXFLAGS = 					\
+BISONXXFLAGS =					\
   --location-prefix=$(parserprefix)		\
-  --location-dir=$(parserdir)
+  --location-dir=$(parserdir)			\
+  $(if $(V:0=),--verbose)
 
 # A Flex wrapper for C++.
 FLEXXX = $(top_builddir)/build-aux/bin/flex++
@@ -134,7 +135,7 @@ parser/ugrammar.stamp: parser/ugrammar.y $(ugrammar_deps)
 	$(AM_V_at)$(MAKE) -C $(top_builddir)/bison MAKEFLAGS=
 	$(AM_V_at)$(PRUNE_FOR_SPACE) - <$< >parser/ugrammar-pruned.y
 	$(AM_V_at)chmod a-w parser/ugrammar-pruned.y
-	$(AM_V_at)$(BISONXX) $(BISONXXFLAGS)	\
+	$(AM_V_at)$(BISONXX) $(BISONXXFLAGS) --	\
 	  parser/ugrammar-pruned.y		\
 	  parser/ugrammar.cc			\
 	  $(AM_BISONFLAGS) $(BISONFLAGS)
