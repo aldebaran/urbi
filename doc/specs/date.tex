@@ -156,7 +156,7 @@ Date.epoch == Date.new("1970-01-01 00:00:00.00");
 \end{urbiunchecked}
 
 \item[hour]
-  The hour as a \refObject{Float}.
+  The hour as a \refObject{Float}.  Always less than 24.
 \begin{urbiscript}
 {
   var d = Date.new("2010-09-29 17:32:53");
@@ -166,8 +166,9 @@ Date.epoch == Date.new("1970-01-01 00:00:00.00");
 };
 \end{urbiscript}
 
-\item[microsecond]
-  The number of microseconds as a \refObject{Float}.
+\item[microsecond]%
+  The number of microseconds in the current second, as a \refObject{Float}.
+  See also \refSlot{us}.  Always less than $1000 000$.
 \begin{urbiscript}
 {
   var d = Date.new("2010-09-29 17:32:53.123456");
@@ -178,7 +179,7 @@ Date.epoch == Date.new("1970-01-01 00:00:00.00");
 \end{urbiscript}
 
 \item[minute]
-  The minute as a \refObject{Float}.
+  The minute as a \refObject{Float}.  Always less than 60.
 \begin{urbiscript}
 {
   var d = Date.new("2010-09-29 17:32:53");
@@ -189,7 +190,7 @@ Date.epoch == Date.new("1970-01-01 00:00:00.00");
 \end{urbiscript}
 
 \item[month]
-  The month as a \refObject{Float}.
+  The month as a \refObject{Float}.  Always less or equal to 12.
 \begin{urbiscript}
 {
   var d = Date.new("2010-09-29 17:32:53");
@@ -218,6 +219,26 @@ Date.now;
 
 \item[timestamp] Synonym for \refSlot{asFloat}.
 
+\item[us]%
+  The \emph{total} number of microseconds since midnight, as a
+  \refObject{Float}.  See also \refSlot{microsecond}.
+\begin{urbiassert}
+Date.new("2010-08-17 00:00:00.0")     .us == 0;
+Date.new("2010-08-17 00:00:00.123456").us == 123456;
+Date.new("2010-08-17 00:00:01.234567").us == 1234567;
+Date.new("2010-08-17 01:02:03.456789").us
+  == (1 * 3600 + 2 * 60 + 3) * 1000000 + 456789;
+\end{urbiassert}
+
+\begin{urbiscript}
+{
+  var d = Date.new("2010-09-29 17:32:53.123456");
+  assert(d.us == 63173123456);
+  d.us = 123456;
+  assert(d == Date.new("2010-09-29 00:00:00.123456"));
+};
+\end{urbiscript}
+
 \item[year]
   The year as a \refObject{Float}.
 \begin{urbiscript}
@@ -228,7 +249,6 @@ Date.now;
   assert(d == Date.new("2000-09-29 17:32:53"));
 };
 \end{urbiscript}
-
 \end{urbiscriptapi}
 
 

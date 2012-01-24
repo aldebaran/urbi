@@ -36,6 +36,7 @@ namespace urbi
       typedef duration_type::min_type minute_type;
       typedef duration_type::sec_type second_type;
       typedef long microsecond_type;
+      typedef long us_type;
 
       typedef boost::gregorian::date date_type;
       typedef boost::gregorian::greg_year year_type;
@@ -78,13 +79,14 @@ namespace urbi
       Name ## _type Name ## _get() const;       \
       void Name ## _set(Name ## _type y)        \
 
-    DATE_MODIFIERS(year);
-    DATE_MODIFIERS(month);
     DATE_MODIFIERS(day);
     DATE_MODIFIERS(hour);
-    DATE_MODIFIERS(minute);
-    DATE_MODIFIERS(second);
     DATE_MODIFIERS(microsecond);
+    DATE_MODIFIERS(minute);
+    DATE_MODIFIERS(month);
+    DATE_MODIFIERS(second);
+    DATE_MODIFIERS(us);
+    DATE_MODIFIERS(year);
 # undef DATE_MODIFIERS
 
 

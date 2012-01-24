@@ -76,6 +76,7 @@ namespace urbi
       DECLARE(minute);
       DECLARE(month);
       DECLARE(second);
+      DECLARE(us);
       DECLARE(year);
 
 #undef DECLARE
@@ -208,9 +209,22 @@ namespace urbi
 
 #define MILLION 1000000L
 
+  Date::microsecond_type Date::us_get() const
+  {
+    return time_.time_of_day().total_microseconds();
+  }
+
+  void Date::us_set(Date::us_type value)
+  {
+    Date::duration_type td = time_.time_of_day();
+    td -= boost::posix_time::microseconds(td.total_microseconds());
+    td += boost::posix_time::microseconds(value);
+    time_ = Date::value_type(time_.date(), td);
+  }
+
   Date::microsecond_type Date::microsecond_get() const
   {
-    return time_.time_of_day().total_microseconds() % MILLION;
+    return us_get() % MILLION;
   }
 
   void Date::microsecond_set(Date::microsecond_type value)
