@@ -32,9 +32,9 @@ namespace urbi
     public:
       typedef boost::posix_time::ptime value_type;
       typedef boost::posix_time::time_duration duration_type;
-      typedef boost::posix_time::time_duration::hour_type hour_type;
-      typedef boost::posix_time::time_duration::min_type minute_type;
-      typedef boost::posix_time::time_duration::sec_type second_type;
+      typedef duration_type::hour_type hour_type;
+      typedef duration_type::min_type minute_type;
+      typedef duration_type::sec_type second_type;
 
       typedef boost::gregorian::date date_type;
       typedef boost::gregorian::greg_year year_type;

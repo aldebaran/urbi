@@ -197,6 +197,14 @@ namespace urbi
   TIME_GETTER(Unit)          \
   TIME_SETTER(Unit)          \
 
+  TIME_MODIFIERS(hour)
+  TIME_MODIFIERS(minute)
+  TIME_MODIFIERS(second)
+
+#undef TIME_GETTER
+#undef TIME_SETTER
+#undef TIME_MODIFIERS
+
 #define DATE_GETTER(Unit)                        \
   Date::Unit ## _type Date::Unit ## _get() const \
   {                                              \
@@ -221,16 +229,10 @@ namespace urbi
   DATE_GETTER(Unit)                   \
   DATE_SETTER(Unit, Y, M, D)          \
 
-  TIME_MODIFIERS(hour)
-  TIME_MODIFIERS(minute)
-  TIME_MODIFIERS(second)
-  DATE_MODIFIERS(year, year_given, time_.date().month(), time_.date().day())
+  DATE_MODIFIERS(year,  year_given, time_.date().month(), time_.date().day())
   DATE_MODIFIERS(month, time_.date().year(), month_given, time_.date().day())
-  DATE_MODIFIERS(day, time_.date().year(), time_.date().month(), day_given)
+  DATE_MODIFIERS(day,   time_.date().year(), time_.date().month(), day_given)
 
-#undef TIME_GETTER
-#undef TIME_SETTER
-#undef TIME_MODIFIERS
 #undef DATE_GETTER
 #undef DATE_SETTER
 #undef DATE_MODIFIERS
