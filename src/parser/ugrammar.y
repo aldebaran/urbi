@@ -644,6 +644,7 @@ stmt:
 %type <ast::rCall> k1_id;
 k1_id:
   "identifier"               { $$ = MAKE(call, @$, $1); }
+| "this" "." "identifier"    { $$ = MAKE(call, @$, new ast::This(@1), $3); }
 | k1_id "." "identifier"     { $$ = MAKE(call, @$, ast::rExp($1), $3); }
 ;
 

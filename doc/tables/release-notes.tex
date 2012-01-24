@@ -32,6 +32,12 @@ This release fixes some packaging-related minor issues.
 \item Windows packages with the installer now have some \us files (namely
   \file{platform.u}) which properly depend on whether you are using the
   debug or release flavor.
+\item When defining functions, their qualified name may start with \this:
+\begin{urbiscript}
+function this.foo() { echo("foo"); }|;
+this.foo();
+[00016170] *** foo
+\end{urbiscript}
 \end{itemize}
 
 \subsection{Changes}
