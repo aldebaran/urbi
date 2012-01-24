@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010, 2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -24,10 +24,12 @@ namespace urbi
       {
         type_check(o, Float::proto);
         typedef long long time_t;
-       // Multiply the time_duration by 1000000, not the time_t,
-       // because in boost 1.38 the argument type of
-       // posix_time::microseconds is not large enough.
-        return boost::posix_time::microseconds(time_t(o->as<Float>()->value_get())) * 1000000;
+        // Multiply the time_duration by 1000000, not the time_t,
+        // because in boost 1.38 the argument type of
+        // posix_time::microseconds is not large enough.
+        return
+          boost::posix_time::microseconds(time_t(o->as<Float>()->value_get()))
+          * 1000000;
       }
 
       static rObject
