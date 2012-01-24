@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2011, Gostai S.A.S.
+ * Copyright (C) 2009-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -17,10 +17,6 @@
 # include <libport/ctime>
 
 # include <urbi/object/cxx-object.hh>
-
-#define DATE_MODIFIERS(Name)          \
-  Name ## _type Name ## _get() const; \
-  void Name ## _set(Name ## _type y); \
 
 namespace urbi
 {
@@ -77,12 +73,18 @@ namespace urbi
     `----------------*/
 
     public:
-      DATE_MODIFIERS(year)
-      DATE_MODIFIERS(month)
-      DATE_MODIFIERS(day)
-      DATE_MODIFIERS(hour)
-      DATE_MODIFIERS(minute)
-      DATE_MODIFIERS(second)
+#define DATE_MODIFIERS(Name)                    \
+      Name ## _type Name ## _get() const;       \
+      void Name ## _set(Name ## _type y)        \
+
+    DATE_MODIFIERS(year);
+    DATE_MODIFIERS(month);
+    DATE_MODIFIERS(day);
+    DATE_MODIFIERS(hour);
+    DATE_MODIFIERS(minute);
+    DATE_MODIFIERS(second);
+# undef DATE_MODIFIERS
+
 
     /*--------------.
     | Conversions.  |
@@ -113,8 +115,6 @@ namespace urbi
     };
   }
 }
-
-# undef DATE_MODIFIERS
 
 # include <urbi/object/date.hxx>
 
