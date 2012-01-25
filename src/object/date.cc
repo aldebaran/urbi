@@ -209,7 +209,7 @@ namespace urbi
 
 #define MILLION 1000000L
 
-  Date::microsecond_type Date::us_get() const
+  Date::us_type Date::us_get() const
   {
     return time_.time_of_day().total_microseconds();
   }

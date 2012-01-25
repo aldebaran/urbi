@@ -14,6 +14,7 @@
 # include <boost/date_time/gregorian/gregorian.hpp>
 # include <boost/date_time/posix_time/posix_time.hpp>
 
+# include <libport/cstdint>
 # include <libport/ctime>
 
 # include <urbi/object/cxx-object.hh>
@@ -35,8 +36,9 @@ namespace urbi
       typedef duration_type::hour_type hour_type;
       typedef duration_type::min_type minute_type;
       typedef duration_type::sec_type second_type;
+      /// [0, 999999[.
       typedef long microsecond_type;
-      typedef long us_type;
+      typedef uint64_t us_type;
 
       typedef boost::gregorian::date date_type;
       typedef boost::gregorian::greg_year year_type;
