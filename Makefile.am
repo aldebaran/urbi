@@ -46,7 +46,8 @@ EXTRA_DIST +=					\
   build-aux/bin/flex++.in			\
   build-aux/bin/fuse-switch			\
   build-aux/bin/output-to-dot			\
-  build-aux/bin/studentize
+  build-aux/bin/studentize			\
+  build-aux/bin/tex4ht-post
 
 include debian/local.mk
 devdir = dev/
