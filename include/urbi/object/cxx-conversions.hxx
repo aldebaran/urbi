@@ -197,12 +197,13 @@ namespace urbi
       }                                         \
     };
 
-    CONVERT(unsigned char);
-    CONVERT(unsigned short);
-    CONVERT(unsigned long);
-    CONVERT(short);
-    CONVERT(long);
     CONVERT(long long);
+    CONVERT(long);
+    CONVERT(short);
+    CONVERT(unsigned char);
+    CONVERT(unsigned long long);
+    CONVERT(unsigned long);
+    CONVERT(unsigned short);
 #undef CONVERT
 
 
