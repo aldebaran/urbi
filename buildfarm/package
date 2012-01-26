@@ -123,38 +123,41 @@ check_md5 ()
 }
 
 
-# publish FILE-OR-DIR
-# -------------------
-# Publish a tarball in DIR_ARCHIVE.  Check md5sum.
+# publish FILE-OR-DIR...
+# ----------------------
+# Publish tarballs in DIR_ARCHIVE.  Check md5sum.
 publish ()
 {
-  # $pack: the package (tarball/zip) to publish.
-  local pack=$1
-  # If this is a directory, make it a tarball.
-  if test -d "$pack"; then
-    make_tarball "$pack"
-    pack=$make_tarball_res
-  fi
-
-  # Compute the md5sum of the file.
   local here
   here=$(pwd)
-  local base
-  base=$(basename "$pack")
-  cd $(dirname "$pack")
-    $MD5SUM "$base" >"$base.md5"
-  cd $here
+  # $pack: the package (tarball/zip) to publish.
+  local pack
+  for pack
+  do
+    # If this is a directory, make it a tarball.
+    if test -d "$pack"; then
+      make_tarball "$pack"
+      pack=$make_tarball_res
+    fi
 
-  # Publish the archive and its md5sum.
-  move_into "$DIR_ARCHIVE" "$pack" "$pack.md5"
+    # Compute the md5sum of the file.
+    local base
+    base=$(basename "$pack")
+    cd $(dirname "$pack")
+      $MD5SUM "$base" >"$base.md5"
+    cd $here
 
-  # Make sure we managed to publish properly.
-  check_md5 $DIR_ARCHIVE "$base"
+    # Publish the archive and its md5sum.
+    move_into "$DIR_ARCHIVE" "$pack" "$pack.md5"
 
-  # This looks useless, but it's an attempt to eliminate
-  # nondeterministic problems of availability of shared directories
-  # on OS X.
-  ls "$DIR_ARCHIVE" >/dev/null
+    # Make sure we managed to publish properly.
+    check_md5 $DIR_ARCHIVE "$base"
+
+    # This looks useless, but it's an attempt to eliminate
+    # nondeterministic problems of availability of shared directories
+    # on OS X.
+    ls "$DIR_ARCHIVE" >/dev/null
+  done
 }
 
 
@@ -202,6 +205,7 @@ docsrc="$DIR_INSTALL/$prefix/share/doc/urbi-sdk"
 if test -f "$docsrc/urbi-sdk.pdf"; then
   stderr "Documentation is compiled, shipping"
   tree_copy "$docsrc" "$DIR_PACKAGES/$urbi_doc"
+  publish "$DIR_PACKAGES/$urbi_doc"
   # Do not leave the COMPONENTS.txt file, which is architecture
   # specific.  It would override the existing one from the package
   # into which the documentation will be copied.
@@ -230,11 +234,25 @@ fi
 # Create a fresh directory in which we put the subdirectories of the
 # $DIR_INSTALL directory.
 tree_copy "$DIR_INSTALL/$prefix" "$DIR_PACKAGES/$name"
+# On Windows, make the installer.
+case $BUILDFARM_OS in (windows)
+  delegate="$DIR_SOURCE/buildfarm/make-installer"
+  # The expected output from this delegate.
+  exe=$DIR_PACKAGES/${name%-$BUILDFARM_MODE}.exe
+  "$delegate" "$DIR_ARCHIVE/$name"
+  # The delegate might not create the installer, if it was run
+  # before its peer.
+  if test -f "$DIR_ARCHIVE/$exe"; then
+    check_md5 "$DIR_ARCHIVE" "$exe"
+  fi
+esac
+publish "$DIR_PACKAGES/$name"
 
 # 3. Description.
 #
 # Extract the file that describes the contents of the package.
 cp "$docsrc/COMPONENTS.txt" "$DIR_PACKAGES/$urbi_sdk.txt"
+publish "$DIR_PACKAGES/$urbi_sdk.txt"
 
 # 4. Prebuilt-Urbi Runtime.
 #
@@ -246,45 +264,17 @@ tree_copy "$DIR_INSTALL/$prefix" "$packagedir"
 # Lobby.license.
 (cd "$packagedir" &&
     rm -rf README.txt include libexec share/doc)
+publish $packagedir
 
 # 5. Source tarball.
 tarname=$BUILDFARM_PROJECT-$SHA1.tar.bz2
 if test -f $DIR_BUILD/$tarname; then
-  move_into $DIR_PACKAGES $DIR_BUILD/$tarname
+  publish $DIR_BUILD/$tarname
 fi
 
 # 6. Distribution packages.
 case $BUILDFARM_HOSTNAME in (bf-3)
   make -C "$DIR_BUILD" packages
   sha1=$(echo "$SHA1" | sed 's/[-_]/./g')
-  move_into $DIR_PACKAGES $DIR_BUILD/*$sha1*.{rpm,deb}
+  publish $DIR_BUILD/*$sha1*.{rpm,deb}
 esac
-
-## --------------------- ##
-## Upload the packages.  ##
-## --------------------- ##
-
-ls -la $DIR_PACKAGES
-packs=$(ls $DIR_PACKAGES)
-test -n "$packs" ||
-  fatal "The project's package script didn't create anything"
-
-# Iterate over packaged content.
-for pack in $packs
-do
-  publish "$DIR_PACKAGES/$pack"
-
-  # On Windows, make the installers.
-  case $BUILDFARM_OS in (windows)
-    delegate="$DIR_SOURCE/buildfarm/make-installer"
-    # This is the expected output from this delegate.
-    exe=${pack%-$BUILDFARM_MODE}.exe
-    "$delegate" "$DIR_ARCHIVE/$pack"
-    # The delegate might not create the installer, if it was run
-    # before its peer.
-    if test -f "$DIR_ARCHIVE/$exe"; then
-      check_md5 "$DIR_ARCHIVE" "$exe"
-    fi
-    ;;
-  esac
-done
