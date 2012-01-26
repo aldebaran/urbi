@@ -72,17 +72,25 @@ move_into ()
 {
   local dir=$1
   shift
+
+  # The published names.
+  local outs
+
   # First, copy them all into $dir with a tmp extension.
   local i
   for i
   do
-    xmv -v -f "$i" "$dir/$(basename "$i").tmp"
+    # The published name in the current iteration.
+    local out
+    out=$dir/$(basename "$i")
+    xmv -v -f "$i" "$out.tmp"
+    outs="$outs $out"
   done
 
   # Then rename them all.
-  for i
+  for i in $outs
   do
-    xmv -v -f "$dir/$(basename "$i").tmp" "$dir/$(basename "$i")"
+    xmv -v -f "$i.tmp" "$i"
   done
 }
 
@@ -288,10 +296,11 @@ case $BUILDFARM_OS in (windows)
   my_zip=$name.zip
   # The archive built by the other one.
   other_zip=$(find_dual "$my_zip")
-  if test -r "$my_zip"                            \
-     && test -r "$other_zip"                      \
-     && test "$my_zip" -nt "$other_zip";
-  then
+  if test ! -r "$other_zip"; then
+    stderr "not making installer: no $other_zip"
+  elif test -nt "$other_zip" -nt "$my_zip"; then
+    stderr "not making installer: $other_zip is newer, it should do it"
+  else
     tools=$HOME/share/tools
     # We need vcxx-2005, not vcxx2005.
     compiler=$(echo "$BUILDFARM_COMPILER" | perl -pe 's/(vcxx)(\d+)/$1-$2/')
