@@ -56,37 +56,11 @@ include include/local.mk
 include share/local.mk
 
 
-## ------------------------------------- ##
-## Generate the list of symbols we use.  ##
-## ------------------------------------- ##
-
-.PHONY: symbols
-symbols:
-	$(MAKE) $(AM_MAKEFLAGS) -C src $@
-
-
 # Make sure config.h.in is up to date.  This looks like an Automake
 # bug to me.
 BUILT_SOURCES +=				\
   $(top_srcdir)/src/kernel/config.h.in		\
   src/kernel/config.h
-
-
-## ---------------------- ##
-## Convenient shortcuts.  ##
-## ---------------------- ##
-
-# Don't bounce to libs: sort of loop unrolling.
-core:
-	$(MAKE) $(AM_MAKEFLAGS) -C sdk-remote/libport
-	$(MAKE) $(AM_MAKEFLAGS) -C sdk-remote/src core
-	$(MAKE) $(AM_MAKEFLAGS) -C src libuobject$(LIBSFX).la bin/urbi$(EXEEXT)
-
-libs:
-	$(MAKE) $(AM_MAKEFLAGS) -C sdk-remote/libport
-	$(MAKE) $(AM_MAKEFLAGS) -C sdk-remote/src libs
-	$(MAKE) $(AM_MAKEFLAGS) -C src libuobject$(LIBSFX).la
-
 
 
 ## ------------- ##

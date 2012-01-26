@@ -33,16 +33,6 @@ include include/local.mk
 include doc/local.mk
 
 
-## ---------------------- ##
-## Convenient shortcuts.  ##
-## ---------------------- ##
-
-.PHONY: core libs
-core libs:
-	$(MAKE) $(AM_MAKEFLAGS) -C libport
-	$(MAKE) -C src $@
-
-
 ## ------- ##
 ## Check.  ##
 ## ------- ##

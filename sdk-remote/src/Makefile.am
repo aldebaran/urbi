@@ -1,4 +1,4 @@
-## Copyright (C) 2005-2011, Gostai S.A.S.
+## Copyright (C) 2005-2012, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -95,15 +95,6 @@ STAMPS += libraries.stamp executables.stamp all.stamp
 libraries.stamp: $(LTLIBRARIES)
 executables.stamp: $(PROGRAMS)
 all.stamp: $(LTLIBRARIES) $(PROGRAMS)
-
-
-## ---------------------- ##
-## Convenient shortcuts.  ##
-## ---------------------- ##
-
-.PHONY: core libs
-libs: $(LTLIBRARIES)
-core: libs bin/urbi-launch$(EXEEXT)
 
 
 ## ----------- ##
