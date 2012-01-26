@@ -95,6 +95,16 @@ xmv ()
 ## Variables.  ##
 ## ----------- ##
 
+# Check predefined.
+for v in BUILDFARM_COMPILER BUILDFARM_MODE BUILDFARM_OS \
+         DIR_BUILD DIR_INSTALL DIR_SOURCE
+do
+  eval "val=\$$v"
+  test -n "$val" ||
+    fatal "\$$v is not set"
+done
+
+
 # ------- #
 # Tools.  #
 # ------- #
