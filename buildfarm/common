@@ -2,8 +2,6 @@
 
 me=$(basename $0)
 
-env=$(set +o)
-
 # stderr LINE...
 # --------------
 stderr ()
@@ -72,6 +70,25 @@ tree_copy ()
   mkdir -p "$dest"
   tar -C "$source" -cf - . | tar -C "$dest" -xpBf -
 }
+
+
+# xcp ARG...
+# ----------
+# Wrapper around "cp" that tries to do things three times, then fail.
+# This is because sometimes we get "Input/output error" with WebDAV,
+# which is a huge waste of time on the BF.
+xcp ()
+{
+  local i
+  for i in 1 2 3
+  do
+    if cp "$@"; then
+      return 0
+    fi
+  done
+  fatal "cannot: cp $*"
+}
+
 
 
 # xmv ARG...

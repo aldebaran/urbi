@@ -2,6 +2,7 @@
 
 set -e
 . $(dirname "$0")/common
+env=$(set +o)
 
 
 # make_tarball DIRECTORY
@@ -64,11 +65,11 @@ make_tarball ()
 }
 
 
-# move_into DIR SOURCES...
+# copy_into DIR SOURCES...
 # ------------------------
 # Import the SOURCES... into DIR, making it atomic so that we don't
 # "see" files that are not ready to be used.
-move_into ()
+copy_into ()
 {
   local dir=$1
   shift
@@ -83,7 +84,7 @@ move_into ()
     # The published name in the current iteration.
     local out
     out=$dir/$(basename "$i")
-    xmv -v -f "$i" "$out.tmp"
+    xcp -v -f "$i" "$out.tmp"
     outs="$outs $out"
   done
 
@@ -156,7 +157,7 @@ publish ()
     cd $here
 
     # Publish the archive and its md5sum.
-    move_into "$DIR_ARCHIVE" "$pack" "$pack.md5"
+    copy_into "$DIR_ARCHIVE" "$pack" "$pack.md5"
 
     # Make sure we managed to publish properly.
     check_md5 $DIR_ARCHIVE "$base"
@@ -188,7 +189,7 @@ find_dual_unit_test ()
   local res
   for i in \
   urbi-runtime-2.7.3-windows-x86-vcxx2008-debug-no-doc.zip:urbi-runtime-2.7.3-windows-x86-vcxx2008-no-doc.zip\
-  /home/build/share/built/urbi-sdk/archives/2.7.3-000-g0fb1c3f/urbi-runtime-2.7.3-windows-x86-vcxx2008-debug.zip:/home/build/share/built/urbi-sdk/archives/2.7.3-000-g0fb1c3f/urbi-runtime-2.7.3-windows-x86-vcxx2008.zip\
+  /home/build/2.7.3-000-g0fb1c3f/urbi-runtime-2.7.3-windows-x86-vcxx2008-debug.zip:/home/build/2.7.3-000-g0fb1c3f/urbi-runtime-2.7.3-windows-x86-vcxx2008.zip\
   urbi-runtime-2.7.3-windows-x86-vcxx2008-no-doc.zip:urbi-runtime-2.7.3-windows-x86-vcxx2008-debug-no-doc.zip
   do
     o=$(echo "$i" | sed -e 's/^.*://')
@@ -285,7 +286,8 @@ fi
 # 2. Prebuilt-Urbi SDK.
 #
 # Create a fresh directory in which we put the subdirectories of the
-# $DIR_INSTALL directory.
+# $DIR_INSTALL directory.  Be sure to leave the package in
+# DIR_PACKAGES, used below for the Windows installer for instance.
 tree_copy "$DIR_INSTALL/$prefix" "$DIR_PACKAGES/$name"
 publish "$DIR_PACKAGES/$name"
 
@@ -293,9 +295,9 @@ publish "$DIR_PACKAGES/$name"
 #
 # If my zip is the newest, do the merge-install.
 case $BUILDFARM_OS in (windows)
-  my_zip=$name.zip
+  my_zip=$DIR_PACKAGES/$name.zip
   # The archive built by the other one.
-  other_zip=$(find_dual "$my_zip")
+  other_zip=$DIR_ARCHIVE/$(find_dual "$name.zip")
   if test ! -r "$other_zip"; then
     stderr "not making installer: no $other_zip"
   elif test -nt "$other_zip" -nt "$my_zip"; then
