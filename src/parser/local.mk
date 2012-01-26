@@ -130,7 +130,7 @@ endif
 parser/ugrammar.stamp: parser/ugrammar.y $(ugrammar_deps)
 	$(AM_V_GEN)mkdir -p $(@D)
 	$(AM_V_at)rm -f $@ $@.tmp parser/ugrammar-pruned.y
-	$(AM_V_at)echo '$@ rebuilt because of: $?' >$@.tmp
+	$(AM_V_at)echo '$@: $?' >$@.tmp
 	$(AM_V_at)$(MAKE) $(BISONXX)
 	$(AM_V_at)$(MAKE) -C $(top_builddir)/bison \
 	  MAKEFLAGS= $(if $(V:0=),V=1,V=0)
