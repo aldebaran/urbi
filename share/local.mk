@@ -1,4 +1,4 @@
-## Copyright (C) 2011-2012, Gostai S.A.S.
+## Copyright (C) 2012, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -6,5 +6,8 @@
 ##
 ## See the LICENSE file for more information.
 
-geshidir = $(brandsharedir)/geshi
-dist_geshi_DATA := share/geshi/urbi.php
+include share/emacs/local.mk
+include share/geshi/local.mk
+include share/images/local.mk
+include share/pkgconfig/local.mk
+include share/urbi/local.mk

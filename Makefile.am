@@ -53,10 +53,7 @@ include debian/local.mk
 devdir = dev/
 include dev/local.mk
 include include/local.mk
-include share/emacs/local.mk
-include share/images/local.mk
-include share/pkgconfig/local.mk
-include share/urbi/local.mk
+include share/local.mk
 
 
 ## ------------------------------------- ##
