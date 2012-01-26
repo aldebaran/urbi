@@ -161,14 +161,59 @@ publish ()
 }
 
 
+# find_dual ZIP
+# -------------
+# If ZIP is release, return the debug one, and vice versa.  Does not
+# check for the existence of the files.
+#
+# For Windows.
+find_dual ()
+{
+  echo "$1" | perl -pe 's/-debug// || s/((-no-doc)?\.zip)/-debug$1/'
+}
+
+# Check the previous function.
+find_dual_unit_test ()
+{
+  local i
+  local o
+  local res
+  for i in \
+  urbi-runtime-2.7.3-windows-x86-vcxx2008-debug-no-doc.zip:urbi-runtime-2.7.3-windows-x86-vcxx2008-no-doc.zip\
+  /home/build/share/built/urbi-sdk/archives/2.7.3-000-g0fb1c3f/urbi-runtime-2.7.3-windows-x86-vcxx2008-debug.zip:/home/build/share/built/urbi-sdk/archives/2.7.3-000-g0fb1c3f/urbi-runtime-2.7.3-windows-x86-vcxx2008.zip\
+  urbi-runtime-2.7.3-windows-x86-vcxx2008-no-doc.zip:urbi-runtime-2.7.3-windows-x86-vcxx2008-debug-no-doc.zip
+  do
+    o=$(echo "$i" | sed -e 's/^.*://')
+    i=$(echo "$i" | sed -e 's/:.*$//')
+    res=$(find_dual $i)
+    test "$o" = "$res" ||
+      fatal "find_dual fails on $i: $res instead of $o"
+  done
+}
+
+find_dual_unit_test
+
+# installer_name
+# --------------
+# Compute the name of the Windows installer program.
+installer_name ()
+{
+  local f="$1"
+  local nod="no-doc"
+
+  f=${f/-$BUILDFARM_MODE/}
+  f=${f/-$nod/}
+  f=${f/.zip/.exe}
+  echo "$f"
+}
+
 ## ------ ##
 ## Main.  ##
 ## ------ ##
 
 # The directories which will receive packages to publish.
 rm -rf $DIR_PACKAGES
-mkdir -p $DIR_PACKAGES
-mkdir -p "$DIR_ARCHIVE"
+mkdir -p "$DIR_PACKAGES" "$DIR_ARCHIVE"
 
 
 ## ----------- ##
@@ -234,19 +279,43 @@ fi
 # Create a fresh directory in which we put the subdirectories of the
 # $DIR_INSTALL directory.
 tree_copy "$DIR_INSTALL/$prefix" "$DIR_PACKAGES/$name"
-# On Windows, make the installer.
+publish "$DIR_PACKAGES/$name"
+
+# 3. Windows installer.
+#
+# If my zip is the newest, do the merge-install.
 case $BUILDFARM_OS in (windows)
-  delegate="$DIR_SOURCE/buildfarm/make-installer"
-  # The expected output from this delegate.
-  exe=$DIR_PACKAGES/${name%-$BUILDFARM_MODE}.exe
-  "$delegate" "$DIR_ARCHIVE/$name"
-  # The delegate might not create the installer, if it was run
-  # before its peer.
-  if test -f "$DIR_ARCHIVE/$exe"; then
-    check_md5 "$DIR_ARCHIVE" "$exe"
+  my_zip=$name.zip
+  # The archive built by the other one.
+  other_zip=$(find_dual "$my_zip")
+  if test -r "$my_zip"                            \
+     && test -r "$other_zip"                      \
+     && test "$my_zip" -nt "$other_zip";
+  then
+    tools=$HOME/share/tools
+    # We need vcxx-2005, not vcxx2005.
+    compiler=$(echo "$BUILDFARM_COMPILER" | perl -pe 's/(vcxx)(\d+)/$1-$2/')
+    # vcredist has name with vcxx-2005, not vcxx2005.
+    vcredist=$tools/vcredist/vcredist_x86-$compiler.exe
+    gostai_console="$tools/gostai-console/gostai-console-2.6-win32.exe"
+    gostai_editor="$tools/gostai-editor/gostai-editor-2.5-win32.exe"
+
+    installer=$DIR_PACKAGES/$(installer_name "$(basename $my_zip)")
+    # Merge zips.
+    $DIR_SOURCE/buildfarm/merge-install.sh                \
+        -v                                                \
+        --vcredist "$vcredist"                            \
+        --compiler "$compiler"                            \
+        --version "$SHA1"                                 \
+        --templateloc "$DIR_SOURCE/share/templates"       \
+        --installscriptloc "$DIR_SOURCE/share/installer/" \
+        --gostai-console "$gostai_console"                \
+        --gostai-editor "$gostai_editor"                  \
+        --output "$installer"                             \
+        "$my_zip" "$other_zip"
+    publish "$installer"
   fi
 esac
-publish "$DIR_PACKAGES/$name"
 
 # 3. Description.
 #
