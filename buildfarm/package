@@ -311,7 +311,7 @@ case $BUILDFARM_OS in (windows)
 
     installer=$DIR_PACKAGES/$(installer_name "$(basename $my_zip)")
     # Merge zips.
-    $DIR_SOURCE/buildfarm/merge-install.sh                \
+    $DIR_SOURCE/buildfarm/make-installer                  \
         -v                                                \
         --vcredist "$vcredist"                            \
         --compiler "$compiler"                            \
