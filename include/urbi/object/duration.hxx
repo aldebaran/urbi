@@ -11,6 +11,8 @@
 #ifndef URBI_OBJECT_DURATION_HXX
 # define URBI_OBJECT_DURATION_HXX
 
+# include <libport/cmath>
+
 namespace urbi
 {
   namespace object
@@ -23,9 +25,17 @@ namespace urbi
       to(const rObject& o)
       {
         type_check(o, Float::proto);
-        // Keep the fractional part: compute with doubles.
-        return boost::posix_time::microseconds(o->as<Float>()->value_get()
-                                               * 1000000);
+        // On Debian Etch we cannot pass directly a double to
+        // microseconds (even with Boost 1.40, whereas it is accepted
+        // on Ubuntu 10.04, same Boost.  Besides, there can be
+        // precision issues: be sure to preserve the fractional part.
+        ufloat secs;
+        ufloat frac = std::modf(o->as<Float>()->value_get(), &secs);
+        target_type res;
+        // "long" is explicitly the type used by these ctors.
+        res += boost::posix_time::seconds(long(secs));
+        res += boost::posix_time::microseconds(long(frac * 1000000));
+        return res;
       }
 
       static rObject
