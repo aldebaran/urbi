@@ -104,7 +104,9 @@ namespace urbi
     boost::posix_time::time_duration
     Duration::boost_duration() const
     {
-      return boost::posix_time::microseconds(value_get() * MILLION);
+      return
+        CxxConvert<boost::posix_time::time_duration>
+        ::to(const_cast<Duration*>(this));
     }
 
   }
