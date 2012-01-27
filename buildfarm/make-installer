@@ -21,24 +21,8 @@ usage ()
  usage: $0 [options]
 
 Options:
-  -i, --installprogram    name of installer generator program
-                          [$installer]
-  -a, --installarguments  arguments for installer
-                          [$installargs]
-  -s, --installscriptloc  directory of installer.nsh
-                          [$installscriptloc]
-  -t, --templateloc       directory with templates
-                          [$templateloc]
-  --vcredist              vcredist binary
-                          [$vcredist]
-  --compiler              version of visual studio
-                          [$compiler]
-  --version               version of Urbi
-                          [$version]
-  --gostai-console	  Gostai console installer
-			  [$gostaiconsole]
-  --gostai-editor	  Gostai editor installer
-			  [$gostaieditor]
+  -i, --installprogram    name of installer generator program [$installer]
+  -a, --installarguments  arguments for installer [$installargs]
   -d, --debug             debug mode
   -v, --verbose           verbose mode
   -o, --output            output file
@@ -48,15 +32,11 @@ EOF
 
 files=
 verbose=false
-vcredist="/home/build/share/tools/vcredist/vcredist_x86-vcxx-2008.exe"
-compiler="vcxx-2008"
-version=
 installer="$HOME/.wine/drive_c/Program Files/NSIS/makensis.exe"
 installerargs="/NOCD share/installer/installer.nsh"
 # Location of installer.nsh, will create a symlink to it if set
-instalscriptloc=
-templateloc=
-urbiconsole=
+installscriptloc=$DIR_SOURCE/share/installer
+templateloc=$DIR_SOURCE/share/templates
 # Target
 output=
 
@@ -66,15 +46,6 @@ do
   (-h|--help) usage;;
   (-i|--installprogram) shift; installer=$1 ;;
   (-a|--installarguments) shift; installerargs=$1 ;;
-  (-s|--installscriptloc) shift; installscriptloc=$1 ;;
-  (-t|--templateloc) shift; templateloc=$1;;
-  (--vcredist) shift; vcredist=$1;;
-  (--comp | --compiler) shift;
-     # We need vcxx-2005, not vcxx2005.
-     compiler=$(echo "$1" | perl -pe 's/(vcxx)(\d+)/$1-$2/');;
-  (--version) shift; version=$1;;
-  (--gostai-console) shift; gostaiconsole=$1;;
-  (--gostai-editor) shift; gostaieditor=$1;;
   (-d|--debug) set -x ;;
   (-v|--verbose) verbose=true ;;
   (-o|--output) shift; output=$1 ;;
@@ -85,9 +56,6 @@ done
 
 test "$(echo $files |wc -w)" -eq 2 ||
   fatal "expected exactly two files"
-
-test -r "$vcredist" ||
-  fatal "cannot read $vcredist"
 
 verb "merging archives $files"
 dir=$(mktemp -d)
@@ -101,7 +69,9 @@ cd $dir
 mkdir temp
 mkdir merge
 cd temp
-for f in $files; do
+
+for f in $files
+do
   verb "merging $f"
   unzip -q $f
   basedir=$(echo *)
@@ -146,8 +116,8 @@ if test -n "templateloc"; then
   ln -s $templateloc share/templates
 fi
 
-verb "running '$installer' /D$compiler /DVERSION=$version $installerargs"
-wine "$installer" "/D$compiler" "/DVERSION=$version" $installerargs
+verb "running '$installer' /D$vcxx /DVERSION=$SHA1 $installerargs"
+wine "$installer" "/D$vcxx" "/DVERSION=$SHA1" $installerargs
 
 if test -n "$output"; then
   xmv "$dir/merge/gostai-engine-runtime.exe" "$output"

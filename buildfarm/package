@@ -303,25 +303,10 @@ case $BUILDFARM_OS in (windows)
   elif test -nt "$other_zip" -nt "$my_zip"; then
     stderr "not making installer: $other_zip is newer, it should do it"
   else
-    tools=$HOME/share/tools
-    # We need vcxx-2005, not vcxx2005.
-    compiler=$(echo "$BUILDFARM_COMPILER" | perl -pe 's/(vcxx)(\d+)/$1-$2/')
-    # vcredist has name with vcxx-2005, not vcxx2005.
-    vcredist=$tools/vcredist/vcredist_x86-$compiler.exe
-    gostai_console="$tools/gostai-console/gostai-console-2.6-win32.exe"
-    gostai_editor="$tools/gostai-editor/gostai-editor-2.5-win32.exe"
-
     installer=$DIR_PACKAGES/$(installer_name "$(basename $my_zip)")
     # Merge zips.
     $DIR_SOURCE/buildfarm/make-installer                  \
         -v                                                \
-        --vcredist "$vcredist"                            \
-        --compiler "$compiler"                            \
-        --version "$SHA1"                                 \
-        --templateloc "$DIR_SOURCE/share/templates"       \
-        --installscriptloc "$DIR_SOURCE/share/installer/" \
-        --gostai-console "$gostai_console"                \
-        --gostai-editor "$gostai_editor"                  \
         --output "$installer"                             \
         "$my_zip" "$other_zip"
     publish "$installer"
