@@ -588,15 +588,15 @@ System.system("exit 23") >> 8
   \refSlot[Date]{now}.
 
 \begin{urbiscript}
-var t1 = System.timeReference;
+var t1 = System.timeReference|;
 sleep(1s);
-var t2 = System.timeReference;
+var t2 = System.timeReference|;
 assert
 {
   t1 == t2;
   t1.isA(Date);
   (Date.now - (System.timeReference + System.time)) < 0.5s;
-}
+};
 \end{urbiscript}
 \begin{urbicomment}
 removeSlots("t1", "t2");
