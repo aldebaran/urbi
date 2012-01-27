@@ -313,13 +313,13 @@ case $BUILDFARM_OS in (windows)
   fi
 esac
 
-# 3. Description.
+# 4. Description.
 #
 # Extract the file that describes the contents of the package.
 cp "$docsrc/COMPONENTS.txt" "$DIR_PACKAGES/$urbi_sdk.txt"
 publish "$DIR_PACKAGES/$urbi_sdk.txt"
 
-# 4. Prebuilt-Urbi Runtime.
+# 5. Prebuilt-Urbi Runtime.
 #
 # Create a run-time version of the package.
 packagedir="$DIR_PACKAGES/$urbi_runtime"
@@ -331,15 +331,15 @@ tree_copy "$DIR_INSTALL/$prefix" "$packagedir"
     rm -rf README.txt include libexec share/doc)
 publish $packagedir
 
-# 5. Source tarball.
+# 6. Source tarball.
 tarname=$BUILDFARM_PROJECT-$SHA1.tar.bz2
 if test -f $DIR_BUILD/$tarname; then
   publish $DIR_BUILD/$tarname
 fi
 
-# 6. Distribution packages.
+# 7. Distribution packages.
 case $BUILDFARM_HOSTNAME in (bf-3)
-  make -C "$DIR_BUILD" packages
   sha1=$(echo "$SHA1" | sed 's/[-_]/./g')
+  make -C "$DIR_BUILD" packages URBI_VERSION=$sha1
   publish $DIR_BUILD/*$sha1*.{rpm,deb}
 esac
