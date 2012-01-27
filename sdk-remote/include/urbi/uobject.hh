@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2011, Gostai S.A.S.
+ * Copyright (C) 2009-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -57,7 +57,7 @@
 # define UBindVarRename(Obj, X, Uname)          \
   (X).init(__name, Uname, ctx_)
 
-# define UBindVar(Obj,X)                        \
+# define UBindVar(Obj, X)                       \
   UBindVarRename(Obj, X, #X)
 
 /// Bind multiple variables in one call

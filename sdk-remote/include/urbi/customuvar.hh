@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010, 2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -13,8 +13,8 @@
 #ifndef URBI_CUSTOMUVAR_HH
 # define URBI_CUSTOMUVAR_HH
 
-#include <urbi/uobject.hh>
-#include <urbi/uvar.hh>
+# include <urbi/uobject.hh>
+# include <urbi/uvar.hh>
 
 namespace urbi
 {
