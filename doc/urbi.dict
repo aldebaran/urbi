@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1542 utf-8
+personal_ws-1.1 en 1573 utf-8
 aa
 aaa
 abc
@@ -23,8 +23,10 @@ addProto
 addSecond
 addValue
 ADL
+aec
 Affero
 afoodef
+agc
 agg
 AGPL
 aibo
@@ -42,6 +44,9 @@ ALMotion
 ALMotor
 ALProxy
 ALRobotPose
+alsa
+AlsaMicrophone
+AlsaSpeaker
 ALTextToSpeech
 ALUrbiStarter
 american
@@ -114,6 +119,7 @@ autoconf
 autodebug
 automain
 automake
+AutomaticGainControl
 autopoint
 autotools
 AXS
@@ -163,6 +169,7 @@ boolean
 brandNewTag
 bsd
 bufferIn
+bufferSize
 bugReport
 builddir
 bumperL
@@ -188,6 +195,7 @@ cameraTopic
 cameraval
 cameraYaw
 cancelFindBase
+canceller
 canem
 CardinalDirection
 cb
@@ -215,6 +223,7 @@ classname
 classpath
 clearStats
 cloneSlot
+closeDelay
 ClosedLoop
 Clément
 cmd
@@ -281,7 +290,8 @@ DCM
 dcon
 Debian
 decompile
-Decrementation
+decrement
+decrementation
 deepclean
 defaultPitchSpeed
 defaultRollSpeed
@@ -291,6 +301,9 @@ defaultYawSpeed
 defaultYSpeed
 defaultZSpeed
 Demaille
+denoise
+Denoiser
+denoising
 DependencyWalker
 deprecations
 dequeue
@@ -345,6 +358,7 @@ eachi
 eae
 eba
 ec
+EchoCanceller
 echoEach
 eE
 elbowR
@@ -406,6 +420,7 @@ findBase
 finfo
 fingerLR
 fingerR
+Firefox
 fireRate
 firstline
 FIXME
@@ -445,6 +460,7 @@ fullengine
 func
 functionalities
 FunctionProfile
+gainPercent
 gatewayAddress
 gcc
 gdb
@@ -487,6 +503,7 @@ GHz
 gl
 GLIBC
 gmake
+gmapping
 gnulib
 gnuplot
 goDuring
@@ -593,6 +610,7 @@ installcheck
 installdir
 instantiation
 instantiations
+internalwebsite
 interruptible
 io
 IoService
@@ -602,6 +620,7 @@ IRCenter
 IRLeft
 IRRight
 IRs
+irs
 isA
 isalnum
 isalpha
@@ -662,6 +681,7 @@ laserDistanceMax
 laserDistanceMin
 laserLastTimestamp
 laserLoad
+LaserScan
 laserVal
 lastCaptureTimestamp
 lastModifiedDate
@@ -715,8 +735,10 @@ LinearMotor
 LinearSpeedMotor
 linphone
 linux
+llll
 llvm
 ln
+lnk
 loadFile
 loadLibrary
 loadModule
@@ -820,6 +842,7 @@ myHandle
 myHiddenKey
 myimage
 myInstance
+myJazzName
 myList
 myLocalVariable
 myMind
@@ -854,6 +877,7 @@ naoAcademics
 NaoQi
 naoRobocup
 naoT
+nav
 nb
 nc
 ndebug
@@ -884,6 +908,7 @@ numSubscribers
 nxt
 o's
 ObjectTracker
+odom
 Odometric
 odometry
 odometryAlpha
@@ -930,12 +955,14 @@ params
 parseopt
 pathPlanningEvent
 pc
+pcm
 pdf
 pdfcrop
 PDFLaTeX
 perl
 perlre
 PGain
+pgm
 php
 physicsReset
 pid
@@ -948,6 +975,7 @@ plugin
 plusTwo
 pMaxSpeedFraction
 pNames
+pollFD
 pollFor
 pollInterval
 pollOneFor
@@ -1069,6 +1097,7 @@ roscore
 roscpp
 rosgraph
 rosImg
+roslaunch
 roslib
 rosmake
 rosout
@@ -1076,6 +1105,7 @@ rosrun
 ROSService
 ROSTools
 ROSTopic
+rostopic
 ROSTopics
 rotateLeft
 rotateRight
@@ -1089,6 +1119,7 @@ runningcommands
 runServer
 runtime
 runTo
+rviz
 rw
 rxconsole
 rxgraph
@@ -1187,6 +1218,7 @@ soundVolumeMax
 sp
 speakerL
 speakerR
+speakout
 specialFeature
 SpeechRecognizer
 SpeedAdaptive
@@ -1272,6 +1304,8 @@ texlive
 texmf
 TextTo
 TextToSpeech
+tf
+tfMessage
 tghi
 th
 theObject
