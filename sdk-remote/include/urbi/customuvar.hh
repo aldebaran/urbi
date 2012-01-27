@@ -58,11 +58,13 @@ namespace urbi
     T data_;
   };
 }
+
 /// Declare a CustomVar whose custom store is its value.
-#define UBindCacheVar(cls, v, t) \
-  UBindVar(cls, v); \
-  ::urbi::createUCallback(*this, &v, "var", &CustomUVar<t>::updateCache, \
-                          v.get_name(), ctx_);
+#define UBindCacheVar(Obj, V, T)                                        \
+  UBindVar(Obj, V);                                                     \
+  ::urbi::createUCallback(*this, &V,                                    \
+                          "var", &::urbi::CustomUVar<T>::updateCache,   \
+                          V.get_name(), ctx_);
 
 # include <urbi/customuvar.hxx>
 
