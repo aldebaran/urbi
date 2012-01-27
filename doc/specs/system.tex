@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2011, Gostai S.A.S.
+%% Copyright (C) 2009-2012, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -580,6 +580,27 @@ System.system("exit 23") >> 8
   };
 \end{urbiassert}
 
+
+\item[timeReference]%
+  The ``origin of time'' of this run of \urbi, as a \refObject{Date}.  It is
+  a constant during the run.  Basically, \lstinline|System.time| is about
+  \lstinline|Date.now - System.timeReference|.  See also \refSlot{time} and
+  \refSlot[Date]{now}.
+
+\begin{urbiscript}
+var t1 = System.timeReference;
+sleep(1s);
+var t2 = System.timeReference;
+assert
+{
+  t1 == t2;
+  t1.isA(Date);
+  (Date.now - (System.timeReference + System.time)) < 0.5s;
+}
+\end{urbiscript}
+\begin{urbicomment}
+removeSlots("t1", "t2");
+\end{urbicomment}
 
 \item[unsetenv](<name>)%
   Undefine the environment variable \var{name}, return its previous value.
