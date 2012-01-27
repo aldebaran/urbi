@@ -29,7 +29,3 @@ LIBUOBJECT_REMOTE_LIBS =						\
 module_LTLIBRARIES =
 moduledir = $(urbi_uobjectsdir)
 include modules.mk
-
-installcheck-buildfarm:
-check-buildfarm:
-distcheck-buildfarm:

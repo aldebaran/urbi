@@ -40,6 +40,6 @@ include doc/local.mk
 # check-html, check-clean, check-uob etc.
 check-%:
 	$(MAKE) $(AM_MAKEFLAGS) -C src/tests $@
-installcheck-buildfarm check-buildfarm recheck recheck-html: clean-semaphores
+recheck recheck-html: clean-semaphores
 	$(MAKE) $(AM_MAKEFLAGS) -C src $@
 	$(MAKE) $(AM_MAKEFLAGS) -C src/tests $@

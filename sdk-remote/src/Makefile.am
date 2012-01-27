@@ -95,13 +95,3 @@ STAMPS += libraries.stamp executables.stamp all.stamp
 libraries.stamp: $(LTLIBRARIES)
 executables.stamp: $(PROGRAMS)
 all.stamp: $(LTLIBRARIES) $(PROGRAMS)
-
-
-## ----------- ##
-## Buildfarm.  ##
-## ----------- ##
-
-# The target run by the buildfarm.
-CHECK_BUILDFARM_FLAGS = -j4 AM_COLOR_TESTS=no VERBOSE=1 INSTRUMENTATION=0.2
-%check-buildfarm:
-	$(MAKE) $(AM_MAKEFLAGS) $(CHECK_BUILDFARM_FLAGS) $*check-html

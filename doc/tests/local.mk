@@ -10,6 +10,7 @@
 check-TESTS: tests-check-programs
 tests-check-programs:
 	$(MAKE) $(AM_MAKEFLAGS) -C $(top_builddir)/tests am-check-programs
+check-TESTS: clean-semaphores
 
 ## ------- ##
 ## Check.  ##
@@ -126,16 +127,6 @@ installcheck-local:
 	$(MAKE) $(AM_MAKEFLAGS)						\
 	  TESTS_ENVIRONMENT='$$(INSTALLCHECK_ENVIRONMENT)' check
 
-## ----------- ##
-## Buildfarm.  ##
-## ----------- ##
-
-#.PHONY: check-buildfarm
-CHECK_BUILDFARM_FLAGS = AM_COLOR_TESTS=no VERBOSE=1 # INSTRUMENTATION=1
-%heck-buildfarm:
-	$(MAKE) $(AM_MAKEFLAGS) $*heck-html $(CHECK_BUILDFARM_FLAGS)
-
-check-TESTS: clean-semaphores
 
 
 ## -------- ##

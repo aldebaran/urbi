@@ -20,7 +20,6 @@
 include build-aux/make/init.mk
 include build-aux/make/package-version.mk
 include build-aux/make/build-aux.mk
-DISTCHECK_BUILDFARM_HOSTNAME = bf-7
 include build-aux/make/build-farm.mk
 BOOTSTRAP_CFG = .bootstrap.cfg
 include build-aux/make/bootstrap.mk
@@ -106,18 +105,6 @@ install-doc:
 ## Check.  ##
 ## ------- ##
 
-
-# The target run by the buildfarm.
-.PHONY: check-buildfarm check-sdk-uobjects-buildfarm
-CHECK_BUILDFARM_FLAGS = AM_COLOR_TESTS=no VERBOSE=1 # INSTRUMENTATION=1
-%check-buildfarm: clean-semaphores
-	$(MAKE) $(AM_MAKEFLAGS) -C tests $*check-html $(CHECK_BUILDFARM_FLAGS)
-
-# The target used by the build farm to create the uobjects used in our
-# uob test suite.
-check-sdk-uobjects-buildfarm:
-	$(MAKE) $(AM_MAKEFLAGS) -C sdk-remote/src/tests check-uobjects $(CHECK_BUILDFARM_FLAGS)
-
 # Run just the doc test suite, without building again the PDF.
 check-addons check-doc:
 	$(MAKE) $(AM_MAKEFLAGS) -C doc $@
@@ -138,9 +125,9 @@ recheck recheck-html:
 	$(MAKE) $(AM_MAKEFLAGS) -C tests $@
 	$(MAKE) $(AM_MAKEFLAGS) -C doc $@
 
-.PHONY: spell-check spell-check-buildfarm
-spell-check spell-check-buildfarm:
-	$(MAKE) $(AM_MAKEFLAGS) -C doc $(@:-buildfarm=)
+.PHONY: spell-check
+spell-check:
+	$(MAKE) $(AM_MAKEFLAGS) -C doc $@
 
 ## -------- ##
 ## Stamps.  ##
