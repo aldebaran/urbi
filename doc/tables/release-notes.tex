@@ -30,10 +30,6 @@ user-visible changes in \usdk releases.
   exception is raised inside the \lstinline|finally| clause.
 \item Do not emit \refSlot[Tag]{leave} events when a frozen tag waiting to
   execute statements is stopped.
-\item Avoid unexpected execution of code caused by semaphore release and a
-  stop of the code acquiring the semaphore.  This change implies that
-  \refSlot[Semaphore]{acquire} either returns when it holds the semaphore
-  or jumps to the end of the stopped tag.
 \item Avoid unexpected execution of code caused by \refSlot[Barrier]{signal}
   (or \refSlot[Barrier]{signalAll}) and a stop of the code waiting on the
   barrier.
