@@ -229,23 +229,25 @@ fi
 
 # tools.
 toolsdir=$sharedir/tools
-# We need vcxx-2005, not vcxx2005.
-vcxx=$(echo "$BUILDFARM_COMPILER" | perl -pe 's/(vcxx)(\d+)/$1-$2/')
-# vcredist has name with vcxx-2005, not vcxx2005.
-vcredist=$toolsdir/vcredist/vcredist_x86-$vcxx.exe
-gostai_console="$toolsdir/gostai-console/gostai-console-2.6-win32.exe"
-gostai_editor="$toolsdir/gostai-editor/gostai-editor-2.5-win32.exe"
-for i in vcredist gostai_console gostai_editor
-do
-  eval "file=\$$i"
-  test -r "$file" ||
-    fatal "cannot read $i: $val"
-  test -f "$file" ||
-    fatal "not a file $i: $val"
-  test -s "$file" ||
-    fatal "empty file $i: $val"
-done
-
+case $BUILDFARM_OS in (windows)
+  # We need vcxx-2005, not vcxx2005.
+  vcxx=$(echo "$BUILDFARM_COMPILER" | perl -pe 's/(vcxx)(\d+)/$1-$2/')
+  # vcredist has name with vcxx-2005, not vcxx2005.
+  vcredist=$toolsdir/vcredist/vcredist_x86-$vcxx.exe
+  gostai_console="$toolsdir/gostai-console/gostai-console-2.6-win32.exe"
+  gostai_editor="$toolsdir/gostai-editor/gostai-editor-2.5-win32.exe"
+  for i in vcredist gostai_console gostai_editor
+  do
+    eval "file=\$$i"
+    test -r "$file" ||
+      fatal "cannot read $i: $val"
+    test -f "$file" ||
+      fatal "not a file $i: $val"
+    test -s "$file" ||
+      fatal "empty file $i: $val"
+  done
+  ;;
+esac
 
 # colordiff sometimes does not tell different files apart (e.g., on
 # Debian Etch).
