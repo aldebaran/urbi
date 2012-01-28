@@ -198,7 +198,8 @@ esac
 ## --------------------- ##
 
 stderr "$BUILDFARM_HOSTNAME: $BUILDFARM_PROJECT-$BUILDFARM_NAME-$BUILDFARM_MODE"
-stderr "Version: SHA1"
+stderr "Version: $SHA1"
+stderr "https://share.gostai.com/built/urbi-sdk/archives/$SHA1/"
 
 # We really want ps to work.
 #
