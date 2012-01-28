@@ -3,7 +3,10 @@
 set -e
 . $(dirname "$0")/common
 
-# It may look stupid, but we sometimes have concurrency issues.
 cd "$DIR_BUILD"
-make -j ${JOBS}
-make
+
+# Remove useless remains from previous "make dist" or "make packages".
+rm -rf urbi-* urbi_*
+
+# It may look stupid, but we sometimes have concurrency issues.
+make -j ${JOBS} || make
