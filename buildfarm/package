@@ -236,9 +236,9 @@ test "$BUILDFARM_MODE" != "release" &&
   CONFIGURATION="$CONFIGURATION-$BUILDFARM_MODE"
 
 # The SDK package.
-urbi_sdk=$BUILDFARM_PROJECT-$SHA1-$CONFIGURATION
+urbi_sdk=$BUILDFARM_PROJECT-$VERSION-$CONFIGURATION
 # The doc only package.
-urbi_doc=${BUILDFARM_PROJECT%-sdk}-doc-$SHA1
+urbi_doc=${BUILDFARM_PROJECT%-sdk}-doc-$VERSION
 # The SDK package, without the doc.
 urbi_sdk_no_doc=$(echo "$urbi_sdk" | sed -e 's/urbi-sdk/urbi-sdk-no-doc/')
 # The runtime package, i.e., without doc etc.
@@ -332,14 +332,14 @@ tree_copy "$DIR_INSTALL/$prefix" "$packagedir"
 publish $packagedir
 
 # 6. Source tarball.
-tarname=$BUILDFARM_PROJECT-$SHA1.tar.bz2
+tarname=$BUILDFARM_PROJECT-$VERSION.tar.bz2
 if test -f $DIR_BUILD/$tarname; then
   publish $DIR_BUILD/$tarname
 fi
 
 # 7. Distribution packages.
 case $BUILDFARM_HOSTNAME in (bf-3)
-  sha1=$(echo "$SHA1" | sed 's/[-_]/./g')
-  make -C "$DIR_BUILD" packages URBI_VERSION=$sha1
-  publish $DIR_BUILD/*$sha1*.{rpm,deb}
+  version=$(echo "$VERSION" | sed 's/[-_]/./g')
+  make -C "$DIR_BUILD" packages URBI_VERSION=$version
+  publish $DIR_BUILD/*$version*.{rpm,deb}
 esac

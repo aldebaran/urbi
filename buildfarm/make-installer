@@ -116,8 +116,8 @@ if test -n "templateloc"; then
   ln -s $templateloc share/templates
 fi
 
-verb "running '$installer' /D$vcxx /DVERSION=$SHA1 $installerargs"
-wine "$installer" "/D$vcxx" "/DVERSION=$SHA1" $installerargs
+verb "running '$installer' /D$vcxx /DVERSION=$VERSION $installerargs"
+wine "$installer" "/D$vcxx" "/DVERSION=$VERSION" $installerargs
 
 if test -n "$output"; then
   xmv "$dir/merge/gostai-engine-runtime.exe" "$output"

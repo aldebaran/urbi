@@ -106,7 +106,17 @@ xmv ()
   fatal "cannot: mv $*"
 }
 
-
+# git_describe ARGS...
+# --------------------
+# Make a slight effort so that instead of 2.2-8-g9b02553 we get
+# 2.2-008-g9b02553, which is better with "ls".
+git_describe ()
+{
+  cd "$DIR_SOURCE"
+  git describe "$@" |
+    # Keep at least three digits for the patchlevel count (if present).
+    perl -pe 's{(?<=-)(\d+)(?=-g[\da-f]+$)}{ sprintf "%03d", $1 }e'
+}
 
 ## ----------- ##
 ## Variables.  ##
@@ -142,24 +152,11 @@ export BUILDFARM_HOSTNAME=$(hostname | sed -e 's/\..*//')
 # Package.  #
 # --------- #
 
+# Short version, possibly without patchlevel and SHA1.
+VERSION=$(git_describe)
+
 # The full version of the package, with SHA1.
-#
-# Make a slight effort so that instead of 2.2-8-g9b02553 we get
-# 2.2-008-g9b02553, which is better with "ls".  Always show the sha1
-# (--long) so that when we use repeatedly the same tag, tarballs with
-# the same name are *not* stored at the same place.
-SHA1=$(cd "$DIR_SOURCE" &&
-       git describe --long |
-         perl -ne '
-  if (m{^(?:.*/)?(.*)-(\d+)-(g[\da-f]+)$})
-  {
-    printf "%s-%03d-%s\n", $1, $2, $3;
-  }
-  elsif (m{^(?:.*/)?(.*)$})
-  {
-    printf "%s\n", $1;
-  }')
-test -n "$SHA1" || SHA1=$(cd "$DIR_SOURCE" && git rev-parse HEAD)
+VERSION_LONG=$(git_describe --long)
 
 # This --prefix, /usr, is chosen so that the Debian packages can use
 # our builds.
@@ -177,20 +174,16 @@ export DIR_STAGE=$(dirname "$DIR_INSTALL")/stage
 # Where to put the packages that will be published.
 export DIR_PACKAGES=$(dirname "$DIR_INSTALL")/packages
 
-# Where to publish the result (in share/).
 sharedir=$HOME/share
-export DIR_DEST=$sharedir/built/$BUILDFARM_PROJECT
 
 # Where to publish the packages.
-case $SHA1 in
-  # We could automatically install releases there, but it is feared
-  # that this is too much automation, the maintainer should do that.
-  # She might want also to get rid of the sha1 part when copying for
-  # archives/ to releases/.
-  #
-  # (*-000-g*) DIR_ARCHIVE="$DIR_DEST/releases/$SHA1";;
-  (*)        export DIR_ARCHIVE="$DIR_DEST/archives/$SHA1";;
-esac
+#
+# We could automatically install releases in releases/, but it is
+# feared that this is too much automation, the maintainer should do
+# that.  She might want also to get rid of the SHA1 part when copying
+# for archives/ to releases/.
+export DIR_ARCHIVE=$sharedir/built/$BUILDFARM_PROJECT/archives/$VERSION_LONG
+
 
 
 ## --------------------- ##
@@ -198,8 +191,8 @@ esac
 ## --------------------- ##
 
 stderr "$BUILDFARM_HOSTNAME: $BUILDFARM_PROJECT-$BUILDFARM_NAME-$BUILDFARM_MODE"
-stderr "Version: $SHA1"
-stderr "https://share.gostai.com/built/urbi-sdk/archives/$SHA1/"
+stderr "Version: $VERSION_LONG ($VERSION)"
+stderr "https://share.gostai.com/built/urbi-sdk/archives/$VERSION_LONG/"
 
 # We really want ps to work.
 #
