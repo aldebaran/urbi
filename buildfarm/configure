@@ -1,7 +1,8 @@
 #!/bin/sh
 
-set -ex
+set -e
 . $(dirname "$0")/common
+env=$(set +o)
 
 # older REFERENCE FILE...
 # -----------------------
