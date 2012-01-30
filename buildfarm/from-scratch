@@ -3,4 +3,9 @@ performed by the buildfarm.
 
 * 2011-11-22: change libjpeg build system
 * 2012-01-09: remove local.mk in libport
-* 2012-01-10: location.hh and position.hh have moved.
+* 2012-01-10: location.hh and position.hh have moved
+* 2012-01-30: upgrade bison
+
+Local Variables:
+mode: outline
+End:
