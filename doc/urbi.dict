@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1745 utf-8
+personal_ws-1.1 en 1747 utf-8
 aa
 aaa
 abc
@@ -732,6 +732,7 @@ jerror
 jessie
 jmorecfg
 jni
+jnilib
 jpeg
 jpeglib
 jpg
@@ -783,6 +784,7 @@ lhs
 libboost
 libcoroutine
 libfoo
+libjava
 libjpeg
 liblinphone
 libltdl

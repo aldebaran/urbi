@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2011, Gostai S.A.S.
+%% Copyright (C) 2009-2012, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -126,6 +126,24 @@ Be sure to read \autoref{sec:build:check}.  In particular, run \samp{make
   check} several times (see \autoref{sec:build:check} to know why).  If the
 failures remain, please submit the \file{test-suite.log} file(s) (see
 \autoref{sec:bug}).
+
+\subsection{check: error: Unable to load native library: libjava.jnilib}
+\label{sec:faq:jnilib}
+
+If you experience the following failure on Mac OS X:
+
+\begin{verbatim}
+$ urbi-launch-java --port-file server.port tests/all/All.jar
+Error occurred during initialization of VM
+Unable to load native library: libjava.jnilib
+\end{verbatim}
+
+\noindent
+then you have something in the \env{DYLD\_LIBRARY\_PATH} that annoys the
+Java VM.  Although we have not pinpointed it exactly, it seems to be a
+problem in our libjpeg: first run \samp{make -C sdk-remote/jpeg clean} then
+\samp{make -S sdk-remote/jpeg}.
+
 
 \section{Troubleshooting}
 
