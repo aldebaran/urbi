@@ -17,6 +17,9 @@ namespace urbi
 {
   namespace object
   {
+    // Compute with doubles.
+#define MILLION 1000000.0
+
     /*---------------.
     | Construction.  |
     `---------------*/
@@ -28,7 +31,7 @@ namespace urbi
     }
 
     Duration::Duration(const boost::posix_time::time_duration& val)
-      : Float(val.total_microseconds() / 1000000)
+      : Float(val.total_microseconds() / MILLION)
     {
       proto_add(proto);
     }
@@ -95,8 +98,9 @@ namespace urbi
     boost::posix_time::time_duration
     Duration::boost_duration() const
     {
-      typedef long long time_t;
-      return boost::posix_time::microseconds(time_t(value_get() * 1000000));
+      return
+        CxxConvert<boost::posix_time::time_duration>
+        ::to(const_cast<Duration*>(this));
     }
 
   }

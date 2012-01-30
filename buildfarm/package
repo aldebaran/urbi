@@ -2,6 +2,7 @@
 
 set -e
 . $(dirname "$0")/common
+env=$(set +o)
 
 
 # make_tarball DIRECTORY
@@ -64,25 +65,33 @@ make_tarball ()
 }
 
 
-# move_into DIR SOURCES...
+# copy_into DIR SOURCES...
 # ------------------------
 # Import the SOURCES... into DIR, making it atomic so that we don't
 # "see" files that are not ready to be used.
-move_into ()
+copy_into ()
 {
   local dir=$1
   shift
+
+  # The published names.
+  local outs
+
   # First, copy them all into $dir with a tmp extension.
   local i
   for i
   do
-    xmv -v -f "$i" "$dir/$(basename "$i").tmp"
+    # The published name in the current iteration.
+    local out
+    out=$dir/$(basename "$i")
+    xcp -v -f "$i" "$out.tmp"
+    outs="$outs $out"
   done
 
   # Then rename them all.
-  for i
+  for i in $outs
   do
-    xmv -v -f "$dir/$(basename "$i").tmp" "$dir/$(basename "$i")"
+    xmv -v -f "$i.tmp" "$i"
   done
 }
 
@@ -123,40 +132,89 @@ check_md5 ()
 }
 
 
-# publish FILE-OR-DIR
-# -------------------
-# Publish a tarball in DIR_ARCHIVE.  Check md5sum.
+# publish FILE-OR-DIR...
+# ----------------------
+# Publish tarballs in DIR_ARCHIVE.  Check md5sum.
 publish ()
 {
-  # $pack: the package (tarball/zip) to publish.
-  local pack=$1
-  # If this is a directory, make it a tarball.
-  if test -d "$pack"; then
-    make_tarball "$pack"
-    pack=$make_tarball_res
-  fi
-
-  # Compute the md5sum of the file.
   local here
   here=$(pwd)
-  local base
-  base=$(basename "$pack")
-  cd $(dirname "$pack")
-    $MD5SUM "$base" >"$base.md5"
-  cd $here
+  # $pack: the package (tarball/zip) to publish.
+  local pack
+  for pack
+  do
+    # If this is a directory, make it a tarball.
+    if test -d "$pack"; then
+      make_tarball "$pack"
+      pack=$make_tarball_res
+    fi
 
-  # Publish the archive and its md5sum.
-  move_into "$DIR_ARCHIVE" "$pack" "$pack.md5"
+    # Compute the md5sum of the file.
+    local base
+    base=$(basename "$pack")
+    cd $(dirname "$pack")
+      $MD5SUM "$base" >"$base.md5"
+    cd $here
 
-  # Make sure we managed to publish properly.
-  check_md5 $DIR_ARCHIVE "$base"
+    # Publish the archive and its md5sum.
+    copy_into "$DIR_ARCHIVE" "$pack" "$pack.md5"
 
-  # This looks useless, but it's an attempt to eliminate
-  # nondeterministic problems of availability of shared directories
-  # on OS X.
-  ls "$DIR_ARCHIVE" >/dev/null
+    # Make sure we managed to publish properly.
+    check_md5 $DIR_ARCHIVE "$base"
+
+    # This looks useless, but it's an attempt to eliminate
+    # nondeterministic problems of availability of shared directories
+    # on OS X.
+    ls "$DIR_ARCHIVE" >/dev/null
+  done
 }
 
+
+# find_dual ZIP
+# -------------
+# If ZIP is release, return the debug one, and vice versa.  Does not
+# check for the existence of the files.
+#
+# For Windows.
+find_dual ()
+{
+  echo "$1" | perl -pe 's/-debug// || s/((-no-doc)?\.zip)/-debug$1/'
+}
+
+# Check the previous function.
+find_dual_unit_test ()
+{
+  local i
+  local o
+  local res
+  for i in \
+  urbi-runtime-2.7.3-windows-x86-vcxx2008-debug-no-doc.zip:urbi-runtime-2.7.3-windows-x86-vcxx2008-no-doc.zip\
+  /home/build/2.7.3-000-g0fb1c3f/urbi-runtime-2.7.3-windows-x86-vcxx2008-debug.zip:/home/build/2.7.3-000-g0fb1c3f/urbi-runtime-2.7.3-windows-x86-vcxx2008.zip\
+  urbi-runtime-2.7.3-windows-x86-vcxx2008-no-doc.zip:urbi-runtime-2.7.3-windows-x86-vcxx2008-debug-no-doc.zip
+  do
+    o=$(echo "$i" | sed -e 's/^.*://')
+    i=$(echo "$i" | sed -e 's/:.*$//')
+    res=$(find_dual $i)
+    test "$o" = "$res" ||
+      fatal "find_dual fails on $i: $res instead of $o"
+  done
+}
+
+find_dual_unit_test
+
+# installer_name
+# --------------
+# Compute the name of the Windows installer program.
+installer_name ()
+{
+  local f="$1"
+  local nod="no-doc"
+
+  f=${f/-$BUILDFARM_MODE/}
+  f=${f/-$nod/}
+  f=${f/.zip/.exe}
+  echo "$f"
+}
 
 ## ------ ##
 ## Main.  ##
@@ -164,8 +222,7 @@ publish ()
 
 # The directories which will receive packages to publish.
 rm -rf $DIR_PACKAGES
-mkdir -p $DIR_PACKAGES
-mkdir -p "$DIR_ARCHIVE"
+mkdir -p "$DIR_PACKAGES" "$DIR_ARCHIVE"
 
 
 ## ----------- ##
@@ -202,6 +259,7 @@ docsrc="$DIR_INSTALL/$prefix/share/doc/urbi-sdk"
 if test -f "$docsrc/urbi-sdk.pdf"; then
   stderr "Documentation is compiled, shipping"
   tree_copy "$docsrc" "$DIR_PACKAGES/$urbi_doc"
+  publish "$DIR_PACKAGES/$urbi_doc"
   # Do not leave the COMPONENTS.txt file, which is architecture
   # specific.  It would override the existing one from the package
   # into which the documentation will be copied.
@@ -228,13 +286,38 @@ fi
 # 2. Prebuilt-Urbi SDK.
 #
 # Create a fresh directory in which we put the subdirectories of the
-# $DIR_INSTALL directory.
+# $DIR_INSTALL directory.  Be sure to leave the package in
+# DIR_PACKAGES, used below for the Windows installer for instance.
 tree_copy "$DIR_INSTALL/$prefix" "$DIR_PACKAGES/$name"
+publish "$DIR_PACKAGES/$name"
+
+# 3. Windows installer.
+#
+# If my zip is the newest, do the merge-install.
+case $BUILDFARM_OS in (windows)
+  my_zip=$DIR_PACKAGES/$name.zip
+  # The archive built by the other one.
+  other_zip=$DIR_ARCHIVE/$(find_dual "$name.zip")
+  if test ! -r "$other_zip"; then
+    stderr "not making installer: no $other_zip"
+  elif test -nt "$other_zip" -nt "$my_zip"; then
+    stderr "not making installer: $other_zip is newer, it should do it"
+  else
+    installer=$DIR_PACKAGES/$(installer_name "$(basename $my_zip)")
+    # Merge zips.
+    $DIR_SOURCE/buildfarm/make-installer                  \
+        -v                                                \
+        --output "$installer"                             \
+        "$my_zip" "$other_zip"
+    publish "$installer"
+  fi
+esac
 
 # 3. Description.
 #
 # Extract the file that describes the contents of the package.
 cp "$docsrc/COMPONENTS.txt" "$DIR_PACKAGES/$urbi_sdk.txt"
+publish "$DIR_PACKAGES/$urbi_sdk.txt"
 
 # 4. Prebuilt-Urbi Runtime.
 #
@@ -246,45 +329,17 @@ tree_copy "$DIR_INSTALL/$prefix" "$packagedir"
 # Lobby.license.
 (cd "$packagedir" &&
     rm -rf README.txt include libexec share/doc)
+publish $packagedir
 
 # 5. Source tarball.
 tarname=$BUILDFARM_PROJECT-$SHA1.tar.bz2
 if test -f $DIR_BUILD/$tarname; then
-  move_into $DIR_PACKAGES $DIR_BUILD/$tarname
+  publish $DIR_BUILD/$tarname
 fi
 
 # 6. Distribution packages.
 case $BUILDFARM_HOSTNAME in (bf-3)
   make -C "$DIR_BUILD" packages
   sha1=$(echo "$SHA1" | sed 's/[-_]/./g')
-  move_into $DIR_PACKAGES $DIR_BUILD/*$sha1*.{rpm,deb}
+  publish $DIR_BUILD/*$sha1*.{rpm,deb}
 esac
-
-## --------------------- ##
-## Upload the packages.  ##
-## --------------------- ##
-
-ls -la $DIR_PACKAGES
-packs=$(ls $DIR_PACKAGES)
-test -n "$packs" ||
-  fatal "The project's package script didn't create anything"
-
-# Iterate over packaged content.
-for pack in $packs
-do
-  publish "$DIR_PACKAGES/$pack"
-
-  # On Windows, make the installers.
-  case $BUILDFARM_OS in (windows)
-    delegate="$DIR_SOURCE/buildfarm/make-installer"
-    # This is the expected output from this delegate.
-    exe=${pack%-$BUILDFARM_MODE}.exe
-    "$delegate" "$DIR_ARCHIVE/$pack"
-    # The delegate might not create the installer, if it was run
-    # before its peer.
-    if test -f "$DIR_ARCHIVE/$exe"; then
-      check_md5 "$DIR_ARCHIVE" "$exe"
-    fi
-    ;;
-  esac
-done

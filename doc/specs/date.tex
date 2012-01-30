@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2011, Gostai S.A.S.
+%% Copyright (C) 2009-2012, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -33,16 +33,18 @@ The string should be formatted as \samp{\var{yyyy}-\var{mm}-\var{dd}
 \var{ss} are optional. If the block \samp{\var{hh}:\var{mn}:\var{ss}} is
 absent, the behavior is undefined.
 
-
 \begin{urbiscript}
+Date.new("2003-10-10 20:10:50:637");
+[00000001] 2003-10-10 20:10:50.637000
+
 Date.new("2003-10-10 20:10:50");
-[00000001] 2003-10-10 20:10:50
+[00000001] 2003-10-10 20:10:50.000000
 
 Date.new("2003-Oct-10 20:10");
-[00000002] 2003-10-10 20:10:00
+[00000002] 2003-10-10 20:10:00.000000
 
 Date.new("2003-10-10 20");
-[00000003] 2003-10-10 20:00:00
+[00000003] 2003-10-10 20:00:00.000000
 \end{urbiscript}
 
 Pay attention that the format is rather strict; for instance too many spaces
@@ -53,6 +55,19 @@ Date.new("2003-10-10  20:10:50");
 [00001968:error] !!! new: cannot convert to date: 2003-10-10  20:10:50
 \end{urbiscript}
 
+Pay attention that the format is not strict enough either; for instance,
+below, the \samp{.} separator seem to prefix microseconds, but actually
+merely denotes the minutes.  Seconds must be spelled out in order to
+introduce microseconds.
+
+\begin{urbiscript}
+Date.new("2003-10-10 00.12");
+[00000003] 2003-10-10 00:12:00.000000
+
+Date.new("2003-10-10 00:00.12");
+[00000003] 2003-10-10 00:00:12.000000
+\end{urbiscript}
+
 \subsection{Slots}
 
 \begin{urbiscriptapi}
@@ -60,7 +75,7 @@ Date.new("2003-10-10  20:10:50");
   The date which corresponds to waiting \refObject{Duration} \var{that}
   after \this.
 \begin{urbiassert}
-Date.new("2010-08-17 12:00") + 60s == Date.new("2010-08-17 12:01");
+Date.new("2010-08-17 12:00:00.2") + 63.2s == Date.new("2010-08-17 12:01:03.4");
 \end{urbiassert}
 
 
@@ -68,8 +83,8 @@ Date.new("2010-08-17 12:00") + 60s == Date.new("2010-08-17 12:01");
   If \var{that} is a Date, the difference between \this and \var{that} as a
   \refObject{Duration}.
 \begin{urbiassert}
-Date.new("2010-08-17 12:01") - Date.new("2010-08-17 12:00") ==  60s;
-Date.new("2010-08-17 12:00") - Date.new("2010-08-17 12:01") == -60s;
+Date.new("2010-08-17 12:01:00.50") - Date.new("2010-08-17 12:00") == 60.5s;
+Date.new("2010-08-17 12:00")       - Date.new("2010-08-17 12:01") == -60s;
 \end{urbiassert}
 
 If \var{that} is a Duration or a Float, the corresponding Date.
@@ -92,8 +107,8 @@ Date.new("2010-08-17 12:01") - 60s
 \item['=='](<that>)%
   Equality test.
 \begin{urbiassert}
-Date.new("2010-08-17 12:00") == Date.new("2010-08-17 12:00");
-Date.new("2010-08-17 12:00") != Date.new("2010-08-17 12:01");
+Date.new("2010-08-17 12:00:00.123") == Date.new("2010-08-17 12:00:00.123");
+Date.new("2010-08-17 12:00")        != Date.new("2010-08-17 12:01");
 \end{urbiassert}
 
 
@@ -107,14 +122,19 @@ d.asFloat.isA(Float);
 
 
 \item[asString] Present as \samp{\var{yyyy}-\var{mm}-\var{dd}
-    \var{hh}:\var{mn}:\var{ss}.\var{us}} where \var{yyyy} is the four-digit
-  year, \var{mm} the three letters name of the month (Jan, Feb, ...),
-  \var{dd} the two-digit day in the month (from 1 to 31), \var{hh} the
-  two-digit hour (from 0 to 23), \var{mn} the two-digit number of minutes in
-  the hour (from 0 to 59), and \var{ss} the two-digit number of seconds in
-  the minute (from 0 to 59).
+    \var{hh}:\var{mn}:\var{ss}.\var{us}} where:
+  \begin{itemize}
+  \item \var{yyyy} is the four-digit year,
+  \item \var{mm} the three letters name of the month (Jan, Feb, ...),
+  \item \var{dd} the two-digit day in the month (from 1 to 31),
+  \item \var{hh} the two-digit hour (from 0 to 23),
+  \item \var{mn} the two-digit number of minutes in the hour (from 0 to 59),
+  \item \var{ss} the two-digit number of seconds in the minute (from 0 to
+    59), and
+  \item \var{iiiiii} the six-digit number of microseconds.
+  \end{itemize}
 \begin{urbiassert}
-Date.new("2009-02-14 00:31:30").asString == "2009-02-14 00:31:30";
+Date.new("2009-02-14 00:31:30").asString == "2009-02-14 00:31:30.000000";
 \end{urbiassert}
 
 
@@ -136,12 +156,12 @@ Date.new("2010-02-01 17:32:53").day = 29;
   A fixed value, the ``origin of times'': January 1st 1970, at
   midnight.
 \begin{urbiunchecked}
-Date.epoch == Date.new("1970-01-01 00:00");
+Date.epoch == Date.new("1970-01-01 00:00:00.00");
 \end{urbiunchecked}
 
 
 \item[hour]
-  The hour as a \refObject{Float}.
+  The hour as a \refObject{Float}.  Always less than 24.
 \begin{urbiassert}
 var d = Date.new("2010-09-29 17:32:53");
 d.hour == 17;
@@ -149,9 +169,20 @@ d.hour = 8;
 d == Date.new("2010-09-29 08:32:53");
 \end{urbiassert}
 
+\item[microsecond]%
+  The number of microseconds in the current second, as a \refObject{Float}.
+  See also \refSlot{us}.  Always less than $1000 000$.
+\begin{urbiscript}
+{
+  var d = Date.new("2010-09-29 17:32:53.123456");
+  assert(d.microsecond == 123456);
+  d.microsecond = 654321;
+  assert(d == Date.new("2010-09-29 17:32:53.654321"));
+};
+\end{urbiscript}
 
 \item[minute]
-  The minute as a \refObject{Float}.
+  The minute as a \refObject{Float}.  Always less than 60.
 \begin{urbiassert}
 var d = Date.new("2010-09-29 17:32:53");
 d.minute == 32;
@@ -161,7 +192,7 @@ d == Date.new("2010-09-29 17:12:53");
 
 
 \item[month]
-  The month as a \refObject{Float}.
+  The month as a \refObject{Float}.  Always less or equal to 12.
 \begin{urbiassert}
 var d = Date.new("2010-09-29 17:32:53");
 d.month == 9;
@@ -189,6 +220,25 @@ d == Date.new("2010-09-29 17:32:37");
 
 \item[timestamp] Synonym for \refSlot{asFloat}.
 
+\item[us]%
+  The \emph{total} number of microseconds since midnight, as a
+  \refObject{Float}.  See also \refSlot{microsecond}.
+\begin{urbiassert}
+Date.new("2010-08-17 00:00:00.0")     .us == 0;
+Date.new("2010-08-17 00:00:00.123456").us == 123456;
+Date.new("2010-08-17 00:00:01.234567").us == 1234567;
+Date.new("2010-08-17 01:02:03.456789").us
+  == (1 * 3600 + 2 * 60 + 3) * 1000000 + 456789;
+\end{urbiassert}
+
+\begin{urbiscript}
+{
+  var d = Date.new("2010-09-29 17:32:53.123456");
+  assert(d.us == 63173123456);
+  d.us = 123456;
+  assert(d == Date.new("2010-09-29 00:00:00.123456"));
+};
+\end{urbiscript}
 
 \item[year]
   The year as a \refObject{Float}.

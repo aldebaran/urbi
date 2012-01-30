@@ -72,9 +72,11 @@ namespace urbi
 
       DECLARE(day);
       DECLARE(hour);
+      DECLARE(microsecond);
       DECLARE(minute);
       DECLARE(month);
       DECLARE(second);
+      DECLARE(us);
       DECLARE(year);
 
 #undef DECLARE
@@ -191,6 +193,43 @@ namespace urbi
   TIME_GETTER(Unit)          \
   TIME_SETTER(Unit)          \
 
+  TIME_MODIFIERS(hour)
+  TIME_MODIFIERS(minute)
+  TIME_MODIFIERS(second)
+
+#undef TIME_GETTER
+#undef TIME_SETTER
+#undef TIME_MODIFIERS
+
+#define MILLION 1000000L
+
+  Date::us_type Date::us_get() const
+  {
+    return time_.time_of_day().total_microseconds();
+  }
+
+  void Date::us_set(Date::us_type value)
+  {
+    Date::duration_type td = time_.time_of_day();
+    td -= boost::posix_time::microseconds(td.total_microseconds());
+    td += boost::posix_time::microseconds(value);
+    time_ = Date::value_type(time_.date(), td);
+  }
+
+  Date::microsecond_type Date::microsecond_get() const
+  {
+    return us_get() % MILLION;
+  }
+
+  void Date::microsecond_set(Date::microsecond_type value)
+  {
+    Date::duration_type td = time_.time_of_day();
+    td -= boost::posix_time::microseconds(td.total_microseconds() % MILLION);
+    td += boost::posix_time::microseconds(value);
+    time_ = Date::value_type(time_.date(), td);
+  }
+
+
 #define DATE_GETTER(Unit)                        \
   Date::Unit ## _type Date::Unit ## _get() const \
   {                                              \
@@ -215,16 +254,10 @@ namespace urbi
   DATE_GETTER(Unit)                   \
   DATE_SETTER(Unit, Y, M, D)          \
 
-  TIME_MODIFIERS(hour)
-  TIME_MODIFIERS(minute)
-  TIME_MODIFIERS(second)
-  DATE_MODIFIERS(year, year_given, time_.date().month(), time_.date().day())
+  DATE_MODIFIERS(year,  year_given, time_.date().month(), time_.date().day())
   DATE_MODIFIERS(month, time_.date().year(), month_given, time_.date().day())
-  DATE_MODIFIERS(day, time_.date().year(), time_.date().month(), day_given)
+  DATE_MODIFIERS(day,   time_.date().year(), time_.date().month(), day_given)
 
-#undef TIME_GETTER
-#undef TIME_SETTER
-#undef TIME_MODIFIERS
 #undef DATE_GETTER
 #undef DATE_SETTER
 #undef DATE_MODIFIERS
@@ -242,14 +275,17 @@ namespace urbi
     std::string
     Date::as_string() const
     {
-      return libport::format("%04s-%02s-%02s %02s:%02s:%02s",
-                             time_.date().year(),
-                             // Otherwise we get "Jan", "Feb", etc.
-                             int(time_.date().month()),
-                             time_.date().day(),
-                             time_.time_of_day().hours(),
-                             time_.time_of_day().minutes(),
-                             time_.time_of_day().seconds());
+      Date::duration_type td = time_.time_of_day();
+      return
+        libport::format("%04s-%02s-%02s %02s:%02s:%02s.%06s",
+                        time_.date().year(),
+                        // Otherwise we get "Jan", "Feb", etc.
+                        int(time_.date().month()),
+                        time_.date().day(),
+                        td.hours(),
+                        td.minutes(),
+                        td.seconds(),
+                        td.total_microseconds() % MILLION);
     }
 
     Date::duration_type

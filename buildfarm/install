@@ -2,8 +2,8 @@
 
 set -e
 . $(dirname "$0")/common
-
 set -x
+env=$(set +o)
 
 cd "$DIR_BUILD"
 rm -rf "$DIR_INSTALL" "$DIR_STAGE"

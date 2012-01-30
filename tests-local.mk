@@ -7,7 +7,7 @@ TESTS_DIRS = 0.x 1.x 2.x demo uob @fsm @ros
 
 # Run server in fast mode
 FAST_MODE = true
-# Whether we use Valgrind etc. Activated in 'check-buildfarm'.
+# Whether we use Valgrind etc.
 INSTRUMENTATION = false
 
 # The wrappers around our embedded SDK-Remote tools.

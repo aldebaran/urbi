@@ -332,7 +332,7 @@ namespace ast
      *
      */
     // We need two separate functions. This could be improved if
-    // ParametricAst where able to pick the same variable several times,
+    // ParametricAst were able to pick the same variable several times,
     // which should pose no problem now that ast are refcounted.
     static
     rLValue
@@ -374,6 +374,7 @@ namespace ast
 
     /// (relation name, rhs), e.g., ("!=", 2).
     typedef std::pair<libport::Symbol, rExp> relation_type;
+
     /// List of relations, e.g., [(!=, 2), (<, 3)].
     /// To be used with an initial lhs to mean "lhs != 2 < 3".
     typedef std::vector<relation_type> relations_type;
@@ -547,6 +548,7 @@ namespace std
   ostream& operator<<(ostream& o, const ast::Factory::case_type& c);
   ostream& operator<<(ostream& o, const ast::Factory::cases_type& c);
   ostream& operator<<(ostream& o, const ast::Factory::modifier_type& m);
+  ostream& operator<<(ostream& o, const ast::Factory::relation_type& m);
 }
 
 #endif // !AST_FACTORY_HH

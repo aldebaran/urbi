@@ -505,6 +505,7 @@ FunctionProfile
 gatewayAddress
 gcc
 gdb
+ge
 generateALBindings
 GeSHi
 getActualPoseAndTime
@@ -627,6 +628,7 @@ IEEE
 ifconfig
 iff
 IGain
+iiiiii
 IJG
 ImageConversion
 imageData
@@ -963,6 +965,7 @@ notifyAccess
 notifyChange
 notifyChangeOwned
 Nottale
+ntpdate
 num
 numSubscribers
 nxt

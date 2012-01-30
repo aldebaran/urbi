@@ -54,25 +54,14 @@ EXTRA_DIST +=					\
   build-aux/bin/flex++.in			\
   build-aux/bin/fuse-switch			\
   build-aux/bin/output-to-dot			\
-  build-aux/bin/studentize
+  build-aux/bin/studentize			\
+  build-aux/bin/tex4ht-post
 
 include debian/local.mk
 devdir = dev/
 include dev/local.mk
 include include/local.mk
-include share/emacs/local.mk
-include share/images/local.mk
-include share/pkgconfig/local.mk
-include share/urbi/local.mk
-
-
-## ------------------------------------- ##
-## Generate the list of symbols we use.  ##
-## ------------------------------------- ##
-
-.PHONY: symbols
-symbols:
-	$(MAKE) $(AM_MAKEFLAGS) -C src $@
+include share/local.mk
 
 
 # Make sure config.h.in is up to date.  This looks like an Automake
@@ -80,23 +69,6 @@ symbols:
 BUILT_SOURCES +=				\
   $(top_srcdir)/src/kernel/config.h.in		\
   src/kernel/config.h
-
-
-## ---------------------- ##
-## Convenient shortcuts.  ##
-## ---------------------- ##
-
-# Don't bounce to libs: sort of loop unrolling.
-core:
-	$(MAKE) $(AM_MAKEFLAGS) -C sdk-remote/libport
-	$(MAKE) $(AM_MAKEFLAGS) -C sdk-remote/src core
-	$(MAKE) $(AM_MAKEFLAGS) -C src libuobject$(LIBSFX).la bin/urbi$(EXEEXT)
-
-libs:
-	$(MAKE) $(AM_MAKEFLAGS) -C sdk-remote/libport
-	$(MAKE) $(AM_MAKEFLAGS) -C sdk-remote/src libs
-	$(MAKE) $(AM_MAKEFLAGS) -C src libuobject$(LIBSFX).la
-
 
 
 ## ------------- ##
@@ -142,18 +114,6 @@ install-doc:
 ## Check.  ##
 ## ------- ##
 
-
-# The target run by the buildfarm.
-.PHONY: check-buildfarm check-sdk-uobjects-buildfarm
-CHECK_BUILDFARM_FLAGS = AM_COLOR_TESTS=no VERBOSE=1 # INSTRUMENTATION=1
-%check-buildfarm: clean-semaphores
-	$(MAKE) $(AM_MAKEFLAGS) -C tests $*check-html $(CHECK_BUILDFARM_FLAGS)
-
-# The target used by the build farm to create the uobjects used in our
-# uob test suite.
-check-sdk-uobjects-buildfarm:
-	$(MAKE) $(AM_MAKEFLAGS) -C sdk-remote/src/tests check-uobjects $(CHECK_BUILDFARM_FLAGS)
-
 # Run just the doc test suite, without building again the PDF.
 check-addons check-doc:
 	$(MAKE) $(AM_MAKEFLAGS) -C doc $@
@@ -174,9 +134,9 @@ recheck recheck-html:
 	$(MAKE) $(AM_MAKEFLAGS) -C tests $@
 	$(MAKE) $(AM_MAKEFLAGS) -C doc $@
 
-.PHONY: spell-check spell-check-buildfarm
-spell-check spell-check-buildfarm:
-	$(MAKE) $(AM_MAKEFLAGS) -C doc $(@:-buildfarm=)
+.PHONY: spell-check
+spell-check:
+	$(MAKE) $(AM_MAKEFLAGS) -C doc $@
 
 
 ## -------- ##

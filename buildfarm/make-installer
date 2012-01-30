@@ -1,122 +1,126 @@
 #! /bin/sh
 
+# Merge multiple (2) Urbi SDK tarballs (one debug and one release)
+# and run the installer generator.
+
 set -e
 . $(dirname "$0")/common
-set -x
 
 ## ----------- ##
 ## Functions.  ##
 ## ----------- ##
 
-# find_dual ZIP
-# -------------
-# If ZIP is release, return the debug one, and vice versa.  Does not
-# check for the existence of the files.
-find_dual ()
+verb ()
 {
-  echo "$1" | perl -pe 's/-debug// || s/((-no-doc)?\.zip)/-debug$1/'
+  if $verbose; then stderr "$@"; fi
 }
 
-# Check the previous function.
-find_dual_unit_test ()
+usage ()
 {
-  local i
-  local o
-  local res
-  for i in \
-  urbi-runtime-2.7.3-windows-x86-vcxx2008-debug-no-doc.zip:urbi-runtime-2.7.3-windows-x86-vcxx2008-no-doc.zip\
-  /home/build/share/built/urbi-sdk/archives/2.7.3-000-g0fb1c3f/urbi-runtime-2.7.3-windows-x86-vcxx2008-debug.zip:/home/build/share/built/urbi-sdk/archives/2.7.3-000-g0fb1c3f/urbi-runtime-2.7.3-windows-x86-vcxx2008.zip\
-  urbi-runtime-2.7.3-windows-x86-vcxx2008-no-doc.zip:urbi-runtime-2.7.3-windows-x86-vcxx2008-debug-no-doc.zip
-  do
-    o=$(echo "$i" | sed -e 's/^.*://')
-    i=$(echo "$i" | sed -e 's/:.*$//')
-    res=$(find_dual $i)
-    test "$o" = "$res" ||
-      fatal "find_dual fails on $i: $res instead of $o"
-  done
+  cat <<EOF
+ usage: $0 [options]
+
+Options:
+  -i, --installprogram    name of installer generator program [$installer]
+  -a, --installarguments  arguments for installer [$installargs]
+  -d, --debug             debug mode
+  -v, --verbose           verbose mode
+  -o, --output            output file
+EOF
+  exit 0
 }
 
-find_dual_unit_test
+files=
+verbose=false
+installer="$HOME/.wine/drive_c/Program Files/NSIS/makensis.exe"
+installerargs="/NOCD share/installer/installer.nsh"
+# Location of installer.nsh, will create a symlink to it if set
+installscriptloc=$DIR_SOURCE/share/installer
+templateloc=$DIR_SOURCE/share/templates
+# Target
+output=
 
-get_installer_name ()
-{
-  local f="$1"
-  local nod="no-doc"
-
-  f=${f/-$BUILDFARM_MODE/}
-  f=${f/-$nod/}
-  f=${f/.zip/.exe}
-  echo "$f"
-}
-
-
-## ----------- ##
-## Variables.  ##
-## ----------- ##
-
-# Check that we have all the envvars we expect.
-for v in BUILDFARM_COMPILER BUILDFARM_MODE BUILDFARM_OS \
-         DIR_PACKAGES DIR_SOURCE
+while test $# -ne 0
 do
-  eval "test -n \$$v" ||
-    fatal "\$$v is not set"
+  case $1 in
+  (-h|--help) usage;;
+  (-i|--installprogram) shift; installer=$1 ;;
+  (-a|--installarguments) shift; installerargs=$1 ;;
+  (-d|--debug) set -x ;;
+  (-v|--verbose) verbose=true ;;
+  (-o|--output) shift; output=$1 ;;
+  (*) files="$files $1" ;;
+  esac
+  shift
 done
 
-test $# = 1 ||
-  fatal "invalid argument number: $#, expecting 1"
-upname=$1
+test "$(echo $files |wc -w)" -eq 2 ||
+  fatal "expected exactly two files"
 
+verb "merging archives $files"
+dir=$(mktemp -d)
 
-# Do not produce anything if we are not working on windows builds.
-case $BUILDFARM_OS in
-  (windows) ;;
-  (*) exit 0;;
-esac
+if test -n "$output"; then
+  trap "cd / && rm -rf $dir" 0 1 2 13 15
+fi
 
-tools=$HOME/share/tools
-# We need vcxx-2005, not vcxx2005.
-compiler=$(echo "$BUILDFARM_COMPILER" | perl -pe 's/(vcxx)(\d+)/$1-$2/')
-# vcredist has name with vcxx-2005, not vcxx2005.
-vcredist=$tools/vcredist/vcredist_x86-$compiler.exe
-gostai_console="$tools/gostai-console/gostai-console-2.6-win32.exe"
-gostai_editor="$tools/gostai-editor/gostai-editor-2.5-win32.exe"
-for i in vcredist gostai_console gostai_editor
+verb "Will work in $dir"
+cd $dir
+mkdir temp
+mkdir merge
+cd temp
+
+for f in $files
 do
-  eval "file=\$$i"
-  test -r "$file" ||
-    fatal "cannot read $i: $val"
-  test -f "$file" ||
-    fatal "not a file $i: $val"
-  test -s "$file" ||
-    fatal "empty file $i: $val"
+  verb "merging $f"
+  unzip -q $f
+  basedir=$(echo *)
+  case $f in
+    (*debug*)
+    mv $basedir/bin/urbi-launch.exe $basedir/bin/urbi-launch-d.exe
+    mv $basedir/bin/urbi.exe $basedir/bin/urbi-d.exe
+    sed -e 's/urbi-launch/urbi-launch-d/g' $basedir/urbi.bat \
+        >$basedir/urbi-d.bat
+    rm $basedir/urbi.bat
+    ;;
+  esac
+  cp -a */* ../merge
+  #safer that way
+  cd ..
+  rm -rf temp
+  mkdir temp
+  cd temp
 done
+cd ../merge
 
+verb "Copying vcredist from $vcredist"
+cp $vcredist ./vcredist-x86.exe
 
-## ------ ##
-## Main.  ##
-## ------ ##
+if test -n "$installscriptloc"; then
+  verb "Setting up symlink to $installscriptloc"
+  ln -s $installscriptloc share/installer
+fi
 
-# The archive built by this slave.
-my_zip="$upname.zip"
-# The archive built by the other one.
-other_zip=$(find_dual "$my_zip")
-installer=$(get_installer_name "$(basename $my_zip)")
+if test -n "$gostaiconsole"; then
+  verb "Copying gostai-console installer from $gostaiconsole"
+  cp "$gostaiconsole" ./gostai-console-installer.exe
+fi
 
-if test -r "$my_zip"                            \
-   && test -r "$other_zip"                      \
-   && test "$my_zip" -nt "$other_zip"; then
-  # My zip is the newest, do the merge-install.
+if test -n "$gostaieditor"; then
+  verb "Copying gostai-editor installer from $gostaieditor"
+  cp "$gostaieditor" ./gostai-editor-installer.exe
+fi
 
-  # Merge zips.
-  $DIR_SOURCE/buildfarm/merge-install.sh                \
-      -v                                                \
-      --vcredist "$vcredist"                            \
-      --compiler "$compiler"                            \
-      --version "$SHA1"                                 \
-      --templateloc "$DIR_SOURCE/share/templates"       \
-      --installscriptloc "$DIR_SOURCE/share/installer/" \
-      --gostai-console "$gostai_console"                \
-      --gostai-editor "$gostai_editor"                  \
-      --output "$DIR_PACKAGES/$installer"               \
-      "$my_zip" "$other_zip"
+if test -n "templateloc"; then
+  verb "Setting up symlink to $templateloc"
+  ln -s $templateloc share/templates
+fi
+
+verb "running '$installer' /D$vcxx /DVERSION=$SHA1 $installerargs"
+wine "$installer" "/D$vcxx" "/DVERSION=$SHA1" $installerargs
+
+if test -n "$output"; then
+  xmv "$dir/merge/gostai-engine-runtime.exe" "$output"
+else
+  verb "Result in $dir"
 fi

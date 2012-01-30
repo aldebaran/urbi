@@ -1,10 +1,18 @@
 <?php
-/*************************************************************************************
+/*
+ * Copyright (C) 2011-2012, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+/***********************************************************************
  * urbi.php
  * -------
  * Author: Alexandre Morgand (morgand.alexandre@gmail.com)
- * Contributors:
- * Copyright: (c) 2011 Morgand (http://gostai.com)
  * Release Version: 1.0
  * Date Started: 2011/09/10
  *
@@ -14,7 +22,7 @@
  * -------
  * -------------------------
  *
- *************************************************************************************
+ *************************************************************************
  *
  *     This file is part of GeSHi.
  *
@@ -32,7 +40,7 @@
  *   along with GeSHi; if not, write to the Free Software
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- ************************************************************************************/
+ *************************************************************************/
 
 
 $language_data = array (

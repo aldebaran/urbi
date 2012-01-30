@@ -1,31 +1,10 @@
-%% Copyright (C) 2009-2011, Gostai S.A.S.
+%% Copyright (C) 2009-2012, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
 %% implied warranties of fitness for a particular purpose.
 %%
 %% See the LICENSE file for more information.
-
-\newcommand{\refInterface}[2][\empty]%
-  {\refObject[#1]{Interface.#2}}
-
-%% \interface {InterfaceName}
-%% --------------------------
-\newcommand{\interface}[1]{%
-  \subsection[#1]{\labelObject{Interface.#1}\lstindex{#1}}%
-  \def\currentObject{Interface.#1}%
-  %
-}
-
-%% \subinterface {SuperInterface} {InterfaceName}
-%% ----------------------------------------------
-\newcommand{\subinterface}[2]{%
-  \subsubsection[#2]{\labelObject{Interface.#2}\lstindex{#2}}%
-  \def\currentObject{Interface.#2}%
-  Subclass of \refInterface{#1}.%
-}
-
-\newcommand{\gsrapi}{Gostai Standard Robotics API\xspace}
 
 \chapter{Gostai Standard Robotics API}
 \label{sec:naming}

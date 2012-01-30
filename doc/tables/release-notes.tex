@@ -402,7 +402,7 @@ Math.round(1.2) == 1.2.round;
 
 
 \section{\usdk 2.7.5}
-\release{2.7}{2011-12-XX}
+\release{2.7}{2012-01-27}
 
 This release fixes some packaging-related minor issues.
 \subsection{Fixes}
@@ -419,6 +419,15 @@ This release fixes some packaging-related minor issues.
 \item Windows packages with the installer now have some \us files (namely
   \file{platform.u}) which properly depend on whether you are using the
   debug or release flavor.
+\item GeSHi support is properly installed.
+\item When defining functions, their qualified name may start with \this:
+\begin{urbiscript}
+function this.foo() { echo("foo"); }|;
+this.foo();
+[00016170] *** foo
+\end{urbiscript}
+\item Timestamps now use a monotonic clock, insensitive to wall clock
+  changes (fired by \command{ntpdate} for instance).
 \end{itemize}
 
 \subsection{Changes}
@@ -441,6 +450,14 @@ This release fixes some packaging-related minor issues.
   \lstinline|\var{a}.'&&'(\var{b})|, but to
   \lstinline|if (\var{a}) \var{b} else \var{a}| (with provisions to avoid
   multiple computations of \var{a}).
+\item \refSlot[System]{timeReference} is a \refObject{Date}.
+\end{itemize}
+
+\subsection{New Feature}
+\begin{itemize}
+\item \refObject{Date} features microsecond support
+  (\refSlot[Date]{microsecond}, \refSlot[Date]{us}).
+\item \refObject{Duration} is accurate at the microsecond.
 \end{itemize}
 
 \subsection{Documentation}
@@ -511,8 +528,8 @@ $ ls /usr/local/bin/../include
 boost   jconfig.h  jmorecfg.h  libport    urbi
 gostai  jerror.h   jpeglib.h   serialize
 \end{shell}
-\item GeSHi (Generic Syntax Highlighter, \url{http://qbnz.com/highlighter/})
-  support to display colored \us on websites using php.
+\item \Href{http://qbnz.com/highlighter/}{GeSHi (Generic Syntax
+    Highlighter)} support to display colored \us on websites using php.
 \end{itemize}
 
 \subsection{Documentation}
@@ -554,8 +571,25 @@ gostai  jerror.h   jpeglib.h   serialize
 \section{\usdk 2.7.2}
 \release{2.7}{2011-05-13}
 
-There was no public release of \usdk 2.7.2, which contained only a simple
-change for a single architecture for a customer of ours.
+There was no public release of \usdk 2.7.2.
+
+\subsection{Fixes}
+\begin{itemize}
+\item Avoid unexpected execution of code caused by \refObject{Semaphore}
+  release and a stop of the code acquiring the semaphore.  This caused
+  pieces of code such as the following not to end.
+\begin{urbiscript}
+var m = Mutex.new|;
+for& (10)
+  { m.stop | m: { sleep(1) } };
+"done";
+[00016170] "done"
+\end{urbiscript}
+
+  Now \refSlot[Semaphore]{acquire} either returns when it holds the
+  semaphore or it jumps to the end of the stopped tag.
+\end{itemize}
+
 
 \section{\usdk 2.7.1}
 \release{2.7}{2011-03-17}

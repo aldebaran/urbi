@@ -30,17 +30,18 @@ DECLARE_LOCATION_FILE;
 namespace std
 {
   ostream&
-  operator<< (ostream& o, const ast::Factory::case_type& c)
+  operator<<(ostream& o, const ast::Factory::case_type& c)
   {
-    return o << "/* " << (const void*) &c << " */ "
-             << "case "
-             << ::libport::deref << c.first
-             << " => "
-             << ::libport::deref << c.second;
+    return o
+      << "/* " << (const void*) &c << " */ "
+      << "case "
+      << ::libport::deref << c.first
+      << " => "
+      << ::libport::deref << c.second;
   }
 
   ostream&
-  operator<< (ostream& o, const ast::Factory::cases_type& cs)
+  operator<<(ostream& o, const ast::Factory::cases_type& cs)
   {
     o << "/* " << (const void*) &cs << " */ "
       << "{" << endl;
@@ -49,11 +50,16 @@ namespace std
     return o << "}";
   }
 
+  // Also implements relation_type, which is a synonym.
   ostream&
   operator<<(ostream& o, const ast::Factory::modifier_type& m)
   {
-    return o << m.first << ": " << m.second;
+    return o
+      << ::libport::deref << m.first
+      << " => "
+      << ::libport::deref << m.second;
   }
+
 }
 
 
@@ -170,7 +176,7 @@ namespace ast
   {
     PARAMETRIC_AST
       (a,
-       "{ var '$t' = %exp:1 | if ('$t') %exp:2 else '$t' }");
+       "{ var '$t1' = %exp:1 | if ('$t1') %exp:2 else '$t1' }");
     return exp(a % lhs % rhs);
   }
 
@@ -974,7 +980,7 @@ namespace ast
   {
     PARAMETRIC_AST
       (a,
-       "{ var '$t' = %exp:1 | if ('$t') '$t' else %exp:2 }");
+       "{ var '$t2' = %exp:1 | if ('$t2') '$t2' else %exp:2 }");
     return exp(a % lhs % rhs);
   }
 
@@ -1011,19 +1017,6 @@ namespace ast
     }
   }
 
-  /// Create a Position.
-  rExp
-  Factory::make_position(const location& loc) /* const */
-  {
-    PARAMETRIC_AST(pos, "Position.new(%exp:1, %exp:2, %exp:3)");
-    const libport::Symbol* fn = loc.begin.filename;
-    return exp(pos
-               % (fn ? make_string(loc, fn->name_get()) : make_nil())
-               % make_float(loc, loc.begin.line)
-               % make_float(loc, loc.begin.column));
-  }
-
-
   Factory::relations_type&
   Factory::make_relation(relations_type& rels, libport::Symbol op, rExp exp)
   {
@@ -1041,20 +1034,20 @@ namespace ast
     case 1:
       return make_call(loc, lhs, rels[0].first, rels[0].second);
     default:
-    PARAMETRIC_AST(decl, "{ var '$t' | %exp:1 }");
-    PARAMETRIC_AST(first,  "          %exp:1 . %id:2 ('$t' = %exp:3)");
-    PARAMETRIC_AST(middle, "%exp:1 &&   '$t' . %id:2 ('$t' = %exp:3)");
-    PARAMETRIC_AST(last,   "%exp:1 &&   '$t' . %id:2 (%exp:3)");
+      PARAMETRIC_AST(decl, "{ var '$t3' | %exp:1 }");
+      PARAMETRIC_AST(first,  "          %exp:1 . %id:2 ('$t3' = %exp:3)");
+      PARAMETRIC_AST(middle, "%exp:1 &&  '$t3' . %id:2 ('$t3' = %exp:3)");
+      PARAMETRIC_AST(last,   "%exp:1 &&  '$t3' . %id:2 (%exp:3)");
 
-    rExp res = 0;
-    for (size_t i = 0; i < rels.size(); ++i)
-      if (i == 0)
-        res = exp(first % lhs % rels[i].first % rels[i].second);
-      else if (i == rels.size() - 1)
-        res = exp(last % res % rels[i].first % rels[i].second);
-      else
-        res = exp(middle % res % rels[i].first % rels[i].second);
-    return exp(decl % res);
+      rExp res = 0;
+      for (size_t i = 0; i < rels.size(); ++i)
+        if (i == 0)
+          res = exp(first % lhs % rels[i].first % rels[i].second);
+        else if (i == rels.size() - 1)
+          res = exp(last % res % rels[i].first % rels[i].second);
+        else
+          res = exp(middle % res % rels[i].first % rels[i].second);
+      return exp(decl % res);
     }
   }
 

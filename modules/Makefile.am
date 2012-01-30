@@ -37,7 +37,3 @@ stub.stamp: $(VERSIONIFY_STUBS) $(VERSIONIFY_CACHE) $(VERSIONIFY)
 	$(AT_V_PATCH) $(VERSIONIFY_RUN)				\
 	  $(addprefix --resolve=, $(VERSIONIFY_STUBS))
 ALLS += stub.stamp
-
-installcheck-buildfarm:
-check-buildfarm:
-distcheck-buildfarm:

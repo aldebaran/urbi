@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2009-2010, 2012, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -42,6 +42,7 @@ Duration.new(-1);
   Return the duration as a \refObject{Float}.
 \begin{urbiassert}
 Duration.new(1000).asFloat == 1000;
+Duration.new(1000.1234).asFloat == 1000.1234;
 \end{urbiassert}
 
 
@@ -55,7 +56,8 @@ Duration.new(1000).asString == "1000s";
 \item[seconds]
   Return the duration as a \refObject{Float}.
 \begin{urbiassert}
-Duration.new(1000).seconds == 1000;
+Duration.new(1000)   .seconds == 1000;
+Duration.new(1000.52).seconds == 1000.52;
 \end{urbiassert}
 \end{urbiscriptapi}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2011, Gostai S.A.S.
+ * Copyright (C) 2009-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -449,12 +449,10 @@ namespace urbi
 
   std::string getFilteredHostname()
   {
-    char hn[1024];
-    gethostname(hn, 1024);
-    std::string res = hn;
+    std::string res = libport::gethostname();
     if (!isalpha(res[0]))
       res = "_" + res;
-    foreach(char& c, res)
+    foreach (char& c, res)
       if (!isalnum(c) && c != '_')
         c = '_';
     return res;

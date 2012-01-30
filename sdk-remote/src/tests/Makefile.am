@@ -1,4 +1,4 @@
-## Copyright (C) 2007-2011, Gostai S.A.S.
+## Copyright (C) 2007-2012, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -93,16 +93,5 @@ TEST_LOGS = $(addsuffix .log,$(basename $(TESTS)))
 
 check-clean-local:
 	rm -rf $(TEST_LOGS:.log=.dir)
-
-
-
-## ----------- ##
-## Buildfarm.  ##
-## ----------- ##
-
-# The target run by the buildfarm.
-CHECK_BUILDFARM_FLAGS = -j2 AM_COLOR_TESTS=no VERBOSE=1 INSTRUMENTATION=0.2
-%check-buildfarm:
-	$(MAKE) $(AM_MAKEFLAGS) $(CHECK_BUILDFARM_FLAGS) $*check-html
 
 check-TESTS: clean-semaphores
