@@ -1,0 +1,198 @@
+\ifx\ifHtml\undefined
+\begin{tabular}{|c|l||c|l|}
+  \hline
+  Keyword & Remark & Keyword & Remark \\
+  \hline
+     \lstinline"and" & Synonym for \lstinline|&&|               &
+  \lstinline"and_eq" & Synonym for \lstinline|&=|               \\
+     \lstinline"asm" & Reserved                                 &
+  \lstinline"assert" & \autoref{sec:lang:assert}                \\
+      \lstinline"at" & \autoref{sec:lang:at}                    &
+    \lstinline"auto" & Reserved                                 \\
+  \lstinline"bitand" & \autoref{sec:lang:op:bitwise}            &
+   \lstinline"bitor" & \autoref{sec:lang:op:bitwise}            \\
+    \lstinline"bool" & Reserved                                 &
+   \lstinline"break" & \autoref{sec:lang:break}                 \\
+    \lstinline"call" & \autoref{sec:lang:rv}                    &
+    \lstinline"case" & \autoref{sec:lang:switch}                \\
+   \lstinline"catch" & \autoref{sec:lang:catch}, \autoref{sec:lang:timeout} &
+    \lstinline"char" & Reserved                                 \\
+   \lstinline"class" & \autoref{sec:lang:class}                 &
+ \lstinline"closure" & \autoref{sec:lang:closure}               \\
+   \lstinline"compl" & \autoref{sec:lang:op:bitwise}            &
+   \lstinline"const" & \autoref{sec:lang:prop:std}              \\
+\lstinline"const_cast" & Reserved                                 &
+\lstinline"continue" & \autoref{sec:lang:continue}              \\
+ \lstinline"default" & \autoref{sec:lang:switch}                &
+  \lstinline"delete" & Reserved                                 \\
+  \lstinline"detach" &                                          &
+  \lstinline"disown" &                                          \\
+      \lstinline"do" & \autoref{sec:lang:do}                    &
+  \lstinline"double" & Reserved                                 \\
+\lstinline"dynamic_cast" & Reserved                                 &
+    \lstinline"else" & \autoref{sec:lang:if}                    \\
+    \lstinline"enum" & \autoref{sec:lang:continue}              &
+   \lstinline"every" & \autoref{sec:lang:every}                 \\
+\lstinline"explicit" & Reserved                                 &
+  \lstinline"export" & Reserved                                 \\
+  \lstinline"extern" & Reserved                                 &
+\lstinline"external" & Reserved                                 \\
+   \lstinline"float" & Reserved                                 &
+     \lstinline"for" & \lstinline|for&| and \lstinline-for|- flavors \\
+ \lstinline"foreach" & Deprecated, use \lstinline|for|          &
+\lstinline"freezeif" &                                          \\
+  \lstinline"friend" & Reserved                                 &
+\lstinline"function" & \autoref{sec:lang:function}, \autoref{sec:lang:closure} \\
+    \lstinline"goto" & Reserved                                 &
+      \lstinline"if" & \autoref{sec:lang:if}                    \\
+      \lstinline"in" & \autoref{sec:lang:foreach}               &
+  \lstinline"inline" & Reserved                                 \\
+     \lstinline"int" & Reserved                                 &
+\lstinline"internal" & Deprecated                               \\
+    \lstinline"long" & Reserved                                 &
+    \lstinline"loop" & \lstinline|loop&|, \lstinline-loop|-, \autoref{sec:lang:loop} \\
+ \lstinline"mutable" & Reserved                                 &
+\lstinline"namespace" & Reserved                                 \\
+     \lstinline"new" & \autoref{sec:tut:ctor}                   &
+     \lstinline"not" & Synonym for \lstinline|!|                \\
+  \lstinline"not_eq" & Synonym for \lstinline|!=|               &
+ \lstinline"onleave" & \autoref{sec:lang:at}                    \\
+      \lstinline"or" & Synonym for \lstinline-||-               &
+   \lstinline"or_eq" & Synonym for \lstinline-|=-               \\
+ \lstinline"private" & Ignored                                  &
+\lstinline"protected" & Ignored                                  \\
+  \lstinline"public" & Ignored                                  &
+\lstinline"register" & Reserved                                 \\
+\lstinline"reinterpret_cast" & Reserved                                 &
+  \lstinline"return" & \autoref{sec:lang:rv}                    \\
+   \lstinline"short" & Reserved                                 &
+  \lstinline"signed" & Reserved                                 \\
+  \lstinline"sizeof" & Reserved                                 &
+  \lstinline"static" & Deprecated                               \\
+\lstinline"static_cast" & Reserved                                 &
+  \lstinline"stopif" &                                          \\
+  \lstinline"struct" & Reserved                                 &
+  \lstinline"switch" & \autoref{sec:lang:switch}                \\
+\lstinline"template" & Reserved                                 &
+    \lstinline"this" &                                          \\
+   \lstinline"throw" & \autoref{sec:lang:throw}                 &
+ \lstinline"timeout" & \autoref{sec:lang:timeout}               \\
+     \lstinline"try" & \autoref{sec:lang:catch}                 &
+ \lstinline"typedef" & Reserved                                 \\
+  \lstinline"typeid" & Reserved                                 &
+\lstinline"typename" & Reserved                                 \\
+   \lstinline"union" & Reserved                                 &
+\lstinline"unsigned" & Reserved                                 \\
+   \lstinline"using" & Reserved                                 &
+     \lstinline"var" & \autoref{sec:lang:var}, \autoref{sec:lang:slots} \\
+ \lstinline"virtual" & Reserved                                 &
+\lstinline"volatile" & Reserved                                 \\
+\lstinline"waituntil" & \autoref{sec:lang:waituntil}             &
+   \lstinline"watch" & \autoref{sec:lang:watch}                 \\
+ \lstinline"wchar_t" & Reserved                                 &
+\lstinline"whenever" & \autoref{sec:lang:whenever}              \\
+   \lstinline"while" & \lstinline|while&| and \lstinline-while|- flavors &
+     \lstinline"xor" & Synonym for \lstinline|^|                \\
+  \lstinline"xor_eq" & Synonym \lstinline|^=|                   &
+\\
+  \hline
+\end{tabular}
+\else
+\begin{tabular}{|c|l|}
+  \hline
+  Keyword & Remark \\
+  \hline
+     \lstinline"and" & Synonym for \verb|&&|                    \\
+  \lstinline"and_eq" & Synonym for \verb|&=|                    \\
+     \lstinline"asm" & Reserved                                 \\
+  \lstinline"assert" & \autoref{sec:lang:assert}                \\
+      \lstinline"at" & \autoref{sec:lang:at}                    \\
+    \lstinline"auto" & Reserved                                 \\
+  \lstinline"bitand" & \autoref{sec:lang:op:bitwise}            \\
+   \lstinline"bitor" & \autoref{sec:lang:op:bitwise}            \\
+    \lstinline"bool" & Reserved                                 \\
+   \lstinline"break" & \autoref{sec:lang:break}                 \\
+    \lstinline"call" & \autoref{sec:lang:rv}                    \\
+    \lstinline"case" & \autoref{sec:lang:switch}                \\
+   \lstinline"catch" & \autoref{sec:lang:catch}, \autoref{sec:lang:timeout} \\
+    \lstinline"char" & Reserved                                 \\
+   \lstinline"class" & \autoref{sec:lang:class}                 \\
+ \lstinline"closure" & \autoref{sec:lang:closure}               \\
+   \lstinline"compl" & \autoref{sec:lang:op:bitwise}            \\
+   \lstinline"const" & \autoref{sec:lang:prop:std}              \\
+\lstinline"const_cast" & Reserved                                 \\
+\lstinline"continue" & \autoref{sec:lang:continue}              \\
+ \lstinline"default" & \autoref{sec:lang:switch}                \\
+  \lstinline"delete" & Reserved                                 \\
+  \lstinline"detach" &                                          \\
+  \lstinline"disown" &                                          \\
+      \lstinline"do" & \autoref{sec:lang:do}                    \\
+  \lstinline"double" & Reserved                                 \\
+\lstinline"dynamic_cast" & Reserved                                 \\
+    \lstinline"else" & \autoref{sec:lang:if}                    \\
+    \lstinline"enum" & \autoref{sec:lang:continue}              \\
+   \lstinline"every" & \autoref{sec:lang:every}                 \\
+\lstinline"explicit" & Reserved                                 \\
+  \lstinline"export" & Reserved                                 \\
+  \lstinline"extern" & Reserved                                 \\
+\lstinline"external" & Reserved                                 \\
+   \lstinline"float" & Reserved                                 \\
+     \lstinline"for" & \verb|for&| and \verb-for|- flavors      \\
+ \lstinline"foreach" & Deprecated, use \verb|for|               \\
+\lstinline"freezeif" &                                          \\
+  \lstinline"friend" & Reserved                                 \\
+\lstinline"function" & \autoref{sec:lang:function}, \autoref{sec:lang:closure} \\
+    \lstinline"goto" & Reserved                                 \\
+      \lstinline"if" & \autoref{sec:lang:if}                    \\
+      \lstinline"in" & \autoref{sec:lang:foreach}               \\
+  \lstinline"inline" & Reserved                                 \\
+     \lstinline"int" & Reserved                                 \\
+\lstinline"internal" & Deprecated                               \\
+    \lstinline"long" & Reserved                                 \\
+    \lstinline"loop" & \verb|loop&|, \verb-loop|-, \autoref{sec:lang:loop} \\
+ \lstinline"mutable" & Reserved                                 \\
+\lstinline"namespace" & Reserved                                 \\
+     \lstinline"new" & \autoref{sec:tut:ctor}                   \\
+     \lstinline"not" & Synonym for \verb|!|                     \\
+  \lstinline"not_eq" & Synonym for \verb|!=|                    \\
+ \lstinline"onleave" & \autoref{sec:lang:at}                    \\
+      \lstinline"or" & Synonym for \verb-||-                    \\
+   \lstinline"or_eq" & Synonym for \verb-|=-                    \\
+ \lstinline"private" & Ignored                                  \\
+\lstinline"protected" & Ignored                                  \\
+  \lstinline"public" & Ignored                                  \\
+\lstinline"register" & Reserved                                 \\
+\lstinline"reinterpret_cast" & Reserved                                 \\
+  \lstinline"return" & \autoref{sec:lang:rv}                    \\
+   \lstinline"short" & Reserved                                 \\
+  \lstinline"signed" & Reserved                                 \\
+  \lstinline"sizeof" & Reserved                                 \\
+  \lstinline"static" & Deprecated                               \\
+\lstinline"static_cast" & Reserved                                 \\
+  \lstinline"stopif" &                                          \\
+  \lstinline"struct" & Reserved                                 \\
+  \lstinline"switch" & \autoref{sec:lang:switch}                \\
+\lstinline"template" & Reserved                                 \\
+    \lstinline"this" &                                          \\
+   \lstinline"throw" & \autoref{sec:lang:throw}                 \\
+ \lstinline"timeout" & \autoref{sec:lang:timeout}               \\
+     \lstinline"try" & \autoref{sec:lang:catch}                 \\
+ \lstinline"typedef" & Reserved                                 \\
+  \lstinline"typeid" & Reserved                                 \\
+\lstinline"typename" & Reserved                                 \\
+   \lstinline"union" & Reserved                                 \\
+\lstinline"unsigned" & Reserved                                 \\
+   \lstinline"using" & Reserved                                 \\
+     \lstinline"var" & \autoref{sec:lang:var}, \autoref{sec:lang:slots} \\
+ \lstinline"virtual" & Reserved                                 \\
+\lstinline"volatile" & Reserved                                 \\
+\lstinline"waituntil" & \autoref{sec:lang:waituntil}             \\
+   \lstinline"watch" & \autoref{sec:lang:watch}                 \\
+ \lstinline"wchar_t" & Reserved                                 \\
+\lstinline"whenever" & \autoref{sec:lang:whenever}              \\
+   \lstinline"while" & \verb|while&| and \verb-while|- flavors  \\
+     \lstinline"xor" & Synonym for \verb|^|                     \\
+  \lstinline"xor_eq" & Synonym \verb|^=|                        \\
+  \hline
+\end{tabular}
+\fi

@@ -1668,6 +1668,9 @@ Foo.foo;
 Foo.bar;
 [00001818] 51
 \end{urbiscript}
+\begin{urbicomment}
+removeSlots("Foo");
+\end{urbicomment}
 
 \subsection{Arguments}
 
@@ -1894,6 +1897,10 @@ aLobby.receive("Global.fun;");
 aLobby.receive("Global.clo;");
 [00000014] (2, Lobby<The main Lobby>, "Foo")
 \end{urbiscript}
+\begin{urbicomment}
+removeSlots("aLobby");
+Global.removeSlots("Foo", "fun", "clo");
+\end{urbicomment}
 
 
 \subsection{Variadic functions}

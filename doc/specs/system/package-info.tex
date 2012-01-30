@@ -112,11 +112,10 @@ System.PackageInfo.components["Urbi"].string.isA(String);
 \end{urbiassert}
 
 
-\item[subMinor] The sub-minor version component (see \refSlot{version}).
+\item[subMinor] The sub-minor version component (see \refSlot{version}), for
+  instance \lstinline|4| for \usdk 2.7.4.
 \begin{urbiassert}
-// Urbi 2.7.4.
-System.PackageInfo.components["Urbi"].subMinor
-  == 4;
+System.PackageInfo.components["Urbi"].subMinor.isA(Float);
 \end{urbiassert}
 
 

@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1704 utf-8
+personal_ws-1.1 en 1745 utf-8
 aa
 aaa
 abc
@@ -25,8 +25,10 @@ addProto
 addSecond
 addValue
 ADL
+aec
 Affero
 afoodef
+agc
 agg
 AGPL
 aibo
@@ -46,6 +48,9 @@ ALMotor
 aLobby
 ALProxy
 ALRobotPose
+alsa
+AlsaMicrophone
+AlsaSpeaker
 ALTextToSpeech
 ALUrbiStarter
 american
@@ -129,6 +134,7 @@ autoconf
 autodebug
 automain
 automake
+AutomaticGainControl
 autopoint
 autotools
 AXS
@@ -182,6 +188,7 @@ breakInWhile
 breakpoint
 bsd
 bufferIn
+bufferSize
 bugReport
 builddir
 bumperL
@@ -208,6 +215,7 @@ cameraTopic
 cameraval
 cameraYaw
 cancelFindBase
+canceller
 canem
 CardinalDirection
 cb
@@ -239,6 +247,7 @@ classpath
 clearStats
 clo
 cloneSlot
+closeDelay
 ClosedLoop
 Clément
 cmd
@@ -332,6 +341,9 @@ defaultYawSpeed
 defaultYSpeed
 defaultZSpeed
 Demaille
+denoise
+Denoiser
+denoising
 DependencyWalker
 deprecations
 dequeue
@@ -390,6 +402,7 @@ eae
 eba
 EBNF
 ec
+EchoCanceller
 echoEach
 eE
 elbowR
@@ -458,6 +471,7 @@ findBase
 finfo
 fingerLR
 fingerR
+Firefox
 fireRate
 firstline
 FIXME
@@ -492,6 +506,7 @@ fozo
 fPIC
 fpzo
 fpzzo
+frameRate
 freezeif
 Frodo
 fromAscii
@@ -502,7 +517,9 @@ fullengine
 func
 functionalities
 FunctionProfile
+gainPercent
 gatewayAddress
+gb
 gcc
 gdb
 ge
@@ -550,6 +567,7 @@ GHz
 gl
 GLIBC
 gmake
+gmapping
 gnulib
 gnuplot
 goDuring
@@ -558,9 +576,7 @@ Gostai's
 goTo
 goto
 goToAbsolute
-goToChargingDock
 goToChargingStation
-gotoChargingStation
 GPL
 GPS
 GraphViz
@@ -664,6 +680,7 @@ installcheck
 installdir
 instantiation
 instantiations
+internalwebsite
 interruptible
 invertible
 io
@@ -675,6 +692,7 @@ IRCenter
 IRLeft
 IRRight
 IRs
+irs
 isA
 isAlnum
 isAlpha
@@ -736,6 +754,7 @@ laserDistanceMax
 laserDistanceMin
 laserLastTimestamp
 laserLoad
+LaserScan
 laserVal
 lastCaptureTimestamp
 lastModifiedDate
@@ -746,6 +765,7 @@ LD
 ldd
 LDFLAGS
 le
+leaveChargingStation
 leaveTheKitchen
 ledL
 ledR
@@ -792,8 +812,10 @@ linphone
 linux
 listList
 listVector
+llll
 llvm
 ln
+lnk
 loadFile
 loadLibrary
 loadModule
@@ -880,6 +902,7 @@ Moulard
 Moussu
 moveInto
 moveTo
+MPEG
 msg
 msgs
 MSI
@@ -903,6 +926,7 @@ myHandle
 myHiddenKey
 myimage
 myInstance
+myJazzName
 myList
 myLocalVariable
 myMind
@@ -972,6 +996,7 @@ nxt
 o's
 oba
 ObjectTracker
+odom
 Odometric
 odometry
 odometryAlpha
@@ -1024,6 +1049,7 @@ params
 parseopt
 pathPlanningEvent
 pc
+pcm
 pcontroller
 pdf
 pdfcrop
@@ -1031,6 +1057,7 @@ PDFLaTeX
 perl
 perlre
 PGain
+pgm
 php
 physicsReset
 pid
@@ -1045,6 +1072,7 @@ plusTwo
 pMaxSpeedFraction
 pNames
 Pocolibs
+pollFD
 pollFor
 pollInterval
 pollOneFor
@@ -1174,6 +1202,7 @@ roscore
 roscpp
 rosgraph
 rosImg
+roslaunch
 roslib
 roslisp
 rosmake
@@ -1182,6 +1211,7 @@ rosrun
 ROSService
 ROSTools
 ROSTopic
+rostopic
 ROSTopics
 rotateLeft
 rotateRight
@@ -1203,6 +1233,7 @@ runServer
 runTag
 runtime
 runTo
+rviz
 rw
 rxconsole
 rxgraph
@@ -1322,6 +1353,7 @@ soundVolumeMax
 sp
 speakerL
 speakerR
+speakout
 specialFeature
 SpeechRecognizer
 SpeedAdaptive
@@ -1417,6 +1449,8 @@ texlive
 texmf
 TextTo
 TextToSpeech
+tf
+tfMessage
 tghi
 th
 theObject
@@ -1424,6 +1458,7 @@ threadedAssemble
 TimeAdaptive
 timedOut
 timeOut
+timeReference
 TimerHandle
 timeShift
 timestamp
@@ -1454,6 +1489,7 @@ trunc
 tts
 tuple
 tuples
+turnAbsolute
 turnGasOff
 turnGasOn
 turtlesim
@@ -1615,6 +1651,7 @@ VisionToolbox
 VM
 VoiceXML
 voicexml
+volumePercent
 VPATH
 waitForChanges
 waitForTermination
