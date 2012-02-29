@@ -1077,6 +1077,19 @@ namespace urbi
       return res;
     }
 
+    rObject
+    Object::package_root_get()
+    {
+      static rObject res = 0;
+      if (!res)
+      {
+        res = Object::proto->clone();
+        res->slot_set_value(SYMBOL(Package), res);
+        Object::proto->slot_set_value(SYMBOL(Package), res);
+      }
+      return res;
+    }
+
     rObject Object::proto;
   } // namespace object
 }

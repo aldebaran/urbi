@@ -530,16 +530,27 @@ namespace eval
   Visitor::visit(const ast::LocalDeclaration* d)
   {
     ast::rExp v = d->value_get();
-    rObject res = v ? ast(this_, v.get()) : object::void_class;
-    if (v)
-      check_void(res);
+    rObject res;
     if (d->what_get() == SYMBOL(DOLLAR_IMPORT))
     {
+      // Lookup import exp from 'Package'.
+      rObject othis = this_.state.this_get();
+      FINALLY(((rObject, othis))((Job&, this_)),
+        this_.state.this_set(othis));
+      this_.state.this_set( object::Object::package_root_get());
+      res = v ? ast(this_, v.get()) : object::void_class;
+       if (v)
+         check_void(res);
       this_.state.import_stack.back().push_back(res);
       this_.state.import_stack_size.back()++;
     }
     else
+    {
+      res = v ? ast(this_, v.get()) : object::void_class;
+      if (v)
+        check_void(res);
       this_.state.def(d, res, d->constant_get());
+    }
     return res;
   }
 

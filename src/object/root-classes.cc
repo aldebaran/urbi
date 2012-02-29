@@ -152,6 +152,7 @@ namespace urbi
 
       // Object is a special case: it is not built as a clone of itself.
       Object::proto = new Object();
+      Object::package_root_get();
       void_class = Object::proto->clone();
       // Slot
       //Slot::proto = new Object;

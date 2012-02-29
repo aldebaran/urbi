@@ -374,6 +374,13 @@ namespace urbi
       std::string uid() const;
 
       /*--------.
+      | Package |
+      `--------*/
+    public:
+      /// Get 'Package' object, where lookup starts for 'import' exps.
+      static rObject package_root_get();
+
+      /*--------.
       | Binding |
       `--------*/
     public:
