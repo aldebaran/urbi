@@ -14,7 +14,7 @@ requireFile("urbi/channel.u");
 requireFile("urbi/control.u");
 requireFile("urbi/global.u");
 
-do (Global.Tag)
+do (Tag)
 {
   var name = "";
   function asString()

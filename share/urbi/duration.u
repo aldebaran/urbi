@@ -12,7 +12,7 @@ requireFile("urbi/channel.u");
 requireFile("urbi/global.u");
 requireFile("urbi/control.u");
 
-do (Global.Duration)
+do (Duration)
 {
   copySlot("seconds", "asFloat");
 };

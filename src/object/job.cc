@@ -171,6 +171,10 @@ namespace urbi
 #undef ADDJOBSTATS
 #undef ADDSTATS
 #undef ADDENTRY
+      // Give infos about the import stack.
+      const runner::State& state = value_->state;
+      res[new String("ImportStack")] = to_urbi(state.import_stack);
+      res[new String("ImportCapture")] = to_urbi(state.import_captured);
       return new Dictionary(res);
     }
 

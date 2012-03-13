@@ -10,7 +10,7 @@
 
 requireFile("urbi/global.u");
 
-class Global.Comparable
+class Package.Lang.Comparable
 {
   function '!=' (var that) { ! (this == that) };
   function '==' (var that) { ! (this != that) };

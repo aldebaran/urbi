@@ -12,7 +12,7 @@ requireFile("urbi/file.u");
 requireFile("urbi/path.u");
 requireFile("urbi/exception.u");
 
-do (Global.Directory)
+do (Directory)
 {
   function '$doInto'(rhs, action, routine)
   {
@@ -87,10 +87,10 @@ do (Global.Directory)
 
   function removeAll()
   {
-    if (this === Global.Directory)
+    if (this === Directory)
       throw Exception.Primitive.new("removeAll",
                                     "cannot call method on %s"
-                                    % Global.Directory.type) |
+                                    % Directory.type) |
     removeAll_
   };
 

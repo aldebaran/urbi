@@ -24,7 +24,7 @@ var profile = System.profile(function() { echo("foo") });
 [:]  Yields:                    0
 [:]  Total time (us):         112
 [:]  Wall-clock time (us):    112
-[:]  Function calls:           16
+[:]  Function calls:           14
 [:]  Max depth:                 5
 [:]
 [:]  .-------------------------------------------------------------------.
@@ -41,7 +41,6 @@ var profile = System.profile(function() { echo("foo") });
 [:]  |        lobby |   5.36 |         96 |      6 |       2 |         3 |
 [:]  | getSlotValue |   3.57 |        104 |      4 |       1 |         4 |
 [:]  |            + |   2.68 |        107 |      3 |       1 |         3 |
-[:]  |        lobby |   2.68 |        110 |      3 |       2 |         1 |
 [:]  |        Lobby |   1.79 |        112 |      2 |       2 |         1 |
 [:]  '--------------'--------'------------'--------'---------'-----------'
 [:])
@@ -64,7 +63,9 @@ is extremely useful to profile asynchronous code based on \lstinline|at| for
 instance.
 
 \begin{urbiscript}
-var Global.x = false|;
+var x = false|;
+// Make sure 'x' is visible whoever the caller of 'profiled' is.
+import this|;
 function profiled()
 {
   at (x)
@@ -99,9 +100,9 @@ var profile_async = System.profile(getSlotValue("profiled"));
 [:])
 
 // Trigger the at twice.
-Global.x = true|;
+x = true|;
 [00106213] *** true
-Global.x = false|;
+x = false|;
 [00172119] *** false
 
 // The profile now includes additional statistic about the evaluations of
@@ -111,8 +112,8 @@ profile_async;
 [:]  Yields:                    2
 [:]  Total time (us):         251
 [:]  Wall-clock time (us):    251
-[:]  Function calls:           53
-[:]  Max depth:                 5
+[:]  Function calls:           33
+[:]  Max depth:                 4
 [:]
 [:]  .-------------------------------------------------------------------.
 [:]  |   function   |   %    | cumulative |  self  |  calls  |   self    |
@@ -123,22 +124,15 @@ profile_async;
 [:]  |         send |  11.16 |         91 |     28 |       2 |        14 |
 [:]  |        event |  10.76 |        118 |     27 |       1 |        27 |
 [:]  |    at: { x } |  10.76 |        145 |     27 |       3 |         9 |
-[:]  |        apply |   9.16 |        168 |     23 |       2 |    11.500 |
 [:]  |        clone |   5.98 |        183 |     15 |       4 |     3.750 |
-[:]  |        lobby |   5.98 |        198 |     15 |       4 |     3.750 |
 [:]  |         echo |   5.58 |        212 |     14 |       2 |         7 |
 [:]  |      onEvent |   4.38 |        223 |     11 |       1 |        11 |
 [:]  |            + |   1.99 |        228 |      5 |       4 |     1.250 |
 [:]  |          new |   1.99 |        233 |      5 |       4 |     1.250 |
-[:]  |        lobby |   1.59 |        237 |      4 |       4 |         1 |
-[:]  |            + |   1.20 |        240 |      3 |       2 |     1.500 |
 [:]  |     asString |   0.80 |        242 |      2 |       2 |         1 |
-[:]  |        apply |   0.80 |        244 |      2 |       2 |         1 |
-[:]  |            x |   0.80 |        246 |      2 |       3 |     0.667 |
 [:]  |         init |   0.80 |        248 |      2 |       4 |     0.500 |
-[:]  | getSlotValue |   0.80 |        250 |      2 |       2 |         1 |
-[:]  |        Lobby |   0.40 |        251 |      1 |       4 |     0.250 |
 [:]  |            x |      0 |        251 |      0 |       1 |         0 |
+[:]  |            x |      0 |        212 |      0 |       3 |         0 |
 [:]  '--------------'--------'------------'--------'---------'-----------'
 [:])
 \end{urbiscript}
@@ -188,7 +182,7 @@ profile.maxFunctionCallDepth == 5;
   The total number of function calls made.
 \begin{urbiassert}
 // Example continued from Construction.
-profile.totalCalls == 16;
+profile.totalCalls == 14;
 \end{urbiassert}
 
 

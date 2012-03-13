@@ -15,7 +15,7 @@ requireFile("urbi/singleton.u");
 requireFile("urbi/control.u");
 
 // k1 compatibility.
-class Global.Kernel1
+class Package.Lang.Kernel1
 {
   setProtos([Singleton]);
 

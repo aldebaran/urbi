@@ -79,6 +79,7 @@ namespace urbi
       BIND(asString,   as_string);
       BIND(bodyString, body_string);
       BIND(spawn);
+      BIND(getImports, imports_get);
     }
 
 

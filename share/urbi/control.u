@@ -11,12 +11,12 @@
 requireFile("urbi/call-message.u");
 requireFile("urbi/boolean.u");
 
-class Global.Control
+class Package.Lang.Control
 {
   function spawn(var fun, var clearTags)
   {
-    if (!fun.isA(getSlotValue("Code")))
-      throw Exception.Type.new(fun.type, getSlotValue("Code"));
+    if (!fun.isA(Package.Lang.getSlotValue("Code")))
+      throw Exception.Type.new(fun.type, Package.Lang.getSlotValue("Code"));
     fun.spawn(clearTags)
   };
 

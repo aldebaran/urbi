@@ -325,16 +325,17 @@ v.y;
 \begin{urbiscript}
 var Global.counter = 0|
 var Global.access = 0|
-var accessHandle = &access.notifyAccess(closure() {
+var accessHandle = Global.&access.notifyAccess(closure() {
   Global.access = ++Global.counter
 })|
+import Global |
 assert
 {
   access == 1;
   access == 2;
   access == 3;
 };
-&access.removeNotifyAccess(accessHandle)|;
+Global.&access.removeNotifyAccess(accessHandle)|;
 assert
 {
   access == 3;

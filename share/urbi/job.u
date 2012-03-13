@@ -15,7 +15,7 @@ requireFile("urbi/channel.u");
 
 do (Job)
 {
-  addProto(Global.Traceable);
+  addProto(Traceable);
 
   function dumpState()
   {

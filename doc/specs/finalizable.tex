@@ -86,7 +86,7 @@ class o2
     echo("Ouch");
   }
 }|;
-[00000010:error] !!! updateSlot: cannot inherit from a Finalizable without being one
+[00000010:error] !!! apply: cannot inherit from a Finalizable without being one
 \end{urbiscript}
 
 write:
@@ -107,6 +107,7 @@ var o3 =
 If you need multiple prototypes, do as follows.
 
 \begin{urbiscript}
+import Global;
 class Global.Foo
 {
   function init()

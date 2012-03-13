@@ -16,7 +16,7 @@ requireFile("urbi/object.u");
 requireFile("urbi/boolean.u");
 requireFile("urbi/control.u");
 
-const var Global.Mutex = Tag.new;
+const var Package.Lang.Mutex = Tag.new;
 do (Mutex)
 {
   var type = "Mutex";
@@ -64,7 +64,7 @@ do (Mutex)
   };
 };
 
-var Global.NotMutex = Mutex.new;
+var Package.Lang.NotMutex = Mutex.new;
 do (NotMutex)
 {
   var type = "NotMutex";

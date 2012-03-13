@@ -252,7 +252,7 @@ namespace urbi
 #undef DECLARE
     }
 
-    URBI_ENUM_REGISTER(Logger::levels::Level, Global.Logger.Levels,
+    URBI_ENUM_REGISTER(Logger::levels::Level, Logger.Levels,
                        (Logger::levels::none,  None),
                        (Logger::levels::log,   Log),
                        (Logger::levels::trace, Trace),

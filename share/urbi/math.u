@@ -16,7 +16,7 @@ requireFile("urbi/singleton.u");
 requireFile("urbi/control.u");
 requireFile("urbi/float.u");
 
-class Global.Math
+class Package.Lang.Math
 {
   setProtos([Singleton]);
 
@@ -48,4 +48,4 @@ class Global.Math
     setSlotValue(v, Float.getSlotValue(v));
 };
 
-Global.addProto(Global.Math);
+//Global.addProto(Global.Math);

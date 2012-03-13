@@ -379,6 +379,8 @@ namespace urbi
     public:
       /// Get 'Package' object, where lookup starts for 'import' exps.
       static rObject package_root_get();
+      /// Get the 'Lang' package, a.k.a. Package.Lang
+      static rObject package_lang_get();
 
       /*--------.
       | Binding |

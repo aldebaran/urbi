@@ -126,7 +126,7 @@ namespace urbi
     RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
     UMessage* m = ctx->syncGet(owner_->get_name() + "->" + urbi::name(p));
     if (!m->value)
-      FRAISE("Error fetching property on %s", owner_->get_name());
+      FRAISE("Error fetching property %s on %s", urbi::name(p), owner_->get_name());
     UValue res = *m->value;
     delete m;
     return res;

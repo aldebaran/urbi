@@ -25,86 +25,89 @@ System.loadFile(System.searchFile("urbi/system.u"));
 System.load("urbi/global.u");
 System.load("urbi/platform" + System.urbiLibrarySuffix + ".u");
 
-requireFile("urbi/traceable.u");
-requireFile("urbi/exception.u");
-requireFile("urbi/call-message.u");
-requireFile("urbi/comparable.u");
-requireFile("urbi/container.u");
-requireFile("urbi/lazy.u");
-requireFile("urbi/range-iterable.u");
-requireFile("urbi/list.u");
-requireFile("urbi/singleton.u");
+System.requireFile("urbi/traceable.u");
+System.requireFile("urbi/exception.u");
+System.requireFile("urbi/call-message.u");
+System.requireFile("urbi/comparable.u");
+System.requireFile("urbi/container.u");
+System.requireFile("urbi/lazy.u");
+System.requireFile("urbi/range-iterable.u");
+System.requireFile("urbi/list.u");
+System.requireFile("urbi/singleton.u");
 
-requireFile("urbi/boolean.u");
-requireFile("urbi/nil.u");
-requireFile("urbi/control.u");
-requireFile("urbi/channel.u");
+System.requireFile("urbi/boolean.u");
+System.requireFile("urbi/nil.u");
+System.requireFile("urbi/control.u");
+System.requireFile("urbi/channel.u");
 
 // Disable top-level display
 Channel.topLevel.enabled = false;
 
 // Provide !=.
-Object.addProto(Comparable);
+// Do not inherit from comparable as it would create an inheritance loop.
+function Object.'!=' (var b)
+{
+  ! (this == b);
+};
 
-requireFile("urbi/orderable.u");
-List.protos.insertBack(Global.Orderable);
 
-requireFile("urbi/updatehook-stack.u");
+System.requireFile("urbi/orderable.u");
+List.protos.insertBack(Orderable);
 
-requireFile("urbi/binary.u");
-requireFile("urbi/code.u");
-requireFile("urbi/date.u");
-requireFile("urbi/dictionary.u");
-requireFile("urbi/directory.u");
-requireFile("urbi/file.u");
-requireFile("urbi/path.u");
-requireFile("urbi/loadable.u");
-requireFile("urbi/duration.u");
-requireFile("urbi/enumeration.u");
-requireFile("urbi/event.u");
-requireFile("urbi/float.u");
-requireFile("urbi/group.u");
-requireFile("urbi/kernel1.u");
-requireFile("urbi/job.u");
-requireFile("urbi/lobby.u");
-requireFile("urbi/math.u");
-requireFile("urbi/mutex.u");
-requireFile("urbi/package-info.u");
-requireFile("urbi/pattern.u");
-requireFile("urbi/profile.u");
-requireFile("urbi/pubsub.u");
-requireFile("urbi/socket.u");
-requireFile("urbi/stack-frame.u");
-requireFile("urbi/string.u");
-requireFile("urbi/tag.u");
-requireFile("urbi/timeout.u");
-requireFile("urbi/trajectory-generator.u");
-requireFile("urbi/tuple.u");
-requireFile("urbi/vector.u");
-requireFile("urbi/weak-pointer.u");
-// Enhance requireFile thanks to previous loadings.
-requireFile("urbi/require-file.u");
+System.requireFile("urbi/updatehook-stack.u");
 
+System.requireFile("urbi/binary.u");
+System.requireFile("urbi/code.u");
+System.requireFile("urbi/date.u");
+System.requireFile("urbi/dictionary.u");
+System.requireFile("urbi/directory.u");
+System.requireFile("urbi/file.u");
+System.requireFile("urbi/path.u");
+System.requireFile("urbi/loadable.u");
+System.requireFile("urbi/duration.u");
+System.requireFile("urbi/enumeration.u");
+System.requireFile("urbi/event.u");
+System.requireFile("urbi/float.u");
+System.requireFile("urbi/group.u");
+System.requireFile("urbi/kernel1.u");
+System.requireFile("urbi/job.u");
+System.requireFile("urbi/lobby.u");
+System.requireFile("urbi/math.u");
+System.requireFile("urbi/mutex.u");
+System.requireFile("urbi/package-info.u");
+System.requireFile("urbi/pattern.u");
+System.requireFile("urbi/profile.u");
+System.requireFile("urbi/pubsub.u");
+System.requireFile("urbi/socket.u");
+System.requireFile("urbi/stack-frame.u");
+System.requireFile("urbi/string.u");
+System.requireFile("urbi/tag.u");
+System.requireFile("urbi/timeout.u");
+System.requireFile("urbi/trajectory-generator.u");
+System.requireFile("urbi/tuple.u");
+System.requireFile("urbi/vector.u");
+System.requireFile("urbi/weak-pointer.u");
+// Enhance System.requireFile thanks to previous loadings.
+System.requireFile("urbi/require-file.u");
 /*----------.
 | UObject.  |
 `----------*/
 
 "Initializing uobjects NOW";
 
-requireFile("urbi/uobject.u");
-
-if ("ros" in Platform.enabledModules && System.env["ROS_ROOT"])
-  loadModule("urbi/ros");
+System.requireFile("urbi/uobject.u");
+if ("ros" in System.Platform.enabledModules && System.env["ROS_ROOT"])
+  System.loadModule("urbi/ros");
 
 // These guys are loading modules via loadModule, which needs
 // UObject.searchPath, which is defined by urbi/uobject.u.
 if (!System.Platform.compilationModeSpace)
 {
-  requireFile("urbi/formatter.u");
-  requireFile("urbi/input-stream.u");
-  requireFile("urbi/logger.u");
-  requireFile("urbi/process.u");
-  requireFile("urbi/regexp.u");
+  System.requireFile("urbi/formatter.u");
+  System.requireFile("urbi/input-stream.u");
+  System.requireFile("urbi/logger.u");
+  System.requireFile("urbi/process.u");
+  System.requireFile("urbi/regexp.u");
 };
 Channel.topLevel.enabled = true |
 System.defaultIsSystem = false |

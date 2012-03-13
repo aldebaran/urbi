@@ -16,7 +16,7 @@ requireFile("urbi/global.u");
 
 // Publisher-subscriber interface
 
-class Global.PubSub
+class Package.Lang.PubSub
 {
 
   class Subscriber

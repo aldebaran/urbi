@@ -63,20 +63,20 @@ if (true) else 12;
 Write \lstinline|if (true) {} else 12;|.  As a consequence
 \lstinline|if (x) &y;| is no longer ambiguous: its unique interpretation is
 \lstinline|if (x) { &y };| and no longer \lstinline| { if (x) {} } & y;|:
-\begin{urbiassert}
+\begin{urbiunchecked}
 { if (true)  &true else &false } === &true;
 { if (false) &true else &false } === &false;
-\end{urbiassert}
+\end{urbiunchecked}
 
 \item Implicit tags are restricted to single identifiers in interactive
   sessions.  In other words, in the \urbi shell you may expect tags to be
   automatically created:
-\begin{urbiscript}
+\begin{urbiunchecked}
 assert (!hasSlot("foo"));
 foo: 123;
 [00003258] 123
 assert (hasSlot("foo") && foo.isA(Tag));
-\end{urbiscript}
+\end{urbiunchecked}
 \noindent
 This is no longer valid for complex tags, nor when used deeper in the code:
 \begin{urbiscript}
@@ -1150,7 +1150,7 @@ try { throw 1 } catch { echo(2) } else { echo(3) } finally { echo(4) };
 \item \refSlot[System]{eval} and \refSlot[System]{load} report syntax
   warnings.
 \begin{urbiscript}
-eval("new Object");
+System.eval("new Object");
 [00001388:warning] !!! 1.1-10: `new Obj(x)' is deprecated, use `Obj.new(x)'
 [00001388:warning] !!!    called from: eval
 [00001388] Object_0x1001b2320
@@ -2317,7 +2317,7 @@ for (var c: "foo") echo (c);
   operator is used for comparison:
 
 \begin{urbiscript}
-min(3, 2, 17);
+Math.min(3, 2, 17);
 [00000001] 2
 \end{urbiscript}
 

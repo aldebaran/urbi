@@ -16,7 +16,7 @@ requireFile("urbi/boolean.u");
 requireFile("urbi/comparable.u");
 requireFile("urbi/control.u");
 
-class Global.Binary
+class Package.Lang.Binary
 {
   addProto(Comparable);
   removeProto(Object);
@@ -24,7 +24,7 @@ class Global.Binary
   // The semantics is mandated by K1 compatibility.
   function '+'(rhs)
   {
-    var res = Global.Binary.new(keywords, data + rhs.data)|
+    var res = Binary.new(keywords, data + rhs.data)|
     if (keywords.empty)
       res.keywords = rhs.keywords |
     res
@@ -55,7 +55,7 @@ class Global.Binary
 
   function copy()
   {
-    Global.Binary.new(keywords, data)
+    Binary.new(keywords, data)
   };
 
   function empty()

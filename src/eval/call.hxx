@@ -311,9 +311,11 @@ namespace eval
      job.state.pop_frame(msg, previous_frame);          \
      job.state.lobby_set(caller_lobby);                 \
      std::swap(job.state.import_captured, import_captured); \
-     job.state.has_import_stack = prev_has_import_stack;  \
-     if (function->ast_get()->has_imports_get())        \
+     /* Warning, has_import_stack may change (see load)*/   \
+     /* So re-read it, do not rely on what function says*/  \
+     if (job.state.has_import_stack)                        \
        job.state.import_stack.pop_back();               \
+     job.state.has_import_stack = prev_has_import_stack;  \
      BOOST_PP_IF(URBI_DYNAMIC_STACK_NONE,               \
                  {                                      \
                    delete [] local_stack;               \
@@ -735,7 +737,12 @@ namespace eval
                      const ::ast::exps_type& args)
   {
     DECLARE_LOCATION_FILE;
-
+    // Prepare current imports, to be stored in closure around args
+    std::vector<rObject> imports;
+    if (job.state.has_import_stack)
+      imports = job.state.import_stack.back();
+    imports.insert(imports.end(),
+      job.state.import_captured.begin(), job.state.import_captured.end());
     // Build the list of lazy arguments
     object::objects_type lazy_args;
     lazy_args << tgt;
@@ -756,7 +763,7 @@ namespace eval
                  job.state.call(),
                  job.state.lobby_get(),
                  job.state.this_get());
-
+      closure->imports_get() = imports;
       Rebinder rebind(routine, closure, job.state);
       rebind(body.get());
 

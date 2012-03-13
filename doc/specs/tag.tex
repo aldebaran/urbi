@@ -474,20 +474,6 @@ var t2 = Tag.new("cool name");
   specified, let stopped code return \var{result} as value.
   See \autoref{sec:specs:tag:stop}.
 
-
-\item[tags] An object in which implicit tags stored as slots.  See
-  \autoref{sec:lang:tag}.
-\begin{urbiscript}
-assert (!hasSlot("brandNewTag"));
-brandNewTag: {};
-assert
-{
-  locateSlot("brandNewTag") === Tag.tags;
-  brandNewTag.isA(Tag);
-};
-\end{urbiscript}
-
-
 \item[unblock]
   Unblock \this.  See \autoref{sec:specs:tag:block}.
 

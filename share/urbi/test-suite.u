@@ -18,10 +18,13 @@ System.assertVerbose = true|;
 // Too many unpredictable changes in the error messages.
 Exception.Lookup.fixSpelling = false|;
 
+// Many tests were written before the import age.
+import System;
+
 /*---------.
 | camera.  |
 `---------*/
-class Global.camera: Loadable
+class Package.Lang.camera: Package.gsrapi.Loadable
 {
   UVar.new(this, "val");
   // In order to avoid the "unexpected void" messages if we forget to
@@ -70,7 +73,7 @@ class Global.camera: Loadable
 | Global.  |
 `---------*/
 
-do (Global)
+do (Package.Lang)
 {
   // A channel for synclines.
   var syncline = Channel.new("#")|;
@@ -137,7 +140,7 @@ do (Global)
 
   function skipIfHostName (var host)
   {
-    var hostname = env["BUILDFARM_HOSTNAME"] || "" |
+    var hostname = System.env["BUILDFARM_HOSTNAME"] || "" |
     clog << "Hostname: %s" % hostname |
     if (hostname == host)
       testSkip("cannot run on this host (%s)" % host);
@@ -305,8 +308,9 @@ do (Location)
 {
   function here(var backtrack = 0)
   {
-    var list = {
-      try { throw Exception.new}
+    var list =
+   {
+      try { throw Exception.new("")}
       catch (var e) { e.'$backtrace' }
     }|
     var drop = true|
@@ -328,7 +332,7 @@ do (Location)
 | Range.  |
 `--------*/
 
-class Range : Global.Container
+class Range : Container
 {
   var first;
   var last;
@@ -403,7 +407,7 @@ do (System)
           l[1]
           .split(" ", 1024, false, false)
           .map(closure (v) { try { v.asFloat } catch (var e) { v } })
-      }
+      } 
       catch (var e)
       {
         d[l[0]] = l[1]
@@ -427,7 +431,7 @@ do (System)
       {
         function onEnter()
         {
-          begMem = Global.System.status.stat("VmData");
+          begMem = System.status.stat("VmData");
           clog << "%s: %s: start with %d kB" % [location, mode(), begMem];
         };
 
@@ -436,7 +440,7 @@ do (System)
           // FIXME: trigger the garbage collection
           // sleep(100ms);
 
-          var endMem = Global.System.status.stat("VmData");
+          var endMem = System.status.stat("VmData");
           clog << "%s: %s: leak %d kB" % [location, mode(), endMem - begMem];
           if (judge_mode)
           {
@@ -495,7 +499,7 @@ do (System)
 // Keep sync with urbivalid/test.u.
 if (System.Platform.isWindows)
 {
-  class Global.Process
+  class Package.Lang.Process
   {
     function init(var args[])
     {

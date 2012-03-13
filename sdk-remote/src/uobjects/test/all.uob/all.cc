@@ -155,11 +155,8 @@ public:
     UBindFunction(all, emitO);
     UBindFunctions
       (all,
-       loop_yield, yield_for);
-    UBindFunctions
-      (urbi::UContext,
-       side_effect_free_get, side_effect_free_set,
-       yield);
+       loop_yield, yield_for, yield);
+
 
     UBindFunction(all, getDestructionCount);
 
@@ -212,6 +209,12 @@ public:
     ++destructionCount;
   }
 
+  void
+  yield_for(double duration)
+  {
+    UContext::yield_for(duration * 1000000.0);
+  }
+  
   urbi::UImage
   convert(const urbi::UImage source, const std::string& id)
   {

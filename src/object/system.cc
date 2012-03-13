@@ -81,8 +81,32 @@ namespace urbi
       static rObject
       execute_parsed(parser::parse_result_type p, rObject self)
       {
+        // We execute as if the code was in the current context.
+        // But said code may contain import directives.
         ast::rConstAst ast = parser::transform(ast::rConstExp(p));
         runner::Job& run = runner();
+        runner::State& state = run.state;
+        if (!state.has_import_stack)
+        {
+          // We are not supposed to create a scope here. But we must reset
+          // import informations in the state we found it. There is no way
+          // to produce a valid state by leaving has_import_stack = true
+          // when we exit, since we do not know how many levels of scoping
+          // are present in current function call
+          state.has_import_stack = true;
+          // That would have been done on function enter if it had import_stack
+          state.import_stack.push_back(std::vector<rObject>());
+          // That would have been done on scope enter if function had importstack.
+          state.import_stack_size.push_back(0);
+          FINALLY(((runner::State&, state)),
+             state.import_stack_size.pop_back();
+             state.import_stack.pop_back();
+             state.has_import_stack = false;
+             );
+          return
+          eval::ast_context(run, ast.get(),
+                            self ? self : rObject(run.state.lobby_get()));
+        }
         return
           eval::ast_context(run, ast.get(),
                             self ? self : rObject(run.state.lobby_get()));

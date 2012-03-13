@@ -20,7 +20,7 @@ requireFile("urbi/control.u");
 requireFile("urbi/nil.u");
 requireFile("urbi/tag.u");
 
-const var Global.Timeout = Tag.new;
+const var Package.Lang.Timeout = Tag.new;
 do (Timeout)
 {
   var type = "Timeout";

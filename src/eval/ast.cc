@@ -369,8 +369,8 @@ namespace eval
     rObject res = watch_eval(data);
     if (dynamic_cast<object::Event*>(res.get()))
     {
-      CAPTURE_GLOBAL(Global);
-      Global->call("warn",
+      CAPTURE_LANG(lang);
+      lang->call("warn",
                    new object::String("at (<event>) without a '?', "
                                       "probably not what you mean"));
     }
@@ -438,7 +438,8 @@ namespace eval
       object::objects_type args;
       if (updateMode)
       {
-        // Retarget the slot we are looking for
+        // Replace current target ('updateSlot') with first argument
+        // of updateSlot call.
         strict_args(this_, args, *e->arguments_get());
         if (args.size() != 2)
           runner::raise_arity_error(2, args.size());
@@ -449,38 +450,19 @@ namespace eval
       }
       object::Object::location_type loc;
       // Try looking up on this first
-      loc = tgt->slot_locate(s);
+      /* We do not want fallback to take precedence over import.
+      * Maybe we event want to disable fallback for implicit targets?
+      * So lookup in this without fallback, then import, then this with fallback
+      * So fallback in case of implicit target is a bit costly, but that should
+      * be rare.
+      */
+      loc = tgt->slot_locate(s, false);
+      if (!loc.first) // Try import stacks, throw if not found
+        loc = import_stack_lookup(this_.state, s, tgt, false);
+      if (!loc.first) // Try this, with fallback
+        loc = tgt->slot_locate(s);
       if (!loc.first)
-      {
-        // Try the import stack
-        if (!this_.state.import_stack.empty() && this_.state.has_import_stack)
-        rforeach(rObject& o, this_.state.import_stack.back())
-        {
-          loc = o->slot_locate(s);
-          if (loc.first)
-          {
-            tgt = o;
-            break;
-          }
-        }
-      }
-      if (!loc.first)
-      {
-        // try the captured import stack
-        rforeach(rObject& o, this_.state.import_captured)
-        {
-          loc = o->slot_locate(s);
-          if (res)
-          {
-            tgt = o;
-            break;
-          }
-        }
-      }
-      if (!loc.first)
-      {
         runner::raise_lookup_error(s, tgt);
-      }
       if (updateMode)
       {
         tgt->slot_update_with_cow(s, args[1], true, loc);
@@ -533,16 +515,36 @@ namespace eval
     rObject res;
     if (d->what_get() == SYMBOL(DOLLAR_IMPORT))
     {
+      // Desugar phase detected that we had an import, and allocated an
+      // import stack for us.
+      assert(!this_.state.import_stack.empty());
+      assert(!this_.state.import_stack_size.empty());
+      // We want to lookup import expression in package.
+      // We could change this, but then import of local stuff or import this
+      // will not work. So instead, add 'Package' to our imports, temporarily.
       // Lookup import exp from 'Package'.
+      unsigned p = this_.state.import_stack.back().size();
+      unsigned check_sz = this_.state.import_stack.size();
+      this_.state.import_stack.back().push_back(
+        object::Object::package_root_get());
+      this_.state.import_stack_size.back()++;
+      /*
       rObject othis = this_.state.this_get();
       FINALLY(((rObject, othis))((Job&, this_)),
         this_.state.this_set(othis));
       this_.state.this_set( object::Object::package_root_get());
-      res = v ? ast(this_, v.get()) : object::void_class;
-       if (v)
-         check_void(res);
-      this_.state.import_stack.back().push_back(res);
-      this_.state.import_stack_size.back()++;
+      */
+      if (!v)
+        FRAISE("Missing import argument");
+      res = ast(this_, v.get());
+      check_void(res);
+      // Import stack depth should not have changed
+      assert(this_.state.import_stack.size() == check_sz);
+      (void)check_sz;
+      // So, uber-trick, replace our temporary Package we inserted in imports
+      // with the result
+      this_.state.import_stack.back()[p] = res;
+      res = object::void_class; // value of import statement is void
     }
     else
     {
@@ -610,10 +612,14 @@ namespace eval
 
     // Capture imports.
     if (this_.state.has_import_stack)
+    {
       foreach(rObject& v, this_.state.import_stack.back())
         res->import_add(v);
+    }
     foreach(rObject&v , this_.state.import_captured)
+    {
       res->import_add(v);
+    }
     return res;
   }
 
@@ -795,6 +801,22 @@ namespace eval
     if (ast::rCall call = owner.unsafe_cast<ast::Call>())
     {
       rObject owner = ast(this_, call->target_get().get());
+      if (call->target_implicit())
+      {
+        // Reproduce lookup algorithm.
+        // FIXME: desugar to bounce on call
+        object::Object::location_type loc;
+        libport::Symbol s = call->name_get();
+        loc = owner->slot_locate(s, false);
+        if (!loc.first) // Try import stacks, throw if not found
+          loc = import_stack_lookup(this_.state, s, owner, false);
+        if (!loc.first) // Try this, with fallback
+          loc = owner->slot_locate(s);
+        if (!loc.first)
+          runner::raise_lookup_error(s, owner);
+        // Owner was changed by import_stack_lookup if slot was found here
+        // FIXME: suboptimal, we have the slot now.
+      }
       return owner->call(SYMBOL(getProperty),
                          new object::String(call->name_get()),
                          new object::String(p->name_get()));
@@ -817,6 +839,22 @@ namespace eval
     if (ast::rCall call = owner.unsafe_cast<ast::Call>())
     {
       rObject owner = ast(this_, call->target_get().get());
+      if (call->target_implicit())
+      {
+        // Reproduce lookup algorithm.
+        // FIXME: desugar to bounce on call
+        object::Object::location_type loc;
+        libport::Symbol s = call->name_get();
+        loc = owner->slot_locate(s, false);
+        if (!loc.first) // Try import stacks, throw if not found
+          loc = import_stack_lookup(this_.state, s, owner, false);
+        if (!loc.first) // Try this, with fallback
+          loc = owner->slot_locate(s);
+        if (!loc.first)
+          runner::raise_lookup_error(s, owner);
+        // Owner was changed by import_stack_lookup if slot was found here
+        // FIXME: suboptimal, we have the slot now.
+      }
       return owner->call(SYMBOL(setProperty),
                          new object::String(call->name_get()),
                          new object::String(p->name_get()),
@@ -954,13 +992,12 @@ namespace eval
       if (!c || c->arguments_get() || !c->target_implicit()
 	  // And only in a shell session.
 	  || !this_.state.this_get()->as<object::Lobby>())
-	throw;
-
-      // `Tag.tags' represents the top level tag.
-      CAPTURE_GLOBAL2(Tag, tags);
-      // Create a new tag as a slot of Tag.tags.  It also stores it
-      // into Tag.tags.
-      res = tags->call(SYMBOL(new), new object::String(c->name_get()));
+	      throw;
+	    CAPTURE_LANG(lang);
+	    rTag t = new object::Tag(object::Tag::proto);
+	    t->init(c->name_get());
+	    res = t;
+	    lang->slot_set_value(c->name_get(), res);
     }
     return object::type_check<object::Tag>(res);
   }
@@ -1168,6 +1205,58 @@ namespace eval
     this_.yield_until_terminated(collector);
 
     return object::void_class;
+  }
+
+  object::Object::location_type import_stack_lookup(
+    const runner::State& state, libport::Symbol s, rObject& tgt,
+    bool throwOnError)
+  {
+    GD_FINFO_DUMP("Import lookup for %s", s);
+    object::Object::location_type loc;
+
+    GD_FINFO_DUMP("Import stack status: %s, %s", state.import_stack.size(),
+     state.has_import_stack);
+    // Try the import stack
+    if (!state.import_stack.empty() && state.has_import_stack)
+    {
+      rforeach(const rObject& o, state.import_stack.back())
+      {
+        loc = o->slot_locate(s);
+        if (loc.first)
+        {
+          tgt = o;
+          break;
+        }
+      }
+    }
+    if (!loc.first)
+    {
+      // try the captured import stack
+      rforeach(const rObject& o, state.import_captured)
+      {
+        loc = o->slot_locate(s);
+        if (loc.first)
+        {
+          tgt = o;
+          break;
+        }
+      }
+    }
+    // try lang
+    if (!loc.first)
+    {
+      static rObject lang = object::Object::package_lang_get();
+      loc = lang->slot_locate(s);
+      if (loc.first)
+        tgt = lang;
+    }
+    GD_FINFO_DUMP("Import retargeted to %s", tgt);
+    if (!loc.first && throwOnError)
+    {
+      GD_FINFO_DUMP("Import lookup failed for %s", s);
+      runner::raise_lookup_error(s, tgt);
+    }
+    return loc;
   }
 
 } // namespace eval

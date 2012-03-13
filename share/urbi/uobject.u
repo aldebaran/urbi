@@ -13,9 +13,9 @@
 
 // We cannot use the "class Global.UObject: Finalizable" syntax here,
 // because of specific constraints of Finalizable.
-var Global.UObject = Finalizable.new;
-var Global.UVar = Slot;
-do (Global.UObject)
+var Package.Lang.UObject = Finalizable.new;
+var Package.Lang.UVar = Slot;
+do (UObject)
 {
   function uvalueSerialize()
   {
@@ -210,7 +210,7 @@ do (Global.UObject)
   {
     var obj|
     if (objname.isA(String))
-      obj = uobjects.getUObject(objname).acceptVoid // FIXME should be nil
+      obj = uobjects.findUObject(objname).acceptVoid // FIXME should be nil
     else
       obj = objname|
     if (!obj.isVoid && lobby.hasLocalSlot("__bindingCount"))
@@ -290,7 +290,7 @@ do (Global.UObject)
   {
     try
     {
-      Channel.new(tag) << eval(exp)
+      Channel.new(tag) << System.eval(exp)
     }
     catch (var e)
     {
@@ -300,7 +300,7 @@ do (Global.UObject)
 };
 
 // All UVars accessed from remote objects are stored there also.
-class Global.VAR
+class Package.Lang.VAR
 {
 };
 
@@ -417,6 +417,7 @@ do (Slot)
                                         function(x) { x.hasLocalSlot("__bindingCount")});
     // Then ask them to use RTP and reset existing notifies.
     var chan = Channel.new('external'.MODULE_TAG)|
+    var chan.lobby|
     var msg = ['external'.UEM_SETRTP, fullName, 1] |
     var tv = {if (split) outputValue.acceptVoid else value.acceptVoid }|
     for|(var l: lobbies)
@@ -657,24 +658,17 @@ do (UValue)
   var asPrintable = getSlotValue("asTopLevelPrintable");
 };
 
-class Global.uobjects {
-};
-
-class Global.getUObject {
+class Package.Lang.getUObject {
   function fallback()
   {
-    uobjects.getUObject(call.message)
+    uobjects.findUObject(call.message)
   };
 };
-function Global.uobjects_handle()
-{
-  warn("uobjects_handle no longuer necessary")|
-  nil
-};
 
-Global.uobjects.uobjectInit();
 
-Global.addProto(uobjects);
+uobjects.uobjectInit();
+
+function UObject.searchPath() { uobjects.searchPath};
 
 // UObjects can use evaluate at initialization-time.
 
@@ -686,7 +680,7 @@ do (Global.&evaluate)
   changed.unsubscribeFaultySubscriber = false;
   set = function(v)
   {
-    var res = eval(v).acceptVoid|
+    var res = System.eval(v).acceptVoid|
     if (!res.isVoid)
       setOutputValue(res)
   };
@@ -716,11 +710,11 @@ Global.&currentRunnerInUObjectUpdate.get = function()
 | Global.external.  |
 `------------------*/
 
-class Global.'external'
+class Package.Lang.'external'
 {
   function logger()
   {
-    Global.'external'.logger = Logger.new("Urbi.UObject")
+    'external'.logger = Logger.new("Urbi.UObject")
   };
   var MODULE_TAG = "__ExternalMessage__";
   var UEM_EVALFUNCTION = 0;
@@ -760,8 +754,6 @@ class Global.'external'
     // The remote sent the code 'class <objname> {};' just before
     // calling this function, but we want objname in uobjects, not
     // lobby.
-    if (uobjects not in Global.protos)
-      Global.addProto(uobjects)|
     // FIXME: just register to internal uobject hash
     uobjects.setSlotValue(objname, UObject.new) |
     do (uobjects.getSlotValue(objname))
@@ -789,9 +781,9 @@ class Global.'external'
       var u = "object".fresh|
       chan << ['external'.UEM_NEW, u, objname]|
       // Wait until the remote defines u.init.
-      waituntil(Global.uobjects.hasSlot(u)
-                && Global.uobjects.getSlotValue(u).hasLocalSlot("init")) |
-      var ret = Global.uobjects.getSlotValue(u)|
+      waituntil(uobjects.hasSlot(u)
+                && uobjects.getSlotValue(u).hasLocalSlot("init")) |
+      var ret = uobjects.getSlotValue(u)|
       ret.protos = [this]|
       ret
     }|
@@ -807,9 +799,9 @@ class Global.'external'
     // changes over time.  Something that waituntil does not know to
     // cope with currently.
     while (src.stats["packetSent"] == 0)
-      sleep(period)|
+      sleep(System.period)|
     // Data has been transmitted. Wait a bit...
-    sleep(20 * period)|
+    sleep(20 * System.period)|
     // And check if something was received.
     if (!dst.stats["bytesReceived"])
     {
@@ -865,7 +857,7 @@ class Global.'external'
     {
       if (varname == "load")
         return|
-      logger.err << "error: external var called for "+objname+"."+varname
+      logger.warn << "external var called for non-uobject "+objname+"."+varname
     }|
     if (!lobby.hasSlot("handle"))
     {
@@ -875,7 +867,7 @@ class Global.'external'
         nil
       }
     }|
-    var obj = uobjects.getUObject(objname)|
+    var obj = uobjects.findUObject(objname)|
     // Setup a hook, notify the remote when a change occurrs.
     if (!obj.hasLocalSlot(varname))
       Slot.new(obj, varname)|
@@ -918,7 +910,7 @@ class Global.'external'
     // wall("attempting RTP connection...");
     // RTP setup will require usage of the connection which is stuck in
     // the foreground "external var" call, so detach.
-    var obj = uobjects.getUObject(objname)|
+    var obj = uobjects.findUObject(objname)|
     if (!obj.hasSlot(varname))
     {
       wall("fail fail " + objname +" " + obj)
@@ -977,7 +969,7 @@ class Global.'external'
   {
     // Create a 'notifyChange' function that generates the UObject
     // message and sends it through the remote connection.
-    var uob = uobjects.getUObject(objname)|
+    var uob = uobjects.findUObject(objname)|
     var chan = Channel.new(MODULE_TAG)|
     var chan.lobby = lobby|
     var fullname = objname + "." + varname|
@@ -1019,12 +1011,12 @@ class Global.'external'
 
     // Directly set it if the source UVar is from this connection
     // FIXME: cleanup
-    if (getSlotValue(objname).hasLocalSlot("lobby")
-         && getSlotValue(objname).lobby == lobby
+    if (uob.hasLocalSlot("lobby")
+         && uob.lobby == lobby
         && objname == fr)
     {
       lobby.__bindingFunc[fullName] =
-        uobjects.getUObject(objname).getSlot(varname).notifyChange(f)
+        uobjects.findUObject(objname).getSlot(varname).notifyChange(f)
     }
     else
     // Or use an intermediate UConnection and InputPort to handle
@@ -1032,8 +1024,8 @@ class Global.'external'
     {
       // Try to put the port into source UObject if it exists, or lobby.
       var o|
-      if (uobjects.getUObject(fr).isVoid
-          || uobjects.getUObject(fr).lobby != lobby)
+      if (uobjects.findUObject(fr).isVoid
+          || uobjects.findUObject(fr).lobby != lobby)
       {
         if (lobby.hasLocalSlot("hookPoint"))
           o = lobby.hookPoint
@@ -1042,7 +1034,7 @@ class Global.'external'
         logger.warn << ("Invalid source uobject " + fr +" in 'external var', using " + o)|
       }
       else
-        o = uobjects.getUObject(fr)|
+        o = uobjects.findUObject(fr)|
       var iportname = fullname.replace(".", "_")|
       if (!o.hasLocalSlot(iportname))
       {
@@ -1051,7 +1043,7 @@ class Global.'external'
       }|
       o.getSlot(iportname).set = f|
       lobby.__bindingFunc[fullName] =
-      uobjects.getSlotValue(objname).getSlot(varname) >> o.getSlot(iportname)
+      findUObject(objname).getSlot(varname) >> o.getSlot(iportname)
           |
     }|
     void
@@ -1093,7 +1085,7 @@ class Global.'external'
       else
         res.uvalueDeserialize.unacceptVoid
     }|
-    Global.uobjects.getSlotValue(objname).setSlotValue(fname, f)|
+    uobjects.getSlotValue(objname).setSlotValue(fname, f)|
     void
   };
 
@@ -1122,7 +1114,7 @@ class Global.'external'
         "at (uobjects.%s.%s?(%s)) 'external'.eventBounce(true, \"%s\",[%s])"
         "onleave 'external'.eventBounce(false, \"%s\",[%s])"
         % [objname, ename, varargs, fullname, args, fullname, args]|
-      eval(code)
+      System.eval(code)
     }
   };
 
@@ -1204,7 +1196,7 @@ function uobjects.resetConnectionStats()
  * You can set 'uvalueSerializeSlots' to fix the names of the slots that must
  * be serialized.
  */
-class Global.UValueSerializable
+class Package.Lang.UValueSerializable
 {
   var uvalueSerializeSlots = nil;
   function uvalueSerialize()
@@ -1248,4 +1240,4 @@ function Dictionary.uvalueSerialize()
 };
 
 // Store serializable objects here.
-class Global.Serializables {};
+class Package.Lang.Serializables {};

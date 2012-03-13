@@ -94,7 +94,7 @@ do (String)
   // -----------
   // If the Formatter object is not present, provide a simple
   // implementation of '%', only handling '%s'.
-  if (hasSlot("Formatter"))
+  if (Package.Lang.hasSlot("Formatter"))
     var this.'%' = function(list)
     {
       Formatter.new(this) % list

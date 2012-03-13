@@ -556,11 +556,19 @@ public class UObject extends UObjectCPP
 		    res = methods[i];
 		else
 		{
-		    String msg = "There are several methods with name "
-			+ method_name + " in UObject "
-			+ obj_cls.getName ()
-			+ ", please specify the arguments to avoid ambiguities";
-		    throw new RuntimeException(msg);
+                    // Try to figure out which one overrides the other.
+                    if (res.getDeclaringClass() == obj_cls)
+                      ;
+                    else if (methods[i].getDeclaringClass() == obj_cls)
+                      res = methods[i];
+                    else
+                    {
+		      String msg = "There are several methods with name "
+			  + method_name + " in UObject "
+			  + obj_cls.getName ()
+			  + ", please specify the arguments to avoid ambiguities";
+		      throw new RuntimeException(msg);
+                    }
 		}
 	    }
 	}

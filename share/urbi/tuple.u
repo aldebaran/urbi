@@ -22,7 +22,7 @@ requireFile("urbi/list.u");
 requireFile("urbi/nil.u");
 requireFile("urbi/range-iterable.u");
 
-class Global.Tuple : Global.RangeIterable, Global.Container
+class Package.Lang.Tuple : RangeIterable, Container
 {
   var members = [];
 
@@ -135,7 +135,7 @@ class Global.Tuple : Global.RangeIterable, Global.Container
         idx++;
       };
     };
-    Global.setSlotValue(name, Res);
+    Package.Lang.setSlotValue(name, Res);
   };
 
   makeTupleClass("Pair", 2);

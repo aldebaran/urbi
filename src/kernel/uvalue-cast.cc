@@ -248,7 +248,6 @@ uvalue_deserialize(object::rObject s)
 {
   using namespace object;
   CAPTURE_GLOBAL(Serializables);
-  CAPTURE_GLOBAL(Global);
   CAPTURE_GLOBAL(Object);
   rObject lobby =
     ::kernel::urbiserver->getCurrentRunner().state.lobby_get();

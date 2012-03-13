@@ -43,10 +43,13 @@ namespace urbi
     ::urbi::object::capture(libport::Symbol(#Name), From)
 
 # define CAPTURE_GLOBAL(Name)                   \
-  CAPTURE_(Name, ::urbi::object::global_class)
+  CAPTURE_(Name, ::urbi::object::Object::package_lang_get())
 
 # define CAPTURE_GLOBAL2(Name, Member)          \
   CAPTURE_GLOBAL(Name);                         \
   CAPTURE_(Member, Name)
+
+# define CAPTURE_LANG(Name) static ::urbi::object::rObject Name = \
+    ::urbi::object::Object::package_lang_get()
 
 #endif // !OBJECT_GLOBAL_HH

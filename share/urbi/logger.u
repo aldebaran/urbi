@@ -8,4 +8,4 @@
  * See the LICENSE file for more information.
  */
 
-loadModule("urbi/logger");
+System.loadModule("urbi/logger");

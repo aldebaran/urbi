@@ -18,7 +18,7 @@ requireFile("urbi/list.u");
 requireFile("urbi/nil.u");
 requireFile("urbi/range-iterable.u");
 
-class Global.Group : RangeIterable, Comparable
+class Package.Lang.Group : RangeIterable, Comparable
 {
   function init(var args[])
   {

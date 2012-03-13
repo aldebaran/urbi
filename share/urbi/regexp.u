@@ -15,10 +15,10 @@ requireFile("urbi/global.u");
 requireFile("urbi/kernel1.u");
 requireFile("urbi/control.u");
 
-loadLibrary("urbi/regexp");
+System.loadLibrary("urbi/regexp");
 do (Regexp)
 {
-  protos.insertFront(Global.Container);
+  protos.insertFront(Container);
 
   copySlot("match", "has");
 

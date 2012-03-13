@@ -206,7 +206,10 @@ public class All extends UObject
     //	}
     //	return 0;
     //    }
-
+    public void yield_for(double sDuration)
+    {
+       super.yield_for((int)(sDuration * 1000000.0));
+    }
     public int setBypassNotifyChangeBinary(String name)
     {
 	UNotifyChange(name, "onBinaryBypass");

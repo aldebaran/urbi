@@ -23,8 +23,8 @@ The keywords \lstinline|function| and \lstinline|closure| build Code
 instances.
 
 \begin{urbiassert}
-function(){}.protos[0] === getSlotValue("Code");
-closure (){}.protos[0] === getSlotValue("Code");
+function(){}.protos[0] === Package.Lang.getSlotValue("Code");
+closure (){}.protos[0] === Package.Lang.getSlotValue("Code");
 \end{urbiassert}
 
 \subsection{Slots}
@@ -63,11 +63,11 @@ If the functions capture different variables, they are different.
 \begin{urbiscript}
 {
   var x;
-  function Global.capture_x() { x };
-  function Global.capture_x_again () { x };
+  function Object.capture_x() { x };
+  function Object.capture_x_again () { x };
   {
     var x;
-    function Global.capture_another_x() { x };
+    function Object.capture_another_x() { x };
   }
 }|;
 assert

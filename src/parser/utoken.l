@@ -619,7 +619,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
         break;
     }
   out_of_loop:
-  UNPUT(libport::format("Global.Binary.new(\"%s\", \"%s\");",
+  UNPUT(libport::format("Binary.new(\"%s\", \"%s\");",
                         keywords, libport::escape(data, '"')));
 }
 

@@ -11,9 +11,9 @@
 requireFile("urbi/global.u");
 requireFile("urbi/traceable.u");
 
-class Global.Exception
+class Package.Lang.Exception
 {
-  addProto(Global.Traceable);
+  addProto(Traceable);
 
   // An error, or a warning?
   var isError = true;
@@ -34,7 +34,7 @@ class Global.Exception
   /// Make the instanciation of subobjects easier.
   function '$Exception'(msg)
   {
-    Exception.getSlotValue("init").apply([this, msg])
+    Package.Lang.Exception.getSlotValue("init").apply([this, msg])
   };
 
   function location()
@@ -124,7 +124,7 @@ class Global.Exception
       function init(var args[])
       {
         if (args.size != locSize + fmtSize)
-          throw Exception.Arity.new("%s.%s" % [name, "init"],
+          throw Package.Lang.Exception.Arity.new("%s.%s" % [name, "init"],
                                     args.size,
                                     locSize + fmtSize) |
         for| (var i: locSize)
@@ -142,14 +142,14 @@ class Global.Exception
       };
     };
 
-    Exception.setSlotValue(name, Res);
+    Package.Lang.Exception.setSlotValue(name, Res);
   };
 
   function makeMsgException(name, inherit, locSlots, msg)
   {
     makeFmtException(name, inherit, locSlots, "", [])|
-    Exception.getSlotValue(name).removeSlot("fmt")|
-    Exception.getSlotValue(name).message = msg
+    Package.Lang.Exception.getSlotValue(name).removeSlot("fmt")|
+    Package.Lang.Exception.getSlotValue(name).message = msg
   };
 
   function makeException(name, inherit, locSlots)
@@ -157,7 +157,7 @@ class Global.Exception
     makeMsgException(name, inherit, locSlots, Exception.message);
   };
 
-class Exception.Arity: Exception
+class Package.Lang.Exception.Arity: Exception
 {
   var effective;
   var min;
@@ -186,7 +186,7 @@ class Exception.Arity: Exception
   };
 };
 
-class Exception.BadNumber: Exception
+class Package.Lang.Exception.BadNumber: Package.Lang.Exception
 {
   var this.fmt = "<no message>";
   var this.effective = "<no message>";
@@ -207,7 +207,7 @@ class Exception.BadNumber: Exception
   };
 };
 
-class Exception.BadInteger: Exception.BadNumber
+class Package.Lang.Exception.BadInteger: Package.Lang.Exception.BadNumber
 {
 };
 
@@ -252,7 +252,7 @@ makeFmtException(
   "%s: \"%s\"", ["msg", "elt"]
 );
 
-class Exception.Scheduling: Exception
+class Package.Lang.Exception.Scheduling: Package.Lang.Exception
 {
   function throwNew(msg)
   {
@@ -260,7 +260,7 @@ class Exception.Scheduling: Exception
   };
 };
 
-class Exception.Syntax: Exception
+class Package.Lang.Exception.Syntax: Package.Lang.Exception
 {
   // The location of the syntactical error.
   var loc = "<no location>";
@@ -296,7 +296,7 @@ makeMsgException(
 | Type, arguments and subobjects.  |
 `---------------------------------*/
 
-class Exception.Type: Exception
+class Package.Lang.Exception.Type: Package.Lang.Exception
 {
   var expectedTypes = nil;
   var effective = nil;
@@ -328,7 +328,7 @@ class Exception.Type: Exception
   };
 };
 
-class Exception.Argument: Exception
+class Package.Lang.Exception.Argument: Package.Lang.Exception
 {
   var index = nil;
   var exception = nil;
@@ -349,7 +349,7 @@ class Exception.Argument: Exception
   };
 };
 
-do (Global.Exception)
+do (Package.Lang.Exception)
 {
   function argumentTypeException(routine, index, effective,
                                  expected, alternatives = [])
@@ -358,7 +358,7 @@ do (Global.Exception)
   }
 };
 
-class Exception.ArgumentType: Exception.Argument
+class Package.Lang.Exception.ArgumentType: Package.Lang.Exception.Argument
 {
   var index = nil;
   var routine = nil;
@@ -377,7 +377,7 @@ class Exception.ArgumentType: Exception.Argument
 | Lookup.  |
 `---------*/
 
-class Exception.Lookup: Exception
+class Package.Lang.Exception.Lookup: Package.Lang.Exception
 {
   var msg;
   var obj;
@@ -405,7 +405,7 @@ class Exception.Lookup: Exception
   };
 };
 
-class Exception.PropertyLookup: Exception
+class Package.Lang.Exception.PropertyLookup: Package.Lang.Exception
 {
   var obj;
   // Not named "slot" to avoid the features of Exception.slot.

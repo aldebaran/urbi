@@ -840,11 +840,17 @@ static void writeFromContext(const std::string& ctx,
 
 static object::rObject get_robject(rObject, const std::string& s)
 {
+  CAPTURE_LANG(lang);
   libport::BlockLock bl(object_links_lock);
   ObjectLinks::iterator i = object_links.find(s);
   if (i != object_links.end())
     return i->second.getRef();
-  rObject res = object::global_class->slot_get_value(libport::Symbol(s), false);
+  rObject res = lang->slot_get_value(libport::Symbol(s), false);
+  if (res)
+    return res;
+  // If at some point we remove the 'import uobjects', check here too
+  CAPTURE_GLOBAL(uobjects);
+  res = uobjects->slot_get_value(libport::Symbol(s), false);
   if (res)
     return res;
   return object::void_class;
@@ -1250,10 +1256,10 @@ namespace urbi
           boost::bind(&KernelUContextImpl::setHubUpdate, this, hub, period));
         return;
       }
-      rObject uob = object::Object::proto->slot_get_value(SYMBOL(UObject));
-      rObject f = uob->slot_get_value(SYMBOL(setHubUpdate));
+      CAPTURE_GLOBAL(UObject);
+      rObject f = UObject->slot_get_value(SYMBOL(setHubUpdate));
       object::objects_type args;
-      args << uob
+      args << UObject
            << rObject(new object::String(hub->get_name()))
            << new object::Float(period / 1000.0)
            << MAKE_VOIDCALL(hub, urbi::UObjectHub, update);
@@ -1304,8 +1310,8 @@ namespace urbi
       rObject r; // Must live until we call ref() on object_links's entry.
       if (fromcxx)
       {
-        r = ::urbi::uobjects::uobject_new(
-          where->slot_get_value(SYMBOL(UObject)), false, false);
+        CAPTURE_GLOBAL(UObject);
+        r = ::urbi::uobjects::uobject_new(UObject);
         owner_->__name =
         r->call(SYMBOL(__uobjectName))->as<object::String>()->value_get();
       }
@@ -1559,8 +1565,8 @@ namespace urbi
       }
       if (!slot_)
       {
-        rObject protoslot = object::Object::proto->slot_get_value(SYMBOL(Slot));
-        slot_ = protoslot->call(SYMBOL(new),
+        CAPTURE_GLOBAL(Slot);
+        slot_ = Slot->call(SYMBOL(new),
                                  o, new object::String(splitName_.second))
         ->as<object::Slot>();
       }
@@ -2007,8 +2013,9 @@ namespace urbi
           return res;
       }
       GD_FINFO_TRACE("get_base falling back to getSlot for %s", objname);
+      CAPTURE_LANG(lang);
       rObject res =
-        object::global_class->slot_get_value(libport::Symbol(objname),
+        lang->slot_get_value(libport::Symbol(objname),
                                              false);
       if (!res)
       {
@@ -2023,7 +2030,7 @@ namespace urbi
     */
     rObject uobject_initialize(const objects_type& args)
     {
-      CAPTURE_GLOBAL(Global);
+      CAPTURE_GLOBAL(Object);
       urbi::setCurrentContext(new urbi::impl::KernelUContextImpl());
       where = args.front();
       where->slot_set_value(SYMBOL(setTrace), object::primitive(&setTrace));
@@ -2036,9 +2043,9 @@ namespace urbi
                             object::primitive(&Stats::enable));
       where->slot_set_value(SYMBOL(allUObjects),
                             object::primitive(&all_uobjects));
-      where->slot_set_value(SYMBOL(getUObject),
+      where->slot_set_value(SYMBOL(findUObject),
                             object::primitive(&get_robject));
-      Global->slot_set_value(SYMBOL(uvalueDeserialize), primitive(&uvalue_deserialize));
+      Object->slot_set_value(SYMBOL(uvalueDeserialize), primitive(&uvalue_deserialize));
 
       where->bind(SYMBOL(searchPath),    &uobject_uobjectsPath,
                   &uobject_uobjectsPathSet);
@@ -2054,9 +2061,9 @@ namespace urbi
     rObject
     uobject_make_proto(const std::string& name)
     {
+      CAPTURE_GLOBAL(UObject);
       rObject res =
-        object::Object::proto
-        ->slot_get_value(SYMBOL(UObject))
+        UObject
         ->call(SYMBOL(clone));
       res->call(SYMBOL(uobjectInit));
       res->call(SYMBOL(init));
@@ -2170,8 +2177,8 @@ namespace urbi
         std::string id;
         UValue val;
         ia >> id >> val;
-        object::global_class->slot_get_value(SYMBOL(UObject))
-          ->call(SYMBOL(funCall), object::to_urbi(id),
+        CAPTURE_GLOBAL(UObject);
+        UObject->call(SYMBOL(funCall), object::to_urbi(id),
                  object_cast(val));
       }
       break;

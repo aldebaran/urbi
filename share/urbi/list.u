@@ -19,7 +19,7 @@ requireFile("urbi/range-iterable.u");
 
 do (List)
 {
-  protos = [Global.RangeIterable, Global.Container];
+  protos = [RangeIterable, Container];
   var tree = "";
 
   function '<'(var that)

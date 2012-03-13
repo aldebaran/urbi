@@ -718,9 +718,9 @@ In the previous example, typing \lstinline|global| will look for the
 This solution would work; however, storing all global variables in
 \refObject{Object} wouldn't be very clean. \refObject{Object} is rather
 designed to hold methods shared by all objects. Instead, a
-\lstinline|Global| object exists. This object is a prototype of Object, so
-all his slots are accessible from Object, and thus from anywhere. So,
-creating a genuine global variable is as simple as storing it in
+\lstinline|Global| object exists. This object is always accessible no matter
+where you are.
+So creating a genuine global variable is as simple as storing it in
 \lstinline|Global|:
 
 \begin{urbiscript}
@@ -741,16 +741,12 @@ class Constants
   var One = 1;
   // ...
 }|;
-// Make them global by making them accessible from Global.
-Global.addProto(Constants);
-[00000000] Global
-
+// Make them global by making them accessible from Package.Lang.
+var Package.Lang.Constants = Constants|;
 // Test it.
-Global.Pi;
+Constants.Pi;
 [00000000] 3.14
-Pi;
-[00000000] 3.14
-function Object.testPi() { echo(Pi) }|;
+function Object.testPi() { echo(Constants.Pi) }|;
 42.testPi;
 [00000000] *** 3.14
 \end{urbiscript}

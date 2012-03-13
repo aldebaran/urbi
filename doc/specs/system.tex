@@ -38,6 +38,9 @@ $ ./echo -x 12 -v "foo"
 [00000172] ["-x", "12", "-v", "foo"]
 \end{shell}
 
+\begin{urbicomment}
+import System;
+\end{urbicomment}
 
 \item['assert'](<assertion>)%
   Unless \refSlot{ndebug} is true, throw an error if
@@ -503,7 +506,7 @@ getLocale("LC_NUMERIC") == "C";
 // Windows does not understand the "fr_FR" locale, it supports "French"
 // which actually denotes "French_France.1252".
 var fr_FR =
-  { if (System.Platform.isWindows) "French_France.1252" else "fr_FR" };
+  { if (System.Platform.isWindows) "French_France.1252" else "fr_FR.utf8" };
 // Changing one via the environment does not affect the others.
 (env["LC_CTYPE"] = fr_FR) == fr_FR;
 getLocale("LC_CTYPE")   == "C";
@@ -609,7 +612,7 @@ stats.keys.sort == ["cycles",
 // Number of cycles.
 0 < stats["cycles"];
 // Cycles duration.
-0 < stats["cyclesMin"] <= stats["cyclesMean"] <= stats["cyclesMax"];
+0 <= stats["cyclesMin"] <= stats["cyclesMean"] <= stats["cyclesMax"];
 
 stats["cyclesVariance"].isA(Float);
 stats["cyclesStdDev"].isA(Float);

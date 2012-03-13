@@ -134,7 +134,7 @@ namespace urbi
 
 #define CLASS_REGISTER(What, Name)                      \
       What ## _initialize();                            \
-      global_class->slot_set_value(SYMBOL_(Name), What, true)
+      Object::package_lang_get()->slot_set_value(SYMBOL_(Name), What, true)
 
 
 #define CLASS_SETUP(What, Name)                 \
@@ -153,6 +153,7 @@ namespace urbi
       // Object is a special case: it is not built as a clone of itself.
       Object::proto = new Object();
       Object::package_root_get();
+      rObject lang = Object::package_lang_get();
       void_class = Object::proto->clone();
       // Slot
       //Slot::proto = new Object;
@@ -181,10 +182,10 @@ namespace urbi
       CLASS_INIT(global_class, Global);
       CLASS_INIT(Object::proto, Object);
       global_class_initialize();
-      global_class->slot_set_value(SYMBOL(Global), global_class, true);
+      lang->slot_set_value(SYMBOL(Global), global_class, true);
       object_class_initialize();
-      global_class->slot_set_value(SYMBOL(Object), Object::proto, true);
-
+      lang->slot_set_value(SYMBOL(Object), Object::proto, true);
+      lang->slot_set_value(SYMBOL(uobjects), Object::proto->clone(), true);
       // Completion cannot be done before String is complete.
       EXISTING_CLASS_SETUP(true_class, true);
       EXISTING_CLASS_SETUP(false_class, false);
@@ -196,7 +197,7 @@ namespace urbi
       ANONYMOUS_CLASS_SETUP(accepted_void_class, acceptedVoid);
 
       // Object.addProto(Global)
-      Object::proto->proto_add(global_class);
+      //Object::proto->proto_add(global_class);
     }
 
     // This is only used to created references on unused classes, so

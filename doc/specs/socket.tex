@@ -22,7 +22,7 @@ server and client can read it.  \lstinline|Dialog.reply(var \var{s})|
 returns the reply to a message \var{s}.
 
 \begin{urbiscript}
-class Global.Dialog
+class Dialog
 {
   var lines =
   [
@@ -41,6 +41,8 @@ class Global.Dialog
     "off";
   }
 }|;
+// Import lobby so that Dialog is visible from everywhere.
+import this|;
 \end{urbiscript}
 
 The server, an instance of \refObject{Server}, expects incoming connections,
@@ -81,13 +83,6 @@ var client =
       echo("client: " + reply);
     };
   }|;
-\end{urbiscript}
-
-As of today, \us's socket machinery requires to be regularly polled.
-
-\begin{urbiscript}
-every (100ms)
-  Socket.poll,
 \end{urbiscript}
 
 The server is then activated, listening to incoming connections on a port

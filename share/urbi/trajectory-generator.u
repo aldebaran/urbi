@@ -8,25 +8,26 @@
  * See the LICENSE file for more information.
  */
 
-requireFile("urbi/loadable.u");
-requireFile("urbi/call-message.u");
-requireFile("urbi/global.u");
-requireFile("urbi/object.u");
-requireFile("urbi/dictionary.u");
-requireFile("urbi/boolean.u");
-requireFile("urbi/control.u");
-requireFile("urbi/list.u");
-requireFile("urbi/channel.u");
-requireFile("urbi/group.u");
-requireFile("urbi/tag.u");
-requireFile("urbi/float.u");
+System.requireFile("urbi/loadable.u");
+System.requireFile("urbi/call-message.u");
+System.requireFile("urbi/global.u");
+System.requireFile("urbi/object.u");
+System.requireFile("urbi/dictionary.u");
+System.requireFile("urbi/boolean.u");
+System.requireFile("urbi/control.u");
+System.requireFile("urbi/list.u");
+System.requireFile("urbi/channel.u");
+System.requireFile("urbi/group.u");
+System.requireFile("urbi/tag.u");
+System.requireFile("urbi/float.u");
 
 /*----------------------.
 | TrajectoryGenerator.  |
 `----------------------*/
-class Global.TrajectoryGenerator
+class Package.Lang.TrajectoryGenerator
 {
-  var 'pi/2' = pi / 2;
+  import Math;
+  var 'pi/2' = Math.pi / 2;
 
   // Initialization: Instantiate one of the sub classes.
   function init(args)
@@ -82,7 +83,7 @@ class Global.TrajectoryGenerator
   function duration(var speed)
   {
     if (speed)
-      abs(startValue - targetValue) / speed
+      (startValue - targetValue).abs / speed
     else
       Float.inf
   }|
@@ -209,6 +210,7 @@ class TrajectoryGenerator.OpenLoop : TrajectoryGenerator
 
 class TrajectoryGenerator.Accel : TrajectoryGenerator.OpenLoop
 {
+  import Math;
   function init(args)
   {
     var this.accel = args["accel"] |
@@ -239,6 +241,7 @@ class TrajectoryGenerator.Accel : TrajectoryGenerator.OpenLoop
 
 class TrajectoryGenerator.Sin : TrajectoryGenerator.OpenLoop
 {
+  import Math;
   function init(args)
   {
     var this.phase = args.getWithDefault("phase", 0) |
@@ -255,6 +258,7 @@ class TrajectoryGenerator.Sin : TrajectoryGenerator.OpenLoop
 
 class TrajectoryGenerator.Smooth : TrajectoryGenerator.OpenLoop
 {
+  import Math;
   function init(args)
   {
     var this.duration = args["smooth"] |
@@ -279,6 +283,7 @@ class TrajectoryGenerator.Smooth : TrajectoryGenerator.OpenLoop
 
 class TrajectoryGenerator.Time : TrajectoryGenerator.OpenLoop
 {
+  import Math;
   function init(args)
   {
   };
@@ -319,6 +324,7 @@ class TrajectoryGenerator.Time : TrajectoryGenerator.OpenLoop
 // the current value to compute the new one.
 class TrajectoryGenerator.ClosedLoop : TrajectoryGenerator
 {
+  import Math;
   /// Stop adaptive trajectory if error is below this value.
   var delta = 0;
   var lastVal;
@@ -344,7 +350,7 @@ class TrajectoryGenerator.ClosedLoop : TrajectoryGenerator
   // Compute a float mean for the relative positionning errors.
   function errorLevel(currentVal)
   {
-    delta = abs(currentVal - lastVal) * 0.02 + delta * 0.98 |
+    delta = (currentVal - lastVal).abs * 0.02 + delta * 0.98 |
     lastVal = currentVal |
     delta
   };
@@ -352,7 +358,7 @@ class TrajectoryGenerator.ClosedLoop : TrajectoryGenerator
   // Whether we reached the target value.
   function targetReached(var currentVal)
   {
-    abs(currentVal - targetValue) <= errorLevel(currentVal)
+    (currentVal - targetValue).abs <= errorLevel(currentVal)
   };
 };
 

@@ -514,6 +514,10 @@ namespace urbi
         slots_.set(loc.first, slot, rs, true);
         return rs->property_get(prop);
       }
+      else if (prop == SYMBOL(rangemin))
+        return to_urbi(-std::numeric_limits<libport::ufloat>::infinity());
+      else if (prop == SYMBOL(rangemax))
+        return to_urbi(std::numeric_limits<libport::ufloat>::infinity());
       runner::raise_urbi_skip(SYMBOL(PropertyLookup),
                               this, to_urbi(slot), to_urbi(prop));
     }
@@ -607,7 +611,7 @@ namespace urbi
           o << libport::iendl;
         o << k << " = ";
         if (rSlot s = slot->second->as<Slot>())
-          s->value(const_cast<Object*>(this))->dump(o, depth_max);
+          s->value(val)->dump(o, depth_max);
         else
           slot->second->dump(o, depth_max);
         started = true;
@@ -654,7 +658,7 @@ namespace urbi
     std::ostream&
     Object::protos_dump(std::ostream& o) const
     {
-      if (proto_ || !protos_->empty())
+      if (proto_ || (protos_ && !protos_->empty()))
       {
         o << "protos = ";
         bool first = true;
@@ -1085,7 +1089,19 @@ namespace urbi
       {
         res = Object::proto->clone();
         res->slot_set_value(SYMBOL(Package), res);
+        res->slot_set_value(SYMBOL(Lang), Object::proto->clone());
         Object::proto->slot_set_value(SYMBOL(Package), res);
+      }
+      return res;
+    }
+
+    rObject
+    Object::package_lang_get()
+    {
+      static rObject res = 0;
+      if (!res)
+      {
+        res = package_root_get()->slot_get_value(SYMBOL(Lang));
       }
       return res;
     }

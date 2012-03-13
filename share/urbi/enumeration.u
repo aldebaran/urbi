@@ -15,7 +15,7 @@ requireFile("urbi/global.u");
 requireFile("urbi/range-iterable.u");
 requireFile("urbi/control.u");
 
-class Global.Enumeration : Global.RangeIterable
+class Package.Lang.Enumeration : RangeIterable
 {
   var this.name = "Enumeration";
   var this.values = [];

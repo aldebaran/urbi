@@ -13,7 +13,8 @@ requireFile("urbi/channel.u");
 requireFile("urbi/control.u");
 requireFile("urbi/global.u");
 
-class Global.Loadable
+class Package.gsrapi {};
+class Package.gsrapi.Loadable
 {
   var load = false;
 

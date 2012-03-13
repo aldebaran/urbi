@@ -44,6 +44,10 @@ In other words, float literals match the
 \lstinline|[0-9]+(\.[0-9]+)?([eE][-+]?[0-9]+)?| regular expression.  For
 instance:
 
+\begin{urbicomment}
+import Math;
+\end{urbicomment}
+
 \begin{urbiassert}
 0 == 0000.0000;
 // This is actually a call to the unary '+'.
@@ -184,8 +188,8 @@ Float.new == 0;
      0.asBool === false;
    0.1.asBool === true;
 (-0.1).asBool === true;
-   inf.asBool === true;
-   nan.asBool === true;
+   Math.inf.asBool === true;
+   Math.nan.asBool === true;
 \end{urbiassert}
 
 
@@ -329,8 +333,8 @@ compl 0 == 0xFFFF_FFFF;    compl 0xFFFF_FFFF == 0;
      0.floor ==  0;
    1.4.floor ==  1;     1.5.floor ==  1;    1.6.floor ==  1;
 (-1.4).floor == -2;  (-1.5).floor == -2; (-1.6).floor == -2;
-   inf.floor == inf; (-inf).floor == -inf;
-   nan.floor.isNan;
+   Math.inf.floor == Math.inf; (-Math.inf).floor == -inf;
+   Math.nan.floor.isNan;
 \end{urbiassert}
 
 
@@ -421,7 +425,7 @@ inf * -2 == -inf;
   Whether \this is infinite.
 \begin{urbiassert}
     !0.isInf; !1.isInf; !(-1).isInf;
-  !nan.isInf;
+  !Math.nan.isInf;
    inf.isInf;  (-inf).isInf;
 \end{urbiassert}
 

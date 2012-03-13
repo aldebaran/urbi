@@ -246,7 +246,7 @@ do (Object.new)
 \item[allProto]%
   A list with \this, its parents, their parents,\ldots
 \begin{urbiassert}
-123.allProtos.size == 12;
+123.allProtos.size == 6;
 \end{urbiassert}
 
 
@@ -498,6 +498,9 @@ do (2) { var this.attr = "foo"; this.attr->prop = "bar" }.dump(1);
 [00020505] ***       }
 [00020505] ***   }
 
+\end{urbiscript}
+
+\begin{urbiunchecked}
 Object.dump(1);
 [00020555] *** Object {
 [00020555] ***   /* Special slots */
@@ -510,7 +513,7 @@ Object.dump(1);
 
 0.dump(1.5);
 [00020605:error] !!! dump: expected integer: 1.5
-\end{urbiscript}
+\end{urbiunchecked}
 
 
 \item[getLocalSlot](<name>)%
@@ -606,7 +609,7 @@ assert(!Derive.hasLocalSlot("base"));
   Whether the slot \var{slotName} of \this has a property \var{propName}.
 \begin{urbiassert}
 var o = Object.new;
-const var o.halfPi = pi / 2;
+const var o.halfPi = Math.pi / 2;
 
  o.hasProperty("halfPi", "constant");
 !o.hasProperty("halfPi", "foobar");

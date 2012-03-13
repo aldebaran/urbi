@@ -64,7 +64,7 @@ connect_plugin(const std::string& host, int port,
   cl.setErrorCallback(callback(&onError));
   cl.setCallback(callback(&onDone), "output");
   foreach (const std::string& m, modules)
-    cl << libport::format("loadModuleOrDie(\"%s\");", libport::escape(m));
+    cl << libport::format("System.loadModuleOrDie(\"%s\");", libport::escape(m));
   cl << "output << 1;";
   while (true)
     sleep(1);

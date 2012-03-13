@@ -11,7 +11,7 @@
 requireFile("urbi/comparable.u");
 requireFile("urbi/global.u");
 
-do (Global.getSlotValue("Code"))
+do (Package.Lang.getSlotValue("Code"))
 {
   addProto(Comparable);
 };

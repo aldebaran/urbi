@@ -40,6 +40,8 @@
 
 #include <eval/send-message.hh>
 #include <eval/call.hh>
+#include <eval/ast.hh>
+
 
 namespace urbi
 {
@@ -145,7 +147,19 @@ namespace urbi
       // We need to set the 'code' slot: make a copy of the call message.
       const rObject& message = call_message->slot_get_value(SYMBOL(message));
       const libport::Symbol msg(from_urbi<std::string>(message));
-      const rObject& code = target->slot_get_value(msg);
+      // We have to try the import stack on msg.
+      rObject code;
+      object::Object::location_type loc =  target->slot_locate(msg);
+      if (loc.first) // Refetch or we bypass dependency tracker.
+        code = target->slot_get_value(msg);
+      else
+      {
+        loc = eval::import_stack_lookup(r.state, msg, target);
+        code = loc.second;
+        if (object::rSlot sl = code->as<object::Slot>())
+          code = sl->value(target);
+      }
+
       call_message->slot_update(SYMBOL(code), code);
       call_message->slot_update(SYMBOL(target), target);
       // FIXME: Sanity checks on the call message are probably required

@@ -17,7 +17,7 @@ requireFile("urbi/list.u");
 requireFile("urbi/nil.u");
 requireFile("urbi/file.u");
 
-var Lobby.systemLobby = this;
+var Lobby.systemLobby = Lobby.lobby;
 do (Lobby)
 {
   var onDisconnect = Event.new;
@@ -102,8 +102,8 @@ do (Lobby)
         maybeLoad("URBI.INI", clog) |
         maybeLoad("global.u", clog)
       }|
-      maybeLoad("CLIENT.INI", clog) |
-      maybeLoad("local.u", clog)
+       maybeLoad("CLIENT.INI", clog) |
+       maybeLoad("local.u", clog)
     }
   };
 
@@ -116,7 +116,7 @@ do (Lobby)
 
   function wall(var msg, var tag = "")
   {
-    for| (var l in lobbies - [Lobby])
+    for| (var l in instances - [Lobby])
       l.echo(msg, tag);
   };
 
@@ -158,6 +158,8 @@ do (Lobby)
     }
   };
 
+  var lobbies = getSlotValue("instances");
+
   // We received a C-c that makes us clear the foreground jobs.
   function sigint_interrupt()
   {
@@ -171,4 +173,9 @@ do (Lobby)
     System.shutdown;
   };
 
+};
+
+function Package.Lang.lobby()
+{
+  Lobby.lobby
 };

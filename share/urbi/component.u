@@ -8,12 +8,13 @@
  * See the LICENSE file for more information.
  */
 
-
+{
+import gsrapi;
 /** Localization class.
  */
-class Global.Localization {} | do (Localization)
+class Package.gsrapi.Localization {} | do (Localization)
 {
-  protos.insertFront(Global.Container);
+  protos.insertFront(Container);
   function makeEnum
   {
     var type = call.evalArgAt(0) |
@@ -40,7 +41,7 @@ class Global.Localization {} | do (Localization)
     name
   };
 
-  makeEnum(Localization,
+  makeEnum(this,
            up,
            inbetween,
            down,
@@ -67,9 +68,10 @@ class Global.Localization {} | do (Localization)
  *   robot.arm[left].addComponent("shoulder");
  *   robot.arm[left].addDevice("arm", MyMotor.new);
  */
-var Global.Localizer = Group.new | do (Global.Localizer)
+var Package.gsrapi.Localizer = Group.new | do (Package.gsrapi.Localizer)
 {
   var type = "Localizer";
+  var dict = [=>];
   function init(name)
   {
     var this.componentName = name |
@@ -163,7 +165,7 @@ var Global.Localizer = Group.new | do (Global.Localizer)
  *  The dump() and flatDump() can be used to dump all the components in a
  *  hierarchy, and show the Facets they implement.
  */
-class Global.Component
+class Package.gsrapi.Component
 {
   function clone()
   {
@@ -433,5 +435,7 @@ class Global.Component
       removeLocalSlot("compactName")|
     setSlotValue("compactName", name)
   }|;
+
+};
 
 };

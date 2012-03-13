@@ -186,10 +186,10 @@ namespace urbi
         // New versions of Urbi register "Urbi" as a component name,
         // but keep backward compatibility on "Urbi SDK".  So use the
         // latter for a good while.
-         "PackageInfo.components[\"Urbi SDK\"].major,"
-         "PackageInfo.components[\"Urbi SDK\"].minor,"
-         "PackageInfo.components[\"Urbi SDK\"].subMinor,"
-         "PackageInfo.components[\"Urbi SDK\"].patch,"
+         "System.PackageInfo.components[\"Urbi SDK\"].major,"
+         "System.PackageInfo.components[\"Urbi SDK\"].minor,"
+         "System.PackageInfo.components[\"Urbi SDK\"].subMinor,"
+         "System.PackageInfo.components[\"Urbi SDK\"].patch,"
          "]"
          );
       UList& list = *m->value->list;
@@ -210,7 +210,7 @@ namespace urbi
          "if (!UObject.hasSlot(\"syncGet\"))\n"
          "  function UObject.syncGet(exp, tag)\n"
          "  {\n"
-         "    try { Channel.new(tag) << eval(exp) }\n"
+         "    try { Channel.new(tag) << System.eval(exp) }\n"
          "    catch (var e) { lobby.send(\"!!! \" + e, tag) }\n"
          "  }");
 
@@ -228,7 +228,7 @@ namespace urbi
       new HookPoint(hookPointName_, const_cast<RemoteUContextImpl*>(this));
       URBI_SEND_COMMAND_C
         (*outputStream,
-         "var hookPoint = uobjects.getUObject(\"" << hookPointName_ << "\")|");
+         "var hookPoint = uobjects.findUObject(\"" << hookPointName_ << "\")|");
     }
 
     RemoteUContextImpl::~RemoteUContextImpl()
@@ -496,7 +496,7 @@ namespace urbi
         URBI_SEND_COMMA_COMMAND_C
           (*ctx->outputStream,
            libport::format
-           ("Global.UObject.funCall(\"%s\", Exception.new(\""
+           ("UObject.funCall(\"%s\", Exception.new(\""
             "exception caught while calling remote method: %s\"))",
             var, libport::escape(e->what())));
       else if (ctx->serializationMode)
@@ -514,7 +514,7 @@ namespace urbi
           // URBI_SEND_COMMAND does not now how to send binary since it
           // depends on the kernel version.
           ctx->backend_->startPack();
-          *ctx->backend_ << "Global.UObject.funCall(\"" << var << "\", ";
+          *ctx->backend_ << "UObject.funCall(\"" << var << "\", ";
           ctx->backend_->send(retval);
           *ctx->backend_ << "),\n";
           ctx->backend_->endPack();
@@ -524,13 +524,13 @@ namespace urbi
         case DATA_VOID:
           URBI_SEND_COMMAND_C
             (*ctx->outputStream,
-             libport::format("Global.UObject.funCall(\"%s\")", var));
+             libport::format("UObject.funCall(\"%s\")", var));
           break;
 
         default:
           URBI_SEND_COMMA_COMMAND_C
             (*ctx->outputStream,
-             libport::format("Global.UObject.funCall(\"%s\", %s)",
+             libport::format("UObject.funCall(\"%s\", %s)",
                              var, retval));
           break;
       }

@@ -11,7 +11,7 @@
 requireFile("urbi/global.u");
 
 /// Provide range-for loops, provided we have some "asList".
-class Global.RangeIterable
+class Package.Lang.RangeIterable
 {
   // Repeat \a action \a this times in concurrently.
   function 'each&'(action)

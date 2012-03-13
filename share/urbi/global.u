@@ -7,16 +7,17 @@
  *
  * See the LICENSE file for more information.
  */
-
+//fixme 
+//remove all that
 do (Global)
 {
   // Import the primitives.
   addProto(System);
   removeProto(Object);
 
-  function echo(var args[])
+  function Package.Lang.echo(var args[])
   {
-    lobby.getSlotValue("echo").apply([lobby] + args);
+    Lobby.lobby.getSlotValue("echo").apply([Lobby.lobby] + args);
   };
 
   /*---------------------------.
@@ -27,7 +28,7 @@ do (Global)
   // to a.m(b, c)
   // FIXME: I'm not satisfied with the name, but can't find anything
   // better
-  function methodToFunction(name)
+  function Object.methodToFunction(name)
   {
     function (var args[])
     {

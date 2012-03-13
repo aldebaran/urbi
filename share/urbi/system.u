@@ -89,14 +89,14 @@ do (System)
 
     function '[]='(var key, var value)
     {
-      Dictionary.getSlotValue("[]=").apply([env, key, value]) |
+      Dictionary.getSlotValue("[]=").apply([this, key, value]) |
       setenv(key, value);
     };
 
     function erase(var key)
     {
-      if (env.has(key))
-        Dictionary.getSlotValue("erase").apply([env, key]) |
+      if (has(key))
+        Dictionary.getSlotValue("erase").apply([this, key]) |
       unsetenv(key);
     };
   };
@@ -122,7 +122,7 @@ do (System)
 
   // Enhance loadFile to fill systemFiles.
   overrideSlot("loadFile",
-  function (var file, var target = this, var isSystem = defaultIsSystem)
+  function (var file, var target = this, var isSystem = System.defaultIsSystem)
     {
       if (isSystem)
         addSystemFile(file.asString)|
@@ -136,11 +136,11 @@ do (System)
 
   /// Look for file and load it.
   // Throw on errors.
-  function load(var file, var target = this, var isSystem = defaultIsSystem)
+  function load(var file, var target = this, var isSystem = System.defaultIsSystem)
   {
-    '$loadedFiles'.set(file, false)|
-    var res = loadFile(searchFile(file), target, isSystem).acceptVoid |
-    '$loadedFiles'.set(file, true)|
+    System.'$loadedFiles'.set(file, false)|
+    var res = System.loadFile(System.searchFile(file), target, isSystem).acceptVoid |
+    System.'$loadedFiles'.set(file, true)|
     res.unacceptVoid
   };
 
@@ -170,12 +170,12 @@ do (System)
   };
 
   // Look for file, and load it if found.
-  function maybeLoad(var file, var channel = Global.clog)
+  function Package.Lang.maybeLoad(var file, var channel = clog)
   {
     var path = nil |
     try
     {
-      path = searchFile(file)
+      path = System.searchFile(file)
     }
     catch (var e if e.isA(Exception.FileNotFound))
     {
@@ -183,7 +183,7 @@ do (System)
     if (!path.isNil)
     {
       channel.echo("loading %s." % path) |
-      loadFile(path)
+      System.loadFile(path)
     }
   };
 
@@ -198,7 +198,7 @@ do (System)
   {};
 
   function requireFile(var file,
-                       var target = this, var isSystem = defaultIsSystem)
+                       var target = this, var isSystem = System.defaultIsSystem)
   {
     if (file in '$loadedFiles')
       '$requireWait'(file)
@@ -246,3 +246,34 @@ do (System)
     env.erase(k)
   }|;
 };
+
+/** Since file is loaded on 'this' by default, we cannot put load in Package.Lang, or
+ * the lookup will retarget the call to 'Package.Lang' whatever 'this' is.
+ */
+function Object.load(var file, var target = this, var isSystem = System.defaultIsSystem)
+{
+  System.load(file, target, isSystem)
+};
+
+function Object.loadFile(var file, var target = this)
+{
+  System.loadFile(file, target)
+};
+
+
+do(Package.Lang)
+{
+  var nonInterruptible = System.getSlotValue("nonInterruptible");
+  var noVoidError = System.getSlotValue("noVoidError");
+  function shutdown()
+  {
+    System.shutdown;
+  };
+  var scopeTag = Tag.getSlotValue("scope");
+  //var echo = System.getSlotValue("echo");
+  var time = System.getSlotValue("time");
+  var shiftedTime = System.getSlotValue("shiftedTime");
+  var sleep = System.getSlotValue("sleep");
+  var inf = Float.inf;
+};
+

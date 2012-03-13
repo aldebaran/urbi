@@ -37,7 +37,7 @@ namespace urbi
     rObject
     resolve_namespace(std::string& name)
     {
-      rObject res = global_class;
+      rObject res = Object::package_lang_get();
       size_t dot;
       while ((dot = name.find(".")) != std::string::npos)
       {

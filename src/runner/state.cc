@@ -57,7 +57,14 @@ namespace runner
     create_scope_tag();
     apply_tag(lobby->tag_get());
     if (has_import_stack)
+    {
+      CAPTURE_GLOBAL(uobjects);
       import_stack.push_back(std::vector<rObject>());
+      import_stack.back().push_back(uobjects);
+      // Only required if we execute code without entering a scope.
+      // It seems to be possible.
+      import_stack_size.push_back(1);
+    }
   }
 
   State::State(const State& base)

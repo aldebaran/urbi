@@ -193,19 +193,19 @@ assert(myself == "myself");
   The object \emph{from which} the invocation was made (the \dfn{caller} in
   other languages).  Not to be confused with \refSlot{target}.
 \begin{urbiscript}
-function Global.getSender { call.sender } |
-function Global.callGetSender { getSender } |
+function Object.getSender { call.sender } |
+function Object.callGetSender { getSender } |
 
 assert
 {
   // Call from the current Lobby, with the Lobby as target.
   getSender === lobby;
-  // Call from the current Lobby, with Global as the target.
-  Global.getSender === lobby;
+  // Call from the current Lobby, with Object as the target.
+  Object.getSender === lobby;
   // Ask Lobby to call getSender.
   callGetSender === lobby;
   // Ask Global to call getSender.
-  Global.callGetSender === Global;
+  Object.callGetSender === Object;
 };
 \end{urbiscript}
 
@@ -215,19 +215,19 @@ assert
   object that will be bound to \this during the evaluation.  Not to be
   confused with \refSlot{sender}.
 \begin{urbiscript}
-function Global.getTarget { call.target } |
-function Global.callGetTarget { getTarget } |
+function Object.getTarget { call.target } |
+function Object.callGetTarget { getTarget } |
 
 assert
 {
   // Call from the current Lobby, with the Lobby as target.
   getTarget === lobby;
   // Call from the current Lobby, with Global as the target.
-  Global.getTarget === Global;
+  Object.getTarget === Object;
   // Ask Lobby to call getTarget.
   callGetTarget === lobby;
   // Ask Global to call getTarget.
-  Global.callGetTarget === Global;
+  Object.callGetTarget === Object;
 };
 \end{urbiscript}
 \end{urbiscriptapi}

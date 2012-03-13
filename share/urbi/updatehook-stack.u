@@ -16,7 +16,7 @@ requireFile("urbi/boolean.u");
 requireFile("urbi/channel.u");
 requireFile("urbi/control.u");
 
-function Global.UpdateHookStack (name, value)
+function Package.Lang.UpdateHookStack (name, value)
 {
   var myself = getProperty(name, "updateHook")|
   var res = value|
@@ -29,7 +29,7 @@ function Global.UpdateHookStack (name, value)
   res
 };
 
-do (getSlotValue("UpdateHookStack"))
+do (Package.Lang.getSlotValue("UpdateHookStack"))
 {
   var hooks = [];
 
@@ -44,7 +44,7 @@ do (getSlotValue("UpdateHookStack"))
   };
 };
 
-function Global.installUpdateHookStack(o, slot)
+function Package.Lang.installUpdateHookStack(o, slot)
 {
   if (o === Object)
     throw Exception.new("Cannot install updateHookStack on Object!")|

@@ -197,8 +197,8 @@ radians. For instance, \lstinline|180deg| (180 degrees) is equal to
 \end{table}
 
 \begin{urbiassert}
-pi == 180deg;
-pi == 200grad;
+Math.pi == 180deg;
+Math.pi == 200grad;
 \end{urbiassert}
 
 \subsubsection{Dictionaries}
@@ -613,7 +613,7 @@ It is guaranteed that the expressions that define the class name and its
 parents are evaluated only once.
 
 \begin{urbiscript}
-function Global.verboseId(var x)
+function verboseId(var x)
 {
   echo(x) | x
 }|;
@@ -1850,8 +1850,8 @@ enclosing scope:
 \begin{urbiscript}
 {
   var local = 0;
-  function Global.getLocal() { local };
-  function Global.setLocal(var x) { local = x };
+  function lobby.getLocal() { local };
+  function lobby.setLocal(var x) { local = x };
 }|;
 assert
 {
@@ -1874,7 +1874,7 @@ called a \dfn{delegate}, in \us use \lstindex{closure} instead of
 \begin{urbiscript}
 {
   var x = 0;
-  class Global.Foo
+  class lobby.Foo
   {
     function fun () { (++x, lobby, type) };
     closure  clo () { (++x, lobby, type) };
@@ -3674,18 +3674,18 @@ id(Tag.new):id(2);
 
 Since job control is especially useful in interactive sessions, \us provides
 \dfn{implicit tags}: unknown single identifiers auto-instantiate a fresh
-\refObject{Tag} that will be stored as a slot of \refSlot[Tag]{tags}.
+\refObject{Tag} that will be stored in Package.Lang.
 
 \begin{urbiscript}
 // t does not exist.
-assert (!hasSlot("t"));
+t.stop;
+[00000001:error] !!! lookup failed: t
 t: 1;
 [00015631] 1
 // t is created.  It is part of Tag.tags.
 assert
 {
-  hasSlot("t");
-  locateSlot("t") === Tag.tags;
+  t === Package.Lang.t
 };
 
 // Composite Tags cannot be created this way.

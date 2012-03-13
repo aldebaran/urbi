@@ -19,9 +19,9 @@ requireFile("urbi/channel.u");
 requireFile("urbi/range-iterable.u");
 requireFile("urbi/comparable.u");
 
-do (Global.Dictionary)
+do (Dictionary)
 {
-  protos = [Global.RangeIterable, Global.Comparable, Global.Container];
+  protos = [RangeIterable, Comparable, Container];
   var tree = "";
 
   class KeyError: Exception
