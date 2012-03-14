@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2011, Gostai S.A.S.
+ * Copyright (C) 2005-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -153,8 +153,7 @@ namespace urbi
     // And computing kernelMajor requires this code to be run.  So we
     // need to write something that both k1 and k2 will like.
     send(SYNCLINE_WRAP(
-           "if (isdef(Channel))\n"
-           "  var lobby.%s = Channel.new(\"%s\")|;",
+           "var lobby.%s = Channel.new(\"%s\")|;",
            internalPongTag, internalPongTag));
     // The folowwing calls may fail if we got disconnected.
     try

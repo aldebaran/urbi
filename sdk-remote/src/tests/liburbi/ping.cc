@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010, Gostai S.A.S.
+ * Copyright (C) 2009-2010, 2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -8,12 +8,13 @@
  * See the LICENSE file for more information.
  */
 
+#include <urbi/utag.hh>
 #include <bin/tests.hh>
 
 BEGIN_TEST
 client.setErrorCallback(callback(&dump));
 client.setCallback(callback(&dump), "output");
-client.setCallback(callback(&dump), "__gostai_private__internal_pong");
+client.setCallback(callback(&dump), urbi::internalPongTag);
 
 /*--------------------------------------.
 | Test from without ping to with ping.  |
@@ -88,8 +89,9 @@ dumpSem--;
 SEND("cout << \"after sleep\";");
 //= D output "after sleep"
 dumpSem--;
-
-SEND("__gostai_private__internal_pong.enabled = false;");
+std::string msg = urbi::internalPongTag;
+msg += ".enabled = false;";
+SEND(msg.c_str());
 SEND("sleep(0.1);");
 //= E client_error Lost connection with server: ping timeout
 dumpSem--;
