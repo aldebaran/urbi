@@ -178,12 +178,14 @@ namespace eval
                       boost::optional< ::ast::loc>());
   }
 
+// We must check before poping the call stack, as it is a circular
+// buffer.
 #define FINALLY_Stack(DefineOrUse)              \
     FINALLY_ ## DefineOrUse                     \
     (Stack,                                     \
       ((Job&, job))((bool, reg))                \
       ((runner::Profile::idx, profile_prev)),   \
-     if (reg)                                   \
+     if (reg && !job.state.call_stack_get().empty()) \
        job.state.call_stack_get().pop_back();   \
      if (job.is_profiling())                    \
        job.profile_leave(profile_prev);         \
