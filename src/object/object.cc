@@ -372,18 +372,13 @@ namespace urbi
             return o;
         }
 
-      // Handle const here, in order to prevent COW on const, but to
-      // allow updateHook on functions.  For instance, "protos" is a
-      // function (and therefore is defined as "const"), yet, thanks
-      // to the updateHook, "protos = [Object]" does not really make
-      // the assignment.
-      if (s && s->constant_get())
-        runner::raise_const_error();
-
       // If return-value of hook is not void, write it to slot.
       // Copy on write check
+      // Assumes copy on write is on by default.
       if (r.first == this || (s && !s->copyOnWrite_get()))
-      {
+      { // no-cow case
+        if (s && s->constant_get())
+          runner::raise_const_error();
         runner::Job* j = ::kernel::urbiserver->getCurrentRunnerOpt();
         bool d = false; // Initialize or GCC complains.
         if (j)
@@ -410,7 +405,7 @@ namespace urbi
           s->set(v, this);
       }
       else
-      {
+      {// cow case
         if (s)
         {
           // Slot present in parent, copy it.
