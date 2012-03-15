@@ -14,7 +14,7 @@
 BEGIN_TEST
 client.setErrorCallback(callback(&dump));
 client.setCallback(callback(&dump), "output");
-client.setCallback(callback(&dump), urbi::internalPongTag);
+client.setCallback(callback(&dump), urbi::internalPongTag());
 
 /*--------------------------------------.
 | Test from without ping to with ping.  |
@@ -89,7 +89,7 @@ dumpSem--;
 SEND("cout << \"after sleep\";");
 //= D output "after sleep"
 dumpSem--;
-std::string msg = urbi::internalPongTag;
+std::string msg = urbi::internalPongTag();
 msg += ".enabled = false;";
 SEND(msg.c_str());
 SEND("sleep(0.1);");

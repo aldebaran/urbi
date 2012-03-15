@@ -154,7 +154,7 @@ namespace urbi
     // need to write something that both k1 and k2 will like.
     send(SYNCLINE_WRAP(
            "var lobby.%s = Channel.new(\"%s\")|;",
-           internalPongTag, internalPongTag));
+           internalPongTag(), internalPongTag()));
     // The folowwing calls may fail if we got disconnected.
     try
     {
@@ -218,7 +218,7 @@ namespace urbi
       const char* err = "!!! Lost connection with server: ping timeout";
       // FIXME: Choose between two differents way to alert user program.
       clientError(err);
-      notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag, err));
+      notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag(), err));
       close();
     }
   }
@@ -231,7 +231,7 @@ namespace urbi
       pong_timeout_handler_ =
         libport::asyncCall(boost::bind(&UClient::pongTimeout, this, link_),
                            pong_timeout_);
-      send("%s << 1,", internalPongTag);
+      send("%s << 1,", internalPongTag());
       ping_sent_ = libport::utime();
       ping_sem_++;
     }

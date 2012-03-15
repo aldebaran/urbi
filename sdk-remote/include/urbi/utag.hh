@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2011, Gostai S.A.S.
+ * Copyright (C) 2008-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -16,11 +16,13 @@
 /// that we can easily concatenate strings at compile time.
 # define TAG_PRIVATE_PREFIX "__gostai_private__"
 
+#include <urbi/export.hh>
+
 // FIXME: The need to make these tags public is not clear.
 namespace urbi
 {
-  extern const char* connectionTimeoutTag;
-  extern const char* internalPongTag;
+  URBI_SDK_API const char* connectionTimeoutTag();
+  URBI_SDK_API const char* internalPongTag();
 
 } // namespace urbi
 
