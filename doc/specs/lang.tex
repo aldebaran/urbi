@@ -4412,21 +4412,21 @@ class Global.Foo
   function event()
   {
     var res = Event.new;
-    at sync (res?) { assert(this === Foo) | echo(1) }
-    onleave        { assert(this === Foo) | echo(2) };
+    at sync (res?) { assert(this === Global.Foo) | echo(1) }
+    onleave        { assert(this === Global.Foo) | echo(2) };
 
-    at (res?)      { assert(this === Foo) | echo(3) }
-    onleave        { assert(this === Foo) | echo(4) };
+    at (res?)      { assert(this === Global.Foo) | echo(3) }
+    onleave        { assert(this === Global.Foo) | echo(4) };
     res;
   };
 }|;
 
 class Global.Bar
 {
-  var event = Foo.event;
+  var event = Global.Foo.event;
 }|;
 
-Bar.event!;
+Global.Bar.event!;
 [00003017] *** 1
 [00003017] *** 2
 [00003017] *** 3

@@ -209,12 +209,6 @@ public:
     ++destructionCount;
   }
 
-  void
-  yield_for(double duration)
-  {
-    UContext::yield_for(duration * 1000000.0);
-  }
-
   urbi::UImage
   convert(const urbi::UImage source, const std::string& id)
   {
