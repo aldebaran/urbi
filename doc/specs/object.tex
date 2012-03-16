@@ -988,7 +988,7 @@ bot.locateSlot("x") === bot;
 \end{urbiassert}
 
   If the slot is declared constant (\autoref{sec:lang:prop:std}), updating
-  the slot is invalid, even for inherited slots.
+  the slot is invalid, but copy-on-write will work.
 
 \begin{urbiscript}
 class Top
@@ -999,22 +999,20 @@ class Top
 Top.updateSlot("x", [2]);
 [00007858:error] !!! cannot modify const slot
 
-// Cannot update inherited const slot.
+// Uupdating inherited const slot is possible.
 var bot = Top.new|;
 bot.updateSlot("x", [3]);
-[00007872:error] !!! cannot modify const slot
+[00007872] [3]
 \end{urbiscript}
 
   The constant property prevents the slot from being assigned a new value,
   it does not forbid mutable values from being modified.
 
 \begin{urbiscript}
-bot.x << 2|;
+Top.x << 2|;
 assert
 {
-  // The slot is still inherited.
-  bot.locateSlot("x") === Top;
-  // and its associated value is updated.
+  // The associated value is updated.
   Top.x == [1, 2];
 };
 \end{urbiscript}
