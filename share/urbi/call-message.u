@@ -11,7 +11,7 @@
 requireFile("urbi/global.u");
 requireFile("urbi/object.u");
 
-class Package.Lang.CallMessage
+package lang.CallMessage
 {
   // Non-evaluated target
   var targetLazy;

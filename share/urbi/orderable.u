@@ -10,7 +10,7 @@
 
 requireFile("urbi/global.u");
 
-class Package.Lang.Orderable
+package lang.Orderable
 {
   // Each operator points to the following one, so that defining one
   // suffices.

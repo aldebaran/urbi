@@ -16,7 +16,7 @@ requireFile("urbi/singleton.u");
 requireFile("urbi/control.u");
 requireFile("urbi/float.u");
 
-class Package.Lang.Math
+package lang.Math
 {
   setProtos([Singleton]);
 

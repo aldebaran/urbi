@@ -276,14 +276,25 @@ namespace rewrite
     // the protos will be looked for in the context of the newly
     // created object.
     PARAMETRIC_AST
-      (desugar,
+      (desugarClass,
        "const var %lvalue:1 =\n"
        "  do (Object.'class'(%exp:2, %exp:3))\n"
        "  {\n"
        "    %exp:4\n"
        "  }\n"
        );
-
+    PARAMETRIC_AST
+      (desugarPackage,
+       "do('package')\n"
+       "{\n"
+       "const var %lvalue:1 =\n"
+       "  do (Object.'class'(%exp:2, %exp:3))\n"
+       "  {\n"
+       "    %exp:4\n"
+       "  }\n"
+       "}\n"
+       );
+    ast::ParameterizedAst& desugar = c->is_package_get()?desugarPackage:desugarClass;
     desugar % what
       % factory_->make_string(l, name)
       % factory_->make_list(l, maybe_recurse_collection(c->protos_get()))

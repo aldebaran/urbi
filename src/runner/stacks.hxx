@@ -155,10 +155,17 @@ namespace runner
       }
       current_frame_.first = &toplevel_stack_[0];
     }
-
-    rSlot slot = new Slot(v);
-    slot->constant_set(constant);
-    def(e->local_index_get() + 2, false, slot);
+    if (e->is_import_get())
+    {
+      assert(v->as<Slot>());
+      def(e->local_index_get() + 2, false, v->as<Slot>());
+    }
+    else
+    {
+      rSlot slot = new Slot(v);
+      slot->constant_set(constant);
+      def(e->local_index_get() + 2, false, slot);
+    }
   }
 
   LIBPORT_SPEED_ALWAYS_INLINE

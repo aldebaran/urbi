@@ -340,6 +340,8 @@ namespace urbi
       rObject getSlot(key_type k);
       // Convenience overload because Symbols don't cast to strings.
       rObject getSlot(const std::string& k);
+      /// Reproduce the lookup algorithm in the implicit target case.
+      rSlot findSlot(const std::string& k);
       /// Return the associated value.
       /// \throw Exception.Lookup if not available locally.
       rObject getLocalSlotValue(key_type k);

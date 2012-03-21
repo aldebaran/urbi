@@ -350,6 +350,7 @@ namespace urbi
       DECLARE(callMessage        , object_class_callMessage);
       // DECLARE(changed            , &Object::changed_get);
       DECLARE(createSlot         , &Object::urbi_createSlot);
+      DECLARE(findSlot           , &Object::findSlot);
       DECLARE(getLocalSlot       , &Object::getLocalSlot);
       DECLARE(getLocalSlotValue  , &Object::getLocalSlotValue);
       DECLARE(getProperty        , &Object::property_get);

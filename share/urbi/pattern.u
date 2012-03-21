@@ -15,7 +15,7 @@ requireFile("urbi/global.u");
 requireFile("urbi/boolean.u");
 requireFile("urbi/control.u");
 
-class Package.Lang.Pattern
+package lang.Pattern
 {
   var pattern;
   var bindings = [ => ];

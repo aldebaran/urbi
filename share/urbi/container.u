@@ -10,7 +10,7 @@
 
 requireFile("urbi/global.u");
 
-class Package.Lang.Container
+package lang.Container
 {
   function has(var e) { ! hasNot(e) };
   function hasNot(var e) { ! has(e) };

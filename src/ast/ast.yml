@@ -1079,6 +1079,16 @@ LocalDeclaration:
         type: bool
         access: rW
         init: "false"
+    - is_import:
+        desc: Wheter this local declaration is an import
+        type: bool
+        access: rW
+        init: "false"
+    - is_star:
+        desc: Wheter this local declaration is a star import
+        type: bool
+        access: rW
+        init: "false"
   printer:
     - '{
          if (n->constant_get())
@@ -1328,6 +1338,11 @@ Class:
     - content:
         type: rExp
         desc: Class content
+    - is_package:
+        type: bool
+        desc: Is this a class or a package.
+        default: "false"
+        access: rW
   printer:
     - '"class "'
     - ~what

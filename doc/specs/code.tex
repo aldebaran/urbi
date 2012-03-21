@@ -23,8 +23,8 @@ The keywords \lstinline|function| and \lstinline|closure| build Code
 instances.
 
 \begin{urbiassert}
-function(){}.protos[0] === Package.Lang.getSlotValue("Code");
-closure (){}.protos[0] === Package.Lang.getSlotValue("Code");
+function(){}.protos[0] === 'package'.lang.getSlotValue("Code");
+closure (){}.protos[0] === 'package'.lang.getSlotValue("Code");
 \end{urbiassert}
 
 \subsection{Slots}

@@ -3674,7 +3674,7 @@ id(Tag.new):id(2);
 
 Since job control is especially useful in interactive sessions, \us provides
 \dfn{implicit tags}: unknown single identifiers auto-instantiate a fresh
-\refObject{Tag} that will be stored in Package.Lang.
+\refObject{Tag} that will be stored in package.lang.
 
 \begin{urbiscript}
 // t does not exist.
@@ -3685,7 +3685,7 @@ t: 1;
 // t is created.  It is part of Tag.tags.
 assert
 {
-  t === Package.Lang.t
+  t === 'package'.lang.t
 };
 
 // Composite Tags cannot be created this way.

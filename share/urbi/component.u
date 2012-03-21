@@ -9,10 +9,10 @@
  */
 
 {
-import gsrapi;
+import gsrapi.*;
 /** Localization class.
  */
-class Package.gsrapi.Localization {} | do (Localization)
+package gsrapi.Localization {} | do (Localization)
 {
   protos.insertFront(Container);
   function makeEnum
@@ -68,7 +68,7 @@ class Package.gsrapi.Localization {} | do (Localization)
  *   robot.arm[left].addComponent("shoulder");
  *   robot.arm[left].addDevice("arm", MyMotor.new);
  */
-var Package.gsrapi.Localizer = Group.new | do (Package.gsrapi.Localizer)
+var 'package'.gsrapi.Localizer = Group.new | do ('package'.gsrapi.Localizer)
 {
   var type = "Localizer";
   var dict = [=>];
@@ -165,7 +165,7 @@ var Package.gsrapi.Localizer = Group.new | do (Package.gsrapi.Localizer)
  *  The dump() and flatDump() can be used to dump all the components in a
  *  hierarchy, and show the Facets they implement.
  */
-class Package.gsrapi.Component
+package gsrapi.Component
 {
   function clone()
   {

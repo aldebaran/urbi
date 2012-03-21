@@ -13,8 +13,8 @@
 
 // We cannot use the "class Global.UObject: Finalizable" syntax here,
 // because of specific constraints of Finalizable.
-var Package.Lang.UObject = Finalizable.new;
-var Package.Lang.UVar = Slot;
+var 'package'.lang.UObject = Finalizable.new;
+var 'package'.lang.UVar = Slot;
 do (UObject)
 {
   function uvalueSerialize()
@@ -300,7 +300,7 @@ do (UObject)
 };
 
 // All UVars accessed from remote objects are stored there also.
-class Package.Lang.VAR
+package lang.VAR
 {
 };
 
@@ -658,7 +658,7 @@ do (UValue)
   var asPrintable = getSlotValue("asTopLevelPrintable");
 };
 
-class Package.Lang.getUObject {
+package lang.getUObject {
   function fallback()
   {
     uobjects.findUObject(call.message)
@@ -710,7 +710,7 @@ Global.&currentRunnerInUObjectUpdate.get = function()
 | Global.external.  |
 `------------------*/
 
-class Package.Lang.'external'
+package lang.'external'
 {
   function logger()
   {
@@ -1196,7 +1196,7 @@ function uobjects.resetConnectionStats()
  * You can set 'uvalueSerializeSlots' to fix the names of the slots that must
  * be serialized.
  */
-class Package.Lang.UValueSerializable
+package lang.UValueSerializable
 {
   var uvalueSerializeSlots = nil;
   function uvalueSerialize()
@@ -1240,4 +1240,4 @@ function Dictionary.uvalueSerialize()
 };
 
 // Store serializable objects here.
-class Package.Lang.Serializables {};
+package lang.Serializables {};

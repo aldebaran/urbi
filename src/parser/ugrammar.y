@@ -447,9 +447,21 @@ protos:
 exp:
   "class" lvalue protos block
     {
-      $$ = MAKE(class, @$, $2, $3, $4);
+      $$ = MAKE(class, @$, $2, $3, $4, false);
     }
 ;
+
+
+%token PACKAGE "package";
+exp:
+  "package" lvalue protos block
+    {
+      ast::rClass c = MAKE(class, @$, $2, $3, $4, true).unsafe_cast<ast::Class>();
+      c->is_package_set(true);
+      $$ = c;
+    }
+;
+
 
 /*-------.
 | Enum.  |
@@ -524,12 +536,43 @@ stmt:
 
 %token IMPORT "import";
 
+
 stmt:
-  "import" exp[what]
+  "import" lvalue[what]
+  {
+    ast::rExp e = $what;
+    ast::rCall c = $what.unsafe_cast<ast::Call>();
+    libport::Symbol s = c->name_get();
+    bool isStar = (s==SYMBOL(STAR));
+    if (isStar)
+    {
+      e = c->target_get();
+      // s is irrelevant in that case
+    }
+    else
+    { // We must replace last call with a getslot
+      ast::rExp tgt = c->target_get();
+      if (c->target_implicit())
+        e = MAKE(call, @$, c->target_get(), SYMBOL(findSlot),
+          MAKE(string, @$, s));
+      else
+        e = MAKE(get_slot, @$, tgt, s);
+    }
+    ast::LocalDeclaration* ae
+      = new ast::LocalDeclaration(@$, s, e);
+    ae->is_star_set(isStar);
+    ae->is_import_set(true);
+    $$ = ae;
+  }
+;
+
+/*
+stmt:
+  "import" lvalue[what] "." "*"
   {
     $$ = new ast::LocalDeclaration(@$, SYMBOL(DOLLAR_IMPORT), $what);
   }
-;
+;*/
 
 /*---------.
 | Events.  |
@@ -946,6 +989,7 @@ primary-exp:
 lvalue:
                   id   { $$ = MAKE(call, @$, $1); }
 | primary-exp "." id   { $$ = MAKE(call, @$, $1, $3); }
+| primary-exp "." "*"  { $$ = MAKE(call, @$, $1, $3); }
 ;
 
 primary-exp:

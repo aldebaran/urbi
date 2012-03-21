@@ -175,7 +175,7 @@ do (Lobby)
 
 };
 
-function Package.Lang.lobby()
+function 'package'.lang.lobby()
 {
   Lobby.lobby
 };

@@ -21,7 +21,7 @@ requireFile("urbi/lazy.u");
 | Channel.  |
 `----------*/
 
-class Package.Lang.Channel
+package lang.Channel
 {
   /// Display nothing if false.
   var enabled = true;
@@ -100,12 +100,12 @@ class Channel.Filter: Channel
     // Some of these slots do not exist at function definition time.
     ["Float", "String", "List", "Dictionary", "Binary", "UValue", "Tuple",
     "nil"]
-    .map(function(x) { Package.Lang.getSlotValue(x)})
+    .map(function(x) { 'package'.lang.getSlotValue(x)})
   };
 };
 
 // Default channels.
-do (Package.Lang)
+do ('package'.lang)
 {
   var cout = Channel.new("output");
   var cerr = Channel.new("error");

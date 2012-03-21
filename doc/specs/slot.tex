@@ -314,7 +314,7 @@ var Global.access = 0|
 var accessHandle = Global.&access.notifyAccess(closure() {
   Global.access = ++Global.counter
 })|
-import Global |
+import Global.*;
 assert
 {
   access == 1;

@@ -129,6 +129,13 @@ namespace eval
   strict_args(Job& job,
               object::objects_type& args,
               const ::ast::exps_type& exp_args);
+
+  /** Lookup a symbol on the import stack, throw if not found.
+  @param target will be set to the correct target if found.
+  */
+  std::pair<object::Object*, object::rObject>
+  import_stack_lookup(const runner::State& state,
+    libport::Symbol s, rObject& target, bool throwOnError = true);
 } // namespace eval
 
 # if defined LIBPORT_COMPILATION_MODE_SPEED

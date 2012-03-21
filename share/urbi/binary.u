@@ -16,7 +16,7 @@ requireFile("urbi/boolean.u");
 requireFile("urbi/comparable.u");
 requireFile("urbi/control.u");
 
-class Package.Lang.Binary
+package lang.Binary
 {
   addProto(Comparable);
   removeProto(Object);

@@ -170,7 +170,7 @@ do (System)
   };
 
   // Look for file, and load it if found.
-  function Package.Lang.maybeLoad(var file, var channel = clog)
+  function 'package'.lang.maybeLoad(var file, var channel = clog)
   {
     var path = nil |
     try
@@ -247,8 +247,8 @@ do (System)
   }|;
 };
 
-/** Since file is loaded on 'this' by default, we cannot put load in Package.Lang, or
- * the lookup will retarget the call to 'Package.Lang' whatever 'this' is.
+/** Since file is loaded on 'this' by default, we cannot put load in 'package'.lang, or
+ * the lookup will retarget the call to ''package'.lang' whatever 'this' is.
  */
 function Object.load(var file, var target = this, var isSystem = System.defaultIsSystem)
 {
@@ -261,7 +261,7 @@ function Object.loadFile(var file, var target = this)
 };
 
 
-do(Package.Lang)
+do('package'.lang)
 {
   var nonInterruptible = System.getSlotValue("nonInterruptible");
   var noVoidError = System.getSlotValue("noVoidError");

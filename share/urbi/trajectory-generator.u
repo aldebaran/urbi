@@ -24,9 +24,9 @@ System.requireFile("urbi/float.u");
 /*----------------------.
 | TrajectoryGenerator.  |
 `----------------------*/
-class Package.Lang.TrajectoryGenerator
+package lang.TrajectoryGenerator
 {
-  import Math;
+  import Math.*;
   var 'pi/2' = Math.pi / 2;
 
   // Initialization: Instantiate one of the sub classes.
@@ -210,7 +210,7 @@ class TrajectoryGenerator.OpenLoop : TrajectoryGenerator
 
 class TrajectoryGenerator.Accel : TrajectoryGenerator.OpenLoop
 {
-  import Math;
+  import Math.*;
   function init(args)
   {
     var this.accel = args["accel"] |
@@ -241,7 +241,7 @@ class TrajectoryGenerator.Accel : TrajectoryGenerator.OpenLoop
 
 class TrajectoryGenerator.Sin : TrajectoryGenerator.OpenLoop
 {
-  import Math;
+  import Math.*;
   function init(args)
   {
     var this.phase = args.getWithDefault("phase", 0) |
@@ -258,7 +258,7 @@ class TrajectoryGenerator.Sin : TrajectoryGenerator.OpenLoop
 
 class TrajectoryGenerator.Smooth : TrajectoryGenerator.OpenLoop
 {
-  import Math;
+  import Math.*;
   function init(args)
   {
     var this.duration = args["smooth"] |
@@ -283,7 +283,7 @@ class TrajectoryGenerator.Smooth : TrajectoryGenerator.OpenLoop
 
 class TrajectoryGenerator.Time : TrajectoryGenerator.OpenLoop
 {
-  import Math;
+  import Math.*;
   function init(args)
   {
   };
@@ -324,7 +324,7 @@ class TrajectoryGenerator.Time : TrajectoryGenerator.OpenLoop
 // the current value to compute the new one.
 class TrajectoryGenerator.ClosedLoop : TrajectoryGenerator
 {
-  import Math;
+  import Math.*;
   /// Stop adaptive trajectory if error is below this value.
   var delta = 0;
   var lastVal;

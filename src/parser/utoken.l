@@ -462,6 +462,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "new"           RETURN_SYMBOL(NEW);
   /*>no-space>*/
 "onleave"       RETURN(ONLEAVE);
+"package"       RETURN(PACKAGE);
 "return"        RETURN(RETURN);
 "stopif"        RETURN(STOPIF);
 "switch"        RETURN(SWITCH);

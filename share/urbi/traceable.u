@@ -10,7 +10,7 @@
 
 requireFile("urbi/global.u");
 
-class Package.Lang.Traceable
+package lang.Traceable
 {
   var hideSystemFiles = true;
 

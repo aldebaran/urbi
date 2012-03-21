@@ -177,7 +177,7 @@ namespace ast
     rExp
     make_class(const location& l,
                rLValue lvalue,
-               exps_type* protos, rExp block) /* const */;
+               exps_type* protos, rExp block, bool package) /* const */;
 
 
     /// closure () { <value> }

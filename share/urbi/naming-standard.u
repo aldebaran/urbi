@@ -11,9 +11,9 @@
 
 /** Urbi Naming Standard infrastructure classes **/
 
-do (Package.gsrapi)
+do ('package'.gsrapi)
 {
-  import this;
+  import this.*;
   /// Implementations of a Facet must inherit from the appropriate class.
   class Interface {
     var componentName;

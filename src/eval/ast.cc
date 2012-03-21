@@ -513,10 +513,12 @@ namespace eval
   {
     ast::rExp v = d->value_get();
     rObject res;
-    if (d->what_get() == SYMBOL(DOLLAR_IMPORT))
+    if (d->is_import_get())
     {
       // Desugar phase detected that we had an import, and allocated an
       // import stack for us.
+      // If non star, this is not an import but a local variable, but we still
+      // need an import stack
       assert(!this_.state.import_stack.empty());
       assert(!this_.state.import_stack_size.empty());
       // We want to lookup import expression in package.
@@ -528,12 +530,6 @@ namespace eval
       this_.state.import_stack.back().push_back(
         object::Object::package_root_get());
       this_.state.import_stack_size.back()++;
-      /*
-      rObject othis = this_.state.this_get();
-      FINALLY(((rObject, othis))((Job&, this_)),
-        this_.state.this_set(othis));
-      this_.state.this_set( object::Object::package_root_get());
-      */
       if (!v)
         FRAISE("Missing import argument");
       res = ast(this_, v.get());
@@ -541,10 +537,16 @@ namespace eval
       // Import stack depth should not have changed
       assert(this_.state.import_stack.size() == check_sz);
       (void)check_sz;
-      // So, uber-trick, replace our temporary Package we inserted in imports
-      // with the result
-      this_.state.import_stack.back()[p] = res;
-      res = object::void_class; // value of import statement is void
+      if (d->is_star_get())
+      {
+        // So, uber-trick, replace our temporary Package we inserted in imports
+        // with the result
+        this_.state.import_stack.back()[p] = res;
+        res = object::void_class; // value of import statement is void
+      }
+      else // local variable
+        this_.state.def(d, res, d->constant_get());
+      res = object::void_class;
     }
     else
     {

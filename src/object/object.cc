@@ -942,6 +942,29 @@ namespace urbi
       return slot_update(name, value);
     }
 
+    rSlot
+    Object::findSlot(const std::string& str)
+    {
+      libport::Symbol k(str);
+      object::Object::location_type loc;
+      loc = slot_locate(k, false);
+      rObject tgt(this);
+      if (!loc.first)
+        loc = eval::import_stack_lookup(
+          ::kernel::urbiserver->getCurrentRunner().state,
+          k, tgt, false);
+      if (!loc.first)
+        loc = slot_locate(k, true);
+      if (!loc.first)
+        runner::raise_lookup_error(k, this);
+      if (rSlot s = loc.second->as<Slot>())
+        return s;
+      // Convert it to a slot.
+      rSlot s(new Slot(loc.second));
+      slots_.set(loc.first, k, s, true);
+      return s;
+    }
+
     rObject
     Object::asPrintable() const
     {
@@ -1083,9 +1106,9 @@ namespace urbi
       if (!res)
       {
         res = Object::proto->clone();
-        res->slot_set_value(SYMBOL(Package), res);
-        res->slot_set_value(SYMBOL(Lang), Object::proto->clone());
-        Object::proto->slot_set_value(SYMBOL(Package), res);
+        res->slot_set_value(SYMBOL(package), res);
+        res->slot_set_value(SYMBOL(lang), Object::proto->clone());
+        //Object::proto->slot_set_value(SYMBOL(Package), res);
       }
       return res;
     }
@@ -1096,7 +1119,8 @@ namespace urbi
       static rObject res = 0;
       if (!res)
       {
-        res = package_root_get()->slot_get_value(SYMBOL(Lang));
+        res = package_root_get()->slot_get_value(SYMBOL(lang));
+        res->slot_set_value(SYMBOL(package), package_root_get());
       }
       return res;
     }

@@ -14,7 +14,7 @@ requireFile("urbi/global.u");
 requireFile("urbi/channel.u");
 requireFile("urbi/control.u");
 
-class Package.Lang.StackFrame
+package lang.StackFrame
 {
   var name = nil;
   var location = nil;

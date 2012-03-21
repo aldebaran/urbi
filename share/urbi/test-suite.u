@@ -19,12 +19,12 @@ System.assertVerbose = true|;
 Exception.Lookup.fixSpelling = false|;
 
 // Many tests were written before the import age.
-import System;
+import System.*;
 
 /*---------.
 | camera.  |
 `---------*/
-class Package.Lang.camera: Package.gsrapi.Loadable
+package lang.camera: 'package'.gsrapi.Loadable
 {
   UVar.new(this, "val");
   // In order to avoid the "unexpected void" messages if we forget to
@@ -73,7 +73,7 @@ class Package.Lang.camera: Package.gsrapi.Loadable
 | Global.  |
 `---------*/
 
-do (Package.Lang)
+do ('package'.lang)
 {
   // A channel for synclines.
   var syncline = Channel.new("#")|;
@@ -160,7 +160,7 @@ do (Package.Lang)
 
   function skipIfUrbi2 ()
   {
-    if (PackageInfo.components["Urbi SDK"].versionValue <= 2008000)
+    if (PackageInfo.components["Urbi SDK"].versionValue <= 2007000)
       testSkip("requires Urbi 3");
   }|;
 
@@ -499,7 +499,7 @@ do (System)
 // Keep sync with urbivalid/test.u.
 if (System.Platform.isWindows)
 {
-  class Package.Lang.Process
+  package lang.Process
   {
     function init(var args[])
     {

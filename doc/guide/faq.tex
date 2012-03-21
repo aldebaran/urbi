@@ -734,21 +734,22 @@ fashion. This is for instance what is done for mathematical constants:
 
 \begin{urbiscript}
 // Store all constants here
-class Constants
+package lang.Constants
 {
   var Pi = 3.14;
   var Euler = 2.17;
   var One = 1;
   // ...
 }|;
-// Make them global by making them accessible from Package.Lang.
-var Package.Lang.Constants = Constants|;
 // Test it.
 Constants.Pi;
 [00000000] 3.14
 function Object.testPi() { echo(Constants.Pi) }|;
 42.testPi;
 [00000000] *** 3.14
+import Constants.*;
+Pi;
+[00000000] 3.14
 \end{urbiscript}
 
 \subsubsection{How do I add a new slot in an object?}

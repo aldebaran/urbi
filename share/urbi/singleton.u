@@ -14,7 +14,7 @@ requireFile("urbi/global.u");
 | Singleton.  |
 `------------*/
 
-class Package.Lang.Singleton
+package lang.Singleton
 {
   function clone() { this };
   function 'new'(var args[]) { this };

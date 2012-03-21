@@ -558,9 +558,9 @@ namespace ast
   rExp
   Factory::make_class(const location& l,
                       rLValue lvalue,
-                      exps_type* protos, rExp block) /* const */
+                      exps_type* protos, rExp block, bool package) /* const */
   {
-    return new Class(l, lvalue, protos, block);
+    return new Class(l, lvalue, protos, block, package);
   }
 
   rExp
