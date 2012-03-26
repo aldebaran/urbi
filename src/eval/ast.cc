@@ -674,29 +674,7 @@ namespace eval
                       e->name_get(), e->arguments_get(),
                       e->location_get());
     else
-    {
-      if (this_.dependencies_log_get())
-      {
-        try
-        {
-          this_.dependencies_log_set(false);
-          GD_CATEGORY(Urbi.At);
-          GD_FPUSH_DEBUG("Register local variable '%s' for at monitoring",
-                         e->name_get());
-          object::Event* evt = static_cast<object::Event*>
-            (slot->property_get(SYMBOL(changed)).get());
-          this_.dependencies_log_set(true);
-          this_.dependency_add(evt);
-        }
-        catch (...)
-        {
-          this_.dependencies_log_set(true);
-          throw;
-        }
-      }
-
       return value;
-    }
   }
 
 
