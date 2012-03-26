@@ -153,7 +153,8 @@ namespace urbi
         // for next emit.
         GD_INFO_TRACE("No more subscribers, calling unsubscribed");
         e->callbacks_.clear();
-        e->unsubscribed_();
+        if (e->unsubscribed)
+          e->unsubscribed();
       }
     }
 

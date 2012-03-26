@@ -82,29 +82,8 @@ namespace urbi
 
     Event::~Event()
     {
-      destructed_();
-    }
-
-    /*------------.
-    | Callbacks.  |
-    `------------*/
-
-    Event::signal_type&
-    Event::destructed_get()
-    {
-      return destructed_;
-    }
-
-    Event::signal_type&
-    Event::subscribed_get()
-    {
-      return subscribed_;
-    }
-
-    Event::signal_type&
-    Event::unsubscribed_get()
-    {
-      return unsubscribed_;
+      if (destructed)
+        destructed();
     }
 
     void
@@ -177,7 +156,8 @@ namespace urbi
           *active << EventHandler::stop_job_type(sub, args, true);
         active->trigger_job(sub, args, true);
       }
-      subscribed_();
+      if (subscribed)
+        subscribed();
     }
 
     void
@@ -269,7 +249,8 @@ namespace urbi
       if (!empty && callbacks_.empty())
       {
         GD_INFO_TRACE("No more subscribers, calling unsubscribed");
-        unsubscribed_();
+        if (unsubscribed)
+          unsubscribed();
       }
       GD_FINFO_TRACE("%s subscribers after cleanup", callbacks_.size());
       for (unsigned i = 0; i < cbcopy.size(); ++i)

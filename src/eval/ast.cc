@@ -407,10 +407,10 @@ namespace eval
     GD_FPUSH_TRACE("Create watch event: %s : %s", code->body_string(), res); \
     WatchEventData* data = new WatchEventData(res, code);               \
     data->profile = this_.profile_get();                                \
-    res->destructed_get().connect(boost::bind(&watch_stop, data));      \
+    res->destructed = boost::bind(&watch_stop, data);  \
     /* Maintain that event alive as long as it is subscribed to. */     \
-    res->subscribed_get().connect(boost::bind(watch_ward, data));       \
-    res->unsubscribed_get().connect(boost::bind(watch_unward, data));   \
+    res->subscribed = boost::bind(watch_ward, data);       \
+    res->unsubscribed = boost::bind(watch_unward, data);   \
     /* Test it a first time. */                                         \
     Fun(data);                                                          \
                                                                         \

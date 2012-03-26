@@ -36,13 +36,7 @@ namespace urbi
       virtual ~Event();
 
     public:
-      typedef boost::signal0<void> signal_type;
-      signal_type& destructed_get();
-      signal_type& subscribed_get();
-      signal_type& unsubscribed_get();
-      ATTRIBUTE_R(signal_type, destructed);
-      ATTRIBUTE_R(signal_type, subscribed);
-      ATTRIBUTE_R(signal_type, unsubscribed);
+      boost::function0<void> destructed, subscribed, unsubscribed;
 
     public:
       typedef Subscription::callback_type callback_type;
