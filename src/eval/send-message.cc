@@ -13,6 +13,8 @@
  ** \brief Definition of eval::send_message.
  */
 
+#include <runner/job.hh>
+
 #include <eval/send-message.hh>
 #include <libport/format.hh>
 #include <libport/debug.hh>

@@ -10,6 +10,8 @@
 
 #include <libport/containers.hh>
 
+#include <runner/job.hh>
+
 #include <urbi/kernel/userver.hh>
 #include <runner/exception.hh>
 #include <urbi/runner/raise.hh>

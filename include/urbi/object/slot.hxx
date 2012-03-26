@@ -15,6 +15,8 @@
 # include <urbi/object/cxx-conversions.hh>
 # include <urbi/runner/raise.hh>
 
+# include <runner/job.hh>
+
 namespace urbi
 {
   namespace object
@@ -23,6 +25,7 @@ namespace urbi
     Slot::Slot()
       : constant_(false)
       , copyOnWrite_(true)
+      , has_uvalue_(false)
       , value_(object::void_class)
     {
       Ward w(this);
@@ -86,6 +89,23 @@ namespace urbi
     Slot::constant() const
     {
       return constant_;
+    }
+
+    inline
+    rObject
+    Slot::value(Object* sender, bool fromUObject) const
+    {
+      if (runner::Job* r =
+        ::kernel::urbiserver->getCurrentRunnerOpt())
+      {
+        if (r->dependencies_log_get())
+          r->dependency_add(const_cast<Slot*>(this)->changed());
+      }
+       //URBI_AT_HOOK_(const_cast<Slot*>(this)->changed);
+       if ( (sender && oget_) || get_ || has_uvalue_)
+         return value_special(sender, fromUObject);
+       else
+         return split_ ? output_value_ : value_;
     }
   }
 }

@@ -13,6 +13,7 @@
  ** \brief Definition of runner::Job.
  */
 
+#include <urbi/object/slot.hh>
 #ifndef RUNNER_JOB_HH
 # define RUNNER_JOB_HH
 
@@ -207,9 +208,9 @@ namespace runner
     void profile_join(Job& child);
 
     ///
-    Profile::idx profile_enter(Object* function, libport::Symbol msg);
+    Object* profile_enter(Object* function, libport::Symbol msg);
     ///
-    void profile_leave(Profile::idx idx);
+    void profile_leave(Object* idx);
 
     /// Wheter there is a profiling in run.
     bool is_profiling() const;
@@ -234,6 +235,7 @@ namespace runner
     bool dependencies_log_get() const;
     void dependencies_log_set(bool val);
     void dependency_add(object::rEvent evt);
+    void dependency_add(object::rObject evt);
     void dependencies_clear();
   protected:
     bool dependencies_log_;

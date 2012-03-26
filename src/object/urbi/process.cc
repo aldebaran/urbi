@@ -25,8 +25,8 @@
 #include <libport/thread.hh>
 #include <libport/unistd.h>
 
-#include <urbi/object/job.hh>
 #include <runner/job.hh>
+#include <urbi/object/job.hh>
 
 #include <object/urbi/input-stream.hh>
 #include <object/urbi/output-stream.hh>

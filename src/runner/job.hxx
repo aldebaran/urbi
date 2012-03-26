@@ -188,6 +188,14 @@ namespace runner
       dependencies_.insert(evt);
   }
 
+  LIBPORT_SPEED_INLINE void
+  Job::dependency_add(object::rObject evt)
+  {
+    assert(evt);
+    if (dependencies_log_)
+      dependencies_.insert(evt->as<object::Event>());
+  }
+
   LIBPORT_SPEED_ALWAYS_INLINE
   void
   Job::dependencies_clear()

@@ -11,6 +11,8 @@
 #include <libport/utime.hh>
 #include <libport/finally.hh>
 
+#include <runner/job.hh>
+
 #include <object/profile.hh>
 #include <urbi/object/global.hh>
 #include <urbi/object/slot.hh>

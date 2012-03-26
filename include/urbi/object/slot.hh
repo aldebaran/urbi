@@ -125,6 +125,9 @@ namespace urbi
        // Read input val in split mode.
        rObject get_input_value();
     protected:
+      // Get value, when getter or a uvalue is present.
+      rObject value_special(Object* sender = 0, bool fromUObject = false) const;
+
       // Changed event, created on demand.
       ATTRIBUTE_RW(rObject, changed);
 
@@ -142,6 +145,8 @@ namespace urbi
       ATTRIBUTE_RW(std::vector<void*>, in_setter);
       // Enable rtp mode
       ATTRIBUTE_R(bool, rtp);
+      // True if content is a uvalue
+      ATTRIBUTE_RW(bool, has_uvalue);
       void rtp_set(bool v);
 
       /*------------.

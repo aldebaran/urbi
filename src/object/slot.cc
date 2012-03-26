@@ -134,6 +134,7 @@ namespace urbi
       GD_FINFO_DUMP("Slot::set, slot %s, sender %s, oset %s",
         this, sender, !!oset_);
       timestamp_ = timestamp / 1000000.0;
+      has_uvalue_ = false;
       // Apply rangemax/rangemin for float and encapsulated float
       // Do not bother with UValue for numeric types.
       if (rUValue uval = value->as<UValue>())
@@ -144,6 +145,8 @@ namespace urbi
           f = std::min(rangemax_, std::max(f, rangemin_));
           value = to_urbi(f);
         }
+        else
+          has_uvalue_ = true;
       }
       else if (rFloat vf = value->as<Float>())
       {
@@ -194,6 +197,7 @@ namespace urbi
       GD_FINFO_DUMP("Slot::set_output_value, slot %s, val %s changed %s ",
                     this, v, changed_);
       output_value_ = v;
+      has_uvalue_ = v->as<UValue>();
       check_waiters();
       // Both optim and let us run the init phase with no runner.
       if (!changed_)
@@ -296,6 +300,7 @@ namespace urbi
 
     Slot::Slot(const Slot& model)
       : CxxObject()
+      , has_uvalue_(false)
     {
       //std::cerr <<"slot copy " << &model <<" -> " << this
       //<< " oset " << model.oset_ << std::endl;
@@ -310,9 +315,8 @@ namespace urbi
     }
 
     rObject
-    Slot::value(Object* sender, bool fromUObject) const
+    Slot::value_special(Object* sender, bool fromUObject) const
     {
-      URBI_AT_HOOK_(const_cast<Slot*>(this)->changed);
       if (in_getter_ > 3)
       {
         // Some level of reentrency is possible when using a getter that writes
@@ -521,6 +525,7 @@ namespace urbi
       init();
       if (val)
         value_ = val;
+      has_uvalue_ = val?(bool)val->as<UValue>():false;
     }
 
     const size_t Slot::allocator_static_max_size = sizeof(Slot);

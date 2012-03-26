@@ -10,6 +10,8 @@
 
 #include <libport/foreach.hh>
 
+#include <runner/job.hh>
+
 #include <object/profile.hh>
 
 namespace urbi
