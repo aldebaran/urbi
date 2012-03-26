@@ -35,11 +35,11 @@ namespace eval
   /// and should be avoided. You should prefer adding an rObject result to
   /// the function and make it accept a Job& as argument in order to
   /// create an Action out of it.
-  Action  exec(boost::function0<void> e,
+  Action  exec(const boost::function0<void>& e,
                rObject self);
 
   rObject exec(Job& job,
-               boost::function0<void> e,
+               const boost::function0<void>& e,
                rObject self);
 
 } // namespace eval

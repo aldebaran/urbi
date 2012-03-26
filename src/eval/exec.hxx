@@ -42,18 +42,19 @@ namespace eval
   }
 
   inline
-  Action  exec(boost::function0<void> e,
+  Action  exec(const boost::function0<void>& e,
                rObject self)
   {
     typedef rObject (*fun_t)(Job& job,
-                             boost::function0<void> e,
+                             const boost::function0<void>& e,
                              rObject self);
+    // Note: e is copied here, on purpose.
     return boost::bind((fun_t) &exec, _1, e, self);
   }
 
   inline
   rObject exec(Job& job,
-               boost::function0<void> e,
+               const boost::function0<void>& e,
                rObject self)
   {
     job.state.this_set(self);
