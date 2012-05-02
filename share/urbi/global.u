@@ -7,8 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
-//fixme 
-//remove all that
+
 do (Global)
 {
   // Import the primitives.

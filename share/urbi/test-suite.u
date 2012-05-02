@@ -407,7 +407,7 @@ do (System)
           l[1]
           .split(" ", 1024, false, false)
           .map(closure (v) { try { v.asFloat() } catch (var e) { v } })
-      } 
+      }
       catch (var e)
       {
         d[l[0]] = l[1]
