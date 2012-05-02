@@ -18,6 +18,8 @@
 
 #include <runner/job.hh>
 
+#include <eval/send-message.hh>
+
 namespace urbi
 {
   namespace object
@@ -215,11 +217,34 @@ namespace urbi
     size_t
     Socket::onRead(const void* data, size_t length)
     {
+      bool mustExit = false;
       std::string str(reinterpret_cast<const char*>(data), length);
-      if (slot_has(SYMBOL(receive)))
-        call(SYMBOL(receive), to_urbi(str));
-      else
-        EMIT1(received, str);
+      try
+      {
+        if (slot_has(SYMBOL(receive)))
+          call(SYMBOL(receive), to_urbi(str));
+        else
+          EMIT1(received, str);
+      }
+      catch(const UrbiException& e)
+      {
+        mustExit = true;
+        eval::show_exception(e);
+      }
+      catch(const std::exception& e)
+      {
+        mustExit = true;
+        eval::send_error((std::string)"Unexpected exception caught: " + e.what());
+      }
+      catch(...)
+      {
+        eval::send_error("Unknown exception caught");
+      }
+      if (mustExit)
+      {
+        eval::send_error("Exceptiong caught in receive, closing connection.");
+        close();
+      }
       return length;
     }
 
