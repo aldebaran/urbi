@@ -51,14 +51,14 @@ namespace urbi
       : value_(0)
     {
       BIND(DOLLAR_backtrace, backtrace);
-      BIND(current);
-      BIND(jobs);
+      BINDG(current);
+      BINDG(jobs);
       BIND(resetStats);
-      BIND(stats);
-      BIND(status);
-      BIND(tags);
+      BINDG(stats);
+      BINDG(status);
+      BINDG(tags);
       BIND(terminate);
-      BIND(timeShift);
+      BINDG(timeShift);
       BIND(waitForTermination);
     }
 

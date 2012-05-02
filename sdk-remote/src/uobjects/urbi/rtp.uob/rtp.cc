@@ -739,6 +739,7 @@ void URTP::setHeaderTarget(UVar& v)
 
 void URTP::sendVar(UVar& v)
 {
+  GD_FINFO_TRACE("Sendvar on %s", v.get_name());
   UNotifyChange(v, &URTP::onChange);
 }
 
@@ -828,7 +829,8 @@ void URTP::groupedSendVar(UVar& v)
   libport::BlockLock bl(lock);
   // This uvar is temporary.
   UVar* nv = new UVar(v.get_name());
-  GD_SINFO_DEBUG("testuvar is " << nv << " " << nv->get_temp());
+  GD_SINFO_DEBUG("testuvar is " << nv << " " << nv->get_temp()
+    <<" " << nv->get_name());
   groupedVars[v.get_name()] = nv;
   UNotifyChange(*nv, &URTP::onGroupedChange);
 }
@@ -866,6 +868,7 @@ void URTP::onGroupedChange(UVar& v)
 void URTP::sendGrouped(const std::string& name, const UValue& val,
                        libport::utime_t time)
 {
+  GD_FINFO_DUMP("sendGrouped %s %s", name, val.type);
   libport::BlockLock bl(lock);
   if (!groupOArchiver)
     groupOArchiver = new libport::serialize::BinaryOSerializer(sOArchiver);

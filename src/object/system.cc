@@ -48,6 +48,8 @@
 #include <runner/state.hh>
 #include <urbi/runner/raise.hh>
 
+#include <object/uvalue.hh>
+
 #include <eval/ast.hh>
 #include <eval/call.hh>
 #include <eval/send-message.hh>
@@ -713,36 +715,68 @@ namespace urbi
       return result;
     }
 
+    static int t1()
+    {
+      int res = 0;
+      urbi::UValue uuv(1);
+      object::rObject uv(new object::UValue(uuv));
+      for (unsigned i = 0; i < 100000; ++i)
+      {
+        res += (bool)uv->as<UValue>();
+      }
+      return res;
+    }
+
+    static int t2()
+    {
+      int res = 0;
+      object::rObject uv(new Float(12));
+      for (unsigned i = 0; i < 100000; ++i)
+      {
+        res += (bool)uv->as<UValue>();
+      }
+      return res;
+    }
+    static void t3(rObject o)
+    {
+      CAPTURE_GLOBAL(Global);
+      libport::Symbol sn("fo" "o");
+      rSlot s = Global->slot_get(sn)->as<Slot>();
+      for (unsigned i = 0; i < 100000; ++i)
+        s->value(o, false);
+    }
+
     void
     system_class_initialize()
     {
 #define DECLARE(Name)                                           \
       system_class->bind(SYMBOL_(Name), &system_##Name)
-
+#define DECLAREG(Name)                                          \
+      system_class->bind(SYMBOL_(Name), &system_##Name, 0)
       DECLARE(_exit);
       DECLARE(addSystemFile);
-      DECLARE(arguments);
+      DECLAREG(arguments);
       DECLARE(breakpoint);
-      DECLARE(cycle);
+      DECLAREG(cycle);
       DECLARE(getLocale);
       DECLARE(getenv);
-      DECLARE(hostName);
+      DECLAREG(hostName);
       DECLARE(interactive);
       DECLARE(loadLibrary);
       DECLARE(loadModule);
-      DECLARE(noVoidError);
-      DECLARE(nonInterruptible);
+      DECLAREG(noVoidError);
+      DECLAREG(nonInterruptible);
       DECLARE(poll);
       DECLARE(pollLoop);
       DECLARE(profile);
-      DECLARE(programName);
+      DECLAREG(programName);
       DECLARE(reboot);
-      DECLARE(redefinitionMode);
+      DECLAREG(redefinitionMode);
       DECLARE(resetStats);
       DECLARE(searchFile);
       DECLARE(setSystemFiles);
       DECLARE(setenv);
-      DECLARE(shiftedTime);
+      DECLAREG(shiftedTime);
       system_class->bind(SYMBOL(shutdown),
                          static_cast<void (*)(Object*)>(&system_shutdown));
       system_class->bind(SYMBOL(shutdown),
@@ -751,17 +785,21 @@ namespace urbi
       DECLARE(stopall);
       DECLARE(system);
       DECLARE(systemFiles);
-      DECLARE(time);
+      DECLAREG(time);
       DECLARE(unsetenv);
-      DECLARE(urbiDocDir);
+      DECLAREG(urbiDocDir);
       DECLARE(urbiLibrarySuffix);
-      DECLARE(urbiRoot);
-      DECLARE(urbiShareDir);
+      DECLAREG(urbiRoot);
+      DECLAREG(urbiShareDir);
       DECLARE(DOLLAR_objAddr);
 
 #undef DECLARE
 
-      system_class->bind(SYMBOL(env), &system_env);
+      system_class->bind(SYMBOL(env), &system_env, 0);
+      #define boo Symbol
+      system_class->bind(libport::boo("t1"), &t1);
+      system_class->bind(libport::boo("t2"), &t2);
+      system_class->bind(libport::boo("t3"), &t3);
       system_class->bind(SYMBOL(initenv), &system_env_init);
       system_class->bind(SYMBOL(sleep), &system_sleep);
       system_class->bind(SYMBOL(sleep), &system_sleep_inf);

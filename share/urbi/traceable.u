@@ -18,14 +18,14 @@ package lang.Traceable
 
   function backtrace()
   {
-    if ('$backtrace'.isVoid)
+    if ('$backtrace'.isVoid())
       []
     else if (!hideSystemFiles)
-      '$backtrace'
+      '$backtrace'()
     else
-      '$backtrace'
+      '$backtrace'()
         .filter(closure (sf) {
-          sf.location.isNil || !sf.location.isSystemLocation
+          sf.location.isNil() || !sf.location.isSystemLocation()
         })
   };
 };

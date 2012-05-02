@@ -79,7 +79,8 @@ namespace eval
                      libport::Symbol msg,
                      const object::objects_type& args,
                      object::Object* call_message,
-                     boost::optional< ::ast::loc> loc);
+                     boost::optional< ::ast::loc> loc,
+                     unsigned call_flags = 0);
 
 
   /*----------------------------.
@@ -101,7 +102,8 @@ namespace eval
                           object::Code* function,
                           libport::Symbol msg,
                           const object::objects_type& args,
-                          object::Object* call_message_);
+                          object::Object* call_message_,
+                          unsigned call_flags);
 
   rObject call_funargs(Job& job,
                        object::Code* function,

@@ -600,6 +600,7 @@ public:
     GD_INFO_DUMP("entering onChange");
     lastChange = v.get_name();
     changeCount = ++count;
+    v.type();
     if (writeLastChangeVal.data())
     {
       if (v.type() == urbi::DATA_DOUBLE)

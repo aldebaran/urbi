@@ -27,9 +27,9 @@ package lang.StackFrame
 
   function asString()
   {
-    if (!location.isNil)
-      location.asString + ": " + name.asString
+    if (!location.isNil())
+      location.asString() + ": " + name.asString()
     else
-      name.asString
+      name.asString()
   }
 };

@@ -38,16 +38,16 @@ do (String)
   function closest(var set)
   {
     // One character is too short.
-    if (size == 1)
+    if (size() == 1)
       nil
     else
     {
-      var lcm = toLower |
+      var lcm = toLower() |
       var min = 999 |
       var res = nil |
       for| (var n: set)
       {
-        var d = lcm.distance(n.toLower) |
+        var d = lcm.distance(n.toLower()) |
         if (d < min)
         {
           min = d |
@@ -61,7 +61,7 @@ do (String)
       // words with less than three letters unless we got a case
       // mismatch (caught above) or only one case-sensitive change.
       if (2 < min
-          || (size < 3 && res.size < 3 && 1 < distance(res)))
+          || (size() < 3 && res.size() < 3 && 1 < distance(res)))
         res = nil |
       res
     }
@@ -75,17 +75,17 @@ do (String)
   // we should bind the Boost's trim familly.
   function trim()
   {
-    if (empty)
+    if (empty())
       ""
     else
     {
       var res = this;
-      var p = res.length-1;
+      var p = res.length()-1;
       while (res[p] == " ")
         p--;
       res = res[0, p+1];
       while (res.length && res[0] == " ")
-        res = res[1, res.length];
+        res = res[1, res.length()];
       res;
     }
   };
@@ -105,14 +105,14 @@ do (String)
       if (!list.isA(List))
         list = [list] |
       var chunks = split("%s") |
-      if (list.size != chunks.size - 1)
+      if (list.size() != chunks.size() - 1)
         throw "invalid format: wrong number of arguments" |
       var res = "" |
       for| (var el: chunks)
       {
         res += el |
-        if (!list.empty)
-          res += list.removeFront
+        if (!list.empty())
+          res += list.removeFront()
       }|
       res
     };

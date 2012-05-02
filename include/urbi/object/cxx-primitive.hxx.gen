@@ -182,6 +182,23 @@ namespace urbi
       // * method pointers
       typedef AnyToBoostFunction<M> C;
       aver(!libport::has(content_, C::arity));
+      if (content_.empty())
+      {
+         if (!default_)
+         { // This is the first entry, put it in default
+           default_ =  boost::bind(MakePrimitive<typename C::type>::primitive,
+                    _1, /*_2,*/ C::convert(f));
+           default_arity_ = C::arity;
+           return;
+         }
+         else if (default_arity_!= -1)
+         { // move back default in the content_ set
+            content_[default_arity_] = default_;
+            default_ = 0;
+            default_arity_ = -1;
+            // and go on...
+         }
+      }
       content_[C::arity] =
         boost::bind(MakePrimitive<typename C::type>::primitive,
                     _1, /*_2,*/ C::convert(f));

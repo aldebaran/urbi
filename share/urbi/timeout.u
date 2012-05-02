@@ -20,7 +20,7 @@ requireFile("urbi/control.u");
 requireFile("urbi/nil.u");
 requireFile("urbi/tag.u");
 
-const var 'package'.lang.Timeout = Tag.new;
+const var 'package'.lang.Timeout = Tag.new();
 do (Timeout)
 {
   var type = "Timeout";
@@ -40,11 +40,11 @@ do (Timeout)
     var this.e = Event.new|
     leave.blockSubscriberException = false|
     at (enter?)
-      launch|
+      launch()|
     at (leave?)
-      end|
+      end()|
     at (e?)
-      count|
+      count()|
   };
 
   function launch()
@@ -62,7 +62,7 @@ do (Timeout)
         {}|
     timedOut = running|
     if (timedOut)
-      stop
+      stop()
   };
 
   function end()

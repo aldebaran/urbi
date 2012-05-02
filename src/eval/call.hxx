@@ -199,7 +199,8 @@ namespace eval
                      libport::Symbol msg,
                      const object::objects_type& args,
                      object::Object* call_message,
-                     boost::optional< ::ast::loc> loc)
+                     boost::optional< ::ast::loc> loc,
+                     unsigned call_flags)
   {
     GD_CATEGORY(Urbi.Call);
     GD_FPUSH_TRACE("Call %s (%s)", msg, loc ? string_cast(loc.get()) : "?");
@@ -231,14 +232,14 @@ namespace eval
     if (object::rCode code = function->as<object::Code>())
     {
       // GD_INFO_DEBUG("Function is a Code object");
-      res = call_apply_urbi(job, code, msg, args, call_message);
+      res = call_apply_urbi(job, code, msg, args, call_message, call_flags);
       // GD_FINFO_DEBUG("Function returned = %p", res.get());$
     }
     else if (const object::rPrimitive& p = function->as<object::Primitive>())
     {
       // GD_INFO_DEBUG("Function is a Primitive object");
       // GD_FINFO_DEBUG("Args: %d", args.size() - 1);
-      res = p->call_raw(args);
+      res = p->call_raw(args, call_flags);
       // GD_FINFO_DEBUG("Function returned = %p", res.get());
     }
     else // access a slot.
@@ -254,7 +255,8 @@ namespace eval
                             SYMBOL(LPAREN_RPAREN), args, call_message, loc);
       }
       // GD_FINFO_DEBUG("Ensure that no arguments are provided (%d == 0)", args.size() - 1);
-      object::check_arg_count(args, 0);
+      if (! (call_flags & object::Primitive::CALL_IGNORE_EXTRA_ARGS))
+        object::check_arg_count(args, 0);
       return function;
     }
 
@@ -336,7 +338,8 @@ namespace eval
                           object::Code* function,
                           libport::Symbol msg,
                           const object::objects_type& args,
-                          object::Object* call_message_)
+                          object::Object* call_message_,
+                          unsigned call_flags)
   {
     // GD_CATEGORY(Urbi.Eval.Call);
 
@@ -441,6 +444,10 @@ namespace eval
           break;
         --min;
       }
+      if (call_flags & object::Primitive::CALL_IGNORE_EXTRA_ARGS)
+        max = UINT_MAX;
+      if (call_flags & object::Primitive::CALL_IGNORE_MISSING_ARGS)
+        min = 0;
       // Check arity
       // GD_FINFO_DEBUG("Check args: %d in [ %d .. %d ]", args.size() - 1, min, max);
       object::check_arg_count(args, min, max);
@@ -468,11 +475,18 @@ namespace eval
             // Empty list argument.
             job.state.def_arg(formal, new object::List);
           else
+          {
             // Take default value.
             // FIXME: !!! remove this cast.
-            job.state.def_arg(
-              formal,
-              eval::ast(job, ::ast::rConstAst(formal->value_get().get())));
+            if (formal->value_get())
+              job.state.def_arg(
+                formal,
+                eval::ast(job, ::ast::rConstAst(formal->value_get().get())));
+            else
+                job.state.def_arg(
+                formal,
+                object::nil_class);
+          }
     }
 
     // Before calling, check that we are not exhausting the stack
@@ -490,7 +504,7 @@ namespace eval
                        libport::Symbol msg,
                        const object::objects_type& args)
   {
-    return call_apply_urbi(job, function, msg, args, 0);
+    return call_apply_urbi(job, function, msg, args, 0, 0);
   }
 
   /*-------------------------------------.
@@ -511,11 +525,18 @@ namespace eval
     if (target == object::void_class
         && !target->local_slot_get(message))
       runner::raise_unexpected_void_error();
-
+    rObject routine = target->slot_get(message);
+    static ::ast::exps_type*  empty_args = new ::ast::exps_type();
+    if (rSlot s = routine->as<Slot>())
+    {
+      if (s->hasLocalSlot(SYMBOL(autoEval)) && !arguments)
+        arguments = empty_args;
+      routine = s->value(target);
+    }
     // Bounce on the same function with routine argument.
     return call_msg(job,
                     target,
-                    target->slot_get_value(message),
+                    routine,
                     message,
                     arguments, location);
   }
@@ -530,7 +551,8 @@ namespace eval
   {
     aver(routine);
     aver(target);
-
+    if (!input_ast_args)
+      return routine;
     // Evaluated arguments. Even if the function is lazy, it holds the
     // target.
     object::objects_type args;

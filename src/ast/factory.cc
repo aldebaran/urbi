@@ -622,14 +622,14 @@ namespace ast
     // every, (exp:1) exp:2.
     PARAMETRIC_AST
       (comma,
-       "for, (var deadline = shiftedTime; true;\n"
+       "for, (var deadline = shiftedTime(); true;\n"
        "      deadline = Control.'every,sleep'(deadline, %exp:1))\n"
        "  %exp:2\n");
 
     // every| (exp:1) exp:2.
     PARAMETRIC_AST
       (pipe,
-       "for (var deadline = shiftedTime; true;\n"
+       "for (var deadline = shiftedTime(); true;\n"
        "     deadline = Control.'every|sleep'(deadline, %exp:1))\n"
        "  %exp:2\n");
 
@@ -789,13 +789,13 @@ namespace ast
        "  '$freezeif_ex' :"
        "  {"
        "    at(%exp:1)"
-       "      '$freezeif_in'.freeze"
+       "      '$freezeif_in'.freeze()"
        "    onleave"
-       "      '$freezeif_in'.unfreeze |"
+       "      '$freezeif_in'.unfreeze() |"
        "    '$freezeif_in' :"
        "    {"
        "      %exp:2 |"
-       "      '$freezeif_ex'.stop |"
+       "      '$freezeif_ex'.stop() |"
        "    }"
        "  }"
        "}"
@@ -1113,8 +1113,8 @@ namespace ast
        "  var '$stopif' = Tag.new(\"$stopif\") |"
        "  '$stopif':"
        "  {"
-       "    { %exp:2 | '$stopif'.stop } &"
-       "    { waituntil(%exp:1) | '$stopif'.stop }"
+       "    { %exp:2 | '$stopif'.stop() } &"
+       "    { waituntil(%exp:1) | '$stopif'.stop() }"
        "  } |"
        "}"
         );
@@ -1214,14 +1214,14 @@ namespace ast
       (try_clause,
        "try\n"
        "{\n"
-       "  var '$tag' = Tag.new|\n"
+       "  var '$tag' = Tag.new()|\n"
        "  '$tag':\n"
        "  {\n"
        "    sleep(%exp:1) | throw Exception.TimeOut\n"
        "  },\n"
-       "  var '$res' = %exp:2.acceptVoid |\n"
-       "  '$tag'.stop |\n"
-       "  '$res'.unacceptVoid\n"
+       "  var '$res' = %exp:2.acceptVoid() |\n"
+       "  '$tag'.stop() |\n"
+       "  '$res'.unacceptVoid()\n"
        "}\n"
        "catch (var e if e.isA(Exception.TimeOut))\n"
        "{\n"
@@ -1482,4 +1482,24 @@ namespace ast
     return new While(loc, flavor, cond, make_scope(body));
   }
 
+   rExp
+   Factory::make_define_setter_getter(const location& loc,
+     libport::Symbol kind, libport::Symbol name,
+     rExp routine)
+   {
+     PARAMETRIC_AST(
+       desugar,
+       "{"
+       "  if (!hasLocalSlot(%exp:1))"
+       "    setSlotValue(%exp:2, 0)|"
+       "  getSlot(%exp:3).updateSlot(%exp:4, %exp:5)"
+       "}"
+       );
+     return exp(desugar
+       % make_string(loc, name)
+       % make_string(loc, name)
+       % make_string(loc, name)
+       % make_string(loc, kind)
+       % routine);
+   }
 }

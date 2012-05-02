@@ -24,12 +24,12 @@ do (List)
 
   function '<'(var that)
   {
-    for| (var i : size.min(that.size))
+    for| (var i : size().min(that.size()))
       if (this[i] < that[i])
         return true
       else if (that[i] < this[i])
         return false |
-    size < that.size;
+    size() < that.size();
   };
 
   copySlot("insertBack", "<<");
@@ -54,7 +54,7 @@ do (List)
     if (empty)
       throw Exception.new("list cannot be empty") |
     var res = 0|
-    var size = this.size |
+    var size = this.size() |
     var i;
     try
     {
@@ -120,7 +120,7 @@ do (List)
 
   function keys()
   {
-    size.asList
+    size().asList()
   };
 
   // Build a new list containing the result of \a f applied to all elements
@@ -136,7 +136,7 @@ do (List)
   // (a..b, a:b, ...).
   function range(var from, var to = nil)
   {
-    if (to.isNil)
+    if (to.isNil())
     {
       to = from |
       from = 0  |
@@ -150,7 +150,7 @@ do (List)
   function remove(e)
   {
     var res = this - [e] |
-    clear |
+    clear() |
     for| (var i: res)
       this << i |
     this
@@ -166,7 +166,7 @@ do (List)
   function matchAgainst(var handler, var pattern)
   {
     pattern.isA(List)
-    && pattern.size == size
+    && pattern.size() == size()
     &&
     {
       // FIXME: do this with a crossed map
@@ -196,15 +196,15 @@ do (List)
     var t = [=>] |
     for| (var i: this)
       t[i] = true |
-    t.keys;
+    t.keys();
   };
 
   // The list of elements zipped with the \a f function.
   function zip(f, l)
   {
-    assert(this.size == l.size) |
+    assert(this.size() == l.size()) |
     var res = [] |
-    for| (var i: this.size)
+    for| (var i: this.size())
       res << f(this[i], l[i]) |
     res
   };

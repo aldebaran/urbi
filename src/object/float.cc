@@ -119,11 +119,11 @@ namespace urbi
 #endif
       BIND(floor);
       BIND(hash);
-      BIND(inf);
+      BINDG(inf);
       BIND(isInf,   is_inf);
       BIND(isNan,   is_nan);
       BIND(log);
-      BIND(nan);
+      BINDG(nan);
       BIND(random);
       BIND(srandom);
       BIND(round);

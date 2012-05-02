@@ -14,7 +14,7 @@ do (nil)
 {
   // Singleton derives from Object.
   setProtos([Singleton]);
-  function '==' (x) { x.isNil };
+  function '==' (x) { x.isNil() };
   var asString = "nil";
   // nil prints nothing in the toplevel
   var asTopLevelPrintable = nil;
@@ -24,10 +24,10 @@ do (nil)
     for| (var m : [
       "nil.isVoid will return false eventually, adjust your code.",
       "    For instance replace InputStream loops from",
-      "      while (!(x = i.get.acceptVoid).isVoid)",
+      "      while (!(x = i.get().acceptVoid()).isVoid())",
       "        cout << x;",
       "    to",
-      "      while (!(x = i.get).isNil)",
+      "      while (!(x = i.get()).isNil())",
       "        cout << x;",
       ])
         Logger.warn << m|
@@ -37,7 +37,7 @@ do (nil)
 
 do (Object)
 {
-  function isNil()
+  get isNil()
   {
     nil === this
   }

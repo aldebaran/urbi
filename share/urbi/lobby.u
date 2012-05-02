@@ -17,12 +17,12 @@ requireFile("urbi/list.u");
 requireFile("urbi/nil.u");
 requireFile("urbi/file.u");
 
-var Lobby.systemLobby = Lobby.lobby;
+var Lobby.systemLobby = Lobby.lobby();
 do (Lobby)
 {
-  var onDisconnect = Event.new;
+  var onDisconnect = Event.new();
   var connected = true;
-
+  lobby->oget = getSlotValue("lobby");
   function asString()
   {
     var res = Object.getSlotValue("asString").apply([this]) |
@@ -44,7 +44,7 @@ do (Lobby)
     echoEach(System
              .PackageInfo
              .components["Urbi"]
-             .banner)
+             .banner())
   };
 
   // Echo the copyright notice.
@@ -66,7 +66,7 @@ do (Lobby)
   function echo(var msg, var tag = "", var prefix = "***")
   {
     // Avoid the trailing space.
-    msg = msg.asString |
+    msg = msg.asString() |
     send(prefix + { if (msg) " " + msg else "" }, tag)
   };
 
@@ -91,12 +91,12 @@ do (Lobby)
   /// \param isGhost        whether it's the ghostconnection.
   function initialize(var displayBanner, var isGhost = false)
   {
-    if (this != lobby)
+    if (this != lobby())
       receive("initialize(%s, %s);" % [displayBanner, isGhost])
     else
     {
       if (displayBanner)
-        banner|
+        banner()|
       if (isGhost)
       {
         maybeLoad("URBI.INI", clog) |
@@ -110,7 +110,7 @@ do (Lobby)
   // Echo the Urbi contributors.
   function thanks()
   {
-    echoEach(File.new(System.urbiDocDir / "THANKS.txt").asList
+    echoEach(File.new(System.urbiDocDir / "THANKS.txt").asList()
              + ["", "See also `authors;'."]);
   };
 
@@ -123,10 +123,10 @@ do (Lobby)
   // Create an urbi connection to a remote host.
   function reverseConnect(host, port)
   {
-    do (create)
+    do (create())
     {
       var remoteIP = host|
-      var socket = Socket.new|
+      var socket = Socket.new()|
       var socket.receive = closure(t) { receive(t)}|
       function write (t)
       {
@@ -143,22 +143,22 @@ do (Lobby)
       }|
       // Prevent call to quit as it would close the ghost connection
       var quitBackend = &quit|
-      function quit()
+      get quit()
       {
-        socket.disconnect
+        socket.disconnect()
       }|
       socket.connect(host, port)|
-      var t = Tag.new|
+      var t = Tag.new()|
       t: at(socket.disconnected?)
       {
-        quitBackend|
-        t.stop
+        quitBackend()|
+        t.stop()
       }|
       initialize(true)
     }
   };
 
-  var lobbies = getSlotValue("instances");
+  setSlot("lobbies", getSlot("instances"));
 
   // We received a C-c that makes us clear the foreground jobs.
   function sigint_interrupt()
@@ -170,12 +170,15 @@ do (Lobby)
   function sigint_shutdown()
   {
     cerr << "!!! received interruption, shutting down." |
-    System.shutdown;
+    System.shutdown();
   };
 
 };
 
-function 'package'.lang.lobby()
+do ('package'.lang)
 {
-  Lobby.lobby
+  get lobby()
+  {
+    Lobby.lobby()
+  };
 };

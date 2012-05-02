@@ -67,12 +67,12 @@ namespace urbi
 
       BIND_VARIADIC(newFlowControl, new_flow_control);
 
-      BIND(blocked);
-      BIND(enter);
+      BINDG(blocked);
+      BINDG(enter);
       BIND(freeze);
-      BIND(frozen);
+      BINDG(frozen);
       BIND(getParent, parent_get);
-      BIND(leave);
+      BINDG(leave);
       BIND(priority);
       BIND(scope);
       BIND(setPriority, priority_set);

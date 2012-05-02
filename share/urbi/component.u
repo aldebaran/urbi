@@ -33,7 +33,7 @@ package gsrapi.Localization {} | do (Localization)
     if (compactName)
       var this.compactName = compactName
     else
-      var this.compactName = name[0].toUpper
+      var this.compactName = name[0].toUpper()
   };
 
   function asString()
@@ -68,7 +68,7 @@ package gsrapi.Localization {} | do (Localization)
  *   robot.arm[left].addComponent("shoulder");
  *   robot.arm[left].addDevice("arm", MyMotor.new);
  */
-var 'package'.gsrapi.Localizer = Group.new | do ('package'.gsrapi.Localizer)
+var 'package'.gsrapi.Localizer = Group.new() | do ('package'.gsrapi.Localizer)
 {
   var type = "Localizer";
   var dict = [=>];
@@ -77,7 +77,7 @@ var 'package'.gsrapi.Localizer = Group.new | do ('package'.gsrapi.Localizer)
     var this.componentName = name |
     var this.parentComponent = nil |
     var this.cachedNames |
-    var this.dict = Dictionary.new |
+    var this.dict = Dictionary.new() |
     addProto(Component)
   };
 
@@ -108,7 +108,7 @@ var 'package'.gsrapi.Localizer = Group.new | do ('package'.gsrapi.Localizer)
     if (key.isA(Localization))
       key = key.name |
     if (!key.isA(String))
-      key = key.asString |
+      key = key.asString() |
     if (!dict.has(key))
       set(okey, Component.new(key)) |
     dict.get(key)
@@ -120,7 +120,7 @@ var 'package'.gsrapi.Localizer = Group.new | do ('package'.gsrapi.Localizer)
     if (key.isA(Localization))
       key = key.name |
     if (!key.isA(String))
-      key = key.asString |
+      key = key.asString() |
     if (dict.has(key))
       remove(dict.get(key)) |
     add(val) |
@@ -169,7 +169,7 @@ package gsrapi.Component
 {
   function clone()
   {
-    var res = Group.new |
+    var res = Group.new() |
     res.protos.insertFront(this) |
     res
   };
@@ -250,7 +250,7 @@ package gsrapi.Component
         if (m.hasLocalSlot("componentName"))
           m.componentName
         else
-          m.asString
+          m.asString()
       } + ", "|
       res[0, res.length - 2] + ">"
     }
@@ -273,27 +273,27 @@ package gsrapi.Component
   /// Give a flattened view of all the implemented Facets in the hierarchy.
   function flatDump()
   {
-    dumpByInterface(allMembers)
+    dumpByInterface(allMembers())
   };
 
   function dumpByInterface(what, indent=0)
   {
-    var bf = Dictionary.new|
+    var bf = Dictionary.new()|
     for|(var m: what)
     {
-      for| (var f: m.facets)
-        bf.getWithDefault(f.asString, [], true) << m
+      for| (var f: m.facets())
+        bf.getWithDefault(f.asString(), [], true) << m
     }|
-    for|(var k: bf.keys.sort)
+    for|(var k: bf.keys.sort())
       echo(" "*indent + k +": "
            + bf[k].map(
              function(x)
              {
                if (x.hasLocalSlot("compactName"))
-                 x.compactName
+                 x.compactName()
                else
-                 x.componentName
-             }).sort.join(" "))
+                 x.componentName()
+             }).sort().join(" "))
   };
 
   /// Hierarchical dump of all components and devices
@@ -301,7 +301,7 @@ package gsrapi.Component
   {
     var myfacets = "";
     if (isA(Interface))
-      myfacets = "(" + facets.join(" ") + ")"|
+      myfacets = "(" + facets().join(" ") + ")"|
     echo(" "*indent + componentName + myfacets);
     dumpByInterface(members.filter(function(x) { !x.isA(Component)}),
                 indent+2);
@@ -310,11 +310,11 @@ package gsrapi.Component
   };
 
   /// Give the full name of a device by crawling through the hieararchy
-  function Object.fullname()
+  do (Object) { get fullname()
   {
     if (!hasLocalSlot("parentComponent"))
       throw "Interface is not attached to a component."|
-    var name =  componentName |
+    var name =  componentName() |
     var p = parentComponent |
     var next = this |
     if (p)
@@ -322,10 +322,10 @@ package gsrapi.Component
       if (!p.parentComponent.isA(Localizer))
       {
         if (next.hasLocalSlot("componentLocalization"))
-          name = p.componentName  + "[" + next.componentLocalization + "]."
+          name = p.componentName()  + "[" + next.componentLocalization + "]."
             + name
         else
-          name = p.componentName  + "." + name
+          name = p.componentName()  + "." + name
       }|
       if (!p.parentComponent)
         break |
@@ -333,7 +333,7 @@ package gsrapi.Component
       p = p.parentComponent
     } |
     name
-  };
+  };};
 
   function Dictionary.merge(b)
   {
@@ -351,7 +351,7 @@ package gsrapi.Component
     // Avoid problems with group updateslot.
     if (hasLocalSlot("cachedNames"))
       removeLocalSlot("cachedNames") |
-    var this.cachedNames = Dictionary.new |
+    var this.cachedNames = Dictionary.new() |
     if (isA(Group))
       for| (var m: members)
       {
@@ -366,7 +366,7 @@ package gsrapi.Component
   function Object.makeCompactNames(where=Global, constify=true, cache=true)
   {
     if (cache)
-      cacheNames |
+      cacheNames() |
     if (!cache)
       makeCompactName(where, constify) |
     if (isA(Group))
@@ -397,9 +397,9 @@ package gsrapi.Component
       if (p.parentComponent && p.parentComponent.isA(Localizer))
       {
         if (p.componentLocalization.hasSlot("compactName"))
-          localizers = p.componentLocalization.compactName.asString + localizers
+          localizers = p.componentLocalization.compactName().asString() + localizers
         else
-          localizers = p.componentLocalization.asString + localizers
+          localizers = p.componentLocalization.asString() + localizers
       }
       else
       {
@@ -410,7 +410,7 @@ package gsrapi.Component
         {
           //wall("  including: ") |
           if (name)
-            name = name[0].toUpper + name[1, name.length] |
+            name = name[0].toUpper() + name[1, name.length] |
           name = first + name |
           base = first |
           first = ""

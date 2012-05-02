@@ -16,19 +16,19 @@ package lang.RangeIterable
   // Repeat \a action \a this times in concurrently.
   function 'each&'(action)
   {
-    asList.'each&'(action)
+    asList().'each&'(action)
   };
 
   // Repeat \a action \a this times in concurrently.
   function 'each'(action)
   {
-    asList.'each'(action)
+    asList().'each'(action)
   };
 
   // Repeat \a action \a this times in concurrently.
   function 'each|'(action)
   {
-    asList.'each|'(action)
+    asList().'each|'(action)
   };
 
   // Whether all the elements verify the \a f predicate.

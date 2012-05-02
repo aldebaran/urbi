@@ -31,7 +31,7 @@ package lang.Pattern
   function match(value)
   {
     matchPattern(pattern, value)
-    && (getSlotValue("guard").isNil || guard(this))
+    && (getSlotValue("guard").isNil() || guard(this))
   };
 
   function matchPattern(pattern, value)

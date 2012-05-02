@@ -18,13 +18,13 @@ requireFile("urbi/control.u");
 System.loadLibrary("urbi/regexp");
 do (Regexp)
 {
-  protos.insertFront(Container);
+  protos().insertFront(Container);
 
   copySlot("match", "has");
 
   function matchs ()
   {
     Kernel1.deprecated("Regexp.matchs", "Regexp.matches") |
-    matches
+    matches()
   };
 };

@@ -11,18 +11,18 @@
 requireFile("urbi/range-iterable.u");
 do (File)
 {
-  protos << RangeIterable;
+  protos() << RangeIterable;
 
   function basename()
   {
     Kernel1.deprecated("basename", "asPath.basename") |
-    asPath.basename
+    asPath.basename()
   };
 
   function lastModifiedDate()
   {
     Kernel1.deprecated("lastModifiedDate", "asPath.lastModifiedDate") |
-    asPath.lastModifiedDate
+    asPath.lastModifiedDate()
   };
 
   function rename(name)
@@ -57,6 +57,6 @@ do (File)
   {
     var o = OutputStream.new(create(name)) |
     o << content |
-    o.close
+    o.close()
   };
 };

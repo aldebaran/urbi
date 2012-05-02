@@ -305,6 +305,7 @@ namespace eval
 
     runner::Job& r = ::kernel::runner();
     rObject v = watch_eval(data);
+    GD_FINFO_TRACE("Got %s", *v.get());
     foreach (object::Event* evt, r.dependencies())
       data->subscriptions <<
       evt->onEvent(boost::bind(watch_run, data, _1));

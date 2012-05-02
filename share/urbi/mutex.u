@@ -16,7 +16,7 @@ requireFile("urbi/object.u");
 requireFile("urbi/boolean.u");
 requireFile("urbi/control.u");
 
-const var 'package'.lang.Mutex = Tag.new;
+const var 'package'.lang.Mutex = Tag.new();
 do (Mutex)
 {
   var type = "Mutex";
@@ -32,7 +32,7 @@ do (Mutex)
         var Job.current.'$mutexRelease' = [] |
       var l = Job.current.'$mutexRelease' |
       l.insertBack(false) |
-      this.lock |
+      this.lock() |
       // This will not be executed if the semaphore is not acquired, but we
       // have to save this state because the unlock would be executed in all
       // cases.
@@ -42,20 +42,20 @@ do (Mutex)
     function this.onLeave()
     {
       var l = Job.current.'$mutexRelease' |
-      if (l.back)
-        this.unlock |
+      if (l.back())
+        this.unlock() |
       l.removeBack() |
     } |
   };
 
   function lock()
   {
-    sem.acquire
+    sem.acquire()
   };
 
   function unlock()
   {
-    sem.release
+    sem.release()
   };
 
   function '!'()
@@ -64,7 +64,7 @@ do (Mutex)
   };
 };
 
-var 'package'.lang.NotMutex = Mutex.new;
+var 'package'.lang.NotMutex = Mutex.new();
 do (NotMutex)
 {
   var type = "NotMutex";
@@ -73,12 +73,12 @@ do (NotMutex)
 
   function clone()
   {
-    var res = Mutex.new|
+    var res = Mutex.new()|
     res.protos = [NotMutex]|
 
     function res.onEnter()
     {
-      this.unlock |
+      this.unlock() |
     } |
 
     function res.onLeave()
@@ -87,13 +87,13 @@ do (NotMutex)
       var acquired = false |
       try
       {
-        this.lock |
+        this.lock() |
         acquired = true |
       }
       finally
       {
         if (!acquired)
-          this.onLeave |
+          this.onLeave() |
       } |
     } |
 
@@ -107,11 +107,11 @@ do (NotMutex)
 
   function lock()
   {
-    mtx.unlock
+    mtx.unlock()
   };
 
   function unlock()
   {
-    mtx.lock
+    mtx.lock()
   };
 };

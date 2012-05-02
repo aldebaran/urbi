@@ -91,10 +91,10 @@ namespace urbi
       BIND(asPath, as_path);
       BIND(asPrintable, as_printable);
       BIND(asString, as_string);
-      BIND(content);
+      BINDG(content);
       BIND(create);
       BIND(remove);
-      BIND(size);
+      BINDG(size);
 
       setSlot(SYMBOL(init), new Primitive(&file_init_bouncer));
     }

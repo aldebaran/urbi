@@ -267,9 +267,9 @@ namespace urbi
     namespace detail
     {
 
-    template <typename G> rObject make_getter(G, libport::meta::False)
+    template <typename G> rObject make_getter(G g, libport::meta::False)
     {
-      return 0;
+      return primitive(g);
     }
 
     template <typename G> rObject make_getter(G g, libport::meta::True)
@@ -303,10 +303,13 @@ namespace urbi
                 G g,
                 S s)
     {
+      GD_CATEGORY(Urbi.Object);
       rObject getter = detail::make_getter(g,
         typename libport::meta::member_function_0_trait<G>::is_valid());
       rObject setter = detail::make_setter(s,
         typename libport::meta::member_function_1_trait<S>::is_valid());
+      GD_FINFO_TRACE("Binding %s, g=%s (%s), s=%s (%s)", name, !!g, !!getter,
+        !!s, !!setter);
       slot_set(libport::Symbol(name),
                getter, setter);
     }

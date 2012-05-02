@@ -47,7 +47,7 @@ namespace flower
 
     has_break_ = true;
 
-    PARAMETRIC_AST(res, "'$loopBreakTag'.stop");
+    PARAMETRIC_AST(res, "'$loopBreakTag'.stop()");
     result_ = exp(res);
     result_->original_set(b);
   }
@@ -60,7 +60,7 @@ namespace flower
 
     has_continue_ = true;
 
-    PARAMETRIC_AST(res, "'$loopContinueTag'.stop");
+    PARAMETRIC_AST(res, "'$loopContinueTag'.stop()");
     result_ = exp(res);
     result_->original_set(c);
   }
@@ -203,7 +203,7 @@ namespace flower
     }
     else
     {
-      PARAMETRIC_AST(a, "'$returnTag'.stop");
+      PARAMETRIC_AST(a, "'$returnTag'.stop()");
       result_ = exp(a);
     }
 

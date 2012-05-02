@@ -534,6 +534,12 @@ namespace ast
                const location& flavor_loc, flavor_type flavor,
                rExp cond,
                rExp body) /* const */;
+
+    static
+    rExp
+    make_define_setter_getter(const location& loc,
+      libport::Symbol kind, libport::Symbol name,
+      rExp routine);
   };
 
   /// Whether the \a e was the empty command.

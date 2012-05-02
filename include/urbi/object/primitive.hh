@@ -41,14 +41,19 @@ namespace urbi
       values_type& value_get();
       const values_type& value_get() const;
       virtual rObject operator() (object::objects_type args);
-      virtual rObject call_raw(const object::objects_type& args);
+      virtual rObject call_raw(const object::objects_type& args,
+        unsigned flags = 0);
 
       // Urbi methods
       rObject apply(rList args);
-
+      /// Drop extra arguments
+      static const unsigned int CALL_IGNORE_EXTRA_ARGS = 1;
+      /// Fill missing arguments with nil
+      static const unsigned int CALL_IGNORE_MISSING_ARGS = 2;
     private:
       values_type content_;
       value_type default_;
+      int default_arity_; // -1 for unknown
     };
   }; // namespace object
 }

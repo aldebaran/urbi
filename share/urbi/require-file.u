@@ -17,15 +17,15 @@ do (System)
   {
     if (! '$loadedFiles'[file])
     {
-      var tag = Tag.new|
+      var tag = Tag.new()|
       tag:
       {
         at ('$loadedFiles'.elementChanged?)
         {
           if ('$loadedFiles'[file])
-            tag.stop
+            tag.stop()
         } |
-        sleep
+        sleep()
       }
     }
   };

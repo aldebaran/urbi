@@ -133,7 +133,7 @@ namespace urbi
       BIND(asPrintable, as_printable);
       BIND(asString);
       BIND(distance);
-      BIND(empty);
+      BINDG(empty);
 #if !defined COMPILATION_MODE_SPACE
       BIND(format);
 #endif
@@ -156,7 +156,7 @@ namespace urbi
       BIND(join);
       BIND(replace);
       BIND(set);
-      BIND(size);
+      BINDG(size);
       BIND(toAscii);
       BIND(toLower, to_lower);
       BIND(toUpper, to_upper);

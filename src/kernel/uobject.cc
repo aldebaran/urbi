@@ -1854,6 +1854,8 @@ namespace urbi
                        boost::function1<rObject, const objects_type&>
                        (boost::bind(&wrap_ucallback, _1, owner_, traceName,
                                     true))));
+        me->slot_get(libport::Symbol(method))->slot_set(SYMBOL(watchIncompatible),
+          urbi::object::to_urbi(true));
       }
       if (owner_->type == "event")
       {
@@ -1943,6 +1945,9 @@ namespace urbi
           var->oset_set(callback_);
         else
           var->oset_set(callback_);
+        if (!var->hasLocalSlot(SYMBOL(watchIncompatible)))
+          var->slot_set(SYMBOL(watchIncompatible),
+            urbi::object::to_urbi(true));
         GD_FINFO_DUMP("Registered on %s(%s)", owner_->name,
                       var.get());
         if (owner_->target)
@@ -2153,8 +2158,16 @@ namespace urbi
         GD_FINFO_TRACE("UEM_ASSIGNVALUE %s %s", name, val);
         object::rUValue ov(new object::UValue(val));
         rObject o = xget_base(p.first);
-        o->slot_get(Symbol(p.second))->as<object::Slot>()
-        ->uobject_set(ov, o, time);
+        if (!o)
+          GD_FWARN("Object '%s' requested by remote not found", p.first);
+        else
+        {
+          rSlot s =  o->getSlot(Symbol(p.second))->as<object::Slot>();
+          if (!s)
+            GD_FWARN("Slot '%s' from '%s' is not a slot", p.second, p.first);
+          else
+            s->uobject_set(ov, o, time);
+        }
       }
       break;
       case urbi::UEM_EMITEVENT:

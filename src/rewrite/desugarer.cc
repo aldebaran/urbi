@@ -119,7 +119,7 @@ namespace rewrite
                                       recurse(source[k]));
       dict = new ast::Dictionary(loc, d);
     }
-    PARAMETRIC_AST(traj, "TrajectoryGenerator.new(%exp:1).run");
+    PARAMETRIC_AST(traj, "TrajectoryGenerator.new(%exp:1).run()");
     ast::rExp res(factory_->make_lvalue_wrap(what, exp(traj % dict).get()));
     // Parametric ASTs forward the location of the user code to the
     // desugared code.  In the case of trajectories, this is a
@@ -201,7 +201,7 @@ namespace rewrite
        "  var '$value' = %exp:2 |\n"
        "  var '$pattern' = Pattern.new(%exp:1) |\n"
        "  if (!'$pattern'.match('$value'))\n"
-       "    throw Exception.MatchFailure.new |\n"
+       "    throw Exception.MatchFailure.new() |\n"
        "  {\n"
        "    %unscope:2 |\n"
        "    %exp:3\n"
@@ -322,7 +322,9 @@ namespace rewrite
   {
     ast::rExp event = recurse(e->event_get());
     ast::exps_type* args = maybe_recurse_collection(e->arguments_get());
-
+    // No args no call.
+    if (!args)
+      args = new ast::exps_type();
     if (ast::rExp duration = e->duration_get())
     {
       PARAMETRIC_AST
@@ -337,7 +339,7 @@ namespace rewrite
          "  }\n"
          "  finally\n"
          "  {\n"
-         "    '$emit'.stop|\n"
+         "    '$emit'.stop()|\n"
          "  }\n"
          "}");
 
@@ -367,10 +369,10 @@ namespace rewrite
 
     PARAMETRIC_AST
       (post_op,
-       "{var '$save' = %exp:1 | %lvalue:2 = %exp:3.%id:4 | '$save'}");
+       "{var '$save' = %exp:1 | %lvalue:2 = %exp:3.%id:4() | '$save'}");
     PARAMETRIC_AST
       (pre_op,
-       "%lvalue:1 = %exp:2.%id:3");
+       "%lvalue:1 = %exp:2.%id:3()");
     result_ =
       recurse(factory_->make_lvalue_wrap(
                 what,

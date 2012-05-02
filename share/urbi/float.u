@@ -35,7 +35,7 @@ do (Float)
   var epsilonTilde = 0.0001;
 
   /// Absolute approximation.
-  function '~='(x) { (this - x).abs <= epsilonTilde };
+  function '~='(x) { (this - x).abs() <= epsilonTilde };
 
 /* %= is now a = a % b.
 
@@ -57,7 +57,7 @@ do (Float)
 
   function asList()
   {
-    seq
+    seq()
   };
 
   var '$fresh' = 0;
@@ -75,17 +75,17 @@ do (Float)
 
   function map(f)
   {
-    asList.map(f)
+    asList().map(f)
   };
 
   function max(var args[])
   {
-    (args << this).max;
+    (args << this).max();
   };
 
   function min(var args[])
   {
-    (args << this).min;
+    (args << this).min();
   };
 
   /// owner: The object that owns the slot onto which a property will be
@@ -152,7 +152,7 @@ do (Float)
   function sgn()
   {
     Kernel1.deprecated("Float.sgn", "Float.sign") |
-    sign
+    sign()
   };
 
   function sqr()

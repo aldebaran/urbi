@@ -79,16 +79,16 @@ namespace urbi
     {
       BIND(asBool, as_bool);
       BIND(clear);
-      BIND(elementAdded, elementAdded_get);
-      BIND(elementChanged, elementChanged_get);
-      BIND(elementRemoved, elementRemoved_get);
-      BIND(empty);
+      BINDG(elementAdded, elementAdded_get);
+      BINDG(elementChanged, elementChanged_get);
+      BINDG(elementRemoved, elementRemoved_get);
+      BINDG(empty);
       BIND(erase);
       BIND(get);
       BIND(has);
-      BIND(keys);
+      BINDG(keys);
       BIND(set);
-      BIND(size);
+      BINDG(size);
     }
 
     const Dictionary::value_type&

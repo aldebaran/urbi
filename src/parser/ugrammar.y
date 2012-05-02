@@ -408,6 +408,10 @@ block:
 | "{" error "}"       { $$ = MAKE(noop, @$); }
 ;
 
+block:
+   "{" id "~" id "}" { $$ = MAKE(noop, @$); }
+;
+
 /*----------.
 | Classes.  |
 `----------*/
@@ -604,6 +608,20 @@ stmt:
       // Compiled as "var name = function args stmt".
       $$ = new ast::Declaration(@$, $2,
                                 MAKE(routine, @$, $1, @3, $3, $4));
+    }
+  | id id formals block
+    {
+      if ($1 == SYMBOL(get) || $1 == SYMBOL(set))
+      {
+        $$ = MAKE(define_setter_getter, @$,
+          libport::Symbol("o" + std::string($1)), $2,
+          MAKE(routine, @$, false, @3, $3, $4));
+      }
+      else
+      {
+         $$ = MAKE(define_setter_getter, @$, $1, $2,
+          MAKE(routine, @$, false, @3, $3, $4));
+      }
     }
 ;
 
@@ -1033,7 +1051,10 @@ new:
   "new" "identifier" args.opt
   {
     // Compiled as "id . new (args)".
-    $$ = MAKE(call, @$, MAKE(call, @$, $2), SYMBOL(new), $3);
+    ast::exps_type* args = $3;
+    if (!args)
+      args = new ast::exps_type();
+    $$ = MAKE(call, @$, MAKE(call, @$, $2), SYMBOL(new), args);
     up.deprecated(@$, "new Obj(x)", "Obj.new(x)");
   }
 ;
@@ -1233,10 +1254,10 @@ unary-exp:
   primary-exp        { std::swap($$, $1); }
 | "--" lvalue        { $$ = new ast::Decrementation(@$, $2, false); }
 | "++" lvalue        { $$ = new ast::Incrementation(@$, $2, false); }
-| "+" unary-exp      { $$ = MAKE(call, @$, $2, $1); }
-| "-" unary-exp      { $$ = MAKE(call, @$, $2, $1); }
-| "!" unary-exp      { $$ = MAKE(call, @$, $2, $1); }
-| "compl" unary-exp  { $$ = MAKE(call, @$, $2, $1); }
+| "+" unary-exp      { $$ = MAKE(call, @$, $2, $1, new ast::exps_type()); }
+| "-" unary-exp      { $$ = MAKE(call, @$, $2, $1, new ast::exps_type()); }
+| "!" unary-exp      { $$ = MAKE(call, @$, $2, $1, new ast::exps_type()); }
+| "compl" unary-exp  { $$ = MAKE(call, @$, $2, $1, new ast::exps_type()); }
 ;
 
 /*---------------------.

@@ -123,7 +123,7 @@ namespace urbi
       BIND(run);
       BIND(runTo);
       BIND(kill);
-      BIND(status);
+      BINDG(status);
       BIND(name, name_);
     }
 

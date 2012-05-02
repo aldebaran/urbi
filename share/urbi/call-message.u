@@ -19,13 +19,13 @@ package lang.CallMessage
   // All evaluated arguments including target as first element
   function allArgs()
   {
-    evalOnce |
+    evalOnce() |
     allArgs = [targetLazy] + args
   };
 
   function argAt(var i)
   {
-    args[i].value
+    args[i].value()
   };
 
   function argsCount()
@@ -36,8 +36,8 @@ package lang.CallMessage
   function argsPrint()
   {
     // Pretty print arguments.
-    argsPrint = argsVal.map(closure (var v) { v.asPrintable }) |
-    if (targetLazy.asString == "<IMPLICIT>")
+    argsPrint = argsVal().map(closure (var v) { v.asPrintable() }) |
+    if (targetLazy.asString() == "<IMPLICIT>")
       argsPrint[0] = "" |
     argsPrint
   };
@@ -45,29 +45,29 @@ package lang.CallMessage
   function argsStr()
   {
     // Evaluate arguments.
-    argsStr = allArgs.map(closure (var v) { v.asString }) |
-    if (targetLazy.asString == "<IMPLICIT>")
+    argsStr = allArgs().map(closure (var v) { v.asString() }) |
+    if (targetLazy.asString() == "<IMPLICIT>")
       argsStr[0] = "" |
     argsStr
   };
 
   function argString(var i)
   {
-    args[i].asString
+    args[i].asString()
   };
 
   function argsVal()
   {
     // Retrieve arguments values.
-    var unevaluated = Object.new |
+    var unevaluated = Object.new() |
     var unevaluated.asString = "?" |
     argsVal = allArgs.map(closure (var v) {
       // FIXME: We check if this object is "nil" because currently
       // (Urbi 2.8) nil.isVoid issues a warning and returns true.
       // Eventually it will return false again, without warning.  But
       // meanwhile, checking for nil.isVoid would issue a warning.
-      if (!v.getSlotValue("val").acceptVoid.isNil && v.getSlotValue("val").isVoid
-          || v.getSlotValue("val").allProtos.hasSame(Executable))
+      if (!v.getSlotValue("val").acceptVoid().isNil() && v.getSlotValue("val").isVoid()
+          || v.getSlotValue("val").allProtos().hasSame(Executable))
         unevaluated
       else
         v.val
@@ -79,7 +79,7 @@ package lang.CallMessage
 
   function evalArgAt(var i)
   {
-    args[i].eval
+    args[i].eval()
   };
 
   function eval(var args[])
@@ -89,14 +89,14 @@ package lang.CallMessage
 
   function evalOnce()
   {
-    eval |
+    eval() |
     evalOnce = function() {} |
     void
   };
 
   function evalArgs()
   {
-    args.map(function (arg) { arg.eval })
+    args.map(function (arg) { arg.eval() })
   };
 
   /// Used by format functions.
@@ -110,7 +110,7 @@ package lang.CallMessage
     ] |
 
   // Add the opposite.
-  for| (var k: '$opNeg'.keys)
+  for| (var k: '$opNeg'.keys())
     '$opNeg'.set('$opNeg'.get(k), k);
 
   var '$funRename' =
@@ -120,20 +120,20 @@ package lang.CallMessage
     ];
 
   /// callFormat
-  function format(var formatArgs = argsStr)
+  function format(var formatArgs = argsStr())
   {
-    if (formatArgs.size == 1 && message in ["!"])
+    if (formatArgs.size() == 1 && message in ["!"])
       "%s %s" % [message, formatArgs[0]]
-    else if (formatArgs.size == 2 && message in '$funRename')
+    else if (formatArgs.size() == 2 && message in '$funRename')
       "%3% %1% %2%" % ['$funRename'[message], formatArgs[0], formatArgs[1]]
-    else if (formatArgs.size == 2 && message in '$opNeg')
+    else if (formatArgs.size() == 2 && message in '$opNeg')
       "%2% %1% %3%" % [message, formatArgs[0], formatArgs[1]]
     else if (2 <= formatArgs.size)
     {
       if (formatArgs[0])
-        "%2%.%1%(%3%)" % [message, formatArgs[0], formatArgs.tail.join(", ")]
+        "%2%.%1%(%3%)" % [message, formatArgs[0], formatArgs.tail().join(", ")]
       else
-        "%s(%s)" % [message, formatArgs.tail.join(", ")]
+        "%s(%s)" % [message, formatArgs.tail().join(", ")]
     }
     else
     {
@@ -145,7 +145,7 @@ package lang.CallMessage
   };
 
   /// callNegatedFormat
-  function negatedFormat(var formatArgs = argsStr)
+  function negatedFormat(var formatArgs = argsStr())
   {
     if (formatArgs.size == 1 && message in ["!"])
       "%s %s == %s" % [message, formatArgs[0], value]
@@ -158,9 +158,9 @@ package lang.CallMessage
     {
       if (formatArgs[0])
         "%2%.%1%(%3%) == %4%" % [message, formatArgs[0],
-                                formatArgs.tail.join(", "), value]
+                                formatArgs.tail().join(", "), value]
       else
-        "%s(%s) == %s" % [message, formatArgs.tail.join(", "), value]
+        "%s(%s) == %s" % [message, formatArgs.tail().join(", "), value]
     }
     else
     {
@@ -173,6 +173,6 @@ package lang.CallMessage
 
   function value()
   {
-    eval
+    eval()
   };
 };

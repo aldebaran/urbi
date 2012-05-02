@@ -32,7 +32,7 @@ do (Global)
   {
     function (var args[])
     {
-      var val = args.head.getSlotValue(name) |
+      var val = args.head().getSlotValue(name) |
       if (val.isA(Executable))
         val.apply(args)
       else

@@ -14,16 +14,16 @@ do (Object)
   function acceptVoid()   { this };
   function unacceptVoid() { this };
 };
-do (void.acceptVoid)
+do (void.acceptVoid())
 {
-  function acceptVoid()   { new };
-  function unacceptVoid() { protos.front };
+  function acceptVoid()   { new() };
+  function unacceptVoid() { protos.front() };
 };
 
 System.loadFile(System.searchFile("urbi/object.u"));
 System.loadFile(System.searchFile("urbi/system.u"));
 System.load("urbi/global.u");
-System.load("urbi/platform" + System.urbiLibrarySuffix + ".u");
+System.load("urbi/platform" + System.urbiLibrarySuffix() + ".u");
 
 System.requireFile("urbi/traceable.u");
 System.requireFile("urbi/exception.u");
@@ -52,7 +52,7 @@ function Object.'!=' (var b)
 
 
 System.requireFile("urbi/orderable.u");
-List.protos.insertBack(Orderable);
+List.protos().insertBack(Orderable);
 
 System.requireFile("urbi/updatehook-stack.u");
 
@@ -94,8 +94,11 @@ System.requireFile("urbi/require-file.u");
 `----------*/
 
 "Initializing uobjects NOW";
-
 System.requireFile("urbi/uobject.u");
+
+// Convert some object slots into getters
+for|(var i in ["slotAdded", "slotRemoved", "uid"])
+  Object.setProperty(i, "oget", Object.getSlotValue(i))|
 if ("ros" in System.Platform.enabledModules && System.env["ROS_ROOT"])
   System.loadModule("urbi/ros");
 

@@ -192,13 +192,13 @@ namespace urbi
       BIND(asPrintable, as_printable);
       BIND(asString, as_string);
       BIND(clear);
-      BIND(current);
-      BIND(content, list<&directory_mk_string>);
+      BINDG(current);
+      BINDG(content, list<&directory_mk_string>);
       BIND(create);
       BIND(createAll, create_all);
-      BIND(empty);
-      BIND(exists);
-      BIND(parent);
+      BINDG(empty);
+      BINDG(exists);
+      BINDG(parent);
       BIND(remove);
       BIND(removeAll_, remove_all);
 

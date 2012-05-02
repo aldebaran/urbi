@@ -45,25 +45,25 @@ package lang.Exception
     // always set by the generic exception throwing mechanism
     // (Interpreter.&raise).
     if (hasLocalSlot("loc"))
-      loc
-    else if (!hideSystemFiles)
-      '$location'.acceptVoid
-    else if (!'$location'.isVoid
-             && '$location'.begin.file.asString not in System.systemFiles)
-      '$location'
+      loc()
+    else if (!hideSystemFiles())
+      '$location'().acceptVoid()
+    else if (!'$location'().isVoid()
+             && '$location'().begin().file().asString() not in System.systemFiles())
+      '$location'()
     else
     {
-      var b = backtrace |
-      if (b.size != 0
-          && !b[0].location.isNil)
+      var b = backtrace() |
+      if (b.size() != 0
+          && !b[-1].location().isNil())
       {
         // FIXME: Nasty hack: we need to avoid displaying
         // "assertCall:" when an assertion exception is displayed.
         // Actually, we need a means to "skip" a part of the
         // backtrace, see what's done in the runner for instance.
-        if (b[0].name not in ["assert", "assert_", "assertCall"])
-          routine = b[0].name|
-        b[0].location
+        if (b[-1].name() not in ["assert", "assert_", "assertCall"])
+          routine = b[-1].name()|
+        b[-1].location()
       }
     }
   };
@@ -74,9 +74,9 @@ package lang.Exception
     chan << "!!! " + this |
     // Don't display the top-level stack frame if it's already
     // been used as location.
-    var bt = backtrace |
-    if (bt.size != 0 && location.acceptVoid == bt[0].location)
-      bt.removeFront|
+    var bt = backtrace() |
+    if (bt.size() != 0 && location().acceptVoid() == bt[0].location())
+      bt.removeFront()|
     for| (var sf: bt)
       // FIXME: Read the fixme above.
       if (sf.name not in ["assert", "assert_", "assertCall"])
@@ -88,13 +88,13 @@ package lang.Exception
   {
     // FIXME: This is a hack: calling location might change 'routine'.
     // Clear this.
-    var loc = location.acceptVoid |
-    var res = message |
-    if (!slot.isVoid)
+    var loc = location().acceptVoid() |
+    var res = message() |
+    if (!slot.isVoid())
       res = "%s: %s" % [slot, res]
-    else if (!routine.isVoid)
+    else if (!routine.isVoid())
       res = "%s: %s" % [routine, res] |
-    if (!loc.isVoid)
+    if (!loc.isVoid())
       res = "%s: %s" % [loc, res] |
     res
   };
@@ -103,7 +103,7 @@ package lang.Exception
   {
     "%s%s `%s'" %
       [{if (type == "Exception") "" else "Exception."},
-       type, asString]
+       type, asString()]
   };
 };
 
@@ -113,8 +113,8 @@ package lang.Exception
 {
   function makeFmtException(name, inherit, locSlots, fmt, fmtSlots)
   {
-    var locSize = locSlots.size;
-    var fmtSize = fmtSlots.size;
+    var locSize = locSlots.size();
+    var fmtSize = fmtSlots.size();
 
     class Res : inherit
     {
@@ -123,9 +123,9 @@ package lang.Exception
 
       function init(var args[])
       {
-        if (args.size != locSize + fmtSize)
+        if (args.size() != locSize + fmtSize)
           throw 'package'.lang.Exception.Arity.new("%s.%s" % [name, "init"],
-                                    args.size,
+                                    args.size(),
                                     locSize + fmtSize) |
         for| (var i: locSize)
           this.updateSlot(locSlots[i], args[i]) |
@@ -154,7 +154,7 @@ package lang.Exception
 
   function makeException(name, inherit, locSlots)
   {
-    makeMsgException(name, inherit, locSlots, Exception.message);
+    makeMsgException(name, inherit, locSlots, Exception.message());
   };
 
 package lang.Exception.Arity: Exception
@@ -321,10 +321,10 @@ package lang.Exception.Type: 'package'.lang.Exception
       "a %s" % expectedTypes[0]
   };
 
-  function message()
+  get message()
   {
     "unexpected %s, expected %s"
-      % [getSlotValue("effective").asPrintable, formatTypes]
+      % [getSlotValue("effective").asPrintable(), formatTypes()]
   };
 };
 
@@ -393,7 +393,7 @@ package lang.Exception.Lookup: 'package'.lang.Exception
     msg = m |
     obj = o |
     if (fixSpelling)
-      suggested = m.closest({ if (deep) o.slotNames else o.localSlotNames })|
+      suggested = m.closest({ if (deep) o.slotNames() else o.localSlotNames() })|
   };
 
   function message()

@@ -16,14 +16,14 @@ class System.Platform
   var hostOs = "@host_os@";
   var hostVendor = "@host_vendor@";
 
-  function isWindows()
+  get isWindows()
   {
     hostOs == "mingw32";
   };
 
-  function kind()
+  get kind()
   {
-    if (isWindows)
+    if (isWindows())
       "WIN32"
     else
       "POSIX";

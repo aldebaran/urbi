@@ -66,7 +66,7 @@ package lang.Group : RangeIterable, Comparable
     // We must use callMessage instead of apply, as the later looses the message
     closure action (m)
     {
-      results.insertBack(m.callMessage(call).acceptVoid)
+      results.insertBack(m.callMessage(call).acceptVoid())
     } |
     'each&'(action) |
     // If the resulting group contains only void, return void.
@@ -75,7 +75,7 @@ package lang.Group : RangeIterable, Comparable
     else
       Group.getSlotValue("new").apply([Group] + results)
   };
-
+  var &fallback.autoEval = true;
   for| (var s : ["getProperty", "hasProperty", "setProperty", "updateSlot"])
     copySlot("fallback", s);
 

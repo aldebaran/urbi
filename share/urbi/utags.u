@@ -19,7 +19,7 @@ output.'<<' = function(x)
 {
    if (enabled)
     {
-      var toPrint = { if (quote) x.asTopLevelPrintable else x.asString }|
+      var toPrint = { if (quote) x.asTopLevelPrintable() else x.asString() }|
       if (!toPrint.isNil)
 	lobby.write(toPrint);
     };

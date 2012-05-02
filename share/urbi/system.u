@@ -49,20 +49,20 @@ do (System)
       }|
 
       // Skip the function name.
-      var args = call.args.tail |
+      var args = call.args.tail() |
       var target = args[0] |
       var c = call |
       c.message = message |
-      c.args = args.tail |
+      c.args = args.tail() |
       c.targetLazy = target |
-      c.target = target.value.acceptVoid |
-      var formatArgsStr = c.format |
+      c.target = target.value().acceptVoid() |
+      var formatArgsStr = c.format() |
       var messageFail =
-          "%s (%s)" % [formatArgsStr, c.negatedFormat(c.argsPrint)] |
+          "%s (%s)" % [formatArgsStr, c.negatedFormat(c.argsPrint())] |
       var messagePass =
-          "%s (%s)" % [formatArgsStr, c.format(c.argsPrint)] |
+          "%s (%s)" % [formatArgsStr, c.format(c.argsPrint())] |
 
-      assert_(c.value, messageFail, messagePass)
+      assert_(c.value(), messageFail, messagePass)
     }
   };
 
@@ -125,23 +125,23 @@ do (System)
   function (var file, var target = this, var isSystem = System.defaultIsSystem)
     {
       if (isSystem)
-        addSystemFile(file.asString)|
+        addSystemFile(file.asString())|
       'loadFile$old'(file, target)
     });
 
   for (var s: ["component", "naming-standard", "object",
                "system", "test-suite", "urbi"])
     // String.% is not available, yet.
-    addSystemFile(searchFile("urbi/" + s + ".u").asString);
+    addSystemFile(searchFile("urbi/" + s + ".u").asString());
 
   /// Look for file and load it.
   // Throw on errors.
   function load(var file, var target = this, var isSystem = System.defaultIsSystem)
   {
     System.'$loadedFiles'.set(file, false)|
-    var res = System.loadFile(System.searchFile(file), target, isSystem).acceptVoid |
+    var res = System.loadFile(System.searchFile(file), target, isSystem).acceptVoid() |
     System.'$loadedFiles'.set(file, true)|
-    res.unacceptVoid
+    res.unacceptVoid()
   };
 
   /// Same as loadModule, but exit on failure.
@@ -180,7 +180,7 @@ do (System)
     catch (var e if e.isA(Exception.FileNotFound))
     {
     }|
-    if (!path.isNil)
+    if (!path.isNil())
     {
       channel.echo("loading %s." % path) |
       System.loadFile(path)
@@ -191,7 +191,7 @@ do (System)
   {
     nonInterruptible |
     for| (var t : Job.jobs)
-      t.dumpState
+      t.dumpState()
   };
 
   function '$requireWait'(var file)
@@ -209,7 +209,8 @@ do (System)
 
   // Do not make a wrapper function here, as you would get a tag for
   // the scope of that function, instead of the caller.
-  setSlotValue("scopeTag", Tag.getSlotValue("scope"));
+  var scopeTag;
+  scopeTag->oget = Tag.getSlotValue("scope");
 
   function spawn(var fun, var clear)
   {
@@ -217,7 +218,7 @@ do (System)
     Control.spawn(fun, clear)
   };
 
-  function version()
+  get version()
   {
     PackageInfo.components["Urbi"].version
   };
@@ -260,20 +261,23 @@ function Object.loadFile(var file, var target = this)
   System.loadFile(file, target)
 };
 
+System.shutdown->oget = function() { System.&shutdown.value()};
 
 do('package'.lang)
 {
-  var nonInterruptible = System.getSlotValue("nonInterruptible");
-  var noVoidError = System.getSlotValue("noVoidError");
-  function shutdown()
+  setSlot("nonInterruptible", System.getSlot("nonInterruptible"));
+  setSlot("noVoidError", System.getSlot("noVoidError"));
+  get shutdown()
   {
-    System.shutdown;
+    System.shutdown()
   };
-  var scopeTag = Tag.getSlotValue("scope");
+  // Cannot use a wrapper here obviously.
+  var scopeTag;
+  scopeTag->oget = Tag.getSlotValue("scope");
   //var echo = System.getSlotValue("echo");
-  var time = System.getSlotValue("time");
-  var shiftedTime = System.getSlotValue("shiftedTime");
+  get time() { System.time()};
+  get shiftedTime() { System.shiftedTime()};
   var sleep = System.getSlotValue("sleep");
-  var inf = Float.inf;
+  var inf = Float.inf();
 };
 

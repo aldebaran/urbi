@@ -47,10 +47,10 @@ namespace urbi
       , io_service_(object::Socket::get_default_io_service())
     {
       BIND(getIoService);
-      BIND(host);
+      BINDG(host);
       BIND(listen);
-      BIND(port);
-      BIND(sockets);
+      BINDG(port);
+      BINDG(sockets);
     }
 
     void

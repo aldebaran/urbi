@@ -37,6 +37,8 @@ package lang.TrajectoryGenerator
     var this.targetValue = args["base"]|
     var this.args = args|
     var adaptive = args.getWithDefault("adaptive", false) |
+    var this.startTime = 0|
+    var this.startValue = 0|
     protos =
       [{
         if ("accel" in args)
@@ -72,35 +74,35 @@ package lang.TrajectoryGenerator
   // init().
   function reset()
   {
-    var this.startTime = time|
+    this.startTime = time|
     // Sin does not need startValue, but it is simpler to compute it
     // anyway as it allows to depend on it below.  Besides, it allows
     // to enforce a proper initial value for Sin too.
-    var this.startValue = getStartValue |
+    this.startValue = getStartValue() |
   };
 
   // Going from startValue to targetValue with given speed.
   function duration(var speed)
   {
     if (speed)
-      (startValue - targetValue).abs / speed
+      (startValue - targetValue).abs() / speed
     else
-      Float.inf
+      inf
   }|
 
   /// Evaluate the initial value.
   function getStartValue()
   {
-    var res = getter |
+    var res = getter() |
     switch (res.type)
     {
       case "Float":
         // Fine.
 
       case "Group":
-        res = res.members.head |
+        res = res.members().head() |
         while (res.type == "List")
-          res = res.head
+          res = res.head()
 
       default:
         // Accept unknown types as long as they have a '+' slot.
@@ -113,18 +115,19 @@ package lang.TrajectoryGenerator
   };
 
   // Override system time to take shift induced by freeze into account.
-  function time()
+  get time()
   {
     System.time - Job.current.timeShift
   };
 
   /// Use this tag to end a trajectory.
-  var tag;
+  var tag = nil;
 
   /// End the trajectory.
   function stop()
   {
-    tag.stop
+    if (tag)
+      tag.stop()
   };
 
   // Update the variable according to the trajectory.
@@ -132,11 +135,11 @@ package lang.TrajectoryGenerator
   // Blocking until the trajectory is over.
   function run()
   {
-    reset |
-    tag = Tag.new|
+    reset() |
+    tag = Tag.new()|
     tag:
       every|(System.period)
-	setter(nextValue)
+	setter(nextValue())
   };
 
   // Generate a TrajectoryGenerator that first runs \a this, then
@@ -163,9 +166,9 @@ class TrajectoryGenerator.Until : TrajectoryGenerator
   // Blocking until the trajectory is over.
   function run()
   {
-    at (until)
-      gen.stop;
-    gen.run;
+    at (until())
+      gen.stop();
+    gen.run();
   };
 };
 
@@ -178,6 +181,7 @@ class TrajectoryGenerator.Then : TrajectoryGenerator
   {
     var this.first = first |
     var this.second = second |
+    this.tag = Tag.new()
   };
 
   // Update the variable according to the trajectory.
@@ -185,8 +189,16 @@ class TrajectoryGenerator.Then : TrajectoryGenerator
   // Blocking until the trajectory is over.
   function run()
   {
-    first.run|
-    second.run
+    tag: {
+      first.run()|
+      second.run()
+    }
+  };
+  function stop()
+  {
+    first.stop()|
+    second.stop()|
+    tag.stop()
   };
 };
 
@@ -204,7 +216,7 @@ class TrajectoryGenerator.OpenLoop : TrajectoryGenerator
 {
   function nextValue()
   {
-    get
+    get()
   };
 };
 
@@ -226,10 +238,10 @@ class TrajectoryGenerator.Accel : TrajectoryGenerator.OpenLoop
   function get()
   {
     var time = time |
-    if (duration - System.period < time - startTime)
+    if (duration() - System.period < time - startTime)
     {
       setter(targetValue) |
-      stop
+      stop()
     }
     else
     {
@@ -252,7 +264,7 @@ class TrajectoryGenerator.Sin : TrajectoryGenerator.OpenLoop
 
   function get()
   {
-    targetValue + ampli * sin((time - startTime) * alpha + phase)
+    targetValue() + ampli * sin((time - startTime) * alpha + phase)
   };
 };
 
@@ -267,14 +279,14 @@ class TrajectoryGenerator.Smooth : TrajectoryGenerator.OpenLoop
   function get()
   {
     var time = time |
-    if (duration - System.period < time - startTime)
+    if (duration() - System.period < time - startTime)
     {
       setter(targetValue)|
-      stop
+      stop()
     }
     else
     {
-      var stat = (time - startTime) / duration |
+      var stat = (time - startTime) / duration() |
       startValue
         + (targetValue - startValue) * (sin(pi * stat - 'pi/2') + 1) / 2
     }
@@ -301,14 +313,14 @@ class TrajectoryGenerator.Time : TrajectoryGenerator.OpenLoop
   function get()
   {
     var timeElapsed = time - startTime |
-    if (duration - System.period < timeElapsed)
+    if (duration() - System.period < timeElapsed)
     {
       setter(targetValue)|
-      stop
+      stop()
     }
     else
     {
-      var stat = timeElapsed / duration |
+      var stat = timeElapsed / duration() |
       startValue + (targetValue - startValue) * stat
     }
   };
@@ -331,11 +343,11 @@ class TrajectoryGenerator.ClosedLoop : TrajectoryGenerator
 
   function nextValue()
   {
-    var currentVal = getter |
+    var currentVal = getter()|
     if (targetReached(currentVal))
     {
       setter(targetValue) |
-      stop
+      stop()
     }
     else
       get(currentVal)
@@ -344,13 +356,13 @@ class TrajectoryGenerator.ClosedLoop : TrajectoryGenerator
   function reset()
   {
     TrajectoryGenerator.getSlotValue("reset").apply([this]) |
-    lastVal = getter
+    lastVal = getter()
   };
 
   // Compute a float mean for the relative positionning errors.
   function errorLevel(currentVal)
   {
-    delta = (currentVal - lastVal).abs * 0.02 + delta * 0.98 |
+    delta = (currentVal - lastVal).abs() * 0.02 + delta * 0.98 |
     lastVal = currentVal |
     delta
   };
@@ -358,7 +370,7 @@ class TrajectoryGenerator.ClosedLoop : TrajectoryGenerator
   // Whether we reached the target value.
   function targetReached(var currentVal)
   {
-    (currentVal - targetValue).abs <= errorLevel(currentVal)
+    (currentVal - targetValue).abs() <= errorLevel(currentVal)
   };
 };
 
@@ -377,7 +389,7 @@ class TrajectoryGenerator.SpeedAdaptive : TrajectoryGenerator.ClosedLoop
   function get(currentVal)
   {
     var res = currentVal
-        + speed * (targetValue - currentVal).sign * System.period |
+        + speed * (targetValue - currentVal).sign() * System.period |
     if (currentVal < targetValue < res || res < targetValue < currentVal)
       targetValue
     else
@@ -405,7 +417,7 @@ class TrajectoryGenerator.TimeAdaptive : TrajectoryGenerator.ClosedLoop
 
   function get(var currentVal)
   {
-    var timeLeft = startTime + duration - time |
+    var timeLeft = startTime + duration() - time |
     if (timeLeft < System.period)
       targetValue
     else

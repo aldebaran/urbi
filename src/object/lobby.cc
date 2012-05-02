@@ -63,12 +63,12 @@ namespace urbi
       BIND(send, send, void (Lobby::*)(const std::string&, const std::string&));
 
       BIND(binaryMode);
-      BIND(bytesReceived);
-      BIND(bytesSent);
+      BINDG(bytesReceived);
+      BINDG(bytesSent);
       BIND(create);
-      BIND(instances, instances_get);
+      BINDG(instances, instances_get);
       BIND(lobby);
-      BIND(quit);
+      BINDG(quit);
       BIND(receive);
       BIND(write);
     }

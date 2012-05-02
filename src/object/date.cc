@@ -87,8 +87,8 @@ namespace urbi
       BIND(PLUS, operator +);
       BIND(asFloat, as_float);
       BIND(asString, as_string);
-      BIND(epoch);
-      BIND(now);
+      BINDG(epoch);
+      BINDG(now);
       bind_variadic(SYMBOL(init), &Date::init);
     }
 

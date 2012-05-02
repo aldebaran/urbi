@@ -27,17 +27,17 @@ do (Tag)
       "%s<%s>" % [type, uid]
   };
 
-  function begin()
+  get begin()
   {
-    var res = clone|
+    var res = clone()|
     at (res.enter?)
       echo("%s: begin" % res.name)|
     res;
   };
 
-  function end()
+  get end()
   {
-    var res = clone|
+    var res = clone()|
     at (res.leave?)
       echo("%s: end" % res.name)|
     res;

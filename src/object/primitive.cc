@@ -29,6 +29,7 @@ namespace urbi
   namespace object
   {
     Primitive::Primitive()
+    : default_arity_(-1)
     {
       proto_add(proto);
     }
@@ -36,6 +37,7 @@ namespace urbi
     Primitive::Primitive(rPrimitive model)
       : content_(model->value_get())
       , default_()
+      , default_arity_(-1)
     {
       proto_add(proto);
       proto_remove(Object::proto);
@@ -44,6 +46,7 @@ namespace urbi
     Primitive::Primitive(const value_type& p)
       : content_()
       , default_(p)
+      , default_arity_(-1)
     {
       if (!proto)
         proto = new Primitive(FirstPrototypeFlag());
@@ -101,26 +104,54 @@ namespace urbi
     }
 
 
-    rObject Primitive::call_raw(const object::objects_type& args)
+    rObject Primitive::call_raw(const object::objects_type& args,
+      unsigned flags)
     {
+      //flags = CALL_IGNORE_EXTRA_ARGS | CALL_IGNORE_MISSING_ARGS;
       size_t arity = args.size();
-      if (libport::has(content_, arity))
+      if (default_
+        && ( (size_t)default_arity_ == arity
+          || (arity == 1 && default_arity_ == 0)))
+        return default_(args);
+      else if (libport::has(content_, arity))
         return content_[arity](args);
       // Self is always present, accept it even for 0-arity.
       else if (arity == 1 && libport::has(content_, 0))
         return content_[0](args);
-      else if (default_)
+      else if (default_ && default_arity_ == -1)
         return default_(args);
 
       // error handing
       size_t min = INT_MAX;
       size_t max = 0;
-
+      size_t minAbove = INT_MAX;
+      size_t maxBelow = 0;
       // FIXME: the valid arities is not necessarily a range.
       foreach (const Primitive::values_type::value_type& elt, content_)
       {
+        if (elt.first >= arity)
+          minAbove = std::min(minAbove, elt.first);
+        if (elt.first <= arity)
+          maxBelow = std::max(maxBelow, elt.first);
         min = std::min(min, elt.first);
         max = std::max(max, elt.first);
+      }
+      if (default_arity_ != -1)
+      {
+        minAbove = std::min(minAbove, (size_t)default_arity_);
+        maxBelow = std::max(maxBelow, (size_t)default_arity_);
+      }
+      if ( (flags & CALL_IGNORE_EXTRA_ARGS) && maxBelow)
+      {
+        object::objects_type cp(args.begin(), args.begin() + maxBelow);
+        return ((maxBelow == (size_t)default_arity_)?default_:content_[maxBelow])(cp);
+      }
+      if ((flags & CALL_IGNORE_MISSING_ARGS) && minAbove < INT_MAX)
+      {
+         object::objects_type cp = args;
+         for (unsigned i = 0; i< minAbove - args.size(); ++i)
+           cp.push_back(nil_class);
+         return ((minAbove == (size_t)default_arity_)?default_:content_[minAbove])(cp);
       }
       if (min == max)
       {

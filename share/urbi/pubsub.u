@@ -23,7 +23,7 @@ package lang.PubSub
   {
     function init()
     {
-       var this.barrier = Barrier.new |
+       var this.barrier = Barrier.new() |
        var this.queue = []
     };
 
@@ -36,19 +36,19 @@ package lang.PubSub
     function getOne()
     {
       if (queue.empty)
-        barrier.wait |
-      var ev = queue.front |
-      queue.removeFront |
+        barrier.wait() |
+      var ev = queue.front() |
+      queue.removeFront() |
       ev
     };
 
     function getAll()
     {
       if (queue.empty)
-        barrier.wait |
+        barrier.wait() |
       // Take a copy of the list before clearing it
-      var evs = queue.clone |
-      queue.clear |
+      var evs = queue.clone() |
+      queue.clear() |
       evs
     };
   };
@@ -60,7 +60,7 @@ package lang.PubSub
 
   function subscribe()
   {
-    var sub = Subscriber.new |
+    var sub = Subscriber.new() |
     subscribers.insertBack(sub) |
     sub
   };

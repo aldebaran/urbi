@@ -110,34 +110,33 @@ package lang.Tuple : RangeIterable, Container
 
       function init(var args[])
       {
-        if (args.size != size)
+        if (args.size() != size())
           throw Exception.Arity.new("%s.%s" % [name, "init"],
-                                    args.size,
-                                    size)|
+                                    args.size(),
+                                    size())|
         var m = args |
-        m += m.range(size - m.size) |
+        m += m.range(size() - m.size()) |
         Tuple.getSlotValue("init").apply([this, m])
       };
 
       var idx = 0;
-      for (var name: names.range(size))
+      for (var name: names.range(0, size))
       {
-        var n = idx;
-        setSlotValue(name, function () { members[n] });
-        setProperty(name, "updateHook",
-          function (name, val) {
-            // Copy members if needed before altering it
-            if (!hasLocalSlot("members"))
-              members = members.clone |
-            members[n] = val|
-            void
-          });
+        var n = idx; // We need a closure on this slot.
+        setSlotValue(name, 0);
+        getSlot(name).oget = function() { members[n]};
+        getSlot(name).oset = function(v, s)
+        {
+          if (!hasLocalSlot("members"))
+            members = members.clone()|
+          members[n] = v
+        };
         idx++;
       };
     };
     'package'.lang.setSlotValue(name, Res);
   };
 
-  makeTupleClass("Pair", 2);
-  makeTupleClass("Triplet", 3);
+   makeTupleClass("Pair", 2);
+   makeTupleClass("Triplet", 3);
 };

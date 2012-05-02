@@ -20,7 +20,7 @@ do (Event)
   var blockSubscriberException = true;
   function '||' (rhs)
   {
-    var res = Event.new |
+    var res = Event.new() |
     at (this?)
       res! |
     at (rhs?)
@@ -35,8 +35,8 @@ do (Event)
   {
     var handler |
     rhs.onEvent(closure (evt, payload) { true },
-                closure (evt, payload, pattern) { handler = this.trigger },
-                closure (evt, payload, pattern) { handler.stop },
+                closure (evt, payload, pattern) { handler = this.trigger() },
+                closure (evt, payload, pattern) { handler.stop() },
                 true) |
 
     // To watch many at once.
@@ -47,8 +47,8 @@ do (Event)
   // duration. That is, "this ~ duration".
   function persists(var duration)
   {
-    var res = Event.new |
-    var control = Tag.new |
+    var res = Event.new() |
+    var control = Tag.new() |
     var handler = nil |
     at (this?)
     {
@@ -60,10 +60,10 @@ do (Event)
     }
     onleave
     {
-      control.stop |
+      control.stop() |
       if (handler != nil)
       {
-        handler.stop |
+        handler.stop() |
         handler = nil
       }
     } |

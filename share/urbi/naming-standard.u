@@ -51,7 +51,7 @@ do ('package'.gsrapi)
         Interface.hasLocalSlot(name) && Interface.getSlotValue(name) === o
       };
 
-      var res = allProtos.filter(isInterface) |
+      var res = allProtos().filter(isInterface) |
       res.filter(function (x) { !res.any(function(y) { x !== y && y.isA(x)})})
     };
   };

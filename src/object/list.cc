@@ -80,7 +80,7 @@ namespace urbi
       BIND(each_AMPERSAND, each_and);
       BIND(each_PIPE, each_pipe);
       BIND(eachi);
-      BIND(empty);
+      BINDG(empty);
       BIND(front);
       BIND(hash);
       BIND(SBL_SBR, operator[]);
@@ -95,7 +95,7 @@ namespace urbi
       BIND(removeFront);
       BIND(removeById, remove_by_id);
       BIND(reverse);
-      BIND(size);
+      BINDG(size);
       BIND(STAR, operator*);
       BIND(tail);
     }

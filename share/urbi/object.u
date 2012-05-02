@@ -10,9 +10,6 @@
 
 do (Object)
 {
-  // Syntactic sugar for setProtos.
-  protos->updateHook = function(slot, value) { setProtos(value); };
-
   function '!'()
   {
     if (this) false else true
@@ -26,7 +23,7 @@ do (Object)
 
   function 'class'(var name, var protos = [])
   {
-    var res = Object.clone |
+    var res = Object.clone() |
     if (protos)
       res.setProtos(protos) |
     var res.type = name |
@@ -36,7 +33,7 @@ do (Object)
 
   function cloneSlot(from, to)
   {
-    setSlot(to, getSlot(from).clone)
+    setSlot(to, getSlot(from).clone())
   };
 
   function copySlot(from, to)
@@ -48,7 +45,7 @@ do (Object)
   function getPeriod()
   {
     Kernel1.deprecated("Object.getPeriod", "System.period") |
-    System.period
+    System.period()
   };
 
   function print()
@@ -62,8 +59,8 @@ do (Object)
     // Beware that we may be losing the ancestry on Object, which has
     // access to "addProto".
     var add = Object.getSlotValue("addProto") |
-    protos.clear() |
-    for| (var p: ps.reverse)
+    protos().clear() |
+    for| (var p: ps.reverse())
       add.apply([this, p]) |
   };
 
@@ -84,12 +81,12 @@ do (Object)
   // To be overridden by subclasses.
   function asString()
   {
-    '$id'
+    '$id'()
   };
 
   function format(f = FormatInfo)
   {
-    asString.format(f)
+    asString().format(f)
   };
 
 
@@ -129,12 +126,12 @@ do (Object)
   function '$id'()
   {
     var res = type |
-    if (!isProto)
+    if (!isProto())
     {
-      if (hasLocalSlot("name") && !name.empty)
-        res += "<" + name + ">"
+      if (hasLocalSlot("name") && !name().empty())
+        res += "<" + name() + ">"
       else
-        res += "_" + uid
+        res += "_" + uid()
     } |
     res
   };
@@ -151,25 +148,25 @@ do (Object)
 
   function inspect(var deep = false)
   {
-    function '<' (l, r) { l.toLower < r.toLower }|
+    function '<' (l, r) { l.toLower() < r.toLower() }|
     // Be sure that "l.inspect" (with l being a Lobby) goes onto the
     // current Lobby, not onto "l".
     function echo(m) { lobby.echo(m) }|
-    echo("Inspecting " + this.asPrintable)|
+    echo("Inspecting " + this.asPrintable())|
     echo("** Prototypes:")|
-    for| (var p: protos)
-      echo("  " + p.asPrintable)|
+    for| (var p: protos())
+      echo("  " + p.asPrintable())|
     var slots =
       {
         if (deep)
         {
           echo("** All Slots:")|
-          slotNames
+          slotNames()
         }
         else
         {
           echo("** Local Slots:")|
-          localSlotNames
+          localSlotNames()
         }
       }|
     for| (var s: slots.sort('<'))
@@ -184,19 +181,22 @@ do (Object)
              else if (o === this)
                "  this."
              else
-               "  %s." % o.asPrintable
+               "  %s." % o.asPrintable()
            }
            + "%s : %s%s"
               % [s,
                  { if (constant) "const " else "" },
-                 o.getSlotValue(s).type])|
+                 {if (o.hasProperty(s, "get") || o.hasProperty(s, "oget")) "gettable" else o.getSlotValue(s).type}])|
       if (ps)
       {
         echo("    Properties:") |
         for| (var p: ps.keys.sort('<'))
           echo("     %s : %s = %s"
-               % [p, ps[p].type, ps[p].asPrintable])
+               % [p, ps[p].type, ps[p].asPrintable()])
       }
     };
   };
+  // Syntactic sugar for setProtos.
+  protos->oset = function(v, s) { setProtos(v)}; // getSlotValue("setProtos");
+  &protos.oget = function(u) {&protos.value.apply([this])};
 };

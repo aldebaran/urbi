@@ -81,23 +81,23 @@ namespace urbi
 
       BIND(EQ_EQ, operator==, bool, (const rObject&) const);
       BIND(LT_EQ, operator<=);
-      BIND(absolute);
+      BINDG(absolute);
       BIND(asList, as_list);
       BIND(asPrintable, as_printable);
       BIND(asString, as_string);
-      BIND(basename);
+      BINDG(basename);
       BIND(cd);
-      BIND(cwd);
-      BIND(dirname);
-      BIND(exists);
+      BINDG(cwd);
+      BINDG(dirname);
+      BINDG(exists);
       BIND(init);
       BIND(isDir, is_dir);
       BIND(isReg, is_reg);
       BIND(open);
       BIND(lastModifiedDate, last_modified_date);
-      BIND(readable);
+      BINDG(readable);
       BIND(rename);
-      BIND(writable);
+      BINDG(writable);
     }
 
     void

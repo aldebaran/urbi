@@ -68,7 +68,7 @@ namespace urbi
       , onSubscribe_(0)
       , callbacks_()
     {
-      BIND(hasSubscribers);
+      BINDG(hasSubscribers);
       BIND(onEvent, onEvent, on_event_type);
       BIND(onSubscribe, onSubscribe_);
       BIND(subscribe);

@@ -27,31 +27,31 @@ package lang.Lazy : Comparable
     // code is very likely to be a closure, do not fire it, otherwise
     // we might compare two values instead of two expressions.
     getSlotValue("code") == other.getSlotValue("code")
-      && getSlotValue("val").acceptVoid == other.getSlotValue("val").acceptVoid;
+      && getSlotValue("val").acceptVoid() == other.getSlotValue("val").acceptVoid();
   };
 
   function eval()
   {
-    val = code.acceptVoid|
-    getSlotValue("val").unacceptVoid
+    val = code().acceptVoid()|
+    getSlotValue("val").unacceptVoid()
   };
 
   function value()
   {
-    if (getSlotValue("val").isVoid)
-      eval|
-    getSlotValue("val").unacceptVoid
+    if (getSlotValue("val").isVoid())
+      eval()|
+    getSlotValue("val").unacceptVoid()
   };
 
   function asString ()
   {
     var c = getSlotValue("code") |
-    if (c.isVoid)
+    if (c.isVoid())
       type
     else if (c.hasSlot("bodyString"))
-      c.bodyString
+      c.bodyString()
     else
-      c.asString
+      c.asString()
   };
 };
 
@@ -60,8 +60,8 @@ package lang.PseudoLazy: Lazy
 
   function eval()
   {
-    val = getSlotValue("code").acceptVoid|
-    getSlotValue("val").unacceptVoid
+    val = getSlotValue("code").acceptVoid()|
+    getSlotValue("val").unacceptVoid()
   };
 
 };

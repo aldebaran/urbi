@@ -248,6 +248,8 @@ namespace urbi
     rObject
     Slot::init(bool fromModel)
     {
+      has_uvalue_ = false;
+      oget_ = oset_ = get_ = set_ = 0;
       rSlot model;
       if (fromModel)
         model = protos_get_first()->as<Slot>();
@@ -330,11 +332,25 @@ namespace urbi
       rObject res;
       if (sender && oget_)
       {
-         object::objects_type args;
-         args << const_cast<Slot*>(this);
+        object::objects_type args;
+        args << sender << const_cast<Slot*>(this);
+        /*
+        if (rPrimitive p = oget_->as<Primitive>())
+        {
+          res = p->call_raw(args, Primitive::CALL_IGNORE_EXTRA_ARGS);
+        }
+        else*/
+        {
+
          res = eval::call_apply(::kernel::runner(),
-                                 sender,
-                                 oget_, SYMBOL(oget), args);
+                                 oget_.get(),
+                                 SYMBOL(oget),
+                                 args,
+                                 0,
+                                 boost::optional< ::ast::loc>(),
+                                 Primitive::CALL_IGNORE_EXTRA_ARGS
+                                 );
+        }
       }
       if (get_)
       {
@@ -452,7 +468,33 @@ namespace urbi
       CAPTURE_GLOBAL(System);
       while (true)
       {
-        value(nil_class.get()); // FIXME: !!!
+        // UObjects need an access to the getter, and
+        // watchers need a changed! . But if there is a watcher, the changed!
+        // will trigger reevaluation which will call the getter.
+
+        // We must protect against reetrant calls to changed as it confuses
+        // the dependency tracker, as is done in setter().
+        runner::Job& r = ::kernel::runner();
+        bool isIn = libport::has(in_setter_, &r);
+        if (!isIn)
+        {
+          GD_FINFO_DUMP("set_output_value on %s: disabling notifies", this);
+          in_setter_.push_back(&r);
+          FINALLY(((std::vector<void*>&, in_setter_))
+            ((runner::Job&, r)),
+            for (unsigned i=0; i<in_setter_.size(); ++i)
+              if (in_setter_[i] == &r)
+              {
+                if (i != in_setter_.size()-1)
+                  in_setter_[in_setter_.size()-1] = in_setter_[i];
+                in_setter_.pop_back();
+              }
+              );
+          objects_type nothing;
+          if (changed_)
+            changed_->as<object::Event>()->syncEmit(nothing);
+        }
+        //changed_->as<Event>()->syncEmit();
         rObject period = System->call(SYMBOL(period));
         r.yield_for(libport::utime_t(period->as<Float>()->value_get()
                                      * 1000000.0));
@@ -463,12 +505,18 @@ namespace urbi
     bool
     Slot::push_pull_check(bool first_getter)
     {
+
       // Activate if there is at least one getter and at least one
       // notifychange-like.
       bool need_loop =
        !push_pull_loop_ &&
        (get_ || oget_) &&
-       (changed_ && changed_->as<Event>()->hasSubscribers());
+       (changed_ && changed_->as<Event>()->hasSubscribers()) &&
+       hasLocalSlot(SYMBOL(watchIncompatible))
+       ;
+       /*std::cerr <<"ppchecking "<< push_pull_loop_ <<" " << need_loop << " "
+       << (changed_ && changed_->as<Event>()->hasSubscribers())
+       << std::endl;*/
       if (need_loop)
       {
         push_pull_loop_ = true;
@@ -479,8 +527,8 @@ namespace urbi
         nr->name_set("pushPullLoop");
         nr->set_action(boost::bind(&Slot::push_pull_loop_run, this, _1));
         // Remove the lobby's tag.
-	nr->state.tag_stack_clear();
-	nr->start_job();
+        nr->state.tag_stack_clear();
+        nr->start_job();
       }
       if (!need_loop && first_getter && changed_)
       {
@@ -488,6 +536,7 @@ namespace urbi
         call(SYMBOL(hookChangedEvent));
       }
       GD_FINFO_TRACE("push_pull_check: %s", need_loop);
+      //std::cerr <<"ppchecking done"<<std::endl;
       return need_loop;
     }
 

@@ -20,32 +20,32 @@ package lang.Math
 {
   setProtos([Singleton]);
 
-  function abs(var x)     { x.abs };
-  function acos(var x)    { x.acos };
-  function asin(var x)    { x.asin };
-  function atan(var x)    { x.atan };
-  function ceil(var x)    { x.ceil };
-  function cos(var x)     { x.cos };
-  function exp(var x)     { x.exp };
-  function floor(var x)   { x.floor };
-  function log(var x)     { x.log };
-  function random(var x)  { x.random };
-  function srandom(var x) { x.srandom };
-  function round(var x)   { x.round };
-  function sign(var x)    { x.sign };
-  function sin(var x)     { x.sin };
-  function sqr(var x)     { x.sqr };
-  function sqrt(var x)    { x.sqrt };
-  function tan(var x)     { x.tan };
-  function trunc(var x)   { x.trunc };
+  function abs(var x)     { x.abs() };
+  function acos(var x)    { x.acos() };
+  function asin(var x)    { x.asin() };
+  function atan(var x)    { x.atan() };
+  function ceil(var x)    { x.ceil() };
+  function cos(var x)     { x.cos() };
+  function exp(var x)     { x.exp() };
+  function floor(var x)   { x.floor() };
+  function log(var x)     { x.log() };
+  function random(var x)  { x.random() };
+  function srandom(var x) { x.srandom() };
+  function round(var x)   { x.round() };
+  function sign(var x)    { x.sign() };
+  function sin(var x)     { x.sin() };
+  function sqr(var x)     { x.sqr() };
+  function sqrt(var x)    { x.sqrt() };
+  function tan(var x)     { x.tan() };
+  function trunc(var x)   { x.trunc() };
 
   function atan2(x, y)  { x.atan2(y) };
 
-  function min(var args[]) { args.min };
-  function max(var args[]) { args.max };
+  function min(var args[]) { args.min() };
+  function max(var args[]) { args.max() };
 
   for (var v: ["inf", "nan", "pi"])
-    setSlotValue(v, Float.getSlotValue(v));
+    setSlot(v, Float.getSlot(v));
 };
 
 //Global.addProto(Global.Math);

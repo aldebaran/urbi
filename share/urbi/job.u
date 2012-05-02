@@ -35,7 +35,7 @@ do (Job)
         echo("    " + t);
     } |
 
-    if (var b = backtrace)
+    if (var b = backtrace())
     {
       echo("  Backtrace:") |
       for| (var l : b)

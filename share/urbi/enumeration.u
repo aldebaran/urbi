@@ -19,7 +19,7 @@ package lang.Enumeration : RangeIterable
 {
   var this.name = "Enumeration";
   var this.values = [];
-  protos << Container;
+  protos() << Container;
 
   function init(name, values)
   {
@@ -29,7 +29,7 @@ package lang.Enumeration : RangeIterable
     var i = 0|
     for| (var value in values)
     {
-      var val = clone |
+      var val = clone() |
       var val.asString = value |
       setSlot(value, val)|
       this.values << val|
@@ -53,6 +53,6 @@ package lang.Enumeration : RangeIterable
 
   function size()
   {
-    asList.size
+    asList.size()
   };
 };

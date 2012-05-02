@@ -34,15 +34,15 @@ package lang.camera: 'package'.gsrapi.Loadable
   var images;
   function loadImages ()
   {
-    if (images.isVoid)
+    if (images.isVoid())
     {
       var dir = System.urbiShareDir / "images" / "gostai-logo" / "jpeg";
       clog << "Loading images from %s." % dir;
       images =
         Directory.new(dir)
-        .asList
+        .asList()
         .map (function (var path)
-              { var res = File.new(path).content;
+              { var res = File.new(path).content();
                 res.keywords = "jpeg";
                 res });
       clog << "Loaded %s images." % images.size;
@@ -59,7 +59,7 @@ package lang.camera: 'package'.gsrapi.Loadable
   var count = 0;
   at (load)
   {
-    loadImages;
+    loadImages();
     every (period)
     {
       val = images[count];
@@ -113,7 +113,7 @@ do ('package'.lang)
     res << "\\subsection{Slots}";
     res << "";
     res << "\\begin{urbiscriptapi}";
-    for (var i : localSlotNames.sort)
+    for (var i : localSlotNames().sor())
     {
       res << "\\item[%s]%s%%"
              % [{ if (i.isAlnum) i else "'%s'" % i },
@@ -166,13 +166,13 @@ do ('package'.lang)
 
   function skipIfWindows ()
   {
-    if (System.Platform.isWindows)
+    if (System.Platform.isWindows())
       testSkip("cannot run on Windows");
   }|;
 
   function skipIfWindowsDebug ()
   {
-    if (System.Platform.isWindows && System.Platform.compilationModeDebug)
+    if (System.Platform.isWindows() && System.Platform.compilationModeDebug())
       testSkip("cannot run on Windows Debug compilation-mode");
   }|;
 }|;
@@ -188,7 +188,7 @@ do (Object)
 {
   // Deterministic localSlotNames.
   overrideSlot("localSlotNames",
-    function () { 'localSlotNames$old'.sort });
+    function () { 'localSlotNames$old'().sort() });
 
   // Remove files and directories.
   //
@@ -208,9 +208,9 @@ do (Object)
           s = File.new(s) |
       // Remove File/Directory.
       if (s.isA(Directory))
-        s.removeAll
+        s.removeAll()
       else
-        s.remove
+        s.remove()
     }|
     {}
   };
@@ -239,9 +239,10 @@ do (Dictionary)
   overrideSlot("keys",
     function ()
     {
-      'keys$old'.sort (function (a, b) { a.asString < b.asString } )
+      'keys$old'.sort (function (a, b) { a.asString() < b.asString() } )
     }
   )|;
+  get keys() { 'keys$old'.sort (function (a, b) { a.asString() < b.asString() } )};
 }|;
 
 
@@ -252,7 +253,7 @@ do (Dictionary)
 // These would be overridden if there is a support for inotify.
 do (Directory)
 {
-  var fileCreated = Event.new;
+  var fileCreated = Event.new();
 
   fileCreated.overrideSlot("waituntil",
     function /* skip_if_no_inotify */(var args[])
@@ -262,7 +263,7 @@ do (Directory)
 
   // Deterministic content.
   overrideSlot("content",
-    function () { 'content$old'.sort });
+    function () { 'content$old'.sort() });
 
   var fileDeleted = fileCreated;
 }|;
@@ -316,7 +317,7 @@ do (Location)
     var drop = true|
     var loc = nil|
     var i = 0|
-    for| (i = 0; i < list.size && loc.isNil; ++i)
+    for| (i = 0; i < list.size && loc.isNil(); ++i)
     {
       if (drop)
         drop = drop && list[i].name != "here"|
@@ -377,7 +378,7 @@ do (String)
 
 do (System)
 {
-  const var Status = do (Object.new)
+  const var Status = do (Object.new())
   {
     function stat(var name)
     {
@@ -391,22 +392,21 @@ do (System)
 
   function status()
   {
-    skipIfWindows;
+    skipIfWindows();
     var procStatus = Path.new("/") / "proc" / "self" / "status";
     if (!procStatus.exists)
       testSkip("No /proc/self/status");
-
     var is = InputStream.new(File.new(procStatus));
     var d = [ => ];
     var line;
-    while (!(line = is.getLine).isNil)
+    while (!(line = is.getLine()).isNil())
     {
       var l = line.split(":\t");
       try {
         d[l[0]] =
           l[1]
           .split(" ", 1024, false, false)
-          .map(closure (v) { try { v.asFloat } catch (var e) { v } })
+          .map(closure (v) { try { v.asFloat() } catch (var e) { v } })
       } 
       catch (var e)
       {
@@ -427,11 +427,11 @@ do (System)
 
     function mode() { if (judge_mode) "judge" else "bench" };
 
-    var checker = do (Tag.new)
+    var checker = do (Tag.new())
       {
         function onEnter()
         {
-          begMem = System.status.stat("VmData");
+          begMem = System.status().stat("VmData");
           clog << "%s: %s: start with %d kB" % [location, mode(), begMem];
         };
 
@@ -440,7 +440,7 @@ do (System)
           // FIXME: trigger the garbage collection
           // sleep(100ms);
 
-          var endMem = System.status.stat("VmData");
+          var endMem = System.status().stat("VmData");
           clog << "%s: %s: leak %d kB" % [location, mode(), endMem - begMem];
           if (judge_mode)
           {
@@ -454,7 +454,7 @@ do (System)
 
     System.memCheck = function (var f, var loc = nil)
     {
-      if (loc.isNil)
+      if (loc.isNil())
         loc = Location.here(-1);
       location = loc;
 
@@ -474,15 +474,15 @@ do (System)
   // Check that spawn threads do not map too much space.
   function memThreadCheck(var expectedMem, var f, var loc = nil)
   {
-    if (loc.isNil)
+    if (loc.isNil())
       loc = Location.here(-1);
 
-    var beg = System.status.stat("VmData") |
+    var beg = System.status().stat("VmData") |
     clog << "before thread: %d kB" % [beg] |
 
     memCheck(f, loc) |
 
-    var end = System.status.stat("VmData") |
+    var end = System.status().stat("VmData") |
     clog << "after thread: %d kB" % [end] |
 
     // Ensure that the thread does not ask for more than 32 KB.

@@ -13,7 +13,7 @@
 
 // We cannot use the "class Global.UObject: Finalizable" syntax here,
 // because of specific constraints of Finalizable.
-var 'package'.lang.UObject = Finalizable.new;
+var 'package'.lang.UObject = Finalizable.new();
 var 'package'.lang.UVar = Slot;
 do (UObject)
 {
@@ -33,8 +33,9 @@ do (UObject)
   // urbi/logger is actually loaded, which requires the
   // UObject.searchPath, which is defined below by the UObjectInit
   // call.
-  function logger()
+  get logger()
   {
+    UObject.logger->oget = nil |
     UObject.logger = Logger.new("Urbi.UObject")
   };
 
@@ -46,32 +47,32 @@ do (UObject)
   var remoteEventMap;
   function update()
   {
-    logger.warn << "update not defined"
+    logger.warn("update not defined")
   };
 
   // Override new to throw an exception if init returned a nonzero float
   function 'new'(var args[])
   {
     // The fresh child.
-    var res = call.getSlotValue("target").clone |
+    var res = call.getSlotValue("target").clone() |
     if (!res.hasLocalSlot("tag"))
-      var res.tag = Tag.new|
+      var res.tag = Tag.new()|
     // Call the "init" from the parent, retargetted to the child.
     call.message = "init" |
     var ret;
     try {
-      ret = res.callMessage(call).acceptVoid|
+      ret = res.callMessage(call).acceptVoid()|
     }
     catch(var e)
     {
       if (res.isRemote)
-        res.destroy|
+        res.destroy()|
       throw e
     }|
     if (ret.isA(Float) && ret != 0)
     {
       if (res.isRemote) // Remote still need explicit destruction
-        res.destroy|
+        res.destroy()|
       throw Exception.new("%s construction failed: init returned %s."
                             % [__uobjectName, ret])
     }
@@ -87,7 +88,7 @@ do (UObject)
   function uobjectInit()
   {
     // COW
-    updateTask = Tag.new|
+    updateTask = Tag.new()|
     remoteEventMap = [ => ]|
     timerTask = [ => ]
   };
@@ -103,8 +104,8 @@ do (UObject)
     // Try to remove all global locations this object might be in.
     if (hasLocalSlot("__uobjectName") && uobjects.hasLocalSlot(__uobjectName))
       uobjects.removeLocalSlot(__uobjectName)| // yeah no quote
-    if (isRemote)
-      finalize
+    if (isRemote())
+      finalize()
   };
   function finalize()
   {
@@ -118,12 +119,12 @@ do (UObject)
     }|
     if (hasLocalSlot("timerTask"))
       for| (var t: timerTask)
-        t.second.stop |
+        t.second.stop() |
     if (hasLocalSlot("updateTask"))
-      updateTask.stop |
-    for|(var sn: localSlotNames)
+      updateTask.stop() |
+    for|(var sn: localSlotNames())
     {
-      getLocalSlot(sn).isVoid|
+      getLocalSlot(sn).isVoid()|
       var s = getLocalSlot(sn)|
       s.dead = true|
       if (ir)
@@ -142,7 +143,7 @@ do (UObject)
     }|
   };
   var defaultFinalize = getSlotValue("finalize");
-  var bounceSetUpdate = Event.new;
+  var bounceSetUpdate = Event.new();
   at(bounceSetUpdate?(var obj))
   {
     if (0 < obj.updateInterval)
@@ -157,7 +158,7 @@ do (UObject)
     if (0 < interval < minimumInterval)
       interval = minimumInterval|
     // Stop current update task.
-    updateTask.stop|
+    updateTask.stop()|
     updateInterval = interval|
     bounceSetUpdate!(this)
   };
@@ -166,12 +167,12 @@ do (UObject)
   function setTimer(interval, func, tagName=nil)
   {
     if (!tagName)
-      tagName = String.fresh|
+      tagName = String.fresh()|
     if (interval < minimumInterval)
       interval = minimumInterval|
     if (!hasLocalSlot("timerTask"))
       timerTask = [ => ]|
-    var tag = Tag.new|
+    var tag = Tag.new()|
     disown({tag:loop{ func() | sleep(interval)}}) |
     timerTask[tagName] = tag
   };
@@ -182,7 +183,7 @@ do (UObject)
     var v = timerTask.getWithDefault(tagName, nil) |
     if (v)
     {
-      v.stop |
+      v.stop() |
       timerTask.erase(tagName) |
       true
     }
@@ -198,8 +199,8 @@ do (UObject)
     // Ensure only one instance is running using a tag in slot hub<hubname>.
     var slotName = "hub"+hubname |
     if (!hasSlot(slotName))
-      setSlotValue(slotName, Tag.new) |
-    getSlotValue(slotName).stop |
+      setSlotValue(slotName, Tag.new()) |
+    getSlotValue(slotName).stop() |
     if (0 < interval)
       getSlotValue(slotName):
         detach({loop{ func() | sleep(interval)}})
@@ -210,10 +211,10 @@ do (UObject)
   {
     var obj|
     if (objname.isA(String))
-      obj = uobjects.findUObject(objname).acceptVoid // FIXME should be nil
+      obj = uobjects.findUObject(objname).acceptVoid() // FIXME should be nil
     else
       obj = objname|
-    if (!obj.isVoid && lobby.hasLocalSlot("__bindingCount"))
+    if (!obj.isVoid() && lobby.hasLocalSlot("__bindingCount"))
     {
       var except = nil|
       var cnt = -1|
@@ -222,7 +223,7 @@ do (UObject)
         // May fail if the slot is gone, in which case there is not much to
         // unnotify
         fullName = obj.getSlot(varname).fullName|
-        cnt = lobby.__bindingCount.getWithDefault(fullName, -1)|
+        cnt = lobby.__bindingCount.getWithDefault(fullName(), -1)|
       }
       catch(var e) {except = e}|
       if (cnt <= 0)
@@ -231,7 +232,7 @@ do (UObject)
       }
       else
       {
-        if (count.isInf)
+        if (count.isInf())
           cnt = 0
         else
           cnt -= count |
@@ -247,7 +248,7 @@ do (UObject)
             // closure on a ton of stuffs, so remove it.
             //if (handle.target)
               //handle.target.set = nil|
-            handle.disconnect
+            handle.disconnect()
           }
           // Check if it is a notify handle (FIXME: no longuer possible)
           else if (handle.isA(Float) || handle.isA(Tag))
@@ -263,11 +264,11 @@ do (UObject)
           if (handle.isA(List))
           {
             for|(var i: handle)
-              try{i.destroy} catch {}|
+              try{i.destroy()} catch {}|
             lobby.__bindingFunc[fullName] = []
           }|
           lobby.__bindingCount.erase(fullName)|
-          obj.getSlot(varname).dereference
+          obj.getSlot(varname).dereference()
         }
       }
     }
@@ -283,7 +284,7 @@ do (UObject)
     // Get the barrier.
     var b = lobby.barriers[name] |
     lobby.barriers.erase(name) |
-    b.signal(val.acceptVoid)
+    b.signal(val.acceptVoid())
   };
 
   function syncGet(exp, tag)
@@ -322,32 +323,33 @@ do (Slot)
     {
       var l = Job.current.targetLobby|
       var bc = l.__bindingCount.getWithDefault(n, nil)|
-      if (bc.isNil)
+      if (bc.isNil())
       {
-        reference|
+        reference()|
         l.__bindingCount[n] = 0
       }
     }|
     fullName
   };
-  function logger()
+  get logger()
   {
+    Slot.logger->get = nil|
     Slot.logger = Logger.new("Urbi.UObject")
   };
-  var traceSet = Event.new;
-  var traceGet = Event.new;
-  var traceBind = Event.new;
+  var traceSet = Event.new();
+  var traceGet = Event.new();
+  var traceBind = Event.new();
   // Name of the owning object if in a standard component node, VAR otherwise
   var ownerName = "VAR";
   // Unique ID associated with this UVar
   function uniqueID()
   {
-    uniqueID = String.fresh
+    uniqueID = String.fresh()
   };
-  function fullName()
+  get fullName()
   {
     if (ownerName == "VAR")
-      "VAR." + uniqueID
+      "VAR." + uniqueID()
     else
       ownerName + "." + initialName
   };
@@ -361,7 +363,7 @@ do (Slot)
     // if ownerName is not VAR, then this UVar is globally accessible.
     if (!remoteRefCount && ownerName == "VAR")
     {
-      VAR.setSlot(uniqueID, this)
+      VAR.setSlot(uniqueID(), this)
     }|
     remoteRefCount++
   };
@@ -369,7 +371,7 @@ do (Slot)
   {
     remoteRefCount--|
     if (!remoteRefCount && ownerName == "VAR" )
-      VAR.removeSlot(uniqueID)
+      VAR.removeSlot(uniqueID())
   };
 
   // If this is true, callbacks that throw will be removed from callback lists.
@@ -413,13 +415,13 @@ do (Slot)
     Lobby.systemLobby.echo("enablertp")|
     // Propagate to all remotes.
     // First find the list of lobbies that have remotes
-    var lobbies = System.lobbies.filter(
+    var lobbies = System.lobbies().filter(
                                         function(x) { x.hasLocalSlot("__bindingCount")});
     // Then ask them to use RTP and reset existing notifies.
     var chan = Channel.new('external'.MODULE_TAG)|
     var chan.lobby|
     var msg = ['external'.UEM_SETRTP, fullName, 1] |
-    var tv = {if (split) outputValue.acceptVoid else value.acceptVoid }|
+    var tv = {if (split) outputValue.acceptVoid() else value.acceptVoid() }|
     for|(var l: lobbies)
     {
       chan.lobby = l |
@@ -436,7 +438,7 @@ do (Slot)
       }
       else if (currentBindings.isA(UConnection))
       {
-        currentBindings.disconnect|
+        currentBindings.disconnect()|
         'external'.setupRTP(tv.isA(Binary), parts[0], parts[1], l, nil)
       }
     }
@@ -446,7 +448,7 @@ do (Slot)
   // Compatibility with gostai studio which checks
   // UObject.hasLocalSlot(hasProperty)
   UObject.hasProperty = getSlotValue("hasProperty");
-  var onHasNotifyAccess = Event.new;
+  var onHasNotifyAccess = Event.new();
 
   // If \a compatF is non-nil, warn about a deprecated use of function
   // \a fnName and return \a compatF, otherwise return \a f.
@@ -454,7 +456,7 @@ do (Slot)
   {
     if (!compatF.isNil)
     {
-      logger.warn << ("%s(handle, func) is deprecated, use %s(func)"
+      logger.warn() << ("%s(handle, func) is deprecated, use %s(func)"
                       % [fnName, fnName])|
       compatF
     }
@@ -466,7 +468,7 @@ do (Slot)
   function notifyChange(f, compatF = nil)
   {
     var cb = backwards("notifyChange", f, compatF)|
-    var s = Subscription.new|
+    var s = Subscription.new()|
     s.asynchronous = false|
     s.onEvent = closure() {cb()}|
     changed.subscribe(s)|
@@ -505,25 +507,33 @@ do (Slot)
   function hookChangedEvent()
   {
     disown({
+        /*
+           echo("ppcheck")|
+           echo(this)|
+           echo(this.oget || this.get)|
+           echo(this.changed.hasSubscribers())|
+           echo(this.hasLocalSlot("watchIncompatible"))|*/
            // Handle the possible race where a subscriber appeared when
            // this job started
-           if (changed.hasSubscribers)
+           if (changed.hasSubscribers())
              pushPullCheck(false)
            else
            {
-             var t = Tag.new |
+             //echo("waiting...")|
+             var t = Tag.new() |
              if (!changed.hasLocalSlot("onSubscribe"))
-               var changed.onSubscribe = Event.new |
+               var changed.onSubscribe = Event.new() |
              t: at (changed.onSubscribe?)
              {
+               //echo("gogogo")|
                if (pushPullCheck(false))
                { // If loop mode is active, no need to monitor anymore.
                  changed.removeLocalSlot("onSubscribe")|
-                 t.stop
+                 t.stop()
                }
              }
 
-           }
+           }//|echo("hop")
     })
   };
 
@@ -628,7 +638,7 @@ do (UConnection)
         if (o.isA(UObject))
           for|(var j: o.localSlotNames)
             if (!o.getSlot(j).isVoid && o.getSlot(j).isA(UVar))
-              res += o.getSlot(j).List.new
+              res += o.getSlot(j).List.new()
       }
     }|
     res
@@ -663,6 +673,7 @@ package lang.getUObject {
   {
     uobjects.findUObject(call.message)
   };
+  var &fallback.autoEval = true;
 };
 
 
@@ -689,14 +700,8 @@ do (Global.&evaluate)
 var Global.currentLobbyId;
 Global.currentLobbyId->get = function()
 {
-  lobby.uid
+  Lobby.lobby.uid()
 };
-/*
-Slot.new(Global, "currentLobbyId");
-Global.getSlot("currentLobbyId").notifyAccess(function()
-{
-  currentLobbyId = lobby.uid;
-});*/
 
 Slot.new(Global, "currentRunnerInUObjectUpdate");
 Global.&currentRunnerInUObjectUpdate.get = function()
@@ -712,8 +717,9 @@ Global.&currentRunnerInUObjectUpdate.get = function()
 
 package lang.'external'
 {
-  function logger()
+  get logger()
   {
+    'external'.logger->oget = nil|
     'external'.logger = Logger.new("Urbi.UObject")
   };
   var MODULE_TAG = "__ExternalMessage__";
@@ -747,7 +753,7 @@ package lang.'external'
   function object(objname)
   {
     if (!lobby.hasLocalSlot("$uobjectMutex"))
-      lobby.setSlotValue("$uobjectMutex", Mutex.new)|
+      lobby.setSlotValue("$uobjectMutex", Mutex.new())|
     nonInterruptible |
     if (uobjects.hasLocalSlot(objname))
       return|
@@ -755,17 +761,17 @@ package lang.'external'
     // calling this function, but we want objname in uobjects, not
     // lobby.
     // FIXME: just register to internal uobject hash
-    uobjects.setSlotValue(objname, UObject.new) |
+    uobjects.setSlotValue(objname, UObject.new()) |
     do (uobjects.getSlotValue(objname))
     {
       var __uobjectName = objname |
       var isRemote = true |
-      uobjectInit |
+      uobjectInit() |
     }|
     if (!lobby.hasLocalSlot(objname))
-      logger.err << "error: lobby " + lobby + " has no slot " + objname
+      logger.err() << "error: lobby " + lobby + " has no slot " + objname
     else
-      for| (var s: lobby.getSlotValue(objname).localSlotNames)
+      for| (var s: lobby.getSlotValue(objname).localSlotNames())
         uobjects.getSlotValue(objname).setSlotValue(s, lobby.getSlotValue(objname).getSlotValue(s))|
     lobby.removeLocalSlot(objname)|
     do (uobjects.getSlotValue(objname))
@@ -778,7 +784,7 @@ package lang.'external'
     var chan.source = objname|
     function cloner()
     {
-      var u = "object".fresh|
+      var u = "object".fresh()|
       chan << ['external'.UEM_NEW, u, objname]|
       // Wait until the remote defines u.init.
       waituntil(uobjects.hasSlot(u)
@@ -798,23 +804,25 @@ package lang.'external'
     // Do not use waituntil here, as stats is a primitive which
     // changes over time.  Something that waituntil does not know to
     // cope with currently.
-    while (src.stats["packetSent"] == 0)
+    while (src.stats()["packetSent"] == 0)
+    {
       sleep(System.period)|
+    }|
     // Data has been transmitted. Wait a bit...
     sleep(20 * System.period)|
     // And check if something was received.
-    if (!dst.stats["bytesReceived"])
+    if (!dst.stats()["bytesReceived"])
     {
       try
       {
-        logger.warn << "RTP connection %s=>%s seems to be failing,"
+        logger.warn() << "RTP connection %s=>%s seems to be failing,"
                        " falling back to TCP"
-                       % [dst.getRemoteHost, src.getRemoteHost]
+                       % [dst.getRemoteHost(), src.getRemoteHost()]
       }
       catch
       {
         // One of the getRemoteHost failed.
-        logger.warn << "RTP connection with %s seems to be failing,"
+        logger.warn() << "RTP connection with %s seems to be failing,"
                        " falling back to TCP"
                        % lobby.remoteIP
       }|
@@ -827,21 +835,21 @@ package lang.'external'
   {
     if (!lobby.hasLocalSlot("_rtp_object_name"))
       throw "RTP subsystem not setup for this lobby: "|
-    var rrtp = uobjects.getSlotValue(lobby._rtp_object_name).new|
+    var rrtp = uobjects.getSlotValue(lobby._rtp_object_name).new()|
     var port = rrtp.listen("0.0.0.0", "0")|
     var host = lobby.remoteIP|
-    var lrtp = URTP.new|
+    var lrtp = URTP.new()|
     //wall("...connecting to " + host +":" + port)|
     lrtp.connect(host, port)|
-    var lrtp.lobbyId = lobby.uid|
+    var lrtp.lobbyId = lobby.uid()|
     var l = lobby |
     // Destroy local rtp object when the remote disconnects
     disown({
-           var t = Tag.new|
+           var t = Tag.new()|
            t:at(Lobby.onDisconnect?(l))
            {
-             try{lrtp.destroy} catch {} |
-             t.stop
+             try{lrtp.destroy()} catch {} |
+             t.stop()
            }
     })|
     (lrtp, rrtp)
@@ -857,13 +865,13 @@ package lang.'external'
     {
       if (varname == "load")
         return|
-      logger.warn << "external var called for non-uobject "+objname+"."+varname
+      logger.warn("external var called for non-uobject "+objname+"."+varname)
     }|
     if (!lobby.hasSlot("handle"))
     {
       function lobby.handle()
       {
-        warn("Lobby handles are no longuer used")|
+        logger.warn("Lobby handles are no longuer used")|
         nil
       }
     }|
@@ -880,17 +888,17 @@ package lang.'external'
       var lobby.__bindingFunc = [ => ]
     } |
     var currentCount = lobby.__bindingCount.getWithDefault(fullName, nil) |
-    if (currentCount.isNil)
+    if (currentCount.isNil())
     {
       currentCount = 0|
-      obj.getSlot(varname).reference
+      obj.getSlot(varname).reference()
     }|
     lobby.__bindingCount[fullName] = currentCount + 1 |
     if (currentCount)
       return |
 
     // Try to use RTP mode for binaries, or if explicitly requested.
-    var tv = obj.getSlotValue(varname).acceptVoid|
+    var tv = obj.getSlotValue(varname).acceptVoid()|
     if (lobby.hasLocalSlot("_rtp_object_name")
         && !lobby.hasLocalSlot("noRTP")
         && (obj.getSlot(varname).rtp
@@ -915,7 +923,7 @@ package lang.'external'
     {
       wall("fail fail " + objname +" " + obj)
     }|
-    var fullname = obj.getSlot(varname).fullName|
+    var fullname = obj.getSlot(varname).fullName()|
     if (isbin)
     {
       // each Binary UVar uses its own RTP connection.  Those are
@@ -923,7 +931,7 @@ package lang.'external'
       (var lrtp, var rrtp) = makeRTPPair(lobby)|
       rrtp.localDeliver = objname + "." + varname|
       var Job.current.targetLobby = lobby |
-      lrtp.sendVar(obj.getSlot(varname).uvalueSerialize)|
+      lrtp.sendVar(obj.getSlot(varname).uvalueSerialize())|
       Job.current.removeSlot("targetLobby")|
       lobby.__bindingFunc[fullname] = [rrtp, lrtp]|
       // Fallback to old TCP method if RTP fails.
@@ -955,12 +963,12 @@ package lang.'external'
         }
         catch(var e)
         {
-          logger.err << "fatal error setting rtp: " + e
+          logger.err() << "fatal error setting rtp: " + e
         }|
       }|
       lobby.__bindingFunc[fullname] = lobby.sharedRTP|
       var Job.current.targetLobby = lobby |
-      lobby.sharedRTP.groupedSendVar(obj.getSlot(varname).uvalueSerialize)|
+      lobby.sharedRTP.groupedSendVar(obj.getSlot(varname).uvalueSerialize())|
       Job.current.removeSlot("targetLobby")
     }
   };
@@ -973,9 +981,9 @@ package lang.'external'
     var chan = Channel.new(MODULE_TAG)|
     var chan.lobby = lobby|
     var fullname = objname + "." + varname|
-    var fullName = uob.getSlot(varname).fullName|
-    var slotId = uob.getSlot(varname).uid|
-    var chan.source = fullname +" " + uob.protos[0].asString|
+    var fullName = uob.getSlot(varname).fullName()|
+    var slotId = uob.getSlot(varname).uid()|
+    var chan.source = fullname +" " + uob.protos[0].asString()|
     // Construct the setter function. Expects this=slot
     function f(args[])
     {
@@ -989,7 +997,7 @@ package lang.'external'
           && Job.current.hasLocalSlot("$uobjectInUpdate"))
       if (lobby == chan.lobby
           && Job.current.hasLocalSlot("$uobjectInUpdate")
-          && Job.current.'$uobjectInUpdate' == slotId.asFloat)
+          && Job.current.'$uobjectInUpdate' == slotId.asFloat())
         return|
         /*
       var uvar =
@@ -1000,9 +1008,9 @@ package lang.'external'
           args[0]
       }|*/
       var Job.current.targetLobby = chan.lobby|
-      v = v.uvalueSerialize  |
+      v = v.uvalueSerialize()  |
       Job.current.removeSlot("targetLobby")|
-      if (!v.isNil && !v.isVoid)
+      if (!v.isNil() && !v.isVoid())
         chan << ['external'.UEM_ASSIGNVALUE,
                  fullName,
                  v,
@@ -1024,14 +1032,14 @@ package lang.'external'
     {
       // Try to put the port into source UObject if it exists, or lobby.
       var o|
-      if (uobjects.findUObject(fr).isVoid
+      if (uobjects.findUObject(fr).isVoid()
           || uobjects.findUObject(fr).lobby != lobby)
       {
         if (lobby.hasLocalSlot("hookPoint"))
           o = lobby.hookPoint
         else
           o = lobby|
-        logger.warn << ("Invalid source uobject " + fr +" in 'external var', using " + o)|
+        logger.warn() << ("Invalid source uobject " + fr +" in 'external var', using " + o)|
       }
       else
         o = uobjects.findUObject(fr)|
@@ -1065,25 +1073,25 @@ package lang.'external'
     var chan.lobby = lobby|
     var chan.source = functionName |
     if (!lobby.hasLocalSlot("barriers"))
-      var lobby.barriers = Dictionary.new|
+      var lobby.barriers = Dictionary.new()|
     var ownerLobby = lobby|
     function f(var args[])
     {
       var Job.current.targetLobby = chan.lobby|
-      args = args.uvalueSerialize|
+      args = args.uvalueSerialize()|
       Job.current.removeSlot("targetLobby")|
       if (args.size != nargs)
         throw Exception.Arity.new("Remote bound function", args.size, nargs)|
-      var u = String.fresh |
-      chan.lobby.barriers[u] = Barrier.new |
+      var u = String.fresh() |
+      chan.lobby.barriers[u] = Barrier.new() |
       chan << [ 'external'.UEM_EVALFUNCTION,
                 functionName + "__" + args.size,
                 u ] + args|
-      var res = chan.lobby.barriers[u].wait|
+      var res = chan.lobby.barriers[u].wait()|
       if (res.isA(Exception))
         throw res
       else
-        res.uvalueDeserialize.unacceptVoid
+        res.uvalueDeserialize().unacceptVoid()
     }|
     uobjects.getSlotValue(objname).setSlotValue(fname, f)|
     void
@@ -1101,13 +1109,13 @@ package lang.'external'
     // FIXME: No way to catch an event with payload without generating the 'at'
     // code.
     var obj = uobjects.getSlotValue(objname)|
-    var fullname = objname+"."+ename+"__" + nargs.asString |
-    var key = lobby.uid + fullname |
+    var fullname = objname+"."+ename+"__" + nargs.asString() |
+    var key = lobby.uid() + fullname |
     if (key not in obj.remoteEventMap)
     {
       obj.remoteEventMap[key] = 1 |
       if (not uobjects.getSlotValue(objname).hasLocalSlot(ename))
-        uobjects.getSlotValue(objname).setSlotValue(ename, Event.new) |
+        uobjects.getSlotValue(objname).setSlotValue(ename, Event.new()) |
       var args = nargs.map(function(x) { "p%s" %[x]}).join(", ") |
       var varargs = nargs.map(function(x) { "var p%s" %[x]}).join(", ")|
       var code =
@@ -1122,9 +1130,9 @@ package lang.'external'
   {
     nonInterruptible;
     // Remove all the remote uobjects created by this lobby.
-    for| (var o: uobjects.localSlotNames)
+    for| (var o: uobjects.localSlotNames())
     {
-      if (!uobjects.getSlotValue(o).isVoid
+      if (!uobjects.getSlotValue(o).isVoid()
           && uobjects.getSlotValue(o).hasSlot("lobby")
           && uobjects.getSlotValue(o).lobby === l)
       {
@@ -1133,7 +1141,7 @@ package lang.'external'
         // errors.
         try
         {
-          uobjects.getSlotValue(o).destroy
+          uobjects.getSlotValue(o).destroy()
         }
         catch
         {}
@@ -1142,9 +1150,9 @@ package lang.'external'
 
     if (uobjects.hasLocalSlot("URTP"))
       // Also kill local RTP uobjects linked to this lobby.
-      for| (var o: l.localSlotNames)
+      for| (var o: l.localSlotNames())
         if (l.getSlotValue(o).isA(URTP))
-          l.getSlotValue(o).destroy;
+          l.getSlotValue(o).destroy();
 
     // Unblock all pending remote function calls
     if (l.hasLocalSlot("barriers"))
@@ -1152,16 +1160,16 @@ package lang.'external'
         b.second.signal(Exception.new("Remote disconnected"))|
     // Dereference uvars
     if (l.hasLocalSlot("__bindingCount"))
-    for|(var n: l.__bindingCount.keys)
+    for|(var n: l.__bindingCount.keys())
     {
       var parts = n.split(".")|
       if (parts[0] == "VAR" && !l.__bindingCount.getWithDefault(n, nil).isNil)
-        VAR.getSlot(parts[1]).dereference
+        VAR.getSlot(parts[1]).dereference()
     }|
     // Kill hookPoint
     if (l.hasLocalSlot("hookPoint"))
     {
-      l.hookPoint.destroy|
+      l.hookPoint.destroy()|
       //l.removeSlot("hookPoint")
     }|
     if (l.hasLocalSlot("__bindingFunc"))
@@ -1181,14 +1189,14 @@ package lang.'external'
 /// Display statistics for all found connections
 function uobjects.connectionStats()
 {
-  for| (var c: UConnection.getAll)
-    echo(c.asString  + " " +  c.displayStats)
+  for| (var c: UConnection.getAll())
+    echo(c.asString()  + " " +  c.displayStats())
 };
 
 function uobjects.resetConnectionStats()
 {
-  for| (var c: UConnection.getAll)
-    c.resetStats
+  for| (var c: UConnection.getAll())
+    c.resetStats()
 };
 
 /** Inherit from UValueSerializable to make objects of your class available from
@@ -1202,13 +1210,13 @@ package lang.UValueSerializable
   function uvalueSerialize()
   {
     nonInterruptible;
-    var res = Dictionary.new;
+    var res = Dictionary.new();
     res["$sn"] = type;
     // No need to recurse here.
-    var names = uvalueSerializeSlots || localSlotNames;
+    var names = uvalueSerializeSlots() || localSlotNames();
     for|(var s: names)
       if (!getSlotValue(s).isA(Executable))
-        res[s] = getSlotValue(s).uvalueSerialize;
+        res[s] = getSlotValue(s).uvalueSerialize();
     res;
   };
 };
@@ -1220,12 +1228,12 @@ function Object.uvalueSerialize()
 
 function List.uvalueSerialize()
 {
-  map(function(x) {x.uvalueSerialize})
+  map(function(x) {x.uvalueSerialize()})
 };
 
 function Dictionary.uvalueSerialize()
 {
-  var res = Dictionary.new |
+  var res = Dictionary.new() |
   for| (var e: this)
   {
     var k = e.first |

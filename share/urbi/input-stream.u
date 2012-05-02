@@ -17,7 +17,7 @@ do (InputStream)
   {
     var l|
     var res = []|
-    while| ((l = getLine) != nil)
+    while| ((l = getLine()) != nil)
       res << l|
     res
   };

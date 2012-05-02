@@ -196,8 +196,8 @@ namespace urbi
     std::string rLinkName = linkName + "_l";
     URBI_SEND_COMMAND_C
       (*outputStream,
-       libport::format("var %s = URTP.new|\n"
-                       "%s.sourceContext = lobby.uid|\n",
+       libport::format("var %s = URTP.new()|\n"
+                       "%s.sourceContext = lobby.uid()|\n",
                        rLinkName, rLinkName));
     // Now asynchronously ask the remote object to listen and to report
     // the port number.
@@ -245,7 +245,7 @@ namespace urbi
     URBI_SEND_COMMA_COMMAND_C
       (*outputStream,
        libport::format
-       ("detach('external'.monitorRTP(%s, %s, closure() {'external'.failRTP}))",
+       ("detach('external'.monitorRTP(%s, %s, closure() {'external'.failRTP()}))",
         linkName, rLinkName));
     // If link is not the shared link which uses group mode, set target.
     if (varname != "_shared_")
@@ -442,7 +442,7 @@ namespace urbi
   {
     RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
     std::string name = owner_->get_name();
-    UMessage* m = ctx->syncGet(name + ".uvalueSerialize");
+    UMessage* m = ctx->syncGet(name + ".uvalueSerialize()");
     if (m->type == MESSAGE_DATA)
       value_->set(*m->value);
     delete m;
