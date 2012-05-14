@@ -193,6 +193,6 @@ cxx_headers = \
 PERL = perl
 maintainer-check-includes: $(HEADERS)
 	$(AM_V_GEN)! $(PERL) -n						  \
-	  -e '/#\s*include\s*<(.*?)>/ and $$include{$$1} = 1;'		  \
+	  -e '/#\s*include\s*<(.*?)>/ and ! /maintainer-check-includes-safe/ and $$include{$$1} = 1;'		  \
 	  -e 'END { print join ("\n", (sort (keys %include), "")) }' $^ | \
 	  grep -Ev '^((boost|libport|sched|urbi)/|($(cxx_headers)))'

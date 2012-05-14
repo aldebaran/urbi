@@ -15,7 +15,13 @@
 # include <urbi/object/cxx-conversions.hh>
 # include <urbi/runner/raise.hh>
 
-# include <runner/job.hh>
+/* Header below required to inline Slot::value(), but not part
+ * of exported headers.
+ * Do not touch the comment on the include line.
+ */
+#ifdef BUILDING_URBI_SDK
+# include <runner/job.hh> // maintainer-check-includes-safe
+#endif
 
 namespace urbi
 {
@@ -91,6 +97,10 @@ namespace urbi
       return constant_;
     }
 
+/* This function is inlined for performances, but requires internal
+ * headers.
+ */
+#ifdef BUILDING_URBI_SDK
     inline
     rObject
     Slot::value(Object* sender, bool fromUObject) const
@@ -107,6 +117,7 @@ namespace urbi
        else
          return split_ ? output_value_ : value_;
     }
+#endif
   }
 }
 

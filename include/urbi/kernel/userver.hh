@@ -324,7 +324,6 @@ namespace kernel
     /// Exit code.
     ATTRIBUTE_R(int, return_value);
   };
-
 }
 
 // When protected by the big kernel lock, we are allowed to play with
