@@ -48,7 +48,7 @@ our own, we simply clone \lstinline|Pair|.  We can then use it as a regular
 pair.
 
 \begin{urbiscript}
-var p = Pair.clone;
+var p = Pair.clone();
 [00000000] (nil, nil)
 p.first = "101010";
 [00000000] "101010"
@@ -65,11 +65,11 @@ at will. Yet this is not a good idea, since you will alter your base
 prototype, which alters any derivative, future and even past.
 
 \begin{urbiscript}
-var before = Pair.clone;
+var before = Pair.clone();
 [00000000] (nil, nil)
 Pair.first = false;
 [00000000] false
-var after = Pair.clone;
+var after = Pair.clone();
 [00000000] (false, nil)
 before;
 [00000000] (false, nil)
@@ -86,7 +86,7 @@ in a single relation: prototyping. You can inspect an object prototypes with
 the \lstinline{protos} method.
 
 \begin{urbiscript}[firstnumber=1]
-var p = Pair.clone;
+var p = Pair.clone();
 [00000000] (nil, nil)
 p.protos;
 [00000000] [(nil, nil)]
@@ -98,10 +98,10 @@ below.
 
 \begin{urbiscript}
 // List.head returns the first element.
-p.protos.head;
+p.protos.head();
 [00000000] (nil, nil)
 // Check that the prototype is really Pair.
-p.protos.head === Pair;
+p.protos.head() === Pair;
 [00000000] true
 \end{urbiscript}
 
@@ -117,17 +117,17 @@ instance, \lstinline|p|, our clone of \lstinline|Pair|, has no
 below.
 
 \begin{urbiscript}[firstnumber=1]
-var p = Pair.clone;
+var p = Pair.clone();
 [00000000] (nil, nil)
 // p has no slots of its own.
-p.localSlotNames;
+p.localSlotNames();
 [00000000] []
 // Yet this works.
 p.first;
 // This is because p has Pair for prototype, and Pair has a 'first' slot.
-p.protos.head === Pair;
+p.protos.head() === Pair;
 [00000000] true
-"first" in Pair.localSlotNames && "second" in Pair.localSlotNames;
+"first" in Pair.localSlotNames() && "second" in Pair.localSlotNames();
 [00000000] true
 \end{urbiscript}
 
@@ -141,12 +141,12 @@ prototypes from an object thanks to \lstinline{addProto} and
 
 \begin{urbiscript}[firstnumber=1]
 // We create a fresh object.
-var c = Object.clone;
+var c = Object.clone();
 [00000000] Object_0x1
 // As expected, it has no 'slot' slot.
 c.slot;
 [00000000:error] !!! lookup failed: slot
-var p = Object.clone;
+var p = Object.clone();
 [00000000] Object_0x2
 var p.slot = 0;
 [00000000] 0
@@ -175,11 +175,11 @@ Thus, slots from the last prototype added take precedence over other
 prototype's slots.
 
 \begin{urbiscript}[firstnumber=1]
-var proto1 = Object.clone;
+var proto1 = Object.clone();
 [00000000] Object_0x10000000
-var proto2 = Object.clone;
+var proto2 = Object.clone();
 [00000000] Object_0x20000000
-var o = Object.clone;
+var o = Object.clone();
 [00000000] Object_0x30000000
 o.addProto(proto1);
 [00000000] Object_0x30000000
@@ -208,7 +208,7 @@ You can check where in the prototype hierarchy a slot is found with the
 an object.
 
 \begin{urbiscript}[firstnumber=1]
-var p = Pair.clone;
+var p = Pair.clone();
 [00000000] (nil, nil)
 // Check that the 'first' slot is found in Pair
 p.locateSlot("first") === Pair;
@@ -238,13 +238,13 @@ and the other clone as well?
 The answer is, of course, no, as illustrated below.
 
 \begin{urbiscript}[firstnumber=1]
-var proto = Object.clone;
+var proto = Object.clone();
 [00000000] Object_0x1
 var proto.x = 0;
 [00000000] 0
-var o1 = proto.clone;
+var o1 = proto.clone();
 [00000000] Object_0x2
-var o2 = proto.clone;
+var o2 = proto.clone();
 [00000000] Object_0x3
 // Are we modifying proto's x slot here?
 o1.x = 1;
@@ -301,7 +301,7 @@ this we use the \lstinline{do} scope described in
 customize pairs printing --- don't give it too much attention for now.
 
 \begin{urbiscript}[firstnumber=1]
-var MyPair = Object.clone;
+var MyPair = Object.clone();
 [00000000] Object_0x1
 do (MyPair)
 {
@@ -316,7 +316,7 @@ do (MyPair)
 MyPair;
 [00000000] MyPair: nil, nil
 // Let's try it out
-var p = MyPair.clone;
+var p = MyPair.clone();
 [00000000] MyPair: nil, nil
 p.first = 0;
 [00000000] 0
@@ -360,7 +360,7 @@ class Bottom : Top
 };
 [00000000] Bottom
 
-Bottom.new.top;
+Bottom.new().top;
 [00000000] "top"
 \end{urbiscript}
 

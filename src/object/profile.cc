@@ -82,11 +82,11 @@ namespace urbi
       proto_add(Object::proto);
 
       bind(SYMBOL(calls), function_profiles);
-      BIND(maxFunctionCallDepth, function_call_depth_max_get);
-      BIND(totalCalls, function_calls_get);
-      BIND(totalTime);
-      BIND(wallClockTime);
-      BIND(yields, yields_get);
+      BINDG(maxFunctionCallDepth, function_call_depth_max_get);
+      BINDG(totalCalls, function_calls_get);
+      BINDG(totalTime);
+      BINDG(wallClockTime);
+      BINDG(yields, yields_get);
     }
 
 
@@ -120,11 +120,11 @@ namespace urbi
     {
       proto_add(Object::proto);
 
-      BIND(calls, calls_get);
-      BIND(name, name_get);
-      BIND(selfTime);
-      BIND(selfTimePer);
-      BIND(time);
+      BINDG(calls, calls_get);
+      BINDG(name, name_get);
+      BINDG(selfTime);
+      BINDG(selfTimePer);
+      BINDG(time);
     }
 
     FunctionProfile&

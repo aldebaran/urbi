@@ -48,14 +48,14 @@ class Point: UValueSerializable
 \item[uvalueSerialize]%
   Return a \refObject{String} that corresponds to a serialization of \this.
 \begin{urbiassert}
-                 123.uvalueSerialize == 123;
-                "ab".uvalueSerialize == "ab";
-              [1, 2].uvalueSerialize == [1, 2];
-["b" => 2, "a" => 1].uvalueSerialize == ["a" => 1, "b" => 2];
+                 123.uvalueSerialize() == 123;
+                "ab".uvalueSerialize() == "ab";
+              [1, 2].uvalueSerialize() == [1, 2];
+["b" => 2, "a" => 1].uvalueSerialize() == ["a" => 1, "b" => 2];
 
-Point.uvalueSerialize
+Point.uvalueSerialize()
    == ["$sn" => "Point", "type" => "Point", "x" => 0, "y" => 0];
-Point.new(12, 34).uvalueSerialize
+Point.new(12, 34).uvalueSerialize()
    == ["$sn" => "Point", "x" => 12, "y" => 34];
 \end{urbiassert}
 

@@ -117,7 +117,7 @@ namespace urbi
       argv_ << binary_;
 
       BIND(asString, as_string);
-      BIND(done);
+      BINDG(done);
       BIND(init);
       BIND(join);
       BIND(run);

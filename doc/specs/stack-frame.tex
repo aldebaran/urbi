@@ -25,7 +25,7 @@ function getStackFrame()
 {
   try
   {
-    inner
+    inner()
   }
   catch(var e)
   {
@@ -63,22 +63,22 @@ StackFrame.new("inner",
 \begin{urbiscriptapi}
 \item[asString] Clean display of the call location.
 \begin{urbiscript}
-getStackFrame;
-[00000004] foo.u:7.5-9: inner
+getStackFrame();
+[00000004] foo.u:7.5-11: inner
 \end{urbiscript}
 
 
 \item[location] \refObject{Location} of the function call.
 \begin{urbiscript}
-getStackFrame.location;
-[00000003] foo.u:7.5-9
+getStackFrame().location;
+[00000003] foo.u:7.5-11
 \end{urbiscript}
 
 
 \item[name] \refObject{String}, representing the name of the called
   function.
 \begin{urbiscript}
-getStackFrame.name;
+getStackFrame().name;
 [00000002] "inner"
 \end{urbiscript}
 \end{urbiscriptapi}

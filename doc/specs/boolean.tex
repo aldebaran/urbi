@@ -38,9 +38,9 @@ by default objects as considered ``true'', objects evaluating to
 The method \refSlot[Object]{asBool} is in charge of converting some
 arbitrary value into a Boolean.
 \begin{urbiscript}
-assert(Global.asBool == true);
-assert(nil.asBool ==    false);
-void.asBool;
+assert(Global.asBool() == true);
+assert(nil.asBool() ==    false);
+void.asBool();
 [00000421:error] !!! unexpected void
 \end{urbiscript}
 
@@ -63,7 +63,7 @@ not new copies.
 true;
 !false;
 (2 < 6) === true;
-true.new === true;
+true.new() === true;
 (6 < 2) === false;
 \end{urbiassert}
 

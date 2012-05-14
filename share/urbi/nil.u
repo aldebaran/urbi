@@ -19,7 +19,7 @@ do (nil)
   // nil prints nothing in the toplevel
   var asTopLevelPrintable = nil;
 
-  function isVoid ()
+  get isVoid ()
   {
     for| (var m : [
       "nil.isVoid will return false eventually, adjust your code.",
@@ -30,7 +30,7 @@ do (nil)
       "      while (!(x = i.get()).isNil())",
       "        cout << x;",
       ])
-        Logger.warn << m|
+        Logger.warn() << m|
     true;
   };
 };

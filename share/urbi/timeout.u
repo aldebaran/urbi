@@ -37,7 +37,7 @@ do (Timeout)
     var this.running = false|
     var this.thrower = thrower_|
     var this.time = time_|
-    var this.e = Event.new|
+    var this.e = Event.new()|
     leave.blockSubscriberException = false|
     at (enter?)
       launch()|
@@ -69,7 +69,7 @@ do (Timeout)
   {
     running = false|
     if (thrower && timedOut)
-      throw Exception.new(asString + " has timed out.")
+      throw Exception.new(asString() + " has timed out.")
   };
 
 };

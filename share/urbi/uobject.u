@@ -476,7 +476,7 @@ do (Slot)
   };
   function removeNotifyChange(h)
   {
-    h.stop
+    h.stop()
   };
 
 
@@ -570,7 +570,7 @@ do (UConnection)
   };
   function niceName(varname)
   {
-    varname.asString
+    varname.asString()
   };
 
   function asString()
@@ -679,8 +679,10 @@ package lang.getUObject {
 
 uobjects.uobjectInit();
 
-function UObject.searchPath() { uobjects.searchPath};
-
+do (UObject)
+{
+get searchPath() { uobjects.searchPath};
+};
 // UObjects can use evaluate at initialization-time.
 
 Slot.new(Global, "evaluate");
@@ -691,7 +693,7 @@ do (Global.&evaluate)
   changed.unsubscribeFaultySubscriber = false;
   set = function(v)
   {
-    var res = System.eval(v).acceptVoid|
+    var res = System.eval(v).acceptVoid()|
     if (!res.isVoid)
       setOutputValue(res)
   };

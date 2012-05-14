@@ -28,13 +28,13 @@ proper level (in increase order of importance: \refSlot{dump},
 \begin{urbiscript}
 var logger = Logger.new("Category")|;
 
-logger.dump << "Low level debug message"|;
+logger.dump() << "Low level debug message"|;
 // Nothing displayed, unless the debug level is set to DUMP.
 
-logger.warn << "something wrong happened, proceeding"|;
+logger.warn() << "something wrong happened, proceeding"|;
 [       Category        ] something wrong happened, proceeding
 
-logger.err << "something really bad happened!"|;
+logger.err() << "something really bad happened!"|;
 [       Category        ] something really bad happened!
 \end{urbiscript}
 
@@ -127,7 +127,7 @@ var c = Logger.categories;
 c.isA(Dictionary);
 c["Urbi.Call"];
 // The four category families used by Urbi SDK.
-c.keys.map (function (var s) { s.split(".")[0] }).unique
+c.keys.map (function (var s) { s.split(".")[0] }).unique()
   == ["Libport", "Sched", "Serialize", "Urbi"];
 \end{urbiassert}
 
@@ -138,7 +138,7 @@ c.keys.map (function (var s) { s.split(".")[0] }).unique
   \this to allow chained operations.
 \begin{urbiscript}
 // None of these are displayed unless the current level is at least DEBUG.
-Logger.debug << "debug 1"|;
+Logger.debug() << "debug 1"|;
 Logger.debug("debug 2")|;
 Logger.debug("debug 3", "Category2")|;
 \end{urbiscript}
@@ -172,7 +172,7 @@ c2 << "Disabled";
   chained operations.
 \begin{urbiscript}
 // None of these are displayed unless the current level is at least DEBUG.
-Logger.dump << "dump 1"|;
+Logger.dump() << "dump 1"|;
 Logger.dump("dump 2")|;
 Logger.dump("dump 3", "Category2")|;
 \end{urbiscript}
@@ -246,7 +246,7 @@ Logger.Levels.values;
   Report a debug \var{message} of \var{category} to the user. It will be
   shown if debug is not disabled. Return \this to allow chained operations.
 \begin{urbiscript}
-Logger.log << "log 1"|;
+Logger.log() << "log 1"|;
 [       Logger        ] log 1
 
 Logger.log("log 2")|;
@@ -323,7 +323,7 @@ Logger.enable("*");
   \lstinline|Dump|. Return \this to allow chained operations.
 \begin{urbiscript}
 // None of these are displayed unless the current level is at least TRACE.
-Logger.trace << "trace 1"|;
+Logger.trace() << "trace 1"|;
 Logger.trace("trace 2")|;
 Logger.trace("trace 3", "Category2")|;
 \end{urbiscript}
@@ -333,7 +333,7 @@ Logger.trace("trace 3", "Category2")|;
   Report a warning \var{message} of \var{category} to the user. Return \this
   to allow chained operations.
 \begin{urbiscript}
-Logger.warn << "warn 1"|;
+Logger.warn() << "warn 1"|;
 [       Logger        ] warn 1
 
 Logger.warn("warn 2")|;

@@ -56,10 +56,10 @@ if (true) else 12;
 \end{urbiunchecked}
 \noindent
 is now an error:
-\begin{urbiscript}
+\begin{urbiunchecked}
 if (true) else 12;
 [00003258:error] !!! syntax error: unexpected else
-\end{urbiscript}
+\end{urbiunchecked}
 Write \lstinline|if (true) {} else 12;|.  As a consequence
 \lstinline|if (x) &y;| is no longer ambiguous: its unique interpretation is
 \lstinline|if (x) { &y };| and no longer \lstinline| { if (x) {} } & y;|:
@@ -79,7 +79,7 @@ assert (hasSlot("foo") && foo.isA(Tag));
 \end{urbiunchecked}
 \noindent
 This is no longer valid for complex tags, nor when used deeper in the code:
-\begin{urbiscript}
+\begin{urbiunchecked}
 bar.baz: echo(2);
 [00015621:error] !!! lookup failed: bar
 
@@ -87,7 +87,7 @@ class Foo { function f() { t1: echo (12) } }|;
 Foo.f;
 [00015631:error] !!! lookup failed: t1
 [00015631:error] !!!    called from: f
-\end{urbiscript}
+\end{urbiunchecked}
 \noindent
 See \autoref{sec:lang:tag} for details.
 
@@ -196,7 +196,7 @@ i.close;
 
 \item Comparisons can be chained, with guaranties over the order and number
   of evaluations of the operands (\autoref{sec:lang:op:comparison}):
-\begin{urbiscript}
+\begin{urbiunchecked}
 function v(x) { echo(x) | x }|;
 
 v(1) == v(2) < v(3) < v(4) || v(10) < v(11) != v(12) <= v(13);
@@ -207,7 +207,7 @@ v(1) == v(2) < v(3) < v(4) || v(10) < v(11) != v(12) <= v(13);
 [00033933] *** 12
 [00033933] *** 13
 [00033933] true
-\end{urbiscript}
+\end{urbiunchecked}
 
 \item In addition to postfix increment/decrement operators, prefix operators
   are supported and redefinable (\autoref{sec:lang:op:incdec}).
@@ -221,7 +221,7 @@ var x = 0;
   \lstinline|catch|, \lstinline|else|, and \lstinline|finally| clauses,
   modeled after the syntax of \lstinline|try|-blocks.  See
   \autoref{sec:lang:timeout}.
-\begin{urbiscript}
+\begin{urbiunchecked}
 function testTimeOut(var duration)
 {
   timeout (1s)  { echo("computation"); sleep(duration); "body-value" }
@@ -243,7 +243,7 @@ testTimeOut(2s);
 [00001267] *** interrupted!
 [00001270] *** finally
 [00001271] "catch-value"
-\end{urbiscript}
+\end{urbiunchecked}
 \end{itemize}
 
 \subsubsection{\us Standard Library}
@@ -251,7 +251,7 @@ testTimeOut(2s);
 \item \refSlot[Job]{backtrace} now includes information about event handling
   (both sending and receiving parts).
 
-\begin{urbiscript}
+\begin{urbiunchecked}
 //#push 1 "file.u"
 var f = Event.new|;
 function watchEvent()
@@ -271,7 +271,7 @@ sendEvent;
 [00008208] *** ---- event handler backtrace:
 [00008208] *** file.u:4.3-5.41: onEvent
 [00008208] *** file.u:11.1-10: watchEvent
-\end{urbiscript}
+\end{urbiunchecked}
 
   On the same example, \usdk 2.7.4 displays only:
 \begin{urbiunchecked}
@@ -298,16 +298,16 @@ sendEvent;
   \item \refSlot[Logger]{categories} gives the set of existing categories,
   \item categories that match a given pattern can be enabled/disabled
     (\refSlot[Logger]{enable}, \refSlot[Logger]{disable}),
-\begin{urbiscript}
+\begin{urbiunchecked}
 Logger.enable("Category*");
 Logger.disable("Category.Sub");
-\end{urbiscript}
+\end{urbiunchecked}
   \item the status of all the categories can be changed according to a given
     specification string similar to \env{GD\_CATEGORY}
     (\refSlot[Logger]{set}).
-\begin{urbiscript}
+\begin{urbiunchecked}
 Logger.set("+Category*,-Category.Sub");
-\end{urbiscript}
+\end{urbiunchecked}
   \end{itemize}
 
 \item The functions \refSlot[Math]{ceil} and \refSlot[Math]{floor} were
@@ -315,10 +315,10 @@ Logger.set("+Category*,-Category.Sub");
   Yet users are encouraged to prefer the ``method-like'' versions, i.e.,
   \refSlot[Float]{ceil} and so forth.
 \begin{urbiassert}
-Math.ceil (1.2) == 1.2.ceil;
-Math.floor(1.2) == 1.2.floor;
-Math.trunc(1.2) == 1.2.trunc;
-Math.round(1.2) == 1.2.round;
+Math.ceil (1.2) == 1.2.ceil();
+Math.floor(1.2) == 1.2.floor();
+Math.trunc(1.2) == 1.2.trunc();
+Math.round(1.2) == 1.2.round();
 \end{urbiassert}
 
 \item \refSlot[String]{'[]'} accepts negative indexes, as
@@ -331,8 +331,8 @@ Math.round(1.2) == 1.2.round;
   literal \refObject{Float}s, including support for underscores and
   hexadecimal.
 \begin{urbiassert}
-"123_456_789".asFloat == 123_456_789;
-"0xFFFF_FFFF".asFloat == 0xFFFF_FFFF;
+"123_456_789".asFloat() == 123_456_789;
+"0xFFFF_FFFF".asFloat() == 0xFFFF_FFFF;
 \end{urbiassert}
 
 \item \refSlot[String]{find} and  \refSlot[String]{rfind} can search a
@@ -421,11 +421,11 @@ This release fixes some packaging-related minor issues.
   debug or release flavor.
 \item GeSHi support is properly installed.
 \item When defining functions, their qualified name may start with \this:
-\begin{urbiscript}
+\begin{urbiunchecked}
 function this.foo() { echo("foo"); }|;
 this.foo();
 [00016170] *** foo
-\end{urbiscript}
+\end{urbiunchecked}
 \item Timestamps now use a monotonic clock, insensitive to wall clock
   changes (fired by \command{ntpdate} for instance).
 \end{itemize}
@@ -578,13 +578,13 @@ There was no public release of \usdk 2.7.2.
 \item Avoid unexpected execution of code caused by \refObject{Semaphore}
   release and a stop of the code acquiring the semaphore.  This caused
   pieces of code such as the following not to end.
-\begin{urbiscript}
+\begin{urbiunchecked}
 var m = Mutex.new|;
 for& (10)
   { m.stop | m: { sleep(1) } };
 "done";
 [00016170] "done"
-\end{urbiscript}
+\end{urbiunchecked}
 
   Now \refSlot[Semaphore]{acquire} either returns when it holds the
   semaphore or it jumps to the end of the stopped tag.
@@ -649,10 +649,10 @@ Backward compatibility is ensured, but a warning will be issued.
 \item \refObject{Dictionary} Duplicate keys in \refObject{Dictionary}
 literals are now an error.
 Instead of setting the value of the last occurrence, it will throw an error.
-\begin{urbiscript}
+\begin{urbiunchecked}
 ["one" => 1, "one" => 2];
 [00000001:error] !!! duplicate dictionary key: "one"
-\end{urbiscript}
+\end{urbiunchecked}
 
 \item The functions \lstinline{urbi::convertRGBtoYCrCb} and
   \lstinline{urbi::convertYCrCbtoRGB} have been renamed as
@@ -668,7 +668,7 @@ Instead of setting the value of the last occurrence, it will throw an error.
 \subsection{New Features}
 \begin{itemize}
 \item \refObject{Logger} provides a logging service:
-\begin{urbiscript}
+\begin{urbiunchecked}
 var logger = Logger.new("Category")|;
 
 logger.dump << "Low level debug message"|;
@@ -679,7 +679,7 @@ logger.warn << "something wrong happened, proceeding"|;
 
 logger.err << "something really bad happened!"|;
 [       Category        ] something really bad happened!
-\end{urbiscript}
+\end{urbiunchecked}
 
 \item \refObject{Profile} and \refObject{Profile.Function} replace the
   former \code{Profiling} object.
@@ -699,7 +699,7 @@ logger.err << "something really bad happened!"|;
 
 \item A new construct, \lstinline{watch}, creates an event that allows to
   monitor any change of an expression (\autoref{sec:lang:watch}).
-\begin{urbiscript}
+\begin{urbiunchecked}
 var x = 0|;
 var y = 0|;
 var e = watch(x + y)|;
@@ -709,16 +709,9 @@ x = 1|;
 [00000000] *** x + y = 1
 y = 2|;
 [00000000] *** x + y = 3
-\end{urbiscript}
+\end{urbiunchecked}
 \begin{urbicomment}
 removeSlots("e", "x", "y");
-// Killing slots monitored by a "at" is bad.
-[01234567:error] !!! lookup failed: x
-[01234567:error] !!!    called from: removeSlots
-[01234567:error] !!! lookup failed: x
-[01234567:error] !!!    called from: removeSlots
-[01234567:error] !!! lookup failed: x
-[01234567:error] !!!    called from: removeSlots
 \end{urbicomment}
 
 \item Gostai Editor for Windows was updated to 2.5.  It now includes
@@ -773,7 +766,7 @@ which provide significant optimizations.  Several bugs have been fixed too.
   supported, see \autoref{sec:lang:class}.
 \item A literal syntax for strict variadic functions has been added, see
   \autoref{sec:lang:fun-variadic}.  For instance
-\begin{urbiscript}
+\begin{urbiunchecked}
 function variadic(var a1, var a2, var a3, var args[])
 {
   echo("a1 = %s, a2 = %s, a3 = %s, args = %s"
@@ -785,7 +778,7 @@ variadic(1, 2, 3, 4);
 [00000002] *** a1 = 1, a2 = 2, a3 = 3, args = [4]
 variadic(1, 2, 3, 4, 5);
 [00000002] *** a1 = 1, a2 = 2, a3 = 3, args = [4, 5]
-\end{urbiscript}
+\end{urbiunchecked}
   This is faster than using lazy functions and call messages.
 \item \refObject{Directory} objects have new features for creation,
   modification and deletion.
@@ -895,11 +888,11 @@ function Foo.'=='(var that)
 \item \refSlot[Object]{removeSlot} warns when asked to remove of a
   non-existing slot, and \refSlot[Object]{removeSlot} about non-existing
   properties.
-\begin{urbiscript}
+\begin{urbiunchecked}
 removeSlot("doesNotExist")|;
 [00000002:warning] !!! no such local slot: doesNotExist
 [00000002:warning] !!!    called from: removeSlot
-\end{urbiscript}
+\end{urbiunchecked}
   In the past, it used to accept this silently; in the future, this will be
   an error, as with \refSlot[Object]{removeLocalSlot}.  Use
   \refSlot[Object]{hasLocalSlot} or \refSlot[Object]{hasProperty}
@@ -909,7 +902,7 @@ removeSlot("doesNotExist")|;
   \lstinline|at| statement yields an Event and no question mark was used,
   since this is most likely an oversight.
 
-\begin{urbiscript}
+\begin{urbiunchecked}
 var e = Event.new|;
 
 // This is not the correct way to match an event.
@@ -919,14 +912,9 @@ at (e) echo("Oops.");
 
 // This is.
 at (e?) echo("Okay.");
-\end{urbiscript}
+\end{urbiunchecked}
 \begin{urbicomment}
 removeSlots("e");
-// Killing slots monitored by an "at".
-[01234567:error] !!! lookup failed: x
-[01234567:error] !!!    called from: removeSlots
-[01234567:error] !!! lookup failed: e
-[01234567:error] !!!    called from: removeSlots
 \end{urbicomment}
 
 \item \refSlot[File]{rename} returns \lstinline|this|.
@@ -963,13 +951,13 @@ removeSlots("e");
 \item Fix \refSlot[Float]{random} on windows, which always returned
   \lstinline|41| in some situations.
 \item Do not scope variables created inside a pipe inside a comma:
-\begin{urbiscript}
+\begin{urbiunchecked}
 var a = 0 | var b = 1,
 echo(a);
 [00000001] *** 0
 echo(b);
 [00000001] *** 1
-\end{urbiscript}
+\end{urbiunchecked}
 \end{itemize}
 
 \subsection{New Features}
@@ -984,7 +972,7 @@ echo(b);
 
   Enumeration types can be created with the usual \langC-like syntax.
   See \autoref{sec:lang:enum} and \refObject{Enumeration}.
-\begin{urbiscript}
+\begin{urbiunchecked}
 enum Suit
 {
   hearts,
@@ -1003,7 +991,7 @@ for (var suit : Suit)
 [00000002] *** Red: diamonds
 [00000003] *** Black: clubs
 [00000004] *** Black: spades
-\end{urbiscript}
+\end{urbiunchecked}
 
 \item \command{umake} supports new options: \option{-I}, \option{-L},
   \option{-l}, \option{--package} (for \command{pkg-config}).  See
@@ -1036,10 +1024,10 @@ for (var suit : Suit)
 
 \item The keys in Dictionary literals are no longer required to be literal
   strings.
-\begin{urbiscript}
+\begin{urbiunchecked}
 ["a" + "b" => "ab", 12.asString => "12"];
 [00002405] ["12" => "12", "ab" => "ab"]
-\end{urbiscript}
+\end{urbiunchecked}
 
 \noindent
 They still need to evaluate into String values (no longer true since \usdk
@@ -1119,7 +1107,7 @@ They still need to evaluate into String values (no longer true since \usdk
 \item Support for \lstinline|else| in \lstinline|try| blocks
   (\autoref{sec:lang:catch}).  Run only when the \lstinline|try|
   block completed properly.
-\begin{urbiscript}
+\begin{urbiunchecked}
 // Can we run "riskyFeature"?
 try { riskyFeature } catch { false } else { true };
 [00004220] false
@@ -1131,12 +1119,12 @@ try { riskyFeature } catch { false } else { true };
 riskyFeature = function () { 42 }|;
 try { riskyFeature } catch { false } else { true };
 [00004447] true
-\end{urbiscript}
+\end{urbiunchecked}
 
 \item Support for \lstinline|finally| in \lstinline|try| blocks
   (\autoref{sec:lang:except:finally}).  Use it for code that must be run
   whatever the control flow can be.  For instance:
-\begin{urbiscript}
+\begin{urbiunchecked}
 try { echo(1) } catch { echo(2) } else { echo(3) } finally { echo(4) };
 [00002670] *** 1
 [00002670] *** 3
@@ -1145,16 +1133,16 @@ try { echo(1) } catch { echo(2) } else { echo(3) } finally { echo(4) };
 try { throw 1 } catch { echo(2) } else { echo(3) } finally { echo(4) };
 [00002671] *** 2
 [00002671] *** 4
-\end{urbiscript}
+\end{urbiunchecked}
 
 \item \refSlot[System]{eval} and \refSlot[System]{load} report syntax
   warnings.
-\begin{urbiscript}
+\begin{urbiunchecked}
 System.eval("new Object");
 [00001388:warning] !!! 1.1-10: `new Obj(x)' is deprecated, use `Obj.new(x)'
 [00001388:warning] !!!    called from: eval
 [00001388] Object_0x1001b2320
-\end{urbiscript}
+\end{urbiunchecked}
 \item New functions \lstinline|as| and \lstinline|fill| on UVar to ease access
 to the generic cast system.
 \item Add support to \code{boost::unordered\_map} to UObject casting system.
@@ -1177,7 +1165,7 @@ to the generic cast system.
 \item Deep overall of the event handling primitives.  Watching an expression
   will succeed in cases where it used to fail.  For instance:
 
-\begin{urbiscript}
+\begin{urbiunchecked}
 at (isdef (myVar))
   echo("var myVar = " + myVar),
 
@@ -1186,7 +1174,7 @@ myVar;
 
 var myVar = 42|;
 [00000003] *** var myVar = 42
-\end{urbiscript}
+\end{urbiunchecked}
 
 \noindent
 or
@@ -1326,12 +1314,12 @@ x = 1|;
 \item \refSlot[Tuple]{'*'}
 \item Assertion failures are more legible:
 
-\begin{urbiscript}
+\begin{urbiunchecked}
 var one = 1|;
 var two = 2|;
 assert (one == two);
 [00000002:error] !!! failed assertion: one == two (1 != 2)
-\end{urbiscript}
+\end{urbiunchecked}
 
   \noindent
   instead of
@@ -1936,12 +1924,12 @@ library specifications) is included.
   This new method has been introduced to transform a string to a float.  It
   raises a PrimitiveError exception if the conversion fails:
 
-\begin{urbiscript}
+\begin{urbiunchecked}
 "2.1".asFloat;
 [00000002] 2.1
 "2.0a".asFloat;
 [00000003:error] !!! asFloat: invalid number: "2.0a"
-\end{urbiscript}
+\end{urbiunchecked}
 \end{itemize}
 
 \subsection{Programs}
@@ -2049,7 +2037,7 @@ asked by our users during the beta-test period.
   It is now possible to define the \lstinline|()| operator on objects and
   have it called as soon as at least one parameter is given:
 
-\begin{urbiscript}
+\begin{urbiunchecked}
 class A {
   function '()' (x) { echo("A called with " + x) };
 }|;
@@ -2059,7 +2047,7 @@ A();
 [00000002] A
 A(42);
 [00000003] *** A called with 42
-\end{urbiscript}
+\end{urbiunchecked}
 
 \item \lstinline|catch (\var{type} \var{name})| syntax removed.\\
   It was used to catch exceptions if and only if they inherited
@@ -2128,10 +2116,10 @@ echo (x);
   Now uses an index as its first argument and inserts the given element
   before the index position:
 
-\begin{urbiscript}
+\begin{urbiunchecked}
 ["a", "b", "c"].insert(1, "foo");
 [00000001] ["a", "foo", "b", "c"]
-\end{urbiscript}
+\end{urbiunchecked}
 
 \item \refSlot[List]{sort}.\\
   Now takes an optional argument, which is a function to call instead of the
@@ -2139,12 +2127,12 @@ echo (x);
   strings, depending on whether we want to be case-sensitive (the default)
   or not:
 
-\begin{urbiscript}
+\begin{urbiunchecked}
 ["foo", "bar", "Baz"].sort;
 [00000001] ["Baz", "bar", "foo"]
 ["foo", "bar", "Baz"].sort(function(x, y) {x.toLower < y.toLower});
 [00000002] ["bar", "Baz", "foo"]
-\end{urbiscript}
+\end{urbiunchecked}
 
 \item \refSlot[System]{searchPath}.\\
   It is now possible to get the search path for files such as \file{urbi.u}
@@ -2155,11 +2143,11 @@ echo (x);
   environment instead of \refObject{void}. This allows you do to things such
   as:
 
-\begin{urbiscript}
+\begin{urbiunchecked}
 var ne = System.getenv("nonexistent");
 [00000001:warning] !!! `System.getenv(that)' is deprecated, use `System.env[that]'
 if (!ne.isNil) do_something(ne);
-\end{urbiscript}
+\end{urbiunchecked}
 
   \noindent
   while previously you had to retrieve the environment variable twice, once
@@ -2246,32 +2234,32 @@ is now safe.
   \lstinline{object} and \lstinline{from} are now regular identifiers and
   can be used as other names.  For example, it is now legal to declare:
 
-\begin{urbiscript}
+\begin{urbiunchecked}
 var object = 1|;
 var from = 1|;
-\end{urbiscript}
+\end{urbiunchecked}
 
 \item Hexadecimal literals.\\
   It is now possible to enter (integral) hexadecimal numbers by
   prefixing them with \lstinline{0x}, as in:
 
-\begin{urbiscript}
+\begin{urbiunchecked}
 0x2a;
 [00000001] 42
-\end{urbiscript}
+\end{urbiunchecked}
 
   Only integral numbers are supported.
 
 %% FIXME: The hexadecimal representation of a number can be obtained by specifying the
 %% FIXME: base to \refSlot[Float]{asString}:
 %% FIXME:
-%% FIXME: \begin{urbiscript}
+%% FIXME: \begin{urbiunchecked}
 %% FIXME: 42.asString(16);
 %% FIXME: [00000001] "2a"
 %% FIXME: // \refSlot[Float]{hex} is a shortcut:
 %% FIXME: 42.hex;
 %% FIXME: [00000001] "2a"
-%% FIXME: \end{urbiscript}
+%% FIXME: \end{urbiunchecked}
 \end{itemize}
 
 \subsection{Standard library}
@@ -2280,12 +2268,12 @@ var from = 1|;
   \refObject{String} now has a \slot{asList} method, which can be used
   transparently to iterate over the characters of a string:
 
-\begin{urbiscript}
+\begin{urbiunchecked}
 for (var c: "foo") echo (c);
 [00000001] *** f
 [00000002] *** o
 [00000003] *** o
-\end{urbiscript}
+\end{urbiunchecked}
 
 \item \refSlot[String]{split} method Largely improved.
 
@@ -2294,10 +2282,10 @@ for (var c: "foo") echo (c);
 %%% FIXME:   It is now possible to easily join list members by inserting an
 %%% FIXME:   arbitrary string between them:
 %%% FIXME:
-%%% FIXME: \begin{urbiscript}
+%%% FIXME: \begin{urbiunchecked}
 %%% FIXME: ", ".join(["abc", "def", "ghi"]);
 %%% FIXME: [00000001] "abc, def, ghi"
-%%% FIXME: \end{urbiscript}
+%%% FIXME: \end{urbiunchecked}
 \item \refSlot[List]{min} and \refSlot[List]{max}.\\
   It is now possible to call \lstinline{min} and \lstinline{max} on a
   list. By default, the \lstinline|<| comparison operator is used, but one
@@ -2305,42 +2293,42 @@ for (var c: "foo") echo (c);
   \lstinline{max} argument should one be needed. Here is an example on how
   to compare strings in case-sensitive and case-insensitive modes:
 
-\begin{urbiscript}
+\begin{urbiunchecked}
 ["the", "brown", "Fox"].min;
 [00000001] "Fox"
 ["the", "brown", "Fox"].min(function (l, r) { l.toLower < r.toLower });
 [00000002] "brown"
-\end{urbiscript}
+\end{urbiunchecked}
 
   \refSlot[Math]{min} and \refSlot[Math]{max} taking an arbitrary number of
   arguments have also been defined. In this case, the default \lstinline{<}
   operator is used for comparison:
 
-\begin{urbiscript}
+\begin{urbiunchecked}
 Math.min(3, 2, 17);
 [00000001] 2
-\end{urbiscript}
+\end{urbiunchecked}
 
 \item Negative indices.\\
   It is now possible to use negative indices when taking list elements.  For
   example, -1 designates the last element, and -2 the one before that.
 
-\begin{urbiscript}
+\begin{urbiunchecked}
 ["a", "b", "c"][-1];
 [00000001] "c"
-\end{urbiscript}
+\end{urbiunchecked}
 
 \item Tag names.\\
   Tags were displayed as \lstinline|Tag_0x01234500| which did not make their
   \lstinline{name} slot apparent. They are now displayed as
   \lstinline|Tag<\var{name}>|:
 
-\begin{urbiscript}
+\begin{urbiunchecked}
 Tag.new;
 [00000001] Tag<tag_1>
 Tag.new("mytag");
 [00000002] Tag<mytag>
-\end{urbiscript}
+\end{urbiunchecked}
 
 \item \lstinline{every} and exceptions.\\
   If an exception is thrown and not caught during the execution of an

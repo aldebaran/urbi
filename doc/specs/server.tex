@@ -23,8 +23,8 @@ new \lstinline|Server| has its own slot \lstinline|connection|. This
 slot is an event that is launched when a connection establishes.
 
 \begin{urbiscript}
-var s = Server.new|
-s.localSlotNames;
+var s = Server.new()|
+s.localSlotNames();
 [00000001] ["connection"]
 \end{urbiscript}
 

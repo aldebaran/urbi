@@ -75,7 +75,7 @@ package lang.Exception
     // Don't display the top-level stack frame if it's already
     // been used as location.
     var bt = backtrace() |
-    if (bt.size() != 0 && location().acceptVoid() == bt[0].location())
+    if (bt.size() != 0 && bt[0].location() && location().acceptVoid() == bt[0].location())
       bt.removeFront()|
     for| (var sf: bt)
       // FIXME: Read the fixme above.
@@ -90,10 +90,10 @@ package lang.Exception
     // Clear this.
     var loc = location().acceptVoid() |
     var res = message() |
-    if (!slot.isVoid())
-      res = "%s: %s" % [slot, res]
-    else if (!routine.isVoid())
-      res = "%s: %s" % [routine, res] |
+    if (!slot().isVoid())
+      res = "%s: %s" % [slot(), res]
+    else if (!routine().isVoid())
+      res = "%s: %s" % [routine(), res] |
     if (!loc.isVoid())
       res = "%s: %s" % [loc, res] |
     res
@@ -345,7 +345,7 @@ package lang.Exception.Argument: 'package'.lang.Exception
   {
     "%s: %s"
      % [{if (index) "argument %s" % index else "this"},
-        exception.message]
+        exception.message()]
   };
 };
 

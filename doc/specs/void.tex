@@ -36,7 +36,7 @@ void.isVoid;
 \begin{urbiscript}
 void.foo;
 [00096374:error] !!! unexpected void
-void.acceptVoid.foo;
+void.acceptVoid().foo;
 [00102358:error] !!! lookup failed: foo
 \end{urbiscript}
 
@@ -46,16 +46,16 @@ void.acceptVoid.foo;
   Actually there is a temporary exception: \refSlot[nil]{isVoid}.
 \begin{urbiassert}
 void.isVoid;
-void.acceptVoid.isVoid;
+void.acceptVoid().isVoid;
 ! 123.isVoid;
 
 nil.isVoid;
 [     Logger     ] nil.isVoid will return false eventually, adjust your code.
 [     Logger     ]     For instance replace InputStream loops from
-[     Logger     ]       while (!(x = i.get.acceptVoid).isVoid)
+[     Logger     ]       while (!(x = i.get().acceptVoid()).isVoid())
 [     Logger     ]         cout << x;
 [     Logger     ]     to
-[     Logger     ]       while (!(x = i.get).isNil)
+[     Logger     ]       while (!(x = i.get()).isNil())
 [     Logger     ]         cout << x;
 \end{urbiassert}
 
@@ -64,7 +64,7 @@ nil.isVoid;
   Remove the magic from \this that allowed to manipulate it as a value, even
   if it \lstinline|void|.  See also \refSlot{acceptVoid}.
 \begin{urbiscript}
-void.acceptVoid.unacceptVoid.foo;
+void.acceptVoid().unacceptVoid().foo;
 [00096374:error] !!! unexpected void
 \end{urbiscript}
 \end{urbiscriptapi}

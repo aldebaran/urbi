@@ -93,12 +93,12 @@ do (Object)
   /*--------.
   | Slots.  |
   `--------*/
-  function allSlotNames()
+  get allSlotNames()
   {
     slotNames
   };
 
-  function isProto()
+  get isProto()
   {
     hasLocalSlot("type")
   };

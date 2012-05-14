@@ -34,7 +34,7 @@ launch it.
 p.status;
 [00000005] not started
 
-p.run;
+p.run();
 p.status;
 [00000006] running
 \end{urbiscript}
@@ -51,7 +51,7 @@ p.stdin << "3\n" |;
 p.status;
 [00000007] running
 
-p.stdin.close;
+p.stdin.close();
 \end{urbiscript}
 
 \noindent
@@ -62,7 +62,7 @@ for awhile.  The method \lstinline|join| means ``wait for the process
 to finish''.
 
 \begin{urbiscript}
-p.join;
+p.join();
 
 p.status;
 [00000008] exited with status 0
@@ -72,7 +72,7 @@ p.status;
 Finally we can check its output.
 
 \begin{urbiscript}
-p.stdout.asList;
+p.stdout.asList();
 [00000009] ["1", "2", "3"]
 \end{urbiscript}
 
@@ -102,14 +102,14 @@ Process.new("cat", ["--version"]);
 \begin{urbiscript}
 do (Process.new("cat", []))
 {
-  assert (asProcess === this);
+  assert (asProcess() === this);
 }|;
 \end{urbiscript}
 
 
 \item[asString] \lstinline|Process| and the name of the program.
 \begin{urbiassert}
-Process.new("cat", ["--version"]).asString
+Process.new("cat", ["--version"]).asString()
   == "Process cat";
 \end{urbiassert}
 
@@ -119,9 +119,9 @@ Process.new("cat", ["--version"]).asString
 do (Process.new("sleep", ["1"]))
 {
   assert (!done);
-  run;
+  run();
   assert (!done);
-  join;
+  join();
   assert (done);
 }|;
 \end{urbiscript}
@@ -132,12 +132,12 @@ do (Process.new("sleep", ["1"]))
 do (Process.new("sleep", ["2"]))
 {
   var t0 = System.time;
-  assert (status.asString == "not started");
-  run;
-  assert (status.asString == "running");
-  join;
+  assert (status.asString() == "not started");
+  run();
+  assert (status.asString() == "running");
+  join();
   assert (t0 + 2s <= System.time);
-  assert (status.asString == "exited with status 0");
+  assert (status.asString() == "exited with status 0");
 }|;
 \end{urbiscript}
 
@@ -148,11 +148,11 @@ do (Process.new("sleep", ["2"]))
 \begin{urbiscript}
 do (Process.new("sleep", ["1"]))
 {
-  run;
-  kill;
-  join;
+  run();
+  kill();
+  join();
   assert (done);
-  assert (status.asString == "killed by signal 9");
+  assert (status.asString() == "killed by signal 9");
 }|;
 \end{urbiscript}
 
@@ -168,12 +168,12 @@ Process.new("cat", ["--version"]).name == "cat";
 \begin{urbiscript}
 do (Process.new("sleep", ["1"]))
 {
-  assert (status.asString == "not started");
-  run;
-  assert (status.asString == "running");
-  join;
-  assert (status.asString == "exited with status 0");
-  run;
+  assert (status.asString() == "not started");
+  run();
+  assert (status.asString() == "running");
+  join();
+  assert (status.asString() == "exited with status 0");
+  run();
 }|;
 [00021972:error] !!! run: process was already run
 \end{urbiscript}
@@ -193,11 +193,11 @@ do (Process.new("sleep", ["1"]))
 \begin{urbiscript}
 do (Process.new("urbi-send", ["--no-such-option"]))
 {
-  run;
-  join;
+  run();
+  join();
   assert
   {
-    stderr.asList ==
+    stderr.asList() ==
     ["urbi-send: invalid option: --no-such-option",
      "Try `urbi-send --help' for more information."];
   };
@@ -210,11 +210,11 @@ do (Process.new("urbi-send", ["--no-such-option"]))
 \begin{urbiscript}
 do (Process.new(System.programName, ["--version"]))
 {
-  run;
-  join;
+  run();
+  join();
   assert
   {
-    stdout.asList[1] == "Copyright (C) 2004-2012 Gostai S.A.S.";
+    stdout.asList()[1] == "Copyright (C) 2004-2012 Gostai S.A.S.";
   };
 }|;
 \end{urbiscript}
@@ -225,11 +225,11 @@ do (Process.new(System.programName, ["--version"]))
 \begin{urbiscript}
 do (Process.new("cat", []))
 {
-  run;
+  run();
   stdin << "Hello, World!\n";
-  stdin.close;
-  join;
-  assert (stdout.asList == ["Hello, World!"]);
+  stdin.close();
+  join();
+  assert (stdout.asList() == ["Hello, World!"]);
 }|;
 \end{urbiscript}
 \end{urbiscriptapi}

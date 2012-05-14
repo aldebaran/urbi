@@ -16,7 +16,7 @@ package lang.Traceable
 
   var '$backtrace';
 
-  function backtrace()
+  get backtrace()
   {
     if ('$backtrace'.isVoid())
       []

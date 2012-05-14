@@ -226,7 +226,7 @@ namespace urbi
       proto_add(Tag::proto);
 
       BIND(asPrintable, as_printable);
-      BIND(categories);
+      BINDG(categories);
       BIND(disable);
       BIND(enable);
       BIND(init, init, void, ());

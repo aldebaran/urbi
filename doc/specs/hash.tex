@@ -22,7 +22,7 @@ much as possible, have different hashes.
 \subsection{Construction}
 Objects can be hashed with \refSlot[Object]{hash}.
 \begin{urbiassert}
-Object.new.hash.isA(Hash);
+Object.new().hash().isA(Hash);
 \end{urbiassert}
 
 \subsection{Slots}
@@ -30,12 +30,12 @@ Object.new.hash.isA(Hash);
 \item[asFloat] A Float value equivalent to the \lstinline|Hash| object. Two
   hashes have the same Float representation if and only if they are equal.
 \begin{urbiscript}
-var h1 = Object.new.hash|;
-var h2 = Object.new.hash|;
+var h1 = Object.new().hash()|;
+var h2 = Object.new().hash()|;
 assert
 {
-  h1.asFloat == h1.asFloat;
-  h1.asFloat != h2.asFloat;
+  h1.asFloat() == h1.asFloat();
+  h1.asFloat() != h2.asFloat();
 };
 \end{urbiscript}
 
@@ -63,8 +63,8 @@ class C
 
 assert
 {
-  C.new(0, 0).hash == C.new(0, 0).hash;
-  C.new(0, 0).hash != C.new(0, 1).hash;
+  C.new(0, 0).hash() == C.new(0, 0).hash();
+  C.new(0, 0).hash() != C.new(0, 1).hash();
 };
 \end{urbiscript}
 \end{urbiscriptapi}

@@ -44,9 +44,9 @@ this.protos[0].protos;
 Lobbies cannot be cloned, they must be created using \refSlot{create}.
 
 \begin{urbiscript}
-Lobby.new;
+Lobby.new();
 [00000177:error] !!! new: `Lobby' objects cannot be cloned
-Lobby.create;
+Lobby.create();
 [00000174] Lobby_0x126450
 \end{urbiscript}
 
@@ -56,7 +56,7 @@ Lobby.create;
 \item[authors] Credit the authors of \usdk.  See also \refSlot{thanks} and
   \autoref{sec:genesis}.
 \begin{urbiscript}
-lobby.authors;
+lobby.authors();
 [00478679] *** Authors of Urbi:
 [00478679] ***  - Jean-Christophe Baillie (original designer)
 [00478679] ***
@@ -71,7 +71,7 @@ lobby.authors;
 
 \item[banner] Internal.  Display \usdk banner.
 \begin{urbiscript}
-lobby.banner;
+lobby.banner();
 [00006124] *** ********************************************************
 [00006124] *** Urbi version 2.7.4 rev. 268868e
 [00006124] *** Copyright (C) 2004-2012 Gostai S.A.S.
@@ -88,7 +88,7 @@ lobby.banner;
 \item[bytesReceived] The number of bytes that were ``input'' to \this.  See
   also \refSlot{receive}.
 \begin{urbiscript}
-var l = Lobby.create|;
+var l = Lobby.create()|;
 assert (l.bytesReceived == 0);
 
 l.receive("123456789;");
@@ -113,7 +113,7 @@ removeSlot("l")|;
 // being an already defined slot).
 \end{urbicomment}
 \begin{urbiscript}
-var l = Lobby.create|;
+var l = Lobby.create()|;
 assert (l.bytesSent == 0);
 
 l.send("0123456789");
@@ -150,7 +150,7 @@ connected;
 \begin{urbiscript}
 every (1s) echo(1), sleep(0.5s); every (1s) echo(2),
 sleep(1.2s);
-connectionTag.stop;
+connectionTag.stop();
 [00000507] *** 1
 [00001008] *** 2
 [00001507] *** 1
@@ -161,7 +161,7 @@ connectionTag.stop;
 
 every (1s) echo(3), sleep(0.5s); every (1s) echo(4),
 sleep(1.2s);
-connectionTag.stop;
+connectionTag.stop();
 [00003208] *** 3
 [00003710] *** 4
 [00004208] *** 3
@@ -173,7 +173,7 @@ connectionTag.stop;
 
   Of course, a background job may stop a foreground one.
 \begin{urbiscript}
-{ sleep(1.2s); connectionTag.stop; },
+{ sleep(1.2s); connectionTag.stop(); },
 // Note the `;', this is a foreground statement.
 every (1s) echo(5);
 [00005008] *** 5
@@ -192,7 +192,7 @@ lobby.copyright(false);
 [00028588] *** Urbi version 2.7.4 rev. 268868e
 [00028588] *** Copyright (C) 2004-2012 Gostai S.A.S.
 
-lobby.copyright;
+lobby.copyright();
 [00041874] *** Urbi version 2.7.4 rev. 268868e
 [00041874] *** Copyright (C) 2004-2012 Gostai S.A.S.
 [00041874] ***
@@ -204,7 +204,7 @@ lobby.copyright;
 \item[create]
   Instantiate a new Lobby.
 \begin{urbiassert}
-Lobby.create.isA(Lobby);
+Lobby.create().isA(Lobby);
 \end{urbiassert}
 
 
@@ -254,7 +254,7 @@ Lobby in Lobby.instances;
 \item[license]
   Display the end user license agreement of the \usdk.
 \begin{urbiscript}
-lobby.license;
+lobby.license();
 [00000000] ***                     GNU AFFERO GENERAL PUBLIC LICENSE
 [00000000] ***                        Version 3, 19 November 2007
 [00000000] ***
@@ -278,7 +278,7 @@ Lobby.lobby === this;
   connections), it can be different from the target of the call.
 
 \begin{urbiscript}
-Lobby.create| Lobby.create|;
+Lobby.create()| Lobby.create()|;
 for (var l : lobbies)
   assert (l.lobby == Lobby.lobby);
 \end{urbiscript}
@@ -303,7 +303,7 @@ for (var l : lobbies)
   uses \lstinline|lobby.receive("foo")|, then \lstinline|"foo"| will
   be appended after the end of the file.
 \begin{urbiscript}
-Lobby.create.receive("12;");
+Lobby.create().receive("12;");
 [00478679] 12
 \end{urbiscript}
 
@@ -331,7 +331,7 @@ lobby.send("333");
 %% FIXME: Can't credit everyone because listings does not support UTF-8 in
 %% these environments... And Benoît Sigoure, for instance, has some.
 \begin{urbiscript}
-lobby.thanks;
+lobby.thanks();
 [00478679] *** Contributors to Urbi:
 [00478679] ***
 [00478679] ***  - Adam Oleksy <adam.oleksy@pwr.wroc.pl>

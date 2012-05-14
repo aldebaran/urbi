@@ -26,9 +26,9 @@ See \autoref{sec:lang:string} for details and examples.
 A null String can also be obtained with \slot[String]{new}.
 
 \begin{urbiassert}
-String.new == "";
+String.new() == "";
 String == "";
-"123".new == "123";
+"123".new() == "123";
 \end{urbiassert}
 
 \subsection{Slots}
@@ -158,24 +158,24 @@ assert
   The value of \this as a \refObject{Float}.  See \autoref{sec:lang:float}
   for their syntax.
 \begin{urbiassert}
-            "23".asFloat == 23;
-         "23.03".asFloat == 23.03;
-   "123_456_789".asFloat == 123_456_789;
-"12_34_56_78_90".asFloat == 12_34_56_78_90;
-   "1_2__3___45".asFloat == 1_2__3___45;
-      "1_2.3__4".asFloat == 1_2.3__4;
-   "0xFFFF_FFFF".asFloat == 0xFFFF_FFFF;
-         "1e1_0".asFloat == 1e1_0;
+            "23".asFloat() == 23;
+         "23.03".asFloat() == 23.03;
+   "123_456_789".asFloat() == 123_456_789;
+"12_34_56_78_90".asFloat() == 12_34_56_78_90;
+   "1_2__3___45".asFloat() == 1_2__3___45;
+      "1_2.3__4".asFloat() == 1_2.3__4;
+   "0xFFFF_FFFF".asFloat() == 0xFFFF_FFFF;
+         "1e1_0".asFloat() == 1e1_0;
 \end{urbiassert}
 
   Raise an error on invalid numbers.
 
 \begin{urbiscript}
-"123abc".asFloat;
+"123abc".asFloat();
 [00000001:error] !!! asFloat: invalid number: "123abc"
-"0xabcdefg".asFloat;
+"0xabcdefg".asFloat();
 [00061848:error] !!! asFloat: invalid number: "0xabcdefg"
-"1.2_".asFloat;
+"1.2_".asFloat();
 [00048342:error] !!! asFloat: invalid number: "1.2_"
 \end{urbiscript}
 
@@ -184,7 +184,7 @@ assert
   A List of one-letter Strings that, concatenated, equal \this.  This allows
   to use \lstinline|for| to iterate over the string.
 \begin{urbiscript}
-assert("123".asList == ["1", "2", "3"]);
+assert("123".asList() == ["1", "2", "3"]);
 for (var v : "123")
   echo(v);
 [00000001] *** 1
@@ -196,8 +196,8 @@ for (var v : "123")
 \item[asPrintable]
   \this as a literal (escaped) string.
 \begin{urbiassert}
-"foo".asPrintable == "\"foo\"";
-"foo".asPrintable.asPrintable == "\"\\\"foo\\\"\"";
+"foo".asPrintable() == "\"foo\"";
+"foo".asPrintable().asPrintable() == "\"\\\"foo\\\"\"";
 \end{urbiassert}
 
 
@@ -205,7 +205,7 @@ for (var v : "123")
   \this.
 \begin{urbiassert}
 var s = "\"foo\"";
-s.asString === s;
+s.asString() === s;
 \end{urbiassert}
 
 
@@ -260,8 +260,8 @@ s.asString === s;
 \item[fresh] A String that has never been used as an identifier, prefixed by
   \this.  It can safely be used with \refSlot[Object]{setSlot} and so forth.
 \begin{urbiassert}
-String.fresh == "_5";
-"foo".fresh == "foo_6";
+String.fresh() == "_5";
+"foo".fresh() == "foo_6";
 \end{urbiassert}
 
 
@@ -273,7 +273,7 @@ String.fromAscii(  98) == "b";
 String.fromAscii(0xFF) == "\xff";
 [0, 1, 2, 254, 255]
   .map(function (var v) { String.fromAscii(v) })
-  .map(function (var v) { v.toAscii })
+  .map(function (var v) { v.toAscii() })
   == [0, 1, 2, 254, 255];
 \end{urbiassert}
 
@@ -284,9 +284,9 @@ String.fromAscii(0xFF) == "\xff";
   \refSlot[Object]{hash}.
 
 \begin{urbiassert}
-"".hash.isA(Hash);
-"foo".hash == "foo".hash;
-"foo".hash != "bar".hash;
+"".hash().isA(Hash);
+"foo".hash() == "foo".hash();
+"foo".hash() != "bar".hash();
 \end{urbiassert}
 
 
@@ -354,119 +354,119 @@ String.fromAscii(0xFF) == "\xff";
     \label{tab:string:ischar}
   \end{table}
 \begin{urbiassert}
-           "".isAlnum;
-        "123".isAlnum;
-        "abc".isAlnum; "1b".isAlnum;
+           "".isAlnum();
+        "123".isAlnum();
+        "abc".isAlnum(); "1b".isAlnum();
 \end{urbiassert}
 
 
 \item[isAlpha] Whether all the characters of \this are letters, upper or
   lower case (see \autoref{tab:string:ischar}).
 \begin{urbiassert}
-           "".isAlpha;
-     "abcABC".isAlpha;
-       !"123".isAlpha;  "b".isAlpha;
+           "".isAlpha();
+     "abcABC".isAlpha();
+       !"123".isAlpha();  "b".isAlpha();
 \end{urbiassert}
 
 
 \item[isAscii] Whether all the characters of \this are ascii characters
   (see \autoref{tab:string:ischar}).
 \begin{urbiassert}[escapeinside=<>]
-           "".isAscii;
-     "abc123".isAscii;
-         !"<\textstr{é}>".isAscii; !"<\textstr{è}>".isAscii;
+           "".isAscii();
+     "abc123".isAscii();
+         !"<\textstr{é}>".isAscii(); !"<\textstr{è}>".isAscii();
 \end{urbiassert}
 
 
 \item[isBlank] Whether all the characters of \this are spaces or tabulations
   (see \autoref{tab:string:ischar}).
 \begin{urbiassert}
-           "".isBlank;
-     "\t \t ".isBlank;
-       !"123".isBlank;  !"\v".isBlank;
+           "".isBlank();
+     "\t \t ".isBlank();
+       !"123".isBlank();  !"\v".isBlank();
 \end{urbiassert}
 
 
 \item[isCntrl] Whether all the characters of \this are control characters
   (non-printable) (see \autoref{tab:string:ischar}).
 \begin{urbiassert}
-           "".isCntrl;
-     "\t\n\f".isCntrl;
-        "\10".isCntrl; !"abc".isCntrl;
+           "".isCntrl();
+     "\t\n\f".isCntrl();
+        "\10".isCntrl(); !"abc".isCntrl();
 \end{urbiassert}
 
 
 \item[isDigit] Whether all the characters of \this are decimal digits (see
   \autoref{tab:string:ischar}).
 \begin{urbiassert}
-           "".isDigit;
- "0123456789".isDigit;
-         !"a".isDigit;  !"0x10".isDigit;
+           "".isDigit();
+ "0123456789".isDigit();
+         !"a".isDigit();  !"0x10".isDigit();
 \end{urbiassert}
 
 
 \item[isGraph] Whether all the characters of \this are printable characters
   (not a space) (see \autoref{tab:string:ischar}).
 \begin{urbiassert}
-          "".isGraph;
-    "abc123".isGraph;
-       "{|}".isGraph;
-   !"\t\n\r".isGraph; !" ".isGraph;
+          "".isGraph();
+    "abc123".isGraph();
+       "{|}".isGraph();
+   !"\t\n\r".isGraph(); !" ".isGraph();
 \end{urbiassert}
 
 
 \item[isLower] Whether all the characters of \this are lower characters (see
   \autoref{tab:string:ischar}).
 \begin{urbiassert}
-          "".isLower;
-       "abc".isLower;
-      !"123".isLower;  !"A".isLower;
+          "".isLower();
+       "abc".isLower();
+      !"123".isLower();  !"A".isLower();
 \end{urbiassert}
 
 
 \item[isPrint] Whether all the characters of \this are printable characters
   (see \autoref{tab:string:ischar}).
 \begin{urbiassert}
-          "".isPrint;
-  "abcd1234".isPrint;
-       "{|}".isPrint; !"\r".isPrint;
+          "".isPrint();
+  "abcd1234".isPrint();
+       "{|}".isPrint(); !"\r".isPrint();
 \end{urbiassert}
 
 
 \item[isPunct] Whether all the characters of \this are punctuation marks
   (see \autoref{tab:string:ischar}).
 \begin{urbiassert}
-         "".isPunct;
-     "!_[]".isPunct;
-     !"abc".isPunct;  !"a".isPunct;
+         "".isPunct();
+     "!_[]".isPunct();
+     !"abc".isPunct();  !"a".isPunct();
 \end{urbiassert}
 
 
 \item[isSpace] Whether all the characters of \this are spaces (see
   \autoref{tab:string:ischar}).
 \begin{urbiassert}
-          "".isSpace;
-       "   ".isSpace;
-      !" a ".isSpace;
+          "".isSpace();
+       "   ".isSpace();
+      !" a ".isSpace();
 \end{urbiassert}
 
 
 \item[isUpper] Whether all the characters of \this are upper characters (see
   \autoref{tab:string:ischar}).
 \begin{urbiassert}
-          "".isUpper;
-       "ABC".isUpper;
-      !"123".isUpper; !"a".isUpper;
+          "".isUpper();
+       "ABC".isUpper();
+      !"123".isUpper(); !"a".isUpper();
 \end{urbiassert}
 
 
 \item[isXdigit] Whether all the characters of \this are hexadecimal digits
   (see \autoref{tab:string:ischar}).
 \begin{urbiassert}
-          "".isXdigit;
-    "abcdef".isXdigit;
-"0123456789".isXdigit;
-        !"g".isXdigit; "123abc".isXdigit;
+          "".isXdigit();
+    "abcdef".isXdigit();
+"0123456789".isXdigit();
+        !"g".isXdigit(); "123abc".isXdigit();
 \end{urbiassert}
 
 
@@ -550,7 +550,7 @@ It can also be a list of strings.
 By default splitting is performed on white-spaces:
 
 \begin{urbiassert}
-"  abc  def\tghi\n".split == ["abc", "def", "ghi"];
+"  abc  def\tghi\n".split() == ["abc", "def", "ghi"];
 \end{urbiassert}
 
 \noindent
@@ -587,14 +587,14 @@ negative number corresponds to no limit:
 \item[toAscii] Convert the first character of \this to its integer value in
   the \acro{ASCII} coding.  See also \refSlot{fromAscii}.
 \begin{urbiassert}
-   "a".toAscii == 97;
-   "b".toAscii == 98;
-"\xff".toAscii == 0xff;
+   "a".toAscii() == 97;
+   "b".toAscii() == 98;
+"\xff".toAscii() == 0xff;
 "Hello, World!\n"
-  .asList
-  .map(function (var v) { v.toAscii })
+  .asList()
+  .map(function (var v) { v.toAscii() })
   .map(function (var v) { String.fromAscii(v) })
-  .join
+  .join()
   == "Hello, World!\n";
 \end{urbiassert}
 
@@ -604,7 +604,7 @@ negative number corresponds to no limit:
   See also \refSlot{toLower}.
 \begin{urbiassert}
     var hello =  "Hello, World!";
-hello.toLower == "hello, world!";
+hello.toLower() == "hello, world!";
         hello == "Hello, World!";
 \end{urbiassert}
 
@@ -614,7 +614,7 @@ hello.toLower == "hello, world!";
   See also \refSlot{toLower}.
 \begin{urbiassert}
     var hello =  "Hello, World!";
-hello.toUpper == "HELLO, WORLD!";
+hello.toUpper() == "HELLO, WORLD!";
         hello == "Hello, World!";
 \end{urbiassert}
 \end{urbiscriptapi}
@@ -626,4 +626,4 @@ hello.toUpper == "HELLO, WORLD!";
 %%% ispell-dictionary: "american"
 %%% ispell-personal-dictionary: "../urbi.dict"
 %%% fill-column: 76
-%%% End:
+%%% End

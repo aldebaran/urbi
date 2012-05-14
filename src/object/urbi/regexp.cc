@@ -47,7 +47,7 @@ namespace urbi
       BIND(asString,    as_string);
       BIND(init);
       BIND(match);
-      BIND(matches);
+      BINDG(matches);
     }
 
     std::string

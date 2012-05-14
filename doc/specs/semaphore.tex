@@ -99,10 +99,10 @@ Semaphore.new(1);
   var s = Semaphore.new(1);
   for& (var i : [0, 1, 2, 3])
   {
-    s.acquire;
+    s.acquire();
     echo("start " + i);
     echo("end " + i);
-    s.release;
+    s.release();
   }
 };
 [00000000] *** start 0

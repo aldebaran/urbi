@@ -41,15 +41,15 @@ nil.isNil;
   newer, return true.  In the future, false will be returned.  Therefore, if
   you really need to check whether \var{foo} is \lstinline|void| but not
   \lstinline|nil|, use
-  \lstinline|!\var{foo}.acceptVoid.isNil && \var{foo}.isVoid|.
+  \lstinline|!\var{foo}.acceptVoid().isNil && \var{foo}.isVoid|.
 \begin{urbiassert}
 nil.isVoid;
 [     Logger     ] nil.isVoid will return false eventually, adjust your code.
 [     Logger     ]     For instance replace InputStream loops from
-[     Logger     ]       while (!(x = i.get.acceptVoid).isVoid)
+[     Logger     ]       while (!(x = i.get().acceptVoid()).isVoid())
 [     Logger     ]         cout << x;
 [     Logger     ]     to
-[     Logger     ]       while (!(x = i.get).isNil)
+[     Logger     ]       while (!(x = i.get()).isNil())
 [     Logger     ]         cout << x;
 \end{urbiassert}
 \end{urbiscriptapi}

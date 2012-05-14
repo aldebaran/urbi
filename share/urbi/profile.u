@@ -21,6 +21,7 @@ requireFile("urbi/control.u");
 
 do (Profile)
 {
+  calls->oget = getSlotValue("calls");
   var Function = FunctionProfile;
   removeSlot("FunctionProfile");
 
@@ -29,7 +30,7 @@ do (Profile)
   /// \return (factor, unit)
   function computeUnit(var values)
   {
-    var max = values.filter(function (var v){ v != 0 }).max |
+    var max = values.filter(function (var v){ v != 0 }).max() |
     var order = 0|
     for| (var i : [0, 3, 6])
       if (1 <= max * 10 ** i)

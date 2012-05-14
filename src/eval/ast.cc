@@ -473,7 +473,13 @@ namespace eval
       {
         rObject val = loc.second;
         if (object::rSlot sl = val->as<object::Slot>())
+        {
+          runner::Job& job = ::kernel::server().getCurrentRunner();
+          job.state.call_stack_get() << std::make_pair(s, e->location_get());
+          FINALLY((( runner::Job&, job)),
+            job.state.call_stack_get().pop_back());
           val = sl->value(tgt);
+        }
         else
         {
           // We bypassed slot_get, so we muste handle slot creation if

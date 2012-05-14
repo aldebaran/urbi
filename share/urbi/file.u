@@ -13,22 +13,22 @@ do (File)
 {
   protos() << RangeIterable;
 
-  function basename()
+  get basename()
   {
-    Kernel1.deprecated("basename", "asPath.basename") |
-    asPath.basename()
+    Kernel1.deprecated("basename", "asPath().basename") |
+    asPath().basename()
   };
 
-  function lastModifiedDate()
+  get lastModifiedDate()
   {
-    Kernel1.deprecated("lastModifiedDate", "asPath.lastModifiedDate") |
-    asPath.lastModifiedDate()
+    Kernel1.deprecated("lastModifiedDate", "asPath().lastModifiedDate") |
+    asPath().lastModifiedDate()
   };
 
   function rename(name)
   {
-    Kernel1.deprecated("rename(name)", "asPath.rename(name)") |
-    asPath.rename(name)
+    Kernel1.deprecated("rename(name)", "asPath().rename(name)") |
+    asPath().rename(name)
   };
 
   function '$doInto'(slot, rhs, action, routine)
@@ -49,8 +49,8 @@ do (File)
 
   function moveInto(dir)
   {
-    '$doInto'(asPath, dir, "rename", "moveInto") |
-    this;
+    '$doInto'(asPath(), dir, "rename", "moveInto") |
+    this
   };
 
   function save(name, content)

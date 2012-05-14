@@ -21,7 +21,7 @@ To \dfn{stop} a tag means to kill all the code currently running that it
 labels.  It does not affect ``newcomers''.
 
 \begin{urbiscript}[firstnumber=1]
-var t = Tag.new|;
+var t = Tag.new()|;
 var t0 = time|;
 t: every(1s) echo("foo"),
 sleep(2.2s);
@@ -29,7 +29,7 @@ sleep(2.2s);
 [00001159] *** foo
 [00002159] *** foo
 
-t.stop;
+t.stop();
 // Nothing runs.
 sleep(2.2s);
 
@@ -39,14 +39,14 @@ sleep(2.2s);
 [00001159] *** bar
 [00002159] *** bar
 
-t.stop;
+t.stop();
 \end{urbiscript}
 
 \refSlot[Tag]{stop} can be used to inject a return value to a tagged
 expression.
 
 \begin{urbiscript}[firstnumber=1]
-var t = Tag.new|;
+var t = Tag.new()|;
 var res;
 detach(res = { t: every(1s) echo("computing") })|;
 sleep(2.2s);
@@ -85,7 +85,7 @@ sleep(2.1s);
 [00002000] *** ping
 [00002000] *** ping
 
-ping.block;
+ping.block();
 assert(ping.blocked);
 
 ping:
@@ -93,7 +93,7 @@ ping:
     echo("pong"),
 
 // Neither new nor old code runs.
-ping.unblock;
+ping.unblock();
 assert(!ping.blocked);
 sleep(2.1s);
 
@@ -112,10 +112,10 @@ expressions.
 
 \begin{urbiassert}[firstnumber=1]
 {
-  var t = Tag.new;
+  var t = Tag.new();
   var res = [];
   for (3)
-    detach(res << {t: sleep});
+    detach(res << {t: sleep()});
   t.block("foo");
   res;
 }
@@ -130,7 +130,7 @@ To \dfn{freeze} a tag means holding the execution of code it labels.
 This applies to code already being run, and ``arriving'' pieces of code.
 
 \begin{urbiscript}[firstnumber=1]
-var t = Tag.new|;
+var t = Tag.new()|;
 var t0 = time|;
 t: every(1s) echo("time   : %.0f" % (time - t0)),
 sleep(2.2s);
@@ -138,7 +138,7 @@ sleep(2.2s);
 [00001159] *** time   : 1
 [00002159] *** time   : 2
 
-t.freeze;
+t.freeze();
 assert(t.frozen);
 t: every(1s) echo("shifted: %.0f" % (shiftedTime - t0)),
 sleep(2.2s);
@@ -146,7 +146,7 @@ sleep(2.2s);
 
 // Unfreeze the tag: suspended code is resumed.
 // Note the difference between "time" and "shiftedTime".
-t.unfreeze;
+t.unfreeze();
 assert(!t.frozen);
 sleep(2.2s);
 [00004559] *** shifted: 2
@@ -359,14 +359,14 @@ Another way to see it is that tagging a piece of code with a child will also
 tag it with the parent. To create a child Tag, simply clone its parent.
 
 \begin{urbiscript}
-var parent = Tag.new |
-var child = parent.clone |
+var parent = Tag.new() |
+var child = parent.clone() |
 
 // Stopping parent also stops children.
 {
   parent: {sleep(100ms); echo("parent")},
   child:  {sleep(100ms); echo("child")},
-  parent.stop;
+  parent.stop();
   sleep(200ms);
   echo("end");
 };
@@ -376,7 +376,7 @@ var child = parent.clone |
 {
   parent: {sleep(100ms); echo("parent")},
   child:  {sleep(100ms); echo("child")},
-  child.stop;
+  child.stop();
   sleep(200ms);
   echo("end");
 };
@@ -388,9 +388,9 @@ Hierarchical tags are commonly laid out in slots so as to reflect their tag
 hierarchy.
 
 \begin{urbiunchecked}
-var a = Tag.new;
-var a.b = a.clone;
-var a.b.c = a.b.clone;
+var a = Tag.new();
+var a.b = a.clone();
+var a.b.c = a.b.clone();
 
 a:     foo; // Tagged by a
 a.b:   bar; // Tagged by a and b
@@ -414,7 +414,7 @@ display a tag and remember what it is.
 
 \begin{urbiscript}[firstnumber=1]
 // Anonymous tag.
-var t1 = Tag.new;
+var t1 = Tag.new();
 [00000001] Tag<tag_8>
 
 // Named tag.

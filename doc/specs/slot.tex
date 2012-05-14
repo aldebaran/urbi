@@ -173,7 +173,7 @@ class a {
   var x = 0;
   var y = 0;
 }|;
-var b = a.new|;
+var b = a.new()|;
 a.&x.copyOnWrite = false|;
 b.x = 1| b.y = 1|;
 assert
@@ -227,7 +227,7 @@ class Vector
   var length;
   length->oget = function(slot)
   {
-    ((x*x)+(y*y)).sqrt
+    ((x*x)+(y*y)).sqrt()
   };
 }|;
 var v = Vector.new(2, 0)|;
@@ -263,7 +263,7 @@ removeSlot("v")|;
 
 \begin{urbiscript}
 var integer = 0|;
-integer->set = function(v) { value = v.round}|;
+integer->set = function(v) { value = v.round()}|;
 integer = 1.6 | integer;
 [00000001] 2
 \end{urbiscript}
@@ -281,7 +281,7 @@ class Vector
     y = y_;
   };
   var length;
-  length->oget = function(slot) { ((x*x)+(y*y)).sqrt };
+  length->oget = function(slot) { ((x*x)+(y*y)).sqrt() };
   /// Change the vector length, keeping the same direction
   length->oset = function(value, slot)
   {
@@ -422,7 +422,7 @@ class Motor
     // our val is both motor command, and motor current position
     var this.val = 0;
     var this.running = false;
-    var this.runTag = Tag.new;
+    var this.runTag = Tag.new();
     &val.owned = true;
     // Initialize current position
     &val.outputValue = 0;
@@ -452,13 +452,13 @@ class Motor
     runTag: while(&val.outputValue != &val.value)
     {
       &val.setOutputValue(
-        &val.outputValue + 1 * (&val.value -&val.outputValue).sign);
+        &val.outputValue + 1 * (&val.value -&val.outputValue).sign());
       sleep(1s);
     };
     running = false;
   }
 }|;
-var m = Motor.new;
+var m = Motor.new();
 [00000001] Motor_0x42347788
 // Send a command to motor by writing to val
 m.val = 5|;

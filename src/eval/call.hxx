@@ -531,6 +531,10 @@ namespace eval
     {
       if (s->hasLocalSlot(SYMBOL(autoEval)) && !arguments)
         arguments = empty_args;
+      runner::Job& job = ::kernel::server().getCurrentRunner();
+      job.state.call_stack_get() << std::make_pair(message, location);
+      FINALLY((( runner::Job&, job)),
+        job.state.call_stack_get().pop_back());
       routine = s->value(target);
     }
     // Bounce on the same function with routine argument.

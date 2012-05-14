@@ -116,12 +116,12 @@ namespace urbi
       BIND(combMul);
       BIND(combSub);
       BIND(distance);
-      BIND(norm);
+      BINDG(norm);
       BIND(resize);
       BIND(scalarGE);
       BIND(scalarLE);
       BIND(set, fromList);
-      BIND(size);
+      BINDG(size);
       BIND(sum);
       BIND(trueIndexes);
       BIND(uvalueSerialize);

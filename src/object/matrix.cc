@@ -466,7 +466,7 @@ namespace urbi
       BIND(rowSub);
       BIND(set, fromList);
       BIND(setRow);
-      BIND(size, size, rObject, () const);
+      BINDG(size, size, rObject, () const);
       BIND(transpose);
       BIND(uvalueSerialize);
       slot_set_value(SYMBOL(init), new Primitive(&init));

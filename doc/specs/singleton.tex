@@ -21,7 +21,7 @@ derived of \lstinline{Singleton} are also singletons.
 To be a singleton, the object must have \lstinline{Singleton} as a
 prototype. The common way to do this is
 %
-\lstinline{var s = Singleton.new},
+\lstinline{var s = Singleton.new()},
 %
 but this does not work : \lstinline|s| is not a new singleton, it is
 the \lstinline|Singleton| itself since it cannot be cloned. There are
@@ -33,16 +33,16 @@ class NewSingleton1: Singleton
 {
   var asString = "NewSingleton1";
 }|
-var s1 = NewSingleton1.new;
+var s1 = NewSingleton1.new();
 [00000001] NewSingleton1
 assert(s1 === NewSingleton1);
 assert(NewSingleton1 !== Singleton);
 
 // Create a new Object and set its prototype by hand.
-var NewSingleton2 = Object.new|
+var NewSingleton2 = Object.new()|
 var NewSingleton2.asString = "NewSingleton2"|
 NewSingleton2.protos = [Singleton]|
-var s2 = NewSingleton2.new;
+var s2 = NewSingleton2.new();
 [00000001] NewSingleton2
 assert(s2 === NewSingleton2);
 assert(NewSingleton2 !== Singleton);

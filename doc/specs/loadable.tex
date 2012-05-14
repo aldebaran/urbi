@@ -30,7 +30,7 @@ class Motor: Loadable
 };
 [00000002] Motor
 
-var m = Motor.new;
+var m = Motor.new();
 [00000003] Motor_0x42364388
 
 m.load;
@@ -39,7 +39,7 @@ m.load;
 m.go(1);
 [00000006] *** cannot advance, the motor is off
 
-m.on;
+m.on();
 [00000007] Motor_0x42364388
 
 m.go(123);
@@ -67,16 +67,16 @@ This object should serve as a prototype.
 \item[off](<val>)%
   Set \refSlot{load} to \lstinline|false| and return \this.
 \begin{urbiassert}
-do (Loadable.new)
+do (Loadable.new())
 {
   assert
   {
     !load;
-    off === this;
+    off() === this;
     !load;
-    on === this;
+    on() === this;
     load;
-    off === this;
+    off() === this;
     !load;
   };
 };
@@ -86,14 +86,14 @@ do (Loadable.new)
 \item[on](<val>)%
   Set \refSlot{load} to \lstinline|true| and return \this.
 \begin{urbiassert}
-do (Loadable.new)
+do (Loadable.new())
 {
   assert
   {
     !load;
-    on === this;
+    on() === this;
     load;
-    on === this;
+    on() === this;
     load;
   };
 };
@@ -104,14 +104,14 @@ do (Loadable.new)
   Set \refSlot{load} from \lstinline|true| to \lstinline|false|, and
   vice-versa.  Return \var{val}.
 \begin{urbiassert}
-do (Loadable.new)
+do (Loadable.new())
 {
   assert
   {
     !load;
-    toggle === this;
+    toggle() === this;
     load;
-    toggle === this;
+    toggle() === this;
     !load;
   };
 };

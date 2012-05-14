@@ -73,7 +73,7 @@ namespace urbi
       limits = urbi::object::Object::proto->clone();
 
 #define DECLARE(Urbi, Cxx)                    \
-      limits->bind(SYMBOL_(Urbi), &Float::Cxx)
+      limits->bind(SYMBOL_(Urbi), &Float::Cxx, 0)
 
       DECLARE(digits, limit_digits);
       DECLARE(digits10, limit_digits10);

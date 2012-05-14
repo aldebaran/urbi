@@ -49,12 +49,12 @@ var v = Lazy.new(closure () { heavy_computation() });
 // was not evaluated.
 /* some code */;
 // If the value is needed, heavy_computation is evaluated.
-v.value;
+v.value();
 [00000000] *** Heavy computation
 [00000000] 2
 // If the value is needed a second time, heavy_computation
 // is not reevaluated.
-v.value;
+v.value();
 [00000000] 2
 \end{urbiscript}
 
@@ -84,7 +84,7 @@ class UnaryLazy
   };
   function value(p)
   {
-    var sp = p.asString;
+    var sp = p.asString();
     if (results.has(sp))
       return results[sp];
     var res = func(p);
@@ -96,9 +96,8 @@ class UnaryLazy
 } |
 // The function to cache.
 var inc = function(x) { echo("incing " + x) | x+1 } |
-// The function with cache.
-// Use "getSlot" to get the function, not its evaluation.
-var p = UnaryLazy.new(getSlotValue("inc"));
+// The function with cache. UnaryLazy simply takes the function as argument.
+var p = UnaryLazy.new(inc);
 [00062847] UnaryLazy_0x78b750
 p.value(1);
 [00066758] *** incing 1
@@ -148,9 +147,9 @@ Lazy.new(closure () { 1 + 2 }) != Lazy.new(closure () { 2 + 1 });
   var l1 = Lazy.new(closure () { 1 + 1 });
   var l2 = Lazy.new(closure () { 1 + 1 });
   assert (l1 == l2);
-  l1.eval;
+  l1.eval();
   assert (l1 != l2);
-  l2.eval;
+  l2.eval();
   assert (l1 == l2);
 };
 \end{urbiscript}
@@ -160,7 +159,7 @@ Lazy.new(closure () { 1 + 2 }) != Lazy.new(closure () { 2 + 1 });
   The conversion to \refObject{String} of the body of a non-evaluated
   argument.
 \begin{urbiassert}
-Lazy.new(closure () { echo(1); 1 }).asString == "echo(1);\n1";
+Lazy.new(closure () { echo(1); 1 }).asString() == "echo(1);\n1";
 \end{urbiassert}
 
 

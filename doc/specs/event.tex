@@ -36,7 +36,7 @@ Contrast the following examples:
 \paragraph{Asynchronous handlers}~
 
 \begin{urbiscript}[xrightmargin=0mm,xleftmargin=0mm]
-var e = Event.new |;
+var e = Event.new() |;
 
 at (e?)
   { echo("a"); sleep(20ms); echo("b") }
@@ -51,7 +51,7 @@ sleep(25ms);
 [00000101] *** b
 [00000102] *** d
 
-e.syncEmit | echo("done");
+e.syncEmit() | echo("done");
 [00000001] *** a
 [00000101] *** b
 [00000102] *** c
@@ -66,7 +66,7 @@ e.syncEmit | echo("done");
 removeSlots("e");
 \end{urbicomment}
 \begin{urbiscript}[xrightmargin=0mm,xleftmargin=0mm]
-var e = Event.new |;
+var e = Event.new() |;
 
 at sync (e?)
   { echo("a"); sleep(20ms); echo("b") }
@@ -81,7 +81,7 @@ e! | echo("done");
 [00000052] *** d
 [00000052] *** done
 
-e.syncEmit | echo("done");
+e.syncEmit() | echo("done");
 [00000052] *** a
 [00000073] *** b
 [00000073] *** c
@@ -114,7 +114,7 @@ not depend on this, as in the future we might change this.
 removeSlots("e");
 \end{urbicomment}
 \begin{urbiscript}[xrightmargin=0mm,xleftmargin=0mm]
-var e = Event.new|;
+var e = Event.new()|;
 at (e?(var v))
   { echo("a"+v); sleep(20ms); echo("b"+v) }
 onleave
@@ -125,14 +125,14 @@ var handler = e.trigger(1) | echo("triggered");
 [00000002] *** a1
 [00000102] *** b1
 sleep(200ms);
-handler.stop | echo("stopped");
+handler.stop() | echo("stopped");
 [00000301] *** stopped
 sleep(25ms);
 [00000302] *** c1
 [00000402] *** d1
 
 // at and onleave clauses may overlap.
-handler = e.trigger(2) | handler.stop;
+handler = e.trigger(2) | handler.stop();
 sleep(25ms);
 [00000001] *** a2
 [00000002] *** c2
@@ -144,7 +144,7 @@ handler = e.syncTrigger(3) | echo("triggered");
 [00000002] *** a3
 [00000102] *** b3
 [00000001] *** triggered
-handler.stop | echo("stopped");
+handler.stop() | echo("stopped");
 [00000302] *** c3
 [00000402] *** d3
 [00000301] *** stopped
@@ -157,7 +157,7 @@ handler.stop | echo("stopped");
 removeSlots("e", "handler");
 \end{urbicomment}
 \begin{urbiscript}[xrightmargin=0mm,xleftmargin=0mm]
-var e = Event.new|;
+var e = Event.new()|;
 at sync (e?(var v))
   { echo("a"+v); sleep(20ms); echo("b"+v) }
 onleave
@@ -168,14 +168,14 @@ var handler = e.trigger(1) | echo("triggered");
 [00000002] *** a1
 [00000102] *** b1
 [00000001] *** triggered
-handler.stop | echo("stopped");
+handler.stop() | echo("stopped");
 [00000301] *** stopped
 sleep(25ms);
 [00000302] *** c1
 [00000402] *** d1
 
 // at and onleave clauses don't overlap.
-handler = e.trigger(2) | handler.stop;
+handler = e.trigger(2) | handler.stop();
 sleep(25ms);
 [00000001] *** a2
 [00000201] *** b2
@@ -187,7 +187,7 @@ handler = e.syncTrigger(3) | echo("triggered");
 [00000002] *** a3
 [00000102] *** b3
 [00000001] *** triggered
-handler.stop | echo("stopped");
+handler.stop() | echo("stopped");
 [00000302] *** c3
 [00000402] *** d3
 [00000301] *** stopped
@@ -207,7 +207,7 @@ An \lstinline{Event} is created like any other object.  The constructor
 takes no argument.
 
 \begin{urbiscript}[firstnumber=1]
-var e = Event.new;
+var e = Event.new();
 [00000001] Event_0x9ad8118
 \end{urbiscript}
 
@@ -219,9 +219,9 @@ var e = Event.new;
   events watch for themselves, directly or indirectly.
 
 \begin{urbiscript}
-var e3 = Event.new|;
-var e4 = Event.new|;
-var e_watch = Event.new << e3 << e4 |;
+var e3 = Event.new()|;
+var e4 = Event.new()|;
+var e_watch = Event.new() << e3 << e4 |;
 at (e_watch?)
   echo("!");
 e3!;
@@ -236,8 +236,8 @@ e4!;
   \that triggers.
 
 \begin{urbiscript}
-var e1 = Event.new|;
-var e2 = Event.new|;
+var e1 = Event.new()|;
+var e2 = Event.new()|;
 var either = e1.'||'(e2)|;
 at (either?)
   echo("!");
@@ -260,16 +260,16 @@ e2!;
 removeSlots("e");
 \end{urbicomment}
 \begin{urbiscript}
-var e = Event.new|;
+var e = Event.new()|;
 // No handler, lost message.
-e.emit;
+e.emit();
 at (e?)               echo("e");
 at (e?())             echo("e()");
 at (e?(var x))        echo("e(%s)" % [x]);
 at (e?(var x, var y)) echo("e(%s, %s)" % [x, y]);
 
 // This is what e! does.
-e.emit;
+e.emit();
 [00000135] *** e
 [00000135] *** e()
 
@@ -302,13 +302,13 @@ and \refSlot{syncEmit} for details about the synchronicity of the handling.
   Return true if at least one subscriber is registered to this event.
 
 \begin{urbiscript}
-var ev = Event.new|;
+var ev = Event.new()|;
 ev.hasSubscribers;
 [00000000] false
 tag: at(ev?) echo(1);
 ev.hasSubscribers;
 [00000000] true
-tag.stop;
+tag.stop();
 ev.hasSubscribers;
 [00000000] false
 \end{urbiscript}
@@ -337,7 +337,7 @@ returns \lstinline{void}.
 removeSlots("e");
 \end{urbicomment}
 \begin{urbiscript}
-var e = Event.new|;
+var e = Event.new()|;
 e.onEvent(
   function (var args[]) { echo("cond 1") | true },
   function (var args[]) { echo("enter 1") },
@@ -356,12 +356,12 @@ e.emit(12);
 [00001619] *** leave 1
 [00001619] *** cond 2
 
-var h = e.trigger|;
+var h = e.trigger()|;
 [00001620] *** cond 1
 [00001620] *** enter 1
 [00001620] *** cond 2
 
-h.stop;
+h.stop();
 [00001621] *** leave 1
 \end{urbiscript}
 \begin{urbicomment}
@@ -378,9 +378,9 @@ This function is internal and it might change in the future.
   \refObject{void}.
 
 \begin{urbiscript}
-var e = Event.new|;
-assert (e.onSubscribe.isVoid);
-e.onSubscribe = Event.new|;
+var e = Event.new()|;
+assert (e.onSubscribe.isVoid());
+e.onSubscribe = Event.new()|;
 at (e.onSubscribe?)
   echo("new subscriber");
 at (e?(12)) {};
@@ -392,8 +392,8 @@ waituntil(e?(15)),
   The following example shows how to set up a \lstinline|clock| event that
   is triggered only on the first ``use'' (subscription).
 \begin{urbiscript}
-var clock = Event.new|;
-clock.onSubscribe = Event.new|;
+var clock = Event.new()|;
+clock.onSubscribe = Event.new()|;
 at (clock.onSubscribe? if clock.subscribers.size == 1)
 {
   echo("arming clock event");

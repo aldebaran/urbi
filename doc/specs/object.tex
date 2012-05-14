@@ -23,7 +23,7 @@ All objects in \us must inherit (directly or indirectly) from it.
 A fresh object can be instantiated by cloning \slot{Object} itself.
 
 \begin{urbiscript}[firstnumber=1]
-Object.new;
+Object.new();
 [00000421] Object_0x00000000
 \end{urbiscript}
 
@@ -39,8 +39,8 @@ object-oriented programming languages (see \autoref{sec:tut:class}).
   };
   assert
   {
-    Foo.localSlotNames == ["asFoo", "attr", "type"];
-    Foo.asFoo === Foo;
+    Foo.localSlotNames() == ["asFoo", "attr", "type"];
+    Foo.asFoo() === Foo;
     Foo.attr == 23;
     Foo.type == "Foo";
   };
@@ -66,8 +66,8 @@ object-oriented programming languages (see \autoref{sec:tut:class}).
 \item['!=='](<that>)
   The negation of \lstinline|\this === \that|, see \refSlot{'==='}.
 \begin{urbiassert}
-var o1 = Object.new;
-var o2 = Object.new;
+var o1 = Object.new();
+var o2 = Object.new();
 
       o1 !== o2;
     !(o1 !== o1);
@@ -141,8 +141,8 @@ x.'/='(2) == 10;  x == 20;
   although physically different (i.e., not equal according to
   \lstinline|===|).
 \begin{urbiassert}
-var o1 = Object.new;
-var o2 = Object.new;
+var o1 = Object.new();
+var o2 = Object.new();
 
       o1 == o1;
     !(o1 == o2);
@@ -163,8 +163,8 @@ var o2 = Object.new;
   \lstinline|===|), but will be considered equal by \lstinline|==|.  See
   also \refSlot{'==='} and \autoref{sec:lang:op:comparison}.
 \begin{urbiassert}
-var o1 = Object.new;
-var o2 = Object.new;
+var o1 = Object.new();
+var o2 = Object.new();
 
       o1 === o1;
     !(o1 === o2);
@@ -224,15 +224,15 @@ x.'^='(0xffff) == 0xff00;  x == 0x00ff;
 \item[acceptVoid]
   Return \this.  See \refObject{void} to know why.
 \begin{urbiassert}
-var o = Object.new;
-o.acceptVoid === o;
+var o = Object.new();
+o.acceptVoid() === o;
 \end{urbiassert}
 
 
 \item[addProto](<proto>)%
   Add \var{proto} into the list of prototypes of \this.  Return \this.
 \begin{urbiscript}
-do (Object.new)
+do (Object.new())
 {
   assert
   {
@@ -246,14 +246,14 @@ do (Object.new)
 \item[allProto]%
   A list with \this, its parents, their parents,\ldots
 \begin{urbiassert}
-123.allProtos.size == 6;
+123.allProtos().size == 6;
 \end{urbiassert}
 
 
 \item[allSlotNames]
   Deprecated alias for \refSlot{slotNames}.
 \begin{urbiassert}
-Object.allSlotNames == Object.slotNames;
+Object.allSlotNames() == Object.slotNames();
 \end{urbiassert}
 
 
@@ -282,12 +282,12 @@ Object.as(Object) === Object;
 \item[asBool]
   Whether \this is ``true'', see \autoref{sec:truth}.
 \begin{urbiassert}
-Global.asBool == true;
-nil.asBool ==    false;
+Global.asBool() == true;
+nil.asBool() ==    false;
 \end{urbiassert}
 
 \begin{urbiscript}
-void.asBool;
+void.asBool();
 [00000421:error] !!! unexpected void
 \end{urbiscript}
 
@@ -300,11 +300,11 @@ void.asBool;
   \lstinline{"foo".asPrintable} is the string \lstinline{"\"foo\""}, so that
   using \lstinline{echo}, you would see \lstinline{"foo"}.
 \begin{urbiassert}
-Object.asPrintable.isA(String);
-Object.asPrintable == Object.asString;
+Object.asPrintable().isA(String);
+Object.asPrintable() == Object.asString();
 
-"foo".asString == "foo";
-"foo".asPrintable == "\"foo\"";
+"foo".asString() == "foo";
+"foo".asPrintable() == "\"foo\"";
 \end{urbiassert}
 
   See also \refSlot{asString} and \refSlot{asTopLevelPrintable}.
@@ -317,9 +317,9 @@ Object.asPrintable == Object.asString;
     \refObject{Float}, \refObject{String}, \refObject{List}, etc.), then use
     that syntax:
 \begin{urbiassert}
-         3.1415.asString == "3.1415";
-"Hello, World!".asString == "Hello, World!";
-  [1, "2", [3]].asString == "[1, \"2\", [3]]";
+         3.1415.asString() == "3.1415";
+"Hello, World!".asString() == "Hello, World!";
+  [1, "2", [3]].asString() == "[1, \"2\", [3]]";
 \end{urbiassert}
 
 \item if \this a ``class'', then the name of the class, otherwise a
@@ -327,18 +327,18 @@ Object.asPrintable == Object.asString;
   instance of, and some integral value that depends on \this.
 \begin{urbiscript}
 class Class {}|;
-Class.asString;
+Class.asString();
 [00002106] "Class"
-var c1 = Class.new|; var c2 = Class.new|;
-c1.asString;
+var c1 = Class.new()|; var c2 = Class.new()|;
+c1.asString();
 [00002112] "Class_0x1040e0108"
-c2.asString;
+c2.asString();
 [00002115] "Class_0x1040c17a8"
 assert
 {
-  c1.asString == c1.asString != c2.asString == c2.asString;
-  c1.asString == c1.type + "_" + c1.uid;
-  c2.asString == c2.type + "_" + c2.uid;
+  c1.asString() == c1.asString() != c2.asString() == c2.asString();
+  c1.asString() == c1.type + "_" + c1.uid();
+  c2.asString() == c2.type + "_" + c2.uid();
 };
 \end{urbiscript}
 \end{itemize}
@@ -371,13 +371,13 @@ Test.new(1);
   \refSlot{asTopLevelPrintable} is \refObject{nil}, but not their
   \refSlot{asPrintable}.
 \begin{urbiassert}
-Object.asTopLevelPrintable.isA(String);
-Object.asTopLevelPrintable == Object.asPrintable;
+Object.asTopLevelPrintable().isA(String);
+Object.asTopLevelPrintable() == Object.asPrintable();
 
 // A version of void on which we can call methods.
-var Void = void.acceptVoid;
- nil.asPrintable == "nil";   nil.asTopLevelPrintable == nil;
-Void.asPrintable == "void"; Void.asTopLevelPrintable == nil;
+var Void = void.acceptVoid();
+ nil.asPrintable() == "nil";   nil.asTopLevelPrintable() == nil;
+Void.asPrintable() == "void"; Void.asTopLevelPrintable() == nil;
 \end{urbiassert}
 
   See also \refSlot{asString} and \refSlot{asPrintable}.
@@ -389,7 +389,7 @@ Void.asPrintable == "void"; Void.asTopLevelPrintable == nil;
   and only argument.  \lstinline|this.\var{name}| must take no
   argument.
 \begin{urbiassert}
-{ var myCos = Object.bounce("cos"); myCos(0) }   == 0.cos;
+{ var myCos = Object.bounce("cos"); myCos(0) }   == 0.cos();
 { var myType = bounce("type"); myType(Object); } == "Object";
 { var myType = bounce("type"); myType(3.14); }   == "Float";
 \end{urbiassert}
@@ -419,8 +419,8 @@ Void.asPrintable == "void"; Void.asTopLevelPrintable == nil;
   Clone \this, i.e., create a fresh, empty, object, which
   sole prototype is \this.
 \begin{urbiassert}
-Object.clone.protos == [Object];
-Object.clone.localSlotNames == [];
+Object.clone().protos == [Object];
+Object.clone().localSlotNames() == [];
 \end{urbiassert}
 
 
@@ -428,7 +428,7 @@ Object.clone.localSlotNames == [];
   Set the new slot \var{to} using a clone of \var{from}. This can only
   be used into the same object.
 \begin{urbiscript}
-var foo = Object.new |;
+var foo = Object.new() |;
 cloneSlot("foo", "bar") |;
 assert(!(&foo === &bar));
 \end{urbiscript}
@@ -438,7 +438,7 @@ assert(!(&foo === &bar));
   Same as \refSlot{cloneSlot}, but the slot aren't cloned, so the two slot
   are the same.
 \begin{urbiscript}
-var moo = Object.new |;
+var moo = Object.new() |;
 copySlot("moo", "loo") |;
 assert(&moo === &loo);
 \end{urbiscript}
@@ -449,7 +449,7 @@ assert(&moo === &loo);
   \lstinline|void|) named \var{name}.  Raise an error if \var{name}
   was already defined.
 \begin{urbiassert}
-var o = Object.new;
+var o = Object.new();
 
 !o.hasLocalSlot("foo");
  o.createSlot("foo").isVoid;
@@ -520,7 +520,7 @@ Object.dump(1);
   The value associated to \var{name} in \this, excluding its ancestors
   (contrary to \refSlot{getSlot}).
 \begin{urbiscript}
-var a = Object.new|;
+var a = Object.new()|;
 
 // Local slot.
 var a.slot = 21|;
@@ -557,7 +557,7 @@ getProperty("myPi", "foobar");
   The value associated to \var{name} in \this, possibly after a look-up in
   its prototypes (contrary to \refSlot{getLocalSlot}).
 \begin{urbiassert}
-var b = Object.new;
+var b = Object.new();
 var b.slot = 21;
 
 // Local slot.
@@ -586,11 +586,11 @@ b.getSlotValue("ENOENT");
   A hash only makes sense as long as the hashed object exists.
 
 \begin{urbiassert}
-var o1 = Object.new;
-var o2 = Object.new;
+var o1 = Object.new();
+var o2 = Object.new();
 
-o1.hash == o1.hash;
-o1.hash != o2.hash;
+o1.hash() == o1.hash();
+o1.hash() != o2.hash();
 \end{urbiassert}
 
 
@@ -608,7 +608,7 @@ assert(!Derive.hasLocalSlot("base"));
 \item[hasProperty](<slotName>, <propName>)%
   Whether the slot \var{slotName} of \this has a property \var{propName}.
 \begin{urbiassert}
-var o = Object.new;
+var o = Object.new();
 const var o.halfPi = Math.pi / 2;
 
  o.hasProperty("halfPi", "constant");
@@ -632,12 +632,12 @@ Derive.hasSlot("base");
   properties.  If \var{deep}, all the slots are described, not only
   the local slots. See also \refSlot{dump}.
 \begin{urbiscript}
-do (2) { var this.attr = "foo"; this.attr->prop = "bar"}.inspect;
+do (2) { var this.attr = "foo"; this.attr->prop = "bar"}.inspect();
 [00001227] *** Inspecting 2
 [00001227] *** ** Prototypes:
 [00001227] ***   0
 [00001227] *** ** Local Slots:
-[00001228] ***   attr : String
+[00001228] ***   attr : gettable
 [00001228] ***     Properties:
 [00001228] ***      prop : String = "bar"
 \end{urbiscript}
@@ -679,15 +679,15 @@ void.isVoid;
   A list with the names of the local (i.e., not including those of its
   ancestors) slots of \this.  See also \refSlot{slotNames}.
 \begin{urbiassert}
-var top = Object.new;
+var top = Object.new();
 var top.top1 = 1;
 var top.top2 = 2;
-var bot = top.new;
+var bot = top.new();
 var bot.bot1 = 10;
 var bot.bot2 = 20;
 
-top.localSlotNames == ["top1", "top2"];
-bot.localSlotNames == ["bot1", "bot2"];
+top.localSlotNames() == ["top1", "top2"];
+bot.localSlotNames() == ["bot1", "bot2"];
 \end{urbiassert}
 
 
@@ -702,9 +702,9 @@ locateSlot("doesNotExist").isNil;
 
 \item[print] Send \this to the \refSlot[Channel]{topLevel} channel.
 \begin{urbiscript}
-1.print;
+1.print();
 [00001228] 1
-[1, "12"].print;
+[1, "12"].print();
 [00001228] [1, "12"]
 \end{urbiscript}
 
@@ -734,7 +734,7 @@ do (2) { var foo = "foo" ; foo->bar = "bar" }.properties("foo");
   \this.  Raise an error if \var{slot} does not exist.  See also
   \refSlot{removeSlot}.
 \begin{urbiscript}
-var base = Object.new|;
+var base = Object.new()|;
 var base.slot = "base"|;
 
 var derive = Base.new|;
@@ -746,7 +746,7 @@ derive.removeLocalSlot("foo");
 assert
 {
   derive.removeLocalSlot("slot") === derive;
-  derive.localSlotNames == [];
+  derive.localSlotNames() == [];
   base.slot == "base";
 };
 
@@ -765,7 +765,7 @@ assert
   error if the slot does not exist.  Warn if \var{propName} does not exist;
   in a future release this will be an error.
 \begin{urbiscript}
-var r = Object.new|;
+var r = Object.new()|;
 
 // Non-existing slot.
 r.removeProperty("slot", "property");
@@ -792,7 +792,7 @@ assert
   Remove \var{proto} from the list of prototypes of \this, and return \this.
   Do nothing if \var{proto} is not a prototype of \this.
 \begin{urbiassert}
-var o = Object.new;
+var o = Object.new();
 
 o.addProto(Orderable);
 o.removeProto(123) === o;
@@ -807,10 +807,10 @@ o.protos == [Object];
   \this.  Warn if \var{slot} does not exist; in a future release this will
   be an error.  See also \refSlot{removeLocalSlot}.
 \begin{urbiassert}
-var base = Object.new;
+var base = Object.new();
 var base.slot = "base";
 
-var derive = Base.new;
+var derive = Base.new();
 var derive.slot = "derive";
 
 derive.removeSlot("foo") === derive;
@@ -822,7 +822,7 @@ derive.removeSlot("foo") === derive;
 [00000080:warning] !!!    called from: assertCall
 
 derive.removeSlot("slot") === derive;
-derive.localSlotNames == [];
+derive.localSlotNames() == [];
 base.slot == "base";
 derive.removeSlot("slot") === derive;
 [00000099:warning] !!! no such local slot: slot
@@ -851,7 +851,7 @@ fortyTwo = 51;
   This is what \lstinline|\var{slotName}->\var{propName} = \var{value}|
   actually performs.
 \begin{urbiassert}
-var o = Object.new;
+var o = Object.new();
 var o.slot = "slot";
 var value = "value";
 
@@ -869,9 +869,9 @@ o.setProperty("noSuchSlot", "prop", "12");
   an inherited slot, the slot value is first copied.
 
 \begin{urbiassert}
-var top = Object.new;
+var top = Object.new();
 var top.x = "top";
-var bot = top.new;
+var bot = top.new();
 
 // bot.x is inherited from top.
 bot.locateSlot("x") === top;
@@ -892,7 +892,7 @@ bot.x == "top";
   Set the list of prototypes of \this to \var{protos}.  Return
   \lstinline|void|.
 \begin{urbiassert}
-var o = Object.new;
+var o = Object.new();
 
 o.protos == [Object];
 o.setProtos([Orderable, Object]).isVoid;
@@ -918,11 +918,11 @@ defined slot is not an error and overwrites the slot like
 \item[slotNames]%
   A list with the slot names of \this and its ancestors.
 \begin{urbiassert}
-Object.localSlotNames
-  .subset(Object.slotNames);
-Object.protos.foldl(function (var r, var p) { r + p.localSlotNames },
+Object.localSlotNames()
+  .subset(Object.slotNames());
+Object.protos.foldl(function (var r, var p) { r + p.localSlotNames() },
                     [])
-  .subset(Object.slotNames);
+  .subset(Object.slotNames());
 \end{urbiassert}
 
 
@@ -938,7 +938,7 @@ assert
 {
   Example.type == "Example";
 };
-Example.new;
+Example.new();
 [00000081] Example_0x423740c8
 \end{urbiscript}
 
@@ -946,8 +946,8 @@ Example.new;
 \item[uid]
   The unique id of \this.
 \begin{urbiassert}
-var foo = Object.new;
-var bar = Object.new;
+var foo = Object.new();
+var bar = Object.new();
 
 foo.uid == foo.uid;
 foo.uid != bar.uid;
@@ -957,8 +957,8 @@ foo.uid != bar.uid;
 \item[unacceptVoid]%
   Return \this.  See \refObject{void} to know why.
 \begin{urbiassert}
-var o = Object.new;
-o.unacceptVoid === o;
+var o = Object.new();
+o.unacceptVoid() === o;
 \end{urbiassert}
 
 %%% FIXME: \item[uobjectInit]
@@ -977,9 +977,9 @@ Object.one                  == 2;
   first copy this slot in \this.
 
 \begin{urbiassert}
-var top = Object.new;
+var top = Object.new();
 var top.x = 123;
-var bot = top.new;
+var bot = top.new();
 // x is inherited.
 bot.locateSlot("x") === top;
 bot.updateSlot("x", 456) == 456;
@@ -1000,7 +1000,7 @@ Top.updateSlot("x", [2]);
 [00007858:error] !!! cannot modify const slot
 
 // Updating inherited const slot is possible.
-var bot = Top.new|;
+var bot = Top.new()|;
 bot.updateSlot("x", [3]);
 [00007872] [3]
 \end{urbiscript}

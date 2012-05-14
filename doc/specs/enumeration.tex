@@ -58,7 +58,7 @@ Direction.up.isA(Direction);
 \item[asList]
   Synonym for \refSlot{values}.
 \begin{urbiassert}
-Direction.asList
+Direction.asList()
   == [Direction.up, Direction.down, Direction.left, Direction.right];
 \end{urbiassert}
 
@@ -97,8 +97,8 @@ assert
   The name of the enumeration, or the name of the member if applied to a
   member.
 \begin{urbiassert}
-Direction.asString    == "Direction";
-Direction.up.asString == "up";
+Direction.asString()    == "Direction";
+Direction.up.asString() == "up";
 \end{urbiassert}
 
 

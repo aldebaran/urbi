@@ -210,7 +210,7 @@ do (System)
   // Do not make a wrapper function here, as you would get a tag for
   // the scope of that function, instead of the caller.
   var scopeTag;
-  scopeTag->oget = Tag.getSlotValue("scope");
+  scopeTag->oget = Tag.&scope.oget;
 
   function spawn(var fun, var clear)
   {
@@ -273,7 +273,7 @@ do('package'.lang)
   };
   // Cannot use a wrapper here obviously.
   var scopeTag;
-  scopeTag->oget = Tag.getSlotValue("scope");
+  scopeTag->oget = Tag.&scope.oget;
   //var echo = System.getSlotValue("echo");
   get time() { System.time()};
   get shiftedTime() { System.shiftedTime()};

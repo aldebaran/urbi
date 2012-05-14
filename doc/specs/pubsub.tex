@@ -23,7 +23,7 @@ A \lstinline|PubSub| can be created with no arguments.  Values can be
 published and read by each subscriber.
 
 \begin{urbiscript}[firstnumber=1]
-var ps = PubSub.new;
+var ps = PubSub.new();
 [00000000] PubSub_0x28c1bc0
 \end{urbiscript}
 
@@ -36,11 +36,11 @@ var ps = PubSub.new;
 
 \begin{urbiscript}
 {
-  var sub = ps.subscribe;
+  var sub = ps.subscribe();
   assert
   {
     ps.publish(2) == 2;
-    sub.getOne == 2;
+    sub.getOne() == 2;
   };
   ps.unsubscribe(sub)
 }|;
@@ -51,7 +51,7 @@ var ps = PubSub.new;
   of subscribers.
 
 \begin{urbiscript}
-var sub = ps.subscribe |
+var sub = ps.subscribe() |
 ps.subscribers == [sub];
 [00000000] true
 \end{urbiscript}

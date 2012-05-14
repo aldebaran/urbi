@@ -134,7 +134,7 @@ the \lstinline|!| keyword.
 \subsection{Emitting Events}
 
 \begin{urbiscript}[firstnumber=1]
-var myEvent = Event.new;
+var myEvent = Event.new();
 [00000000] Event_0xb5579008
 at (myEvent?)
   echo("ping");
@@ -153,7 +153,7 @@ punctual events. However, if you emit an event for a given duration,
 
 % FIXME: sleep(1s) is required at the end to make this test pass ...
 \begin{urbiunchecked}[firstnumber=1]
-var myEvent = Event.new;
+var myEvent = Event.new();
 [00000000] Event_0xb558a588
 whenever (myEvent?)
 {
@@ -183,7 +183,7 @@ message type.  To send/catch the payload, just pass arguments to
 \lstinline|!| and \lstinline|?|:
 
 \begin{urbiscript}
-var event = Event.new;
+var event = Event.new();
 [00000000] Event_0x0
 
 at (event?(var payload))
@@ -242,7 +242,7 @@ Actually, the feature is much more powerful than this: full pattern matching
 applies, as with the \lstinline|switch|/\lstinline|case| construct.
 
 \begin{urbiscript}
-var e = Event.new|;
+var e = Event.new()|;
 
 at (e?)
   echo("e");
@@ -258,7 +258,7 @@ at (e?(var x) if x.isA(Float) && x % 2)
 
 // Payload must be a list of three members, the first two being 1 and 2, and
 // the third one being greater than 2, when converted as a Float.
-at (e?([1, 2, var x]) if 2 < x.asFloat)
+at (e?([1, 2, var x]) if 2 < x.asFloat())
   echo("e([1, 2, x = %s])" % x);
 
 e!;

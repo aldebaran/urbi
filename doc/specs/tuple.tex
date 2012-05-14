@@ -121,10 +121,10 @@ expressions are also accepted.
   \code{asPrintable} to convert members to strings.
 
 \begin{urbiassert}
-           ().asString == "()";
-         (1,).asString == "(1,)";
-       (1, 2).asString == "(1, 2)";
-(1, 2, 3, 4,).asString == "(1, 2, 3, 4)";
+           ().asString() == "()";
+         (1,).asString() == "(1,)";
+       (1, 2).asString() == "(1, 2)";
+(1, 2, 3, 4,).asString() == "(1, 2, 3, 4)";
 \end{urbiassert}
 
 
@@ -132,14 +132,14 @@ expressions are also accepted.
   value. Equal tuples (in the sense of \refSlot{'=='}) have equal hashes, see
   \refSlot[Object]{hash}.
 \begin{urbiassert}
-  ().hash.isA(Hash);
-            ().hash == ().hash;
-    (1, "foo").hash == (1, "foo").hash;
+  ().hash().isA(Hash);
+            ().hash() == ().hash();
+    (1, "foo").hash() == (1, "foo").hash();
 // Tuple and List are hashed differently.
-        (0, 1).hash != [0, 1].hash;
+        (0, 1).hash != [0, 1].hash();
 // Tuple uses a List to store elements.
-(0, 1).members.hash == [0, 1].hash;
-        (0, 1).hash != (1, 0).hash;
+(0, 1).members.hash() == [0, 1].hash();
+        (0, 1).hash() != (1, 0).hash();
 \end{urbiassert}
 
 

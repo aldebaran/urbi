@@ -36,7 +36,7 @@ an object (\refObject{Object}).
 
 \begin{urbiscript}
 // Inspect it.
-Foo.localSlotNames;
+Foo.localSlotNames();
 [00000000] ["a", "asFoo", "b", "type"]
 \end{urbiscript} % fix color $
 
@@ -55,7 +55,7 @@ It's as simple as this.  The \lstinline|inspect| method provides a
 convenient short-hand to discover an object (\refObject{Object}).
 
 \begin{urbiscript}
-Foo.inspect;
+Foo.inspect();
 [00000000] *** Inspecting Foo
 [00000000] *** ** Prototypes:
 [00000000] ***   Object
@@ -76,10 +76,10 @@ of \lstinline{Object}.
 
 \begin{urbiscript}
 // Create the o variable as a fresh object.
-var o = Object.clone;
+var o = Object.clone();
 [00000000] Object_0x00000000
 // Check its content
-o.inspect;
+o.inspect();
 [00006725] *** Inspecting Object_0x00000000
 [00006725] *** ** Prototypes:
 [00006726] ***   Object
@@ -106,7 +106,7 @@ its value.
 \begin{urbiscript}
 o.setSlot("a", 42);
 [00000000] 42
-o.inspect;
+o.inspect();
 [00009837] *** Inspecting Object_0x00000000
 [00009837] *** ** Prototypes:
 [00009837] ***   Object
@@ -121,7 +121,7 @@ shorthand for setting slot is using the \lstinline{var} keyword.
 // This is equivalent to o.setSlot("b", "foo").
 var o.b = "foo";
 [00000000] "foo"
-o.inspect;
+o.inspect();
 [00072678] *** Inspecting Object_0x00000000
 [00072678] *** ** Prototypes:
 [00072679] ***   Object
@@ -146,23 +146,23 @@ function set(object, name, value)
 {
   // We have to use setSlot here, since we don't
   // know the actual name of the slot.
-  return object.setSlotValue("x_" + name, value);
+  object.setSlotValue("x_" + name, value)
 }|;
 
 function get(object, name)
 {
   // We have to use getSlot here, since we don't
   // know the actual name of the slot.
-  return object.getSlotValue("x_" + name);
+  object.getSlotValue("x_" + name)
 }|;
 
-var x = Object.clone;
+var x = Object.clone();
 [00000000] Object_0x42342448
 set(x, "foo", 0);
 [00000000] 0
 set(x, "bar", 1);
 [00000000] 1
-x.localSlotNames;
+x.localSlotNames();
 [00000000] ["x_bar", "x_foo"]
 get(x, "foo");
 [00000000] 0
@@ -222,11 +222,11 @@ o.c = 1;
 Finally, use \lstinline{removeLocalSlot} to delete a slot from an object.
 
 \begin{urbiscript}
-o.localSlotNames;
+o.localSlotNames();
 [00000000] ["a", "b", "c"]
 o.removeLocalSlot("c");
 [00000000] Object_0x00000000
-o.localSlotNames;
+o.localSlotNames();
 [00000000] ["a", "b"]
 \end{urbiscript}
 
@@ -253,7 +253,7 @@ the target --- as in \Cxx.  It can be omitted if there is no ambiguity
 with local variables.
 
 \begin{urbiscript}[firstnumber=1]
-var o = Object.clone;
+var o = Object.clone();
 [00000000] Object_0x0
 // This syntax stores the function in the 'f' slot of 'o'.
 function o.f ()
@@ -267,11 +267,12 @@ o.getSlotValue("f");
 [:]  echo("This is f with target ".'+'(this));
 [:]  return 42;
 [:]}
-// Huho, the function is invoked!
+// Huho, no parenthesis, no call.
 o.f;
-[00000000] *** This is f with target Object_0x0
-[00000000] 42
-// The parentheses are in fact optional.
+[00000001] function () {
+[:]  echo("This is f with target ".'+'(this));
+[:]  return 42;
+[:]}
 o.f();
 [00000000] *** This is f with target Object_0x0
 [00000000] 42
@@ -300,13 +301,13 @@ The \lstinline|asList| function simply bounces the task to
 \lstinline|split|.  Let's try \lstinline{getSlotValue}'ing another method:
 
 \begin{urbiscript}
-"foo".size;
-[00000000] 3
-"foo".getSlotValue("size");
+"foo".isBlank();
+[00000000] false
+"foo".getSlotValue("isBlank");
 [00000000] Primitive_0x422f0908
 \end{urbiscript}
 
-The \lstinline{size} method of \refObject{String} is another type of
+The \lstinline{isBlank} method of \refObject{String} is another type of
 object: a \refObject{Primitive}. These objects are executable, like
 functions, but they are actually opaque primitives implemented in
 \Cxx.
@@ -320,11 +321,11 @@ object, including primitive types, types themselves, functions, \ldots
 \begin{urbiscript}
 var x = 0;
 [00000000] 0
-x.localSlotNames;
+x.localSlotNames();
 [00000000] []
 var x.slot = 1;
 [00000000] 1
-x.localSlotNames;
+x.localSlotNames();
 [00000000] ["slot"]
 x.slot;
 [00000000] 1
@@ -349,7 +350,7 @@ another, their values in this documentation are dummy, yet not null to
 be able to differentiate them.
 
 \begin{urbiscript}[firstnumber=1]
-var o = Object.clone;
+var o = Object.clone();
 [00000000] Object_0x100000
 o.uid;
 [00000000] "0x100000"
@@ -417,18 +418,18 @@ non-trivial fact: any modification on \lstinline|a| will affect
 \lstinline|c| as well, as shown below.
 
 \begin{urbiscript}
-a.localSlotNames;
+a.localSlotNames();
 [00000000] []
-b.localSlotNames;
+b.localSlotNames();
 [00000000] []
-c.localSlotNames;
+c.localSlotNames();
 [00000000] []
 var a.flag; // Create a slot in a.
-a.localSlotNames;
+a.localSlotNames();
 [00000000] ["flag"]
-b.localSlotNames;
+b.localSlotNames();
 [00000000] []
-c.localSlotNames;
+c.localSlotNames();
 [00000000] ["flag"]
 \end{urbiscript}
 
@@ -464,13 +465,13 @@ function test(arg)
   var arg.flag;  // add a slot in arg
   echo(arg.uid); // print its uid
 } |;
-var x = Object.clone;
+var x = Object.clone();
 [00000000] Object_0x1
 x.uid;
 [00000000] "0x1"
 test(x);
 [00000000] *** 0x1
-x.localSlotNames;
+x.localSlotNames();
 [00000000] ["flag"]
 \end{urbiscript}
 

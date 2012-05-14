@@ -18,7 +18,7 @@ The following object is set up to die verbosely.
 
 \begin{urbiscript}
 var obj =
-  do (Finalizable.new)
+  do (Finalizable.new())
   {
     function finalize ()
     {
@@ -56,7 +56,7 @@ alias = nil|;
 The constructor takes no argument.
 
 \begin{urbiscript}
-Finalizable.new;
+Finalizable.new();
 [00000527] Finalizable_0x135360
 \end{urbiscript}
 
@@ -69,7 +69,7 @@ instance of Finalizable from its inception.
 There, instead of these two invalid constructs,
 
 \begin{urbiscript}
-class o1 : Finalizable.new
+class o1 : Finalizable.new()
 {
   function finalize()
   {
@@ -93,7 +93,7 @@ write:
 
 \begin{urbiscript}
 var o3 =
-  do (Finalizable.new)
+  do (Finalizable.new())
   {
     function finalize()
     {
@@ -118,13 +118,13 @@ class Global.Foo
 
 class Global.FinalizableFoo
 {
-  addProto(Foo.new);
+  addProto(Foo.new());
 
   function 'new'()
   {
-    var r = clone |
-    r.init |
-    Finalizable.new.addProto(r);
+    var r = clone() |
+    r.init() |
+    Finalizable.new().addProto(r);
   };
 
   function init()
@@ -139,7 +139,7 @@ class Global.FinalizableFoo
 
 }|;
 
-var i = FinalizableFoo.new|;
+var i = FinalizableFoo.new()|;
 [00000117] *** 1
 [00000117] *** 2
 
@@ -156,7 +156,7 @@ i = nil;
   evaluated when the object is reclaimed.  Its return value is
   ignored.
 \begin{urbiscript}
-Finalizable.new.setSlot("finalize", function() { echo("Ouch") })|;
+Finalizable.new().setSlot("finalize", function() { echo("Ouch") })|;
 [00033240] *** Ouch
 \end{urbiscript}
 \end{urbiscriptapi}

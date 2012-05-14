@@ -79,15 +79,15 @@ d[4];
 \item[asPrintable] A string that shows that \this is a Regexp, and its
   value.
 \begin{urbiassert}
-           Regexp.new("abc").asPrintable == "Regexp(\"abc\")";
-Regexp.new("\\d+(\\.\\d+)?").asPrintable == "Regexp(\"\\\\d+(\\\\.\\\\d+)?\")";
+           Regexp.new("abc").asPrintable() == "Regexp(\"abc\")";
+Regexp.new("\\d+(\\.\\d+)?").asPrintable() == "Regexp(\"\\\\d+(\\\\.\\\\d+)?\")";
 \end{urbiassert}
 
 
 \item[asString] The regular expression that was compiled.
 \begin{urbiassert}
-           Regexp.new("abc").asString == "abc";
-Regexp.new("\\d+(\\.\\d+)?").asString == "\\d+(\\.\\d+)?";
+           Regexp.new("abc").asString() == "abc";
+Regexp.new("\\d+(\\.\\d+)?").asString() == "\\d+(\\.\\d+)?";
 \end{urbiassert}
 
 

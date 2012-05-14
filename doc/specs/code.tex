@@ -122,16 +122,16 @@ function () {}.apply([1, 2]);
 \item[asString]
   Conversion to \refObject{String}.
 \begin{urbiassert}
-closure  () { 1 }.asString == "closure () { 1 }";
-function () { 1 }.asString == "function () { 1 }";
+closure  () { 1 }.asString() == "closure () { 1 }";
+function () { 1 }.asString() == "function () { 1 }";
 \end{urbiassert}
 
 
 \item[bodyString]
   Conversion to \refObject{String} of the routine body.
 \begin{urbiassert}
-closure  () { 1 }.bodyString == "1";
-function () { 1 }.bodyString == "1";
+closure  () { 1 }.bodyString() == "1";
+function () { 1 }.bodyString() == "1";
 \end{urbiassert}
 
 

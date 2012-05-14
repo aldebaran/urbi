@@ -21,7 +21,7 @@ This class records differences between \refObject[Date]{Dates}.
 Without argument, a null duration.
 
 \begin{urbiscript}[firstnumber=1]
-Duration.new;
+Duration.new();
 [00000001] Duration(0s)
 Duration.new(1h);
 [00023593] Duration(3600s)
@@ -41,23 +41,23 @@ Duration.new(-1);
 \item[asFloat]
   Return the duration as a \refObject{Float}.
 \begin{urbiassert}
-Duration.new(1000).asFloat == 1000;
-Duration.new(1000.1234).asFloat == 1000.1234;
+Duration.new(1000).asFloat() == 1000;
+Duration.new(1000.1234).asFloat() == 1000.1234;
 \end{urbiassert}
 
 
 \item[asString]
   Return the duration as a \refObject{String}.
 \begin{urbiassert}
-Duration.new(1000).asString == "1000s";
+Duration.new(1000).asString() == "1000s";
 \end{urbiassert}
 
 
 \item[seconds]
   Return the duration as a \refObject{Float}.
 \begin{urbiassert}
-Duration.new(1000)   .seconds == 1000;
-Duration.new(1000.52).seconds == 1000.52;
+Duration.new(1000)   .seconds() == 1000;
+Duration.new(1000.52).seconds() == 1000.52;
 \end{urbiassert}
 \end{urbiscriptapi}
 

@@ -207,11 +207,11 @@ sleep(2.5s);
 [00001000] *** ping
 [00002000] *** ping
 // Suspend execution
-mytag.freeze;
+mytag.freeze();
 // No printing anymore
 sleep(1s);
 // Resume execution
-mytag.unfreeze;
+mytag.unfreeze();
 sleep(1s);
 [00007000] *** ping
 \end{urbiscript}
@@ -230,11 +230,11 @@ sleep(2.5s);
 [00001000] *** ping
 [00002000] *** ping
 // Stop the tag
-mytag.stop;
+mytag.stop();
 [00002500] *** Background job stopped
 // Our background job finished.
 // Unfreezing the tag has no effect.
-mytag.unfreeze;
+mytag.unfreeze();
 \end{urbiscript}
 
 \begin{urbiscript}[firstnumber=1]
@@ -251,7 +251,7 @@ sleep(3.5s);
 [00003000] *** pong
 
 // Block printing of pong.
-mytag.block;
+mytag.block();
 sleep(3s);
 
 // The second half of the while isn't executed anymore.
@@ -260,7 +260,7 @@ sleep(3s);
 [00006000] *** ping
 
 // Reactivate pong
-mytag.unblock;
+mytag.unblock();
 sleep(3.5s);
 [00008000] *** pong
 [00009000] *** ping

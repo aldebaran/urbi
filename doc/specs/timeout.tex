@@ -25,7 +25,7 @@ t:{
   echo("This will not.");
 };
 [00000000] *** This will be displayed.
-[00000007:error] !!! Timeout_0x133ec0 has timed out.
+[00000007:error] !!! new: Timeout_0x133ec0 has timed out.
 [00000007:error] !!!    called from: ---- event handler backtrace:
 [00000007:error] !!!    called from: new
 \end{urbiscript}
@@ -36,13 +36,13 @@ time it is used to tag some code.
 \begin{urbiscript}
 t: { echo("Open"); sleep(1s); echo("Close"); };
 [00000007] *** Open
-[00000007:error] !!! Timeout_0x133ec0 has timed out.
+[00000007:error] !!! new: Timeout_0x133ec0 has timed out.
 [00000007:error] !!!    called from: ---- event handler backtrace:
 [00000007:error] !!!    called from: new
 
 t: { echo("Open"); sleep(1s); echo("Close"); };
 [00000007] *** Open
-[00000007:error] !!! Timeout_0x133ec0 has timed out.
+[00000007:error] !!! new: Timeout_0x133ec0 has timed out.
 [00000007:error] !!!    called from: ---- event handler backtrace:
 [00000007:error] !!!    called from: new
 \end{urbiscript}
@@ -65,7 +65,7 @@ count-down expired with \lstinline|timedOut|.
 
 \begin{urbiscript}
 t:sleep(500ms);
-[00000007:error] !!! Timeout_0x133ec0 has timed out.
+[00000007:error] !!! new: Timeout_0x133ec0 has timed out.
 [00000007:error] !!!    called from: ---- event handler backtrace:
 [00000007:error] !!!    called from: new
 
@@ -97,8 +97,8 @@ Timeout.new(300ms, false);
 \begin{urbiassert}
 var t = Timeout.new(10);
 
-Timeout.asTimeout === Timeout;
-      t.asTimeout === t;
+Timeout.asTimeout() === Timeout;
+      t.asTimeout() === t;
 \end{urbiassert}
 
 
@@ -108,12 +108,12 @@ Timeout.asTimeout === Timeout;
 \begin{urbiassert}
 var t = Timeout.new(10);
 !t.running;
- t.end.isVoid;
+ t.end().isVoid;
 !t.running;
-t.launch.isVoid;
+t.launch().isVoid;
  t.running;
- t.end.isVoid;
- t.end.isVoid;
+ t.end().isVoid;
+ t.end().isVoid;
 \end{urbiassert}
 
 
@@ -122,7 +122,7 @@ t.launch.isVoid;
 
 \begin{urbiassert}
 var t = Timeout.new(10);
-t.launch.isVoid;
+t.launch().isVoid;
 \end{urbiassert}
 
 
@@ -132,9 +132,9 @@ t.launch.isVoid;
 var t = Timeout.new(10);
 
 !t.running;
- t.launch.isVoid;
+ t.launch().isVoid;
  t.running;
- t.end.isVoid;
+ t.end().isVoid;
 !t.running;
 \end{urbiassert}
 
@@ -144,7 +144,7 @@ var t = Timeout.new(10);
 
 \begin{urbiassert}
 var t = Timeout.new(100ms);
- t.launch.isVoid;
+ t.launch().isVoid;
 !t.timedOut;
  sleep(200ms).isVoid;
  t.timedOut;

@@ -26,8 +26,8 @@ adds the subscriber as a watcher of values published on the instance of
 \refObject{PubSub}.
 
 \begin{urbiscript}[firstnumber=1]
-var ps = PubSub.new |;
-var sub = ps.subscribe;
+var ps = PubSub.new() |;
+var sub = ps.subscribe();
 [00000000] Subscriber_0x28607c0
 \end{urbiscript}
 
@@ -45,7 +45,7 @@ var sub = ps.subscribe;
 \begin{urbiscript}
 ps.publish(4) |
 ps.publish(5) |
-echo(sub.getAll);
+echo(sub.getAll());
 [00000000] *** [4, 5]
 \end{urbiscript}
 
@@ -55,7 +55,7 @@ echo(sub.getAll);
   queued, then the method returns it without blocking.
 
 \begin{urbiscript}
-echo(sub.getOne) &
+echo(sub.getOne()) &
 ps.publish(3);
 [00000000] *** 3
 \end{urbiscript}

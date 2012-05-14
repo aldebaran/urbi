@@ -65,9 +65,9 @@ package lang.Tuple : RangeIterable, Container
     members[n] = v
   };
 
-  function size()
+  get size()
   {
-    members.size;
+    members.size
   };
 
   function '*'(var rhs)

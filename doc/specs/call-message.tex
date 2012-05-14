@@ -72,7 +72,6 @@ strict({echo("1"); 1});
 function args { call.args }|
 assert
 {
-  args == [];
   args() == [];
   args({echo(111); 1}) == [Lazy.new(closure() {echo(111); 1})];
   args(1, 2) == [Lazy.new(closure () {1}),
@@ -87,7 +86,6 @@ assert
 function argsCount { call.argsCount }|;
 assert
 {
-  argsCount == 0;
   argsCount() == 0;
   argsCount({echo(1); 1}) == 1;
   argsCount({echo(1); 1}, {echo(2); 2}) == 2;
@@ -105,13 +103,13 @@ assert (code == getSlotValue("code"));
 
 \item[eval] Evaluate \this, and return the result.
 \begin{urbiscript}
-var c1 = do (CallMessage.new)
+var c1 = do (CallMessage.new())
 {
   var this.target = 1;
   var this.message = "+";
   var this.args = [Lazy.new(function () {2})];
 }|
-assert { c1.eval == 3 };
+assert { c1.eval() == 3 };
 
 // A lazy function that returns the sum of this and the second argument,
 // regardless of the first argument.
@@ -119,14 +117,14 @@ function Float.addSecond
 {
   this + call.evalArgAt(1);
 }|
-var c2 = do (CallMessage.new)
+var c2 = do (CallMessage.new())
 {
   var this.target = 2;
   var this.message = "addSecond";
   var this.args = [Lazy.new(function (){ assert (false) }),
                    Lazy.new(function (){ echo (5); 5 })];
 }|
-assert { c2.eval == 7 };
+assert { c2.eval() == 7 };
 [00000454] *** 5
 \end{urbiscript}
 
@@ -145,22 +143,24 @@ function sumTwice
 
 function one () { echo("one"); 1 }|;
 
-sumTwice(1, one, one + one);
+sumTwice(1, one(), one() + one());
 [00000008] *** one
 [00000009] *** one
 [00000010] 2
-sumTwice(2, one, one + one);
+sumTwice(2, one(), one() + one());
 [00000011] *** one
 [00000012] *** one
 [00000011] *** one
 [00000012] *** one
 [00000013] 4
 
-sumTwice(3, one, one);
-[00000014:error] !!! evalArgAt: invalid index: 3
+sumTwice(3, one(), one());
+[00000014:error] !!! sumTwice: invalid index: 3
+[01234567:error] !!!    called from: evalArgAt
 [00000014:error] !!!    called from: sumTwice
-sumTwice(3.14, one, one);
-[00000015:error] !!! evalArgAt: invalid index: 3.14
+sumTwice(3.14, one(), one());
+[00000015:error] !!! sumTwice: invalid index: 3.14
+[01234567:error] !!!    called from: evalArgAt
 [00000015:error] !!!    called from: sumTwice
 \end{urbiscript}
 
@@ -170,7 +170,7 @@ sumTwice(3.14, one, one);
 \begin{urbiscript}
 function twice
 {
-  call.evalArgs + call.evalArgs
+  call.evalArgs() + call.evalArgs()
 }|;
 twice({echo(1); 1}, {echo(2); 2});
 [00000011] *** 1
@@ -185,7 +185,7 @@ twice({echo(1); 1}, {echo(2); 2});
   The name under which the function was called.
 \begin{urbiscript}
 function myself { call.message }|
-assert(myself == "myself");
+assert(myself() == "myself");
 \end{urbiscript}
 
 
@@ -194,18 +194,18 @@ assert(myself == "myself");
   other languages).  Not to be confused with \refSlot{target}.
 \begin{urbiscript}
 function Object.getSender { call.sender } |
-function Object.callGetSender { getSender } |
+function Object.callGetSender { getSender() } |
 
 assert
 {
   // Call from the current Lobby, with the Lobby as target.
-  getSender === lobby;
+  getSender() === lobby;
   // Call from the current Lobby, with Object as the target.
-  Object.getSender === lobby;
+  Object.getSender() === lobby;
   // Ask Lobby to call getSender.
-  callGetSender === lobby;
+  callGetSender() === lobby;
   // Ask Global to call getSender.
-  Object.callGetSender === Object;
+  Object.callGetSender() === Object;
 };
 \end{urbiscript}
 
@@ -216,18 +216,18 @@ assert
   confused with \refSlot{sender}.
 \begin{urbiscript}
 function Object.getTarget { call.target } |
-function Object.callGetTarget { getTarget } |
+function Object.callGetTarget { getTarget() } |
 
 assert
 {
   // Call from the current Lobby, with the Lobby as target.
-  getTarget === lobby;
+  getTarget() === lobby;
   // Call from the current Lobby, with Global as the target.
-  Object.getTarget === Object;
+  Object.getTarget() === Object;
   // Ask Lobby to call getTarget.
-  callGetTarget === lobby;
+  callGetTarget() === lobby;
   // Ask Global to call getTarget.
-  Object.callGetTarget === Object;
+  Object.callGetTarget() === Object;
 };
 \end{urbiscript}
 \end{urbiscriptapi}

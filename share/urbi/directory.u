@@ -24,17 +24,17 @@ do (Directory)
     else
       throw Exception.argumentTypeException(routine, 1, rhs,
                                             [Directory, Path, String]) |
-    var path = Path.new(dir.asString) / Path.new(asPath.basename) |
-    getSlotValue(action).apply([this, path.asString])
+    var path = Path.new(dir.asString()) / Path.new(asPath().basename) |
+    getSlotValue(action).apply([this, path.asString()])
   };
 
   function '/'(rhs)
   {
-    var path = asPath / Path.new(rhs) |
+    var path = asPath() / Path.new(rhs) |
     if (path.isDir)
-      Directory.new(path.asString)
+      Directory.new(path.asString())
     else if (path.exists)
-      File.new(path.asString)
+      File.new(path.asString())
     else
       throw Exception.FileNotFound.new("/", path)
   };
@@ -44,27 +44,27 @@ do (Directory)
     if (!rhs.isA(File) && !rhs.isA(Directory))
       throw Exception.argumentTypeException(
                         '<<', 1, rhs.type, [File, Directory]) |
-    var path = Path.new(asString) / Path.new(rhs.asPath.basename) |
-    rhs.copy(path.asString) |
+    var path = Path.new(asString()) / Path.new(rhs.asPath().basename) |
+    rhs.copy(path.asString()) |
     this
   };
 
-  function basename()
+  get basename()
   {
     Kernel1.deprecated("basename", "asPath.basename") |
-    asPath.basename
+    asPath().basename
   };
 
   function lastModifiedDate()
   {
     Kernel1.deprecated("lastModifiedDate", "asPath.lastModifiedDate") |
-    asPath.lastModifiedDate
+    asPath().lastModifiedDate
   };
 
   function rename(name)
   {
     Kernel1.deprecated("rename(name)", "asPath.rename(name)") |
-    asPath.rename(name)
+    asPath().rename(name)
   };
 
   function copy(dirname)
@@ -91,14 +91,14 @@ do (Directory)
       throw Exception.Primitive.new("removeAll",
                                     "cannot call method on %s"
                                     % Directory.type) |
-    removeAll_
+    removeAll_()
   };
 
-  function size()
+  get size()
   {
-    var res = 0;
-    for (var item: content)
-      res += (this / item).size;
+    var res = 0|
+    for| (var item: content)
+      res += (this / item).size|
     res
   };
 };

@@ -28,7 +28,7 @@ package lang.CallMessage
     args[i].value()
   };
 
-  function argsCount()
+  get argsCount()
   {
     args.size
   };

@@ -70,7 +70,7 @@ namespace urbi
     {
       BIND(init);
       BIND(asString, as_string);
-      BIND(pattern, pattern_get);
+      BINDG(pattern, pattern_get);
 
 # define DECLARE(Name)                                                  \
       bind(#Name, &FormatInfo::Name ##_get, &FormatInfo::Name ##_set);

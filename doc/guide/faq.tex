@@ -456,7 +456,7 @@ Urbi is based on prototypes. To create a new Object derivative (which
 will inherit all the Object methods), you can do:
 
 \begin{urbiscript}
-var myObject = Object.new;
+var myObject = Object.new();
 [00000001] Object_0x76543210
 \end{urbiscript}
 
@@ -500,7 +500,7 @@ function Object.get()
   echo(mind)
 }|;
 // Where is my mind?
-Object.get;
+Object.get();
 [00000004:error] !!! lookup failed: mind
 [00000004:error] !!!    called from: get
 \end{urbiscript}
@@ -672,7 +672,7 @@ function Object.getHis()
   echo(hisMind)
 }|;
 // Call Object's getHis method.
-Object.getHis;
+Object.getHis();
 [00000000:error] !!! lookup failed: hisMind
 [00000000:error] !!!    called from: getHis
 \end{urbiscript}
@@ -745,7 +745,7 @@ package lang.Constants
 Constants.Pi;
 [00000000] 3.14
 function Object.testPi() { echo(Constants.Pi) }|;
-42.testPi;
+42.testPi();
 [00000000] *** 3.14
 import Constants.*;
 Pi;
@@ -758,7 +758,7 @@ To add a slot to an object \lstinline{O}, you have to use the
 \lstinline{setSlot} method:
 
 \begin{urbiscript}
-var O2 = Object.new |
+var O2 = Object.new() |
 // Syntax...
 var O2.mySlot1 = 42;
 [00000001] 42
@@ -909,7 +909,7 @@ See \autoref{stdlib:tag:ctor}.
 \subsubsection{How do I stop a tag?}
 Use the \lstinline|stop| method (see \autoref{sec:specs:tag:stop}).
 \begin{urbiunchecked}
-myTag.stop;
+myTag.stop();
 \end{urbiunchecked}
 
 \subsubsection{Can tagged statements return a value?}
@@ -930,7 +930,7 @@ Events are objects, and must be created as any object by using
 \lstinline{new} to create derivatives of the \lstinline{Event} object.
 
 \begin{urbiunchecked}
-var ev = Event.new;
+var ev = Event.new();
 \end{urbiunchecked}
 
 See \autoref{sec:stdlib:event:ctor}.
@@ -1033,8 +1033,8 @@ However, the execution of the \urbi kernel is not ``stuck'' while the
 remote function executes, as the following code demonstrates:
 
 \begin{urbiunchecked}
-var t = Tag.new;
-test(1) | t.stop,
+var t = Tag.new();
+test(1) | t.stop(),
 t:every(300ms)
   cerr << "running";
 \end{urbiunchecked}

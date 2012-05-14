@@ -37,13 +37,13 @@ streams you opened.
   an error \this is closed.
 \begin{urbiscript}
 var i = InputStream.new(File.create("file.txt"))|;
-assert(i.close.isVoid);
-i.close;
+assert(i.close().isVoid);
+i.close();
 [00000001:error] !!! close: stream is closed
 
 var o = OutputStream.new(File.create("file.txt"))|;
-assert(o.close.isVoid);
-o.close;
+assert(o.close().isVoid);
+o.close();
 [00000002:error] !!! close: stream is closed
 \end{urbiscript}
 
@@ -56,7 +56,7 @@ o.close;
 var i = InputStream.new(File.create("file.txt"));
 
 !i.closed;
-i.close.isVoid;
+i.close().isVoid;
 i.closed;
 \end{urbiassert}
 \end{urbiscriptapi}

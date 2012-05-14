@@ -91,10 +91,10 @@ namespace urbi
       BINDG(dirname);
       BINDG(exists);
       BIND(init);
-      BIND(isDir, is_dir);
-      BIND(isReg, is_reg);
+      BINDG(isDir, is_dir);
+      BINDG(isReg, is_reg);
       BIND(open);
-      BIND(lastModifiedDate, last_modified_date);
+      BINDG(lastModifiedDate, last_modified_date);
       BINDG(readable);
       BIND(rename);
       BINDG(writable);

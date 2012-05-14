@@ -116,8 +116,8 @@ Date.new("2010-08-17 12:00")        != Date.new("2010-08-17 12:01");
 \begin{urbiassert}
 var d = Date.new("2002-01-20 23:59:59");
 
-d.asFloat == d - d.epoch;
-d.asFloat.isA(Float);
+d.asFloat() == d - d.epoch;
+d.asFloat().isA(Float);
 \end{urbiassert}
 
 
@@ -134,7 +134,7 @@ d.asFloat.isA(Float);
   \item \var{iiiiii} the six-digit number of microseconds.
   \end{itemize}
 \begin{urbiassert}
-Date.new("2009-02-14 00:31:30").asString == "2009-02-14 00:31:30.000000";
+Date.new("2009-02-14 00:31:30").asString() == "2009-02-14 00:31:30.000000";
 \end{urbiassert}
 
 

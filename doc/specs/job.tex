@@ -40,16 +40,16 @@ function () { sleep(10) }.spawn(false);
 \item[asJob]
   Return \lstinline|this|.
 \begin{urbiassert}
-Job.current.asJob === Job.current;
+Job.current.asJob() === Job.current;
 \end{urbiassert}
 
 
 \item[asString] The string \lstinline|Job<\var{name}>| where \var{name} is
   the name of the job.
 \begin{urbiassert}
-Job.current.asString == "Job<shell>";
+Job.current.asString() == "Job<shell>";
 var a = function () { sleep(1) }.spawn(false);
-a.asString == "Job<" + a.name + ">";
+a.asString() == "Job<" + a.name + ">";
 \end{urbiassert}
 
 
@@ -60,15 +60,15 @@ a.asString == "Job<" + a.name + ">";
 \begin{urbiscript}
 //#push 100 "foo.u"
 function innermost () { Job.current.backtrace }|;
-function inner ()     { innermost }|;
-function outer ()     { inner }|;
-function outermost () { outer }|;
-echoEach(outermost);
-[00001732] *** foo.u:100.25-45: backtrace
-[00001732] *** foo.u:101.25-33: innermost
-[00001732] *** foo.u:102.25-29: inner
-[00001732] *** foo.u:103.25-29: outer
-[00001732] *** foo.u:104.10-18: outermost
+function inner ()     { innermost() }|;
+function outer ()     { inner() }|;
+function outermost () { outer() }|;
+echoEach(outermost());
+[01234567] *** foo.u:100.25-45: backtrace
+[00001732] *** foo.u:101.25-35: innermost
+[00001732] *** foo.u:102.25-31: inner
+[00001732] *** foo.u:103.25-31: outer
+[00001732] *** foo.u:104.10-20: outermost
 //#pop
 
 //#push 1 "file.u"
@@ -77,15 +77,15 @@ var s = detach(sleep(1))|;
 sleep(100ms);
 assert
 {
-  s.backtrace[0].asString == "file.u:1.16-23: sleep";
-  s.backtrace[1].asString == "file.u:1.9-24: detach";
+  s.backtrace[0].asString() == "file.u:1.16-23: sleep";
+  s.backtrace[1].asString() == "file.u:1.9-24: detach";
 };
 // Leave some time for sleep to return.
 sleep(1);
 assert
 {
   s.backtrace.size == 1;
-  s.backtrace[0].asString == "file.u:1.9-24: detach";
+  s.backtrace[0].asString() == "file.u:1.9-24: detach";
 };
 //#pop
 \end{urbiscript}
@@ -98,7 +98,7 @@ assert
 
 \begin{urbiscript}
 //#push 1 "file.u"
-var e = Event.new|;
+var e = Event.new()|;
 function showBacktrace(var where)
 {
   echo("==================== " + where)|
@@ -110,13 +110,13 @@ onleave
   showBacktrace("at-leave");
 e!;
 [00000647] *** ==================== at-enter
-[00000647] *** file.u:5.12-32: backtrace
+[01234567] *** file.u:5.12-32: backtrace
 [00000647] *** file.u:8.3-27: showBacktrace
 [00000647] *** file.u:11.1: emit
 [00000647] *** ---- event handler backtrace:
 [00000647] *** file.u:7.1-10.27: onEvent
 [00000647] *** ==================== at-leave
-[00000647] *** file.u:5.12-32: backtrace
+[01234567] *** file.u:5.12-32: backtrace
 [00000647] *** file.u:10.3-27: showBacktrace
 [00000647] *** file.u:11.1: emit
 [00000647] *** ---- event handler backtrace:
@@ -124,7 +124,7 @@ e!;
 
 
 //#push 1 "file.u"
-var f = Event.new|;
+var f = Event.new()|;
 function watchEvent()
 {
   at (f?)
@@ -136,24 +136,24 @@ function sendEvent()
 {
   f!;
 }|;
-watchEvent;
-sendEvent;
+watchEvent();
+sendEvent();
 [00000654] *** ==================== at-enter
-[00000654] *** file.u:5.12-32: backtrace
+[01234567] *** file.u:5.12-32: backtrace
 [00000654] *** file.u:5.5-29: showBacktrace
 [00000654] *** file.u:11.3: emit
-[00000654] *** file.u:14.1-9: sendEvent
+[00000654] *** file.u:14.1-11: sendEvent
 [00000654] *** ---- event handler backtrace:
 [00000654] *** file.u:4.3-7.29: onEvent
-[00000654] *** file.u:13.1-10: watchEvent
+[00000654] *** file.u:13.1-12: watchEvent
 [00000654] *** ==================== at-leave
-[00000654] *** file.u:5.12-32: backtrace
+[01234567] *** file.u:5.12-32: backtrace
 [00000654] *** file.u:7.5-29: showBacktrace
 [00000654] *** file.u:11.3: emit
-[00000654] *** file.u:14.1-9: sendEvent
+[00000654] *** file.u:14.1-11: sendEvent
 [00000654] *** ---- event handler backtrace:
 [00000654] *** file.u:4.3-7.29: onEvent
-[00000654] *** file.u:13.1-10: watchEvent
+[00000654] *** file.u:13.1-12: watchEvent
 \end{urbiscript}
 
 
@@ -196,7 +196,7 @@ assert { j1 != j2; j1 != j; j2 == j };
 var t = detach(sleep(1))|;
 // Leave some time for s to be started.
 sleep(100ms);
-t.dumpState;
+t.dumpState();
 [00004295] *** Job: shell_10
 [00004295] ***   State: sleeping
 [00004295] ***   Tags:
@@ -253,10 +253,10 @@ var j = detach({
   waituntil(i != 1);
 
   // Stop breaks the workflow of each job tagged with the tag.
-  var t = Tag.new;
+  var t = Tag.new();
   t: t.stop(21);
 })|;
-j.waitForTermination;
+j.waitForTermination();
 var stats = j.stats|;
 
 Float.epsilonTilde = 0.01 |;
@@ -291,7 +291,7 @@ t.status == "sleeping" ;
 \begin{urbiscript}
 var r = detach({ sleep(1s); echo("done") })|;
 assert (r in Job.jobs);
-r.terminate;
+r.terminate();
 assert (r not in Job.jobs);
 sleep(2s);
 \end{urbiscript}

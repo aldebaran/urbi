@@ -22,7 +22,7 @@ Without argument, a newly constructed Location has its Positions initialized
 to the first line and the first column.
 
 \begin{urbiscript}[firstnumber=1]
-Location.new;
+Location.new();
 [00000001] 1.1
 \end{urbiscript}
 
@@ -71,28 +71,28 @@ Location.new(Position.new("file.u",14,25), Position.new("file.u",14,35));
   \end{itemize}
   or the same without file name when the file name is not defined.
 \begin{urbiassert}
-Location.new(Position.new("file.u",14,25)).asString == "file.u:14.25";
-Location.new(Position.new(14,25)).asString == "14.25";
+Location.new(Position.new("file.u",14,25)).asString() == "file.u:14.25";
+Location.new(Position.new(14,25)).asString() == "14.25";
 
 Location.new(
   Position.new("file.u", 14, 25),
   Position.new("file.u", 14, 35)
-).asString == "file.u:14.25-34";
+).asString() == "file.u:14.25-34";
 
 Location.new(
   Position.new(14, 25),
   Position.new(14, 35)
-).asString == "14.25-34";
+).asString() == "14.25-34";
 
 Location.new(
   Position.new("file.u", 14, 25),
   Position.new("file.u", 15, 35)
-).asString == "file.u:14.25-15.34";
+).asString() == "file.u:14.25-15.34";
 
 Location.new(
   Position.new(14, 25),
   Position.new(15, 35)
-).asString == "14.25-15.34";
+).asString() == "14.25-15.34";
 \end{urbiassert}
 
 

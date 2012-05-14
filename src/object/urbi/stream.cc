@@ -128,7 +128,7 @@ namespace urbi
     URBI_CXX_OBJECT_INIT(Stream)
     {
       BIND(close);
-      BIND(closed);
+      BINDG(closed);
     }
   }
 }

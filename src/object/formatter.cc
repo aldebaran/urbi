@@ -38,7 +38,7 @@ namespace urbi
       : data_(0)
     {
       BIND(init);
-      BIND(data, data_get);
+      BINDG(data, data_get);
       BIND(PERCENT, operator%, std::string, (const rObject&) const);
     }
 

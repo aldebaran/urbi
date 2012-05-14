@@ -262,8 +262,9 @@ do (Directory)
     });
 
   // Deterministic content.
-  overrideSlot("content",
-    function () { 'content$old'.sort() });
+  var 'content$old';
+  'content$old'->oget = &content.oget;
+  content->oget = function() { 'content$old'.sort()};
 
   var fileDeleted = fileCreated;
 }|;

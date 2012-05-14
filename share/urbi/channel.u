@@ -95,7 +95,7 @@ class Channel.Filter: Channel
     for|(var l: v.asTopLevelPrintable().split("\n"))
       echo(l)
   };
-  function uclientFilter()
+  get uclientFilter()
   {
     // Some of these slots do not exist at function definition time.
     ["Float", "String", "List", "Dictionary", "Binary", "UValue", "Tuple",

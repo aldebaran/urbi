@@ -27,7 +27,7 @@ Path;
 [00000001] Path("/")
 \end{urbiscript}
 \begin{urbicomment}
-skipIfWindows;
+skipIfWindows();
 \end{urbicomment}
 
 A \lstinline|Path| is constructed with the string that points to the file
@@ -95,21 +95,21 @@ Path.new("/abs/path").absolute;
   bottom up. There is no difference between relative path and absolute
   path.
 \begin{urbiassert}
-Path.new("/path/to/file.u").asList == ["path", "to", "file.u"];
-Path.new("/path").asList           == Path.new("path").asList;
+Path.new("/path/to/file.u").asList() == ["path", "to", "file.u"];
+Path.new("/path").asList()           == Path.new("path").asList();
 \end{urbiassert}
 
 
 \item[asPrintable]
 \begin{urbiassert}
-Path.new("file.txt").asPrintable == "Path(\"file.txt\")";
+Path.new("file.txt").asPrintable() == "Path(\"file.txt\")";
 \end{urbiassert}
 
 
 \item[asString]
   The name of the file.
 \begin{urbiassert}
-Path.new("file.txt").asString == "file.txt";
+Path.new("file.txt").asString() == "file.txt";
 \end{urbiassert}
 
 
@@ -125,15 +125,15 @@ Path.new("relative/path/file.u").basename  == "file.u";
   Change the current working directory to \this. Return the new current
   working directory as a \lstinline|Path|.
 \begin{urbiassert}
-var a = Directory.create("a").asPath;
-var b = Directory.create("a/b").asPath;
+var a = Directory.create("a").asPath();
+var b = Directory.create("a/b").asPath();
 var cwd = Path.cwd;     // Current location.
 cwd.isA(Path);
 // cd returns the new current working directory.
-b.cd == cwd / b == cwd / "a" / "b";
+b.cd() == cwd / b == cwd / "a" / "b";
 Path.cwd == cwd / b;
 // Go back to the original location.
-Path.new("../..").cd == cwd;
+Path.new("../..").cd() == cwd;
 Path.cwd == cwd;
 \end{urbiassert}
 \begin{urbicomment}
@@ -142,11 +142,11 @@ removeFs("a");
 
 Exceptions are thrown on cases of error.
 \begin{urbiscript}
-Path.new("does/not/exist").cd;
+Path.new("does/not/exist").cd();
 [00003991:error] !!! cd: no such file or directory: does/not/exist
 
 var f = File.create("file.txt")|;
-f.asPath.cd;
+f.asPath().cd();
 [00099415:error] !!! cd: not a directory: file.txt
 \end{urbiscript}
 \begin{urbicomment}
@@ -159,11 +159,11 @@ would actually fail.
 \begin{urbiscript}[firstnumber=1]
 var d = Directory.create("forbidden")|;
 System.system("chmod 444 %s" % d)|;
-d.asPath.cd;
+d.asPath().cd();
 [00140753:error] !!! cd: Permission denied: forbidden
 \end{urbiscript}
 \begin{urbicomment}
-skipIfWindows;
+skipIfWindows();
 removeFs(d);
 removeSlots("d");
 \end{urbicomment}
@@ -179,11 +179,11 @@ removeSlots("d");
 // Save current directory.
 var pwd = Path.cwd;
 // Go into "/".
-var root = Path.new("/").cd;
+var root = Path.new("/").cd();
 // Current working directory is "/".
 Path.cwd == root;
 // Go back to the directory we were in.
-pwd.cd == pwd;
+pwd.cd() == pwd;
 \end{urbiassert}
 
 \item[dirname]%
@@ -215,7 +215,7 @@ removeFs("file.txt");
 \begin{urbiassert}
 Path.cwd.isDir;
 var f = File.create("file.txt");
-!f.asPath.isDir;
+!f.asPath().isDir;
 !Path.new("does/not/exist").isDir;
 \end{urbiassert}
 \begin{urbicomment}
@@ -227,7 +227,7 @@ removeFs("file.txt");
   Whether \this is a regular file.
 \begin{urbiassert}
 var f = File.create("file.txt");
- f.asPath.isReg;
+ f.asPath().isReg;
 !Path.cwd.isReg;
 !Path.new("does/not/exist").isReg;
 \end{urbiassert}
@@ -249,7 +249,7 @@ File.create(p);
   according the type of \this. See \refObject{File} and
   \refObject{Directory}.
 \begin{urbiassert}
-Path.new("/").open.isA(Directory);
+Path.new("/").open().isA(Directory);
 \end{urbiassert}
 
 
@@ -267,7 +267,7 @@ System.system("chmod a+r %s" % p) == 0;
 p.readable;
 \end{urbiassert}
 \begin{urbicomment}
-skipIfWindows;
+skipIfWindows();
 removeFs("file.txt");
 \end{urbicomment}
 
@@ -277,7 +277,7 @@ removeFs("file.txt");
   as \var{name}.  Return \refObject{void}.
 \begin{urbiassert}[firstnumber=1]
 var dir1 = Directory.create("dir1");
-var p = dir1.asPath;
+var p = dir1.asPath();
 p.rename("dir2").isVoid;
 p.basename == "dir2";
 \end{urbiassert}
@@ -300,7 +300,7 @@ System.system("chmod a+w %s" % p) == 0;
 p.writable;
 \end{urbiassert}
 \begin{urbicomment}
-skipIfWindows;
+skipIfWindows();
 removeFs("file.txt");
 \end{urbicomment}
 \end{urbiscriptapi}

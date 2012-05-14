@@ -70,7 +70,7 @@ The Dictionary constructor takes arguments by pair (key, value).
 \begin{urbiscript}
 Dictionary.new("one", 1, "two", 2);
 [00000000] ["one" => 1, "two" => 2]
-Dictionary.new;
+Dictionary.new();
 [00000000] [ => ]
 \end{urbiscript}
 
@@ -104,7 +104,7 @@ It is guaranteed that the pairs to insert are evaluated left-to-write, key
 first, the value.
 
 \begin{urbiassert}
-   ["a".fresh => "b".fresh, "c".fresh => "d".fresh]
+   ["a".fresh() => "b".fresh(), "c".fresh() => "d".fresh()]
 == ["a_5"     => "b_6",     "c_7"     => "d_8"];
 \end{urbiassert}
 
@@ -154,8 +154,8 @@ d["one"] == 1;
 \item[asBool]
   Negation of \refSlot{empty}.
 \begin{urbiassert}
-[=>].asBool == false;
-["key" => "value"].asBool == true;
+[=>].asBool() == false;
+["key" => "value"].asBool() == true;
 \end{urbiassert}
 
 
@@ -164,7 +164,7 @@ d["one"] == 1;
   \var{value}).
 
 \begin{urbiassert}
-["one" => 1, "two" => 2].asList == [("one", 1), ("two", 2)];
+["one" => 1, "two" => 2].asList() == [("one", 1), ("two", 2)];
 \end{urbiassert}
 
   \noindent
@@ -184,14 +184,14 @@ d["one"] == 1;
 \item[asString] A string representing the dictionary.  There is no guarantee
   on the order of the output.
 \begin{urbiassert}
-                [=>].asString == "[ => ]";
-["a" => 1, "b" => 2].asString == "[\"a\" => 1, \"b\" => 2]";
+                [=>].asString() == "[ => ]";
+["a" => 1, "b" => 2].asString() == "[\"a\" => 1, \"b\" => 2]";
 \end{urbiassert}
 
 \item[asTree]%
 Display the content of the List as a tree representation.
 \begin{urbiscript}
-echo("simple dictionary:" + ["key1" => "elt1", "key2" => ["key3" => "elt3"]].asTree);
+echo("simple dictionary:" + ["key1" => "elt1", "key2" => ["key3" => "elt3"]].asTree());
 [:][00000001] *** simple dictionary:
 [:][
 [:]  key1 => elt1,
@@ -201,7 +201,7 @@ echo("simple dictionary:" + ["key1" => "elt1", "key2" => ["key3" => "elt3"]].asT
 [:]  ]
 [:]]
 echo("dictionary with list:" +
-  ["key1" => "elt1", "key2" => ["key3" => ["key4", "key5"]]].asTree);
+  ["key1" => "elt1", "key2" => ["key3" => ["key4", "key5"]]].asTree());
 [:][00000002] *** dictionary with list:
 [:][
 [:]  key1 => elt1,
@@ -220,7 +220,7 @@ echo("dictionary with list:" +
   Empty the dictionary.
 
 \begin{urbiassert}
-["one" => 1].clear.empty;
+["one" => 1].clear().empty;
 \end{urbiassert}
 
 
@@ -257,11 +257,11 @@ d.erase("key2");
 [00000002] ["key1" => "value1"]
 [00000001] *** removed
 
-d.clear;
+d.clear();
 [00000003] [ => ]
 [00000001] *** removed
 
-d.clear;
+d.clear();
 [00000003] [ => ]
 \end{urbiscript}
 
@@ -372,7 +372,7 @@ d.has("one");
   Insert the mapping from \var{key1} to \var{value1} and so forth.
 
 \begin{urbiscript}
-Dictionary.clone.init("one", 1, "two", 2);
+Dictionary.clone().init("one", 1, "two", 2);
 [00000000] ["one" => 1, "two" => 2]
 \end{urbiscript}
 

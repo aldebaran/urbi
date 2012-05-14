@@ -22,26 +22,25 @@ var profile = System.profile(function() { echo("foo") });
 [00000001] *** foo
 [00001672] Profile(
 [:]  Yields:                    0
-[:]  Total time (us):         112
-[:]  Wall-clock time (us):    112
-[:]  Function calls:           14
+[:]  Total time (us):        1085
+[:]  Wall-clock time (us):   1085
+[:]  Function calls:           12
 [:]  Max depth:                 5
 [:]
 [:]  .-------------------------------------------------------------------.
 [:]  |   function   |   %    | cumulative |  self  |  calls  |   self    |
 [:]  |              |        |    (us)    |  (us)  |         | (us/call) |
 [:]  |--------------+--------+------------+--------+---------+-----------|
-[:]  |         send |  24.11 |         27 |     27 |       1 |        27 |
-[:]  |         echo |  14.29 |         43 |     16 |       1 |        16 |
-[:]  |        apply |  10.71 |         55 |     12 |       1 |        12 |
-[:]  |        apply |   9.82 |         66 |     11 |       1 |        11 |
-[:]  |            + |   8.93 |         76 |     10 |       2 |         5 |
-[:]  |   <profiled> |   6.25 |         83 |      7 |       1 |         7 |
-[:]  |     asString |   6.25 |         90 |      7 |       1 |         7 |
-[:]  |        lobby |   5.36 |         96 |      6 |       2 |         3 |
-[:]  | getSlotValue |   3.57 |        104 |      4 |       1 |         4 |
-[:]  |            + |   2.68 |        107 |      3 |       1 |         3 |
-[:]  |        Lobby |   1.79 |        112 |      2 |       2 |         1 |
+[:]  |        apply |  26.91 |        292 |    292 |       1 |       292 |
+[:]  |         echo |  25.35 |        567 |    275 |       1 |       275 |
+[:]  |   <profiled> |  20.18 |        786 |    219 |       1 |       219 |
+[:]  |         send |   6.36 |        855 |     69 |       1 |        69 |
+[:]  |        apply |   4.61 |        905 |     50 |       1 |        50 |
+[:]  |         oget |   4.24 |        951 |     46 |       2 |        23 |
+[:]  |            + |   4.06 |        995 |     44 |       2 |        22 |
+[:]  | getSlotValue |   3.32 |       1031 |     36 |       1 |        36 |
+[:]  |            + |   2.76 |       1061 |     30 |       1 |        30 |
+[:]  |     asString |   2.21 |       1085 |     24 |       1 |        24 |
 [:]  '--------------'--------'------------'--------'---------'-----------'
 [:])
 \end{urbiscript}
@@ -82,7 +81,7 @@ var profile_async = System.profile(getSlotValue("profiled"));
 [:]  Yields:                    0
 [:]  Total time (us):          73
 [:]  Wall-clock time (us):     73
-[:]  Function calls:           11
+[:]  Function calls:            9
 [:]  Max depth:                 4
 [:]
 [:]  .-------------------------------------------------------------------.
@@ -93,7 +92,6 @@ var profile_async = System.profile(getSlotValue("profiled"));
 [:]  |    at: { x } |  21.92 |         50 |     16 |       1 |        16 |
 [:]  |      onEvent |  15.07 |         61 |     11 |       1 |        11 |
 [:]  |        clone |   9.59 |         68 |      7 |       2 |     3.500 |
-[:]  |            x |   2.74 |         70 |      2 |       2 |         1 |
 [:]  |          new |   2.74 |         72 |      2 |       2 |         1 |
 [:]  |         init |   1.37 |         73 |      1 |       2 |     0.500 |
 [:]  '--------------'--------'------------'--------'---------'-----------'
@@ -112,7 +110,7 @@ profile_async;
 [:]  Yields:                    2
 [:]  Total time (us):         251
 [:]  Wall-clock time (us):    251
-[:]  Function calls:           33
+[:]  Function calls:           29
 [:]  Max depth:                 4
 [:]
 [:]  .-------------------------------------------------------------------.
@@ -131,8 +129,6 @@ profile_async;
 [:]  |          new |   1.99 |        233 |      5 |       4 |     1.250 |
 [:]  |     asString |   0.80 |        242 |      2 |       2 |         1 |
 [:]  |         init |   0.80 |        248 |      2 |       4 |     0.500 |
-[:]  |            x |      0 |        251 |      0 |       1 |         0 |
-[:]  |            x |      0 |        212 |      0 |       3 |         0 |
 [:]  '--------------'--------'------------'--------'---------'-----------'
 [:])
 \end{urbiscript}
@@ -182,7 +178,7 @@ profile.maxFunctionCallDepth == 5;
   The total number of function calls made.
 \begin{urbiassert}
 // Example continued from Construction.
-profile.totalCalls == 14;
+profile.totalCalls == 12;
 \end{urbiassert}
 
 

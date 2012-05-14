@@ -118,7 +118,7 @@ do (List)
     sep.join(this, prefix, suffix)
   };
 
-  function keys()
+  get keys()
   {
     size().asList()
   };

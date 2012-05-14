@@ -34,7 +34,7 @@ do (Lobby)
   // Echo the Urbi authors.
   function authors()
   {
-    echoEach(File.new(System.urbiDocDir / "AUTHORS.txt").asList
+    echoEach(File.new(System.urbiDocDir / "AUTHORS.txt").asList()
              + ["", "See also `thanks;'."]);
   };
 

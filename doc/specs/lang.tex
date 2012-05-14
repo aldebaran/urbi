@@ -576,7 +576,7 @@ assert
   Base.type   == "Base";
   Base.protos == [Object];
   Base.slot   == 12;
-  Base.asBase === Base;
+  Base.asBase() === Base;
 };
 
 class Global.Derive : Base
@@ -590,8 +590,8 @@ assert
   Global.Derive.type     == "Derive";
   Global.Derive.protos   == [Base];
   Global.Derive.slot     == 34;
-  Global.Derive.asDerive === Global.Derive;
-  Global.Derive.asBase   === Global.Derive;
+  Global.Derive.asDerive() === Global.Derive;
+  Global.Derive.asBase()   === Global.Derive;
 };
 
 class Base2 {}|;
@@ -603,9 +603,9 @@ assert
   Derive2.type      == "Derive2";
   Derive2.protos    == [Base, Base2];
   Derive2.slot      == 12;
-  Derive2.asDerive2 === Derive2;
-  Derive2.asBase    === Derive2;
-  Derive2.asBase2   === Derive2;
+  Derive2.asDerive2() === Derive2;
+  Derive2.asBase()    === Derive2;
+  Derive2.asBase2()   === Derive2;
 };
 \end{urbiscript}
 
@@ -1432,10 +1432,10 @@ These core operators provide access to slots and their properties. See
 \end{operatorTable}
 
 \begin{urbiassert}
-var obj = Object.new;
+var obj = Object.new();
 var obj.f = function() { 24 };
 
-  obj.f == 24;
+  obj.f() == 24;
   obj.&f != 24;
   obj.&f.isA(Slot);
   obj.&f === obj.getSlot("f");
@@ -1656,16 +1656,16 @@ class Foo
   };
 }|;
 
-Foo.foo;
+Foo.foo();
 [00001720:error] !!! lookup failed: foo
-Foo.bar;
+Foo.bar();
 [00001750:error] !!! lookup failed: bar
 
 [00001787] 93
-Foo.init;
-Foo.foo;
+Foo.init();
+Foo.foo();
 [00001787:error] !!! lookup failed: foo
-Foo.bar;
+Foo.bar();
 [00001818] 51
 \end{urbiscript}
 \begin{urbicomment}
@@ -1855,9 +1855,9 @@ enclosing scope:
 }|;
 assert
 {
-  getLocal == 0;
+  getLocal() == 0;
   setLocal(42);
-  getLocal == 42;
+  getLocal() == 42;
 };
 \end{urbiscript}
 
@@ -1876,11 +1876,11 @@ called a \dfn{delegate}, in \us use \lstindex{closure} instead of
   var x = 0;
   class lobby.Foo
   {
-    function fun () { (++x, lobby, type) };
-    closure  clo () { (++x, lobby, type) };
+    function fun () { (++x, Lobby.lobby, type) };
+    closure  clo () { (++x, Lobby.lobby, type) };
   };
 }|;
-var aLobby = Lobby.create|;
+var aLobby = Lobby.create()|;
 var aLobby.name = "A Fresh Lobby"|;
 lobby.name = "The main Lobby"|;
 
@@ -1889,12 +1889,12 @@ var Global.clo = Foo.getSlotValue("clo")|;
 
 // A "function" invoked in the context of a different lobby and a different
 // this refers to the "new" lobby and "this":
-aLobby.receive("Global.fun;");
+aLobby.receive("Global.fun();");
 [00000012] (1, Lobby<A Fresh Lobby>, "Global")
 
 // A "closure" invoked in the context of a different lobby and a different
 // this refers to the "original" lobby and "this":
-aLobby.receive("Global.clo;");
+aLobby.receive("Global.clo();");
 [00000014] (2, Lobby<The main Lobby>, "Foo")
 \end{urbiscript}
 \begin{urbicomment}
@@ -1998,13 +1998,13 @@ slot's name. The listing below shows how to manipulate slots. More
 documentation about these methods can be found in \autorefObject{Object}.
 
 \begin{urbiscript}
-var o = Object.new|
-assert (o.localSlotNames == []);
+var o = Object.new()|
+assert (o.localSlotNames() == []);
 
 o.createSlot("test");
 assert
 {
-  o.localSlotNames == ["test"];
+  o.localSlotNames() == ["test"];
   o.getSlotValue("test").isVoid;
 };
 
@@ -2130,7 +2130,7 @@ the \refSlot[Object]{protos} method; they can be added or removed with
 \autorefObject{Object} for more documentation.
 
 \begin{urbiscript}
-var ob = Object.new|
+var ob = Object.new()|
 assert (ob.protos == [Object]);
 
 ob.addProto(Pair);
@@ -2164,9 +2164,9 @@ when looking for a slot in an object:
 The following example shows how slots are inherited.
 
 \begin{urbiscript}[firstnumber=1]
-var a = Object.new|
-var b = Object.new|
-var c = Object.new|
+var a = Object.new()|
+var b = Object.new()|
+var c = Object.new()|
 a.setSlotValue("x", "slot in a")|
 b.setSlotValue("x", "slot in b")|
 // c has no "x" slot
@@ -2197,9 +2197,9 @@ process is called \dfn{copy on write}; thanks to it, prototypes are not
 altered when the slot is overridden in a child object.
 
 \begin{urbiscript}
-var p = Object.new|
+var p = Object.new()|
 var p.slot = 0|
-var d = Object.new|
+var d = Object.new()|
 d.addProto(p)|
 d.slot;
 [00000000] 0
@@ -2222,8 +2222,7 @@ of a slot to false.
 A \dfn{message} in \us consists in a message name and arguments. One can
 send a message to an object with the dot (\lstinline|.|) operator, followed
 by the message name (which can be any valid identifier) and the arguments,
-as shown below. When there are no arguments, the parentheses can be
-omitted. As you might see, sending messages is very similar to calling
+as shown below. As you might see, sending messages is very similar to calling
 methods in classical languages.
 
 \begin{urbiunchecked}
@@ -2231,7 +2230,7 @@ methods in classical languages.
 obj.msg(arg1, arg2);
 // Send the message msg to object obj, with no arguments.
 obj.msg();
-// This is strictly equivalent.
+// This does not send the message, it just returns the content of 'msg'.
 obj.msg;
 \end{urbiunchecked}
 
@@ -2262,7 +2261,7 @@ obj.a();
 [00000000] 42
 obj.a(50);
 [00000000:error] !!! a: expected 0 argument, given 1
-obj.b;
+obj.b();
 [00000000:error] !!! b: expected 1 argument, given 0
 obj.b();
 [00000000:error] !!! b: expected 1 argument, given 0
@@ -2474,7 +2473,7 @@ statements.
 
 \begin{urbiscript}
 {
-  var e = Event.new;
+  var e = Event.new();
   at (e?(var msg, var value) if value % 2 == 0)
     echo("%s: %d" % [msg, value]);
 
@@ -2672,7 +2671,7 @@ value of \var{body}.
 do (1024)
 {
   assert(this == 1024);
-  assert(sqrt == 32);
+  assert(sqrt() == 32);
   setSlot("y", 23);
 }.y;
 [00000000] 23
@@ -2825,7 +2824,7 @@ accessible via the \var{name} local variable:
 
 \begin{urbiscript}
 for; (var x : [0, 1, 2, 3, 4])
-  echo(x.sqr);
+  echo(x.sqr());
 [00000000] *** 0
 [00000000] *** 1
 [00000000] *** 4
@@ -3561,7 +3560,7 @@ function areEqual(var args[])
   if (!args.empty)
   {
     var a = args[0];
-    for (var b : args.tail)
+    for (var b : args.tail())
       if (a != b)
       {
         res = false;
@@ -3570,7 +3569,7 @@ function areEqual(var args[])
   };
   res
 }|;
-assert (areEqual);
+assert (areEqual());
 assert (areEqual(1));
 assert (areEqual(1, 0 + 1));
 assert (areEqual(1, 1, 1+1));
@@ -3666,7 +3665,7 @@ id(1):id(2);
 It is always evaluated before the \var{statement} itself.  The value of a
 tagged statement is that of the \var{statement}.
 \begin{urbiscript}
-id(Tag.new):id(2);
+id(Tag.new()):id(2);
 [00015631] *** Tag<tag_3>
 [00015631] *** 2
 [00015631] 2
@@ -3678,7 +3677,7 @@ Since job control is especially useful in interactive sessions, \us provides
 
 \begin{urbiscript}
 // t does not exist.
-t.stop;
+t.stop();
 [00000001:error] !!! lookup failed: t
 t: 1;
 [00015631] 1
@@ -3694,7 +3693,7 @@ t.t2: echo(2);
 
 // If "this" is not a Lobby, then implicit tags are not supported.
 class Foo { function f() { t1: echo(12) } }|;
-Foo.f;
+Foo.f();
 [00015631:error] !!! lookup failed: t1
 [00015631:error] !!!    called from: f
 \end{urbiscript}
@@ -3995,7 +3994,7 @@ instead of \lstinline'|'.
     if (n == 0)
       break
   };
-  res.sort
+  res.sort()
 }
 ==
 [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -4237,7 +4236,7 @@ statement fires immediately, but remains still on later activations of the
 event.
 
 \begin{urbiscript}
-var e = Event.new|;
+var e = Event.new()|;
 at (e) echo("w00t");
 [00000002:warning] !!! at (<event>) without a '?', probably not what you mean
 [00000003] *** w00t
@@ -4256,11 +4255,11 @@ event handlers may also require an event to be sustained for a given amount
 of time before being ``accepted'' (\lstinline|at (e? ~ \var{duration})|).
 
 \begin{urbiscript}[firstnumber=1]
-var e = Event.new|;
+var e = Event.new()|;
 at (e?(var start) ~ 1s)
-  echo("in : %s" % (time - start).round)
+  echo("in : %s" % (time - start).round())
 onleave
-  echo("out: %s" % (time - start).round);
+  echo("out: %s" % (time - start).round());
 
 // This emission is too short to trigger the at.
 e!(time);
@@ -4336,7 +4335,7 @@ executed in detached jobs and won't interfere with the execution flow of the
 job that triggered it.
 
 \begin{urbiscript}[firstnumber=1]
-var e = Event.new;
+var e = Event.new();
 [00000001] Event_0x42389008
 
 at (e?)
@@ -4369,7 +4368,7 @@ synchronous: when a job triggers it, all enter and leave actions are
 executed synchronously before the triggering statement returns.
 
 \begin{urbiscript}[firstnumber=1]
-var e = Event.new;
+var e = Event.new();
 [00000001] Event_0x42389008
 
 at sync (e?)
@@ -4411,7 +4410,7 @@ class Global.Foo
 {
   function event()
   {
-    var res = Event.new;
+    var res = Event.new();
     at sync (res?) { assert(this === Global.Foo) | echo(1) }
     onleave        { assert(this === Global.Foo) | echo(2) };
 
@@ -4423,7 +4422,7 @@ class Global.Foo
 
 class Global.Bar
 {
-  var event = Global.Foo.event;
+  var event = Global.Foo.event();
 }|;
 
 Global.Bar.event!;
@@ -4438,7 +4437,7 @@ The tags that apply to the execution of enter- and leave-clauses include
 that of the whole \lstinline{at}-construct:
 \begin{urbiscript}
 var t = Tag.new("t")|;
-var e = Event.new|;
+var e = Event.new()|;
 t: at sync (e?) { assert(t in Job.current.tags) | echo(1) }
       onleave   { assert(t in Job.current.tags) | echo(2) };
 
@@ -4463,8 +4462,8 @@ control-flow.  To control them, use \refObject[Tag]{Tags}.
 
 Tags allow to disable, temporarily or momentarily, event monitors.
 \begin{urbiscript}
-var t = Tag.new|;
-var e = Event.new|;
+var t = Tag.new()|;
+var e = Event.new()|;
 t: at (e?(var x))      echo("enter" + x)     onleave echo("leave" + x);
 t: at sync (e?(var x)) echo("syncEnter" + x) onleave echo("syncLeave" + x);
 e!(1);
@@ -4474,10 +4473,10 @@ e!(1);
 [00001822] *** leave1
 
 // Nothing happens when the code is frozen.
-t.freeze;
+t.freeze();
 e!(2);
 e!(3);
-t.unfreeze;
+t.unfreeze();
 
 // Back on line!
 e!(4);
@@ -4487,7 +4486,7 @@ e!(4);
 [00001843] *** leave4
 
 // Dead, for ever.
-t.stop;
+t.stop();
 e!(5);
 \end{urbiscript}
 \begin{urbicomment}
@@ -4499,11 +4498,11 @@ is triggered), but also the execution of the body.  And Tags can be
 used from the event-handler itself.
 
 \begin{urbiscript}
-var t = Tag.new|;
-var e = Event.new|;
+var t = Tag.new()|;
+var e = Event.new()|;
 t: at (e?(var x))
 {
-  echo(x+1) | t.stop | echo(x+2)
+  echo(x+1) | t.stop() | echo(x+2)
 }
 onleave
 {
@@ -4520,15 +4519,15 @@ removeSlots("e", "t");
 The same applies when the monitor is interrupted from the
 \lstinline{onleave} clause.
 \begin{urbiscript}
-var t = Tag.new|;
-var e = Event.new|;
+var t = Tag.new()|;
+var e = Event.new()|;
 t: at (e?(var x))
 {
   echo(x+1)
 }
 onleave
 {
-  echo(x+2) | t.stop | echo(x+3)
+  echo(x+2) | t.stop() | echo(x+3)
 };
 e!("a");
 [00001843] *** a1
@@ -4548,12 +4547,12 @@ that escape the scope in which they are defined:
 \begin{urbiscript}
 function Event.newVerbose()
 {
-  var res = Event.new;
+  var res = Event.new();
   at (res?(var x))
     echo(x);
   res
 }|;
-Event.newVerbose!(12);
+Event.newVerbose()!(12);
 [00001202] *** 12
 \end{urbiscript}
 
@@ -4565,13 +4564,13 @@ longer active.
 \begin{urbiscript}
 function Event.newScoped()
 {
-  var res = Event.new;
+  var res = Event.new();
   Tag.scope:
     at (res?(var x))
       echo(x);
   res
 }|;
-Event.newScoped!(23);
+Event.newScoped()!(23);
 // Nothing happens.
 \end{urbiscript}
 \begin{urbicomment}
@@ -4595,7 +4594,7 @@ emission.
 
 \begin{urbiscript}
 {
-  var e = Event.new;
+  var e = Event.new();
   {
     waituntil (e?);
     echo("caught e");
@@ -4611,8 +4610,8 @@ condition remains verified as long as the event is ``on''.
 
 \begin{urbiscript}
 {
-  var e = Event.new;
-  e.trigger;
+  var e = Event.new();
+  e.trigger();
   {
     waituntil (e?);
     echo("caught e");
@@ -4636,7 +4635,7 @@ accepted events.
 
 \begin{urbiscript}
 {
-  var e = Event.new;
+  var e = Event.new();
   {
     waituntil (e?(1, var b));
     echo("caught e(1, %s)" % b);
@@ -4654,7 +4653,7 @@ Events sent before do not release the construct.
 
 \begin{urbiscript}
 {
-  var e = Event.new;
+  var e = Event.new();
   e!;
   {
     waituntil (e?);
@@ -4672,7 +4671,7 @@ to \lstinline{waituntil}.
 
 \begin{urbiscript}
 {
-  var foo = Object.new;
+  var foo = Object.new();
   {
     waituntil (foo.hasLocalSlot("bar"));
     echo(foo.getLocalSlotValue("bar"));
@@ -4782,7 +4781,7 @@ A \lstinline{whenever} clause can be used to catch events with or
 without payloads.
 
 \begin{urbiunchecked}[firstnumber=1]
-var e = Event.new|;
+var e = Event.new()|;
 whenever (e?)
   echo("e on")
 else
@@ -4831,7 +4830,7 @@ If the body of the \lstinline{whenever} lasts for a long time, it is
 possible that two executions be run concurrently.
 
 \begin{urbiscript}[firstnumber=1]
-var e = Event.new|;
+var e = Event.new()|;
 whenever (e?(var d))
 {
   echo("e (%s) on begin" % d);
@@ -4857,7 +4856,7 @@ holds, but also ``how fast'' the \urbi kernel runs.
 \begin{urbiscript}[firstnumber=1]
 var x = 0|;
 var count = 0|;
-var t = Tag.new|;
+var t = Tag.new()|;
 t:
   whenever (x % 2)
   {
@@ -4884,7 +4883,7 @@ waituntil(x == 4);
 [00000846] *** x is now even (2)
 [00000886] *** x is now odd (3)
 [00000924] *** x is now even (4)
-t.stop;
+t.stop();
 \end{urbiscript}
 
 

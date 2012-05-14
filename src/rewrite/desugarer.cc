@@ -283,24 +283,39 @@ namespace rewrite
        "    %exp:4\n"
        "  }\n"
        );
+
     PARAMETRIC_AST
       (desugarPackage,
-       "do('package')\n"
-       "{\n"
-       "const var %lvalue:1 =\n"
-       "  do (Object.'class'(%exp:2, %exp:3))\n"
-       "  {\n"
-       "    %exp:4\n"
-       "  }\n"
-       "}\n"
-       );
-    ast::ParameterizedAst& desugar = c->is_package_get()?desugarPackage:desugarClass;
-    desugar % what
+        "do('package') {\n"
+        "  try {\n"
+        "    do(this) {const var %lvalue:1 = Object.'class'(%exp:2, %exp:3)}\n"
+        "  }\n"
+        "  catch( var e) {}|\n"
+        "  do (%lvalue:4)\n"
+        "  {\n"
+        "    %exp:5\n"
+        "  }\n"
+        "}\n"
+        );
+    ast::ParameterizedAst* desugar;
+    if (c->is_package_get())
+    {
+      desugar = &desugarPackage;
+      (*desugar) % what
+        % factory_->make_string(l, name)
+        % factory_->make_list(l, maybe_recurse_collection(c->protos_get()))
+        % what
+        % c->content_get();
+    }
+    else
+    {
+      desugar = &desugarClass;
+      (*desugar)  % what
       % factory_->make_string(l, name)
       % factory_->make_list(l, maybe_recurse_collection(c->protos_get()))
       % c->content_get();
-
-    result_ = recurse_with_subdecl(exp(desugar));
+    }
+    result_ = recurse_with_subdecl(exp(*desugar));
     result_->original_set(c);
   }
 

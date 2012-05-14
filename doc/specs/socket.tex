@@ -54,7 +54,7 @@ is disconnected.
 
 \begin{urbiscript}
 var server =
-  do (Server.new)
+  do (Server.new())
   {
     at (connection?(var socket))
       at (socket.received?(var data))
@@ -63,7 +63,7 @@ var server =
         socket.write(reply);
         echo("server: " + reply);
         if (reply == "off")
-          socket.disconnect;
+          socket.disconnect();
       };
   }|;
 \end{urbiscript}
@@ -74,7 +74,7 @@ following line of the dialog.
 
 \begin{urbiscript}
 var client =
-  do (Socket.new)
+  do (Socket.new())
   {
     at (received?(var data))
     {
@@ -135,7 +135,7 @@ extra attention to the \textkwd{sync} qualifier passed to \lstinline{at}:
 
 \begin{urbiscript}
 var syncClient =
-  do (Socket.new)
+  do (Socket.new())
   {
     at sync (received?(var data))
     {
@@ -176,7 +176,7 @@ new \refObject{Socket} has four own slots: \refSlot{connected},
 \refSlot{disconnected}, \refSlot{error} and \refSlot{received}.
 
 \begin{urbiscript}
-var s = Socket.new|;
+var s = Socket.new()|;
 \end{urbiscript}
 
 \subsection{Slots}
@@ -222,7 +222,7 @@ var s = Socket.new|;
 \item[isConnected]
   Whether \this is connected.
 \begin{urbiassert}
-! Socket.new.isConnected;
+! Socket.new().isConnected;
 \end{urbiassert}
 
 

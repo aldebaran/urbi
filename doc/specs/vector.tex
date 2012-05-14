@@ -22,7 +22,7 @@ any number of Floats.
 Vector;
 [00000140] <>
 
-Vector.new;
+Vector.new();
 [00000146] <>
 
 Vector.new(1.1);
@@ -201,10 +201,10 @@ do (Vector)
 {
   assert
   {
-    new         ().asString == "<>";
-    new        (1).asString == "<1>";
-    new     (1, 2).asString == "<1, 2>";
-    new(1, 2, 3.4).asString == "<1, 2, 3.4>";
+    new         ().asString() == "<>";
+    new        (1).asString() == "<1>";
+    new     (1, 2).asString() == "<1, 2>";
+    new(1, 2, 3.4).asString() == "<1, 2, 3.4>";
   };
 }|;
 \end{urbiscript}
@@ -213,8 +213,8 @@ do (Vector)
 \item[asVector]%
   Return \this.
 \begin{urbiassert}
-var v = Vector.new;
-v.asVector === v;
+var v = Vector.new();
+v.asVector() === v;
 \end{urbiassert}
 
 
@@ -278,7 +278,7 @@ do (Vector)
 {
   assert
   {
-    new.distance(new) == 0;
+    new().distance(new()) == 0;
 
     new(0, 0).distance(new(3, 4)) == 5;
     new(3, 4).distance(new(0, 0)) == 5;
@@ -300,12 +300,12 @@ do (Vector)
 {
   assert
   {
-    new.norm == 0;
+    new().norm == 0;
 
     new(0).norm == 0;
     new(1).norm == 1;
 
-    new(1, 1).norm == 2.sqrt;
+    new(1, 1).norm == 2.sqrt();
 
     new(0, 0, 0, 0).norm == 0;
     new(1, 1, 1, 1).norm == 2;
@@ -332,7 +332,7 @@ function resized(var values[])
 
 assert
 {
-  resized;
+  resized();
   resized(1);
   resized(1, 2);
   resized(1, 2, 0);
@@ -457,17 +457,17 @@ Vector.new([0, 1, 2, 3]).size == 4;
 \item[sum]%
   The sum of the values stored in \this.
 \begin{urbiassert}
-Vector                  .sum == 0;
-Vector.new(1)           .sum == 1;
-Vector.new(0, 1, 2, 3)  .sum == 6;
+Vector                  .sum() == 0;
+Vector.new(1)           .sum() == 1;
+Vector.new(0, 1, 2, 3)  .sum() == 6;
 \end{urbiassert}
 
 
 \item[trueIndexes]%
   A Vector whose values are the indexes of \this whose value is non-null.
 \begin{urbiassert}
-Vector.trueIndexes == Vector;
-Vector.new(1, 0, 1, 0, 0, 1).trueIndexes == Vector.new(0, 2, 5);
+Vector.trueIndexes() == Vector;
+Vector.new(1, 0, 1, 0, 0, 1).trueIndexes() == Vector.new(0, 2, 5);
 \end{urbiassert}
 
 

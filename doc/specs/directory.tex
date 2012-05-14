@@ -86,7 +86,7 @@ removeSlots("dir1", "dir2", "file");
 
 \item[asString] A \refObject{String} containing the path of the directory.
 \begin{urbiassert}
-Directory.new(".").asString == ".";
+Directory.new(".").asString() == ".";
 \end{urbiassert}
 
 
@@ -97,9 +97,9 @@ Directory.new(".").asString == ".";
 var dir1 = Directory.create("dir1");
 var dir2 = Directory.create("dir1/dir2");
 
-dir1.basename == dir1.asPath.basename == "dir1";
+dir1.basename == dir1.asPath().basename == "dir1";
 [00000808:warning] !!! `basename' is deprecated, use `asPath.basename'
-dir2.basename == dir2.asPath.basename == "dir2";
+dir2.basename == dir2.asPath().basename == "dir2";
 [00000811:warning] !!! `basename' is deprecated, use `asPath.basename'
 \end{urbiassert}
 \begin{urbicomment}
@@ -119,7 +119,7 @@ var file2 = File.create("dir1/dir2/file2");
 
 dir1.content == ["dir2", "file1"];
 dir2.content == ["file2"];
-dir1.clear.isVoid;
+dir1.clear().isVoid;
 dir1.empty;
 \end{urbiassert}
 \begin{urbicomment}
@@ -236,7 +236,7 @@ removeFs("dir");
 \begin{urbiassert}
 var dir = Directory.create("dir");
 dir.exists;
-dir.remove.isVoid;
+dir.remove().isVoid;
 !dir.exists;
 \end{urbiassert}
 
@@ -249,7 +249,7 @@ dir.remove.isVoid;
 %% are skipped on architectures such as Mac OS X.
 \begin{urbiscript}[firstnumber=1]
 if (Path.new("./dummy.txt").exists)
-  File.new("./dummy.txt").remove;
+  File.new("./dummy.txt").remove();
 
   {
     var d = Directory.new(".");
@@ -257,7 +257,7 @@ if (Path.new("./dummy.txt").exists)
     assert
     {
       name == "dummy.txt";
-      Path.new(d.asString + "/" + name).exists;
+      Path.new(d.asString() + "/" + name).exists;
     };
   }
 &
@@ -281,13 +281,13 @@ if (!Path.new("./dummy.txt").exists)
     assert
     {
       name == "dummy.txt";
-      !Path.new(d.asString + "/" + name).exists;
+      !Path.new(d.asString() + "/" + name).exists;
     };
   }
 &
   {
     sleep(100ms);
-    File.new("./dummy.txt").remove;
+    File.new("./dummy.txt").remove();
   }|;
 \end{urbiscript}
 %% Use firstline after this test if this is not related to inotify.
@@ -335,7 +335,7 @@ Directory.create("dir")|;
 var dir = Directory.create("dir/dir")|;
 dir.parent;
 [00000001] Directory("dir")
-assert(dir.parent.parent.asString == Directory.current.asString);
+assert(dir.parent.parent.asString() == Directory.current.asString());
 \end{urbiscript}
 \begin{urbicomment}
 removeFs(dir.parent);
@@ -348,10 +348,10 @@ removeSlots("dir");
 \begin{urbiscript}
 var dir = Directory.create("dir")|;
 File.create("dir/file")|;
-dir.remove;
+dir.remove();
 [00000001:error] !!! remove: directory not empty: dir
-dir.clear;
-dir.remove;
+dir.clear();
+dir.remove();
 assert(!dir.exists);
 \end{urbiscript}
 \begin{urbicomment}
@@ -366,7 +366,7 @@ var dir1 = Directory.create("dir1")|;
 var dir2 = Directory.create("dir1/dir2")|;
 var file1 = File.create("dir1/file1")|;
 var file2 = File.create("dir1/dir2/file2")|;
-dir1.removeAll;
+dir1.removeAll();
 assert(!dir1.exists);
 \end{urbiscript}
 \begin{urbicomment}

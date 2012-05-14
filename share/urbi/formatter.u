@@ -18,7 +18,7 @@ do (Formatter)
     if (this === Formatter)
       "Formatter"
     else
-      "Formatter " + data.asString
+      "Formatter " + data.asString()
   };
 
   function asList()

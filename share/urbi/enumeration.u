@@ -48,11 +48,11 @@ package lang.Enumeration : RangeIterable
 
   function has(var f)
   {
-    asList.has(f)
+    asList().has(f)
   };
 
-  function size()
+  get size()
   {
-    asList.size()
+    asList().size()
   };
 };

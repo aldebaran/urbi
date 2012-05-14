@@ -25,7 +25,7 @@ A \lstinline|Barrier| can be created with no argument.  Calls to
 this instance.
 
 \begin{urbiscript}[firstnumber=1]
-Barrier.new;
+Barrier.new();
 [00000000] Barrier_0x25d2280
 \end{urbiscript}
 
@@ -37,10 +37,10 @@ Barrier.new;
   the \refSlot{wait} method.  Return the number of jobs woken up.
 
 \begin{urbiscript}
-do (Barrier.new)
+do (Barrier.new())
 {
-  echo(wait) &
-  echo(wait) &
+  echo(wait()) &
+  echo(wait()) &
   assert
   {
     signal(1) == 1;
@@ -57,10 +57,10 @@ do (Barrier.new)
   sent to all \refSlot{wait} methods.  Return the number of jobs woken up.
 
 \begin{urbiscript}
-do (Barrier.new)
+do (Barrier.new())
 {
-  echo(wait) &
-  echo(wait) &
+  echo(wait()) &
+  echo(wait()) &
   assert
   {
     signalAll(1) == 2;
@@ -77,9 +77,9 @@ do (Barrier.new)
   function is returned by the \refSlot{wait} method.
 
 \begin{urbiscript}
-do (Barrier.new)
+do (Barrier.new())
 {
-  echo(wait) &
+  echo(wait()) &
   signal(1)
 }|;
 [00000000] *** 1

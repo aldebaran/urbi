@@ -61,7 +61,7 @@ Binary.new("0", "0") != Binary.new("1", "0");
   Incoming binaries must use a semicolon to separate the header part
   from the content, while outgoing binaries use a carriage-return.
 \begin{urbiscript}
-assert(Binary.new("head", "content").asString
+assert(Binary.new("head", "content").asString()
        == "BIN 7 head\ncontent");
 var b = BIN 7 header;content;
 [00000002] BIN 7 header
@@ -75,7 +75,7 @@ Rather, use the \lstinline|\B(\var{size})(\var{data})| special escape
 (see \autoref{sec:lang:string}):
 
 \begin{urbiassert}
-Binary.new("head", "\B(7)(content)").asString
+Binary.new("head", "\B(7)(content)").asString()
        == "BIN 7 head\ncontent";
 \end{urbiassert}
 

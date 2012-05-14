@@ -23,8 +23,8 @@ The \refObject{Socket} must be created by the \refObject{IoService} that
 will handle it using its \refSlot{makeSocket} function.
 
 \begin{urbiscript}
-var io = IoService.new|;
-var s = io.makeSocket|;
+var io = IoService.new()|;
+var s = io.makeSocket()|;
 \end{urbiscript}
 
 You can then use this socket like any other.
@@ -32,7 +32,7 @@ You can then use this socket like any other.
 \begin{urbiscript}
 // Make a simple hello server.
 var serverPort = 0|
-do (Server.new)
+do (Server.new())
 {
   listen("127.0.0.1", "0");
   lobby.serverPort = port;

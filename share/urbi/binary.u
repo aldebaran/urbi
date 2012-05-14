@@ -58,9 +58,9 @@ package lang.Binary
     Binary.new(keywords, data)
   };
 
-  function empty()
+  get empty()
   {
-    data.empty;
+    data.empty
   };
 
   function init(k, v)

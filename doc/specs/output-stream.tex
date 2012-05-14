@@ -35,10 +35,10 @@ Cloning a closed \refSlot{Stream} is valid, but it is forbidden to clone an
 opened one.
 
 \begin{urbiscript}
-var o3 = OutputStream.clone.new(File.new("file.txt"));
+var o3 = OutputStream.clone().new(File.new("file.txt"));
 [00001399] OutputStream_0x10803e7a0
 
-o1.clone;
+o1.clone();
 [00001401:error] !!! clone: cannot clone opened Streams
 \end{urbiscript}
 
@@ -46,9 +46,9 @@ Do not forget to close the streams you opened
 (\autoref{sec:specs:Stream:ctor}).
 
 \begin{urbiscript}
-o1.close;
-o2.close;
-o3.close;
+o1.close();
+o2.close();
+o3.close();
 \end{urbiscript}
 
 \subsection{Slots}
@@ -60,7 +60,7 @@ o3.close;
 \begin{urbiscript}
 var o = OutputStream.new(File.create("fresh.txt"))|;
 o << 1 << "2" << [3, [4]]|;
-o.close;
+o.close();
 assert (File.new("fresh.txt").content.data == "12[3, [4]]");
 o << 1;
 [00000005:error] !!! <<: stream is closed
@@ -74,9 +74,9 @@ o << 1;
   dump its content to the file.  Raise an error if the file is closed.
 \begin{urbiscript}
 var s = OutputStream.new(File.create("file.txt"))|
-s.flush;
-s.close;
-s.flush;
+s.flush();
+s.close();
+s.flush();
 [00039175:error] !!! flush: stream is closed
 \end{urbiscript}
 
@@ -102,7 +102,7 @@ os.put(-1);
 [00034840:error] !!! put: argument 1: expected non-negative integer: -1
 os.put(256);
 [00039175:error] !!! put: argument 1: expected non-positive integer: 256
-os.close;
+os.close();
 os.put(0);
 [00039179:error] !!! put: stream is closed
 \end{urbiscript}

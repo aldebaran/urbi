@@ -74,7 +74,7 @@ namespace urbi
       BIND(getParent, parent_get);
       BINDG(leave);
       BIND(priority);
-      BIND(scope);
+      BINDG(scope);
       BIND(setPriority, priority_set);
       BIND(unblock);
       BIND(unfreeze);

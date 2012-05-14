@@ -38,7 +38,7 @@ var f = Formatter.new("%10s level: %-4.1f%%");
 [00039525] Formatter [%10s, " level: ", %-4.1f, "%"]
 
 for (var d: ["Battery" => 83.3, "Sound" => 60])
-  echo (f % d.asList);
+  echo (f % d.asList());
 [00041133] ***    Battery level: 83.3%
 [00041138] ***      Sound level: 60  %
 \end{urbiscript}
@@ -67,7 +67,7 @@ Formatter.new("%1$s%s");
   Return the content of the \dfn{formatter} as a list of strings and
   \refObject{FormatInfo}.
 \begin{urbiassert}
-Formatter.new("Name:%s, Surname:%s;").asList.asString
+Formatter.new("Name:%s, Surname:%s;").asList().asString()
        == "[\"Name:\", %s, \", Surname:\", %s, \";\"]";
 \end{urbiassert}
 
