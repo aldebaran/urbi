@@ -556,7 +556,7 @@ if (System.Platform.isWindows)
       'system$old'(cmd) |
       while| (!stamp.exists)
         sleep(20ms)|
-      var res = File.new(stamp).asList[0].asFloat |
+      var res = File.new(stamp).asList()[0].asFloat() |
       clog << ("system wrapper: " + command + ": " + cmd + ": " + res) |
       res
     });
