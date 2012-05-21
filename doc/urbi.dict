@@ -1074,6 +1074,8 @@ p's
 PackageInfo
 param
 params
+PAREN
+parens
 parseopt
 pathPlanningEvent
 pc
