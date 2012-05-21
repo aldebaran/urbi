@@ -555,8 +555,19 @@ namespace eval
   {
     aver(routine);
     aver(target);
+
     if (!input_ast_args)
+    {
+      // Behavior change between urbi2 and urbi3
+      static bool report = getenv("URBI_REPORT_MISSING_PAREN");
+      if (report && ( routine->as<object::Code>()
+        || routine->as<object::Primitive>()))
+      {
+        GD_CATEGORY(Urbi.Compatibility);
+        GD_FWARN("Maybe missing parens at %s", loc.get());
+      }
       return routine;
+    }
     // Evaluated arguments. Even if the function is lazy, it holds the
     // target.
     object::objects_type args;
