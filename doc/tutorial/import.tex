@@ -1,0 +1,118 @@
+%% Copyright (C) 2012, Gostai S.A.S.
+%%
+%% This software is provided "as is" without warranty of any kind,
+%% either expressed or implied, including but not limited to the
+%% implied warranties of fitness for a particular purpose.
+%%
+%% See the LICENSE file for more information.
+
+\chapter{Organizing your code using package and import}
+\label{sec:tut:import}
+
+In addition to the lookup mechanism described in the previous chapter,
+\us provides a secondary lookup mechanism similar to the one found in
+most languages, through the \lstinline{import} and \lstinline{package}
+keywords.
+
+\section{Why object lookup is not enough}
+
+Consider the example below, where one would try to emulate a \Cxx namespace
+or \Java package using only object lookup in \us.
+
+\begin{urbiscript}
+// Make a globally-accessible 'namespace' Shapes.
+class Global.Shapes
+{
+  // Create an object representing a point
+  class Point { var x=0; var y=0};
+  // And one representing a color
+  class Color { var r=0; var g=0; var b=0};
+
+  // Now try a colored point using the objects below.
+  class ColoredPoint
+  {
+    var point;
+    var color;
+    function init()
+    {
+      point = Point.new();
+      color = Color.new();
+    }
+  };
+}|;
+\end{urbiscript}
+
+This looks fine, except that Point and Color are not visible from within
+ColoredPoint.init:
+
+\begin{urbiscript}
+var cp = Global.Shapes.ColoredPoint.new();
+[00000001:error] !!! lookup failed: Point
+[01234567:error] !!!    called from: new
+\end{urbiscript}
+
+One would need to make ColoredPoint {\it inherit} from \lstinline{Shapes},
+instead of simply having it as one of its variables, or make all classes
+in Shapes globally accessible. Those are not satisfying solutions.
+
+\section{Import and package}
+
+\lstinline{package} works in the way one would expect:
+
+\begin{urbiscript}
+package Shapes
+{
+  // Create an object representing a point
+  class Point { var x=0; var y=0};
+  // And one representing a color
+  class Color { var r=0; var g=0; var b=0};
+  // Now try a colored point using the objects below.
+  class ColoredPoint
+  {
+    function init()
+    {
+      var this.point = Point.new();
+      var this.color = Color.new();
+    };
+  };
+  var p = ColoredPoint.new();
+  p.print();
+}|;
+[00000001] ColoredPoint_0x00000000
+\end{urbiscript}
+
+Do not nest package declarations, use \lstinline{package} and then
+\lstinline{class} as in the example above.
+
+\lstinline{import} has two syntax: \lstinline{import foo.bar} to make
+\lstinline{foo.bar} visible as {bar} in the current scope, and
+\lstinline{import foo.*} to make everything in the package \lstinline{foo}
+visible in the local scope.
+
+\begin{urbiscript}
+{
+  import Shapes.*;
+  Point;
+  Color;
+};
+[00000001] Color
+// It only applies to the scope.
+Point;
+[01234567:error] !!! lookup failed: Point
+{
+  // Import only Point from Shapes
+  import Shapes.Point;
+  Point;
+  Color;
+};
+[01234567:error] !!! lookup failed: Color
+// Packages have visibility over themselves as one might expect,
+// like an implicit 'import this.*'.
+{
+  import Shapes.ColoredPoint;
+  ColoredPoint.new();
+};
+[00000002] ColoredPoint_0x00000001
+\end{urbiscript}
+
+

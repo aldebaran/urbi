@@ -668,12 +668,16 @@ do (UValue)
   var asPrintable = getSlotValue("asTopLevelPrintable");
 };
 
-package lang.getUObject {
-  function fallback()
+package lang
+{
+  class getUObject
   {
-    uobjects.findUObject(call.message)
+    function fallback()
+    {
+      uobjects.findUObject(call.message)
+    };
+    var &fallback.autoEval = true;
   };
-  var &fallback.autoEval = true;
 };
 
 

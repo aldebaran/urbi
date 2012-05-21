@@ -1,0 +1,43 @@
+%% Copyright (C) 2012, Gostai S.A.S.
+%%
+%% This software is provided "as is" without warranty of any kind,
+%% either expressed or implied, including but not limited to the
+%% implied warranties of fitness for a particular purpose.
+%%
+%% See the LICENSE file for more information.
+
+\chapter{Migration from urbiscript 2 to urbiscript 3}
+
+This chapter describes the changes needed to make \us code written for
+\us 2 work in the \us 3 interpreter.
+
+\section{Automatic function evaluation without parenthesis}
+
+The most visible change from \us 2 to \us 3 is that functions are no
+longuer called when parenthesis are ommited. The function itself is
+returned instead.
+
+So one must add missing parenthesis around all function calls, or convert
+functions with no arguments to properties (\ref{sec:tut:getter}) where
+appropriate.
+
+To help you track function calls missing parenthesis, you can define
+the environment variable URBI\_REPORT\_MISSING\_PAREN.
+
+% We use urbiunchecked because env variable must be set at startup.
+\begin{urbiunchecked}
+function f() {1};
+[00004397] function () { 1 }
+f; // In urbiscript 2 this would have called f
+[  Urbi.Compatibility   ] Maybe missing parens at 2.1
+[00005092] function () { 1 }
+\end{urbiunchecked}
+
+This will produce false positives in the \us standard library that you can
+safely ignore, and false positives in \us 3 code.
+
+\section{getSlot and setSlot}
+
+Since \refObject{Slot}s are now exposed in urbiscript, the \us 2
+\refSlot[Slot]{getSlot} and \refSlot[Slot]{setSlot} have been renamed to
+\refSlot[Slot]{getSlotValue} and \refSlot[Slot]{setSlotValue}.

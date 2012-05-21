@@ -4931,7 +4931,7 @@ and it is thus deleted.
 
 \begin{urbiunchecked}
 {
-  var x = List.new; // A new list is allocated
+  var x = List.new(); // A new list is allocated
   x << 42;
 };
 // The list will be automatically freed, since there are no references to it left.
@@ -4952,8 +4952,8 @@ the object.
 
 \begin{urbiunchecked}
 // Create a reference cycle
-var A = Object.new;
-var A.B = Object.new; // A refers to B
+var A = Object.new();
+var A.B = Object.new(); // A refers to B
 var A.B.A = A; // B refers back to A
 
 removeLocalSlot("A"); // delete our last reference to A

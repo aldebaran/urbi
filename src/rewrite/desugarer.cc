@@ -283,12 +283,18 @@ namespace rewrite
        "    %exp:4\n"
        "  }\n"
        );
-
+    /* This is tricky.
+    * We want to allow multiple 'package foo', but we cannot just use hasSlot,
+    * since we allow 'package foo.bar'.
+    * So we try/catch, but throwing at early initialization stage is
+    * impossible, event if caught.
+    */
     PARAMETRIC_AST
       (desugarPackage,
         "do('package') {\n"
         "  try {\n"
-        "    do(this) {const var %lvalue:1 = Object.'class'(%exp:2, %exp:3)}\n"
+        "    if (!hasLocalSlot(%exp:6))\n"
+        "      do(this) {const var %lvalue:1 = Object.'class'(%exp:2, %exp:3)}\n"
         "  }\n"
         "  catch( var e) {}|\n"
         "  do (%lvalue:4)\n"
@@ -306,7 +312,9 @@ namespace rewrite
         % factory_->make_string(l, name)
         % factory_->make_list(l, maybe_recurse_collection(c->protos_get()))
         % what
-        % c->content_get();
+        % c->content_get()
+        % factory_->make_string(l, boost::lexical_cast<std::string>(*what))
+        ;
     }
     else
     {

@@ -433,14 +433,14 @@ ArithPair.new(1, 10) + ArithPair.new(2, 20) * ArithPair.new(3, 30);
 \section{Properties}
 \label{sec:tut:prop}
 
-Slots should be understood as names to values.  Several names may point to
-the same value (a phenomenon called \dfn{aliasing}).  Enriching values is
-easy: provide them with new slots.  Yet it is sometimes needed to define the
-behavior of the \emph{slot} rather than the property of the value.  This is
-the purpose of \dfn[property]{properties} in \us.
+Sometimes one needs to attach attributes to a variable, and not the value
+it contains, for instance to store whether the variable is constant or not.
+In \us we use objects named \refObject{Slot}s that stands before the actual
+value, and persist when a new value is assigned to the variable. Variables of
+the \refObject{Slot} are called \lstinline{properties}.
 
 \subsection{Features of Values}
-In following example, we attach some random property \lstinline|foo| to the
+In following example, we attach some random slot \lstinline|foo| to the
 value pointed to by the slot \lstinline|x|.
 
 \begin{urbiscript}
@@ -458,6 +458,11 @@ var y = x;
 [00000000] 123
 y.foo;
 [00000000] 42
+// The value in the slots x and y are the same object
+x===y;
+[00000000] true
+x.foo = 43 | y.foo;
+[000000001] 43
 \end{urbiscript}
 
 If \lstinline|x| is bound to a new object (e.g., 456), then the feature
@@ -476,7 +481,7 @@ answers to queries to \lstinline|foo|.
 
 \begin{urbiscript}
 y.foo;
-[00000000] 42
+[00000000] 43
 \end{urbiscript}
 
 \subsection{Features of Slots}
@@ -514,7 +519,79 @@ x->foo = 42;
 [00000000] 42
 \end{urbiscript}
 
+\section{Getters and setters}
+\label{sec:tut:getter}
 
+All the properties with a special meaning are described in \refObject{Slot}.
+Two of particular interest are \lstinline{oget} and \lstinline{oset}. They can
+be used to define a getter and a setter function, which are called each time
+the Slot is read or written to, respectively, thus implementing the
+\lstinline{property} semantics as defined in \Js. \us also borrowed the \Js
+shortcut syntax \lstinline{get foo} and \lstinline{set foo} to define setter
+and getter properties.
+
+Consider this example:
+
+\begin{urbiscript}
+class Vector
+{
+  var x=0;
+  var y=0;
+  function init(x=0, y=0)
+  {
+    this.x = x; // Here we use copy on write to create our own slot x.
+    var this.y = y; // Here we force local slot creation, both are valid.
+  };
+  // Return the L2 norm of the vector
+  get norm() // sugar for norm->oget = function()
+  {
+    (x*x+y*y).sqrt()
+  };
+  // Scale the vector so that its norm becomes newNorm
+  set norm(newNorm) // sugar for norm->oset = function(newNorm)
+  {
+    var oldNorm = norm;
+    x *= newNorm/oldNorm;
+    y *= newNorm/oldNorm;
+  };
+  function asString()
+  {
+    "<" + x + "," + y + ">"
+  };
+};
+[00000000] <0,0>
+var v = Vector.new(1, 1);
+[00016149] <1,1>
+v.norm;
+[00018036] 1.41421
+v.norm = 2.sqrt() | v;
+[00177142] <1,1>
+\end{urbiscript}
+
+\subsection{When to use properties?}
+
+The \lstinline{c#} documentation provides a very good explanation of when to use
+properties that we took the liberty to reproduce verbatim here:
+
+In most cases, properties represent data, and methods perform actions.
+Properties are accessed like fields, which makes them easier to use.
+If a method takes no arguments and returns an object's state information,
+or accepts a single argument to set some part of an object's state,
+it is a good candidate for becoming a property.
+
+Properties should behave as if they are fields; if the method cannot,
+it should not be changed to a property.
+Methods are preferable to properties in the following situations:
+
+\begin{itemize}
+\item The method performs a time-consuming operation. The method is perceivably slower than the time it takes to set or get a field's value.
+\item The method performs a conversion. Accessing a field does not return a converted version of the data it stores.
+\item The "Get" method has an observable side effect. Retrieving a field's value does not produce any side effects.
+\item The order of execution is important. Setting the value of a field does not rely on other operations having occurred.
+\item Calling the method twice in succession creates different results.
+The method is static but returns an object that can be changed by the caller. Retrieving a field's value does not allow the caller to change the data stored by the field.
+
+\end{itemize}
 %%% Local Variables:
 %%% coding: utf-8
 %%% mode: latex

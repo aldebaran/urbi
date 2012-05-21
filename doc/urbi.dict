@@ -259,6 +259,7 @@ Clément
 cmd
 CODESET
 colordiff
+ColoredPoint
 combAdd
 combDiv
 combMul
@@ -996,6 +997,7 @@ netcat
 netMask
 NetworkSetup
 newImage
+newNorm
 newScoped
 NewSingleton
 newVerbose
@@ -1031,6 +1033,7 @@ oget
 OgreMain
 OIS
 ok
+oldNorm
 Oleksy
 onAccess
 onboard
@@ -1079,6 +1082,7 @@ pcontroller
 pdf
 pdfcrop
 PDFLaTeX
+perceivably
 perl
 perlre
 PersonDetector
