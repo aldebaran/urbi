@@ -171,9 +171,12 @@ namespace urbi
         if (set_) // Re-fetch the value that might have been modified by set
           value = value_;
         object::objects_type args;
-        args << value << this;
+        args << sender << value << this;
         eval::call_apply(::kernel::runner(),
-                         sender, oset_, SYMBOL(oset), args);
+                         oset_.get(), SYMBOL(oset), args, 0,
+                         boost::optional< ::ast::loc>(),
+                          Primitive::CALL_IGNORE_EXTRA_ARGS
+                         );
       }
       if (!sender)
       {
