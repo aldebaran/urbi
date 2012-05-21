@@ -293,6 +293,7 @@ namespace rewrite
         "  catch( var e) {}|\n"
         "  do (%lvalue:4)\n"
         "  {\n"
+        "    import this.* |\n"
         "    %exp:5\n"
         "  }\n"
         "}\n"
