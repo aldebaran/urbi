@@ -3455,6 +3455,41 @@ for (var i : ["1", "continue", "2", "break", "3"])
 [00000705] *** finally: break
 \end{urbiscript}
 
+\subsubsection{Tags}
+
+The finally close cannot be interrupted from outside by \refObject{Tag}s:
+
+\begin{urbiscript}
+
+var tag = Tag.new()|;
+detach({
+  tag: {
+    try {
+      echo("starting");sleep(1s); echo("ending")
+    }
+    finally {
+      echo("finally one");
+      sleep(1s);
+      echo("finally two");
+    };
+    echo("out of finally");
+  }
+})|;
+[00000001] *** starting
+tag.stop();
+[00000001] *** finally one
+tag.stop();
+sleep(500ms);
+tag.stop();
+[00000001] *** finally two
+sleep(800ms);
+
+\end{urbiscript}
+
+No matter how many time you stop \lstinline{tag}, the finally-clause will not be
+interrupted. The stop request is still recorded though, so stopping occursrelea
+right at the end of the finally-close, which is what 'out of finally' is
+never displayed.
 
 \subsubsection{Exceptions}
 

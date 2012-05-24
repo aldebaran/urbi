@@ -575,9 +575,19 @@ namespace eval
     }
     catch (...)
     {
+      runner::Job& j = ::kernel::runner();
+      bool ipe = j.ignore_pending_exceptions_get();
+      FINALLY( ((runner::Job&, j))((bool, ipe)),
+        j.ignore_pending_exceptions_set(ipe));
+      j.ignore_pending_exceptions_set(true);
       ast(this_, f->finally_get().get());
       throw;
     }
+    runner::Job& j = ::kernel::runner();
+    bool ipe = j.ignore_pending_exceptions_get();
+    FINALLY( ((runner::Job&, j))((bool, ipe)),
+      j.ignore_pending_exceptions_set(ipe));
+    j.ignore_pending_exceptions_set(true);
     ast(this_, f->finally_get().get());
     return res;
   }
