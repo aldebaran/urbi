@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2011, Gostai S.A.S.
+ * Copyright (C) 2010-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -35,6 +35,7 @@ public:
     UBindFunction(Threaded, queueOp);
     UBindFunction(Threaded, getLastRead);
     UBindFunction(Threaded, startThread);
+    UBindFunction(Threaded, callCount);
     UBindThreadedFunction(Threaded, throwException, LOCK_NONE);
     UBindThreadedFunction(Threaded, lockNoneDelayOp, LOCK_NONE);
     UBindThreadedFunction(Threaded, lockInstanceDelayOp, LOCK_INSTANCE);
@@ -67,6 +68,7 @@ public:
   void lockModuleDelayOp(int id, int delay)          { delayOp(id, delay);}
 
   void delayOp(int id, int delay);
+  int callCount(int id);
   void terminate();
   UVar updated;
   UVar timerUpdated;
@@ -123,7 +125,7 @@ public:
   struct Context
   {
     Context(int id)
-    : hasOp(false), dead(false), id(id) {}
+    : hasOp(false), dead(false), id(id), callCount(0) {}
     std::list<Operation> ops;
     bool hasOp;
     libport::Lockable opLock;
@@ -133,6 +135,7 @@ public:
     pthread_t threadId;
     bool dead;
     int id;
+    unsigned callCount;
   };
   libport::Lockable opsLock;
   std::vector<Context*> ops;
@@ -255,6 +258,7 @@ bool Threaded::threadLoopBody(int id)
       if (ctx.ops.empty())
         ctx.hasOp = false;
     }
+    ++ctx.callCount;
     GD_FINFO_TRACE("[%s] Executing operation %s", id, op.op);
     switch(op.op)
     {
@@ -483,4 +487,12 @@ void Threaded::onTimer()
 int Threaded::dummy()
 {
   return 42;
+}
+
+int Threaded::callCount(int tid)
+{
+  if (tid >= ops.size())
+    return -1;
+  else
+    return ops[tid]->callCount;
 }
