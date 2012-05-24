@@ -17,6 +17,25 @@ user-visible changes in \usdk releases.
 \section{\usdk 3.0}
 \release{2.8}{2011-XX-YY}
 
+This release includes major changes and incompatibilities with urbi 2. A transition guide
+can be found in \ref{sec:guide:k2tok3}.
+
+\subsection{Major changes}
+\begin{itemize}
+\item Function evaluation no longer occurs if parenthesis are omitted.
+\item Proper properties (slot with an associated getter and setter functions) have
+been implemented: \ref{sec:tut:getter}.
+\item \refObject{Slot}s, the objects that holds the properties are now
+accessible in urbiscript through \refSlot[Slot]{getSlot} and \refSlot[Slot]{setSlot}.
+The old \refSlot[Slot]{getSlot} and \refSlot[Slot]{setSlot} functions are renamed to
+\refSlot[Slot]{getSlotValue} and \refSlot[Slot]{setSlotValue}.
+Properties are the slots of the slot object, so \lstinline{x->foo} is the same thing
+as \lstinline{getSlot("x").foo}, or \lstinline{&x.foo}.
+\item All the \us and C++ notification mechanisms (at, UNotifyChange, changed event)
+were unified in an unique system using \refObject{Subscription}s on \refObject{Event}s.
+\item \refObject{Vector} and \refObject{Matrix} provide support for
+  efficient linear algebra operations.
+\end{itemize}
 \subsection{Fixes}
 \begin{itemize}
 \item The indentation of the Emacs \us mode is fixed.
@@ -353,9 +372,6 @@ Math.round(1.2) == 1.2.round();
 
 \item \refSlot[System]{getLocale} and \refSlot[System]{setLocale} allow to
   change the locale settings.
-
-\item \refObject{Vector} and \refObject{Matrix} provide support for
-  efficient linear algebra operations.
 \end{itemize}
 
 \subsubsection{Miscellaneous}
