@@ -4787,7 +4787,8 @@ x = 3;
 
 The \lstindexMain{whenever} construct really behaves like a never-ending
 \lstinline|loop if| construct.  It also works on events and Boolean
-expressions, and triggers each time the condition \emph{becomes} verified.
+expressions. \lstindexMain{whenever} will execute its statement in a loop
+while the condition stays true.
 
 \begin{urbiunchecked}
 whenever (\var{condition})
@@ -4795,8 +4796,8 @@ whenever (\var{condition})
 \end{urbiunchecked}
 
 \lstIndexTwo{else}{whenever}
-It supports an optional \lstinline{else} clause, which is run whenever
-the condition changes ``from true to false''.
+It supports an optional \lstinline{else} clause, which is run in a loop
+while the coniditon is false.
 
 \begin{urbiunchecked}
 whenever (\var{condition})
@@ -4896,14 +4897,14 @@ t:
   whenever (x % 2)
   {
     if (!count)
-      echo("x is now odd (%s)" % x);
-    count++;
+      echo("x is now odd (%s)" % x)|
+    count++
   }
   else
   {
     if (!count)
-      echo("x is now even (%s)" % x);
-    count++;
+      echo("x is now even (%s)" % x)|
+    count++
   };
 
 t:
@@ -4921,6 +4922,65 @@ waituntil(x == 4);
 t.stop();
 \end{urbiscript}
 
+
+At all times, the \lstinline{whenever} is evaluating either the main
+clause or the else clause, no parallel evaluation of the clauses will occur.
+The clauses will not be interupted if the condition switches state. The
+\lstinline{whenever} will instead wait for the end of the evaluation:
+
+\begin{urbiscript}
+var y = 0|;
+var startTime = time()|;
+function roundTime(t) { (t*2).round() / 2}|; // Round at 500ms precision
+function deltaTime() {roundTime(time()-startTime)}|;
+y=1|;
+t:whenever(y==1)
+{
+  echo("y=1 at %s s" % deltaTime());
+  sleep(1s);
+}
+else
+{
+  echo("y=0 at %s s" % deltaTime());
+  sleep(1s);
+};
+[00000001] *** y=1 at 0 s
+[00000001] *** y=1 at 1 s
+sleep(1500ms);
+y=0|;
+[00000001] *** y=0 at 2 s
+[00000001] *** y=0 at 3 s
+sleep(2000ms);
+t.stop();
+\end{urbiscript}
+
+Two special variables are available inside a \lstinline{whenever}:
+\lstinline{\$wheneverOn} and \lstinline{\$wheneverOff}. They are
+\refObject{Tag}s that are stopped when the condition triggers from true to false
+and from false to true respectively. They can be used to interrupt your clauses:
+
+\begin{urbiscript}
+startTime = time()|;
+y=1|;
+t:whenever(y==1)
+{
+  echo("y=1 at %s s" % deltaTime());
+  '$wheneverOn':sleep(1s);
+}
+else
+{
+  echo("y=0 at %s s" % deltaTime());
+  '$wheneverOff': sleep(1s);
+};
+[00000001] *** y=1 at 0 s
+[00000001] *** y=1 at 1 s
+sleep(1500ms);
+y=0|;
+[00000001] *** y=0 at 1.5 s
+[00000001] *** y=0 at 2.5 s
+sleep(1500ms);
+t.stop();
+\end{urbiscript}
 
 
 \section{Trajectories}

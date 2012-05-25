@@ -1419,24 +1419,36 @@ namespace ast
   }
 
   rExp
-  Factory::make_whenever(const location& loc,
+  Factory::make_whenever(const location&,
                          rExp cond,
                          rExp body, rExp else_stmt,
                          rExp duration) // const
   {
     // FIXME: Be smarter on empty else_stmt.
+    PARAMETRIC_AST
+    (emptyElse,
+      "'$wheneverOff': sleep()"
+    );
     if (!else_stmt)
-      else_stmt = make_scope(loc);
+      else_stmt = exp(emptyElse); //else_stmt = make_scope(loc);
     if (duration)
     {
       PARAMETRIC_AST
         (desugar,
          "detach({"
+         "  var '$wheneverOn' = Tag.new()|"
+         "  var '$wheneverOff' = Tag.new()|"
          "  var '$status' = false|"
          "  at sync (%exp:1 ~ %exp:2)"
-         "    '$status' = true"
+         "  {"
+         "    '$status' = true|"
+         "     '$wheneverOff'.stop()"
+         "  }"
          "  onleave"
-         "    '$status' = false |"
+         "  {"
+         "    '$status' = false|"
+         "    '$wheneverOn'.stop()"
+         "  }|"
          "  loop"
          "  {"
          "    if ('$status')"
@@ -1454,10 +1466,18 @@ namespace ast
         (desugar,
          "detach({"
          "  var '$status' = false|"
+         "  var '$wheneverOn' = Tag.new()|"
+         "  var '$wheneverOff' = Tag.new()|"
          "  at sync (%exp:1)"
-         "    '$status' = true"
+         "  {"
+         "    '$status' = true|"
+         "     '$wheneverOff'.stop()"
+         "  }"
          "  onleave"
-         "    '$status' = false |"
+         "  {"
+         "    '$status' = false|"
+         "    '$wheneverOn'.stop()"
+         "  }|"
          "  loop"
          "  {"
          "    if ('$status')"
