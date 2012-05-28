@@ -623,7 +623,17 @@ namespace kernel
           GD_FINFO_TRACE("Fast async jobs processing %s operations",
                          jobs.size());
           foreach(boost::function0<void>& j, jobs)
-            j();
+          {
+            // Prevent an async task from stopping this runner::Job.
+            try
+            {
+              j();
+            }
+            catch(const std::exception& e)
+            {
+              GD_FWARN("Exception in async job: %s", e.what());
+            }
+          }
         }
         GD_INFO_TRACE("Fast async job sleeping");
         fast_async_jobs_tag_->as<object::Tag>()->freeze();
