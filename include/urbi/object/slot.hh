@@ -169,6 +169,8 @@ namespace urbi
       ATTRIBUTE_RW(rObject, value);
       // aka 'sensor' value, what we expose to the external world
       ATTRIBUTE_RW(rObject, output_value);
+      // Constrain value to this type if set
+      ATTRIBUTE_RW(rObject, type);
       ATTRIBUTE_RW(ufloat, timestamp);
       ATTRIBUTE_RW(ufloat, rangemax);
       ATTRIBUTE_RW(ufloat, rangemin);

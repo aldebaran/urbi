@@ -1010,6 +1010,7 @@ namespace ast
         LocalDeclaration* dec =
           new LocalDeclaration(loc, var.name_get(), var.def_get());
         dec->list_set(var.list_get());
+        dec->type_set(var.type_get());
         res->push_back(dec);
       }
       delete formals;

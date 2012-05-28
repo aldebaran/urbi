@@ -49,6 +49,8 @@ namespace urbi
       bind("oget", &Slot::oget_get, &Slot::oget_set);
       BIND(constant, constant_);
       bind("rtp", &Slot::rtp_get, &Slot::rtp_set);
+      slot_remove(SYMBOL(type));
+      BIND(type, type_);
       BIND(get_get); // debug
       BIND(set_get);
       BIND(oget_get); // debug
@@ -133,6 +135,11 @@ namespace urbi
     {
       GD_FINFO_DUMP("Slot::set, slot %s, sender %s, oset %s",
         this, sender, !!oset_);
+      if (type_)
+      {
+        if (!value->call(SYMBOL(isA), type_)->as_bool())
+          runner::raise_type_error(value/*->call(SYMBOL(type))?*/, type_);
+      }
       timestamp_ = timestamp / 1000000.0;
       has_uvalue_ = false;
       // Apply rangemax/rangemin for float and encapsulated float
@@ -253,6 +260,7 @@ namespace urbi
     {
       has_uvalue_ = false;
       oget_ = oset_ = get_ = set_ = 0;
+      type_ = 0;
       rSlot model;
       if (fromModel)
         model = protos_get_first()->as<Slot>();

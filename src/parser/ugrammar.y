@@ -1486,10 +1486,21 @@ identifiers:
 | identifiers "identifier" { std::swap($$, $1); $$.push_back($2); }
 ;
 
+%type <::ast::rExp> typespec;
+typespec:
+  ":" exp { $$ = $2;}
+;
+
+%type <::ast::rExp> typespec.opt;
+typespec.opt:
+  /* empty */ { $$=0;}
+| typespec { std::swap($$, $1);}
+;
+
 %type <::ast::Formal> formal;
 formal:
-  var.opt "identifier"          { $$ = ::ast::Formal($2, 0);  }
-| var.opt "identifier" "=" exp  { $$ = ::ast::Formal($2, $4); }
+ var.opt "identifier" typespec.opt  { $$ = ::ast::Formal($2, 0, $3);  }
+| var.opt "identifier" "=" exp typespec.opt  { $$ = ::ast::Formal($2, $4, $5); }
 | var.opt "identifier" "[" "]"  { $$ = ::ast::Formal($2, true); }
 ;
 

@@ -475,6 +475,22 @@ sleep(10s);
 [00000006] *** Motor position is 5
 \end{urbiscript}
 
+\item[type]%
+  If set, only values inheriting from \lstinline{type} will be accepted
+  into the slot.
+
+\begin{urbiscript}
+var h = 0;
+[00000001] 0
+h->type = Float|;
+h = 1;
+[00000001] 1
+h = "hello";
+[00000002:error] !!! unexpected "hello", expected a Float
+h;
+[00000001] 1
+
+\end{urbiscript}
 
 \item[value]%
   The underlying value.

@@ -1702,6 +1702,65 @@ f(
 [00000000] *** foobar
 \end{urbiscript}
 
+\subsubsection{Default value}
+
+Arguments may have a default value specified at the declaration point, and
+are thus optional when calling the function:
+
+\begin{urbiscript}
+f = function(x, y=10, z=100) { x+y+z}|;
+f();
+[00000001:error] !!! f: expected between 1 and 3 arguments, given 0
+f(2);
+[00000002] 112
+f(2, 30);
+[00000003] 132
+f(2, 30, 400);
+[00000004] 432
+\end{urbiscript}
+
+\subsubsection{Argument typing}
+\label{sec:lang:argtype}
+Arguments can be constrained to a given type using the \lstinline{argname: type}
+syntax. Urbi will check that the argument inherits from \lstinline{type} and
+throw an error if it is not the case.
+
+\begin{urbiscript}
+f = function(x: Float) {x}|;
+f(1);
+[00000001] 1
+f("foo");
+[00000002:error] !!! f: argument 1: unexpected "foo", expected a Float
+
+f = function(x: 1) {x}|;
+f(1);
+[00000002:error] !!! f: argument 1: unexpected 1, expected a Float
+// It did not work because 1 does not inherit from "1",
+// they are two different objects both inheriting from Float
+
+\end{urbiscript}
+
+Argument typing can be combined with default values, but the default value
+must come before the type:
+
+\begin{urbiscript}
+f = function(x=1 : Float) {x}|;
+f(2);
+[00000001] 2
+f();
+[00000002] 1
+f("foo");
+[00000002:error] !!! f: argument 1: unexpected "foo", expected a Float
+
+// This will not do what you expect...
+f = function(x: Float = 1) {x}|;
+// ... but you will find out fast:
+f();
+[00232426:error] !!! f: expected 1 argument, given 0
+f(1);
+[00235466:error] !!! f: argument 1: unexpected 1, expected a Float
+
+\end{urbiscript}
 
 \subsection{Return value}
 \label{sec:lang:rv}
@@ -3487,7 +3546,7 @@ sleep(800ms);
 \end{urbiscript}
 
 No matter how many time you stop \lstinline{tag}, the finally-clause will not be
-interrupted. The stop request is still recorded though, so stopping occursrelea
+interrupted. The stop request is still recorded though, so stopping occurs
 right at the end of the finally-close, which is what 'out of finally' is
 never displayed.
 
@@ -4797,7 +4856,7 @@ whenever (\var{condition})
 
 \lstIndexTwo{else}{whenever}
 It supports an optional \lstinline{else} clause, which is run in a loop
-while the coniditon is false.
+while the condition is false.
 
 \begin{urbiunchecked}
 whenever (\var{condition})
@@ -4925,7 +4984,7 @@ t.stop();
 
 At all times, the \lstinline{whenever} is evaluating either the main
 clause or the else clause, no parallel evaluation of the clauses will occur.
-The clauses will not be interupted if the condition switches state. The
+The clauses will not be interrupted if the condition switches state. The
 \lstinline{whenever} will instead wait for the end of the evaluation:
 
 \begin{urbiscript}

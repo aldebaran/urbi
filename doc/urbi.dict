@@ -350,6 +350,7 @@ defaultXSpeed
 defaultYawSpeed
 defaultYSpeed
 defaultZSpeed
+deltaTime
 Demaille
 denoise
 Denoiser
@@ -1255,6 +1256,7 @@ rotateLeft
 rotateRight
 RotationalMotor
 RotationalSpeedMotor
+roundTime
 rowAdd
 rowDiv
 rowMul
@@ -1434,6 +1436,7 @@ ss
 ssid
 StackFrame
 StackFrames
+startTime
 startTracker
 startup
 startVideoRecord
@@ -1751,6 +1754,8 @@ wheelDistance
 wheelL
 wheelR
 wheelRadius
+wheneverOff
+wheneverOn
 whilePipe
 WiFi
 wifi

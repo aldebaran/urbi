@@ -454,6 +454,7 @@ namespace eval
       object::objects_type::const_iterator effective = args.begin();
       // skip target
       ++effective;
+      unsigned pos = 0;
       // Bind
       foreach (::ast::rLocalDeclaration formal, formals)
         if (effective != args.end())
@@ -468,8 +469,21 @@ namespace eval
             job.state.def_arg(formal, arg);
           }
           else
+          {
+            ++pos;
+            // Validate type if specified
+            if (formal->type_get())
+            {
+              rObject oType = eval::ast(job, formal->type_get());
+              rObject res = (*effective)->call(SYMBOL(isA), oType);
+              if (!res->as_bool())
+              {
+                runner::raise_argument_type_error(pos, *effective, oType);
+              }
+            }
             // Classical argument.
             job.state.def_arg(formal, *(effective++));
+          }
         else
           if (formal->list_get())
             // Empty list argument.

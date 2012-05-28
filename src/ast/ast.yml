@@ -1089,6 +1089,11 @@ LocalDeclaration:
         type: bool
         access: rW
         init: "false"
+    - type:
+        desc: Force variable to this type.
+        type: rExp
+        access: rWw
+        init: '0'
   printer:
     - '{
          if (n->constant_get())

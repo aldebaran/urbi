@@ -24,9 +24,10 @@ namespace ast
     , list_(false)
   {}
 
-  Formal::Formal(libport::Symbol name, rExp def)
+  Formal::Formal(libport::Symbol name, rExp def, rExp type)
     : name_(name)
     , def_(def)
+    , type_(type)
     , list_(false)
   {}
 
@@ -44,6 +45,8 @@ namespace ast
       o << "[]";
     if (f.def_get())
       o << " = " << *f.def_get();
+    if (f.type_get())
+      o << " : " << *f.type_get();
     return o;
   }
 

@@ -109,8 +109,9 @@ namespace urbi
 
       // type.
       static libport::Symbol type("type");
-      res->slot_set_value(type,
-                     new String(name), true);
+      if (!res->local_slot_get(type))
+        res->slot_set_value(type,
+                       new String(name), true);
       // clone.
       static libport::Symbol clone("clone");
       res->slot_set_value(clone,

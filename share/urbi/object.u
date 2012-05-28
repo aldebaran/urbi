@@ -200,3 +200,12 @@ do (Object)
   protos->oset = function(v, s) { setProtos(v)}; // getSlotValue("setProtos");
   &protos.oget = function(u) {&protos.value.apply([this])};
 };
+
+
+do (Slot)
+{
+  function asString()
+  {
+    "Slot_" + uid
+  }
+}|;
