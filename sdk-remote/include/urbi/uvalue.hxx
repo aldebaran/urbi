@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2011, Gostai S.A.S.
+ * Copyright (C) 2009-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -340,6 +340,7 @@ namespace urbi
   {
     v = UBinary();
     UBinary& b = *v.binary;
+    b.type = BINARY_UNKNOWN;
     b.common.size = sizeof(T)*d.size();
     b.common.data = malloc(b.common.size);
     b.message = libport::format("packed %s %s",
