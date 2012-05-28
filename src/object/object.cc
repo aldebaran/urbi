@@ -154,7 +154,7 @@ namespace urbi
     static int lookup_id = 0;
 
     inline Object::location_type
-    Object::slot_locate_(key_type k, bool fallback) const
+    Object::slot_locate_(key_type k) const
     {
       if (lookup_id_ == lookup_id)
         return location_type(0, 0);
@@ -163,7 +163,7 @@ namespace urbi
         return location_type(const_cast<Object*>(this), slot);
       if (proto_)
       {
-        location_type rec = proto_->slot_locate_(k, fallback);
+        location_type rec = proto_->slot_locate_(k);
         if (rec.first)
           return rec;
       }
@@ -171,15 +171,11 @@ namespace urbi
       {
         foreach (const rObject& proto, *protos_)
         {
-          location_type rec = proto->slot_locate_(k, fallback);
+          location_type rec = proto->slot_locate_(k);
           if (rec.first)
             return rec;
         }
       }
-
-      if (fallback)
-        if (rObject slot = local_slot_get(SYMBOL(fallback)))
-          return location_type(const_cast<Object*>(this), slot);
       return location_type(0, 0);
     }
 
@@ -214,7 +210,13 @@ namespace urbi
                         bool fallback) const
     {
       ++lookup_id;
-      return slot_locate_(k, fallback);
+      Object::location_type res = slot_locate_(k);
+      if (!res.first && fallback)
+      {
+        ++lookup_id;
+        res = slot_locate_(SYMBOL(fallback));
+      }
+      return res;
     }
 
     Object::location_type

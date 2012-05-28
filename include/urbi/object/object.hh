@@ -417,7 +417,7 @@ namespace urbi
       void bindvar_(const std::string& name, T (Self::*));
 
 
-      location_type slot_locate_(key_type k, bool fallback) const;
+      location_type slot_locate_(key_type k) const;
 
       /// Our proto as long as we only have one, ie protos_ = 0.
       rObject proto_;
