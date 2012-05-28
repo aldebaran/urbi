@@ -33,8 +33,7 @@ k2-check:
 
 # UObject tests that we fail because features are not implemented.
 XFAIL_TESTS +=					\
-  2.x/derive.chk				\
-  2.x/uob/group.chk
+  2.x/derive.chk
 
 XFAIL_TESTS +=					\
   uob/java/all/transmit-object.chk
