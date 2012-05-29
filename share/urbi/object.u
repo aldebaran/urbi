@@ -23,7 +23,10 @@ do (Object)
 
   function 'class'(var name, var protos = [])
   {
-    var res = Object.clone() |
+    var src = Object|
+    if (!protos.empty)
+      src = protos.front()|
+    var res = src.clone() |
     if (protos)
       res.setProtos(protos) |
     var res.type = name |
