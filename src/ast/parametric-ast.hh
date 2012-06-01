@@ -167,7 +167,7 @@ namespace ast
   `--------------------------*/
 
   /// Convenience wrapper around ParameterizedAst::result<Exp>.
-  rExp exp (ParameterizedAst& t);
+  rExp exp (ParameterizedAst& t, const loc& location=loc());
 
   /// Dump \a a on \a o.
   /// For debugging.

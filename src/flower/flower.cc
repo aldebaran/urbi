@@ -48,7 +48,7 @@ namespace flower
     has_break_ = true;
 
     PARAMETRIC_AST(res, "'$loopBreakTag'.stop()");
-    result_ = exp(res);
+    result_ = exp(res, b->location_get());
     result_->original_set(b);
   }
 
@@ -61,7 +61,7 @@ namespace flower
     has_continue_ = true;
 
     PARAMETRIC_AST(res, "'$loopContinueTag'.stop()");
-    result_ = exp(res);
+    result_ = exp(res, c->location_get());
     result_->original_set(c);
   }
 
@@ -73,7 +73,7 @@ namespace flower
       "{var '$loopBreakTag' = Tag.newFlowControl(\"loopBreakTag\") |"
       "'$loopBreakTag': %exp:1}");
 
-    return exp(brk % e);
+    return exp(brk % e, e->location_get());
   }
 
   static inline
@@ -84,7 +84,7 @@ namespace flower
       "{var '$loopContinueTag' = Tag.newFlowControl(\"loopContinueTag\") |"
       "'$loopContinueTag': %exp:1}");
 
-    return exp(cont % e);
+    return exp(cont % e, e->location_get());
   }
 
   void
@@ -158,7 +158,8 @@ namespace flower
       % symbol(code->flavor_get())
       % c;
 
-    result_ = has_break_ ? brk(exp(each)) : exp(each);
+    result_ = has_break_ ?
+      brk(exp(each, code->location_get())) : exp(each, code->location_get());
     result_->original_set(code);
   }
 

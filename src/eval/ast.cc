@@ -76,7 +76,7 @@ namespace eval
 
     typedef std::vector<libport::Symbol> tag_chain_type;
 
-    object::rTag eval_tag(ast::rConstExp e);
+    object::rObject eval_tag(ast::rConstExp e);
 
 # define VISIT(Node)                            \
     LIBPORT_SPEED_ALWAYS_INLINE rObject         \
@@ -963,7 +963,7 @@ namespace eval
   }
 
   LIBPORT_SPEED_ALWAYS_INLINE
-  object::rTag
+  object::rObject
   Visitor::eval_tag(ast::rConstExp e)
   {
     rObject res;
@@ -996,7 +996,8 @@ namespace eval
 	    res = t;
 	    lang->slot_set_value(c->name_get(), res);
     }
-    return object::type_check<object::Tag>(res);
+    return res;
+      //object::type_check<object::Tag>(res);
   }
 
 
@@ -1013,8 +1014,26 @@ namespace eval
   LIBPORT_SPEED_ALWAYS_INLINE rObject
   Visitor::visit(const ast::TaggedStmt* t)
   {
-    object::rTag tag = eval_tag(t->tag_get());
+    object::rObject maybetag = eval_tag(t->tag_get());
+    if (object::rString str = maybetag->as<object::String>())
+    {
+      // This is not a tag, just use asString to add a backtrace entry
+      std::string s(str->call(SYMBOL(asString))->as<object::String>()->value_get());
+      s = '[' + s + ']';
+      runner::Job& job = ::kernel::server().getCurrentRunner();
+      job.state.call_stack_get() << std::make_pair(s, t->location_get());
+      FINALLY((( runner::Job&, job)),
+        job.state.call_stack_get().pop_back());
+      rObject res = ast(this_, t->exp_get().get());
+      return res;
+    }
+    rTag tag = maybetag->as<Tag>();
+    if (!tag)
+    {
+      runner::raise_type_error(maybetag, Tag::proto, t->location_get());
+    }
     size_t result_depth = this_.state.tag_stack_size();
+
     std::vector<object::rTag> applied;
     try
     {

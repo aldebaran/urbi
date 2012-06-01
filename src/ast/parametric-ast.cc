@@ -173,9 +173,22 @@ namespace ast
   `--------------------------*/
 
   rExp
-  exp(ParameterizedAst& a)
+  exp(ParameterizedAst& a, const loc& location)
   {
-    return a.result<Exp>();
+    rExp res = a.result<Exp>();
+    if (location.begin.filename
+      || location.begin.line >1 || location.begin.column>1
+      || location.end.line>1 || location.end.column>1)
+    {
+      // Wrap the result into a TaggedStmt with the location
+      rTaggedStmt ts(
+        new ast::TaggedStmt(location,
+          new ast::String(location, ""),
+          res));
+      return ts;
+    }
+    else
+      return res;
   }
 
   std::ostream&

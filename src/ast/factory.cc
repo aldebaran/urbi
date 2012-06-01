@@ -614,7 +614,7 @@ namespace ast
 
 
   rExp
-  Factory::make_every(const location&,
+  Factory::make_every(const location& loc,
                       const location& flavor_loc, flavor_type flavor,
                       rExp test, rExp body) // const
   {
@@ -636,7 +636,7 @@ namespace ast
     return exp((FLAVOR_IS(comma) ? comma
                 : FLAVOR_IS(pipe) ? pipe
                 : FLAVOR_ERROR("every"))
-               % test % body);
+               % test % body, loc);
   }
 
 
