@@ -40,6 +40,7 @@ namespace urbi
     {
       BIND(source);
       BIND(target);
+      BIND(instances, instances_get);
       init_();
     }
 

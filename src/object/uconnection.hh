@@ -25,7 +25,7 @@ namespace urbi
      *
      *  See uobject.u for the urbi part.
      */
-    class UConnection: public Subscription
+    class UConnection: public Subscription, public libport::InstanceTracker<UConnection>
     {
       URBI_CXX_OBJECT(UConnection, Subscription);
     public:

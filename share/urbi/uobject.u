@@ -628,20 +628,8 @@ do (UConnection)
 
   /// Return the list of all connections in the system
   function getAll()
-  { // FIXME: instancetracker
-    var res = []|
-    for|(var i: uobjects.localSlotNames)
-    {
-      if (!getSlotValue(i).isVoid)
-      {
-        var o = getSlotValue(i)|
-        if (o.isA(UObject))
-          for|(var j: o.localSlotNames)
-            if (!o.getSlot(j).isVoid && o.getSlot(j).isA(UVar))
-              res += o.getSlot(j).List.new()
-      }
-    }|
-    res
+  {
+    instances() - [UConnection]
   };
 };
 
