@@ -133,7 +133,7 @@ namespace urbi
               else if (evt.mask & IN_IGNORED)
                 ;
               else
-                pabort("unrecognized inotify event");
+                GD_FWARN("unrecognized inotify event %s", evt.mask);
             }
 
 
