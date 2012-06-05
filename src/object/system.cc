@@ -39,12 +39,14 @@
 #include <urbi/object/path.hh>
 #include <object/profile.hh>
 #include <urbi/object/symbols.hh>
+#include <urbi/kernel/uconnection.hh>
 #include <object/system.hh>
 #include <urbi/object/tag.hh>
 #include <urbi/object/job.hh>
 #include <parser/transform.hh>
 #include <runner/exception.hh>
 #include <runner/job.hh>
+#include <runner/shell.hh>
 #include <runner/state.hh>
 #include <urbi/runner/raise.hh>
 
@@ -645,9 +647,24 @@ namespace urbi
     static void
     system_poll()
     {
+
       dead_jobs_.clear();
       dead_jobs_ = kernel::scheduler().terminated_jobs_get();
-      // let refcounting do the job.
+      foreach (const sched::rJob& j, dead_jobs_)
+      {
+        runner::rJob rj = j.unsafe_cast< ::runner::Job>();
+        if (!j->parent_get() && rj)
+        { // Copy run statistics to owning shell.
+          // We ignore jobs with a parent because their stats was copied to
+          // said parent.
+          kernel::UConnection* uc = &rj->state.lobby_get()->connection_get();
+          if (!uc)
+            uc = &kernel::urbiserver->ghost_connection_get();
+          sched::rJob shell = uc->shell_get();
+          j->copy_stats_to(shell);
+        }
+      }
+      // let refcounting do the job on next run.
       kernel::scheduler().terminated_jobs_clear();
       libport::utime_t select_time = 0;
       // 0-delay in fast mode
