@@ -570,7 +570,10 @@ do (UConnection)
   };
   function niceName(varname)
   {
-    varname.asString()
+    if (varname.initialName)
+      varname.ownerName + "." + varname.initialName
+    else
+      varname.asString()
   };
 
   function asString()
@@ -616,12 +619,15 @@ do (UConnection)
     start = time
   };
 
-  function meanCallTime()
+  get meanCallTime()
   {
-    totalCallTime / callCount
+    if (callCount > 0)
+      totalCallTime / callCount
+    else
+      0
   };
 
-  function fireRate()
+  get fireRate()
   {
     callCount / (time-start)
   };
