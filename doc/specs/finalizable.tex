@@ -66,18 +66,9 @@ Because of specific constraints of Finalizable, you cannot change the
 prototype of an object to make it ``finalizable'': it \emph{must} be an
 instance of Finalizable from its inception.
 
-There, instead of these two invalid constructs,
+There, instead of this invalid constructs,
 
 \begin{urbiscript}
-class o1 : Finalizable.new()
-{
-  function finalize()
-  {
-    echo("Ouch");
-  }
-}|;
-[00000008:error] !!! apply: cannot inherit from a Finalizable without being one
-
 class o2
 {
   protos = [Finalizable];
@@ -92,6 +83,14 @@ class o2
 write:
 
 \begin{urbiscript}
+class o1 : Finalizable
+{
+  function finalize()
+  {
+    echo("Ouch");
+  }
+}|;
+// Or
 var o3 =
   do (Finalizable.new())
   {
