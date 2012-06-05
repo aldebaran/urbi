@@ -636,7 +636,11 @@ namespace urbi
       return profile;
     }
 
-    static sched::jobs_type dead_jobs_;
+    /* If dead_jobs is destroyed in atexit(), it might dereference some jobs
+    * which will call the coroutine destruction hook, which might already
+    * be deallocated.
+    */
+    static sched::jobs_type& dead_jobs_ = *new sched::jobs_type();
 
     static void
     system_poll()
