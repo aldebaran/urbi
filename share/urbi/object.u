@@ -27,6 +27,11 @@ do (Object)
     if (!protos.empty)
       src = protos.front()|
     var res = src.clone() |
+    if (src === res)
+    {
+      // Damm this is a singleton
+      res = Object.new()
+    }|
     if (protos)
       res.setProtos(protos) |
     var res.type = name |
