@@ -31,6 +31,7 @@ The old \refSlot[Slot]{getSlot} and \refSlot[Slot]{setSlot} functions are rename
 \refSlot[Slot]{getSlotValue} and \refSlot[Slot]{setSlotValue}.
 Properties are the slots of the slot object, so \lstinline{x->foo} is the same thing
 as \lstinline{getSlot("x").foo}, or \lstinline{&x.foo}.
+\item Code can be organized into packages that can be imported: \ref{sec:tut:import}.
 \item All the \us and C++ notification mechanisms (at, UNotifyChange, changed event)
 were unified in an unique system using \refObject{Subscription}s on \refObject{Event}s.
 \item \refObject{Vector} and \refObject{Matrix} provide support for
