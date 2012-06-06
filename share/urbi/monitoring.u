@@ -1,0 +1,91 @@
+/*
+ * Copyright (C) 2012, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+/* Monitoring functions to track CPU usagy by displaying statistics on
+ * UObject, UConnection an Job.
+ */
+package monitoring
+{
+
+  /* Display UObject statistics, sorted by CPU usage.
+  */
+  function sampleUObjects(samplingTime)
+  {
+    enableStats(1);
+    clearStats();
+    sleep(d);
+    var s = getStats();
+    s = s.asList().sort(function(a, b) { a[1][0]*a[1][3] > b[1][0]*b[1][3]});
+    for|(var i in s)
+    {
+      var comps = i[0].asString().split(".");
+      if (hasSlot(comps[0]))
+        comps[0] = getSlot(comps[0]).asString();
+      if (comps.size < 2)
+        comps.insertBack("")
+      else
+      {
+        var c2 = comps[1].split(" --> ");
+        if (c2.size == 2)
+        {
+          if (hasSlot(c2[1]))
+            c2[1] = getSlot(c2[1].asString);
+          comps[1] = c2[0] + " --> " + c2[1];
+        }
+      };
+      echo(" %s %% %s Hz  %s.%s  %s" %
+        [(i[1][0] * i[1][3] / d)/10000, i[1][3]/d,  comps[0], comps[1],  i[1]])
+    };
+  };
+
+  /* Display UConnection statistics, sorted by CPU usage.
+  */
+  function sampleConnections(samplingTime)
+  {
+    resetConnectionStats();
+    sleep(samplingTime);
+    var res = UConnection.getAll().map(
+      function(x) { [x.asString(), x.displayStats(), x.totalCallTime]});
+    res = res.sort(function(x, y) {x[2] > y[2]});
+    for|(var i in res)
+      echo("%s %% %s %s" %
+        [i[2]* 100 /samplingTime, i[0],  i[1]]);
+  };
+
+  /* Display Job statistics, sorted by CPU usage.
+  */
+  function sampleJobs(samplingTime)
+  {
+    for|(var j in Job.jobs)
+      j.resetStats();
+    sleep(samplingTime);
+    var stats = Job.jobs.map(function(x) {
+        var t = x.stats["Cycles"] * x.stats["CyclesMean"];
+        if (x.stats["TerminatedChildrenCycles"])
+          t += x.stats["TerminatedChildrenCyclesMean"]
+               * x.stats["TerminatedChildrenCycles"] |
+        [x, x.stats, t]
+    })|
+    stats = stats.sort(function(x, y) { x[2] > y[2]})|
+    for|(var s: stats)
+    {
+      var bt =  s[0].backtrace()|
+      var bentry = { if (bt.empty) "" else bt[0]}|
+      echo("%s %% %s %s %s %s %s" %  [
+        s[2]* 100 / samplingTime,
+        s[0].asString(),
+        s[0].lobby(),
+        ["CyclesMean", "CyclesMin", "CyclesMax", "Cycles"].map(function(x) {s[1][x]}),
+        ["TerminatedChildrenCyclesMean", "TerminatedChildrenCyclesMin", "TerminatedChildrenCyclesMax", "TerminatedChildrenCycles"].map(function(x) {s[1][x]}),
+       bentry])
+    }
+  };
+};
+
