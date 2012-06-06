@@ -39,6 +39,8 @@ namespace boostfs = boost::filesystem;
 
 using libport::BlockLock;
 
+GD_CATEGORY(Urbi.Directory);
+
 namespace urbi
 {
   namespace object
