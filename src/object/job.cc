@@ -51,6 +51,7 @@ namespace urbi
       : value_(0)
     {
       BIND(DOLLAR_backtrace, backtrace);
+      BINDG(lobby, lobby_get);
       BINDG(current);
       BINDG(jobs);
       BIND(resetStats);
@@ -66,6 +67,12 @@ namespace urbi
     Job::value_get() const
     {
       return value_;
+    }
+
+    rObject
+    Job::lobby_get()
+    {
+      return value_->state.lobby_get();
     }
 
     rJob
@@ -155,6 +162,14 @@ namespace urbi
         ADDENTRY(Prefix "Min" , Stat.min(), 1e6);                       \
         ADDENTRY(Prefix "Dev" , Stat.standard_deviation(), 1e6);        \
         ADDENTRY(Prefix "Var" , Stat.variance(), 1e6);                  \
+      }                                                                 \
+      else                                                              \
+      {                                                                 \
+        ADDENTRY(Prefix "Max" , 0, 1e6);                                \
+        ADDENTRY(Prefix "Mean", 0, 1e6);                                \
+        ADDENTRY(Prefix "Min" , 0, 1e6);                                \
+        ADDENTRY(Prefix "Dev" , 0, 1e6);                                \
+        ADDENTRY(Prefix "Var" , 0, 1e6);                                \
       }
 
 #define ADDJOBSTATS(Prefix, Thread)                             \

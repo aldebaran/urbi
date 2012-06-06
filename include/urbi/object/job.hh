@@ -49,6 +49,7 @@ namespace urbi
       void terminate();
       libport::ufloat timeShift() const;
       void waitForTermination();
+      rObject lobby_get();
 
     private:
       value_type value_;
