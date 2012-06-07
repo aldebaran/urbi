@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2011, Gostai S.A.S.
+ * Copyright (C) 2007-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -120,7 +120,8 @@ namespace urbi
   {
   public:
     USound();
-    USound(const USoundImpl& us);
+    // Mark explicit otherwise conflicts with the USoundImpl cast operator.
+    explicit USound(const USoundImpl& us);
     USound& operator = (const USoundImpl& us);
   };
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2011, Gostai S.A.S.
+ * Copyright (C) 2007-2012, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -91,6 +91,7 @@ namespace urbi
     size_t width, height;
 
     UImageFormat imageFormat;
+
     operator const UImage&() const;
     operator UImage&();
 
@@ -113,7 +114,7 @@ namespace urbi
   {
   public:
     UImage();
-    UImage(const UImageImpl& us);
+    explicit UImage(const UImageImpl& us);
     UImage& operator = (const UImageImpl& us);
   };
 

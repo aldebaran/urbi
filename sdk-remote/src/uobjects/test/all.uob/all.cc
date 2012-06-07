@@ -464,6 +464,23 @@ public:
     initCalled = 1;
     if (fail > 1)
       throw std::runtime_error("KABOOOM");
+    // Just a simple test to check that usound/usoundimpl cast is not broken
+    urbi::UBinary b;
+    const urbi::UBinary cb;
+    urbi::USound s = b.sound;
+    b.sound = s;
+    s = b.sound;
+    urbi::UImage i = b.image;
+    urbi::UImage& ir = b.image;
+    urbi::USound& sr = b.sound;
+    b.image = i;
+    i = b.image;
+    const urbi::USound bsound = b.sound;
+    const urbi::USound cbsound = cb.sound;
+    const urbi::UImage bi = b.image;
+    const urbi::UImage cbi = cb.image;
+    const urbi::USound& crbsound = cb.sound;
+    const urbi::UImage& crbimage = cb.image;
     return fail;
   }
 
