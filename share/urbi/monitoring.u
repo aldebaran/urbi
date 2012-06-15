@@ -20,7 +20,7 @@ package monitoring
   {
     enableStats(1);
     clearStats();
-    sleep(d);
+    sleep(samplingTime);
     var s = getStats();
     s = s.asList().sort(function(a, b) { a[1][0]*a[1][3] > b[1][0]*b[1][3]});
     for|(var i in s)
