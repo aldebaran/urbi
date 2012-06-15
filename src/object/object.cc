@@ -179,10 +179,12 @@ namespace urbi
       return location_type(0, 0);
     }
 
+    static bool fastHook = getenv("URBI_FAST_HOOK");
     rObject
     Object::local_slot_get(key_type k) const
     {
       rObject res = slots_.get(this, k);
+      if( !fastHook)
       if (res)
         URBI_AT_HOOK(slotRemoved);
       else
@@ -299,7 +301,8 @@ namespace urbi
         GD_FINFO_DEBUG("Slot redefinition: %s", k);
         runner::raise_urbi_skip(SYMBOL(Redefinition), to_urbi(k));
       }
-      slotAdded();
+      if (!fastHook)
+        slotAdded();
       return *this;
     }
 
@@ -893,7 +896,8 @@ namespace urbi
       if (!slot_remove(name))
         warn_hard(libport::format("no such local slot: %s", name));
       else
-        slotRemoved();
+        if (!fastHook)
+          slotRemoved();
       return this;
     }
 
