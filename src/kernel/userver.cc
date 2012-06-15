@@ -138,7 +138,7 @@ namespace kernel
   sched::Scheduler&
   scheduler()
   {
-    return runner().scheduler_get();
+    return server().scheduler_get();
   }
 
 
