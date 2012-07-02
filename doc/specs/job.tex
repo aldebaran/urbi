@@ -84,8 +84,7 @@ assert
 sleep(1);
 assert
 {
-  s.backtrace.size == 1;
-  s.backtrace[0].asString() == "file.u:1.9-24: detach";
+  s.backtrace.size == 0;
 };
 //#pop
 \end{urbiscript}

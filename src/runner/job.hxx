@@ -80,9 +80,21 @@ namespace runner
   LIBPORT_SPEED_ALWAYS_INLINE
   void Job::terminate_cleanup()
   {
+    GD_CATEGORY(Runner.Job);
+    /* Clear all state information now, otherwise it will happen when
+    * job destructor is called which will likely be a bad place like
+    * - outside of any job
+    * - in the system_poll if we use the dead job collector, which can lead
+    * to deadlock if a socket is stored in our state.
+    */
+    GD_FINFO_TRACE("Cleaning state for job %s", this);
     // Do not keep a reference on a job which keeps a reference onto
     // ourselves.
     job_cache_ = 0;
+    state.cleanup();
+    result_cache_ = 0;
+    worker_ = 0;
+    GD_FINFO_TRACE("Cleaned state for job %s", this);
     // Parent cleanup.
     super_type::terminate_cleanup();
   }

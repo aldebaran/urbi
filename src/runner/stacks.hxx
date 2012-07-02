@@ -249,6 +249,13 @@ namespace runner
   Stacks::execution_starts(libport::Symbol)
   {
   }
+
+  LIBPORT_SPEED_ALWAYS_INLINE
+  void
+  Stacks::cleanup()
+  {
+    toplevel_stack_.clear();
+  }
 }
 
 #endif

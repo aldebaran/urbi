@@ -176,4 +176,13 @@ namespace runner
     return res;
   }
 
+  void
+  State::cleanup()
+  {
+    tag_stack_.clear();
+    scope_tags_.clear();
+    call_stack_.clear();
+    stacks_.cleanup();
+  }
+
 } // namespace runner

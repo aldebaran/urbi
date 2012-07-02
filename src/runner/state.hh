@@ -50,6 +50,9 @@ namespace runner
     /// process.
     explicit State(const State& base);
 
+    /// Clear all state data. Object should not be used after this call.
+    void cleanup();
+
     /// Handle tags.
     /// \{
 

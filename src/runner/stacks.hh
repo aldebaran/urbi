@@ -58,6 +58,7 @@ namespace runner
     /// Build static stacks.
     Stacks(rObject self);
 
+    void cleanup();
   /*--------------------------.
   | Starting / ending calls.  |
   `--------------------------*/
