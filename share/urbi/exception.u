@@ -307,8 +307,7 @@ package lang.Exception.Type: 'package'.lang.Exception
       this.expectedTypes = expected.map(function(v){ v.type })
     else
       this.expectedTypes = [expected.type] |
-
-    this.effective = effective
+    this.effective = effective.asPrintable()
   };
 
   function formatTypes()
@@ -324,7 +323,7 @@ package lang.Exception.Type: 'package'.lang.Exception
   get message()
   {
     "unexpected %s, expected %s"
-      % [getSlotValue("effective").asPrintable(), formatTypes()]
+      % [effective, formatTypes()]
   };
 };
 
