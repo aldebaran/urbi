@@ -60,10 +60,10 @@ var server =
       at (socket.received?(var data))
       {
         var reply = Dialog.reply(data);
-        socket.write(reply);
         echo("server: " + reply);
+        socket.write(reply)|
         if (reply == "off")
-          socket.disconnect();
+          socket.disconnect()
       };
   }|;
 \end{urbiscript}
@@ -79,8 +79,8 @@ var client =
     at (received?(var data))
     {
       var reply = Dialog.reply(data);
-      write(reply);
       echo("client: " + reply);
+      write(reply);
     };
   }|;
 \end{urbiscript}
