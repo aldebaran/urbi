@@ -714,9 +714,21 @@ namespace urbi
     {
       while (true)
       {
-        system_poll();
+        try {
+          system_poll();
+        }
+        catch(const std::exception& e)
+        {
+          GD_FERROR("Exception in poll task: %s", e.what());
+        }
+        catch(...)
+        {
+          GD_ERROR("Unknown exception in poll task.");
+        }
         // We just waited the appropriate time, simply yield
-        ::kernel::runner().yield();
+        runner().non_interruptible_set(false);
+        runner().yield();
+        runner().non_interruptible_set(true);
       }
     }
 
