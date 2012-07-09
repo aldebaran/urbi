@@ -391,9 +391,7 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
 
   if (!static_build)
   {
-    handle_libjpeg_      = library_load("jpeg4urbi");
     handle_libport_      = library_load("port");
-    handle_libsched_     = library_load("sched");
 #ifdef LIBPORT_ENABLE_SERIALIZATION
     handle_libserialize_ = library_load("serialize");
 #endif
