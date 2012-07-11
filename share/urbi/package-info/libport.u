@@ -1,0 +1,91 @@
+/*
+ * Copyright (C) 2012, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+do (System.PackageInfo.new("Libport"))
+{
+  // Backward compatibility with Urbi 2.7 which defines this.name.
+  if (hasLocalSlot("name"))
+    removeSlot("name");
+  // An address where to send bug reports.
+  var bugReport =
+    "libport-bugs@lists.gostai.com";
+
+  // Who owns the Copyright.
+  var copyrightHolder =
+    "Gostai S.A.S.";
+
+  // The Copyright of this project.
+  var copyrightYears =
+    "2005-2012";
+
+  // The SCM date string.
+  var date =
+    "2012-06-08 13:19:17 +0200";
+
+  // The day part of the SCM date string.
+  var day =
+    "June 8, 2012";
+
+  // The SCM complete description string, with slashes.
+  var description =
+    "urbi-sdk-2.7.5-275-gcab1661";
+
+  // The SCM identification string.
+  var id =
+    "cab1661 (2012-06-08 13:19:17 +0200 nottale@gostai.com: aver/enforce: x2 speedup in ! NDEBUG case.)";
+
+  // The SCM major version component (Major.Minor.SubMinor).
+  var major =
+    2;
+
+  // The SCM minor version component (Major.Minor.SubMinor).
+  var minor =
+    7;
+
+  // Name of the project.
+  var name =
+    "Libport";
+
+  // The number of changes since the Version.
+  var patch =
+    275;
+
+  // The SCM revision string.
+  var revision =
+    "cab1661";
+
+  // Name and version.
+  var string =
+    "Libport UNDEFINED";
+
+  // The SCM SubMinor version component (Major.Minor.SubMinor).
+  var subMinor =
+    5;
+
+  // The SCM complete version string, with dashes.
+  var tarballVersion =
+    "urbi-sdk-2.7.5-275-gcab1661";
+
+  // Name of the Tarball.
+  var tarname =
+    "libport";
+
+  // The SCM version string.
+  var version =
+    "urbi-sdk-2.7.5";
+
+  // Version and revision together.
+  var versionRev =
+    "version urbi-sdk-2.7.5 patch 275 revision cab1661";
+
+  // The SCM version integer (Major * 1e6 + Minor * 1e3 + SubMinor).
+  var versionValue =
+    2007005;
+};

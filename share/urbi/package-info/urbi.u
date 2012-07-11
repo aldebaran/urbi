@@ -1,0 +1,91 @@
+/*
+ * Copyright (C) 2012, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+do (System.PackageInfo.new("Urbi"))
+{
+  // Backward compatibility with Urbi 2.7 which defines this.name.
+  if (hasLocalSlot("name"))
+    removeSlot("name");
+  // An address where to send bug reports.
+  var bugReport =
+    "kernel-bugs@lists.gostai.com";
+
+  // Who owns the Copyright.
+  var copyrightHolder =
+    "Gostai S.A.S.";
+
+  // The Copyright of this project.
+  var copyrightYears =
+    "2004-2012";
+
+  // The SCM date string.
+  var date =
+    "2012-06-07 10:58:43 +0200";
+
+  // The day part of the SCM date string.
+  var day =
+    "June 7, 2012";
+
+  // The SCM complete description string, with slashes.
+  var description =
+    "2.7.4-1758-g87e0b91";
+
+  // The SCM identification string.
+  var id =
+    "87e0b91 (2012-06-07 10:58:43 +0200 nottale@gostai.com: Fix compilation error when casting const UBinary to const USound.)";
+
+  // The SCM major version component (Major.Minor.SubMinor).
+  var major =
+    2;
+
+  // The SCM minor version component (Major.Minor.SubMinor).
+  var minor =
+    7;
+
+  // Name of the project.
+  var name =
+    "Urbi";
+
+  // The number of changes since the Version.
+  var patch =
+    1758;
+
+  // The SCM revision string.
+  var revision =
+    "87e0b91";
+
+  // Name and version.
+  var string =
+    "Urbi 2.8";
+
+  // The SCM SubMinor version component (Major.Minor.SubMinor).
+  var subMinor =
+    4;
+
+  // The SCM complete version string, with dashes.
+  var tarballVersion =
+    "2.7.4-1758-g87e0b91";
+
+  // Name of the Tarball.
+  var tarname =
+    "urbi-sdk";
+
+  // The SCM version string.
+  var version =
+    "2.7.4";
+
+  // Version and revision together.
+  var versionRev =
+    "version 2.7.4 patch 1758 revision 87e0b91";
+
+  // The SCM version integer (Major * 1e6 + Minor * 1e3 + SubMinor).
+  var versionValue =
+    2007004;
+};
