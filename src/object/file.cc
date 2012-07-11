@@ -27,7 +27,7 @@ namespace boost
 {
   namespace filesystem
   {
-    typedef basic_filesystem_error<boostfs::path> fserror;
+    typedef filesystem_error fserror;
   }
 }
 
