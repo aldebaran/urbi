@@ -294,7 +294,6 @@ qi_stage_lib(uobject)
 
 # Add a simple test:
 enable_testing()
-qi_create_test(test_kernel "test.cpp")
 add_subdirectory(src/object/urbi)
 add_subdirectory(share)
 
