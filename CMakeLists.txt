@@ -36,6 +36,7 @@ qi_generate_src(
   COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/dev/fix-utoken.py ${CMAKE_CURRENT_BINARY_DIR}/src/parser/utoken.cc.raw ${CMAKE_CURRENT_BINARY_DIR}/src/parser/utoken.cc
 )
 
+# You need a bison patched by gostai, in the urbi-sdk/bison repository.
 set(BISON_OPTS
   --defines --report=all -xml
 )
@@ -49,11 +50,9 @@ qi_generate_src(
   COMMAND ${BISON} ${BISON_OPTS} ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/ugrammar.y -o  ${CMAKE_CURRENT_BINARY_DIR}/src/parser/ugrammar.cc
 )
 
-
-
-
 # Go for plugin
 
+# To generate ast stuffs, you need to run the following commands
 #./dev/ast-nodes-gen  src/ast/ < src/ast/ast.yml
 #./dev/ast-all-gen  src/ast/ < src/ast/ast.yml
 #./dev/ast-cloner-gen  src/ast/ < src/ast/ast.yml
