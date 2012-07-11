@@ -4,23 +4,50 @@ project(kernel)
 find_package(qibuild)
 
 add_subdirectory(sdk-remote/libport)
+add_subdirectory(sdk-remote)
 
-# Create a executable named kernel
-# with the source file: main.cpp
-qi_create_bin(urbi-launch
-  SRC sdk-remote/src/bin/urbi-launch.cc sdk-remote/src/liburbi/urbi-root.cc
-  )
-qi_use_lib(urbi-launch DL)
+qi_create_config_h(KCONFIG_H
+   ${CMAKE_CURRENT_SOURCE_DIR}/include/urbi/kernel/config.h.in
+   urbi/kernel/config.h
+)
+
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/sdk-remote/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/sdk-remote/src)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/sdk-remote/libport/include)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/sdk-remote/libport/include)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/include/urbi)
 
 add_definitions(-DLIBPORT_URBI_UFLOAT_DOUBLE)
 add_definitions(-DLIBPORT_LIBSFX="")
 add_definitions(-DLIBPORT_LIBDIRNAME="lib")
 
+#invoke flex on utoken.l
+qi_generate_src(
+  ${CMAKE_CURRENT_BINARY_DIR}/src/parser/utoken.cc.raw
+  SRC src/parser/utoken.l
+  COMMAND flex -+ -o${CMAKE_CURRENT_BINARY_DIR}/src/parser/utoken.cc.raw ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/utoken.l
+)
+
+#fix flex output
+qi_generate_src(
+  ${CMAKE_CURRENT_BINARY_DIR}/src/parser/utoken.cc
+  SRC ${CMAKE_CURRENT_BINARY_DIR}/src/parser/utoken.cc.raw
+  COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/dev/fix-utoken.py ${CMAKE_CURRENT_BINARY_DIR}/src/parser/utoken.cc.raw ${CMAKE_CURRENT_BINARY_DIR}/src/parser/utoken.cc
+)
+
+set(BISON_OPTS
+  --defines --report=all -xml
+)
+set(BISON
+  bison
+)
+
+qi_generate_src(
+  ${CMAKE_CURRENT_BINARY_DIR}/src/parser/ugrammar.cc
+  SRC src/parser/ugrammar.y
+  COMMAND ${BISON} ${BISON_OPTS} ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/ugrammar.y -o  ${CMAKE_CURRENT_BINARY_DIR}/src/parser/ugrammar.cc
+)
 
 
 
@@ -41,6 +68,7 @@ add_definitions(-DLIBPORT_LIBDIRNAME="lib")
 
 
 set(UOBJECT_PLUGIN_SRC
+${CMAKE_CURRENT_BINARY_DIR}/include/urbi/kernel/config.h
 src/ast/all.cc
   src/ast/analyzer.cc
 src/ast/analyzer.hh
@@ -208,7 +236,7 @@ src/parser/transform.hh
 src/parser/uparser.cc
 src/parser/uparser.hh
 src/parser/utoken.hh
-src/parser/utoken.cc
+${CMAKE_CURRENT_BINARY_DIR}/src/parser/utoken.cc
 src/parser/ugrammar.cc
 src/rewrite/desugarer.cc
 src/rewrite/desugarer.hh
@@ -252,23 +280,23 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/include/urbi/parser/)
 # For ast/factory.cc
 add_definitions(-D__SRCDIR__="")
 add_definitions(-DBUILDING_URBI_SDK)
-qi_create_lib(uobject-engine
+# uobject-remote is renamed as uobject using a set_target_properties
+# but this one needs to be correct, because DEPENDS does not honor OUTPUT_NAME
+qi_create_lib(uobject
   SUBFOLDER gostai/engine
-  DEPENDS BOOST BOOST_SIGNALS BOOST_FILESYSTEM BOOST_DATE_TIME  BOOST_SYSTEM BOOST_THREAD
+  DEPENDS port BOOST BOOST_SIGNALS BOOST_FILESYSTEM BOOST_DATE_TIME  BOOST_SYSTEM BOOST_THREAD
   SRC ${UOBJECT_PLUGIN_SRC}
 )
 
-set_target_properties(uobject-engine
-  PROPERTIES
-     OUTPUT_NAME uobject)
 
 
-qi_stage_lib(uobject-engine)
+qi_stage_lib(uobject)
 
 
 # Add a simple test:
 enable_testing()
 qi_create_test(test_kernel "test.cpp")
 add_subdirectory(src/object/urbi)
+add_subdirectory(share)
 
 

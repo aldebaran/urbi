@@ -175,6 +175,7 @@ namespace kernel
 #endif
     // Tell the scheduler we will handle job destruction ourself.
     scheduler_->keep_terminated_jobs_set(true);
+    GD_INFO_TRACE("Initializing root classes.");
     object::root_classes_initialize();
   }
 
@@ -268,8 +269,6 @@ namespace kernel
         << ""
         << ("The urbi kernel was killed by signal "
             + string_cast(i) + ": " + strsignal(i) + ".")
-        << "Please report this bug to " PACKAGE_BUGREPORT " with this report,"
-        << "core dump if any, and what code/situation triggered it."
         << ""
         << "Trying to give more information."
         << "Please include it in the report."

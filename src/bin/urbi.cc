@@ -8,7 +8,7 @@
  * See the LICENSE file for more information.
  */
 
-#include <config.h>
+#include <src/kernel/config.h>
 
 #include <string>
 #include <vector>

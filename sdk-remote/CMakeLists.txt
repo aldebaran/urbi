@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 2.8)
 
 qi_create_bin(urbi-launch
-  SRC bin/urbi-launch.cc sdk-remote/src/liburbi/urbi-root.cc
+  SRC src/bin/urbi-launch.cc src/liburbi/urbi-root.cc
+  DEPENDS port DL
   )
-qi_use_lib(urbi-launch DL)
+#qi_use_lib(urbi-launch DL)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -15,56 +16,54 @@ add_definitions(-DLIBPORT_LIBDIRNAME="lib")
 add_subdirectory(include)
 
 set(URBI_SRC
-  libuco/details.cc
-libuco/local.mk
-libuco/uevent.cc
-libuco/uobject-common.cc
-libuco/uobject-hub-common.cc
-libuco/uprop.cc
-libuco/urbi-main.cc
-libuco/ustarter.cc
-libuco/utable.cc
-libuco/uvar-common.cc
-libuco/version-check.cc
-liburbi/compatibility.hh
-liburbi/compatibility.hxx
-liburbi/kernel-version.cc
-liburbi/local.mk
-liburbi/uabstractclient.cc
-liburbi/uclient.cc
-liburbi/uconversion.cc
-liburbi/umain.cc
-liburbi/umessage.cc
-liburbi/urbi-launch.cc
-liburbi/urbi-root.cc
-liburbi/usyncclient.cc
-liburbi/utag.cc
-libuvalue/exit.cc
-libuvalue/local.mk
-libuvalue/package-info.cc
-libuvalue/ubinary.cc
-libuvalue/uimage.cc
-libuvalue/ulist.cc
-libuvalue/usound.cc
-libuvalue/uvalue-common.cc
+src/libuco/details.cc
+src/libuco/local.mk
+src/libuco/uevent.cc
+src/libuco/uobject-common.cc
+src/libuco/uobject-hub-common.cc
+src/libuco/uprop.cc
+src/libuco/urbi-main.cc
+src/libuco/ustarter.cc
+src/libuco/utable.cc
+src/libuco/uvar-common.cc
+src/libuco/version-check.cc
+src/liburbi/compatibility.hh
+src/liburbi/compatibility.hxx
+src/liburbi/kernel-version.cc
+src/liburbi/uabstractclient.cc
+src/liburbi/uclient.cc
+src/liburbi/uconversion.cc
+src/liburbi/umain.cc
+src/liburbi/umessage.cc
+src/liburbi/urbi-launch.cc
+src/liburbi/urbi-root.cc
+src/liburbi/usyncclient.cc
+src/liburbi/utag.cc
+src/libuvalue/exit.cc
+src/libuvalue/package-info.cc
+src/libuvalue/ubinary.cc
+src/libuvalue/uimage.cc
+src/libuvalue/ulist.cc
+src/libuvalue/usound.cc
+src/libuvalue/uvalue-common.cc
 )
 
 qi_create_lib(urbi ${URBI_SRC} DEPENDS port)
 
 
 set(UOBJECT_REMOTE_SRC
-  sdk-remote/src/libuobject/main.cc
-sdk-remote/src/libuobject/remote-ucontext-impl.hh
-sdk-remote/src/libuobject/ucallbacks.cc
-sdk-remote/src/libuobject/uobject.cc
-sdk-remote/src/libuobject/utimer-callback.cc
-sdk-remote/src/libuobject/uvar.cc
-sdk-remote/src/libuco/urbi-main.cc
+  src/libuobject/main.cc
+  src/libuobject/remote-ucontext-impl.hh
+  src/libuobject/ucallbacks.cc
+  src/libuobject/uobject.cc
+  src/libuobject/utimer-callback.cc
+  src/libuobject/uvar.cc
+  src/libuco/urbi-main.cc
 )
 
 qi_create_lib(uobject-remote
   SUBFOLDER gostai/remote
-  DEPENDS BOOST BOOST_DATE_TIME  BOOST_SYSTEM BOOST_THREAD
+  DEPENDS port BOOST BOOST_DATE_TIME  BOOST_SYSTEM BOOST_THREAD
   SRC ${UOBJECT_REMOTE_SRC}
 )
 

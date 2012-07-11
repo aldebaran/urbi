@@ -2,14 +2,13 @@ function(umodule name)
   qi_create_lib( ${name}
     SHARED
     SUBFOLDER gostai/uobjects/urbi
-    DEPENDS uobject-engine
+    DEPENDS uobject
     SRC ${ARGN}
   )
   set_target_properties( ${name}
     PROPERTIES
       PREFIX ""
   )
-  qi_use_lib( ${name} uobject-engine)
 endfunction()
 
 umodule(logger logger.cc)
