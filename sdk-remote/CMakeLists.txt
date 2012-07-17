@@ -50,6 +50,7 @@ src/libuvalue/uvalue-common.cc
 
 qi_create_lib(urbi ${URBI_SRC} DEPENDS port)
 
+qi_stage_lib(urbi)
 
 set(UOBJECT_REMOTE_SRC
   src/libuobject/main.cc
