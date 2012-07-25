@@ -3,7 +3,15 @@ project(kernel)
 
 find_package(qibuild)
 
-add_subdirectory(sdk-remote/libport)
+#find python
+find_program(_python_executable
+    NAMES python2 python python.exe
+    NO_CMAKE_FIND_ROOT_PATH)
+  if (NOT _python_executable)
+    qi_error("needs python executable in PATH")
+  endif()
+
+
 add_subdirectory(sdk-remote)
 
 qi_create_config_h(KCONFIG_H
@@ -22,6 +30,8 @@ add_definitions(-DLIBPORT_URBI_UFLOAT_DOUBLE)
 add_definitions(-DLIBPORT_LIBSFX="")
 add_definitions(-DLIBPORT_LIBDIRNAME="lib")
 
+if (HAVE_CUSTOM_BISON)
+
 #invoke flex on utoken.l
 qi_generate_src(
   ${CMAKE_CURRENT_BINARY_DIR}/src/parser/utoken.cc.raw
@@ -33,7 +43,7 @@ qi_generate_src(
 qi_generate_src(
   ${CMAKE_CURRENT_BINARY_DIR}/src/parser/utoken.cc
   SRC ${CMAKE_CURRENT_BINARY_DIR}/src/parser/utoken.cc.raw
-  COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/dev/fix-utoken.py ${CMAKE_CURRENT_BINARY_DIR}/src/parser/utoken.cc.raw ${CMAKE_CURRENT_BINARY_DIR}/src/parser/utoken.cc
+  COMMAND ${_python_executable} ${CMAKE_CURRENT_SOURCE_DIR}/dev/fix-utoken.py ${CMAKE_CURRENT_BINARY_DIR}/src/parser/utoken.cc.raw ${CMAKE_CURRENT_BINARY_DIR}/src/parser/utoken.cc
 )
 
 # You need a bison patched by gostai, in the urbi-sdk/bison repository.
@@ -49,8 +59,35 @@ qi_generate_src(
   SRC src/parser/ugrammar.y
   COMMAND ${BISON} ${BISON_OPTS} ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/ugrammar.y -o  ${CMAKE_CURRENT_BINARY_DIR}/src/parser/ugrammar.cc
 )
+else()
+  qi_generate_src(
+  ${CMAKE_CURRENT_BINARY_DIR}/src/parser/ugrammar.cc
+  SRC src/parser/ugrammar.y
+  COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/pregenerated/ ${CMAKE_CURRENT_BINARY_DIR}/src/parser/
+)
+endif()
 
 # Go for plugin
+function(astgen target command)
+ qi_generate_src(
+   ${CMAKE_CURRENT_SOURCE_DIR}/${target}
+  SRC src/ast/ast.yml
+  COMMAND ${_python_executable} ${CMAKE_CURRENT_SOURCE_DIR}/dev/ast-${command}-gen ${CMAKE_CURRENT_SOURCE_DIR}/src/ast < ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/ast.yml
+ )
+endfunction()
+
+
+astgen(src/ast/all.cc all)
+astgen(src/ast/cloner.cc cloner)
+astgen(src/ast/transformer.cc transformer)
+astgen(src/ast/fwd.hh fwd)
+astgen(src/ast/default-visitor.hh default-visitor)
+astgen(src/ast/visitor.hxx visitor)
+astgen(src/ast/pretty-printer.cc pretty-printer)
+astgen(src/ast/dot-printer.cc dot-printer)
+astgen(src/ast/serializer.hh serializer)
+astgen(src/ast/implicit.hh nodes)
+
 
 # To generate ast stuffs, you need to run the following commands
 #./dev/ast-nodes-gen  src/ast/ < src/ast/ast.yml
@@ -75,9 +112,11 @@ src/ast/catches-type.cc
 src/ast/catches-type.hh
 src/ast/cloner.hxx
 src/ast/cloner.cc
+src/ast/default-visitor.hh
 src/ast/dot-print.cc
 src/ast/dot-print.hh
 src/ast/dot-printer.cc
+src/ast/event.hxx
 src/ast/event-match.cc
 src/ast/event-match.hh
 src/ast/event-match.hxx
@@ -90,6 +129,7 @@ src/ast/flavor.hh
 src/ast/flavor.hxx
 src/ast/formal.cc
 src/ast/formal.hh
+src/ast/fwd.hh
 src/ast/loc.cc
 src/ast/loc.hh
 src/ast/local-declarations-type.cc
