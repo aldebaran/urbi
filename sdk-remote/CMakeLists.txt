@@ -8,12 +8,12 @@ qi_create_bin(urbi-launch
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
-
 add_definitions(-DLIBPORT_URBI_UFLOAT_DOUBLE)
 add_definitions(-DLIBPORT_LIBSFX="")
 add_definitions(-DLIBPORT_LIBDIRNAME="lib")
-
+add_subdirectory(src/examples)
 add_subdirectory(include)
+add_subdirectory(src/uobjects)
 
 set(URBI_SRC
 src/libuco/details.cc
@@ -22,7 +22,6 @@ src/libuco/uevent.cc
 src/libuco/uobject-common.cc
 src/libuco/uobject-hub-common.cc
 src/libuco/uprop.cc
-src/libuco/urbi-main.cc
 src/libuco/ustarter.cc
 src/libuco/utable.cc
 src/libuco/uvar-common.cc
@@ -48,7 +47,7 @@ src/libuvalue/usound.cc
 src/libuvalue/uvalue-common.cc
 )
 
-qi_create_lib(urbi ${URBI_SRC} DEPENDS port)
+qi_create_lib(urbi ${URBI_SRC} DEPENDS port DL)
 
 qi_stage_lib(urbi)
 

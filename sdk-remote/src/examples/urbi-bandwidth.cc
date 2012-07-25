@@ -66,18 +66,16 @@ int main(int argc, char * argv[])
   c <<
     "camera.format = 0;\n"
     "camera.resolution = 0;\n"
-    "noop;\n"
-    "noop;\n"
     "if (isdef(Channel))\n"
     "{\n"
-    "  var Global.bw = Channel.new(\"bw\");\n"
-    "  var Global.be = Channel.new(\"be\")|;\n"
+    "  bw = Channel.new(\"bw\");\n"
+    "  be = Channel.new(\"be\")|;\n"
     "};\n";
 
   starttime = c.getCurrentTime();
   c <<
     "for (var i = 0; i < 9 ; i++)\n"
     "  bw << camera.val|\n"
-    "be << camera.val;\n";
+    "be << camera.val;\n" << std::endl;
   urbi::execute();
 }
