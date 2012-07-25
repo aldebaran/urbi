@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 qi_create_bin(urbi-launch
   SRC src/bin/urbi-launch.cc src/liburbi/urbi-root.cc
-  DEPENDS port DL
+  DEPENDS port sched serialize DL
   )
 #qi_use_lib(urbi-launch DL)
 
