@@ -11,9 +11,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 add_definitions(-DLIBPORT_URBI_UFLOAT_DOUBLE)
 add_definitions(-DLIBPORT_LIBSFX="")
 add_definitions(-DLIBPORT_LIBDIRNAME="lib")
-add_subdirectory(src/examples)
-add_subdirectory(include)
-add_subdirectory(src/uobjects)
 
 set(URBI_SRC
 src/libuco/details.cc
@@ -66,9 +63,9 @@ qi_create_lib(uobject-remote
   DEPENDS port BOOST BOOST_DATE_TIME  BOOST_SYSTEM BOOST_THREAD
   SRC ${UOBJECT_REMOTE_SRC}
 )
-
 set_target_properties(uobject-remote
   PROPERTIES
      OUTPUT_NAME uobject)
 
-
+add_subdirectory(src/examples)
+add_subdirectory(include)

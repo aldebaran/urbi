@@ -64,7 +64,12 @@ else()
   ${CMAKE_CURRENT_BINARY_DIR}/src/parser/ugrammar.cc
   SRC src/parser/ugrammar.y
   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/pregenerated/ ${CMAKE_CURRENT_BINARY_DIR}/src/parser/
-)
+  )
+  qi_generate_src(
+  ${CMAKE_CURRENT_BINARY_DIR}/src/parser/utoken.cc
+  SRC src/parser/ugrammar.y
+  COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/pregenerated/ ${CMAKE_CURRENT_BINARY_DIR}/src/parser/
+  )
 endif()
 
 # Go for plugin
@@ -335,6 +340,7 @@ qi_stage_lib(uobject)
 # Add a simple test:
 enable_testing()
 add_subdirectory(src/object/urbi)
+
 add_subdirectory(share)
-
-
+#Requires lib uobject
+add_subdirectory(sdk-remote/src/uobjects)
