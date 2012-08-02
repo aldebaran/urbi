@@ -87,7 +87,7 @@ astgen(src/ast/cloner.cc cloner)
 astgen(src/ast/transformer.cc transformer)
 astgen(src/ast/fwd.hh fwd)
 astgen(src/ast/default-visitor.hh default-visitor)
-astgen(src/ast/visitor.hxx visitor)
+astgen(src/ast/visitor.hh visitor)
 astgen(src/ast/pretty-printer.cc pretty-printer)
 astgen(src/ast/dot-printer.cc dot-printer)
 astgen(src/ast/serializer.hh serializer)
@@ -110,6 +110,8 @@ astgen(src/ast/implicit.hh nodes)
 
 set(UOBJECT_PLUGIN_SRC
 ${CMAKE_CURRENT_BINARY_DIR}/include/urbi/kernel/config.h
+src/ast/implicit.hh
+src/ast/visitor.hh
 src/ast/all.cc
   src/ast/analyzer.cc
 src/ast/analyzer.hh
@@ -121,7 +123,6 @@ src/ast/default-visitor.hh
 src/ast/dot-print.cc
 src/ast/dot-print.hh
 src/ast/dot-printer.cc
-src/ast/event.hxx
 src/ast/event-match.cc
 src/ast/event-match.hh
 src/ast/event-match.hxx
@@ -151,7 +152,6 @@ src/ast/print.hh
 src/ast/symbols-type.cc
 src/ast/symbols-type.hh
 src/ast/transformer.cc
-src/ast/visitor.hxx
 src/binder/bind.cc
 src/binder/bind.hh
 src/binder/binder.cc
