@@ -4,24 +4,6 @@
 [submodule "bison"]
 	path = bison
 	url = ssh://git@git.aldebaran.lan/urbi-sdk/bison.git
-[submodule "build-aux"]
-	path = build-aux
-	url = ssh://git@git.aldebaran.lan/urbi-sdk/build-aux.git
-[submodule "doc/document-aux"]
-	path = doc/document-aux
-	url = ssh://git@git.aldebaran.lan/urbi-sdk/document-aux.git
-[submodule "submodules/modules"]
-	path = submodules/modules
-	url = ssh://git@git.aldebaran.lan/urbi-sdk/modules.git
 [submodule "fsm"]
 	path = fsm
 	url = ssh://git@git.aldebaran.lan/urbi-sdk/fsm.git
-[submodule "sdk-remote/libport"]
-	path = sdk-remote/libport
-	url = ssh://git@git.aldebaran.lan/urbi-sdk/libport.git
-[submodule "sdk-remote/jpeg"]
-	path = sdk-remote/jpeg
-	url = ssh://git@git.aldebaran.lan/urbi-sdk/jpeg.git
-[submodule "submodules/jazz-doc"]
-	path = submodules/jazz-doc
-	url = ssh://git@git.aldebaran.lan/urbi-sdk/jazz-doc.git
