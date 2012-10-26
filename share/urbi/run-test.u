@@ -1,0 +1,104 @@
+var errBacktrace = Regexp.new("^\\[[0-9]{8}:error\\] \\!\\!\\!    called from")|;
+  
+
+function splitChk(content)
+{
+  var reqs = [];
+  var sin = [];
+  var sout = [];
+  var regexp = Regexp.new("^\\[[0-9]{8}(:[a-zA-Z0-9_]+)?\\]");
+  for (var l: content)
+  {
+    if (errBacktrace.match(l))
+      {}
+    else if (regexp.match(l))
+      sout << ("[00000000" + l[9, 0])
+    else
+      sin << l
+  };
+  (reqs, sin, sout)
+}|;
+
+function runTest(chkFile)
+{
+  var debug = Logger.new("test");
+  debug.'<<' = function(x) { this.debug(x)};
+  //debug.level = Logger.level.Dump;
+  var content = File.new(chkFile).content().data.split("\n");
+  (var reqs, var sin, var sout) = splitChk(content);
+  debug << ("input: " + sin);
+  debug << ("expected output: " + sout);
+  debug << "Creating lobby...";
+  var effOut = [];
+  // Create a lobby for the test
+  var l = Lobby.create();
+  // Redirect its output to effOut
+  l.write = function(s) { effOut << s | {}};
+  l.send = function(msg, tag="")
+  {
+    if (tag)
+      tag = ":" + tag|
+    write("[00000000" + tag + "] " + msg.asString())|
+    {}
+  };
+  var ID = "_" + l.uid.asString();
+  // Use a variable to detect end of test
+  if (Object.test_finished.hasLocalSlot(ID))
+    Object.test_finished.removeSlot(ID);
+  debug << "Injecting input...";
+  l.receive(sin.join("\n"));
+  l.receive("var Object.test_finished." + ID + "=1|;\n");
+  debug << "Waiting for test to finish...";
+  // Fixme add a timeout
+  timeout(10s) waituntil(Object.test_finished.hasLocalSlot(ID));
+  if (!Object.test_finished.hasLocalSlot(ID))
+    throw "timeout";
+  debug << "Done";
+  // Filter out stuff in effOut
+  effOut = effOut.filter(closure(x) { !errBacktrace.match(x)});
+  debug << ("Test output: " + effOut);
+
+  // Compare expected and effective
+  if (effOut == sout)
+  {
+    debug << "OK"|
+    true
+  }
+  else
+  {
+    write("SOURCE:\n" + content.join("\n") + "\n\n");
+    write("INPUT:\n" + sin.join("\n") + "\n");
+    write("EXPECTED:\n>> " + sout.join("\n>> ") + "\n\n");
+    write("EFFECTIVE:\n<< "  +effOut.join("\n<< ") + "\n\n");
+    write("\n");
+    debug << "FAIL"|
+    false
+  }
+}|;
+
+var Object.test_finished = Object.new()|;
+
+function main()
+{
+  var tok = 0;
+  var tko = 0;
+  var terr = 0;
+  for (var test: System.arguments)
+  {
+    echo("running %s..." % test)|
+    try {
+      if (runTest(test))
+        ++tok
+      else
+        ++tko
+    }
+    catch(var e)
+    {
+      ++terr;
+      echo("Exception in test: " + e);
+    };
+  };
+  write("TEST SUITE RESULT: %s / %s OK" % [ tok, System.arguments.size]);
+}|;
+main();
+System._exit(1);
