@@ -163,6 +163,8 @@ namespace kernel
     , urbi_root_(urbi_root)
     , return_value_(EX_OK)
   {
+    // Add the path we need to work from cmake build dir.
+    search_path.push_back(libport::path(urbi_root.root() + "/../../share"));
     TIMER_INIT();
     TIMER_PUSH("server");
     urbiserver = this;
