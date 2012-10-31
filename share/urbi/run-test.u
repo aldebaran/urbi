@@ -24,7 +24,7 @@ function runTest(chkFile)
   var debug = Logger.new("test");
   debug.'<<' = function(x) { this.debug(x)};
   //debug.level = Logger.level.Dump;
-  var content = File.new(chkFile).content().data.split("\n");
+  var content = File.new("../tests/2.x/" + chkFile).content().data.split("\n");
   (var reqs, var sin, var sout) = splitChk(content);
   debug << ("input: " + sin);
   debug << ("expected output: " + sout);
@@ -98,7 +98,8 @@ function main()
       echo("Exception in test: " + e);
     };
   };
-  write("TEST SUITE RESULT: %s / %s OK" % [ tok, System.arguments.size]);
+  write("TEST SUITE RESULT: %s / %s OK\n" % [ tok, System.arguments.size]);
+  tok ==  System.arguments.size
 }|;
-main();
-System._exit(1);
+var result = main();
+System._exit({ if (result) 0 else 1});
