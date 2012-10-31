@@ -1,0 +1,21 @@
+skipIfSpace();
+
+var o = Object.new()|
+UVar.new(o,"v")|
+o.v = 12;
+[00000001] 12
+o.v;
+[00000002] 12
+
+o.v->rangemax = 10 | o.v->rangemin = 0 | {};
+o.v = 100 | o.v;
+[00000003] 10
+o.&v.notifyChange(function() {cout << lobby.o.v})|;
+
+warning.enabled = false | {};
+o.v = 5 | o.v'n;
+[00000004:output] 5
+[00000005] 0.5
+o.v'n = 0.2 | o.v;
+[00000006:output] 2
+[00000007] 2

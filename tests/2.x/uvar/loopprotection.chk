@@ -1,0 +1,16 @@
+// Hide everything.
+topLevel.enabled = false;
+var o = Object.new();
+UVar.new(o,"v");
+o.v = 12;
+var Object.count = 0;
+// Make an infinite loop.
+o.&v.notifyChange(function() {Object.count++; lobby.o.v + 1})|;
+o.&v.notifyAccess(function() {Object.count++; lobby.o.v = 12})|;
+
+// We do not care how the loop is detected as long as it is detected.
+o.v = 10 | cout << (count < 10);
+[00000001:output] true
+Object.count = 0;
+o.v | cout <<  (count < 10);
+[00000002:output] true

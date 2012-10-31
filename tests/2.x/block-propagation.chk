@@ -1,0 +1,2 @@
+// In the past, the following expression would fail
+a: { 1 & a.block };

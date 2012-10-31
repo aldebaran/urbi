@@ -1,0 +1,69 @@
+//#plug test/all
+//#uobject test/all
+
+function reset ()
+{
+  all.lastChange = "";
+  all.lastAccess = "";
+  remall.lastChange = "";
+  {};
+}|;
+all.a = 1;
+[00000001] 1
+
+remall.setNotifyChangeByName("all.a")|;
+
+sleep(500ms);
+
+// remote notifychange triggered by urbi write
+reset();
+all.a = 2|;
+sleep(500ms);
+assert
+{
+  all.lastChange == "";
+  all.lastAccess == "";
+  remall.lastChange == "all.a";
+};
+
+
+// remote notifychange triggered by c++ write
+reset();
+all.write(0,3);
+[00000005] 3
+sleep(500ms);
+assert
+{
+  all.lastChange == "";
+  all.lastAccess == "";
+  remall.lastChange == "all.a";
+};
+
+
+
+
+all.setOwned(0)|;
+all.setNotifyChange(0)|;
+all.setNotifyAccess(0)|;
+
+//uowned notifyaccess should be triggered by nonuowned notifychange every cycle
+reset();
+sleep(500ms);
+assert
+{
+  all.lastChange == "";
+  all.lastAccess == "all.a";
+  remall.lastChange == "all.a";
+};
+
+
+reset();
+remall.writeByName("all.a",3);
+[00000011] 3
+sleep(500ms);
+assert
+{
+  all.lastChange == "all.a";
+  all.lastAccess == "all.a";
+  remall.lastChange == "all.a";
+};

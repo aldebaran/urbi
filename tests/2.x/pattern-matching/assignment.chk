@@ -1,0 +1,29 @@
+{
+  [var x, 1, var y] = [0, 1, 2];
+  echo(x);
+  echo(y);
+};
+[00000001] *** 0
+[00000002] *** 2
+
+{
+  [var x, 1, var y] = [0, 2, 2];
+  echo(x);
+  echo(y);
+};
+[00000003:error] !!! input.u:10.3-31: pattern did not match
+
+// Check when exceptions are raised in bindings
+[var x] = [0];
+[00000004] [0]
+[var x] = [0];
+[00000005:error] !!! input.u:@.6: slot redefinition: x
+[var x] = [0];
+[00000006:error] !!! input.u:@.6: slot redefinition: x
+
+// Compare to the result of calls, do the same as switch cases.
+{ function f(i) { i + 1 }; f(2) = 3; };
+[00000007] 3
+
+{ function f(i) { i - 1 }; f(2) = 3; };
+[00000008:error] !!! input.u:@.28-35: pattern did not match

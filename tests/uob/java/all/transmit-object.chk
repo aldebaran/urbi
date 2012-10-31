@@ -1,0 +1,19 @@
+//#uobject test/all
+//#plug test/all
+
+var ra = remall.new(0)|
+var a = all.new(0)|;
+
+assert
+{
+  // UObjects in same address space
+  all.transmitO(all2) === all2;
+  all.transmitO(a) === a;
+  remall.transmitO(ra) === ra;
+  ra.transmitO(remall2) === remall2;
+
+  // UObjects in different address spaces.
+  all.transmitO(ra).isNil;
+  remall.transmitO(all).isNil;
+};
+

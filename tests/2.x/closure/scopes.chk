@@ -1,0 +1,15 @@
+var i = 41;
+[00000001] 41
+
+var Object.f = function (x) { i += x } | {};
+
+{
+  var i = 0;
+
+  Object.f (1);
+};
+[00000002:error] !!! input.u:4.31: lookup failed: i
+[00000003:error] !!!    called from: input.u:9.3-14: f
+
+i;
+[00000004] 41

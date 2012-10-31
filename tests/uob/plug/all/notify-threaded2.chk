@@ -1,0 +1,15 @@
+//#uobject test/all
+//#no-fast
+
+all.setThreadedNotifyChangeByUVar(all.&a)|;
+
+var res = []|;
+all.&lastChangeVal.notifyChange(closure() { 
+  res << all.lastChangeVal;
+  })|;
+
+all.a=0|all.a=1|all.a=2|all.a=3|all.a=4|all.a=5|;
+
+timeout(3s) waituntil(res.size == 6);
+res;
+[00000001] [0, 1, 2, 3, 4, 5]

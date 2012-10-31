@@ -1,0 +1,37 @@
+//#plug test/all
+//#plug urbi/rtp
+//#remote test/all urbi/rtp
+skipIfWindows(); // FIXME: reenable for Urbi 3.
+
+// To check that data is sent by RTP, check that there is no trafic
+// on our TCP connection.
+var remals=[]|;
+for|(30)
+{
+  var r = remall.new(0)|
+  r.markRTP(1, 1)|
+  r.unnotify(1)|
+  r.periodicWriteType = 2|
+  r.periodicWriteTarget = 1|
+  remals << r
+};
+// Start them all at the same time.
+for&(var r: remals) r.periodicWriteRate = 50ms;
+sleep(500ms); // time to setup
+
+assert (remall.lobby.isSilent(400ms, 0, 40*30)),
+var t = remals[0].b|;
+sleep(200ms);
+assert (remals[0].b - t > 0.1);
+sleep(320ms);
+// 500ms, 50ms intervale 30 objects=>300 data update more or less
+// Check that some merging actually occurrs (multiple data in the same packet).
+// We do not control exactly how much merging happens at this point.
+assert
+{
+  remall
+    .lobby
+    .getSlotValue(remall.lobby._rtp_object_name + "____shared__l")
+    .stats()["packetReceived"]
+  < 270;
+};

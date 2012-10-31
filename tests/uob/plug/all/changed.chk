@@ -1,0 +1,59 @@
+//#uobject test/all
+//#no-fast
+
+// Test interaction between uvars and the 'changed' event.
+
+var changeCount = 0|;
+at (all.a->changed?)
+  changeCount++;
+
+function count()
+{
+  var t = changeCount |
+  changeCount = 0 |
+  t
+}|;
+
+all.writeS("all.a", "coin")|;
+count();
+[00000001] 1
+
+all.write(0, 12)|;
+count();
+[00000002] 1
+
+all.a = 5|;
+count();
+[00000003] 1
+
+
+// Owned mode
+all.setOwned(0)|;
+
+all.a = 12|;
+count();
+[00000004] 0
+
+all.writeS("all.a", "coin")|;
+count();
+[00000005] 0
+
+all.write(0, 15)|;
+count();
+[00000006] 1
+
+// Add a notifyaccess: should trigger changed
+all.setNotifyAccess(0)|;
+sleep(30 * System.period) |;
+if (15 < count()) "ok" else "fail: " + count;
+[00000007] "ok"
+
+// Test the other way: fist notifyAccess, then at
+all.setOwned(1)|;
+all.b = 5|;
+all.setNotifyAccess(1)|;
+all.b - all.b;
+[00000008] -1
+at(all.b > 30) "good".print();
+sleep(2s);
+[00000009] "good"

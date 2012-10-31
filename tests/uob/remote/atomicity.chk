@@ -1,0 +1,137 @@
+// Match sure that the initialization of remote UObjects is atomic.
+
+var cycleStart = System.cycle |
+System.systemFiles = [] |
+// This is taken by tcdump from the actual stream bw server and
+// test/all as a remote.
+class remall{}|
+external object remall|
+external function (0) remall.update from remall|
+if (!isdef(remall.load)) var remall.load|
+external var remall.load from hookPoint_flow_16116|
+remall.getSlot("load").update_timed(1, 52452198896)|external function (1) remall.init from remall|
+external function (1) remall.setOwned from remall|
+external function (1) remall.setNotifyChange from remall|
+external function (2) remall.multiRead from remall|
+external function (3) remall.multiWrite from remall|
+external function (1) remall.setBypassNotifyChangeBinary from remall|
+external function (1) remall.setBypassNotifyChangeImage from remall|
+external function (2) remall.markBypass from remall|
+external function (2) remall.markRTP from remall|
+external function (2) remall.selfWriteB from remall|
+external function (2) remall.selfWriteI from remall|
+external function (2) remall.selfWriteVD from remall|
+external function (1) remall.setNotifyAccess from remall|
+external function (1) remall.setNotifyChangeByName from remall|
+external function (1) remall.setNotifyChangeByUVar from remall|
+external function (0) remall.sendEvent8Args from remall|
+external function (1) remall.unnotify from remall|
+external function (1) remall.setThreadedNotifyChange from remall|
+external function (1) remall.setThreadedNotifyChangeByUVar from remall|
+external function (1) remall.read from remall|
+external function (2) remall.write from remall|
+external function (1) remall.readByName from remall|
+external function (2) remall.writeByName from remall|
+external function (2) remall.writeByUVar from remall|
+external function (2) remall.writeOwnByName from remall|
+external function (2) remall.urbiWriteOwnByName from remall|
+external function (1) remall.sendString from remall|
+external function (2) remall.sendBuf from remall|
+external function (0) remall.sendPar from remall|
+external function (1) remall.typeOf from remall|
+external function (1) remall.uobjectName from remall|
+external function (1) remall.allUObjectName from remall|
+if (!isdef(remall.a)) var remall.a|
+external var remall.a from hookPoint_flow_16116|
+if (!isdef(remall.b)) var remall.b|
+external var remall.b from hookPoint_flow_16116|
+if (!isdef(remall.c)) var remall.c|
+external var remall.c from hookPoint_flow_16116|
+if (!isdef(remall.d)) var remall.d|
+external var remall.d from hookPoint_flow_16116|
+if (!isdef(remall.initCalled)) var remall.initCalled|
+external var remall.initCalled from hookPoint_flow_16116|
+remall.getSlot("initCalled").update_timed(0, 52452204476)|if (!isdef(remall.lastChange)) var remall.lastChange|
+external var remall.lastChange from hookPoint_flow_16116|
+if (!isdef(remall.lastAccess)) var remall.lastAccess|
+external var remall.lastAccess from hookPoint_flow_16116|
+if (!isdef(remall.lastChangeVal)) var remall.lastChangeVal|
+external var remall.lastChangeVal from hookPoint_flow_16116|
+remall.getSlot("lastChangeVal").update_timed(-1, 52452204518)|if (!isdef(remall.lastAccessVal)) var remall.lastAccessVal|
+external var remall.lastAccessVal from hookPoint_flow_16116|
+if (!isdef(remall.removeNotify)) var remall.removeNotify|
+external var remall.removeNotify from hookPoint_flow_16116|
+remall.getSlot("removeNotify").update_timed("", 52452204546)|external function (1) remall.readProps from remall|
+external function (2) remall.writeProps from remall|
+external function (2) remall.writeD from remall|
+external function (2) remall.writeS from remall|
+external function (2) remall.writeL from remall|
+external function (2) remall.writeM from remall|
+external function (2) remall.writeB from remall|
+external function (3) remall.makeCall from remall|
+external function (2) remall.writeBNone from remall|
+external function (2) remall.writeI from remall|
+external function (2) remall.writeSnd from remall|
+external function (2) remall.writeRI from remall|
+external function (2) remall.writeRSnd from remall|
+external function (1) remall.transmitD from remall|
+external function (1) remall.transmitS from remall|
+external function (1) remall.transmitL from remall|
+external function (1) remall.transmitM from remall|
+external function (1) remall.transmitB from remall|
+external function (1) remall.transmitI from remall|
+external function (1) remall.transmitSnd from remall|
+external function (1) remall.transmitO from remall|
+external function (1) remall.loop_yield from remall|
+external function (0) remall.side_effect_free_get from remall|
+external function (1) remall.side_effect_free_set from remall|
+external function (0) remall.yield from remall|
+external function (1) remall.yield_for from remall|
+external function (0) remall.getDestructionCount from remall|
+external function (0) remall.invalidRead from remall|
+external function (0) remall.invalidWrite from remall|
+try{var remall.ev = Event.new()} catch(var e) {}|
+external function (0) remall.sendEvent from remall|
+external function (2) remall.sendEvent2Args from remall|
+external function (1) remall.sendNamedEvent from remall|
+external function (1) remall.throwException from remall|
+external function (0) remall.socketStats from remall|
+external function (0) remall.instanciate from remall|
+external function (1) remall.area from remall|
+external function (2) remall.translate from remall|
+external function (0) remall.makeRect from remall|
+external function (2) remall.multiTranslate from remall|
+external function (1) remall.transmitPointOfInterest from remall|
+external function (2) remall.writePointOfInterest from remall|
+external function (1) remall.readPointOfInterest from remall|
+external function (1) remall.pack from remall|
+external function (1) remall.unpack from remall|
+if (!isdef(remall.periodicWriteTarget)) var remall.periodicWriteTarget|
+external var remall.periodicWriteTarget from hookPoint_flow_16116|
+if (!isdef(remall.periodicWriteType)) var remall.periodicWriteType|
+external var remall.periodicWriteType from hookPoint_flow_16116|
+if (!isdef(remall.periodicWriteRate)) var remall.periodicWriteRate|
+external var remall.periodicWriteRate from hookPoint_flow_16116|
+if (!isdef(remall.periodicWriteCount)) var remall.periodicWriteCount|
+external var remall.periodicWriteCount from hookPoint_flow_16116|
+if (!isdef(remall.changeCount)) var remall.changeCount|
+external var remall.changeCount from hookPoint_flow_16116|
+remall.getSlot("periodicWriteCount").update_timed(1, 52452208137)|external var remall.periodicWriteRate from remall|
+if (!isdef(remall.ia)) var remall.ia|
+external var remall.ia from hookPoint_flow_16116|
+remall.getSlot("ia").setSlot("inputPort", true)|if (!isdef(remall.ib)) var remall.ib|
+external var remall.ib from hookPoint_flow_16116|
+remall.getSlot("ib").setSlot("inputPort", true)|if (!isdef(remall.ic)) var remall.ic|
+external var remall.ic from hookPoint_flow_16116|
+remall.getSlot("ic").setSlot("inputPort", true)|if (!isdef(remall.id)) var remall.id|
+external var remall.id from hookPoint_flow_16116|
+remall.getSlot("id").setSlot("inputPort", true)|external function (2) remall.notifyWriteA from remall|
+external function (1) remall.writeAD from remall|
+external function (1) remall.writeAS from remall|
+external function (1) remall.writeAB from remall|
+external function (1) remall.manyWriteTest from remall|
+external event (1) remall.boundev from remall|
+assert
+{
+  cycleStart == System.cycle;
+};

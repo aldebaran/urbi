@@ -1,0 +1,16 @@
+   __HERE__;
+[00000001] input.u:1.4
+
+__HERE__.file.basename;
+[00000002] "input.u"
+
+__HERE__.line;
+[00000003] 7
+
+__HERE__.column;
+[00000004] 1
+
+//#push 1
+   __HERE__;
+[00000005] 1.4
+//#pop

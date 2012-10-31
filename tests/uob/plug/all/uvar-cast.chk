@@ -1,0 +1,9 @@
+//#uobject test/all
+all.a = 1|;
+at(all.b->changed?)
+  assert(all.b == [1,2]);
+all.manyWriteTest(1);
+all.b;
+[00000001] [1, 2]
+all.a["coin"] === all;
+[00000002] true

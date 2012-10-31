@@ -1,0 +1,15 @@
+// Check instances of at are run concurrently
+
+var e = Event.new()|
+
+at (e?)
+{ echo("start"); sleep(100ms); echo("end"); };
+at (e?)
+{ echo("start"); sleep(100ms); echo("end"); };
+
+e!;
+[00000001] *** start
+[00000002] *** start
+[00000003] *** end
+[00000004] *** end
+sleep(500ms);

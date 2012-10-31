@@ -1,0 +1,48 @@
+//#uobject test/all
+
+// The test input might be sent in input.u, so we must be nonblocking.
+{
+  all.a = 1;
+  all.b = 1;
+  all.sendString("all.a  = 12|;");
+  sleep (500ms);
+  assert
+  {
+    all.a == 12
+  };
+},
+
+{
+  sleep(1s);
+  // With length "12", only the all.a part should be sent.
+  all.sendBuf("all.a = 13|;all.b = 13|;", 12);
+  sleep(500ms);
+  assert
+  {
+    all.a == 13;
+    all.b == 1;
+  };
+},
+
+{
+  sleep(2s);
+  var Object.a = 1;
+  all.sendPar;
+  sleep(500ms);
+  assert
+  {
+    Object.a == 123;
+  };
+},
+
+{
+  sleep(3s);
+  shutdown;
+},
+
+// Test system inserts a "shutdown;", so disable it.  We cannot simply
+// "sleep(3s)" here, as "all.sendString" will append its argument to
+// the input of the Lobby, so it would be also delayed by the
+// sleep(3s), and the check would fail.
+if (false)
+

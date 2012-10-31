@@ -1,0 +1,23 @@
+var content;
+
+content = "echo(\"loading short\");\n"
+          "System.requireFile(\"long.u\");\n"
+          "echo(\"short loaded\")" |;
+File.save("short.u", content);
+
+content = "echo(\"loading long\");\n"
+          "sleep(1s); \n"
+          "echo(\"long loaded\")" |;
+File.save("long.u", content);
+
+System.requireFile("long.u"),
+sleep(0.5s) |
+System.requireFile("short.u");
+
+[00000001] *** loading long
+[00000002] *** loading short
+[00000003] *** long loaded
+[00000004] *** short loaded
+
+File.new("short.u").remove();
+File.new("long.u").remove();

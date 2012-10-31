@@ -1,0 +1,34 @@
+// Test default arguments
+function add(x, y = 1, z = 0)
+{
+  x + y + z
+}|;
+
+add();
+[00000001:error] !!! input.u:@.1-5: add: expected between 1 and 3 arguments, given 0
+add(50);
+[00000002] 51
+add(20, 22);
+[00000003] 42
+add(1, 2, 3);
+[00000004] 6
+
+// Test default argument with closure
+var f = {
+  var x = 0;
+  function lobby.inc() { x++|; };
+  function (arg = x) { echo(arg) };
+}|;
+
+f();
+[00000005] *** 0
+f(5);
+[00000006] *** 5
+inc();
+inc();
+f();
+[00000007] *** 2
+
+// Test error cases
+function (x, y = 0, z) {};
+[00000008:error] !!! input.u:@.10-22: syntax error: argument with no default value after arguments with default value

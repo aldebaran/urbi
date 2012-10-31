@@ -1,0 +1,81 @@
+// Check intensive read/write from multiple threads.
+//#uobject test/threaded
+//#no-fast
+import System.*;
+import Global.*;
+import Math.*;
+
+// FIXME: We have a problem on Windows.
+skipIfWindows();
+
+var t = stats()["cycles"]|;
+sleep(2s);
+stats()["cycles"] - t < 5 || "error: kernel is not IDLE";
+[00000001] true
+
+for (10)
+  Threaded.startThread();
+
+UVar.new(Global, "x")|;
+var Global.timeChange = 0|;
+// Store time at which x is written to.
+Global.&x.notifyChange(closure() { Global.timeChange = time})|;
+
+var vars = 10.seq().map(function(x) {String.fromAscii("a".toAscii() + x)})|;
+
+var modified = [0]*10|;
+for|(var i: 10)
+{
+  UVar.new(Global, vars[i]);
+  Global.getSlot(vars[i])
+    .notifyChange(closure() { modified[i] = modified[i] + 1})|;
+  Global.updateSlot(vars[i], i);
+}|;
+vars = vars.map(function(x) { "Global." + x})|;
+// binding spree!
+for(var i: 10)
+  for|(var j: 10)
+    Threaded.queueOp(i, Threaded.CREATE_VAR, [vars[j]]);
+"binding done";
+[00000002] "binding done"
+
+// Send the puree
+var st = time|;
+//every|(1s) { wall( "" + (time - st) +" : " + modified)},
+var count = 0|;
+modified = [0] * 10|;
+while (time-st < 15)
+{
+  for|(var i: 10)
+  {
+    Threaded.queueOp(i, Threaded.WRITE_VAR, [vars[random(10)], i]);
+    Threaded.queueOp(i, Threaded.READ_VAR, [vars[random(10)]]);
+    count++
+  };
+  sleep(100ms);
+};
+
+sleep(1s);
+"o<";
+[00000003] "o<"
+
+var sum = 0|
+for|(5)
+{
+  sum = 0|
+  for|(var v: modified)
+    sum += v;
+  if (sum == count)
+    break|
+  sleep(500ms)
+}|
+assert (sum == count);
+
+// multiple successive writes per thread
+for|(var j: 50)
+  for|(var i: 10)
+    Threaded.queueOp(i, Threaded.WRITE_VAR, [vars[random(10)], i, random(5)+1]);
+
+sleep(2s);
+1;
+[00000004] 1

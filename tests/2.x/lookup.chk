@@ -1,0 +1,6 @@
+asdfjklm;
+[00000001:error] !!! input.u:@.1-8: lookup failed: asdfjklm
+
+// Same test for dvorak peoples
+aoeuhtns;
+[00000002:error] !!! input.u:@.1-8: lookup failed: aoeuhtns

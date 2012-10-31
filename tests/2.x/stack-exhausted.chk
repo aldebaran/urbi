@@ -1,0 +1,14 @@
+// Check that we can intercept a stack exhausted exception
+// Does not work on PPC.
+//#skip-if case $host in (powerpc-apple*) true;; (*) false ;;esac
+
+function f() { f() } |;
+try
+{
+  f()
+}
+catch (var s if s.isA(Exception.Scheduling))
+{
+  echo (s)
+};
+[00000001] *** input.u:5.16-18: stack space exhausted

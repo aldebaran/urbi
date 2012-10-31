@@ -1,0 +1,9 @@
+var e = Event.new()|;
+
+tag1: at (e? if {tag2.stop(); true}) echo("in 1") onleave echo("out 1");
+tag2: at (e?) echo("in 2") onleave echo("out 2");
+
+e.trigger()|;
+[00000004] *** in 1
+
+sleep(100ms);

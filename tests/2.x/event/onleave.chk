@@ -1,0 +1,21 @@
+// Test at(event) onleave
+var e = Event.new() | {};
+at (e?(var a))
+  echo (a)
+onleave
+  echo (a*a);
+
+e!(10);
+[00000001] *** 10
+[00000002] *** 100
+sleep(100ms);
+
+e!(5) ~ 1s,
+sleep(100ms);
+[00000003] *** 5
+
+echo("foo");
+[00000004] *** foo
+
+sleep(1s);
+[00000005] *** 25

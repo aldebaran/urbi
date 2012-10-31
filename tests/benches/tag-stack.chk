@@ -1,0 +1,129 @@
+
+var tag1 = Tag.new() |
+var tag2 = Tag.new() |
+var tag3 = Tag.new() |
+var tag4 = Tag.new() |
+var tag5 = Tag.new() |
+var tag6 = Tag.new() |
+var tag7 = Tag.new() |
+var tag8 = Tag.new() |
+var tag9 = Tag.new() |
+var tag10 = Tag.new() |
+var tag11 = Tag.new() |
+var tag12 = Tag.new() |
+var tag13 = Tag.new() |
+var tag14 = Tag.new() |
+var tag15 = Tag.new() |
+var tag16 = Tag.new() |
+var tag17 = Tag.new() |
+var tag18 = Tag.new() |
+var tag19 = Tag.new() |
+var tag20 = Tag.new() |
+var tag21 = Tag.new() |
+var tag22 = Tag.new() |
+var tag23 = Tag.new() |
+var tag24 = Tag.new() |
+var tag25 = Tag.new() |
+var tag26 = Tag.new() |
+var tag27 = Tag.new() |
+var tag28 = Tag.new() |
+var tag29 = Tag.new() |
+var tag30 = Tag.new() |
+var tag31 = Tag.new() |
+var tag32 = Tag.new() |
+var tag33 = Tag.new() |
+var tag34 = Tag.new() |
+var tag35 = Tag.new() |
+var tag36 = Tag.new() |
+var tag37 = Tag.new() |
+var tag38 = Tag.new() |
+var tag39 = Tag.new() |
+var tag40 = Tag.new() |
+var tags = [tag1, tag2, tag3, tag4, tag5, tag6, tag7, tag8, tag9, tag10, tag11, tag12, tag13, tag14, tag15, tag16, tag17, tag18, tag19, tag20, tag21, tag22, tag23, tag24, tag25, tag26, tag27, tag28, tag29, tag30, tag31, tag32, tag33, tag34, tag35, tag36, tag37, tag38, tag39, tag40] |
+
+var reset = Tag.new() | reset.freeze() |
+loop {
+  reset:
+  tag1:
+tag2:
+tag3:
+tag4:
+tag5:
+tag6:
+tag7:
+tag8:
+tag9:
+tag10:
+tag11:
+tag12:
+tag13:
+tag14:
+tag15:
+tag16:
+tag17:
+tag18:
+tag19:
+tag20:
+tag21:
+tag22:
+tag23:
+tag24:
+tag25:
+tag26:
+tag27:
+tag28:
+tag29:
+tag30:
+tag31:
+tag32:
+tag33:
+tag34:
+tag35:
+tag36:
+tag37:
+tag38:
+tag39:
+tag40: {
+    for (40) {
+      1; 1; 1; 1; 1; 1; 1; 1;
+      1; 1; 1; 1; 1; 1; 1; 1;
+    }
+  }
+},
+
+1;
+[00000000] 1
+
+for| (1024) {
+  reset.unfreeze() |
+
+  tags[0].freeze() |
+  for| (var i: 40 - 1) {
+    tags[i + 1].freeze();
+    1; 1; 1; 1; 1; 1; 1; 1;
+    1; 1; 1; 1; 1; 1; 1; 1;
+    tags[i].unfreeze();
+  }|
+  tags[40 - 1].unfreeze()|
+
+  reset.freeze() | reset.stop() |
+}|
+
+2;
+[00000000] 2
+
+for| (1024 / 4) {
+  reset.unfreeze() |
+
+  for| (var i: 40) {
+    1; 1; 1; 1; 1; 1; 1; 1;
+    1; 1; 1; 1; 1; 1; 1; 1;
+    tags[i].stop();
+  }|
+
+  reset.freeze() | reset.stop() |
+}|
+
+"end";
+[00000000] "end"
+

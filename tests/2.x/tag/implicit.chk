@@ -1,0 +1,46 @@
+t: detach ({loop {echo ("foo"); sleep(1s)}})|;
+[00000001] *** foo
+sleep(2.5s);
+[00000002] *** foo
+[00000003] *** foo
+t.block();
+sleep(10ms);
+echo ("bar");
+[00000004] *** bar
+
+// Implicit tags cannot have arguments.
+t1(1):  detach ({loop {echo ("bar"); sleep(1s)}})|;
+[01234567:error] !!! input.u:@.1-5: lookup failed: t1
+
+// Implicit tags are only valid if "this" is the Lobby.
+class Foo { function f() { t1: echo (12) } }|;
+Foo.f();
+[01234567:error] !!! input.u:@1.28-29: lookup failed: t1
+[01234567:error] !!!    called from: input.u:@1.1-7: f
+
+// Implicit tags cannot be composite.
+t1.t2.t3: detach ({loop {echo ("foo"); sleep(1s)}})|;
+[01234567:error] !!! input.u:@.1-2: lookup failed: t1
+
+// Even if the first members exist.
+var t1 = Tag.new("t1")|;
+var t1.t2 = Tag.new("t1.t2")|;
+t1.t2.t3: detach ({loop {echo ("foo"); sleep(1s)}})|;
+[01234567:error] !!! input.u:@.1-8: lookup failed: t3
+
+
+var t1.t2.t3 = Tag.new("t1.t2.t3")|;
+t1.t2.t3: detach ({loop {echo ("foo"); sleep(1s)}})|;
+[00000005] *** foo
+sleep(2.5s);
+[00000006] *** foo
+[00000007] *** foo
+t1.t2.block();
+sleep(10ms);
+echo ("bar");
+[00000008] *** bar
+
+class C {}|;
+C.tag : 42;
+[01234567:error] !!! input.u:@.1-5: lookup failed: tag
+assert { !C.hasLocalSlot("tag") };

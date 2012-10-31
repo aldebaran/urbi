@@ -1,0 +1,17 @@
+//#uobject test/all
+
+all.a = 1|;
+all.setOwned(0)|;
+all.setNotifyChange(0)|;
+all2.setNotifyChangeByName("all.a")|;
+
+//urbi write to owned val should not trigger notifychange from others.
+{all.lastChange = ""; all.lastAccess = ""; all2.lastChange = "";1};
+[00000005] 1
+assert
+{
+  (all.a = 3) == 3;
+  all.lastChange == "all.a";
+  all.lastAccess == "";
+  all2.lastChange == "";
+};

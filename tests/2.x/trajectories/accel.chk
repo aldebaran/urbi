@@ -1,0 +1,27 @@
+  assign: x=100 accel:10
+&
+  s = sample(x, 4, 1s);
+
+assertSample(s, [0, 5, 20, 45.5]);
+
+x = 0|;
+
+  {
+    assign: x=100 accel:10
+  }
+&
+  {
+    s = sample(x, 2, 1s);
+    assign.freeze();
+    sleep (2s);
+    assign.unfreeze();
+    s += sample(x, 3, 1s);
+  };
+
+assertSample(s, [0, 5, 5, 20, 45.5]);
+
+
+// check zero displacement
+
+x = 0|;
+x = 0 accel:10;

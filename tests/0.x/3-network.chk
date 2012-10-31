@@ -1,0 +1,8 @@
+//#mode: network
+
+// This test relies on "mode: network" to force a network based
+// communication.  And then it checks that we shut down properly all
+// the lobbies.
+
+1;
+[00000001] 1

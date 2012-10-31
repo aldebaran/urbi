@@ -1,0 +1,9 @@
+// Check that we can stop a block and inject a return value
+var t = Tag.new() | {};
+echo({t: sleep(3600s)}),
+echo({t: sleep(3600s)}),
+echo({t: sleep(3600s)}),
+sleep(100ms); t.stop(42); sleep(100ms);
+[00000001] *** 42
+[00000002] *** 42
+[00000003] *** 42

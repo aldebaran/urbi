@@ -1,0 +1,13 @@
+assert
+{
+  var p = Pattern.new(0);
+  p.match(0);
+  ! p.match(1);
+};
+
+assert
+{
+  var p = Pattern.new(Pattern.Binding.new("x"));
+  p.match(42);
+  p.bindings == ["x" => 42];
+};

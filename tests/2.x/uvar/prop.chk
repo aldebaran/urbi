@@ -1,0 +1,28 @@
+var o = Object.new()|;
+
+UVar.new(o,"v")|;
+
+o.v = 12;
+[00000003] 12
+o.v;
+[00000004] 12
+o.v->rangemax = 10 | o.v->rangemin = 0|;
+// Check that we can read our props
+o.v->rangemax;
+[00000005] 10
+o.v = 100 | o.v;
+[00000006] 10
+o.&v.notifyChange(function() {cout << lobby.o.v})|;
+
+// Do not require that the return value of = enforce ranges.
+o.v = -10 | o.v;
+[00000007:output] 0
+[00000008] 0
+
+// Check that changing ranges does not impact our notifychange.
+o.v->rangemax = 100 | o.v->rangemin = 0|;
+o.v = 50;
+[00000009:output] 50
+[00000010] 50
+o.v;
+[00000011] 50

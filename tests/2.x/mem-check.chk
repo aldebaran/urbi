@@ -1,0 +1,72 @@
+import System.*;
+
+function init_memCheck()
+{
+  var initMem = System.status().stat("VmData") |
+  clog << "initialized with %d kB" % [initMem] |
+  var expectMB = 10 |
+  if (System.Platform.compilationModeDebug)
+    expectMB = 15 |
+  assert { initMem < expectMB * 1024; } |
+}|;
+
+
+init_memCheck();
+
+// Emphasize leaks.
+var nb_iter = 500 |;
+import this.*;
+// Check if job creation is leaking.
+System.memCheck(closure () { for (nb_iter) { 1, } });
+System.memCheck(closure () { for (nb_iter) { 1 & 1 } });
+System.memCheck(closure () { for (nb_iter) { for&(10) 1; } });
+
+// Check if allocation is leaking.
+System.memCheck(closure () { for (nb_iter) { Object.new() } });
+
+// Check if tags creation are leaking memory.
+System.memCheck(closure () { for (nb_iter) { Tag.new() } });
+
+// Check tagging.
+{
+  var t = Tag.new();
+  System.memCheck(closure () { for (nb_iter) { t: 1 } });
+  System.memCheck(closure () { for (nb_iter) { t: t.stop() } });
+};
+
+// Check if parser is leaking.
+System.memCheck(closure () {
+  for (nb_iter)
+    eval("[ %s ];" % ("\"pouet_pouet_camion\"," * 10));
+});
+
+System.memCheck(closure () { for (var i: nb_iter) { i.asString() } });
+
+// The creation of a lobbies allocates lot's of memory, just checking that
+// all buffers are freed.
+System.memCheck(closure () { Lobby.create().quit(); });
+[01234567] *** disconnecting Lobby_0xdeadbeef
+[01234567] *** disconnecting Lobby_0x8badf00d
+
+
+// Check inotify thread for monitoring directory changes.
+clog << "inotify thread" |
+System.memThreadCheck(32, closure () { Directory.new(".") });
+
+// Does not pass.  Need more study to understand why.
+// (https://redmine.gostai.com/issues/5036).
+//
+// // Do this check after inotify, because thread stacks may be kept by the
+// // system even after the join.  The stacks are kept to be re-used by another
+// // thread.  So doing it before inotify check may lead to false result due to
+// // the sharing of stack.  Identically, the following statement appear to
+// // leak one thread stack which avoid the re-allocation.  This can be due to
+// // optimization of malloc/free on Linux.
+//
+// // Check process thread for monitoring child processes.
+// clog << "process thread" |
+// System.memThreadCheck(32, closure () {
+//   var p = Process.new("echo", []) |
+//   p.run |
+//   p.join |
+// });

@@ -1,0 +1,75 @@
+var top = Object.new() |;
+top.protos.size;
+[00000001] 1
+
+var bot = Object.new() |;
+bot.protos.size;
+[00000002] 1
+
+var top.foo = "top.foo";
+[00000003] "top.foo"
+bot.addProto(top) |;
+// Call top protos' function.
+bot.foo;
+[00000004] "top.foo"
+
+// Check that getSlot works in depth.
+bot.getSlotValue("foo");
+[00000005] "top.foo"
+
+// Make our own version of "foo" and call it.
+var bot.foo = "bot.foo";
+[00000006] "bot.foo"
+bot.foo;
+[00000007] "bot.foo"
+
+// Detach from our protos'.
+bot.removeProto(top) |;
+bot.protos.size;
+[00000008] 1
+
+// Check that we still can call foo.
+bot.foo;
+[00000009] "bot.foo"
+
+// Remove the slot and try to use it.
+bot.removeLocalSlot("foo") |;
+bot.foo;
+[00000010:error] !!! input.u:@.1-7: lookup failed: foo
+
+
+bot.addProto(top) |;
+bot.foo;
+[00000011] "top.foo"
+
+bot.removeProto(top) |;
+bot.foo;
+[00000012:error] !!! input.u:@.1-7: lookup failed: foo
+
+// This is not an error.  Or should it?
+bot.removeProto(top) |;
+
+
+// Check setProtos.
+class Foo {} |;
+Foo.setProtos([Global, Math]);
+Foo.protos;
+[00000013] [Global, Math]
+
+// Check the updateHook is inherited
+Foo.protos = [Object, Object];
+[00000014] [Object, Object]
+
+Foo.protos;
+[00000015] [Object]
+
+// Check the protos order is preserved
+var foo = 0 |;
+foo.protos = [1, 2, 3];
+[00000016] [1, 2, 3]
+foo.protos;
+[00000017] [1, 2, 3]
+
+// Check invalid inherit
+Object.new.addProto(1);
+[00000018:error] !!! input.u:@.1-22: addProto: cannot inherit from a Float without being one

@@ -1,0 +1,19 @@
+#! /bin/sh
+
+case $# in
+  (0) set .;;
+esac
+
+for i in $(find "$@" -name '*.chk')
+do
+  perl -p  \
+       -e 'INIT { our $count = 0; }' \
+       -e 's/^\[\d+((?::\w+)?)\]/ sprintf("[%08d$1]", ++$count) /e' \
+       $i >$i.tmp
+  perl -0777 -pi -e 's/\s+\Z/\n/gs' $i.tmp
+  if ! diff -U 0 $i $i.tmp; then
+    mv $i.tmp $i
+  else
+    rm $i.tmp
+  fi
+done

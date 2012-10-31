@@ -1,0 +1,35 @@
+// Activate spelling error fixes, normally disabled in tests.
+Exception.Lookup.fixSpelling = true |;
+
+var foobar;
+
+// One character is never fixed.
+x;
+[00000001:error] !!! input.u:@.1: lookup failed: x
+
+// A distance of 2 should be corrected.
+fubar;
+[00000002:error] !!! input.u:@.1-5: lookup failed: fubar (possible misspelling of foobar)
+
+// An unknown word, we cannot do anything about it.
+xyzzy;
+[00000003:error] !!! input.u:@.1-5: lookup failed: xyzzy
+
+
+
+// When working on localSlotNames, don't report inherited names.
+class Base
+{
+  var fobar;
+}|;
+
+class Derive : Base
+{
+  var fobaz;
+}|;
+
+Derive.getLocalSlot("fubar");
+[00000004:error] !!! input.u:@.1-28: lookup failed: fubar (possible misspelling of fobaz)
+
+Derive.&fubar;
+[00000005:error] !!! input.u:@.1-13: lookup failed: fubar (possible misspelling of fobar)

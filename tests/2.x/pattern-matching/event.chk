@@ -1,0 +1,8 @@
+var e = Event.new() | {};
+
+at (e?(var x))
+  echo(x);
+
+e!(42);
+[00000001] *** 42
+sleep(1ms);

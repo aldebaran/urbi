@@ -1,0 +1,16 @@
+class C {}|;
+assert
+{
+  42.asFloat() == 42;
+  42.as(Float) == 42;
+
+  var Float2 = Float;
+  42.as(Float2) == 42;
+
+  "foo".asString() == "foo";
+
+  C.asC() === C;
+  var c = C.new();
+  c.asC() === c;
+};
+

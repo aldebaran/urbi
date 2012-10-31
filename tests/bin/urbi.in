@@ -1,0 +1,202 @@
+#! @SHELL@
+# @configure_input@
+
+me=$(basename $0)
+
+: ${EXEEXT="@EXEEXT@"}
+: ${LIBSFX="@LIBSFX@"}
+: ${abs_top_builddir="@abs_top_builddir@"}
+: ${abs_top_srcdir="@abs_top_srcdir@"}
+: ${kernel_builddir="@kernel_builddir@"}
+: ${kernel_srcdir="@kernel_srcdir@"}
+: ${sdk_remote_builddir="@sdk_remote_builddir@"}
+: ${sdk_remote_srcdir="@sdk_remote_srcdir@"}
+
+: ${BOOST_LDPATH="@BOOST_LDPATH@"}
+
+libport_builddir=$sdk_remote_builddir/libport
+
+case ${me%$EXEEXT} in
+  (urbi)             : ${program=$kernel_builddir/src/bin/$me};;
+  (urbi-launch)      : ${program=$sdk_remote_builddir/src/bin/$me};;
+  (urbi-launch-java) : ${program=$sdk_remote_builddir/sdk/$me};;
+esac
+
+set -e
+
+case $VERBOSE in
+  (x) set -x;;
+esac
+
+stderr ()
+{
+  local i
+  for i
+  do
+    echo >&2 "$0: $i"
+  done
+}
+
+verbose ()
+{
+  test -z "$VERBOSE" ||
+    stderr "$@"
+}
+
+# setenv VAR VAL1...
+# ------------------
+# Set env verbosely $VAR="$VAL1$VAL2...".
+setenv ()
+{
+  local var
+  var=$1
+  shift
+  local val
+  local i
+  for i
+  do
+    val=$val$i
+  done
+  eval "$var=\$val"
+  export $var
+  verbose "$var = $val"
+}
+
+# prependenv VAR VAL...
+# ---------------------
+# Set env verbosely $VAR="$VAL1$VAL2...${$VAR}".
+prependenv ()
+{
+  local val
+  eval "val=\$$1"
+  set x "$@" "$val"
+  shift
+  setenv "$@"
+}
+
+# ld_path_add DIR...
+# ------------------
+# Extend the appropriate envvar so that shared libraries in DIR... will
+# be found.
+ld_path_add ()
+{
+  local d
+  local ds=
+  for d
+  do
+    if test -d $d; then
+      ds="$ds$d:"
+    fi
+  done
+  case $(uname -s) in
+    (CYGWIN*) prependenv PATH "$ds";;
+    (Darwin)  prependenv DYLD_LIBRARY_PATH "$ds";;
+    (*)       prependenv LD_LIBRARY_PATH "$ds";;
+  esac
+}
+
+# repath PATH
+# -----------
+# Set $repath_result to the native path.
+repath ()
+{
+  case $(uname -s) in
+    (CYGWIN*)  repath_result=$(cygpath --windows "$1");;
+    (*)        repath_result=$1;;
+  esac
+}
+
+# urbi_lib ENVBASENAME PATH
+# -------------------------
+urbi_lib ()
+{
+  local env="URBI_ROOT_LIB$1"
+  local path="$2$LIBSFX"
+  repath "$path"
+  setenv $env $repath_result
+}
+
+# Find the non-installed libraries.
+urbi_lib JPEG4URBI "$sdk_remote_builddir/jpeg/.libs/libjpeg4urbi"
+urbi_lib PLUGIN    "$kernel_builddir/src/.libs/libuobject"
+urbi_lib PORT      "$libport_builddir/lib/libport/.libs/libport"
+urbi_lib REMOTE    "$sdk_remote_builddir/src/libuobject/.libs/libuobject"
+urbi_lib SCHED     "$libport_builddir/lib/sched/.libs/libsched"
+urbi_lib SERIALIZE "$libport_builddir/lib/serialize/.libs/libserialize"
+urbi_lib URBI      "$sdk_remote_builddir/src/liburbi/.libs/liburbi"
+
+# Images, doc etc.
+export URBI_DOC="$kernel_srcdir/doc"
+export URBI_SHARE="$kernel_srcdir/share"
+
+# SDK-Remote's uobjects.
+prependenv URBI_UOBJECT_PATH "$sdk_remote_builddir/src/uobjects:"
+
+# Urbi Objects.
+prependenv URBI_UOBJECT_PATH "$kernel_builddir/src/object:"
+
+# Find the noninstalled libraries.
+#
+# Do *not* add a path to either libuobjects, since (at least on OS X),
+# even if you pass an absolute path to dlopen, it first takes the base
+# name and makes a DYLD_LIBRARY_PATH look up.  Which is disastrous in
+# our case, since we have two different libuobject that differ only by
+# their path.
+ld_path_add $libport_builddir/lib/*/.libs               \
+            $sdk_remote_builddir/*/.libs                \
+            $sdk_remote_builddir/src/liburbi/.libs
+
+# Help people who use a version of Boost that is not in the regular
+# place.  But pay attention that on Mac OS X, for a reason I still do
+# not understand, add the MacPorts library directory to
+# DYLD_LIBRARY_PATH breaks the Java machinery:
+#
+#  ./_build/sdk-remote/src/tests/bin/urbi-launch-java tests/all/All.jar
+#  Error occurred during initialization of VM
+#  Unable to load native library: libjava.jnilib
+#
+# I have tried to add various directories of JAVA_HOME before or after
+# BOOST_LDPATH, but it does not help.  So don't do it in this
+# situation.
+case $(uname -s):$BOOST_LDPATH in
+  (Darwin:/opt/local/lib) ;;
+  (*) ld_path_add $BOOST_LDPATH;;
+esac
+
+# Use the shipped Urbi files.
+prependenv URBI_PATH					\
+  "$kernel_srcdir/share:$kernel_builddir/share:"	\
+  "$kernel_srcdir/fsm/share:"				\
+  "$kernel_builddir/modules:"
+case $(uname -o 2>/dev/null) in
+  (Cygwin)
+    # We use colon as separators, not semicolon.
+    URBI_PATH=$(cygpath -p -w "$URBI_PATH" | sed -e 's/;/:/g');;
+esac
+export URBI_PATH
+
+# Find the modules.
+prependenv URBI_UOBJECT_PATH "$kernel_builddir/modules:"
+
+# Bounce to the build-tree urbi-launch.
+setenv URBI_LAUNCH "$sdk_remote_builddir/src/tests/bin/urbi-launch$EXEEXT"
+
+case $me in
+  (urbi-launch-java)
+    setenv liburbi_jar "$sdk_remote_builddir/src/swig/java/lib/liburbijava.jar"
+    setenv library_path "$sdk_remote_builddir/src/swig/java/.libs/"
+    prependenv URBI_UOBJECT_PATH "$sdk_remote_builddir/src/swig/java:"
+    # In Java, we never have to load the plugin implementation.
+    ld_path_add $sdk_remote_builddir/src/libuobject/.libs
+    ;;
+esac
+
+# Keep "." in the URBI_UOBJECT_PATH.
+prependenv URBI_UOBJECT_PATH ".:"
+
+verbose "running $program $*"
+exec "$program" "$@"
+
+# Local Variables:
+# mode: shell-script
+# End:

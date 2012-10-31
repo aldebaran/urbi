@@ -1,0 +1,23 @@
+//#plug urbi/rtp test/all
+//#remote urbi/rtp test/all
+System.systemFiles = []|;
+UVar.new(Global, "val")|;
+Global.val = bigbin|;
+remall.setNotifyChangeByUVar(Global.&val)|;
+
+// The RTP connection is established lazily.  Force this, so that the
+// code for its establishment does not enter in the following count.
+// Yes 10 (ten!) times.  Two is not enough for instance.
+for(10) { Global.val = bigbin; sleep(100ms)};
+
+sleep(400ms);
+wall("start");
+[00000001] *** start
+sleep(100ms);
+
+assert (remall.lobby.isSilent(1.1s, bigbin.data.size, bigbin.data.size)),
+for(10) { Global.val = bigbin; sleep(100ms)};
+
+sleep(200ms);
+wall("stop");
+[00000003] *** stop

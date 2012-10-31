@@ -1,0 +1,53 @@
+//#plug test/all urbi/rtp
+//#remote test/all urbi/rtp
+skipIfWindows(); // FIXME: reenable for Urbi 3.
+System.systemFiles = []|;
+// FIXME: On OS X, 9203 does not pass (see test.u).
+if (System.Platform.hostOs[0,6] == "darwin")
+  bigstring = bigString(9150)|;
+
+UVar.new(Global, "val")|;
+Global.val = bigstring|;
+
+// Force RTP.
+Global.&val.rtp = true|;
+
+remall.setNotifyChangeByUVar(Global.&val)|;
+sleep(100ms);
+Global.val = bigstring|;
+sleep(100ms);
+
+for(10)
+{
+  Global.val = bigstring;
+  sleep(100ms);
+};
+assert(remall.lastChange);
+// careful, removeNotify is processed in the onChange so ensure it is called.
+// Also, writting Global.val is using the RTP channel, so sequence order
+// may not be respected.
+remall.removeNotify = remall.lastChange|;
+timeout(600ms)
+  every|(150ms)
+    Global.val = "fooo"|;
+timeout(3s)
+  waituntil(remall.removeNotify == "");
+assert(remall.removeNotify == "");
+// Wait a bit more until it is effective.
+sleep(2s);
+
+// Check that nothing goes over our RTP link anymore.
+var stats = remall.lobby.sharedRTP.stats()|;
+for (var i : 4)
+{
+  clog << "round %s" % i;
+  Global.val = bigstring;
+  sleep(100ms);
+  assert_equal_dict(stats, remall.lobby.sharedRTP.stats());
+};
+
+// ... second check for the same thing
+remall.lastChange = ""|;
+Global.val = bigstring|;
+sleep(400ms);
+assert (remall.lastChange == "");

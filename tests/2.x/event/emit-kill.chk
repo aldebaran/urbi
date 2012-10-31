@@ -1,0 +1,12 @@
+var e = Event.new()|;
+
+{t: e! ~ 3600} | "end".print(),
+sleep(100ms);
+at(e?) 1.print();
+[00000001] 1
+sleep(100ms);
+t.stop();
+[00000002] "end"
+at(e?) 2.print();
+sleep(100ms) | "done";
+[00000003] "done"

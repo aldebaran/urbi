@@ -1,0 +1,16 @@
+var e = Event.new()|;
+var t = Tag.new()|;
+at(e?) t.stop();
+whenever(e?) { "start".print(); sleep(100ms)};
+t: e! ~ inf | "end".print(),
+[00000001] "start"
+[00000002] "end"
+sleep(300ms);
+1;
+[00000003] 1
+t: e! ~ inf | "end".print(),
+[00000004] "start"
+[00000005] "end"
+sleep(300ms);
+1;
+[00000006] 1

@@ -1,0 +1,36 @@
+//#remote test/all
+
+// Check that loopback protection does not interfere when using InputPorts.
+
+// Consider the following situation:
+
+remall.lastChange = ""|;
+remall.setNotifyChange(0)|;
+remall.&b >> remall.&a|;
+
+// Now if remall were to write to remall.b, it must receive a message
+// from the engine telling him that a was updated. The remote has
+// now way of knowing by itself.
+remall.write(1, 10)|
+timeout(2s) waituntil(remall.lastChange == "remall.a");
+assert(remall.lastChange == "remall.a");
+remall.lastChange = ""|;
+// Try more vicious cases
+UVar.new(Global, "x")|;
+remall.&c >> Global.&x|;
+Global.&x >> remall.&a|;
+remall.write(2, 11)|
+timeout(2s) waituntil(remall.lastChange == "remall.a");
+assert(remall.lastChange == "remall.a");
+remall.lastChange = ""|;
+// Same but with inputport
+UVar.new(Global, "y")|;
+var Global.&y.inputPort = true|;
+remall.&d >> Global.&y|;
+Global.&y >> remall.&a|;
+remall.write(3, 12)|
+timeout(4s) waituntil(remall.lastChange == "remall.a");
+assert(remall.lastChange == "remall.a");
+1;
+[00000001] 1
+

@@ -1,0 +1,3 @@
+var tag = Tag.new() | {};
+tag: { {sleep(100ms); echo ("No")} & tag.stop() };
+tag: { tag.stop() & {sleep(100ms); echo ("No")} };

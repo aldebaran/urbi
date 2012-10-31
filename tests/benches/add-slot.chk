@@ -1,0 +1,8 @@
+do (Object.new())
+{
+  for| (var v: 1024 * 48)
+    setSlot(v.asString(), v);
+}|
+
+"end";
+[00000000] "end"

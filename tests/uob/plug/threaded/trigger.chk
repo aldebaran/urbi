@@ -1,0 +1,27 @@
+// Check that operation from other threads are executed when the kernel is IDLE.
+//#uobject test/threaded
+//#no-fast
+
+import System.*;
+import Global.*;
+
+var t = stats()["cycles"]|;
+sleep(2s);
+stats()["cycles"] - t < 5 || "error: kernel is not IDLE";
+[00000001] true
+
+UVar.new(Global, "x")|;
+var Global.timeChange = 0|;
+// Store time at which x is written to.
+Global.&x.notifyChange(closure() { Global.timeChange = time})|;
+
+Threaded.startThread();
+[00000002] 0
+
+// Check that other threads can wake the scheduler up.
+t = time | Threaded.queueOp(0, Threaded.DELAY, [900000]) | Threaded.queueOp(0, Threaded.WRITE_VAR, ["Global.x", 12]) | sleep(2.5s) |5;
+[00000003] 5
+sleep(500ms);
+// Check that write occurred at t+1s when the thread did it, and not at t+2s when this context woke the kernel up.
+Math.abs(timeChange-t - 1) < 0.5 || ("Wrong operation delay " + (timeChange - t));
+[00000004] true

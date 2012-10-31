@@ -1,0 +1,25 @@
+//#uobject test/all
+uobjectsAll();
+
+
+var Global.z = 12|;
+all2.a = 10|;
+all.makeCall("all", "writeD", ["Global.z", 42]);
+sleep(200ms);
+assert (Global.z == 42);
+
+var r = all.new(0)|;
+all.makeCall(r, "writeD", [all2.&a, 20]);
+sleep(200ms);
+assert (all2.a == 20);
+
+
+// Ensure no deadlocks occurrs when stacking remote calls
+function Global.bounce()
+{
+  all.makeCall("all", "writeD", ["all.a", 20]);
+}|;
+
+all.makeCall("Global", "bounce", []);
+sleep(200ms);
+assert (all.a == 20);

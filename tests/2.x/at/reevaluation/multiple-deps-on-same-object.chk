@@ -1,0 +1,23 @@
+// Check the at-cond is evaluated only once, although it depends on
+// 'this' twice (through this.x and this.y).
+
+var x = 0;
+[00000001] 0
+var y = 0;
+[00000002] 0
+
+echo("setup at");
+[00000003] *** setup at
+at ({echo("eval"); x + y > 0})
+  echo("in");
+[00000004] *** eval
+
+echo("trigger at");
+[00000005] *** trigger at
+x = 1;
+[00000006] *** eval
+[00000007] 1
+[00000008] *** in
+
+echo("the end");
+[00000009] *** the end

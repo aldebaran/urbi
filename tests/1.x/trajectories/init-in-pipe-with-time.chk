@@ -1,0 +1,9 @@
+var pupu = 0 |;
+
+at (0 < pupu)
+   {echo ("Will I be printed")},
+
+
+pupu = 30000 | pupu=0 time:500s,
+[00000001] *** Will I be printed
+sleep(1s);

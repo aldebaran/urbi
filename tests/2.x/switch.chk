@@ -1,0 +1,27 @@
+switch ("bar")
+{
+  case "foo":
+    1;
+  case "bar":
+    2;
+  case "baz":
+    3;
+};
+[00000001] 2
+
+function test(v)
+{
+  switch (v)
+  {
+    case []:
+      echo ("Empty list");
+    case [(var first), 2, (var last)]:
+      echo (first.asString() + " - " + last);
+  };
+}|
+
+test([]);
+[00000002] *** Empty list
+test([1, 1, 1]);
+test([1, 2, 3]);
+[00000003] *** 1 - 3

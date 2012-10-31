@@ -1,0 +1,117 @@
+/* ------------------------------------------ */
+
+{
+  function test_lambda()
+  {
+    var x = 0;
+    [1, 2, 3].each(function (i) { x += i });
+    x;
+  } |;
+
+  test_lambda();
+};
+[00000001] 6
+
+/* ------------------------------------------ */
+
+{
+  function until
+  {
+    // until executes the condition at least once
+    call.evalArgAt(1);
+    while (!call.evalArgAt(0))
+      call.evalArgAt(1);
+  } |;
+
+  {
+    var t = 1;
+    until (t >= 5, { echo (t); t++ });
+  };
+};
+[00000002] *** 1
+[00000003] *** 2
+[00000004] *** 3
+[00000005] *** 4
+
+/* ------------------------------------------ */
+
+{
+  function execute_for
+  {
+    var t = Tag.new();
+    t:
+    {
+      { sleep(call.argAt(1)) | t.stop() } &
+      t.stop(call.argAt(0))
+    }
+  } |;
+
+  execute_for({sleep(2s); 42}, 3s).print();
+  execute_for({sleep(2s); 42}, 1s).isVoid().print();
+};
+[00000006] 42
+[00000007] true
+
+/* ------------------------------------------ */
+
+{
+  function f(x, abort_tag)
+  {
+    if (x == 42)
+      abort_tag.stop(42);
+    return x * x;
+  } |;
+
+  function f_mul(l)
+  {
+    var t = Tag.new();
+    var res = 1;
+    t: {
+      for (var i in l)
+      {
+        res *= f(i, t);
+      };
+      res
+    }
+  } |;
+  f_mul([1, 2, 3]).print();
+  f_mul([1, 42, 3]).print();
+};
+[00000008] 36
+[00000009] 42
+
+/* ------------------------------------------ */
+
+{
+  function big(x)
+  {
+    sleep(500ms);
+    return x;
+  };
+
+  function towards_futures()
+  {
+    var t = time;
+    var x = big(42),
+    var y = big(51),
+
+    // We can run code  meanwhile
+    echo("Do some stuff ...");
+    (time - t < 100ms).print();
+
+    // Join: now we're going to need x and y values
+    // so we wait if they're not already computed.
+    waituntil(!x.isVoid() && !y.isVoid());
+    (time - t > 500ms).print();
+    echo(x);
+    echo(y);
+  } |;
+
+  towards_futures();
+};
+
+[00000010] *** Do some stuff ...
+[00000011] true
+[00000012] true
+[00000013] *** 42
+[00000014] *** 51

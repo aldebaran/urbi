@@ -1,0 +1,2 @@
+call;
+[00000001:error] !!! input.u:@.1-4: syntax error: call: used outside any function

@@ -1,0 +1,52 @@
+var lobby.name = "main"|;
+var l1 = Lobby.create()|;
+var l1.name = "l1"|;
+
+// Check that the lobby used by ats are the lobby which have declared them.
+import Global.*;
+
+var Global.toMain = Event.new()|;
+var Global.toL1 = Event.new()|;
+
+
+// Check with echo.
+{
+  Lobby.overrideSlot("echo", function (var msg, var tag = "", var prefix = "***") {
+    this.'echo$old'(lobby.name + ": " + msg, tag)
+  });
+  Object.overrideSlot("print", function () {
+    Channel.topLevel << Lobby.lobby.name + ": " + this.asString()
+  });
+}|;
+
+at(toMain?(var msg)) echo(msg);
+l1.receive("import Global.*; at(toL1?(var msg)) echo(msg);");
+
+toMain!(0);
+[00000001] *** main: 0
+
+l1.receive("toMain!(1);");
+[00000002] *** main: 1
+
+toL1!(0);
+[00000003] *** l1: 0
+
+l1.receive("toL1!(1);");
+[00000004] *** l1: 1
+
+// Check with .print
+
+var i = 0| at(toMain?) i++.print();
+l1.receive("var i = 0| at(toL1?) i++.print();");
+
+toMain!;
+[00000005] "main: 0"
+
+l1.receive("toMain!;");
+[00000006] "main: 1"
+
+toL1!;
+[00000007] "l1: 0"
+
+l1.receive("toL1!;");
+[00000008] "l1: 1"

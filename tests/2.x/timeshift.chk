@@ -1,0 +1,17 @@
+// Check that timeShift works as expected when a process is sleeping
+var ts;
+a: { sleep(3s); echo ("ending a"); ts = Job.current.timeShift },
+sleep(1s);
+a.freeze();
+sleep(1s);
+a.unfreeze();
+sleep(1s);
+a.freeze();
+sleep(1s);
+a.unfreeze();
+echo ("check");
+[00000001] *** check
+sleep(1.5s);
+[00000002] *** ending a
+if (ts >= 1.8s && ts < 2.2s) echo ("ok") else echo ("not ok");
+[00000003] *** ok

@@ -1,0 +1,25 @@
+//#uobject test/threaded
+//#no-fast
+//#timeout 5
+import Global.*;
+import Math.*;
+
+for(10)
+  Threaded.startThread();
+
+var Global.e = Event.new()|;
+var counter = 0;
+[00000001] 0
+at(e?(var x, var y, var z) if z == "canard") counter++;
+var cnt = 1000|;
+
+// Things are running slow on our win test machines.
+if (System.Platform.isWindows)
+  cnt /= 10|;
+
+for(cnt)
+Threaded.queueOp(random(10), Threaded.EMIT, ["Global.e"]);
+sleep(1s);
+timeout(40s) waituntil(counter == cnt);
+counter == cnt;
+[00000002] true

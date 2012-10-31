@@ -1,0 +1,12 @@
+{
+  var x = 0;
+  x = 1 speed: 1 speed: 1;
+  x;
+};
+[00000001:warning] !!! input.u:@2.18-25: modifier redefined: speed
+[00000002] 1
+
+// Check that an exception is propagated outside the trajectory generator.
+// And also check we are not stuck after the throw (happened once).
+y = 20 sin:10s ampli:5;
+[00000001:error] !!! input.u:@.1: lookup failed: y

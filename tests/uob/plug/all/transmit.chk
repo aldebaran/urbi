@@ -1,0 +1,52 @@
+//#uobject test/all
+uobjectsAll();
+assert
+{
+  // Be sure not to call features from System indirectly.
+  all.hasLocalSlot("setLocale");
+  all.hasLocalSlot("getLocale");
+};
+
+function check(var urbiLoc, var uobLoc)
+{
+  assert
+  {
+    System.setLocale("LC_ALL", urbiLoc).isVoid;
+    all.setLocale("LC_ALL", uobLoc) === nil;
+
+    all.transmitD(1.5) == -1.5;
+
+    all.transmitS("coin") == "oi";
+
+    var d = ["coin" => [42, "string", [ => ]]];
+    all.transmitM(d) == d;
+
+    var v = Vector.new(1.1, 2.2, 3.3, 4.4, 5.5);
+    all.transmitVector(v) == v + 1;
+
+    all.transmitMatrix(Matrix.new(3, 3))
+      == Matrix.new([0, 0, 0],
+                    [1, 1, 1],
+                    [2, 2, 2]);
+
+    all.transmitL([1, "coin", [1, "2"]])
+      == [[1, "2"], "coin", 1];
+
+    // nil.
+    all.transmitL([1.5, nil, 2.5]) == [2.5, nil, 1.5];
+    !all.writeByUVar(all.&a, nil);
+    all.a === nil;
+  };
+}|;
+
+// Exercize different locales, including one in which printf and
+// scanf use a comma instead of a dot ("3,1415").
+var fr_FR =
+  { if (System.Platform.isWindows) "French_France.1252" else "fr_FR.utf8" }|;
+check("C",   "C");
+check("C",   fr_FR);
+check(fr_FR, "C");
+check(fr_FR, fr_FR);
+
+all.transmitM([1 => 2]);
+[01234567:error] !!! input.u:@.1-23: transmitM: Dictionaries exchanged with UObjects can only have String keys: 1 (Float)

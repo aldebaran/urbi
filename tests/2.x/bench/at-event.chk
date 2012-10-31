@@ -1,0 +1,9 @@
+//#timeout 3
+var cnt = 0|
+var x = []|
+for|(50) x.insertBack(Event.new())|
+for|(var i: 50) at(x[i]?) cnt++;
+
+for(100) {for|(var i: 50) x[i]!;1;2;3;4;5};
+cnt;
+[00000001] 5000

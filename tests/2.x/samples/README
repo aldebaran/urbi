@@ -1,0 +1,6 @@
+This directory contains code samples that we have published or
+otherwise sent to customers. We really do not want them to
+break without knowing it.
+
+If you have to break those samples, please make sure that the
+customer or web site or whatever has been notified.

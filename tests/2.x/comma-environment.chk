@@ -1,0 +1,17 @@
+// check that detached runners can read environment
+{
+  var x = 0;
+  { x.print() },
+  x.print();
+};
+[00000001] 0
+[00000002] 0
+
+// check that detached runners can write environment
+{
+  var x = 0;
+  { x = 42 },
+  sleep(100ms);
+  x.print();
+};
+[00000003] 42

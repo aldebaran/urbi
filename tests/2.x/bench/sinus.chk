@@ -1,0 +1,16 @@
+//#timeout 10
+// Benching this is not trivial, what matters is the cost per assignment
+// so ensure we make a fixed amount of them
+var x = 0|
+var cnt = 0|
+at(x->changed?) cnt++;
+for|(100) x = 0 sin:1s ampli:50,
+
+//we could every() break but this is a too recent feature
+t:loop
+{
+  if (cnt > 5000)
+    t.stop();
+};
+1;
+[00000001] 1

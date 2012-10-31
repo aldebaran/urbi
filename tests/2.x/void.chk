@@ -1,0 +1,66 @@
+// Void alone.
+void;
+
+// Void to avoid the display of a value.
+1 | {};
+
+// A function returning void.
+var f = function() {} | {};
+
+var h = function(x) {"ok".print();void;} | {};
+
+h(1);
+[00000001] "ok"
+h(f());
+[00000002:error] !!! input.u:@.1-6: unexpected void
+var i = f();
+[00000003:error] !!! input.u:@.5: unexpected void
+1+f();
+[00000004:error] !!! input.u:@.1-5: unexpected void
+echo("foo").uid;
+[00000005] *** foo
+[00000006:error] !!! input.u:20.1-15: unexpected void
+
+// Test that the location is correct (innermost).
+var j = function()
+{
+  this . h(this . f())
+} | {};
+j();
+[00000007:error] !!! input.u:27.3-22: unexpected void
+[00000008:error] !!!    called from: input.u:29.1-3: j
+
+// Check that "return" returns Void, instead of a null pointer
+// that crashes the system.
+function nada() { return } | {};
+nada();
+
+// Check void cannot be included in literal lists
+[void];
+[00000009:error] !!! input.u:@.1-6: unexpected void
+
+f(): 1;
+[00000010:error] !!! input.u:@.1-6: unexpected void
+
+
+// Check that void cannot be used in a boolean context
+if (void) echo ("foo") else echo ("bar");
+[00000001:error] !!! input.u:@.1-40: unexpected void
+
+// Check accept/unaccept.
+function foo (x) { echo("foo") } | {};
+foo(void);
+[00000001:error] !!! input.u:@.1-9: unexpected void
+foo(echo("bar"));
+[00000002] *** bar
+[00000003:error] !!! input.u:54.1-16: unexpected void
+void.isVoid();
+[00000004] true
+foo(echo("bar").acceptVoid());
+[00000005] *** bar
+[00000006] *** foo
+foo(echo("bar").acceptVoid().unacceptVoid());
+[00000007] *** bar
+[00000008:error] !!! input.u:62.1-44: unexpected void
+foo("foo".unacceptVoid());
+[00000009] *** foo

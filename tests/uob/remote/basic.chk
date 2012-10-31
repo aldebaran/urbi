@@ -1,0 +1,20 @@
+//#plug test/uchange
+//#plug test/uaccess
+//#uobject test/generic
+//#uobject test/remote
+generic.load;
+[00000001] 1
+
+uchange.init();
+[00000002] 0
+
+var uac = uaccess.new()|;
+var uch = uchange.new()|;
+
+// For some reason I do not understand, uac.val is actually changed
+// a lot in my back, and in a nondeterministic fashion (sometimes I
+// get 120, others 117 or even 100).
+assert
+{
+  uac.val - uac.val == -1;
+};

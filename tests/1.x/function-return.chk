@@ -1,0 +1,35 @@
+function f()  { return 1; }|;
+function g(x) { return x; }|;
+function h(z) { return 2; 1; }|;
+function i(x)
+{
+  function f(x) { return x };
+  function g(x) { return -x };
+  return f(20 * x) + g(10 * x);
+}|;
+
+// Regression: We used to forget to process "return" within the value
+// part of another return.  Be sure to have "return" in a subtree of
+// the other "return" AST node.
+function j(x)
+{
+  return function () { return function () { return function () { return x } } }
+}|;
+
+assert
+{
+  f() == 1;
+
+  g(45) == 45;
+  g([1,2,3,"hello"]) == [1, 2, 3, "hello"];
+
+  h(111) == 2;
+
+  i(10) == 100;
+
+  var f1 = j(123);
+  var f2 = f1();
+  var f3 = f2();
+  var f4 = f3();
+  f4 == 123;
+};

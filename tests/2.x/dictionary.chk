@@ -1,0 +1,7 @@
+// Dictionary extension.
+var d = ["a" => 42]|;
+d.extend(["b" => "coin"]);
+[00000003] ["a" => 42, "b" => "coin"]
+
+d.extend(["a" => 51, "c" => [1, 2, 3]]);
+[00000004] ["a" => 51, "b" => "coin", "c" => [1, 2, 3]]

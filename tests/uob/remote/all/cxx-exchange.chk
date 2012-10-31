@@ -1,0 +1,12 @@
+// Test data exchange between C++ remote and plugin code.
+//#plug test/all
+//#uobject test/all
+
+remall.writeB("all.a", "ca;nard")|;
+// Easier to use the backend used by 'external var'.
+all.&a.value.asPrintable();
+[00000001] "BIN 7\nca;nard"
+
+remall.writeS("all.a", "ca;nard")|;
+all.&a.value.asPrintable();
+[00000002] "\"ca;nard\""

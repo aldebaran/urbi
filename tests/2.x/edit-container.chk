@@ -1,0 +1,45 @@
+// check modification of list members with modifier operators
+{
+  var l = [0, 1, 2, 3, 4, 5, 6];
+  l[1] += 1; // 2
+  l[2] -= 2; // 0
+  l[3] *= 3; // 9
+  l[4] /= 4; // 1
+  l[5] %= 5; // 0
+  l[6] ^= 6; // 0
+  l.print();
+};
+[00000001] [0, 2, 0, 9, 1, 0, 0]
+
+// check modification of dictionary members with modifier operators
+{
+  var d = ["a" => 0, "b" => 1, "c" => 2, "d" => 3, "e" => 4, "f" => 5, "g" => 6];
+  d["b"] += 1; // 2
+  d["c"] -= 2; // 0
+  d["d"] *= 3; // 9
+  d["e"] /= 4; // 1
+  d["f"] %= 5; // 0
+  d["g"] ^= 6; // 0
+  d.asList().sort().print();
+};
+[00000002] [("a", 0), ("b", 2), ("c", 0), ("d", 9), ("e", 1), ("f", 0), ("g", 0)]
+
+// check that the target is evaluated once.
+{
+  var l = [0];
+  var i = 0;
+  { l.print(); l }[i] += 3;
+  l.print();
+};
+[00000003] [0]
+[00000004] [3]
+
+// check that the argument is evaluated once.
+{
+  var l = [0];
+  var i = 0;
+  l[ { i.print(); i } ] += 4;
+  l.print();
+};
+[00000005] 0
+[00000006] [4]

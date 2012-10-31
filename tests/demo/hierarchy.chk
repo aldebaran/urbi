@@ -1,0 +1,104 @@
+// Generate a dot rendering of the hierarchy of "class" objects.
+class Hierarchy
+{
+  // Return an identifier for id.
+  function Id(n)
+  {
+    "u" + n.uid();
+  };
+
+  // Whether we want to visit n.
+  function toVisit(n)
+  {
+    (n.acceptVoid().isNil() || !n.isVoid()) && n.hasLocalSlot("type");
+  };
+
+  function escape(s)
+  {
+    s.replace("|", "\\|")
+     .replace("<", "\\<")
+     .replace(">", "\\>")
+  };
+
+  // The label for node n.
+  function label(n)
+  {
+     // + "\\n(" + Id(n) + ")";
+     escape(n.type || "")
+  };
+
+  // Display the node n for dot.
+  function node(n)
+  {
+    if (n.localSlotNames().empty)
+      "%s [ label = \"%s\" ];\n"
+        % [Id(n), label(n)]
+    else
+      "%s [ shape = record, label = \"{%s|%s}\" ];\n"
+        % [Id(n),
+           label(n),
+           n.localSlotNames()
+            .sort()
+            .map(closure (s)
+                   {escape(s) + ": " + label(n.getSlot(s).acceptVoid())})
+            .join("\\n")];
+  };
+
+  // Display an edge from s to d for dot.
+  function edge(s, d)
+  {
+    "%s -> %s%s;\n"
+      % [Id(s), Id(d),
+         // Don't display direct inheritance on Object, they all do.
+         d === Object && " [ constraint = false, style = dotted ]" || ""];
+  };
+
+  // Parents and aggregated values of (n).
+  function neighbours (n)
+  {
+    n.protos
+    + n.localSlotNames().map (function (s) { n.getSlot(s).acceptVoid() })
+  };
+
+  // Visit node n and neighbours.
+  function visit(n)
+  {
+    if (n.uid not in visited
+        && toVisit(n))
+    {
+      visited[n.uid] = true;
+      out << " " * 2 << node(n);
+      for (var s: n.protos)
+        if (toVisit(s))
+          out << " " * 4 << edge(n, s);
+      for (var s: neighbours(n))
+        visit(s);
+    }
+  };
+
+  // Entry point.
+  function init(file, node)
+  {
+    var this.out = OutputStream.new(file);
+    out <<
+      "digraph Hierarchy\n"
+      "{\n"
+      "  graph [rankdir=BT, ratio=0.4];\n"
+      "  node [shape=box, fontsize=14];\n"
+      "\n";
+    var this.visited = Dictionary.new();
+    visit(node);
+    out << "}\n";
+  };
+} |;
+
+var base = "hierarchy" |;
+var dot = Path.new("%s.dot" % base) |;
+if (dot.exists)
+  System.system("rm %s" % dot);
+var h = Hierarchy.new(File.create(dot), Global) |;
+
+// Our playing dirty tricks with LD_LIBRARY_PATH make this fails, at
+// least on OSX when in builddir.
+//
+// System.system("dot -Tpdf %s.dot >%s.pdf" % ([base] * 2));

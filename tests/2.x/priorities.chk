@@ -1,0 +1,8 @@
+// Check that a job with a real-time priority gets executed first
+// without being interrupted.
+var x = 0 | {};
+t: { while (true) x++ },
+var hp = Tag.new() | hp.setPriority(5) | {};
+hp: { var xorig = x; for (var i : 100) nil; x - xorig };
+[00000001] 0
+t.stop();

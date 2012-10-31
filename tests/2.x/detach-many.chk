@@ -1,0 +1,6 @@
+var x = 0 | {};
+function add2 () { x++; sleep (1s); x++ } | {};
+for (var i = 0; i < 100; i++) detach (add2());
+sleep (2s);
+x;
+[00000001] 200

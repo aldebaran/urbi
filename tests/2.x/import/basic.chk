@@ -1,0 +1,18 @@
+
+package a { var x = "a"}|
+package b { var x = "b"}|;
+
+{
+ import a.*;
+ x.print();
+ {
+  import b.*;
+  x.print();
+ };
+ x.print();
+}|;
+
+[00000001] "a"
+[00000002] "b"
+[00000003] "a"
+

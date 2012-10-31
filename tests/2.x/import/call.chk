@@ -1,0 +1,18 @@
+// Check that import works with call messages.
+
+class a
+{
+  var x = 1;
+}|;
+
+function f
+{
+  call.evalArgAt(0)
+}|;
+
+{
+  import a.*;
+  f(x);
+};
+[00000001] 1
+

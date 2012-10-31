@@ -1,0 +1,22 @@
+//#uobject test/all
+
+all.a = 1|;
+all2.setNotifyChangeByName("all.a")|;
+
+//uobject write on notifychange var
+all2.lastChange = ""|;
+assert
+{
+  all.write(0,3) == 3;
+  all2.lastChange == "all.a";
+  all2.lastChangeVal == 3;
+};
+
+//urbi write on notifychange var
+all2.lastChange = ""|;
+assert
+{
+  (all.a = 4) == 4;
+  all2.lastChange == "all.a";
+  all2.lastChangeVal == 4;
+};

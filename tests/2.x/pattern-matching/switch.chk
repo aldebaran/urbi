@@ -1,0 +1,24 @@
+{
+  switch(42)
+  {
+    case (var x):
+      echo(x);
+  };
+  echo(x);
+};
+[00000001] *** 42
+[00000002:error] !!! input.u:7.8: lookup failed: x
+
+// Once switch modified the variables used in "case".
+// In which case the first case here matches, and one is bound to 42.
+var one = 1 | {};
+switch (42)
+{
+  case one:
+    false;
+  default:
+    true;
+};
+[00000003] true
+one;
+[00000004] 1

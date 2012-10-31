@@ -1,0 +1,18 @@
+// Test that import this and other local stuff works.
+
+class a
+{
+  class c { var y = 2};
+  var x = 1;
+  import this.*;
+  import c.*;
+  class b
+  {
+    x;
+    y;
+    function f() { x; y};
+  };
+  b.f();
+}|;
+"ok";
+[00000001] "ok"

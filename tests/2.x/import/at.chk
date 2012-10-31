@@ -1,0 +1,33 @@
+// Check if import works in at condition and body.
+
+// Check both captured and in-scope import.
+
+package a{ var x = 0}|;
+
+function startat()
+{
+  import a.*;
+  at(x) {sleep(20ms); echo("on1 " + x)};
+}|;
+
+var startat2 = {
+  import a.*;
+  function()
+  {
+    at(x) echo("on2 " + x);
+  }
+}|;
+startat();
+startat2();
+sleep(100ms);
+import a;
+a.x=1|;
+sleep(100ms);
+a.x=0|;
+sleep(100ms);
+a.x=2|;
+sleep(100ms);
+[00000001] *** on2 1
+[00000001] *** on1 1
+[00000002] *** on2 2
+[00000001] *** on1 2

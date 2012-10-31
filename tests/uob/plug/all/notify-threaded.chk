@@ -1,0 +1,24 @@
+//#uobject test/all
+//#no-fast
+camera.load = 1|;
+sleep(200ms);
+all.setThreadedNotifyChangeByUVar("all.a")|;
+
+var cnt = 0|;
+all.&lastChange.notifyChange(closure() { cnt++})|;
+
+var count = 10|;
+for(count)
+{
+  all.a = camera.val;
+  sleep(200ms);
+};
+
+assert(cnt == count);
+
+// Check with inputPorts
+all.setThreadedNotifyChange(5)|;
+all.&ia << camera.&val|;
+
+sleep(500ms);
+assert(cnt > count);

@@ -1,0 +1,23 @@
+// Do not mix this file with directory.chk because this one will be skept
+// if there is no inotify support.
+
+// Check that events are working event after a new instance on the same
+// directory (see issue #3447)
+
+var d = Directory.new(".")|;
+{
+  waituntil(d.fileDeleted?("dummy-file-1.txt"));
+  clog << "./dummy-file-1.txt deleted";
+} & {
+  waituntil(d.fileDeleted?("dummy-file-2.txt"));
+  clog << "./dummy-file-2.txt deleted";
+} & {
+  clog << "delete ./dummy-file-1.txt";
+  File.create("./dummy-file-1.txt").remove();
+
+  Directory.new(".")|;
+
+  clog << "delete ./dummy-file-2.txt";
+  File.create("./dummy-file-2.txt").remove();
+};
+// should end.

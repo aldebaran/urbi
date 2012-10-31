@@ -1,0 +1,20 @@
+//#uobject test/all
+uobjectsAll();
+
+at(all.ev?()) { echo("Event catched") };
+all.sendEvent();
+[00000001] *** Event catched
+
+var nev = all.new(0) |;
+at(nev.ev?()) { echo("Event catched on nev") };
+nev.sendEvent();
+[00000002] *** Event catched on nev
+
+var l = [42, 51, "o<", []];
+[00000003] [42, 51, "o<", []]
+at(all.ev?(var pl1, var pl2)) { echo(pl1.asString() + pl2.asString()) };
+all.sendEvent2Args(l, "bar");
+[00000004] *** [42, 51, "o<", []]bar
+
+all.sendNamedEvent("all.ev");
+[00000005] *** Event catched

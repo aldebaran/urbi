@@ -1,0 +1,21 @@
+// Start from 0, go smoothly to 200 then sine around 100 with
+// magnitude 10.
+x = 0|;
+
+var time = TrajectoryGenerator.new(["base"   => 200,
+                                    "time"   => 5s,
+                                    "getter" => closure () { x },
+                                    "setter" => closure (n) { x = n }])|;
+
+var until = TrajectoryGenerator.Until.new(time, closure () { 100 <= x })|;
+
+var sin = TrajectoryGenerator.new(["base"   => 100,
+                                   "sin"    => 2s,
+                                   "ampli"  => 20,
+                                   "getter" => closure () { x },
+                                   "setter" => closure (n) { x = n }])|;
+var seq = until + sin|;
+seq.run(),
+
+assertSample(sample(x, 12, 0.5s),
+             [0, 20, 40, 60, 80, 100, 120, 100, 80, 100, 120, 100]);

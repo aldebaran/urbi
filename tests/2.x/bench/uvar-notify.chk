@@ -1,0 +1,11 @@
+var Object.x = 0|
+class Object.v{}|
+UVar.new(v, "val")|
+UVar.new(v, "val2")|
+UVar.new(v, "val3")|
+v.&val.notifyChange(function() {v.val2 = v.val})|
+v.&val2.notifyChange(function() {x = v.val2 + v.val3})|
+v.&val3.notifyAccess(function() {v.val3 = v.val})|;
+for|(500) v.val = x++;
+x;
+[00000001] 500

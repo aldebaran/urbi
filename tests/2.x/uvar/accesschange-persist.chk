@@ -1,0 +1,22 @@
+// Check that the accesschange loop cannot be stopped.
+//#plug test/all
+//#no-fast
+all.setOwned(0)|
+all.setNotifyAccess(0)|;
+
+//Starts the accesschange loop
+t: all2.setNotifyChangeByName("all.a")|;
+
+// debug
+clog << "Should refresh the value every: " + System.period + "s"|;
+at (all.a->changed?)
+ clog << "all.a = " + all.a;
+
+var x=all.a |sleep(200ms) | all.a-x>5;
+[00000001] true
+t.stop();
+sleep(100ms)|
+clog << "Will wait 200ms."|
+// Check that the loop is still on.
+x=all.a |sleep(200ms) | all.a-x>5;
+[00000002] true

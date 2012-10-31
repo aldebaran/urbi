@@ -1,0 +1,12 @@
+//#uobject test/all
+uobjectsAll();
+
+
+var a = all.new(0) |;
+assert (all.getDestructionCount() == 0);
+
+a.destroy()|;
+a = 1|;
+// yield a bit just in case
+sleep(100ms);
+assert (all.getDestructionCount() == 1);

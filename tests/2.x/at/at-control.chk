@@ -1,0 +1,50 @@
+//#no-fast
+
+var t = Tag.new()|
+var e = Event.new()|;
+t: at(e?) wall("coin");
+e!;
+[00000001] *** coin
+// No reason for async emit and the wall to occurr 'instantl': wait a bit.
+sleep(100ms);
+t.stop();
+e!;
+1;
+[00000002] 1
+
+// Multiple at with duration.
+var a = 1 |;
+var b = 1 |;
+at (a == 1 ~ 300ms) { echo("ok") };
+at (b == 1 ~ 300ms) { echo("ok") };
+
+sleep(300ms);
+[00000002] *** ok
+[00000002] *** ok
+
+// Multiple at on list.
+var list = [] |;
+at(47 in list) echo("47");
+at(47 in list) echo("47");
+at(47 in list) echo("47");
+at(47 in list) echo("47");
+list << 47 |;
+[00000001] *** 47
+[00000002] *** 47
+[00000003] *** 47
+[00000004] *** 47
+
+// Test handler stop doesn't stop all handlers.
+e = Event.new();
+[00000001] Event_0x95d9d78
+at(e?) echo("a") onleave echo("b");
+var e1 = e.trigger();
+[00000002] EventHandler_0x95ea000
+[00000003] *** a
+var e2 = e.trigger();
+[00000004] EventHandler_0x959a280
+[00000005] *** a
+e1.stop();
+[00000006] *** b
+e2.stop();
+[00000007] *** b

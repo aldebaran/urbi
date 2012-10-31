@@ -1,0 +1,61 @@
+// Check that notifyChange callbacks causing exceptions do not disrupt the other callbacks.
+
+// Default changed for this feature. Use the old name to test backward compatibility.
+UVar.eraseThrowingCallbacks = true|;
+[00000001:warning] !!! eraseThrowingCallbacks is deprecated, use unsubscribeFaultySubscriber on evennt
+UVar.new(this, "x")|;
+var calledGood = 0| var calledBad = 0|;
+
+// Put one good before and one after
+&x.notifyChange(closure() { calledGood++;})|;
+&x.notifyChange(closure() { calledBad++; 1/0})|;
+&x.notifyChange(closure() { calledGood++;})|;
+
+x = 12|;
+[00000001:error] !!! exception caught while processing Event:
+[00000002:error] !!! input.u:11.42-44: /: division by 0
+
+calledBad;
+[00000004] 1
+calledGood;
+[00000005] 2
+
+x=12|;
+calledBad;
+[00000006] 1
+calledGood;
+[00000007] 4
+
+&x.notifyChange(closure() { calledBad++; 1/0})|;
+&x.changed.unsubscribeFaultySubscriber = false|;
+
+x = 12|;
+[00000008:error] !!! exception caught while processing Event:
+[00000009:error] !!! input.u:29.42-44: /: division by 0
+calledBad;
+[00000011] 2
+calledGood;
+[00000012] 6
+
+x = 12|;
+[00000013:error] !!! exception caught while processing Event:
+[00000014:error] !!! input.u:29.42-44: /: division by 0
+calledBad;
+[00000016] 3
+calledGood;
+[00000017] 8
+
+&x.changed.unsubscribeFaultySubscriber = true|;
+x = 12|;
+[00000018:error] !!! exception caught while processing Event:
+[00000019:error] !!! input.u:29.42-44: /: division by 0
+calledBad;
+[00000021] 4
+calledGood;
+[00000022] 10
+
+x = 12|;
+calledBad;
+[00000023] 4
+calledGood;
+[00000024] 12

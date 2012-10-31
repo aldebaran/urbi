@@ -1,0 +1,73 @@
+//Event-at-tag interaction
+
+// Since emitting is asynchronous, ensure a small delay both in time and cycles
+// between tests.
+var tingCounter = 0|;
+function ting()
+{
+  sleep(20ms);
+  1;2;3;
+  tingCounter++;
+  "ting " + tingCounter
+}|;
+var e = Event.new()|;
+var t = Tag.new()| var u = Tag.new()|;
+t:u:at(e?) 1.print();
+
+e!;
+[00000001] 1
+
+t.freeze();
+t.unfreeze();
+e!;ting();
+[00000002] 1
+[00000003] "ting 1"
+
+t.stop();
+e!;ting();
+[00000004] "ting 2"
+
+t:u:at(e?) 2.print();
+
+e!;ting();
+[00000005] 2
+[00000006] "ting 3"
+
+t.freeze();
+u.unfreeze();
+e!;ting();
+[00000007] "ting 4"
+
+t.freeze();
+t.unfreeze();
+e!;ting();
+[00000008] 2
+[00000009] "ting 5"
+
+u.block();
+e!;ting();
+[00000010] "ting 6"
+
+u.unblock();
+e!;ting();
+[00000011] "ting 7"
+
+u.block();
+t:u:at(e?) 3.print();
+u.unblock();
+e!;ting();
+[00000012] "ting 8"
+
+
+// Regression: issue #4685.
+var f = Event.new()|;
+t: at(f?) echo(1);
+   at(f?) echo(2);
+f!;
+[00015377] *** 1
+[00015377] *** 2
+t.freeze();
+f!;
+[00019377] *** 2
+"nothing";
+[00026457] "nothing"

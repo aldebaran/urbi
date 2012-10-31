@@ -1,0 +1,13 @@
+function foo() /*! foo doc */
+{};
+[00000001] function () {
+[:]  #trailingws
+[:]}
+foo->doc;
+[00000002] " foo doc "
+var java /*! java doc */ = 0;
+[00000003] 0
+java;
+[00000004] 0
+java->doc;
+[00000005] " java doc "

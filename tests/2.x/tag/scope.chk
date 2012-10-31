@@ -1,0 +1,3 @@
+var t = Tag.new() |
+{t: var foo = 42; foo};
+[00000001:error] !!! input.u:@.19-21: lookup failed: foo

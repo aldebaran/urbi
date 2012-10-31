@@ -1,0 +1,21 @@
+//#uobject test/timer
+//#no-fast
+
+var t = uobjects.timer.new() |
+t.setupUpdate(50) |
+t.setupTimer(50) |;
+sleep(200ms);
+
+clog << "t.updated: " + t.updated;
+1 < t.updated;
+[00000001] true
+
+clog << "t.timerup: " + t.timerup;
+1 < t.timerup;
+[00000002] true
+
+t.destroy | t=nil;
+sleep(500ms);
+// Still alive
+1;
+[00000003] 1

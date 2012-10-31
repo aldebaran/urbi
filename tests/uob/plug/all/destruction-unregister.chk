@@ -1,0 +1,27 @@
+//#uobject test/all
+
+var a = all.new(0) |;
+
+all.getDestructionCount();
+[00000001] 0
+
+a.setNotifyChangeByName("all.a") |
+all.a = 1 |
+a.lastChange;
+[00000002] "all.a"
+
+// Make it run a lot.
+a.setNotifyChangeByName("all.b") |
+a.setNotifyChangeByName("all.c") |
+detach({loop {all.a = 12 | all.b = 12 | all.c=12}})|;
+sleep(200ms);
+a.destroy()|;
+a = 1|;
+// yield a bit just in case
+sleep(100ms);
+all.getDestructionCount();
+[00000003] 1
+
+// This should not segfault.
+all.a = 2;
+[00000004] 2

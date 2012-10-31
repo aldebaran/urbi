@@ -1,0 +1,49 @@
+1 in l in [false];
+[00000001:error] !!! input.u:@.8-9: syntax error: unexpected in
+
+// Check that List.each gives a relevant this to the lambda
+class Foo
+{
+  function bar(x)
+  {
+    x.print()
+  };
+
+  function foo()
+  {
+    [1, 2, 3].each(closure (x) { bar(x) })
+  }
+}| {};
+
+Foo.foo();
+[00000002] 1
+[00000003] 2
+[00000004] 3
+
+// Check += preserves the list identity.
+var l = [1] |
+var uid = l.uid |
+l += [2, 3] |
+assert(l == [1, 2, 3]);
+assert(l.uid == uid);
+
+//# -------------------------------------------------------- ##
+//# Check that each can modify the list it is iterating on.  ##
+//# -------------------------------------------------------- ##
+
+var l1 = [1, 2, 3] | {};
+l1.each(closure (i) { l1.remove(i) });
+l1;
+[00000005] []
+
+l1 = [1, 2, 3] | {};
+l1.'each&'(closure (i) { l1.remove(i) });
+l1;
+[00000006] []
+
+
+// Check that nil and void are printed in lists, and only in lists
+nil;
+void;
+[1, 2, nil, void.acceptVoid(), 3];
+[00000007] [1, 2, nil, void, 3]

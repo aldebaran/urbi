@@ -1,0 +1,35 @@
+{
+  var e = Event.new();
+
+  at async (e?) { sleep(200ms); echo("async"); };
+  e!;
+  sleep(100ms);
+  echo("end");
+};
+[00000001] *** end
+[00000002] *** async
+sleep(100ms);
+
+{
+  var e = Event.new();
+
+  at sync (e?) { sleep(200ms); echo("sync"); };
+  e!;
+  sleep(100ms);
+  echo("end");
+};
+[00000003] *** sync
+[00000004] *** end
+sleep(100ms);
+
+at (Event.new()?) {};
+at sync (Event.new()?) {};
+at async (Event.new()?) {};
+at foobar (Event.new()?) {};
+[00000005:error] !!! input.u:28.1-27: syntax error: unexpected `foobar'
+at sync sync (Event.new()?) {};
+[00000006:error] !!! input.u:30.1-30: syntax error: duplicate keyword: `sync'
+at async async (Event.new()?) {};
+[00000007:error] !!! input.u:32.1-32: syntax error: duplicate keyword: `async'
+at sync async (Event.new()?) {};
+[00000008:error] !!! input.u:34.1-31: syntax error: incompatible keywords: `sync' and `async'

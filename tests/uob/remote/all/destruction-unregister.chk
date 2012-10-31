@@ -1,0 +1,26 @@
+//#uobject test/all
+uobjectsAll();
+
+
+var a = all.new(0) |;
+
+assert (all.getDestructionCount() == 0);
+
+a.setNotifyChangeByUVar(all.&a) |
+all.a = 1 | sleep(100ms) |
+assert (a.lastChange == all.&a.fullName);
+
+// Make it run a lot.
+a.setNotifyChangeByUVar(all.&b) |
+a.setNotifyChangeByUVar(all.&c) |
+detach({loop {all.a = 12 | all.b = 12 | all.c=12}})|;
+sleep(200ms);
+a.destroy() | a = 1|;
+
+// yield a bit just in case
+sleep(100ms);
+assert (all.getDestructionCount() == 1);
+
+// This should not segfault.
+all.a = 2;
+[00000004] 2

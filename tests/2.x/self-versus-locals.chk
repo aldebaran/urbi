@@ -1,0 +1,17 @@
+class C
+{
+  var y = 42;
+  function foo ()   { echo(getSlotValue("y")); uid() };
+  function set ()   { y = 51; var this.x = 42; };
+  function call_set { set() };
+};
+[00000001] C
+C.uid() == C.foo();
+[00000002] *** 42
+[00000003] true
+C.call_set();
+[00000004] 42
+C.x;
+[00000005] 42
+C.y;
+[00000006] 51

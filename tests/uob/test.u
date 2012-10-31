@@ -1,0 +1,70 @@
+/*
+ * Copyright (C) 2010, 2011, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+// Wait for the remote UObjects of \a files to appear.
+function waitForRemoteUObjects (var files)
+{
+  // Open-coded list of names under which the plugins appear in the
+  // Urbi world.  This is not nice, but we need a robust means to wait
+  // for them to be available.
+  var uobs =
+    [
+      // Java test uobjects.
+      "tests.all.All"     => ["remall", "remall2"],
+      "tests.java.Java"   => ["Java"],
+      "tests.timer.Timer" => ["timer"],
+      // Empty on purpose, see java/xfail.chk.
+      "does.not.exist"    => [],
+
+      // C++ test uobjects.
+      "test/all"        => ["remall", "remall2"],
+      "test/generic"    => ["generic"],
+      "test/issue-3699" => ["Test"],
+      "test/lib-urbi"   => ["liburbi"],
+      "test/machine"    => ["UMachine"],
+      "test/remote"     => ["remote"],
+      "test/threaded"   => ["Threaded"],
+      "test/timer"      => ["timer"],
+      "test/uchange"    => ["uchange"],
+      "test/uengine"    => ["UEngine"],
+      "test/ultest"     => ["ultest"],
+
+      // C++ modules.
+      "urbi/rtp"      => [], // Renames itself.
+    ];
+
+  for (var file: files)
+    for (var uo: uobs[file])
+      timeout (5s)
+        waituntil (uobjects.hasLocalSlot(uo))
+      catch
+      {
+        clog << "UObject not loaded: %s from file %s (loaded: %s)"
+                % [uo, file, uobjects.localSlotNames];
+        throw;
+      };
+}|;
+
+
+// Make the test before equally with a plugged/remote all: define all
+// and all2 in the remote case.
+function uobjectsAll ()
+{
+  if (!isdef(uobjects.all))
+    var uobjects.all = remall|;
+  if (!isdef(uobjects.all2))
+    var uobjects.all2 = remall2|;
+}|;
+
+// A sleep function that can be in assertion blocks.
+function Sleep(var d)
+{
+  sleep(d).isVoid();
+}|;

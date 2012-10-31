@@ -1,0 +1,11 @@
+//#plug test/uaccess
+//#no-fast
+
+// Fast mode is screwing the scheduling up it seems.
+
+System.period=0.01ms|;
+at(uaccess.val>=100000)
+  shutdown;
+1;
+[00000001] 1
+sleep(60s);

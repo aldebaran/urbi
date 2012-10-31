@@ -1,0 +1,32 @@
+//#uobject test/lib-urbi
+
+//Synchronisation between two processes running under qemu is tricky, skip for now.
+//#skip-if case $host in (*arm*) true;; (*)false ;;esac
+
+// Check that when a connection is closed, the code it sent is stopped.
+var r = liburbi.new() | {};
+
+r.connectSame();
+[00000001] 0
+
+var Object.x = 0;
+[00000002] 0
+
+r.send("loop Object.x = 1,");
+[00000003] 0
+
+sleep(500ms);
+Object.x;
+[00000004] 1
+
+r.disconnect();
+[00000005] 0
+
+sleep(500ms);
+Object.x = 0;
+[00000006] 0
+
+sleep(500ms);
+// If the code did not stop, Object.x will be 1.
+Object.x;
+[00000007] 0

@@ -1,0 +1,16 @@
+var x = Lazy.new(function () { echo("foo"); 42 })|;
+x.value();
+[00000001] *** foo
+[00000002] 42
+x.value();
+[00000003] 42
+x.eval();
+[00000004] *** foo
+[00000005] 42
+
+var y = Lazy.new(function () { echo("foo"); 42 })|;
+y.eval();
+[00000006] *** foo
+[00000007] 42
+y.value();
+[00000008] 42

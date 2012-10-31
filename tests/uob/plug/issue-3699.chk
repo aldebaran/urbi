@@ -1,0 +1,27 @@
+//#uobject test/issue-3699
+//#no-fast
+// The windows machine, debug mode, needs really more time.
+//#timeout 3
+
+waituntil(Global.hasSlot("Test"));
+
+2;
+[00000002] 2
+
+timeout (500ms)
+{
+  echo(3);
+  var c = Test.new();
+  echo(4);
+  c.foo("plop");
+  echo(5);
+};
+[00000003] *** 3
+[00000004:issue] *** init
+[00000005] *** 4
+[00000006:issue] *** mmm sleepy...plop
+[00000007:issue] *** awake!
+
+sleep(1);
+6;
+[00000008] 6

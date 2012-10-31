@@ -1,0 +1,32 @@
+//#uobject test/all
+
+var all.z = 0;
+[00000001] 0
+all.writeD("all.z", 20);
+[00000002] 0
+all.z;
+[00000003] 20
+
+var all.y = "coin";
+[00000004] "coin"
+all.writeS("all.y", "pan");
+[00000005] 0
+all.y;
+[00000006] "pan"
+
+var all.x = [];
+[00000007] []
+all.writeL("all.x", "coin");
+[00000008] 0
+all.x;
+[00000009] ["coin", 42]
+
+var all.w = [=>];
+[00000010] [ => ]
+all.writeM("all.w", "bar");
+[00000011] 0
+all.w.asList().sort();
+[00000012] [("bar", 42), ("foo", [])]
+
+all.selfWriteVD(1, [1, 18, 3.5])| all.b;
+[00000013] [1, 18, 3.5]

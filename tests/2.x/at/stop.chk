@@ -1,0 +1,13 @@
+// This is not supposed to abort
+var x = 0 |;
+
+var t = Tag.new() |;
+
+at (x == 1) { t: sleep (3600s) } onleave { t.stop() };
+
+
+x = 1 |;
+sleep (1s);
+
+x = 2 |;
+sleep (1s);

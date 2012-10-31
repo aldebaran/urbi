@@ -1,0 +1,35 @@
+//#uobject test/all
+
+// Check local notifychange bypass in remote mode.
+
+var timeChangeCount = 0|
+var timeLastChange = 0|;
+remall2.setNotifyChangeByName("remall.lastChange")|;
+remall.setNotifyChange(0)|;
+
+/* Pay attention, all::onChange code is doing:
+ *   lastChange = v.get_name();
+ *   changeCount = ++count;
+ *
+ * in that order. So, if we notifychange 'lastChange', using a second
+ * object, we can detect if said notifyChange was called synchronously or
+ * asynchronously.
+ */
+//remall2.lastchange remall.changeCount
+remall.&changeCount.notifyChange(closure()
+{
+ timeChangeCount = time
+})|;
+remall2.&lastChange.notifyChange(closure()
+{
+ timeLastChange = time
+})|;
+
+remall.a = 12|;
+timeout(5s) waituntil(timeChangeCount && timeLastChange)|
+assert(timeLastChange < timeChangeCount);
+// Check we do not receive a second notify for the same value.
+remall.changeCount;
+[00000001] 1
+remall2.changeCount;
+[00000002] 1

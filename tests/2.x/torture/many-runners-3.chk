@@ -1,0 +1,13 @@
+// On PPC, which uses threads, we leak semaphores and die of
+// exhaustion.
+//#skip-if case $host in (powerpc-apple*) true;; (*) false ;;esac
+
+var x = 0 | {};
+
+function f() {
+  x++; x++; x++; x++; x++
+} | {};
+
+for& (var i: 1000.seq()) { f() };
+x;
+[00000001] 5000

@@ -1,0 +1,85 @@
+//#uobject test/threaded
+//#no-fast
+import Global.*;
+var delay = 200ms|;
+var dt|;
+UVar.new(Global, "x")|;
+var Global.count = 0|;
+Global.&x.notifyChange(closure() { Global.count++})|;
+// Start 10 thread structures without any thread in it.
+for|(var i: 10) {
+  Threaded.startThread();
+  Threaded.queueOp(i, Threaded.DIE, []);
+};
+sleep(delay);
+
+var tick = 0|;
+detach({
+  every|(100ms)
+    tick++;
+})|;
+tick = 0 |
+for&(var i: 10)
+{
+  Threaded.queueOp(i, Threaded.WRITE_VAR, ["Global.x", i]);
+  Threaded.lockNoneDelayOp(i, 900000);
+}|
+dt = tick|;
+(dt-9).abs() < 3 || ("Expected 9 ticks, got " + dt);
+[00000001] true
+
+count;
+[00000002] 10
+
+// Check function lock, in parallel to no lock.
+// Use timing to detect if the operation is parallel or serial.
+Global.count = 0 | tick = 0|
+for&(var i: 5)
+{
+  Threaded.queueOp(i, Threaded.WRITE_VAR, ["Global.x", i]);
+  Threaded.lockFunctionDelayOp(i, 200000);
+}&
+for&(var i: 5)
+{
+  Threaded.queueOp(i+5, Threaded.WRITE_VAR, ["Global.x", i]);
+  Threaded.lockNoneDelayOp(i+5, 600000);
+}|
+// We can take a big margin, if //isation fails dt=30
+dt = tick|;
+(dt-10).abs() < 6 || ("Expected 10 ticks, got " + dt);
+[00000003] true
+
+count;
+[00000004] 10
+
+
+// Check async notify
+UVar.new(Global, "y")|;
+Threaded.queueOp(0, Threaded.NOTIFY_CHANGE, ["Global.x", 1])|;
+Threaded.lockNoneDelayOp(0, 0)|;
+Threaded.queueOp(0, Threaded.NOTIFY_CHANGE, ["Global.y", 1])|;
+Threaded.lockNoneDelayOp(0, 0)|;
+
+// The notify is in async function lock mode: non blocking.
+var t = time | Global.x=1 & Global.x=2 | assert (time-t < 100ms);
+
+var lastChange = []|;
+Threaded.&lastChange.notifyChange(closure() { lastChange << Threaded.lastChange})|;
+
+// It has a hard-coded delay of 500ms
+sleep(800ms);
+lastChange;
+[00000006] [1]
+sleep(800ms);
+lastChange;
+[00000007] [1, 2]
+
+// This mode should allow parallel notifies on different uvars
+lastChange = []|
+t = time | Global.x=1 & Global.y=2 | assert (time-t < 100ms);
+
+lastChange;
+[00000008] []
+sleep(900ms);
+lastChange.sort();
+[00000009] [1, 2]

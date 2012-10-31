@@ -1,0 +1,4 @@
+//#bench-args --valgrind --locks
+
+"end";
+[00000000] "end"

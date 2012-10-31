@@ -1,0 +1,86 @@
+/*
+ * Copyright (C) 2010, 2011, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+// Check that nothing happens on a Lobby.
+function Lobby.isSilent(checkTime=300ms, sMargin=0, rMargin=0)
+{
+  var s0 = bytesSent|
+  var r0 = bytesReceived|
+  sleep(checkTime) |
+  var s1 = bytesSent|
+  var r1 = bytesReceived|
+  var s = s1 - s0|
+  var r = r1 - r0|
+  clog << "sent %s (%s->%s), received %s (%s->%s)" % [s, s0, s1, r, r0, r1] |
+  s <= sMargin && r <= rMargin;
+}|;
+
+// Build large strings/binaries.
+function bigString(var size)
+{
+  "x" * size
+}|;
+
+function bigBin(var size)
+{
+  Binary.new("", bigString(size))
+}|;
+
+// We send these guys via RTP.  Using 10,000 works fine on GNU/Linux,
+// but OS X fails at 9,204, and passes at 9,203.  Research seems to
+// show that UDP packet fragmentation/defragmentation is unreliable.
+// See for instance:
+//
+// - http://www.blitzbasic.com/Community/posts.php?topic=52464
+// - http://lists.apple.com/archives/darwin-development/2004/May/msg00068.html
+// - http://comments.gmane.org/gmane.comp.lib.boost.asio.user/2044
+//
+// So, unfortunately, we cannot relying on this feature, and RTP
+// support will require the implementation of
+// fragmentation/defragmentation on our side.  Meanwhile, see if the
+// limitation found on OS X passes everywhere.
+var bigstring = bigString(9203)|;
+clog << "bigstring.size: %s" % bigstring.size;
+var bigbin = bigBin(9203)|;
+clog << "bigbin.data.size: %s" % bigbin.data.size;
+
+// We want to check that on RTP failures we fallback on TCP
+// connections.  So we need to "break" the RTP connection.
+function fakeRTPError ()
+{
+  var Global._mRTP = 'external'.getSlotValue("monitorRTP")|
+  'external'.monitorRTP = function(s, d, onfail)
+  {
+    d.stats = ["bytesReceived" => 0] |
+    Global.getSlotValue("_mRTP").apply([this, s, d, onfail])
+  }|;
+}|;
+
+function assert_equal_dict(var d1, var d2)
+{
+  // No need to sort, done in urbi/test-suite.u.
+  var k1 = d1.keys|
+  var k2 = d2.keys|
+  assert(k1 == k2)|
+  var fail = []|
+  for| (var k: d1.keys.sort())
+  {
+    var v1 = d1[k] |
+    var v2 = d2[k] |
+    if (v1 == v2)
+      clog << "passed assertion: d1[%s] == d2[-] (%s == %s)" % [k, v1, v2]
+    else
+      fail << "d1[%s] == d2[-] (%s != %s)" % [k, v1, v2]
+  }|
+  if (fail)
+    throw Exception.new("failed assertion: %s" % [fail])
+  else
+    clog << ("passed assertion: %s == %s" % [d1, d2])
+}|;

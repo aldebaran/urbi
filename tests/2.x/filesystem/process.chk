@@ -1,0 +1,66 @@
+//! rm -rf test1
+skipIfWindows();
+
+var p = Process.new("mkdir", ["test1"]);
+[00000001] Process mkdir
+assert
+{
+  !Path.new("test1").exists;
+  p.run().isVoid();
+  p.join().isVoid();
+  Path.new("test1").exists;
+};
+
+p = Process.new("cat", ["-e"]);
+[00000004] Process cat
+
+p.status;
+[00000005] not started
+
+p.run();
+p.status;
+[00000006] running
+
+p.stdin << "1\n" |
+p.stdin << "2\n" |
+p.stdin << "3\n" |;
+p.status;
+[00000007] running
+p.stdin.close();
+p.join();
+
+p.status;
+[00000008] exited with status 0
+
+p.stdout.asList();
+[00000009] ["1$", "2$", "3$"]
+
+function runEcho()
+{
+  var p = Process.new("/bin/sh", [ "-c", "echo" ]);
+  p.run();
+  p.join();
+  p = nil;
+  sleep(500ms);
+}|;
+
+var fd_path = Path.new("/") / "proc" / "self" / "fd" |;
+if (fd_path.exists)
+{
+  var fd_dir = Directory.new(fd_path);
+  var old_fds = fd_dir.asList().size;
+  runEcho();
+  var new_fds = fd_dir.asList().size;
+  // Assertion failed => pipes are not closed.
+  assert { old_fds == new_fds; };
+};
+
+// Test both destruction orders.
+p = Process.new("ls", [])|;
+p.run()|;sleep(500ms); p = nil;
+
+p = Process.new("sleep", ["2"])|;
+p.run() | p = nil;
+sleep(3s);
+1;
+[00000010] 1

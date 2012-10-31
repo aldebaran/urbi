@@ -1,0 +1,25 @@
+// Check declaration can't appear at some places
+
+// As argument
+1 + var x;
+[00000001:error] !!! input.u:@.5-9: syntax error: declaration not allowed here
+f(var x);
+[00000002:error] !!! input.u:@.3-7: syntax error: declaration not allowed here
+
+// As tag
+var x : tag;
+[00000003:error] !!! input.u:@.7: syntax error: unexpected :
+
+// In list literal
+[1, var x, 3];
+[00000004:error] !!! input.u:@.5-9: syntax error: declaration not allowed here
+
+// In declaration
+var x = var y = 0;
+[00000005:error] !!! input.u:@.9-13: syntax error: declaration not allowed here
+
+// Check that they can appear in other places.
+do (Object)
+{
+  var foo = 42;
+} |;

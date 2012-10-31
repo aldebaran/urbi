@@ -1,0 +1,68 @@
+load("urbi/component.u")|;
+load("urbi/naming-standard.u")|;
+import gsrapi.*;
+var 'package'.lang.robot = Component.new("robot")|;
+robot.addComponent(Component.new("body"))|;
+robot.body.addProto(Interface.Mobile)|;
+robot.body.addComponent(Component.new("head"))|;
+robot.body.head.addDevice("yaw", Interface.Motor.new())|;
+robot.body.head.addDevice("pitch", Interface.Motor.new())|;
+robot.body.head.addDevice("camera", Interface.VideoIn.new())|
+robot.body.addComponent(Localizer.new("arm")) |;
+// Create one, auto-create the other
+robot.body.arm[left] = Component.new("left")|;
+robot.body.arm[right].addDevice("yaw", Interface.Motor.new())|;
+robot.body.arm[left].addDevice("yaw", Interface.Motor.new())|;
+robot.body.addComponent(Localizer.new("leg"))|;
+robot.body.leg[left].addDevice("roll", Interface.Motor.new())|;
+robot.body.leg[right].addDevice("roll", Interface.Motor.new())|;
+
+// urbi/test-suite.u defines a fake camera.  This test does not expect
+// this.
+if (Global.hasLocalSlot("camera"))
+  Global.removeLocalSlot("camera")|;
+
+robot.makeCompactNames() |;
+import Global.*;
+assert
+{
+  robot.body.arm[left].yaw.fullname == "robot.body.arm[left].yaw";
+  robot.body.arm[left].yaw.compactName == "armYawL";
+  robot.body.head.camera.fullname == "robot.body.head.camera";
+
+  // yaw is on armL/R and head
+  armYawL === robot.body.arm[left].yaw;
+  headYaw === robot.body.head.yaw;
+  camera === robot.body.head.camera;
+  //only leg has a roll
+  rollR === robot.body.leg[right].roll;
+
+  armL === robot.body.arm[left];
+};
+
+robot.flatDump();
+[00000009] *** Mobile: body
+[00000010] *** Motor: armYawL armYawR headYaw pitch rollL rollR
+[00000011] *** VideoIn: camera
+
+var Interface.Motor.val = 0|;
+// Check groups
+robot.body.arm[left].val = 12|;
+robot.body.arm[left].yaw.val;
+[00000012] 12
+robot.body.arm.val = 13|;
+assert
+{
+  robot.body.arm[left].yaw.val == 13;
+  robot.body.arm[right].yaw.val == 13;
+};
+
+// Check const component protection
+robot.body.arm[right].yaw = 12;
+[00000015:error] !!! input.u:@.1-21: updateSlot: cannot modify const slot
+
+robot.body = 5;
+[00000017:error] !!! input.u:@.1-5: updateSlot: cannot modify const slot
+
+Global.armYawL = 7;
+[00000019:error] !!! input.u:@.1-6: cannot modify const slot

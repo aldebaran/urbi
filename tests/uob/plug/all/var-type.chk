@@ -1,0 +1,24 @@
+//#uobject test/all
+
+
+var all.v = 1 | {};
+all.typeOf("all.v");
+[00000001] "double"
+
+all.v = "foo" | {};
+all.typeOf("all.v");
+[00000002] "string"
+
+all.v = BIN 0;
+[00000003] BIN 0
+[:]
+all.typeOf("all.v");
+[00000004] "binary"
+
+all.v = [1,2] | {};
+all.typeOf("all.v");
+[00000005] "list"
+
+all.v = ["foo" => 4] | {};
+all.typeOf("all.v");
+[00000006] "dictionary"

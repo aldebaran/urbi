@@ -1,0 +1,23 @@
+// Make sure that in "a, b; c;", c does not wait for a to run.  IOW,
+// make sure that it is treated as "a, {b; c;}", not as "{a, b;}; c"
+
+{ sleep (50ms); echo (1) },
+echo (2);
+echo (3);
+[00000001] *** 2
+[00000002] *** 3
+
+// Flush the echo (1).
+sleep (1s);
+[00000003] *** 1
+
+
+{
+  { sleep (50ms); echo (4) },
+  echo (5);
+  echo (6);
+  sleep (50ms)
+};
+[00000004] *** 5
+[00000005] *** 6
+[00000006] *** 4

@@ -1,0 +1,145 @@
+// Test simple read closure
+
+var adder = function (inc)
+{
+  function (x) { x + inc };
+} | {};
+
+var a5 = adder (5) | {};
+var a7 = adder (7) | {};
+
+a5 (10);
+[00000001] 15
+
+a7 (10);
+[00000002] 17
+
+adder = nil;
+
+a5 (10);
+[00000003] 15
+
+a7 (10);
+[00000004] 17
+
+// Test simple write closure
+
+var makeCounter = function ()
+{
+  var count = 0;
+  function () { count++ }
+} | {};
+
+var c1 = makeCounter() | {};
+var c2 = makeCounter() | {};
+
+c1();
+[00000005] 0
+c1();
+[00000006] 1
+c2();
+[00000007] 0
+c1();
+[00000008] 2
+c2();
+[00000009] 1
+
+// Complex closure
+
+function for_(initialization, condition, increment, action)
+{
+  initialization() |
+  while (condition())
+  {
+    action()|
+    increment()|
+  }
+} | {};
+
+{
+  var count;
+
+  for_ (
+  function () { count = 0 },
+  function () { count <= 10},
+  function () { count++ },
+  function () { echo (count ** 2) }
+  );
+};
+[00000010] *** 0
+[00000011] *** 1
+[00000012] *** 4
+[00000013] *** 9
+[00000014] *** 16
+[00000015] *** 25
+[00000016] *** 36
+[00000017] *** 49
+[00000018] *** 64
+[00000019] *** 81
+[00000020] *** 100
+
+// Stress test closure with lazy
+
+function foo
+{
+  if (call.argAt(1))
+    call.argAt(0)
+} | {};
+function bar
+{
+  foo(call.argAt(1), call.argAt(1))
+} | {};
+
+{
+  var x = 0;
+  foo({x = 5}, false);
+  x.print();
+  foo({x = 5}, true);
+  x.print();
+};
+[00000021] 0
+[00000022] 5
+
+// Test two-level closure
+
+{
+  var x = 0;
+
+  function foo ()
+  {
+    function () { x++ }
+  };
+  foo().apply([nil]);
+  x
+};
+[00000023] 1
+
+// Test lobby access inside closure
+
+{
+  Lobby.overrideSlot("echo", function (var msg, var tag = "") {
+    this.'echo$old'(lobby.name + ": " + msg, tag)
+  });
+  Object.overrideSlot("print", function () {
+    Channel.topLevel << Lobby.lobby.name + ": " + this.asString()
+  });
+}|;
+
+{
+  var lobby.name = "main"|;
+  var l1 = Lobby.create()|;
+  var l1.name = "l1"|;
+
+  var i = 0;
+  var Lobby.f = closure () { echo(i++) };
+  f();
+[00000024] *** main: 0
+  l1.receive("f();");
+[00000025] *** main: 1
+
+  Lobby.f = closure () { i++.print() };
+  f();
+[00000026] "main: 2"
+  l1.receive("f();");
+[00000027] "main: 3"
+}|;

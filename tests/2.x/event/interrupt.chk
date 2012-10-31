@@ -1,0 +1,33 @@
+// See issue 3562.
+
+var x = 0|;
+
+at (x==1 ~ 500ms)
+{
+  echo("foo");
+  sleep(1s);
+  echo("bar")
+
+};
+
+// ok test
+x=1;
+[00000001] 1
+sleep(2s);
+[00000002] *** foo
+[00000003] *** bar
+
+// fail test
+x=0;
+[00000004] 0
+
+// Fire again, but "interrupt" the signal before the at body was done.
+// Make sure the body itself is not interrupted.
+x=1;
+[00000005] 1
+sleep(600ms);
+[00000006] *** foo
+x=0;
+[00000007] 0
+sleep(1s);
+[00000008] *** bar

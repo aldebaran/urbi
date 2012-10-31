@@ -1,0 +1,16 @@
+//#uobject test/all
+
+// Test writing by passing reference to uvar
+
+all.writeByUVar(all.&a, 42)|;
+all.a;
+[00000001] 42
+
+class t {}|;
+var t.all2 = all.new(0)|;
+all.writeByUVar(t.all2.&a, "foo")|;
+t.all2.a;
+[00000002] "foo"
+
+all.writeByUVar("coin.coin", 1);
+[00000003:error] !!! input.u:@.1-31: writeByUVar: UVar creation on non existing object: coin.coin

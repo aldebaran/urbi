@@ -1,0 +1,32 @@
+//#uobject test/timer
+
+
+sleep(500ms);
+timer.hupdated;
+[00000001] 0
+
+timer.setupHubUpdate(100);
+[00000002] 0
+sleep(200ms);
+timer.hupdated;
+[00000003] 1
+
+timer.setupHubUpdate(-1);
+[00000004] 0
+sleep(100ms);
+timer.hupdated = 0;
+[00000005] 0
+sleep(200ms);
+timer.hupdated;
+[00000006] 0
+
+timer.setupHubUpdate(100);
+[00000007] 0
+sleep(200ms);
+timer.hupdated;
+[00000008] 1
+timer.hupdated = 0;
+[00000009] 0
+sleep(200ms);
+timer.hupdated;
+[00000010] 1

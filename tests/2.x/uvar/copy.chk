@@ -1,0 +1,36 @@
+// Check UVar.copy.
+
+class a{}|;
+UVar.new(a, "x")|;
+a.x = 2;
+[00000001] 2
+
+a.&x.copy(a, "y")|;
+a.x=3 | a.y;
+[00000002] 3
+a.y = 4 | a.x;
+[00000003] 4
+
+a.&x.notifyChange(closure() { echo("o<")})|;
+
+a.y = 5|;
+[00000004] *** o<
+
+a.&y.copy(a, "z")|;
+a.z = 6|;
+[00000005] *** o<
+a.z = 7|;
+[00000006] *** o<
+
+// Try with a different parent.
+class b{}|;
+a.&y.copy(b, "v")|;
+
+b.v = 8|;
+[00000007] *** o<
+a.x;
+[00000008] 8
+a.x = 9|;
+[00000009] *** o<
+b.v;
+[00000010] 9

@@ -1,0 +1,11 @@
+// Check that accesschange detector triggers fast enough to avoid infinite loop
+//#plug test/all
+all.setNotifyAccess(1)|all.setNotifyAccess(0)|
+// This increases all.a and all.b so that both at subconditions are true.
+for(10) { all.a;all.b;};
+at(all.a > 12 &&  13 < all.b) "ok".print();
+[00000001] "ok"
+sleep(200ms);
+// If we are still alive, this is good enough
+1;
+[00000002] 1

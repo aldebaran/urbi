@@ -1,0 +1,8 @@
+1.'+'();
+[00000001] 1
+1.'+'(0, 0);
+[00000002:error] !!! input.u:@.1-11: +: expected between 0 and 1 argument, given 2
+1.'+'("foo");
+[00000003:error] !!! input.u:@.1-12: +: argument 1: unexpected "foo", expected a Float
+1.'+'(Object);
+[00000004:error] !!! input.u:@.1-13: +: argument 1: unexpected Object, expected a Float

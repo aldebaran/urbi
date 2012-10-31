@@ -1,0 +1,30 @@
+if (true) "true: true";
+[00000001] "true: true"
+
+if (false) "false: true";
+
+if (true) "true: true" else "true: false";
+[00000002] "true: true"
+
+if (false) "false: true" else "false: false";
+[00000003] "false: false"
+
+if (1) "1: true" else "1: false";
+[00000004] "1: true"
+
+if (0) "0: true" else "0: false";
+[00000005] "0: false"
+
+if (Object) "Object: true" else "Object: false";
+[00000006] "Object: true"
+
+function test (s, o) { if (o) s + ": " + "true" else s + ": " + "false" }|;
+
+test("false", false);
+[00000007] "false: false"
+
+test("true", true);
+[00000008] "true: true"
+
+test("Object", Object);
+[00000009] "Object: true"

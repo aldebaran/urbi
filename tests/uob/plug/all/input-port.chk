@@ -1,0 +1,76 @@
+//#uobject test/all
+//#no-fast
+
+var b = all.new(0)|
+var c = all.new(0)|;
+
+b.setNotifyChange(0)|; //b.a uvar
+b.setNotifyChange(5)|; //b.in input port
+
+var l1 = all.getSlot("a") >> b.getSlot("a")|;
+var l2 = all.getSlot("b") >> b.getSlot("ia")|;
+
+all.b = 10|;
+b.lastChangeVal;
+[00000002] 10
+
+// Write to input port does not write to the uvar
+b.ia.isVoid;
+[00000003] true
+
+all.a = 11|;
+b.lastChangeVal;
+[00000005] 11
+b.a;
+[00000006] 11
+
+
+all.b = 12 | all.a = 13|;
+
+l1.callCount;
+[00000007] 2
+l2.callCount;
+[00000008] 2
+
+var hit = []|;
+b.getSlot("lastChangeVal").notifyChange(closure()
+{ hit << b.lastChangeVal})|;
+
+sleep(650ms);
+// Check rate limiter
+l2.minInterval = 600ms|;
+for(var i: 5) {all.b = i|sleep(400ms)}|;
+hit;
+[00000009] [0, 2, 4]
+l2.callCount;
+[00000010] 5
+
+// Check disable
+l2.enabled = false|;
+l2.minInterval = 0|;
+all.b = 12 |l2.callCount;
+[00000011] 5
+l2.enabled = true|;
+all.b = 12 |l2.callCount;
+[00000012] 6
+
+var Global.val = 0|;
+
+// check asynchronous mode
+b.getSlot("ia").notifyChange(closure(){sleep(500ms)})|;
+l2.asynchronous = true|;
+
+hit = []|;
+for(var i: 5) {all.b = i|sleep(300ms)}|;
+sleep(300ms); // wait for async notify to finish
+l2.callCount;
+[00000015] 9
+hit;
+[00000016] [0, 2, 4]
+
+//check destruction
+b.destroy();
+all.b = 18|;
+sleep(400ms);
+all.b;
+[00000017] 18

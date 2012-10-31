@@ -1,0 +1,85 @@
+
+import System;
+
+var w00t = false;
+[00000001] false
+// Used to suspend.
+waituntil(!w00t);
+w00t = true;
+[00000002] true
+
+
+// Used to crash
+function bam { call.args[0].value } |;
+bam(function (a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z) {  }) |;
+echo ("We're done here");
+[00000003] *** We're done here
+
+// Empty while body used to assert in the flower
+var i = 0;
+[00000005] 0
+while (i++ < 8) {};
+
+// Used to SEGV.
+function { var s2 = 0 speed: 10, } | {};
+
+// Used to assert.
+do (Object) {{1}};
+[00000007] Object
+
+// Used to SEGV before at conditions were made non-interruptible. See
+// bug #4394.
+{
+  var x = false;
+  var t = Tag.new();
+  t: at ({echo("evaluating"); x})
+    echo("in");
+
+  x = true & t.stop();
+};
+[00000008] *** evaluating
+[00000009] *** evaluating
+
+
+
+Float.epsilonTilde = 0.01 |;
+
+// make sure that the scheduler run the next round after an unfreeze
+{
+  var tag = Tag.new();
+  { sleep(100ms); tag.unfreeze() },
+  var t = time();
+  tag: tag.freeze();
+  t = time() - t;
+  assert { t ~= 100ms };
+};
+
+// make sure that the scheduler run the next round after a release
+{
+  var s = Semaphore.new(0);
+  { sleep(100ms); s.release() },
+  var t = time();
+  s.acquire();
+  t = time() - t;
+  assert { t ~= 100ms };
+};
+
+// make sure that the scheduler run the next round after a signal
+{
+  var b = Barrier.new();
+  { sleep(100ms); b.signal(1) },
+  var t = time();
+  b.wait();
+  t = time() - t;
+  assert { t ~= 100ms };
+};
+
+// make sure that the scheduler run the next round after 'e!'
+{
+  var e = Event.new();
+  { sleep(100ms); e! },
+  var t = time();
+  waituntil(e?);
+  t = time() - t;
+  assert { t ~= 100ms };
+};

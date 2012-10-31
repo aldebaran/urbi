@@ -1,0 +1,29 @@
+// Check that notifychange that sleep() are no asploding
+//#uobject test/threaded
+//#no-fast
+
+import Global;
+
+var Global.z1 = 1|;
+var Global.z2 = 1|;
+UVar.new(Global, "x")|
+Global.&x.notifyChange(closure() { Global.z1 = 12;sleep(200ms); Global.z2 = 12})|;
+Global.x =2|
+Global.z1; Global.z2;
+[00000001] 12
+[00000002] 12
+Global.z1 = 1 | Global.z2 = 1 |;
+Threaded.startThread();
+[00000003] 0
+Threaded.queueOp(0, Threaded.WRITE_VAR, ["Global.x", 42])|;
+sleep(300ms);
+Global.z1; Global.z2;
+[00000006] 12
+[00000007] 12
+
+// Still alive?
+
+Threaded.queueOp(0, Threaded.WRITE_VAR, ["Global.z1", 42])|;
+sleep(300ms);
+Global.z1;
+[00000008] 42

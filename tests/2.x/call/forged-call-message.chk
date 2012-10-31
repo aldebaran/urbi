@@ -1,0 +1,11 @@
+// Check that callable passed to functions are not called.
+
+var f = function() {"foo".print}|;
+{ var g = &f; g.bar};
+[00000001:error] !!! input.u:@.15-19: lookup failed: bar
+
+var callEval = function {call.evalArgs}|;
+callEval(&f)|;
+// foo should not get displayed
+1;
+[00000002] 1

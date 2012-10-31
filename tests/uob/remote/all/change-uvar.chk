@@ -1,0 +1,23 @@
+//#uobject test/all
+uobjectsAll();
+
+
+// Test notifychange by passing reference to uvar
+
+all.setNotifyChangeByUVar(all.&a)|;
+all.a = 42;
+[00000001] 42
+sleep(200ms);
+all.lastChangeVal;
+[00000003] 42
+
+
+class t {}|;
+var t.all2 = all.new(0)|;
+all.setNotifyChangeByUVar(t.all2.&a)|;
+t.all2.a = 43;
+[00000004] 43
+sleep(200ms);
+all.lastChangeVal;
+[00000006] 43
+sleep(200ms);

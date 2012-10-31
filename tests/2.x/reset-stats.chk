@@ -1,0 +1,9 @@
+import System.*;
+// Check that we are able to reset the statistics
+stats()["cycles"] > 1;
+[00000001] true
+resetStats(); stats()["cycles"];
+[00000002] 1
+// Check that we return nil just after resetting them
+resetStats() | stats().isNil();
+[00000003] true

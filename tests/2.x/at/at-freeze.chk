@@ -1,0 +1,43 @@
+// Check that ats do not trigger when frozen.
+
+var e = Event.new()|;
+var t = Tag.new()|;
+
+
+t: at(e?) "trigger".print();
+e!;
+[00000001] "trigger"
+
+sleep(100ms);
+
+t.freeze();
+e!;
+sleep(100ms); 1;
+[00000002] 1
+
+t.unfreeze();
+e!;
+[00000003] "trigger"
+
+sleep(100ms); 1;
+[00000004] 1
+t.stop();
+
+
+function f() { if(1) at(e?) "ftrigger".print()}|;
+
+
+t: f()|;
+
+e!;
+[00000005] "ftrigger"
+sleep(100ms);
+
+t.freeze();
+e!; sleep(100ms); 1;
+[00000006] 1
+
+t.unfreeze();
+e!; sleep(100ms); 1;
+[00000007] "ftrigger"
+[00000008] 1

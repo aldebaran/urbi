@@ -1,0 +1,19 @@
+// Check that the semaphore is freed when an exception occurs in a
+// critical section.
+
+var s = Semaphore.new(1) | {};
+
+s.criticalSection(function() { echo ("Regular") });
+[00000001] *** Regular
+
+s.criticalSection(function() { throw "foobar" });
+[00000002:error] !!! foobar
+[00000003:error] !!!    called from: input.u:9.1-48: criticalSection
+
+s.criticalSection(function() { echo ("Ok after throw") });
+[00000004] *** Ok after throw
+
+t: s.criticalSection(function() { t.stop(42) });
+[00000005] 42
+s.criticalSection(function() { echo ("Ok after stop") });
+[00000006] *** Ok after stop

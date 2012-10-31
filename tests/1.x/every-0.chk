@@ -1,0 +1,7 @@
+//every(0) 1; must not freeze everything
+
+var x = 1;
+[00000001] 1
+timeout(1s) every(0) x=3,
+sleep(100ms) | echo("foo");
+[00000002] *** foo

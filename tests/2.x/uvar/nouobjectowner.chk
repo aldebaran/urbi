@@ -1,0 +1,31 @@
+// Test that UVars work when set on non-uobjects.
+
+class a
+{
+  function init()
+  {
+    UVar.new(this, "x");
+    UVar.new(this, "z");
+  }
+}|;
+class b
+{
+  function init()
+  {
+    UVar.new(this, "y");
+  }
+}|;
+
+var aa = a.new()|;
+var bb = b.new()|;
+
+aa.&x >> bb.&y|;
+aa.x = 12|;
+
+bb.&y.notifyChange(function() { echo("!")})|;
+
+aa.x = 13|;
+[00000001] *** !
+aa.x = 15|;
+[00000001] *** !
+

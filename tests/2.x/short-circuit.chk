@@ -1,0 +1,10 @@
+true && { echo ("foo") | 1 };
+[00000001] *** foo
+[00000002] 1
+false && { echo ("foo") | 2 };
+[00000003] false
+true || { echo ("foo") | 3 };
+[00000004] true
+false || { echo ("foo") | 4 };
+[00000005] *** foo
+[00000006] 4

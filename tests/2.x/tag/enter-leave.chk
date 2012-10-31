@@ -1,0 +1,35 @@
+var trace = Tag.new() | {};
+
+at (trace.enter?)
+  echo("enter");
+at (trace.leave?)
+  echo("leave");
+
+trace: echo("Say hi");
+[00000001] *** enter
+[00000002] *** Say hi
+[00000003] *** leave
+
+// Check it works with stops
+trace: sleep(),
+[00000004] *** enter
+trace.stop();
+[00000005] *** leave
+var t = Tag.new()|;
+t: {trace: sleep()},
+[00000006] *** enter
+t.stop();
+[00000007] *** leave
+
+// Check it works with exceptions
+try
+{
+  trace: nada
+}
+catch(var e)
+{
+  echo("caught")
+};
+[00000008] *** enter
+[00000009] *** leave
+[00000010] *** caught

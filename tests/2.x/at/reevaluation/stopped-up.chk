@@ -1,0 +1,24 @@
+var x = 0|;
+// Side-effect in at-condition lead to unspecified behavior, so this is dodgy.
+var count = 0|;
+tag: at ({count++| x == 1}) echo("in");
+
+echo("TRIGGER");
+[00000003] *** TRIGGER
+
+x = 1;
+[00000006] 1
+[00000007] *** in
+echo("DEAD");
+[00000007] *** DEAD
+
+tag.stop();
+sleep(0.1s);
+for(10)
+ {
+ x = 0;
+ x = 1;
+ };
+echo("end");
+[00000008] *** end
+assert(count < 10);

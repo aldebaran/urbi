@@ -1,0 +1,20 @@
+import System.*;
+// Emphasize leaks.
+var Global.nb_iter = 500 |
+System.systemFiles = []|;
+// see Bug #3557
+// Check if at are holding a refrence on their creator.
+{
+  class Foo
+  {
+    var e = Event.new();
+
+    function init()
+    {
+      at (e?)
+        echo(1)
+    };
+  };
+
+  System.memCheck(closure () { for (Global.nb_iter) { Foo.new() } });
+}|;

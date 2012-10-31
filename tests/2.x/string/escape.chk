@@ -1,0 +1,59 @@
+"You can't fight ideas with bullets.";
+[00000001] "You can't fight ideas with bullets."
+
+" test\"test ";
+[00000003] " test\"test "
+
+
+
+// And make sure the location are correct.
+"\h";        4x;
+[00000002:error] !!! input.u:@.1-3: syntax error: invalid character after \-escape: `h'
+[00000645:error] !!! input.u:@1.14-15: syntax error: invalid token: `4x'
+
+" \ ";       4x;
+[00000004:error] !!! input.u:@.1-4: syntax error: invalid character after \-escape: ` '
+[00000645:error] !!! input.u:@1.14-15: syntax error: invalid token: `4x'
+
+" \777 ";    4x;
+[00000005:error] !!! input.u:@.1-6: syntax error: invalid number after \-escape: `777'
+[00000645:error] !!! input.u:@1.14-15: syntax error: invalid token: `4x'
+
+"\B.";       4x;
+[00085408:error] !!! input.u:@.1-4: syntax error: invalid \B(SIZE)(CONTENTS) escape: `\B.'
+[00000645:error] !!! input.u:@1.14-15: syntax error: invalid token: `4x'
+
+"\B(a)";     4x;
+[00001999:error] !!! input.u:@.1-5: syntax error: invalid \B(SIZE)(CONTENTS) escape: `\B(a'
+[00001999:error] !!! input.u:@1.14-15: syntax error: invalid token: `4x'
+
+"\B(0a)";    4x;
+[00157251:error] !!! input.u:@.1-6: syntax error: invalid \B(SIZE)(CONTENTS) escape: `\B(0a'
+[00000645:error] !!! input.u:@1.14-15: syntax error: invalid token: `4x'
+
+
+"\B(0)a";    4x;
+[00040390:error] !!! input.u:@.1-7: syntax error: invalid \B(SIZE)(CONTENTS) escape: `\B(0)a'
+[00040390:error] !!! input.u:@1.14-15: syntax error: invalid token: `4x'
+
+"\B(1)(12";  4x;
+[00000645:error] !!! input.u:@.1-8: syntax error: unexpected '2' for closing \B, expected ')'
+[00000645:error] !!! input.u:@1.14-15: syntax error: invalid token: `4x'
+
+"\B(1)123";  4x;
+[00017873:error] !!! input.u:@.1-7: syntax error: invalid \B(SIZE)(CONTENTS) escape: `\B(1)1'
+[00017873:error] !!! input.u:@1.14-15: syntax error: invalid token: `4x'
+
+
+
+
+
+// Make sure we check all the defects in a string.
+"\h\ \777\B(1)1\h\B(1)(12\h";
+[00000054:error] !!! input.u:@0.1-3: syntax error: invalid character after \-escape: `h'
+[00000054:error] !!! input.u:@1.1-5: syntax error: invalid character after \-escape: ` '
+[00000054:error] !!! input.u:@2.1-9: syntax error: invalid number after \-escape: `777'
+[00000054:error] !!! input.u:@3.1-15: syntax error: invalid \B(SIZE)(CONTENTS) escape: `\B(1)1'
+[00000054:error] !!! input.u:@4.1-17: syntax error: invalid character after \-escape: `h'
+[00000054:error] !!! input.u:@5.1-24: syntax error: unexpected '2' for closing \B, expected ')'
+[00000054:error] !!! input.u:@6.1-27: syntax error: invalid character after \-escape: `h'

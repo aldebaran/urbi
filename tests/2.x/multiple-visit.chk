@@ -1,0 +1,28 @@
+// Check loop bodies with a break are desugared only once. Reported by
+// Alexandre Gabus: neither echo were executed.
+while (true)
+{
+  echo(1) & echo(1);
+  break;
+};
+[00000001] *** 1
+[00000002] *** 1
+
+// Likewise for continue
+var i = 0|
+while (true)
+{
+  i++;
+  if (i <= 3)
+  {
+    echo(i) & echo(i);
+    continue;
+  };
+  break
+};
+[00000003] *** 1
+[00000004] *** 1
+[00000005] *** 2
+[00000006] *** 2
+[00000007] *** 3
+[00000008] *** 3

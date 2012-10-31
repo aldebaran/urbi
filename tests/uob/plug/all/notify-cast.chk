@@ -1,0 +1,16 @@
+//#uobject test/all
+
+// Check notifychange with various types as argument
+
+all.notifyWriteA(all.&b, 0);
+all.b = 12| all.a;
+[00000001] 12
+
+all.notifyWriteA(all.&c, 1);
+all.c = "foo"| all.a;
+[00000002] "foo"
+
+var b = Binary.new("fooo", "fooofooo")|;
+all.notifyWriteA(all.&d, 2);
+all.d = b| all.a == b;
+[00000003] true

@@ -1,0 +1,32 @@
+//#plug test/all
+//#plug urbi/rtp
+//#remote test/all urbi/rtp
+skipIfWindows(); // FIXME: reenable for Urbi 3.
+fakeRTPError();
+
+// To check that data is sent by RTP, check that there is no trafic
+// on our TCP connection.
+remall.markRTP(1,1)|;
+// Disable value update feedback.
+remall.unnotify(1)|;
+var rtpname = remall.lobby._rtp_object_name + "__shared_"|;
+
+// Simulate a connection problem.
+  waituntil(uobjects.hasLocalSlot(rtpname))|
+  waituntil(uobjects.getSlot(rtpname).hasLocalSlot("close"))|
+  uobjects.getSlot(rtpname).close,
+
+remall.periodicWriteType = 2|
+remall.periodicWriteTarget = 1|
+remall.periodicWriteRate = 50ms|;
+
+sleep(2s); // time to setup, to fail, and to fallback
+
+{
+  // Check that we still receive update, but through our TCP link.
+  // ...that means isSilent will fail.
+  assert(!remall.lobby.isSilent(400ms, 0, 60)),
+  var t = remall.b;
+  sleep(200ms);
+  assert (remall.b - t > 0.1);
+};

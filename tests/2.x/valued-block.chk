@@ -1,0 +1,22 @@
+// Compute Fibonacci sequence in parallel with memoization
+//
+// Yes, this is strange. But this is to exercize the scheduler.
+
+// Create tags from 0 to 20 corresponding to the current fibo result
+var tags = [] |
+for (var i = 0; i <= 20; i++)
+  tags.insertBack(Tag.new()) |
+
+// This function will block tags[n] with the associated result. The
+// function itself returns a void result.
+function fibo(n)
+{
+  if (n < 2) {tags[n].block(1); return};
+  tags[n - 1]: detach(fibo(n-1));
+  tags[n - 2]: detach(fibo(n-2));
+  tags[n].block({tags[n - 1]: sleep()} + {tags[n - 2]: sleep()})
+} | {};
+
+detach(fibo(10))|;
+tags[10]: sleep();
+[00000001] 89

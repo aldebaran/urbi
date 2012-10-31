@@ -1,0 +1,10 @@
+{
+  var x;
+  x.isVoid;
+};
+[00000001] true
+{
+  var x,
+  x.isVoid;
+};
+[00000002] true

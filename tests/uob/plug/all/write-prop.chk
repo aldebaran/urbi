@@ -1,0 +1,21 @@
+//#uobject test/all
+
+var a = 23             |
+var a.field = 10       |
+all.a->rangemin = 0    |
+all.a->rangemax = 42 |
+all.a->speedmin = 1  |
+all.a->speedmax = 43 |
+all.a->delta = 10    |
+all.a->blend = "mix" |
+all.a->constant = true|;
+
+// K2 output
+all.readProps("all.a");
+[00000001] [0, 42, 1, 43, 10, "mix", 1]
+all.a->constant = false|;
+all.writeProps("all.a", 2) | {};
+all.a->rangemin;
+[00000002] 2
+all.a->constant;
+[00000003] true

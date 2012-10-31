@@ -1,0 +1,75 @@
+dnl						-*- shell-script -*-
+[
+# directive_get DIRECTIVE FILE...
+# -------------------------------
+# Gather the //#DIRECTIVE in FILE.
+directive_get ()
+{
+  local directive="$1"
+  shift
+  test $# -ne 0 ||
+    fatal "directive_get called without any file to read"
+  sed -n -e "s,^//#$directive\$,1,p"            \
+         -e "s,^//#$directive:* *,,p"           \
+         "$@"
+}
+
+# timeout_adjust FILE...
+# ----------------------
+# Process all the directives that adjust the timeout factor.
+timeout_adjust ()
+{
+  # A factor to change the timeout values for slow tests.
+  test $# = 0 ||
+    timeout_factor $(directive_get timeout "$@")
+
+  # Check for hosts requiring special treatments.
+  local host="${host-@host@}"
+  case $host in
+    (*arm*) timeout_factor 10;;
+  esac
+
+  # If benching, everything is even slower.
+  normalize_boolean BENCH
+  if $BENCH; then
+    timeout_factor 10
+  fi
+}
+
+# uobjects_get KIND FILE...
+# --------------------------
+# Get the UObject list of KIND (java, plug or remote).
+#
+# Same as "directive_get KIND ...", but also support the uobject directive.
+uobjects_get ()
+{
+  local kind=$1
+  shift
+  directive_get "$kind" "$@"
+
+  case $chkdir/ in
+    (*/$kind/*) directive_get "uobject" "$@";;
+    (*/java/* | */plug/* | */remote/*);;
+    (*) test -z "$(directive_get "uobject" "$@")" ||
+          fatal "//#uobject without java, plug or remote in the path: $chkdir"
+        ;;
+  esac
+}
+
+
+# java_get FILE...
+# ----------------
+# In the case of Java, we need to convert the name of the remotes.
+java_get ()
+{
+  local i
+  for i in $(uobjects_get java "$@")
+  do
+    case $i in
+      (test/all) echo "tests.all.All";;
+      (test/timer) echo "tests.timer.Timer";;
+      (*)        echo "$i";;
+    esac
+  done
+}
+]

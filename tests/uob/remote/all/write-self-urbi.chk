@@ -1,0 +1,44 @@
+//#uobject test/all
+skipIfHostName("bf-1");
+uobjectsAll();
+
+
+
+// The urbi code sent by c++ code will display stuffs otherwise.
+// The C++ code is sending urbi code: everything will happen asynchronously.
+var all.z = 0 |;
+all.urbiWriteOwnByName("z", 20) |;
+var a = all.new(0) |;
+var a.z = 0 |;
+a.urbiWriteOwnByName("z", 30) |;
+//cow from uobject
+var b = a.new(0) |;
+b.urbiWriteOwnByName("z", 40) |;
+
+detach
+({
+  sleep(800ms);
+  cout << all.z;
+[00000001:output] 20
+  cout << a.z;
+[00000002:output] 30
+  cout << b.z;
+[00000003:output] 40
+})|;
+
+// In a separate detach to ensure it gets executed.
+detach
+({
+  sleep(1.2s);
+  lobby.quit()
+})|;
+
+sleep();
+/*
+setSlot("quit_", getSlot("quit"))|;
+var shutdown = "DO NOT WANT!!";
+if (!hasLocalSlot("quit"))
+  var quit = "no"
+else
+  quit = "no";
+*/

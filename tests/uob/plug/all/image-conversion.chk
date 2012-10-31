@@ -1,0 +1,50 @@
+//#uobject test/all
+
+var path = System.urbiShareDir / "images"/ "gostai-logo" |
+
+// Conversion to every Urbi format.
+// Yuv422 and grey4 are not supported by the convert function.
+var imageFormat =
+  ["rgb", "YCbCr", "grey8", "yuv411_planar", "nv12", "yuv420_planar",
+   "jpeg", "ppm"]|;
+
+var fail = 0|;
+
+function loadDataImage(var sourceFormat, var destFormat)
+{
+  File
+   .new(path / "converted" / ("00.%s.%s" % [sourceFormat, destFormat]))
+   .content
+   .data;
+}|;
+
+for (var sourceFormat : imageFormat)
+{
+  // Source.
+  var src = path / "sources" / ("00.%s" % sourceFormat);
+  var isrc = File.new(src).content;
+  isrc.keywords = sourceFormat + " 400 300";
+
+  for (var destFormat : imageFormat)
+    if (destFormat != sourceFormat)
+    {
+      // Converted.
+      var cvt = "00.%s.%s" % [sourceFormat, destFormat];
+      var icvt = all.convert(isrc, destFormat).data;
+      OutputStream.new(File.create(cvt)) << icvt;
+
+      // Ref.
+      var ref = path / "converted" / cvt;
+      var iref = File.new(ref).content;
+
+      if (var d = all.imageDiff(iref.data, icvt, cvt))
+      {
+        ++fail;
+        clog << "FAIL: %s" % cvt;
+      }
+      else
+        clog << "PASS: %s" % cvt;
+    };
+};
+
+assert (!fail);

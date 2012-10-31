@@ -1,0 +1,18 @@
+
+
+var e = Event.new()|;
+var t = Tag.new()|;
+
+at(e?) {sleep(100ms) | "caught".print()};
+
+// Check that this blocks for 300ms.
+e! ~ 300ms | "emit".print();
+
+[00000001] "caught"
+[00000002] "emit"
+
+// Check that this blocks and can be stopped.
+t: e! ~ inf | "stopped".print(),
+sleep(300ms) | t.stop();
+[00000003] "caught"
+[00000004] "stopped"

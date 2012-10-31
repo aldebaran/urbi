@@ -1,0 +1,11 @@
+  assign: x=100 smooth:2s
+&
+  s = sample(x, 5, 500ms);
+
+assertSample(s, [0, 15, 50, 85, 100]);
+
+
+// check zero displacement
+
+x = 0|
+x = 0 smooth:1s;

@@ -1,0 +1,78 @@
+  {
+    assign: x=30 speed:10 adaptive:1
+  }
+&
+  {
+    s = sample(x, 2, 1s);
+    x = 0;
+    sleep(1s);
+    s += sample(x, 2, 1s);
+  };
+assertSample(s, [0, 10, 10, 20]);
+
+// With freeze.
+x = 0|;
+  {
+    assign: x=25 speed:10 adaptive:1
+  }
+&
+  {
+    s = sample(x, 2, 1s);
+    assign.freeze();
+    sleep (2s);
+    assign.unfreeze();
+    s += sample(x, 2, 1s);
+  };
+
+assertSample(s, [0, 10, 10, 20]);
+
+// Give time to previous assign to really finish.
+sleep(1s);
+// Freeze assignment, change value
+
+x = 0|;
+
+  {
+    assign: x=30 speed:10 adaptive:1
+  }
+&
+  {
+    s = sample(x, 2, 1s);
+    assign.freeze();
+    // FIXME: assign without sleep
+    sleep (1s);
+    x = 40;
+    sleep (1s);
+    assign.unfreeze();
+    s += sample(x, 2, 1s);
+  };
+
+assertSample(s, [0, 10, 40, 30]);
+
+
+// Check error delta on small values
+
+x = 0|;
+
+  {
+    assign: x=0.3 speed:0.1 adaptive:1
+  }
+&
+  {
+    s = sample(x, 2, 1s);
+    assign.freeze();
+    // FIXME: assign without sleep
+    sleep (1s);
+    x = 0.4;
+    sleep (1s);
+    assign.unfreeze();
+    s += sample(x, 2, 1s);
+  };
+
+assertSample(s, [0, 0.1, 0.4, 0.3]);
+
+
+// check zero displacement
+
+x = 0|
+x = 0 speed:1 adaptive:1;

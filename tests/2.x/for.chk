@@ -1,0 +1,150 @@
+// Check that "for," is rejected properly and does not prevent
+// further use of "for".
+import System.*;
+for, (var i: [1, 2, 3]) { echo (i) };
+[00000001:error] !!! input.u:@.1-4: syntax error: invalid flavor: for,
+for (var i: [1, 2, 3]) { echo (i) };
+[00000002] *** 1
+[00000003] *** 2
+[00000004] *** 3
+
+{
+  var i = 1;
+  for (i + 4)
+  {
+    echo (i);
+    i++;
+  };
+};
+[00000001] *** 1
+[00000002] *** 2
+[00000003] *** 3
+[00000004] *** 4
+[00000005] *** 5
+
+// Check the "duration" of various flavors.
+{
+  var start = cycle |
+  for (3)
+    {};
+  assert (System.cycle - start == 4);
+};
+
+{
+  var start = cycle |
+  for| (3)
+    {};
+  assert (System.cycle - start == 1);
+};
+
+{
+  var start = cycle |
+  for& (3)
+    {};
+  assert (System.cycle - start == 2);
+};
+
+
+// "in" and ":" are the same.
+{
+  var start = cycle |
+  for (var i: [1, 2, 3])
+    echo (i);
+  assert (System.cycle - start == 3);
+};
+[00000001] *** 1
+[00000002] *** 2
+[00000003] *** 3
+
+{
+  var start = cycle |
+  for (var i in [1, 2, 3])
+    echo(i);
+  // This is debatable: 2 would make sense.
+  assert (System.cycle - start == 3);
+};
+[00000005] *** 1
+[00000006] *** 2
+[00000007] *** 3
+
+// for|
+{
+  var start = cycle |
+  for| (var i in [1, 2, 3])
+    echo(i);
+  assert (System.cycle - start == 1);
+};
+[00000009] *** 1
+[00000010] *** 2
+[00000011] *** 3
+
+// for&
+{
+  var start = cycle |
+  for& (var i in [1, 2, 3])
+    echo(i);
+  assert (System.cycle - start == 2);
+};
+[00000013] *** 1
+[00000014] *** 2
+[00000015] *** 3
+
+// Check that the execution of for& is aborted when an exception occurs
+var l = [5, 4, 3, 2, 1]|;
+for& (var i: l)
+{
+  echo ("Initial: " + i);
+  sleep(i * 100ms);
+  echo ("After sleep: " + i);
+  if (i == 2) { 1/0 }
+};
+[00000001] *** Initial: 5
+[00000002] *** Initial: 4
+[00000003] *** Initial: 3
+[00000004] *** Initial: 2
+[00000005] *** Initial: 1
+[00000006] *** After sleep: 1
+[00000007] *** After sleep: 2
+[00000008:error] !!! input.u:@8.17-19: /: division by 0
+[00000009:error] !!!    called from: input.u:@14.14-@8.1: each&
+[01234567:error] !!!    called from: input.u:@15.1-@9.1: []
+
+
+// Check that break stop correctly the loop and that it does not continue
+// after the pipe. (see issue 3071)
+for& (var i : [0, 1, 2])
+{
+  echo("for& and break| " + i);
+  if (i == 1)
+  {
+    break | echo("for&: 'break|' fails")
+  };
+  echo("for&: break fails")
+};
+[00000010] *** for& and break| 0
+[00000011] *** for& and break| 1
+[00000012] *** for& and break| 2
+
+// Even if the body is empty, we must run the loop.
+{
+  var i;
+  for (i = 42; i < 51; i++)
+    {};
+  assert (i == 51);
+};
+
+// Check the "duration" of various flavors.
+{
+  var start = cycle |
+  for (var i = 0; i < 3; i += 3)
+    {};
+  assert (System.cycle - start == 2);
+};
+
+{
+  var start = cycle |
+  for| (var i = 0; i < 3; i += 3)
+    {};
+  assert (System.cycle - start == 1);
+};
+

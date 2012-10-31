@@ -1,0 +1,21 @@
+// Sent to Alexandre Gabus <Alexandre.Gabus@he-arc.ch>
+function make_enum
+{
+  for (var n: call.argsCount())
+  {
+    var name = call.argString(n);
+    var x = n;
+    x.overrideSlot("asString", name);
+    setSlot(name, x);
+  };
+}|;
+make_enum(toto, titi, tata);
+titi;
+[00000001] titi
+assert
+{
+  titi < tata;
+  ! (tata < titi);
+  tata - toto == 2;
+  tata + 10 == 12;
+};

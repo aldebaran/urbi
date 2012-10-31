@@ -1,0 +1,75 @@
+//#mode: net
+
+// Check that lobbies get destroyed when the associated connection
+// gets disconnected.
+// Line above to force network mode
+
+var count = lobbies.size|;
+var s = Socket.new()|;
+s.connect("127.0.0.1", System.listenPort)|;
+assert { s.isConnected };
+
+sleep(1s);
+assert { count == lobbies.size - 1 };
+s.disconnect();
+assert { !s.isConnected };
+
+// Check that the extra lobby is gone
+sleep(1ms);
+assert(count == lobbies.size);
+
+
+// Check again when the lobby is doing something
+var Global.x = 0|;
+s.connect("127.0.0.1", System.listenPort)|;
+assert { s.isConnected };
+s.write("every|(100ms) Global.x++;");
+
+s.disconnect();
+assert { ! s.isConnected };
+
+sleep(1ms);
+assert
+{
+  // Check that the extra lobby is gone
+  count == lobbies.size;
+  // And that its code is stopped
+  Global.x - {sleep(200ms)|Global.x} == 0;
+};
+
+
+// Exactly the same thing with a background task
+
+s.connect("127.0.0.1", System.listenPort)|;
+assert { s.isConnected; };
+s.write("every|(100ms) Global.x++,");
+
+s.disconnect();
+assert { ! s.isConnected };
+
+sleep(1ms);
+assert
+{
+  // Check that the extra lobby is gone
+  count == lobbies.size;
+  // And that its code is stopped
+  Global.x - {sleep(200ms)|Global.x} == 0;
+};
+
+
+// Check we do not block lobbies in ats
+var lobbyCount = lobbies.size|;
+var Global.e = Event.new()|;
+Global.x = 1|;
+var c = Socket.new()|;
+c.connect("127.0.0.1", System.listenPort)|;
+assert(lobbies.size == lobbyCount + 1);
+// Test all possible trigger case (immediate, never, once).
+c.write("at (e?) 1; at(x==2) 1; at(x==3) 1; at(x==1) 1;");
+Global.x = 2|;
+c.write("quit();");
+sleep(300ms);
+assert(lobbies.size == lobbyCount);
+c = nil|;
+"ok";
+[00000001] "ok"

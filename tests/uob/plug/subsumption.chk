@@ -1,0 +1,65 @@
+//#uobject test/subsumption
+//#no-fast
+import Global.*;
+UVar.new(Global, "x")|;
+Global.x = 0;
+[00000001] 0
+var s = subsumption.new(Global.&x)|;
+
+s.val = 1 | x;
+[00000002] 1
+
+s.level = 2;
+[00000003] 2
+s.val = 2 | x;
+[00000004] 1
+
+s.level = 0;
+[00000005] 0
+s.val = 3 | x;
+[00000006] 3
+
+s.level = -5;
+[00000007] -5
+s.val = 4 | x;
+[00000008] 4
+
+s.createOverride("val10", 10)|;
+s.level = 10|;
+
+s.val = 5 |x;
+[00000009] 4
+s.val10 = 6 | x;
+[00000010] 6
+
+s.level = 11 | s.val10 = 7 |x;
+[00000011] 6
+
+s.createTimedOverride("val5_500ms", 5, 0.5)|;
+s.level = 0|;
+s.val5_500ms = 8 | x;
+[00000012] 8
+s.level;
+[00000013] 5
+s.val = 9 | x;
+[00000014] 8
+sleep(350ms);
+s.val = 10 | x;
+[00000015] 8
+sleep(350ms);
+s.val = 11 | x;
+[00000016] 11
+s.level;
+[00000017] 0
+
+s.level = 6|;
+s.val5_500ms = 12 | x;
+[00000018] 11
+
+
+// Test read
+s.val5_500ms;
+[00000019] 11
+
+s.val;
+[00000020] 11

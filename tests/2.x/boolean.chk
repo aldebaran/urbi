@@ -1,0 +1,69 @@
+// &&
+false && false;
+[00000001] false
+
+false && true;
+[00000002] false
+
+true && false;
+[00000003] false
+
+true && true;
+[00000004] true
+
+
+// and
+false and false;
+[00000005] false
+
+false and true;
+[00000006] false
+
+true and false;
+[00000007] false
+
+true and true;
+[00000008] true
+
+
+
+// ||
+false || false;
+[00000009] false
+
+false || true;
+[00000010] true
+
+true || false;
+[00000011] true
+
+true || true;
+[00000012] true
+
+
+// or
+false or false;
+[00000013] false
+
+false or true;
+[00000014] true
+
+true or false;
+[00000015] true
+
+true or true;
+[00000016] true
+
+
+// !
+!false;
+[00000017] true
+
+!true;
+[00000018] false
+
+!0;
+[00000019] true
+
+!1;
+[00000020] false

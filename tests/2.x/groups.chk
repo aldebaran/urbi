@@ -1,0 +1,49 @@
+class C
+{
+  var val = 0;
+}|;
+var a = C.new()|;
+var b = C.new()|;
+
+var g2 = Group.new() << a << b|;
+
+assert
+{
+  (g2.val = 42) == Group.new(42, 42);
+  a.val == b.val == 42;
+};
+
+
+var g3 = Group.new() << a << (Group.new() << b);
+[00000059] Group [C_0x100c30060, Group [C_0x100c40b20]]
+
+
+assert
+{
+  (g3.val = 51) == Group.new(51, Group.new(51));
+  a.val == b.val == 51;
+};
+
+// Check interaction with void
+function String.display () { void }|;
+Group.new("st", "qh", "mn", "ad").display();
+
+// Check method are invoked in parallel on group members
+{
+  class Timed
+  {
+    function m()
+    {
+      echo("start");
+      sleep(10ms);
+      echo("end");
+    }
+  };
+
+  var g = Group.new(Timed, Timed);
+  g.m();
+};
+[00000020] *** start
+[00000021] *** start
+[00000022] *** end
+[00000023] *** end

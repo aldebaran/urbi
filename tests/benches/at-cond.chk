@@ -1,0 +1,8 @@
+//#plug test/all
+var cnt=0|
+all.a = 0|
+
+at(all.a %2) cnt++;
+for(1024 * 128) all.a ++;
+1;
+[00000000] 1

@@ -1,0 +1,11 @@
+// Check that the construct
+//   tag: tag.freeze
+// indeed blocks
+
+var t1 = Tag.new() | {};
+var t2 = Tag.new() | {};
+t2: { t1: t1.freeze(); echo ("You don't see me") },
+sleep (1s);
+echo ("I am the only one");
+[00000001] *** I am the only one
+t2.stop();

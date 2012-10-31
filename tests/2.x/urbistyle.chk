@@ -1,0 +1,297 @@
+/*
+ * Copyright (C) 2010-2011, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+// This is the comment section.
+
+/* an inner comment */
+
+/* nested /* comments */ 5; */
+
+/*
+  /*
+    Multi-line.
+  */
+*/
+
+//#push 12 "file"
+//#pop
+
+// Program example.
+
+do (System)
+{
+  // Assertion control.
+  var nndebug = false;
+
+  var assertVerbose2 = false;
+  function assert2_(var assertion, var messageFail, var messagePass = "")
+  {
+    if (!assertion)
+      throw Exception.new("failed assertion: " + messageFail) |
+    if (assertVerbose2 && !messagePass.empty)
+      clog << "passed assertion: " + messagePass
+  };
+
+  /// assert2(assertion).
+  function 'assert2'
+  {
+    if (call.args.size != 1)
+      throw Exception.Arity.new(call.message, call.args.size, 1) |
+    if (!nndebug)
+      assert2_(call.evalArgAt(0), call.argString(0), call.argString(0)) |
+  };
+
+  /// assert2Call(Message: String | Lazy, Lhs, Rhs).
+  function assert2Call
+  {
+    if (call.args.size < 2)
+      throw Exception.Arity.new(call.message, call.args.size, 2) |
+    if (!nndebug)
+    {
+      // Support lazy invocations (all arguments are lazy),
+      // or a partially lazy one, to ease bouncing from functions.
+      var message =
+      {
+        if (call.args[0].type == "String")
+          call.args[0]
+        else
+          call.argAt(0)
+      }|
+
+      // Skip the function name.
+      var args = call.args.tail |
+      var target = args[0] |
+      var c = call |
+      c.message = message |
+      c.args = args.tail |
+      c.targetLazy = target |
+      c.target = target.value.acceptVoid |
+      var formatArgsStr = c.format |
+      var messageFail =
+          "%s (%s)" % [formatArgsStr, c.negatedFormat(c.argsPrint)] |
+      var messagePass =
+          "%s (%s)" % [formatArgsStr, c.format(c.argsPrint)] |
+
+      assert2_(c.value, messageFail, messagePass)
+    }
+  };
+
+  /// assert2_op(Operator: String | Lazy, Lhs, Rhs).
+  var assert2_op = getSlotValue("assert2Call");
+
+  function currentRunner2()
+  {
+    Kernel1.deprecated("System.currentRunner2", "Job.current") |
+    Job.current
+  };
+
+  var period2 = 20ms;
+
+  // systemFiles.
+  systemFiles->updateHook = function(slot, value)
+  {
+    setSystemFiles(value) |
+    void
+  };
+
+  // '$loadedFiles2' local slot names are files loaded so far
+  // Object.new not being loaded yet, '$loadedFiles2' is a dummy string
+  var '$loadedFiles2' =
+    [
+      "urbi/object.u" => 1,
+      "urbi/urbi.u"   => 1,
+      "urbi/system.u" => 1,
+    ];
+  var defaultIsSystem2 = true;
+
+  // Enhance loadFile to fill systemFiles.
+  overrideSlot("loadFile$old",
+  function (var file, var target = this, var isSystem = defaultIsSystem2)
+    {
+      if (isSystem)
+        addSystemFile(file.asString)|
+      'loadFile$old2'(file, target)
+    });
+
+  for (var s: ["component", "naming-standard", "object",
+               "system", "test-suite", "urbi"])
+    // String.% is not available, yet.
+    addSystemFile(searchFile("urbi/" + s + ".u").asString());
+
+  /// Look for file and load it.
+  // Throw on errors.
+  function load2(var file, var target = this, var isSystem = defaultIsSystem2)
+  {
+    '$loadedFiles2'.set(file, false)|
+    var res = loadFile(searchFile(file), target, isSystem).acceptVoid() |
+    '$loadedFiles2'.set(file, true)|
+    res.unacceptVoid()
+  };
+
+  /// Same as loadModule, but exit on failure.
+  /// Used for the option --module.
+  function loadModuleOrDie2(var module)
+  {
+    try
+    {
+      loadModule(module);
+    }
+    catch (var e)
+    {
+      cerr << e;
+      _exit(1);
+    }
+  };
+
+  function lobbies2()
+  {
+    Lobby.instances
+  };
+
+  function lobby2()
+  {
+    Lobby.lobby
+  };
+
+  // Look for file, and load it if found.
+  function maybeLoad2(var file, var channel = Global.clog)
+  {
+    var path = nil |
+    try
+    {
+      path = searchFile(file)
+    }
+    catch (var e if e.isA(Exception.FileNotFound))
+    {
+    }|
+    if (!path.isNil)
+    {
+      channel.echo("loading %s." % path) |
+      loadFile(path)
+    }
+  };
+
+  function ps2()
+  {
+    nonInterruptible |
+    for| (var t : Job.jobs)
+      t.dumpState
+  };
+
+  function '$requireWait2'(var file)
+  {};
+
+  function requireFile2(var file,
+                       var target = this, var isSystem = defaultIsSystem2)
+  {
+    if (file in '$loadedFiles2')
+      '$requireWait'(file)
+    else
+      load(file, target, isSystem) |
+    void
+  };
+
+  // Do not make a wrapper function here, as you would get a tag for
+  // the scope of that function, instead of the caller.
+  setSlotValue("scopeTag2", Tag.getSlotValue("scope"));
+
+  function spawn2(var fun, var clear)
+  {
+    Kernel1.deprecated("System.spawn", "Code.spawn") |
+    Control.spawn(fun, clear)
+  };
+
+  function version2()
+  {
+    PackageInfo.components["Urbi SDK"].version
+  };
+}|
+
+assert
+{
+  123_456_789 == 123456789;
+  12_34_56_78_90 == 1234567890;
+  1_2__3___45 == 12345;
+  1_2.3__4 == 12.34;
+  0xFFFF_FFFF == 0xFFFFFFFF;
+  1e1_0 == 1e10;
+};
+
+// Ordinary characters
+var r = Regexp.new("oo")|
+assert
+{
+  r.match("oo");
+  r.match("foobar");
+  !r.match("bazquux");
+};
+
+// Numbers special cases.
+
+// System answers.
+
+1_2_3;
+[00000002] 123
+123;
+[00000003] 123
+12;
+[00000004] 12
+1;
+[00000005] 1
+0x1e43;
+[00000006] 7747
+
+// Duration.
+
+assert
+{
+  1d == 24h ;
+  0.5d == 12h ;
+  1h == 60min ;
+  1min == 60s ;
+  1s == 1000ms ;
+
+  1s == 1 ;
+  1s 2s 3s == 6 ;
+  1s 1ms == 1.001 ;
+  1ms 1s == 1.001 ;
+};
+
+// Urbi output.
+
+var c = Channel.new("hello") |
+c << "System answer";
+[00000000:hello] "System answer"
+cout << "System answer";
+[00000000:output] "System answer"
+warning << "warning";
+[00000000:warning] warning
+error;  // The difference in the location is due to //# push.
+[00014570:error] !!! input.u:@2.1-5: lookup failed: error
+echo ("echo");
+[00000000] *** echo
+
+assert
+{
+  System === System;
+};
+
+// Binary declaration.
+"\B(3)("\")" == "\"\\\""|
+
+// Tricky string cases.
+
+"\n\b\r"|
+
+// Structures.
+
+[ "one" => 4, "two" => 6]|
+
+// 12434

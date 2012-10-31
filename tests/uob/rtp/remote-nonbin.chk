@@ -1,0 +1,24 @@
+//#plug test/all
+//#plug urbi/rtp
+//#remote test/all urbi/rtp
+skipIfWindows(); // FIXME: reenable for Urbi 3.
+
+// To check that data is sent by RTP, check that there is no trafic
+// on our TCP connection.
+remall.markRTP(1,1)|;
+// Disable value update feedback.
+remall.unnotify(1)|;
+remall.periodicWriteType = 2|
+remall.periodicWriteTarget = 1|
+remall.periodicWriteRate = 50ms|;
+sleep(2s); // time to setup
+
+{
+  // 8 floating-point writes will make more than 40 bytes.
+  assert(remall.lobby.isSilent(400ms, 0, 40)),
+  var t = remall.b;
+  sleep(200ms);
+  assert(remall.b - t > 0.1);
+};
+"ok";
+[00000001] "ok"

@@ -1,0 +1,16 @@
+skipIfSpace();
+
+// Check that 'this' is part of the default context
+self == this;
+[00000001:warning] !!! input.u:@.1-4: `self' is deprecated, use `this'
+[00000002] true
+
+// Check that it is not local to a block, and that this is a real 'this'.
+self == { this };
+[00000003:warning] !!! input.u:@.1-4: `self' is deprecated, use `this'
+[00000004] true
+
+// Moreover, we expect it to be a lobby
+self.type;
+[00000005:warning] !!! input.u:@.1-4: `self' is deprecated, use `this'
+[00000006] "Lobby"

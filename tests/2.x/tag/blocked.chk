@@ -1,0 +1,20 @@
+// Check that hierarchical tag stopping works as expected
+var t = Tag.new("t")|;
+var t.u = t.new("t.u")|;
+
+t.u: { sleep(100ms); echo ("foo") },
+sleep(10ms);
+t.stop();
+sleep(1s);
+echo ("bar");
+[00000001] *** bar
+
+var x = 0 | {};
+t.u: at (x == 2) echo ("x is 2");
+
+sleep(100ms);
+t.stop();
+x = 2 | {};
+sleep(10ms);
+echo ("baz");
+[00000002] *** baz

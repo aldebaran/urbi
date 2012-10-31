@@ -1,0 +1,50 @@
+// Dummy sinus command to avoid valgrind taking time on following tests.
+import Math.*;
+function testVal (x, val, precision)
+{
+  echo( { if (abs (x - val) <= precision) "PASS" else "FAIL" } );
+} |
+var dummySin = 0|;
+dummySin = 0 sin:1s ampli:1,
+testVal (dummySin, 42, 10000);
+[00000001] *** PASS
+
+// Simple sinus and cosinus
+var s1 = 0|;
+s1 = 0 sin:1s ampli:10,
+assertSample(sample(s1, 4, 250ms), [0, 10, 0, -10]);
+
+// Note that this test is extremely touchy to scheduling issues.  If
+// by any change the trajectory generator yields before computing the
+// first value, then the sampler will fetch as first value the
+// startValue, here "0" coming from "var c1 = 0", not from the
+// trajectory.
+//
+// This once happened when Dictionary.[]= used a `;' instead of `|'...
+var c1 = 0|;
+c1 = 0 cos:1s ampli:10,
+assertSample(sample(c1, 4, 250ms), [10, 0, -10, 0]);
+
+// Test phase
+var s3 = 0|;
+s3 = 0 sin:1s ampli:10 phase:pi/2,
+assertSample(sample(s3, 4, 250ms), [10, 0, -10, 0]);
+
+var c3 = 0|;
+c3 = 0 cos:1s ampli:10 phase:pi,
+assertSample(sample(c3, 4, 250ms), [-10, 0, 10, 0]);
+
+
+// check zero displacement
+
+x = 0|;
+
+  {
+    assign: x=0 sin:1s ampli:0
+  }
+&
+  {
+    sleep(2s);
+    assign.stop();
+  }
+|;

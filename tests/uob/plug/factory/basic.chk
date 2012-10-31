@@ -1,0 +1,31 @@
+//#uobject test/machine
+
+var Machine = uobjects.UMachine|;
+
+var f1 = Machine.new(1s)|;
+
+f1.duration;
+[00000001] 1
+
+f1.assemble(["Hello", ", ", "World", "!"]);
+[00000002] "Hello, World!"
+
+f1.assemble([1, 2, 3]);
+[00000003] "123"
+
+f1.assemble(12, 34);
+[00000004:error] !!! input.u:@.1-19: assemble: expected 1 argument, given 2
+
+f1.assemble(12);
+[00000005] "12"
+
+// Valid change of duration.
+f1.duration = 0s;
+[00000006] 0
+
+// Invalid change of duration.
+// f1.duration = -1s;
+
+// Invalid construction.
+var f2 = Machine.new(-1s);
+[00000007:error] !!! input.u:@.10-25: new: UMachine construction failed: init returned 1.

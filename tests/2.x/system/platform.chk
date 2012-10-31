@@ -1,0 +1,5 @@
+// Basic platform check
+
+assert(System.Platform.kind() in ["POSIX", "WIN32"]);
+assert((System.Platform.kind() == "POSIX" && Path.asString().size == 1) ||
+       (System.Platform.kind() == "WIN32" && Path.asString().size == 3));

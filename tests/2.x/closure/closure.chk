@@ -1,0 +1,27 @@
+class A {
+  function f {
+    var x = call.evalArgAt(0);
+    var y = call.evalArgAt(1);
+    var this.c_ = call;
+    closure(y, z) { [this, call, x, y, z] };
+  }
+} | {};
+
+class B {} | {};
+
+var B.f = A.f(10, 20) | {};
+var l = B.f(42, 51) | {};
+
+assert(l[0] === A);
+assert(l[1] === A.c_);
+assert(l[2] == 10);
+assert(l[3] == 42);   // Shadows outer y
+assert(l[4] == 51);
+
+closure { 42 };
+[00000001:error] !!! input.u:@.1-14: syntax error: closure cannot be lazy
+closure ff { 42 };
+[00000002:error] !!! input.u:@.1-17: syntax error: closure cannot be lazy
+
+closure() { }.apply(42);
+[00000003:error] !!! input.u:@.1-23: apply: this: unexpected 42, expected a List

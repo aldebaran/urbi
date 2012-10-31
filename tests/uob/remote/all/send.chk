@@ -1,0 +1,22 @@
+//#uobject test/all
+uobjectsAll();
+
+assert
+{
+  (all.a = 1) == 1;
+  (all.b = 1) == 1;
+
+  all.sendString("all.a  = 12;") == 0;
+  Sleep(500ms);
+  all.a == 12;
+
+  all.sendBuf("all.a = 13;all.b = 13;", 14) == 0;
+  Sleep(500ms);
+  all.a == 13;
+  all.b == 1;
+
+  var Object.a = 1;
+  all.sendPar() == 0;
+  Sleep(500ms);
+  Object.a == 123;
+};

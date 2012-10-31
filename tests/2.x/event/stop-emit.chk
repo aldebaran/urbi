@@ -1,0 +1,7 @@
+var e = Event.new()|;
+at (e?) echo("foo");
+
+// Check the event is actually emitted.
+t: e! | t.stop();
+[00000001] *** foo
+sleep(100ms);

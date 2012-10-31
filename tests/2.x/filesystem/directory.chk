@@ -1,0 +1,40 @@
+//! mkdir -p root/dir/sub
+//! touch root/1
+//! touch root/2
+//! touch root/3
+//! mkdir root/baddir
+//! chmod 0 root/baddir
+//$ chmod 755 root/baddir
+
+Directory.new("pouf");
+[00000001:error] !!! input.u:@.1-21: new: no such file or directory: pouf
+
+Directory.new("root");
+[00000002] Directory("root")
+Directory.new("root").content().sort();
+[00000003] ["1", "2", "3", "baddir", "dir"]
+
+try {
+  Directory.new("root/bad").content;
+  if (!Platform.isWindows)
+    echo("Failure to throw");   // Yes, Windows allows it...
+}
+catch {
+  // Nothing, this is ok
+};
+
+// Test that a Directory returned by 'create' has its event slots
+if (Path.new("dir/dummy.txt").exists)
+  File.new("dir/dummy.txt").remove;
+
+{
+  var d = Directory.create("dir");
+  waituntil(d.fileCreated?(var name));
+  assert(name == "dummy.txt");
+  d.removeAll
+}
+  &
+{
+  sleep(100ms);
+  File.create("dir/dummy.txt");
+}|;

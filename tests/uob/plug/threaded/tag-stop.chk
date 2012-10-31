@@ -1,0 +1,28 @@
+// Check all operations.
+//#uobject test/threaded
+//#no-fast
+// The windows machine, debug mode, needs really more time.
+//#timeout 3
+
+var tag = Tag.new()|;
+var th = Threaded.new()|;
+var id = th.startThread()|;
+
+th.queueOp(id, Threaded.DIE, []);
+[00000001] 1
+
+sleep(500ms);
+UVar.new(Global, "x")|;
+Global.x = 1|;
+th.queueOp(id, Threaded.WRITE_VAR, ["Global.x", 12])|;
+tag:
+{
+  var t0 = time |
+  th.lockInstanceDelayOp(id, 2000000) |
+  echo ("do not display: %s" % (time - t0))
+},
+sleep(500ms);
+tag.stop();
+sleep(2s);
+"alive";
+[00000002] "alive"

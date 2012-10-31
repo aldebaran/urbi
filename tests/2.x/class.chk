@@ -1,0 +1,18 @@
+// The name of the class currently defined is *not* available in its
+// definition.  As a consequence, we can use the same name from another
+// scope.
+{
+  class a
+  {
+    var foo = 40;
+  };
+  {
+    class a : public a
+    {
+      var bar = 2;
+    };
+    var b = a.new();
+    b.foo + b.bar;
+  };
+};
+[00000001] 42

@@ -1,0 +1,29 @@
+class a { var val = 23 }|
+var b = a.new();
+[00000001] a_0x100c30060
+
+b.val;
+[00000002] 23
+
+var c = a.new();
+[00000003] a_0x100c17040
+
+function a.init() { echo (1000) } |;
+var d = a.new();
+[00000004] *** 1000
+[00000005] a_0x100c2f400
+
+a.init = function (x) { echo (1000+x) } |;
+
+a.new();
+[00000006:error] !!! input.u:18.1-7: new: expected 1 argument, given 0
+
+a.new(444);
+[00000007] *** 1444
+[00000008] a_0x100c7e660
+
+
+// Check that "new" doesn't evaluate its target.
+function foo () { echo ("foo") }|;
+getSlotValue("foo").new().asString();
+[00000009] "function () { echo(\"foo\") }"

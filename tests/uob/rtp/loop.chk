@@ -1,0 +1,54 @@
+// Check run-time switching to RTP.
+//#plug urbi/rtp
+//#plug test/all
+//#remote urbi/rtp test/all
+skipIfWindows(); // FIXME: reenable for Urbi 3.
+
+System.systemFiles = []|;
+// Damm remote rtp takes time to setup.
+sleep(4s);
+
+// Setup basic notifychang on b that writes back to a.
+remall.a = 12|
+remall.b = 15|;
+remall.notifyWriteA(remall.&b, 0);
+remall.b = 42|
+timeout (2s)
+  waituntil (remall.a->changed?) |
+assert (remall.a == 42);
+
+// Now switch to RTP
+
+remall.&a.rtp = true|
+remall.&b.rtp = true|
+for(10)
+{
+  remall.b = 12|;
+  sleep(200ms); // time to setup
+};
+sleep(500ms);
+assert (remall.lobby.isSilent(1s)),
+remall.b = 52|
+timeout(2s)
+  waituntil(remall.a->changed?) |
+assert (remall.a == 52);
+
+sleep(1.2s);
+// Check there is no loopback
+var cnt = 0|
+at (remall.lastChange->changed?)
+  cnt++;
+remall.setNotifyChange(0)|
+sleep(500ms)|;
+
+// Remote notifychange should trigger once (local call)
+remall.write(0, 62)|;
+sleep(1s);
+assert (cnt == 1);
+
+// Same thing here
+remall.sendString("remall.a = 72;")|
+timeout (1s)
+  waituntil (remall.lastChange->changed?) |
+sleep(1s) |
+assert (cnt == 2);

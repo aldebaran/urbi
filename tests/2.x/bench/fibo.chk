@@ -1,0 +1,10 @@
+{
+  var fibo;
+  fibo = function(x)
+  {
+    if (x<2) 1 else
+      fibo(x-1)+fibo(x-2)
+  };
+  fibo(10)
+};
+[00000001] 89

@@ -1,0 +1,62 @@
+// Check atomicity of basic actions
+
+function atomic // (expression)
+{
+  var start = System.cycle |
+  call.evalArgAt (0) |
+  assert (System.cycle == start)
+}|;
+
+atomic (1+2);
+atomic (1-2);
+atomic (1*2);
+atomic (1/2);
+atomic (1.asString);
+
+atomic ({var n = 0});
+
+var n = 0 | {};
+atomic (n += 1);
+atomic (n++);
+atomic (n -= 1);
+atomic (n--);
+atomic (n == 0);
+
+class Foo
+{
+  var counter = 0;
+}|;
+atomic (Foo.counter += 1);
+atomic (Foo.counter++);
+atomic (Foo.counter *= 10);
+
+atomic (echo (n));
+[00000001] *** 0
+
+atomic (true);
+atomic (false);
+atomic ({if (true) true else false});
+atomic ({if (false) false else true});
+atomic (!true);
+atomic (true && false);
+atomic (true || false);
+
+atomic ({var n = 0 | while| (n < 2) {n++}});
+atomic ({for| (var i: [1,2,3]) {i + i}});
+
+var s = Semaphore.new (0) | {};
+atomic (s.release);
+atomic (s.acquire);
+atomic (s.asString);
+
+var l = [] | {};
+atomic (l.insertBack (1));
+atomic (l.insertBack (2));
+atomic (l.size);
+atomic (l+l);
+atomic (l-l);
+atomic (l.asString);
+
+atomic (Tag.new ("foo"));
+
+atomic ([1, 2, 3].foldl(function (a, b) { a + b }, 0));

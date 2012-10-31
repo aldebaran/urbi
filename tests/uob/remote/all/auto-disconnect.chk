@@ -1,0 +1,12 @@
+//#remote test/all
+
+// Test that the remote disconnects when all objects are gone
+var s = lobbies.size|;
+var r = remall.new(0)|;
+var r2 = r.new(0)|;
+r.destroy()|;
+r2.destroy()|;
+remall.destroy()|;
+remall2.destroy()|;
+sleep(500ms);
+assert( lobbies.size == s-1);

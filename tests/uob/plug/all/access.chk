@@ -1,0 +1,76 @@
+//#uobject test/all
+
+
+//notifyaccess on not owned, access from urbi/c++
+//MN: we might want to disable notifyaccess on non-owned var
+
+//remember, every "all" notifyaccess sets the target to ++globalcounter
+
+all.lastAccess = "";
+[00000001] ""
+all.b = 2;
+[00000002] 2
+all.setNotifyAccess(1)|;
+all.b;
+[00000004] 1
+all.lastAccess;
+[00000005] "all.b"
+
+//c++ uvar read
+all.lastAccess = "";
+[00000006] ""
+all2.readByName("all.b");
+[00000007] 2
+all.lastAccess;
+[00000008] "all.b"
+
+//urbi write
+all.b = 100;
+[00000009] 100
+"urbi read";
+[00000010] "urbi read"
+
+all.lastAccess = "";
+[00000011] ""
+all.b;
+[00000012] 3
+all.lastAccess;
+[00000013] "all.b"
+
+"c++ read";
+[00000014] "c++ read"
+
+all.lastAccess = "";
+[00000015] ""
+all2.readByName("all.b");
+[00000016] 4
+all.lastAccess;
+[00000017] "all.b"
+
+
+//c++ uvar write
+all2.writeByName("all.b",100);
+[00000018] 100
+
+"c++ read";
+[00000019] "c++ read"
+
+all.lastAccess = "";
+[00000020] ""
+all2.readByName("all.b");
+[00000021] 5
+all.lastAccess;
+[00000022] "all.b"
+
+
+"urbi read";
+[00000023] "urbi read"
+all.lastAccess = "";
+[00000024] ""
+all.b;
+[00000025] 6
+all.lastAccess;
+[00000026] "all.b"
+
+
+sleep(3s) | shutdown;

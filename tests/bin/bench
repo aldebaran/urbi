@@ -1,0 +1,399 @@
+#!/usr/bin/python
+
+import atexit
+from optparse import OptionParser
+import os
+import re
+import subprocess
+import stats
+import sys
+from tempfile import NamedTemporaryFile
+from subprocess import Popen, PIPE
+
+def enable_flags(option, opt_str, value, parser):
+    setattr(parser.values, option.dest, not re.match(r'^--no-', opt_str))
+
+def add_flag(parser, name, help, default):
+    dest = re.sub('^--no-', '', name).replace('-', '_')
+    parser.add_option("--" + name,
+                  help="Enable " + help,
+                  action="callback", callback=enable_flags,
+                  dest=dest,
+                  default=default)
+    parser.add_option("--no-" + name,
+                  help="Disable " + help,
+                  action="callback", callback=enable_flags,
+                  dest=dest)
+
+
+# Parse options
+parser = OptionParser(usage="usage: %prog [options] command")
+parser.add_option("-m", "--hook-module",
+                  help="Shared library to use for memory tracing",
+                  default="./mhook.so")
+parser.add_option("-f", "--format",
+                  help="formatting of the output",
+                  metavar="human|xls|xls-head",
+                  default='human')
+parser.add_option("-o", "--output",
+                  help="Write result to FILE",
+                  metavar="FILE")
+parser.add_option("-q", "--quiet",
+                  help="Shut program's standard output",
+                  action="store_true")
+parser.add_option("-Q", "--very-quiet",
+                  help="Shut program's standard and error output",
+                  action="store_true")
+parser.add_option("--output-once",
+                  help="Only output things on first run",
+                  action="store_true")
+parser.add_option("-v", "--verbose",
+                  help="Add debug output",
+                  action="store_true")
+
+parser.add_option("-r", "--runs",
+                  help="Number of runs for non-deterministic benches",
+                  type="int",
+                  default=1)
+
+add_flag(parser, "locks", "bench the number of locks", False)
+add_flag(parser, "heap-usage", "bench usage of allocated memory (need valgrind)", True)
+add_flag(parser, "valgrind", "usage of valgrind to compute statistics", False)
+add_flag(parser, "memory", "memory benchs", True)
+add_flag(parser, "cpu", "CPU benchs", True)
+
+opts, args = parser.parse_args()
+
+# Build and escape command
+cmd = ''
+for word in args:
+    # Fixme: escape quotes
+    cmd += "'%s' " % word
+
+# Handle quiet runs
+def get_quiet_cmd():
+    quiet = ''
+    if opts.quiet:
+        quiet = '> /dev/null'
+    if opts.very_quiet:
+        quiet = '> /dev/null 2> /dev/null'
+    if opts.output_once:
+        quiet = ''
+        opts.output_once = False
+        opts.quiet = True
+    return quiet
+
+# Kill processes which are still running when the python script gets killed.
+def terminateChildren():
+    subprocess._cleanup()
+    assert subprocess._active == []
+
+atexit.register(terminateChildren)
+
+#########
+# Stats #
+#########
+
+results = []
+
+def create_stats(det = False):
+    return {'_det_': det}
+
+def save_stats(stats):
+    if stats['_det_'] and not results == []:
+        if not results[0]['_det_']:
+            results.insert(0, stats)
+        else:
+            results[0].update(stats)
+    else:
+        results.append(stats)
+
+######################
+# Check for Programs #
+######################
+
+# Check valgrind features when enabled
+if opts.valgrind:
+    try:
+        p = Popen(["valgrind", "--version"], stdout=PIPE, stderr=PIPE)
+        assert p.wait() == 0
+
+        # Check if valgrind has dhat tools (experimental since 3.6.0).
+        p = Popen(["valgrind",
+                   "--tool=exp-dhat",
+                   "echo"], stdout=PIPE, stderr=PIPE)
+        if p.wait() != 0:
+            opts.heap_usage = False
+
+        # Check if callgrind can count locks.
+        if opts.locks:
+            p = Popen(["valgrind",
+                       "--tool=callgrind", "--collect-bus=yes",
+                       "echo"], stdout=PIPE, stderr=PIPE)
+            if p.wait() != 0:
+                opts.locks = False
+    except OSError:
+        print >> sys.stderr, "valgrind not found."
+        opts.valgrind = False
+
+###########
+# Analyze #
+###########
+
+# Run callgrind and fetch cpu instructions number
+# callgrind can be used to compare performances with different cache properties.
+def callgrind():
+    quiet = get_quiet_cmd()
+    tmp = NamedTemporaryFile()
+    if opts.verbose:
+        print "--- CALLGRIND ---"
+        print "Output to:   %s" % tmp.name
+        print "Running:     %s" % cmd
+    check_locks = ""
+    if opts.locks:
+        check_locks = "--collect-bus=yes"
+    ret = os.system("valgrind --log-file=%s --trace-children=yes %s --tool=callgrind --callgrind-out-file=%s %s %s"
+                    % (tmp.name, check_locks, tmp.name, cmd, quiet))
+    if ret != 0:
+        exit(1)
+
+    for line in open(tmp.name, 'r'):
+        if re.match('^summary', line):
+            res = line.replace('summary: ', '').split()
+            s = create_stats(True)
+            s['inst'] = res[0]
+            if opts.locks and len(res) == 2:
+                s['locks'] = res[1]
+            save_stats(s)
+            return
+
+# Run the command with no encapsulation to check the time it takes to
+# execute it.
+def time_exec():
+    if opts.verbose:
+        print "--- TIMED EXECUTION ---"
+        print "Running:     %s" % cmd
+        print "Runs:        %s" % opts.runs
+    for i in range(opts.runs):
+        s = create_stats(1 == opts.runs)
+        begin = os.times()
+        quiet = get_quiet_cmd()
+        ret = os.system("%s %s" % (cmd, quiet))
+        if ret != 0:
+            exit(1)
+        end  = os.times()
+        s['usr'] = end[2] - begin[2]
+        s['sys'] = end[3] - begin[3]
+        s['real'] = end[4] - begin[4]
+        if s['real'] == 0:
+            s['eff'] = '1'
+        else:
+            s['eff'] = (s['usr'] + s['sys']) / s['real']
+        save_stats(s)
+
+def malloc_hook():
+    quiet = get_quiet_cmd()
+    tmp = NamedTemporaryFile()
+    command = "LD_PRELOAD='%s' MALLOC_CMD_FILTER='%s' MALLOC_STATS_FILE='%s' %s %s " \
+      % (opts.hook_module, cmd.split()[0].split('/')[-1].strip("'"), tmp.name, cmd, quiet)
+    if opts.verbose:
+        print "--- MALLOC HOOK ---"
+        print "Running:     %s" % command
+
+    ret = os.system(command)
+    if ret != 0:
+        exit(1)
+
+    for line in open(tmp.name, 'r'):
+        if re.match('^Max', line):
+            s = create_stats(True)
+            s['mlb'] = int(re.search('[0-9]+', line).group(0))
+            save_stats(s)
+            return
+
+
+def massif():
+    quiet = get_quiet_cmd()
+    tmp = NamedTemporaryFile()
+    if opts.verbose:
+        print "--- MASSIF ---"
+        print "Output to:   %s" % tmp.name
+        print "Running:     %s" % cmd
+	print "Command:     %s" % \
+	"valgrind --trace-children=yes --tool=massif --massif-out-file=%s %s %s"   \
+	              % (tmp.name, cmd, quiet)
+
+    ret = os.system("valgrind --trace-children=yes --tool=massif --massif-out-file=%s %s %s"
+                    % (tmp.name, cmd, quiet))
+    if ret != 0:
+        exit(1)
+
+
+    skip = -1
+    max = 0
+    for line in open(tmp.name, 'r'):
+        if skip == 0:
+            # Match each "mem_heap_B=*" lines and keep the maximal value.
+            line = int(re.sub('.*=', '', line.strip()))
+            if (line > max):
+                max = line;
+            skip -= 1
+        elif re.match('^snapshot=', line):
+            skip = 3
+        skip -= 1
+
+    s = create_stats(True)
+    s['mlb'] = max
+    save_stats(s)
+
+
+def unpp(n):
+    return int(re.sub(',', '', n))
+
+# DHAT is a dynamic heap analysis tool which is based on valgrind 3.6.0.
+def dhat():
+    quiet = get_quiet_cmd()
+    tmp = NamedTemporaryFile()
+    if opts.verbose:
+        print "--- DHAT ---"
+        print "Output to:   %s" % tmp.name
+        print "Running:     %s" % cmd
+	print "Command:     %s" % \
+	"valgrind --num-callers=1 --trace-children=yes --tool=exp-dhat --log-file=%s %s %s" \
+              % (tmp.name, cmd, quiet)
+
+    ret = os.system("valgrind --num-callers=1 --trace-children=yes --tool=exp-dhat --log-file=%s %s %s"
+                    % (tmp.name, cmd, quiet))
+    if ret != 0:
+        exit(1)
+
+    s = create_stats(True)
+    section = 0
+    s['rfb'] = 0
+    s['wtb'] = 0
+    s['tb'] = 1
+    for line in open(tmp.name, 'r'):
+        # Wait for:
+        # ==23490== ======== SUMMARY STATISTICS ========
+        # ==23490== ======== ORDERED BY ... ========
+        m = re.match(r'.* ======== (?P<section>\w+)', line)
+
+        if m != None:
+            if 'SUMMARY' == m.group('section'):
+                section = 1
+            elif 'ORDERED' == m.group('section'):
+                section = 2
+        else:
+            # Wait for:
+            # ==23490== guest_insns:  1,065,230,615
+            # ==23490== max_live:     15,144,865 in 73,205 blocks
+            # ==23490== tot_alloc:    40,727,420 in 334,548 blocks
+            # ==23490== insns per allocated byte: 26
+            # ==23490== tot-alloc:   12,236,622 in 427 blocks (avg size 28657.19)
+            # ==23490== deaths:      264,482, at avg age 16,050,612
+            # ==23490== acc-ratios:  2.41 rd, 1.49 wr  (67,215,487 b-read, 41,580,798 b-written)
+            m = re.match(r'^==\d+== (?P<what>\w(?:\s|\w|[-])*):\s+(?P<value>.*)$', line)
+
+            if m == None:
+                continue
+            elif section == 1:
+                if m.group('what') == 'guest_insns':
+                    s['inst'] = unpp(m.group('value'))
+                elif m.group('what') == 'max_live':
+                    in_blocks = re.match(r'^(?P<bytes>[0-9,]+)\sin\s(?P<blocks>[0-9,]+)\sblocks$', m.group('value'))
+                    s['mlb'] = unpp(in_blocks.group('bytes'))
+                    s['mla'] = unpp(in_blocks.group('blocks'))
+                elif m.group('what') == 'tot_alloc':
+                    in_blocks = re.match(r'^(?P<bytes>[0-9,]+)\sin\s(?P<blocks>[0-9,]+)\sblocks$', m.group('value'))
+                    s['tb'] = unpp(in_blocks.group('bytes'))
+                    s['ta'] = unpp(in_blocks.group('blocks'))
+                elif m.group('what') == 'insns per allocated byte':
+                    s['ipb'] = unpp(m.group('value'))
+            elif section == 2:
+                if m.group('what') == 'acc-ratios':
+                    rw = re.match(r'.*\((?P<rd>[0-9,]+)\sb-read,\s(?P<wr>[0-9,]+)\sb-written\)$', m.group('value'))
+                    s['rfb'] += unpp(rw.group('rd'))
+                    s['wtb'] += unpp(rw.group('wr'))
+    s['rpb'] = float(s['rfb']) / float(s['tb'])
+    s['wpb'] = float(s['wtb']) / float(s['tb'])
+    save_stats(s)
+
+##########
+# Benchs #
+##########
+
+# Bench to Run * Condition for running the bench
+benches = [
+    (time_exec  , opts.cpu),
+    (malloc_hook, opts.memory and not opts.valgrind),
+    (callgrind  , opts.cpu    and opts.valgrind and (opts.locks or not opts.memory)),
+    (dhat       , opts.memory and opts.valgrind and opts.heap_usage),
+    (massif     , opts.memory and opts.valgrind and not opts.heap_usage),
+]
+
+def run_bench(b):
+    if b[1]:
+        b[0]()
+
+# Compute bench results if needed
+if opts.format != 'xls-head':
+    map(run_bench, benches)
+
+##########
+# Output #
+##########
+
+# Potentially redirect stdout
+if opts.output:
+    sys.stdout = open(opts.output, 'w')
+
+
+out_keys = [
+ 'inst', 'locks', 'usr', 'sys', 'real', 'eff',
+ 'mlb', 'mla', 'tb', 'ta', 'ipb', 'rfb', 'wtb', 'rpb', 'wpb',
+]
+
+def out_xlsHead():
+    xlsHead = stats.separator.join(out_keys)
+    print xlsHead
+
+def out_xls():
+    out_xlsHead()
+    for res in results:
+        extract = lambda k: str(res.setdefault(k, ''))
+        print stats.separator.join(map(extract, out_keys))
+
+def out_human():
+    # Extract Desc & pretty-printed Value
+    def extract(k, v):
+        stat = stats.statistics[k]
+        return ( stat[0], stats.pp_table[stat[1]](v) )
+
+    if not opts.very_quiet:
+        print
+        print "*******"
+        print "RESULTS"
+        print "*******"
+        print
+    no_na = lambda v: v != ''
+    print_list = [("Command", cmd)]
+    s = create_stats()
+    for res in results:
+        s.update(res)
+    for k in out_keys:
+        v = s.setdefault(k, '')
+        if no_na(v):
+            print "%31s:  %s" % extract(k, v)
+    print
+    print "XLS output:"
+    out_xls()
+
+# Print results
+if opts.format == 'human':
+    out_human()
+
+if opts.format == 'xls-head':
+    out_xlsHead()
+
+if opts.format == 'xls':
+    out_xls()

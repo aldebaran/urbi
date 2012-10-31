@@ -1,0 +1,19 @@
+function big (x) { sleep(1s); x } | {};
+
+function test()
+{
+  // Future values
+  var x = big(42),
+  var y = big(51),
+  echo("Do some stuff ...");
+  // Join
+  waituntil(!x.isVoid && !y.isVoid);
+  echo(x);
+  echo(y);
+} | {};
+
+
+test();
+[00000001] *** Do some stuff ...
+[00000002] *** 42
+[00000003] *** 51

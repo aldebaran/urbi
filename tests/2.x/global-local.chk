@@ -1,0 +1,13 @@
+//! echo "var Global.x = 0 |;" > global.u
+//! echo "Global.x ++ |;" > local.u
+
+Global.x;
+[00000001] 1
+Lobby.create().initialize(false) |;
+sleep(100ms);
+Global.x;
+[00000001] 2
+Lobby.create().initialize(false) |;
+sleep(100ms);
+Global.x;
+[00000001] 3

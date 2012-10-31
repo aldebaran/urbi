@@ -1,0 +1,42 @@
+// Check Mutex operations
+
+var m = Mutex.new() | {};
+
+function f (name) {
+  var d 
+= function (msg) { echo (name + ": " + msg) };
+  d ("waiting for mutex");
+  m.lock();
+  d ("got mutex, printing string 1 and waiting");
+  sleep (1s);
+  d ("printing string 2 and releasing");
+  m.unlock();
+} | {};
+
+// Create functions waiting on mutex
+
+m.lock();
+
+f ("func1"),
+sleep (1s);
+[00000001] *** func1: waiting for mutex
+f ("func2"),
+sleep (1s);
+[00000002] *** func2: waiting for mutex
+f ("func3"),
+[00000003] *** func3: waiting for mutex
+sleep (1s);
+
+// Unblock them one by one and check that output is not intermixed
+
+m.unlock();
+[00000004] *** func1: got mutex, printing string 1 and waiting
+[00000005] *** func1: printing string 2 and releasing
+[00000006] *** func2: got mutex, printing string 1 and waiting
+[00000007] *** func2: printing string 2 and releasing
+[00000008] *** func3: got mutex, printing string 1 and waiting
+[00000009] *** func3: printing string 2 and releasing
+
+m.lock();
+echo ("This is the end");
+[00000010] *** This is the end

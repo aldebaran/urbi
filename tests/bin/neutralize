@@ -1,0 +1,800 @@
+#! /usr/bin/perl
+
+# Copyright (C) 2011, Gostai S.A.S.
+#
+# This software is provided "as is" without warranty of any kind,
+# either expressed or implied, including but not limited to the
+# implied warranties of fitness for a particular purpose.
+#
+# See the LICENSE file for more information.
+
+=head1 NAME
+
+  neutralize - modify some Urbi input/output
+
+=head1 SYNOPSIS
+
+  neutralize [OPTIONS...] FILE
+
+=head1 DESCRIPTION
+
+Neutralize useless difference (YMMV) between Urbi runs.
+
+=head1 OPTIONS
+
+General options:
+
+=over 4
+
+=item B<-D>, B<--define=variable=value>
+
+Set I<variable> to I<value>.
+
+=over 4
+
+=item C<reference>
+
+To support the special [...] construct, which removes ignored lines,
+the B<--effective-output> needs the result of B<--expected-output>.
+Indeed, that where it can find the requests for [...].  So define this
+variable to the expected output file when computing the effective
+output.
+
+=item C<retimestamp>
+
+Whether to assign timestamps incrementally instead of maping them all
+to C<01234567>.  Defaults to C<false>.
+
+=back
+
+=item B<--effective-output>
+
+Neutralize the insignificant differences in effective output.
+
+=item B<--expected-error>
+
+Neutralize the insignificant differences in expected error.
+
+=item B<--expected-output>
+
+Neutralize the insignificant differences in expected output.
+
+=item B<-h>, B<--help>
+
+Display this message and exit.
+
+=item B<-q>, B<--quiet>
+
+Be less verbose.  Accumulates.
+
+=item B<-v>, B<--verbose>
+
+Be more verbose.  Accumulates.
+
+=back
+
+=cut
+
+# Perl 5.10 would be very useful, for instance to be able to use the
+# \K operator in regexp (see for instance $lineno support).  Yet it is
+# not available in Debian Etch (still 5.8.8), so stick to old Perl.
+# use 5.010_000;
+
+BEGIN
+{
+  use File::Basename;
+  unshift @INC, dirname($0) . '/../../build-aux/lib/perl';
+}
+
+use BuildAux::FileUtils;
+use BuildAux::Verbose;
+use strict;
+
+# The treatement to apply (neutralize, effective-output).
+my $process = "neutralize";
+
+# Variables defined via -D/--define.
+my %variable;
+
+# Don't renumber timestamps, map them to a constant value.
+$variable{retimestamp} = 'false';
+
+=head1 FUNCTIONS
+
+=over 4
+
+=item C<neutralize_profile_line($line)>
+
+Convert
+
+  |         fact |  81.56 |       1.14 |   1.14 |       6 |       189 |
+
+into
+
+  |         fact |........|............|........|       6 |...........|
+
+=cut
+
+sub neutralize_profile_line($)
+{
+  my ($line) = @_;
+
+  # Do not neutralize separation lines.
+  if ($line =~ /\w/)
+  {
+    # Don't split on "each|" appearing in the first column.
+    # Splitting pipes are not preceded by a \w character.
+    my @col = split(/(?<!\w)\|/, $line);
+    verbose 2, "COLUMNS: ", map({ "{{$_}}" } @col);
+    for my $col (0 .. $#col)
+    {
+      # Col 0: before the actual contents.
+      # Col 1: name.
+      # Col 5: number of calls.
+      $col[$col] =~ s/././g
+        unless $col == 0 || $col == 1 || $col == 5;
+    }
+    join('|', @col) . '|';
+  }
+  else
+  {
+    $line;
+  }
+}
+
+=item C<neutralize_profile($profile)
+
+Neutralize tables as follows (smash nondeterministic numbers and
+order).
+
+  .-------------------------------------------------------------------.
+  |   function   |   %    | cumulative |  self  |  calls  |   self    |
+  |              |        |    (ms)    |  (ms)  |         | (us/call) |
+  |--------------+--------+------------+--------+---------+-----------|
+  |         fact |  81.56 |       1.14 |   1.14 |       6 |       189 |
+  |           || |   4.95 |       1.21 |   0.07 |       6 |        11 |
+  |           == |   4.66 |       1.27 |   0.07 |      12 |         5 |
+  |            - |   4.52 |       1.33 |   0.06 |       5 |        12 |
+  |            * |   2.44 |       1.37 |   0.03 |       5 |         6 |
+  |              |   1.08 |       1.38 |   0.01 |       1 |        15 |
+  |   <profiled> |   0.79 |       1.39 |   0.01 |       1 |        11 |
+  '--------------'--------'------------'--------'---------'-----------'
+
+To neutralize it, sort it by function name then call number instead
+of according to the "self time" column, as this might change
+depending on the architecture.
+
+=cut
+
+sub neutralize_profile($)
+{
+  my ($profile) = @_;
+  # Minumum number of columns minus 1 (3 => 4 columns).
+  my $cols = 3;
+  # A line.  There are three different types of line: first, inner,
+  # and last.  See the example above.
+  my $first = qr {\s*\.-{4,}\.};
+  my $inner = qr {\s*\|-{4,}(?:\+-{4,}){$cols,}\|};
+  my $last  = qr {\s*'-{4,}(?:'-{4,}){$cols,}'};
+  my $sep = qr {(?:$first)|(?:$inner)|(?:$last)};
+  $profile =~
+    m
+    {
+      \A
+        (
+          # The header: up to the (first) |----+--- ... --| line.
+          $first\n
+          (?:.|\n)+?
+          $inner\n
+        )
+        (
+          # The body.
+          (?:.*\n)+?
+        )
+        (
+          # The footer, possibly with a Total line.
+          (?:
+            $sep\n
+            (?:.*\n)+?
+          )?
+          $last\n
+        )
+      \Z
+    }mx;
+  my ($header, $body, $footer) = ($1, $2, $3);
+  verbose 2, "HEADER: {{$header}}", "BODY:   {{$body}}", "FOOTER: {{$footer}}";
+  # Beware of units: (ms), (us), (ms/call) etc.
+  $header =~ s/\(.s/(xs/g;
+  local $_;
+  my $res = $header;
+  $res .= "$_\n"
+    foreach sort map { neutralize_profile_line($_) } split ("\n", $body);
+  $footer =~ s{(.*)}{neutralize_profile_line($1)}ge;
+  verbose 2, "FOOTER: {{$footer}}";
+  $res .= $footer;
+  verbose 2, "IN: {{$profile}}", "OUT:{{$res}}";
+  $res;
+}
+
+=item C<neutralize($string)>
+
+Smash parts that can vary to some constant value.
+
+=cut
+
+sub neutralize($)
+{
+  local ($_) = @_;
+
+  # The table of conversion of addresses and numbers.  We used to map
+  # to a single value, say "NUM" or "ADDR".  It's better to have
+  # different values so that we keep track of identities, which
+  # resulted in (i) not being able to tell when two identical expected
+  # output where actually different, and (ii) reciprocally, that two
+  # different guys are actually the same one.
+  my %address;
+  sub neutralize_address($)
+  {
+    my ($addr) = @_;
+
+    $address{$addr} = scalar keys %address
+      unless exists $address{$addr};
+
+    $address{$addr};
+  }
+
+  # Random answers to ping.
+  s/(pong time=).*/$1XXXXXX/g;
+
+  # Logger output: constant width.
+  use List::Util qw[max];
+  my $width = max map { length $_ } split /\|/, $variable{log_categories};
+  s{^\[\s+($variable{log_categories})\s+\]}
+  {
+    my $cat = $1;
+    my $len = length($cat);
+    my $pad1 = $len < $width ? int(($width - $len) / 2) : 0;
+    my $pad2 = ($pad1 + $len < $width) ? $width - $pad1 - $len : 0;
+    # Leave spaces so that it does not look like some output.
+    "[ " . " " x $pad1 . $cat . " " x $pad2 . " ]";
+  }egm;
+
+  # Pointers (Object_0x12345678, uid: "0x12345678", with or without
+  # quotes when printed, Tag<U0x1004043a0>).  On Windows, the
+  # hexadecimal numbers use upper-case digits.
+  s{([U\"_\s]0x)([0-9a-fA-F]+)}
+   {$1 . neutralize_address($2)}eg;
+
+  # Anonymous jobs.
+  s{(?<=shell_)(\d+)}{neutralize_address($1)}eg;
+
+  # Anonymous tags.
+  s{(Tag<\w+_)(\d+)(>)}
+   {"$1" . neutralize_address($2) . $3}eg;
+
+  # FIXME: for some reason, sometimes, on Windows, "%x" does not
+  # print the "0x" prefix.  So the 0xADDR normalization fails.
+  s{(Tag<U)([0-9a-fA-F]+)(>)}
+   {$1 . neutralize_address($2) . $3}eg;
+  s{(uob_)([0-9a-fA-F]+)}
+   {$1 . neutralize_address($2)}eg;
+
+  # Copyright/revision information.
+  s/(\*{3} (?:Libport|Urbi).*version) .*/$1 <VERSION>/g;
+
+  # Bison error messages are too sensitive to the grammar at hand, so
+  # drop the verbose part.
+  s/(unexpected .*), expecting.*/$1/g;
+
+  # Some architectures (Windows) use three-digit exponents.  Most use 2.
+  s/(\d\.*\d*[Ee][-+]*)0([0-9][0-9])/$1$2/g;
+
+  # We do not track locations in urbi/*.u files since they evolve
+  # constantly.  Actually, we do not even check the name of the
+  # library file: they are all mapped to "urbi/urbi.u".  Beware
+  # not to catch any path with "urbi/" in it (for instance all my
+  # sources are in an urbi/ directory), only the last directory.
+  #
+  # Beware that Perl, contrary to all the tools I know, does
+  # include \n in the negated char classes.  Which does matter
+  # with -0777.
+  s{^(\[.{8,}\]\ !!!\s+(?:called from: )?)
+     (?:/.*/)?                    # path prefix
+      (?:
+          urbi/[^/\n]+\.u         # urbi library file
+        | src/[^\n]+\.(?:cc|hxx)  # C++ sources
+      )
+     (?::[-.0-9]*)?               # line and column
+     :}
+   {$1urbi/urbi.u:}gmx;
+
+  # Differences of accuracy in error message bw remote/plug UObjects.
+  #
+  # Plug:
+  #   invalidRead: exception caught while calling all.invalidRead: invalid use of unbound UVar
+  #
+  # Remove:
+  # invalidRead: exception caught while calling remote bound method: invalid use of unbound UVar
+  #
+  # Java:
+  # invalidRead: exception caught while calling remote method: java.lang.RuntimeException: invalid use of unbound UVar
+
+  s{(exception caught while calling) (?:.*?):(?: java.lang.RuntimeException:)?}
+   {$1 method:}g;
+
+  # In Java one cannot produce exceptions that do not derive from
+  # Throwable.  Therefore, there is always a message attached to them.
+  # Rather that having UObject Java smash these messages to "invalid
+  # exception" as in C++, keep the additional details in the message,
+  # but neutralize it here.
+  s{(exception caught while calling method): java.lang.Error: .*}
+   {$1: invalid exception}g;
+
+  # Neutralize profiling.
+  # |   Function   |  Calls  |   Self time   | Self time per |
+  # |        lobby |       2 |      0.000093 |            46 |
+  # Preserve the name and the number of calls, portable results.
+  s{^
+    (
+      \ *\.---------------+\.$
+      .*?
+      '(?:-+'){4,}\n
+    )
+   }
+   {
+     neutralize_profile($1)
+   }gmsex;
+
+
+  # More profiling output.
+  #
+  #   Yields              :    0
+  #   Total time      (ms): 1234
+  #   Wall-clock time (ms): 1234
+  #   Function calls      :   35
+  #   Max depth           :    8
+  #
+  # yes, we also convert the spaces before the figure, since the
+  # figure may be two digits long there, and more elsewhere.  Add
+  # change the unit, as it can be "us" there, "ms" here.
+  #
+  # To make simple, on Windows, there are sometimes too many digits...
+  # For instance:
+  #
+  #	[00000455] Profile(^M
+  #	  Yields:                    2^M
+  #	  Total time (us):      3930.00^M
+  #	  Wall-clock time (us): 3930.00^M
+  #	  Function calls:           51^M
+  #	  Max depth:                 7^M
+  #
+  # Note that there is one too many 0 in times.
+  s{((?:Total|Wall-clock) time\s*\()\w+(\)\s*:)(?:\s*[\d.\-e]+)}
+   { sprintf "%-21s %6s", "$1xs$2", 123 }ge;
+
+  # [01234567] Function('fact', 20,  4e-05, 0.0008)
+  # Beware of scientific notation.
+  s{(Function\(.*?, \d+), [\d.e\-]+, [\d.e\-]+\)}
+   {$1, xx, x.xx)}g;
+
+  # ROS node names.
+  s{/urbi_\d+}{/urbi_NAME}g;
+
+  $_;
+}
+
+=item C<neutralize_timestamps($string)>
+
+Neutralize the timestamps.
+
+We use to renumber, but then it gives a cascade of diff errors when
+there are not the same number of lines between expected and effective.
+So disabled currently, unless C<$variable{retimestamp}> is set to
+C<true>.
+
+Keep the same timestamps for output that share their timestamp.
+
+=cut
+
+sub neutralize_timestamps($)
+{
+  local ($_) = @_;
+
+  my $counter = 1;
+  my %counter;
+  s{^\[(\d{8,})(:*[^\]]*)\]}
+  {
+    my ($timestamp, $tag) = ($1, $2);
+    if ($tag eq ':#' || $variable{retimestamp} ne 'true')
+    {
+      $timestamp = "01234567";
+    }
+    else
+    {
+      $counter{$timestamp} = $counter++
+        unless defined $counter{$timestamp};
+      $timestamp = $counter{$timestamp};
+    }
+    sprintf ("[%08d%s]",
+             $timestamp,
+             $tag);
+  }gme;
+
+  $_;
+}
+
+=item C<repath($path)>
+
+Convert paths from Windows to Unix style.  Use a cache, as spawning a
+subprocess can be really costly.
+
+=cut
+
+my %repath;
+sub repath ($)
+{
+   local ($_) = @_;
+   if (!defined $repath{$_})
+   {
+     # Our builds on cygwin define host as mingw32, so first
+     # try to see the OS we run on.  Then check for $host, as
+     # anyway the build machine is then Unix.
+     if ($^O eq "cygwin")
+     {
+       $_ = `cygpath -u '"'"'$_'"'"'`;
+       chomp $_;
+     }
+     elsif ($variable{host} =~ /mingw32/)
+     {
+       # Do not use winepath here, as we are actually using
+       # Unix paths everywhere.  So simply convert
+       # backslashes to forward slashes, and remove the
+       # drive.  Winepath changes the path to use the
+       # ".wine/dosdevices" directory.  For instance:
+       #
+       # pwd => /home/build
+       #
+       # winepath -u $HOME
+       # =>/home/build/.wine/dosdevices/z:/home/build
+       s/^[CZ]://;
+       s{\\}{/}g;
+     }
+     $repath{$_} = $_;
+   }
+   $repath{$_};
+}
+
+
+=item C<neutralize_ros_loggers ($lines)
+
+One log channel has changed name, which changes its order in the
+sorted output.  The following diff is -good, +bad.
+
+  [01234567:#] "doc/specs/ros.tex:470"
+  [01234567] *** ["level" => "INFO", "name" => "ros"]
+  [01234567] *** ["level" => "INFO", "name" => "ros.roscpp"]
+ -[01234567] *** ["level" => "INFO", "name" => "ros.roscpp.roscpp_internal"]
+  [01234567] *** ["level" => "WARN", "name" => "ros.roscpp.superdebug"]
+ +[01234567] *** ["level" => "DEBUG", "name" => "roscpp_internal"]
+
+Beware that sorting the lines directly is not good enough, since the
+time stamps, chronological, would preserve the old order.
+
+=cut
+
+sub neutralize_ros_loggers($)
+{
+  my ($res) = @_;
+  $res =~ s{"level" => "DEBUG", "name" => "roscpp_internal"}
+           {"level" => "INFO", "name" => "ros.roscpp.roscpp_internal"}m;
+  my @lines =
+    sort { ($a =~ /\*\*\* (.*)/)[0] cmp ($b =~ /\*\*\* (.*)/)[0] }
+    split("\n", $res);
+  $res = join("\n", @lines) . "\n";
+  $res;
+}
+
+
+=item C<effective_output_cut($text)>
+
+Handle the special '[...]' marker which means "suppress everything
+between the two previous lines, and the two following lines".  For
+instance:
+
+  for| (var i : 100)
+   echo(i);
+  [00000455] *** 0
+  [00000455] *** 1
+  [00000455] *** 2
+  [...]
+  [00000455] *** 98
+  [00000455] *** 99
+
+In order to do so, we need to read the reference file (the
+expected output), since that's it that contains those [...] marker).
+
+=cut
+
+sub effective_output_cut($)
+{
+  local $_;
+  ($_) = @_;
+
+  die "no reference output file given: -Dreference=output.exp"
+    unless $variable{reference};
+  # Get all the [...] couples from the reference file.
+  my $ref = contents($variable{reference});
+  while ($ref =~ m{(^.*\n.*)\n(?:\s*\[\.\.\.\]\s*\n)(^.*\n.*)\n}mg)
+  {
+    # There is an additional difficulty: timestamps are not (yet)
+    # neutralized in $_, so convert $before and $after so that their
+    # timestamp part becomes generic.
+    my ($before, $after) =
+      map { s{^\\\[.*?\\\]}{^\\[.*?\\]}mg; $_ }
+      map { quotemeta }
+      ($1, $2);
+    verbose 3, "CUT: {$before}..{$after}";
+    $_ =~ s{($before\n)(?:.|\n)*(\n$after)}{$1\[...\]$2}mg;
+  }
+  $_;
+}
+
+=item C<effective_output($text)>
+
+Transform the raw output from the actual test into some normalized
+form ready to be compared with the expected output.
+
+=cut
+
+sub effective_output($)
+{
+  local $_;
+  ($_) = @_;
+
+  verbose 3, "EFFECTIVE_OUTPUT: IN: {{$_}}";
+
+  # Drop clog output.
+  s/^\[\d{8,}:clog\].*\n//gm;
+
+  # Portability to Windows.
+  s/\r$//gm;
+
+  # Convert Windows error messages into POSIX error messages.
+  s{(!!! .*): path not found}{$1: no such file or directory}g;
+
+  # Convert Windows paths to Unix paths.  Do not be too brutal:
+  # do not do it for a whole line, as, for instance, you might
+  # "fix" escapes from "\n" to "/n".  The Path and Directory
+  # are places to cure.
+  s{(Directory|File|Path)\("(.*?)"\)}
+   {
+      "$1(\"" . repath($2) . "\")";
+   }ge;
+  # Error messages.  Cannot use variable-length look-behind.
+  s{
+     (
+       (?:
+        !!!
+       |[Nn]o\ such\ file\ or\ directory:
+       |Permission\ denied:
+       |Rhs\ of\ concatenation\ is\ absolute:
+       |called\ from:
+       |error\ loading\ file:
+       |syntax\ error:
+       )
+       \s
+       "?  # Yes, some of the error messages include quotes.
+     )
+     ((?:[CZ]:)?[\\\-\.\w~]+)
+   }
+   {
+     $1 . repath($2);
+   }gxe;
+
+  # When checking Directory.cwd etc.  Run this before the removal of
+  # abs_chk_dir and so forth, since they can be prefixes of cwd (in
+  # non-VPATH builds).
+  s,\Q$variable{pwd}\E,%CWD%,g
+    if $variable{pwd};
+
+  # We remove the path to test from the output since they depend
+  # on the environment of the person who runs the test.  We
+  # remove it in two different ways: $abs_chk_dir and
+  # $abs_chk_dir_can because the first one is used for the input
+  # file (since that is the path with which the server is fed)
+  # and the second one in case of a "load", since in that case
+  # the server uses a straight path (URBI_PATH).
+  s,\Q$variable{abs_chk_dir}/\E,,g
+    if $variable{abs_chk_dir};
+  s,\Q$variable{abs_chk_dir_can}/\E,,g
+    if $variable{abs_chk_dir_can};
+
+  # We may also point to the top_srcdir tree, for instance in error
+  # messages in desugared sources.
+  s,\Q$variable{rel_top_srcdir}/\E,,g
+    if $variable{rel_top_srcdir};
+
+  s/(!!!(?:\s+called from:)? )[\-\w\/\.]+:[\d\-.]+: /$1/g
+    if $variable{locations} eq "false";
+
+  # The UObject project is enhanced to issue the timestamp.
+  # Which, of course, is nondeterministic.  Beware of
+  # unbalanced square brackets in M4 code.
+  s{^\[(\d+:__ExternalMessage__\] \[1, .*), [\d.]+\]$}
+   {[$1, <TIMESTAMP>]}gm;
+
+  # test/all create "remall" and "remall2" objects in remote mode
+  # instead of "all" and "all2" when plugged.
+  s{remall(?= construction failed)}{all}g;
+
+  # Boost.Regex from old version (e.g., 1.38) to newer (1.42).
+  s{unmatched \( or \\\(: `\('}
+   {unmatched marking parenthesis \( or \\\(: `\(>>>HERE>>>'}g;
+  s{invalid preceding regular expression: `\*'}
+   {the repeat operator "\*" cannot start a regular expression: `>>>HERE>>>\*'}g;
+
+  # ROS.
+  # Difference between CTurtle and following.
+  s{roslib/Log}{rosgraph_msgs/Log}g;
+  # One logger has changed name.
+  s{((?:^\[\d{8,}\] \*{3} \["level" => .*?, "name" => .*?\]\n)+)}
+   { neutralize_ros_loggers($1) }gme;
+
+  verbose 3, "EFFECTIVE_OUTPUT: PRE CUT: {{$_}}";
+
+  $_ = effective_output_cut($_);
+
+  verbose 3, "EFFECTIVE_OUTPUT: OUT: {{$_}}";
+ $_;
+}
+
+=item C<expected_error($text)>
+
+Select the lines corresponding to error.
+
+=cut
+
+sub expected_error($)
+{
+  my ($in) = @_;
+  local $_;
+  my $res;
+
+  for (split("\n", $in))
+  {
+    $res .= "$_\n"
+      if m{^\[\s+(?:$variable{log_categories})\s+]};
+  }
+
+  $res;
+}
+
+=item C<expected_output($text)>
+
+Select the lines corresponding to output, normalizing the time stamps.
+
+=cut
+
+sub expected_output($)
+{
+  my ($in) = @_;
+  local $_;
+  my $res;
+
+  my $lineno = 0;
+  # Nuke all the lines that are not "output".
+  for (split("\n", $in))
+  {
+    ++$lineno;
+    next if /^\[\d{8,}:(clog)\]/;
+
+    # Lines like "[:] foo" represent non-channel prefixed output.
+    if (s/^\[:\]// || /^\[\d{8,}(:.*?)?\]/ || /^\s*\[\.\.\.\]\s*$/)
+    {
+      # lineno: Error messages with line numbers are too painful to
+      # maintain by hand.  "@" in locations denotes the previous line.
+      1 while s{(!!!.*[:\-])\@([\-\+]?\d+)?}
+      {
+	$1 . ($lineno - 1 - (defined $2 ? $2 : 0))
+      }ge;
+
+      s/(syntax error: unexpected .*?), expecting.*/$1/
+        if $variable{error_verbose} eq "false";
+
+      $res .= "$_\n"
+    }
+  }
+
+  # Fuse lines separated by "\\\n".  Remove the *leading* spaces of
+  # the second line.  If you want spaces, keep them *before* the \ of
+  # the previous line.
+  $res =~ s/\\\n\s*//g;
+
+  $res;
+}
+
+
+=item C<variable_set($assignment)
+
+Split C<$assignment> as C<variable>=C<value> and do it.
+
+=cut
+
+sub variable_set($)
+{
+  my ($assignment) = @_;
+  if ($assignment =~ m{^(\w+)=(.*)$})
+  {
+    $variable{$1} = $2;
+  }
+  else
+  {
+    die "$0: invalid argument for --define: $assignment";
+  }
+}
+
+=item C<getopt()>
+
+Process the command line arguments.
+
+=cut
+
+sub getopt()
+{
+  use BuildAux::Getopt qw($message);
+  $message = "modify some Urbi input/output";
+  BuildAux::Getopt::getopt
+    (
+     "D|define=s"       => sub { variable_set($_[1]) },
+     "effective-output" => sub { $process = $_[0] },
+     "expected-error"   => sub { $process = $_[0] },
+     "expected-output"  => sub { $process = $_[0] },
+     "neutralize"       => sub { $process = $_[0] },
+    );
+  verbose 3, "Variables: ",
+          map { "  $_ => \"$variable{$_}\"" } sort keys %variable;
+}
+
+## ------ ##
+## Main.  ##
+## ------ ##
+
+getopt;
+my $in = contents($ARGV[0]);
+my $out = $in;
+if ($process eq "effective-output")
+{
+  $out = effective_output($in);
+}
+elsif ($process eq "expected-output")
+{
+  $out = expected_output($in);
+}
+elsif ($process eq "expected-error")
+{
+  $out = expected_error($in);
+}
+elsif ($process eq "neutralize")
+{
+  $out = $in;
+}
+verbose 2, "Before neutralize: {{$out}}";
+$out = neutralize_timestamps(neutralize($out));
+print $out;
+
+### Setup "Gostai" style for perl-mode and cperl-mode.
+## Local Variables:
+## perl-indent-level: 2
+## perl-continued-statement-offset: 2
+## perl-continued-brace-offset: -2
+## perl-brace-offset: 0
+## perl-brace-imaginary-offset: 0
+## perl-label-offset: -2
+## cperl-indent-level: 2
+## cperl-brace-offset: 0
+## cperl-continued-brace-offset: -2
+## cperl-label-offset: -2
+## cperl-extra-newline-before-brace: t
+## cperl-merge-trailing-else: nil
+## cperl-continued-statement-offset: 2
+## End:

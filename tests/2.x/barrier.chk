@@ -1,0 +1,58 @@
+// Barriers test
+
+var b = Barrier.new() | {};
+
+echo (b.wait()),
+echo (b.wait()),
+echo (b.wait()),
+sleep(0);
+b.signalAll("foobar");
+[00000001] 3
+[00000002] *** foobar
+[00000003] *** foobar
+[00000004] *** foobar
+
+sleep(1s);
+
+echo (b.wait()),
+sleep(100ms);
+echo (b.wait()),
+sleep(100ms);
+echo (b.wait()),
+sleep(100ms);
+{
+  nonInterruptible;
+  b.signal("foobar");
+  b.signal("foobar");
+  b.signal("foobar");
+};
+[00000005] 1
+[00000006] *** foobar
+[00000007] *** foobar
+[00000008] *** foobar
+sleep(1s);
+
+// Check case where a stop is raised at the same time as a signal, ensure
+// that in no cases the stop could be ignored.
+
+var t = Tag.new() |;
+
+{
+  t : { b.wait().print() },
+  sleep(0ms) |
+  t.stop() |
+  b.signal("stop exception ingnored.") |
+  true
+};
+// Nothing else should be printed here.
+[00000005] true
+
+{
+  t : { b.wait().print() },
+  sleep(0ms) |
+  b.signal("stop exception ingnored.") |
+  t.stop() |
+  true
+};
+// Nothing else should be printed here.
+[00000005] true

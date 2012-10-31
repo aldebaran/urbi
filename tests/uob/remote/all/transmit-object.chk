@@ -1,0 +1,22 @@
+//#uobject test/all
+//#plug test/all
+
+var ra = remall.new(0)|
+var a = all.new(0)|;
+
+var res;
+// UObjects in same address space
+(res = all.transmitO(all2)) === all2  || res;
+[00000001] true
+(res = all.transmitO(a)) === a || res;
+[00000002] true
+(res = remall.transmitO(ra)) === ra || res;
+[00000003] true
+(res = ra.transmitO(remall2)) === remall2 || res;
+[00000004] true
+
+// UObjects in different address spaces.
+(res = all.transmitO(ra).isNil()) || res;
+[00000005] true
+(res = remall.transmitO(all).isNil()) || res;
+[00000006] true

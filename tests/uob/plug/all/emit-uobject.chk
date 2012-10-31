@@ -1,0 +1,14 @@
+//#uobject test/all
+uobjectsAll();
+
+// Test that C++ UEvent::emit can transmit UObjects.
+
+var x;
+at(all.ev?(var v)) x = v;
+
+all.emitO(all);
+sleep(200ms);
+assert(x === all);
+var a = all.instanciate()|;
+all.emitO(a);
+assert(x === a);

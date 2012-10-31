@@ -1,0 +1,17 @@
+// Check that time_shift is inherited by subrunners
+
+var ts = 0 | {};
+var t = Tag.new() | {};
+t: every (1s) { ts += Job.current.timeShift },
+// Accumulate 0 time shift for 3.5s
+sleep (3.5s);
+// Set a time shift of 0.5s
+t.freeze();
+sleep (0.5s);
+t.unfreeze();
+// Let it accumulate two times
+sleep (1.8s);
+t.stop();
+// Check that it is within bounds
+if (ts >= 0.8s && ts < 1.2s) echo ("ok") else echo ("not ok");
+[00000001] *** ok

@@ -1,0 +1,29 @@
+load("urbi/component.u")|;
+load("urbi/naming-standard.u")|;
+import gsrapi.*;
+var l = Localizer.new("arm")|;
+var a = Interface.Motor.new() |
+var b = Interface.Motor.new() |
+var a.val = 12 | var b.val  = 13 |
+l[up] = a | l[down] = b|
+assert
+{
+  l[up].val == 12;
+  l[down].val == 13;
+};
+
+l.val = 20 |
+assert
+{
+  a.val == 20;
+  b.val == 20;
+};
+
+var c = Interface.Motor.new() | var c.val = 42|;
+l[left] = Localizer.new("blob")|;
+l[left][front] = c|
+assert
+{
+  l[left][front].val == 42;
+  l[left][front].val == 42;
+};

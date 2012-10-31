@@ -1,0 +1,47 @@
+//#uobject test/all
+//#plug test/all
+
+function reset()
+{
+  remall2.lastChange = ""|;
+}|;
+
+// Test that the data realy is no longuer transmited when unnotify is called.
+// To test this we cheat a bit and hit the backend.
+all.a = 1;
+[00000001] 1
+remall2.setNotifyChangeByName("all.a")|;
+
+//uobject write on notifychange var
+reset();
+all.write(0,3);
+[00000004] 3
+sleep(200ms);
+assert
+{
+  remall2.lastChange == "all.a";
+  remall2.lastChangeVal == 3;
+};
+
+// Each uvar increments the refcount by two.
+// Go through the remote to get the correct lobby
+remall.sendString("UObject.unnotify(\"all\", \"a\", 2);")|;
+sleep(200ms);
+
+reset();
+
+all.a = 4;
+[00000008] 4
+sleep(200ms);
+assert
+{
+  remall2.lastChange == "";
+};
+
+all.write(0,3);
+[00000010] 3
+sleep(200ms);
+assert
+{
+  remall2.lastChange == "";
+};

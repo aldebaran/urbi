@@ -1,0 +1,12 @@
+function hostname_shell()
+{
+  var p = Process.new("hostname", []);
+  p.run();
+  p.join();
+  p.stdout.getLine()
+}|;
+
+assert
+{
+  System.hostName() == hostname_shell()
+};

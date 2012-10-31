@@ -1,0 +1,10 @@
+
+package a { var x = "a"}|;
+
+var res = {
+  import a.*;
+  function() { x};
+}|;
+
+res();
+[00000001] "a"

@@ -1,0 +1,16 @@
+function f()
+{
+  var t = scopeTag;
+  t:
+    every(1s)
+      echo("foobar"),
+  sleep(3.5s)
+}|;
+f();
+[00000001] *** foobar
+[00000002] *** foobar
+[00000003] *** foobar
+[00000004] *** foobar
+sleep(2s);
+echo("zyxxy");
+[00000005] *** zyxxy

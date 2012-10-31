@@ -1,0 +1,16 @@
+var e = Event.new()|;
+var t = Tag.new()|;
+{t:waituntil(e?)} | "end".print(),
+e!;
+[00000001] "end"
+sleep(50ms);
+{t:waituntil(e?)} | "end".print(),
+t.freeze();
+e!;
+sleep(50ms) | 1;
+[00000002] 1
+//If the two output lines are reveresd, this is a bug.
+t.unfreeze(); sleep(50ms); 2;
+[00000003] 2
+e!;
+[00000004] "end"

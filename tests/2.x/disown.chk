@@ -1,0 +1,13 @@
+// Compare the behaviour of "detach" and "disown" regarding tags
+
+Tag.new():  // Ensure that we have at least one tag
+{
+  var ntags = Job.current.tags.size | {};
+  assert(ntags >= 1);
+  detach(echo (Job.current.tags.size - ntags));
+  sleep(10ms);
+[00000001] *** 0
+  disown(echo (Job.current.tags.size));
+  sleep(10ms);
+[00000002] *** 0
+};

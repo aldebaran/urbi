@@ -1,0 +1,7 @@
+// Check that the connection tag is stored and maintained in runners
+assert(Job.current.tags == [connectionTag]);
+var t = Tag.new() &
+assert({t: Job.current.tags} == [connectionTag, t]);
+var u = Tag.new() |
+assert({t: Job.current.tags} == [connectionTag, t]) &
+assert({u: Job.current.tags} == [connectionTag, u]);

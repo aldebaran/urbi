@@ -1,0 +1,99 @@
+//#uobject test/all
+
+function reset()
+{
+  all.lastChange = ""|;
+  all.lastAccess = ""|;
+  all2.lastChange = ""|;
+}|;
+
+all.a = 1|;
+all.setOwned(0)|;
+all.setNotifyChange(0)|;
+all.setNotifyAccess(0)|;
+
+
+reset();
+assert
+{
+  all.lastChange == "";
+  all.lastAccess == "";
+};
+
+clog << "change from urbi";
+reset();
+assert
+{
+  (all.a = 2) == 2;
+  all.lastChange == "all.a";
+  all.lastAccess == "";
+};
+
+
+clog << "access from urbi";
+reset();
+assert
+{
+  all.a == 1;
+  all.lastChange == "";
+  all.lastAccess == "all.a";
+};
+
+
+clog << "access from c++";
+reset();
+assert
+{
+  all2.readByName("all.a") == 2;
+  all.lastAccess == "all.a";
+  all.lastChange == "";
+};
+
+clog << "change from c++";
+reset();
+assert
+{
+  all2.writeByName("all.a",1) == 1;
+  all.lastChange == "all.a";
+  all.lastAccess == "";
+};
+
+
+
+
+all2.setNotifyChangeByName("all.a")|;
+
+//uowned notifyaccess should be triggered by nonuowned notifychange every cycle
+reset();
+sleep(500ms);
+// Test fails because of bogus fast mode without the yield.
+all.yield_for(200ms);
+
+assert
+{
+  all.lastChange == "";
+  all.lastAccess == "all.a";
+};
+assert {
+  all2.lastChange == "all.a";
+};
+
+
+
+
+// urbi read to uowned var should not trigger owned notifychange
+reset();
+all.a|;
+all.yield_for(200ms);
+
+assert
+{
+  all.lastChange == "";
+  all.lastAccess == "all.a";
+  all2.lastChange == "all.a";
+};
+
+
+
+
+sleep(3s) | shutdown;

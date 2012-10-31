@@ -1,0 +1,50 @@
+package lang.Point: UValueSerializable
+{
+  var x;
+  var y;
+  function init(xx=0, yy=0)
+  {
+     x = xx|
+     y = yy
+  };
+  function asString()
+  {
+    "<" + x +", " + y  + ">"
+  };
+};
+
+
+package lang.Rect: UValueSerializable
+{
+  var a = Point.new;
+  var b = Point.new;
+  function asString()
+  {
+    "[] " + a + " " + b
+  };
+  function init(xa=0, ya=0, xb=0, yb=0)
+  {
+    var this.a = Point.new(xa, ya)|
+    var this.b = Point.new(xb, yb)
+  };
+};
+
+package lang.PointOfInterest: UValueSerializable
+{
+  function init(n="", ss=[], bn=[=>])
+  {
+    var this.sectorName = n;
+    var this.subSectors = ss;
+    var this.byName = bn;
+  };
+  function asString()
+  {
+    "O_O (" + sectorName + ")" + subSectors + " " + byName
+  };
+};
+do(Serializables)
+{
+  var Rect = Rect;
+  var Point = Point;
+  var PointOfInterest = PointOfInterest;
+};

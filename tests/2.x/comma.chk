@@ -1,0 +1,7 @@
+// This used to segfault
+42,
+
+{sleep(200ms); echo("bar")}, sleep(100ms); echo("foo");
+[00000001] *** foo
+[00000002] *** bar
+sleep(200ms); // wait for everything to be printed out

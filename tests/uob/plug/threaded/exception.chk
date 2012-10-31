@@ -1,0 +1,6 @@
+//#uobject test/threaded
+
+Threaded.throwException(1);
+[00000001:error] !!! input.u:@.1-26: throwException: exception caught while calling Threaded.throwException: Exception in threaded call: pan
+Threaded.throwException(0);
+[00000002:error] !!! input.u:@.1-26: throwException: exception caught while calling Threaded.throwException: Exception in threaded call: invalid exception

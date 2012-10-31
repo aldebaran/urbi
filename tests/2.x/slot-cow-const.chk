@@ -1,0 +1,8 @@
+// constness on slots should not interfere with copy-on-write.
+
+class a { const var x = 0}|;
+var b = a.new()|;
+b.x = 12;
+[00000001] 12
+a.x;
+[00000002] 0

@@ -1,0 +1,35 @@
+//#push 100 "foo"
+);
+[00000001:error] !!! foo:100.1: syntax error: unexpected )
+
+//#push 200 "bar"
+);
+[00000002:error] !!! bar:200.1: syntax error: unexpected )
+
+//#pop
+);
+[00000003:error] !!! foo:103.1: syntax error: unexpected )
+
+//#pop
+);
+[00000004:error] !!! input.u:1.1: syntax error: unexpected )
+
+//#pop
+);
+[00000005:error] !!! client.0.in:1.1: syntax error: unexpected )
+
+//#pop
+);
+[00000006:error] !!! 1.1: syntax error: unexpected )
+
+//#pop
+[00000007:error] !!! 4.1-7: syntax error: too many //#pop
+);
+[00000008:error] !!! 6.1: syntax error: unexpected )
+
+
+// This test relies on the fact that the input part of this *.chk are
+// filtered into "client.0.u", and that this file itself is loaded
+// (hence within a push-pop pair).
+// Help the infrastructure: provide something to close.
+//#push 999 "end"

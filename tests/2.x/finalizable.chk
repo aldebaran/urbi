@@ -1,0 +1,12 @@
+var Paf = Finalizable.new()|;
+
+// Check throwing an exception with a reference to this from
+// Finalizable destructor doesn't abort.
+do (Paf)
+{
+  function finalize () {
+    o;
+  };
+}|;
+Paf.new()|;
+[00000001:error] !!! input.u:8.5: lookup failed: o

@@ -1,0 +1,13 @@
+//#uobject test/generic
+var a = generic.new()|;
+
+assert
+{
+  a.val.isVoid();
+  a.foo(1) == 2;
+  a.val == 1;
+  a.foo(2) == 3;
+  a.val == 2;
+  a.inc() == 666;
+  a.val == 3;
+};

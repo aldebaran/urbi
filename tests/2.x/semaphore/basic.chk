@@ -1,0 +1,39 @@
+// Check Semaphore operations
+
+var s = Semaphore.new (0) | {};
+
+function f (name) {
+  var d = function (msg) { echo (name + ": " + msg) };
+  d ("waiting for semaphore");
+  s.acquire();
+  d ("got semaphore, printing string 1 and waiting");
+  sleep (1s);
+  d ("printing string 2 and releasing");
+  s.release();
+} | {};
+
+// Create functions waiting on semaphore
+
+f ("func1"),
+sleep (1s);
+[00000001] *** func1: waiting for semaphore
+f ("func2"),
+sleep (1s);
+[00000002] *** func2: waiting for semaphore
+f ("func3"),
+[00000003] *** func3: waiting for semaphore
+sleep (1s);
+
+// Unblock them one by one and check that output is not intermixed
+
+s.release();
+[00000004] *** func1: got semaphore, printing string 1 and waiting
+[00000005] *** func1: printing string 2 and releasing
+[00000006] *** func2: got semaphore, printing string 1 and waiting
+[00000007] *** func2: printing string 2 and releasing
+[00000008] *** func3: got semaphore, printing string 1 and waiting
+[00000009] *** func3: printing string 2 and releasing
+
+s.acquire();
+echo ("This is the end");
+[00000010] *** This is the end

@@ -1,0 +1,34 @@
+//#plug test/all urbi/rtp
+//#remote test/all urbi/rtp
+skipIfWindows(); // FIXME: reenable for Urbi 3.
+
+fakeRTPError();
+
+UVar.new(Global, "val")|;
+Global.val = bigstring|;
+
+// Force RTP.
+Global.&val.rtp = true|;
+
+// It takes time for fakeRTPError to activate: big delays.
+remall.setNotifyChangeByUVar(Global.&val)|;
+sleep(200ms);
+for(5)
+{
+  Global.val = bigstring|
+  sleep(150ms)
+};
+
+var r = remall.lobby.bytesReceived|
+var s = remall.lobby.bytesSent|
+for(10) { Global.val = bigstring; sleep(100ms);};
+
+// Big strings!
+// Take margin, some values were dropped before RTP failure was detected.
+assert(remall.lobby.bytesSent - s > bigstring.size*5);
+
+// ... that are actually received
+remall.lastChange = ""|;
+Global.val = bigstring|;
+sleep(400ms);
+assert(remall.lastChange == Global.&val.fullName);

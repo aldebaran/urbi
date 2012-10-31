@@ -1,0 +1,48 @@
+//#uobject test/all
+//#no-fast
+// UVar instanciation with various slot initial state
+
+//Non-existing.
+import Global.*;
+all.writeD("Global.foo", 1)|;
+foo;
+[00000001] 1
+// Existing, uvar.
+all.writeD("Global.foo", 2)|;
+foo;
+[00000002] 2
+
+// Existing, non-uvar.
+
+var Global.bar = 10|;
+all.readByName("Global.bar");
+[00000003] 10
+bar;
+[00000004] 10
+all.writeD("Global.bar", 2)|;
+bar;
+[00000005] 2
+all.writeD("Global.bar", 3)|;
+bar;
+[00000006] 3
+
+// Same, but upgrade to UVar when writting instead of reading.
+
+var Global.baz = 20|;
+all.writeD("Global.baz", 2)|;
+baz;
+[00000007] 2
+all.writeD("Global.baz", 3)|;
+baz;
+[00000008] 3
+
+
+// Multiple creation of the same UVar in parallel.
+var Global.c = 10|;
+all.writeD("Global.c", 1) & all.writeD("Global.c", 1);
+c;
+[00000009] 1
+
+all.writeD("Global.d", 1) & all.writeD("Global.d", 1);
+d;
+[00000010] 1

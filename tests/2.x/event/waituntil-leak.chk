@@ -1,0 +1,49 @@
+//#no-fast
+var e = Event.new()|;
+
+function emitDuration (var where)
+{
+  var res = { var t = time() | e.syncEmit() | time() - t };
+  clog << "%10s: %7f" % [where, res];
+  res
+}|;
+
+at(e?) 1+2+3+4;
+{waituntil(e?) | 1.print()},
+
+var base = emitDuration("base")|;
+[00000001] 1
+
+for|(2)
+{
+  for&(100) {waituntil(e?) |1},
+  1;2;
+  e!
+};
+sleep(100ms);
+var after = emitDuration("after")|;
+
+
+for|(16)
+{
+  for&(100) {waituntil(e?) |1},
+  1;2;
+  e!
+};
+sleep(100ms);
+var after2 = emitDuration("after2")|;
+
+
+// Time change between tests should be low.
+function drift(var where, var val)
+{
+  var d = val / base;
+  clog << "%10s: %10f, base = %10f, drift = %f"
+    % [where, val, base, d];
+  d < 4;
+}|;
+
+drift(1, after);
+[00000002] true
+drift(2, after2);
+[00000003] true

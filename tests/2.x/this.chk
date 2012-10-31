@@ -1,0 +1,11 @@
+// Check that this is part of the default context
+this == this;
+[00000001] true
+
+// Check that it is not local to a block, and that this is a real this
+this == { this };
+[00000002] true
+
+// Moreover, we expect it to be a lobby
+this.type;
+[00000003] "Lobby"

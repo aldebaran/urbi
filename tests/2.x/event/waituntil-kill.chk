@@ -1,0 +1,9 @@
+var e = Event.new()|;
+
+{t: waituntil(e?)} | 12.print(),
+sleep(100ms);
+t.stop();
+sleep(100ms);
+[00000001] 12
+1;
+[00000002] 1

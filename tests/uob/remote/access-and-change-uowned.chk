@@ -1,0 +1,15 @@
+//#plug test/uaccess3
+//#uobject test/uchange
+
+uchange.init()|;
+
+uaccess.load;
+[00000001] 1
+
+// uaccess.val access call should be looping, finally reaching 50 and
+// more.
+at (uaccess.val > 25) { echo ("ok"); quit};
+
+
+sleep(2s);
+[00000002] *** ok

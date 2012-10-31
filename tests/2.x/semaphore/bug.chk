@@ -1,0 +1,4 @@
+// Check for an assertion error in Semaphore due to a bug in "|" implementation.
+var s = Semaphore.new (0) | {};
+s.release(),
+s.acquire();

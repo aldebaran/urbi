@@ -1,0 +1,25 @@
+// 0-ary functions and attributes should behave equally.
+var feature = 42;
+[00000001] 42
+feature;
+[00000002] 42
+feature();
+[00000003] 42
+feature(42);
+[00000004:error] !!! input.u:@.1-11: feature: expected 0 argument, given 1
+
+feature = function () { 42 }|;
+feature;
+[00000005] function () { 42 }
+feature();
+[00000006] 42
+feature(42);
+[00000007:error] !!! input.u:@.1-11: feature: expected 0 argument, given 1
+
+feature = function (x) { x }|;
+feature;
+[00000008] function (var x) { x }
+feature();
+[00000009:error] !!! input.u:@.1-9: feature: expected 1 argument, given 0
+feature(42);
+[00000010] 42

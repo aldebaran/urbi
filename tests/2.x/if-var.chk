@@ -1,0 +1,13 @@
+var i = 1;
+[00000001] 1
+if (var i = 2) echo (2) else echo (0);
+[00000002] *** 2
+i;
+[00000003] 1
+
+if (var test = 42; echo(test); false)
+  echo("KO")
+else
+  echo(test);
+[00000004] *** 42
+[00000005] *** 42

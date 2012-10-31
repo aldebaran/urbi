@@ -1,0 +1,6 @@
+// Check that an exception from any side of the & is properly propagated
+
+sleep(3600s) & (1/0);
+[00000001:error] !!! input.u:@.17-19: /: division by 0
+(1/0) & sleep(3600s);
+[00000002:error] !!! input.u:@.2-4: /: division by 0

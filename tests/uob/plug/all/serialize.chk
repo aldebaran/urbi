@@ -1,0 +1,44 @@
+//#uobject test/all
+uobjectsAll();
+load("../../plug/all/serialize.u")|;
+
+// Check UBindFunctionRename.
+assert
+{
+  all.area(Rect.new(10, 10)) == 100;
+  all.rectArea(Rect.new(10, 10)) == 100;
+};
+
+
+
+var r = all.makeRect();
+[00000001] [] <0, 0> <0, 0>
+
+var r2 = all.translate(r, Point.new(10, 10));
+[00000002] [] <10, 10> <10, 10>
+
+var rs = all.multiTranslate([r, r2], Point.new(10, 10));
+[00000003] [[] <10, 10> <10, 10>, [] <20, 20> <20, 20>]
+
+var p = PointOfInterest.new();
+[00000004] O_O ()[] [ => ]
+all.transmitPointOfInterest(p);
+[00000005] O_O ()[] [ => ]
+
+p.sectorName=  "foo"|
+p.subSectors = [Rect.new(), Rect.new(1,1,1,1)]|
+p.byName = ["bar" => Rect.new()]|;
+all.transmitPointOfInterest(p);
+[00000006] O_O (foo)[[] <0, 0> <0, 0>, [] <1, 1> <1, 1>] ["bar" => [] <0, 0> <0, 0>]
+
+all.a = p|
+all.readPointOfInterest(all.&a);
+[00000007] O_O (foo)[[] <0, 0> <0, 0>, [] <1, 1> <1, 1>] ["bar" => [] <0, 0> <0, 0>]
+
+all.writePointOfInterest(all.&b, p);
+all.b;
+[00000008] O_O (foo)[[] <0, 0> <0, 0>, [] <1, 1> <1, 1>] ["bar" => [] <0, 0> <0, 0>]
+
+var d = all.pack([12, 15, 2.4])|;
+all.unpack(d);
+[00000010] [12, 15, 2.4]

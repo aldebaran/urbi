@@ -1,0 +1,28 @@
+//#uobject test/all
+uobjectsAll();
+
+
+var all.z = 0;
+[00000001] 0
+all.writeOwnByName("z", 20);
+[00000002] 0
+all.z;
+[00000003] 20
+
+var a = all.new(0) |;
+var a.z = 0 |;
+a.writeOwnByName("z", 30) |;
+a.z;
+[00000004] 30
+
+//cow from uobject
+var b = a.new(0) |;
+b.writeOwnByName("z", 40) |;
+b.z;
+[00000005] 40
+a.z;
+[00000006] 30
+
+// Leave some time for the last command to complete.
+// FIXME: Why???
+sleep(1s);

@@ -1,0 +1,17 @@
+// Check that local variables captured in closures are not mixed together
+
+function f()
+{
+  {
+    var x = 3;
+    detach({sleep (1s); echo (x)});
+    x = 2;
+  };
+  {
+    var y = 0;
+    detach({y = 1})
+  }
+} | {};
+
+f()|; sleep(2s);
+[00000001] *** 2

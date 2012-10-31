@@ -1,0 +1,55 @@
+//#uobject test/all test/threaded
+//#no-fast
+
+// Check threaded notifychange on a variable in bypass mode
+all.markBypass(0, 1)|;
+all.lastChange = 0|;
+all.lastChangeVal = ""|;
+all.setThreadedNotifyChange(0)|;
+var img = Binary.new("rgb 4 4", "x" * (16*3))|;
+all.writeAV(img)|;
+sleep(300ms);
+assert
+{
+  all.lastChange == "<unknown>"; // Threaded notify has no access to the UVar
+  all.lastChangeVal == img;
+};
+all.lastChange = 0|;
+all.lastChangeVal = ""|;
+
+// Write from a thread
+var id = Threaded.startThread()|;
+Threaded.queueOp(id, Threaded.WRITE_VAR, ["all.a", img])|;
+sleep(300ms);
+assert
+{
+  all.lastChange == "<unknown>";
+  all.lastChangeVal == img;
+};
+
+all.lastChange = 0|;
+all.lastChangeVal = ""|;
+
+// bypass write from a thread
+Threaded.queueOp(id, Threaded.CREATE_VAR, ["Threaded.x"])|;
+Threaded.queueOp(id, Threaded.SET_BYPASS, [0])|;
+sleep(200ms);
+all.setThreadedNotifyChangeByUVar(Threaded.&x)|;
+Threaded.queueOp(id, Threaded.WRITE_VAR, [0, img])|;
+sleep(300ms);
+assert
+{
+  all.lastChangeVal == img;
+};
+
+all.lastChange = 0|;
+all.lastChangeVal = ""|;
+
+// same, owned mode
+Threaded.queueOp(id, Threaded.SET_UOWNED, [0])|;
+Threaded.queueOp(id, Threaded.WRITE_VAR, [0, img])|;
+sleep(300ms);
+assert
+{
+  all.lastChangeVal == img;
+};

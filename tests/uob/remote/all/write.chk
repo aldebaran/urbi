@@ -1,0 +1,39 @@
+//#uobject test/all
+uobjectsAll();
+
+var all.z = 0;
+[00000001] 0
+all.writeD("all.z", 20);sleep(200ms);
+[00000002] 0
+all.z;
+[00000003] 20
+
+//all.b is created by remote uobject
+all.b = "coin";
+[00000004] "coin"
+all.writeS("all.b", "pan");sleep(200ms);
+[00000005] 0
+all.b;
+[00000006] "pan"
+all.writeS("all.b", "pan\n");sleep(200ms);
+[00000007] 0
+all.b;
+[00000008] "pan\n"
+all.writeS("all.b", "[00000:ts] 1\n");sleep(200ms);
+[00000009] 0
+all.b;
+[00000010] "[00000:ts] 1\n"
+
+all.c = [];
+[00000011] []
+all.writeL("all.c", "coin");sleep(200ms);
+[00000012] 0
+all.c;
+[00000013] ["coin", 42]
+
+all.d = [=>] ;
+[00000014] [ => ]
+all.writeM("all.d", "bar");sleep(200ms);
+[00000015] 0
+all.d.asList().sort();
+[00000016] [("bar", 42), ("foo", [])]

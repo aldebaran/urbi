@@ -1,0 +1,15 @@
+// Check variables declared in '&' and ',' are unscoped
+
+{
+  var a & var b;
+  a;
+  b;
+  void;
+};
+
+
+{
+  var a,
+  a;
+  void;
+};

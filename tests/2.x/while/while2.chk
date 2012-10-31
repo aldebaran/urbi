@@ -1,0 +1,17 @@
+// Check that a yield is inserted between runs of the while loop
+
+import System.*;
+
+var n = 0 |
+var ref = cycle |
+while (n < 3)
+  { n++ }
+| cycle - ref;
+[00000001] 3
+
+n = 0 |
+ref = cycle |
+while| (n < 3)
+  { n++ }
+| cycle - ref;
+[00000002] 0

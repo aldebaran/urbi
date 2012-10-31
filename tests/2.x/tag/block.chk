@@ -1,0 +1,36 @@
+var t = Tag.new()|;
+
+t: detach ({loop {echo ("1"); sleep(1s)}})|;
+sleep(2.5s);
+[00000001] *** 1
+[00000002] *** 1
+[00000003] *** 1
+
+t.block();
+sleep(10ms);
+
+echo ("bar");
+[00000004] *** bar
+
+sleep (2s);
+echo ("bar");
+[00000005] *** bar
+
+t.unblock();
+sleep (2s);
+
+echo ("bar");
+[00000006] *** bar
+t.block();
+t: detach ({loop {echo ("2"); sleep(1s)}}) |;
+sleep (2s);
+echo ("bar");
+[00000007] *** bar
+t.unblock();
+
+t: detach ({loop {echo ("3"); sleep(1s)}}) |;
+[00000008] *** 3
+sleep(2.5s);
+[00000009] *** 3
+[00000010] *** 3
+t.block();

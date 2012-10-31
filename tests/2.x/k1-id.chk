@@ -1,0 +1,5 @@
+// Check that more than two components are supported
+var a = Object.new() | var a.b =Object.new |
+function a.b.c () { echo("a.b.c") } | {};
+a.b.c();
+[00000001] *** a.b.c

@@ -1,0 +1,44 @@
+skipIfSpace();
+
+class a { var val};
+[00000001] a
+
+a.val = 23;
+[00000002] 23
+var b = new a;
+[00000003:warning] !!! input.u:@.9-13: `new Obj(x)' is deprecated, use `Obj.new(x)'
+[00000004] a_0x100c43e00
+
+b;
+[00000005] a_0x100c43e00
+
+b.val;
+[00000006] 23
+
+var c = new a();
+[00000007:warning] !!! input.u:@.9-15: `new Obj(x)' is deprecated, use `Obj.new(x)'
+[00000008] a_0x100c48dc0
+c;
+[00000009] a_0x100c48dc0
+
+function a.init() {echo (1000);} | {};
+
+var d = new a();
+[00000010:warning] !!! input.u:@.9-15: `new Obj(x)' is deprecated, use `Obj.new(x)'
+[00000011] *** 1000
+[00000012] a_0x100c5edc0
+
+a.removeSlot("init");
+[00000013] a
+
+function a.init(x) {echo (1000+x);} |;
+
+//e = new a();
+//[00083493] !!! invalid number of arguments for e.init (should be 1 params)
+//[00083493] *** Error: Constructor failed, objet deleted
+var e = new a(444);
+[00000014:warning] !!! input.u:@.9-18: `new Obj(x)' is deprecated, use `Obj.new(x)'
+[00000015] *** 1444
+[00000016] a_0x100c6da40
+e;
+[00000017] a_0x100c6da40

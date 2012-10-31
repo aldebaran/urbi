@@ -1,0 +1,64 @@
+//#uobject test/all
+uobjectsAll();
+
+// This test could use "var a.val", but then a problem is that this "a"
+// must be available to both ends.  This can be done by putting "a" in
+// Global for k2, but that makes the test more dependend on the version
+// of the kernel.
+//
+// It seems easier then to use an object which is already shared by both
+// ends: all itself.
+
+UVar.new(all, "mySlot") | {};
+
+all.mySlot = 2303;
+[00000001] 2303
+
+all.mySlot->rangemin = 1;
+[00000002] 1
+all.mySlot->rangemin;
+[00000003] 1
+
+all.mySlot->rangemax = 2;
+[00000004] 2
+all.mySlot->rangemax;
+[00000005] 2
+
+all.mySlot->speedmin = 3;
+[00000006] 3
+all.mySlot->speedmin;
+[00000007] 3
+
+all.mySlot->speedmax = 4;
+[00000008] 4
+all.mySlot->speedmax;
+[00000009] 4
+
+all.mySlot->delta = 5;
+[00000010] 5
+all.mySlot->delta;
+[00000011] 5
+
+all.mySlot->blend = "mix";
+[00000012] "mix"
+all.mySlot->blend;
+[00000013] "mix"
+
+all.mySlot->constant = true|;
+
+all.readProps("all.mySlot");
+[00000014] [1, 2, 3, 4, 5, "mix", 1]
+
+// Change all these properties to 0.
+all.writeProps("all.mySlot", 0);
+[00000015] 0
+
+all.mySlot->rangemin;
+[00000016] 0
+
+all.mySlot->constant;
+[00000017] false
+
+// Blend mode 0 = mix.
+all.readProps("all.mySlot");
+[00000018] [0, 0, 0, 0, 0, 0, 0]

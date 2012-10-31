@@ -1,0 +1,13 @@
+var mytag = Tag.new("mytag");
+[00000001] Tag<mytag>
+mytag.begin: mytag.end: {echo(42); 42};
+[00000002] *** mytag: begin
+[00000003] *** 42
+[00000004] *** mytag: end
+[00000005] 42
+
+// Check the statement is correctly tagged.
+mytag.end: { sleep(1s); echo("OH NOZ!"); },
+mytag.stop();
+[00000006] *** mytag: end
+sleep(100ms);

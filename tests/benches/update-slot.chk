@@ -1,0 +1,10 @@
+do (Object.new)
+{
+  var s = 0;
+
+  for| (var v: 1024 * 1024 * 4)
+    s = v;
+}|
+
+"end";
+[00000000] "end"

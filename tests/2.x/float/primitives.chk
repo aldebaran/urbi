@@ -1,0 +1,22 @@
+// Incorrect calls.
+Math.sin();
+[00000001:error] !!! input.u:@.1-10: sin: expected 1 argument, given 0
+// Mwahaha.
+Math.sin(3,1416);
+[00000002:error] !!! input.u:@.1-16: sin: expected 1 argument, given 2
+
++10;
+[00000003] 10
+
+// Check that random numbers are really random, and not consistently
+// equal to 1, as observed on Windows.
+{
+  var res = [];
+  var e = Event.new();
+  at (e?) res << 100.'random$old'();
+  e!; e!; e!;
+  assert
+  {
+    res[0] != res[1] || res[1] != res[2];
+  };
+};

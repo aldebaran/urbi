@@ -1,0 +1,127 @@
+var exc = Exception.new("exc");
+[00000001] Exception `exc'
+throw exc;
+[00000002:error] !!! input.u:@.1-9: exc
+try {
+  echo ("before");
+  throw exc;
+  echo ("after");
+} catch (var e if e.isA(exc)) {
+  echo ("caught");
+};
+[00000003] *** before
+[00000004] *** caught
+
+
+try {
+  echo ("before");
+  throw exc;
+  echo ("after");
+} catch (var e) {
+  echo ("caught");
+};
+[00000005] *** before
+[00000006] *** caught
+
+
+try {
+  try {
+    echo ("before");
+    throw exc;
+    echo ("after");
+  } catch (var f if f.isA(Float)) {
+    echo ("bad catch");
+  }
+} catch (var e if e.isA(Float)) {
+  echo ("bad catch");
+} catch (var e if e.isA(exc)) {
+  echo ("caught");
+} catch (var e) {
+  echo ("bad catch");
+};
+[00000007] *** before
+[00000008] *** caught
+
+
+try {
+  try {
+    echo ("before");
+    throw exc;
+    echo ("after");
+  } catch (var e if e.isA(exc)) {
+    echo ("caught");
+    throw e;
+  }
+} catch (var e if e.isA(Float)) {
+  echo ("bad catch");
+} catch (var e if e.isA(exc)) {
+  echo ("recaught");
+} catch (var e) {
+  echo ("bad catch");
+};
+[00000009] *** before
+[00000010] *** caught
+[00000011] *** recaught
+
+
+try {
+  try {
+    echo ("before");
+    throw exc;
+    echo ("after");
+  } catch (var exc) {
+    echo ("caught");
+    throw;
+  }
+} catch (var e if e.isA(Float)) {
+  echo ("bad catch");
+} catch (var e if e.isA(exc)) {
+  echo ("recaught");
+} catch (var e) {
+  echo ("bad catch");
+};
+[00000012] *** before
+[00000013] *** caught
+[00000014] *** recaught
+
+
+// We used to stay stuck in the following case, because the
+// Exception.Type was buggy, and its instantiation created new
+// exceptions.  The problem was that a slot was used to store the
+// guilty expression, and in the case of a primitive (where a float
+// was expected) resulted in the primitive being fired, because of the
+// lack of a getSlot.
+0 + 0.getSlotValue("+");
+[00000015:error] !!! input.u:@.1-23: +: argument 1: unexpected Primitive_0x100b4d940, expected a Float
+
+
+// Check that exceptions are throw when exceptions are badly initialized.
+Exception.Constness.new();
+[00000016] Exception.Constness `cannot modify const slot'
+Exception.Constness.new("");
+[00000017:error] !!! input.u:@.1-27: new: expected 0 argument, given 1
+
+// Check that finally are not executed more than once.
+try {
+  try {
+    echo ("before");
+  } finally {
+    echo ("finally");
+    throw exc;
+  }
+} catch (var e) {
+};
+[00000018] *** before
+[00000019] *** finally
+
+
+// Check the way we display exceptions.  Not always nice, but at
+// least, it does not end in an error.
+Exception;
+[00001147] Exception `<no message>'
+Exception.BadInteger;
+[00003627] Exception.BadInteger `<no message>'
+Exception.FileNotFound;
+[00021473] Exception.FileNotFound `file not found: '
+Exception.Redefinition;
+[00035776] Exception.Redefinition `slot redefinition: '

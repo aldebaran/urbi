@@ -1,0 +1,27 @@
+Object == Object;
+[00000001] true
+
+var a = 1;
+[00000002] 1
+var b = a;
+[00000003] 1
+var Object.c = a;
+[00000004] 1
+a == b;
+[00000005] true
+
+a == Object.c;
+[00000006] true
+
+var d = 1;
+[00000007] 1
+a == d;
+[00000008] true
+
+class c
+{
+  (this == this).print();
+  (this == lobby.c).print();
+} | {};
+[00000009] true
+[00000010] false

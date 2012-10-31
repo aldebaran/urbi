@@ -1,0 +1,104 @@
+// Check all the constructs with invalid flavors.
+
+/*-------------.
+| at (event).  |
+`-------------*/
+
+at, (1?)
+  echo("wrong");
+[00000001:error] !!! input.u:7.1-3: syntax error: invalid flavor: at,
+
+at| (1?)
+  echo("wrong");
+[00000002:error] !!! input.u:11.1-3: syntax error: invalid flavor: at|
+
+at& (1?)
+  echo("wrong");
+[00000003:error] !!! input.u:15.1-3: syntax error: invalid flavor: at&
+
+/*-----------.
+| at (exp).  |
+`-----------*/
+
+at, (false)
+  echo("wrong");
+
+[00000004:error] !!! input.u:23.1-3: syntax error: invalid flavor: at,
+
+at| (false)
+  echo("wrong");
+
+[00000005:error] !!! input.u:28.1-3: syntax error: invalid flavor: at|
+
+at& (false)
+  echo("wrong");
+
+[00000006:error] !!! input.u:33.1-3: syntax error: invalid flavor: at&
+
+
+/*--------.
+| every.  |
+`--------*/
+
+
+
+
+
+every& (false)
+  echo("wrong");
+[00000007:error] !!! input.u:47.1-6: syntax error: invalid flavor: every&
+
+
+
+/*-------------.
+| for a la C.  |
+`-------------*/
+
+for& (var i = 0; i < 2; i += 1)
+  echo(i);
+[00000008:error] !!! input.u:57.1-4: syntax error: invalid flavor: for&
+
+
+
+
+
+
+/*------------.
+| for (num).  |
+`------------*/
+
+for, (2)
+  echo(1);
+[00000009:error] !!! input.u:70.1-4: syntax error: invalid flavor: for,
+
+
+/*----------.
+| foreach.  |
+`----------*/
+
+for, (var i: [0, 1])
+  echo(i);
+[00000010:error] !!! input.u:79.1-4: syntax error: invalid flavor: for,
+
+
+/*-------.
+| loop.  |
+`-------*/
+
+
+loop&
+  echo(1);
+[00000011:error] !!! input.u:89.1-5: syntax error: invalid flavor: loop&
+
+
+
+
+
+
+/*--------.
+| while.  |
+`--------*/
+
+while& (false)
+  echo("FAIL");
+[00000012:error] !!! input.u:102.1-6: syntax error: invalid flavor: while&

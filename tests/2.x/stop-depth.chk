@@ -1,0 +1,33 @@
+var t = Tag.new() |
+var u = Tag.new() |
+function f()
+{
+  echo ("Entering f");
+  t: {
+    echo ("Entering t");
+      u: {
+        echo ("Entering u");
+        sleep (3600s);
+        echo ("Leaving u")
+      };
+    echo ("Leaving t")
+  };
+  echo ("Leaving f")
+} | {};
+
+f(),
+sleep(100ms);
+[00000001] *** Entering f
+[00000002] *** Entering t
+[00000003] *** Entering u
+t.stop() | u.stop(); sleep(100ms);
+[00000004] *** Leaving f
+
+f(),
+sleep(100ms);
+[00000005] *** Entering f
+[00000006] *** Entering t
+[00000007] *** Entering u
+u.stop(); sleep(100ms);
+[00000008] *** Leaving t
+[00000009] *** Leaving f

@@ -1,0 +1,21 @@
+var t = Tag.new() |
+t.frozen;
+[00000001] false
+t.blocked;
+[00000002] false
+t.freeze();
+t.frozen;
+[00000003] true
+t.blocked;
+[00000004] false
+t.block();
+t.blocked;
+[00000005] true
+t.unfreeze();
+t.frozen;
+[00000006] false
+t.blocked;
+[00000007] true
+t.unblock();
+t.blocked;
+[00000008] false

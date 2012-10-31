@@ -1,0 +1,14 @@
+class A {
+   function p () { echo ("In A") }
+} | {};
+
+class B {
+   function p () { echo ("In B") }
+} | {};
+
+var C = B.clone() | {};
+C.p();
+[00000001] *** In B
+C.protos.insertFront(A) | {};
+C.p();
+[00000002] *** In A

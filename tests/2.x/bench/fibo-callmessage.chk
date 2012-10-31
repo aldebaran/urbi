@@ -1,0 +1,11 @@
+{
+  var fibo;
+  fibo = function
+  {
+    var x = call.evalArgAt(0)|
+    if (x<2) 1 else
+      fibo(x-1)+fibo(x-2)
+  };
+  fibo(10)
+};
+[00000001] 89

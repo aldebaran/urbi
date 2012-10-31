@@ -1,0 +1,19 @@
+//#uobject test/all
+uobjectsAll();
+
+// Test Global.evaluate
+
+var Global.foo = 0;
+[00000001] 0
+
+Global.evaluate = "Global.foo = 1;"|;
+Global.foo;
+[00000002] 1
+
+uobjects.all.writeS("Global.evaluate", "Global.foo = 2;")|;
+Global.foo;
+[00000003] 2
+
+uobjects.all.writeS("Global.evaluate", "Global.evaluate = \"Global.foo = 3;\";")|;
+Global.foo;
+[00000004] 3

@@ -1,0 +1,6 @@
+// Check that "stopif (cond) stmt" terminates no later than stmt end
+
+stopif (false) { echo ("foo"); sleep (1s); echo ("bar") }; echo ("baz");
+[00000001] *** foo
+[00000002] *** bar
+[00000003] *** baz

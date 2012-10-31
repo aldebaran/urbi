@@ -1,0 +1,16 @@
+//#uobject test/all
+
+var all.z = 0;
+[00000001] 0
+all.writeD("all.z", 20)|;
+all.z;
+[00000003] 20
+
+all.z->rangemax = 10|
+all.z->rangemin = 0|;
+
+all.writeD("all.z", -1)| all.z;
+[00000004] 0
+
+all.writeD("all.z", 11)| all.z;
+[00000005] 10

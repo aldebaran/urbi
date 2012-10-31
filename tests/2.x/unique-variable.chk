@@ -1,0 +1,12 @@
+function f()
+{
+  var f = 1;
+  var f = 2;
+} | {};
+[00000001:error] !!! input.u:4.3-11: syntax error: variable redefinition: f
+
+function g()
+{
+  var x;
+  function g(x) { 2 };
+} | {};

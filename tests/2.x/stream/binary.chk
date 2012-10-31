@@ -1,0 +1,20 @@
+// Check that the file content is what we write verbatim.
+
+var val = "foo\r\nbar\nbaz\r\0coin\255"|;
+File.save("test.txt", val);
+
+assert
+{
+  File.new("test.txt").content.data == val;
+};
+
+
+var is = InputStream.new(File.new("test.txt"))|;
+var cget = ""|;
+var c;
+while (!(c = is.getChar()).isNil())
+ cget += c;
+assert
+{
+  cget == val;
+};

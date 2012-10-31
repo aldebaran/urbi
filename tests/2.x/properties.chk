@@ -1,0 +1,121 @@
+var x = Object.clone()|;
+var x.f = 0|;
+
+var y = Object.clone()|;
+var y.f = 0|;
+
+
+/*-----------------------------------.
+| Property support from plain Urbi.  |
+`-----------------------------------*/
+assert
+{
+  !x.hasProperty("f", "prop");
+  !y.hasProperty("f", "prop");
+};
+
+x.getProperty("f", "prop");
+[00000003:error] !!! input.u:@.1-26: property lookup failed: f->prop
+y.getProperty("f", "prop");
+[00000004:error] !!! input.u:@.1-26: property lookup failed: f->prop
+
+assert
+{
+  x.setProperty("f", "prop", 42) == 42;
+  x.hasProperty("f", "prop");
+  !y.hasProperty("f", "prop");
+  x.getProperty("f", "prop") == 42;
+};
+
+y.getProperty("f", "prop");
+[00000009:error] !!! input.u:@.1-26: property lookup failed: f->prop
+
+
+/*------------------.
+| Syntactic sugar.  |
+`------------------*/
+
+x.f->prop;
+[00000010] 42
+y.f->prop;
+[00000011:error] !!! input.u:@.1-9: property lookup failed: f->prop
+
+x.f->prop = 51;
+[00000012] 51
+
+x.f->prop;
+[00000013] 51
+y.f->prop;
+[00000014:error] !!! input.u:@.1-9: property lookup failed: f->prop
+
+
+
+/*---------------.
+| Check errors.  |
+`---------------*/
+
+
+var foo = nil;
+foo.bar->prop = 0;
+[00000015:error] !!! input.u:@.1-13: lookup failed: bar
+foo.bar->prop;
+[00000016:error] !!! input.u:@.1-13: lookup failed: bar
+
+/*-------------------------------.
+| Check properties inheritance.  |
+`-------------------------------*/
+
+// Properties should be inherited
+var yes = x.new()|;
+var no = x.new()|;
+var no.f = nil;
+
+assert
+{
+  yes.hasProperty("f", "prop");
+  !no.hasProperty("f", "prop");
+  yes.f->prop == 51;
+};
+
+no.f->prop;
+[00000020:error] !!! input.u:@.1-10: property lookup failed: f->prop
+
+
+/*---------------------.
+| Some syntax errors.  |
+`---------------------*/
+
+var Global.Global->foo = 1;
+[00000021:error] !!! input.u:@.5-22: syntax error: Global.Global->foo is not a valid lvalue
+
+/*-----.
+| Bugs |
+`-----*/
+
+// This used to be a bug because the left part of properties
+// assignments wasn't desugared recursively.
+try
+{
+  x[0].val->foo = 0;
+}
+catch (var e)
+{};
+
+// This used to be a bug because the right part of properties
+// assignments wasn't desugared recursively.
+assert
+{
+  var list = [69];
+  (x.f->prop = list[0]) == 69;
+};
+
+// Overriding properties in a child (which triggers a CoW) used to
+// drop the copied slot properties.
+{
+  var x = Object.new();
+  var x.y = Object.new();
+  x.y->prop = 0;
+  var z = x.clone();
+  z.y->otherProp = 1;
+  assert (z.y->prop == 0);
+};

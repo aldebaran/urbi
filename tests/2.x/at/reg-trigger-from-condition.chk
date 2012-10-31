@@ -1,0 +1,21 @@
+var x = false|;
+
+var tag = Tag.new()|;
+
+at ({x = true; x})
+  echo("first");
+
+at (x)
+  echo("second");
+
+try
+{
+  x = true;
+}
+catch (var s if s.isA(Exception.Scheduling))
+{
+  echo (s)
+};
+[00000001] *** first
+[00000002] *** second
+[00000003] true

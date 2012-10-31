@@ -1,0 +1,3 @@
+// Make sure our testing framework does test.
+"display this";
+[00000001] "not that"

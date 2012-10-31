@@ -1,0 +1,16 @@
+function
+{
+  // new is valide as an identifier
+  var new;
+  new.new(new);
+
+  // object is valid as an identifier
+  var object;
+  object.object(object);
+  function object.object(object) {};
+
+  // from is valid as an identifier
+  var from;
+  from.from(from);
+  function from.from(from) {};
+} | {};

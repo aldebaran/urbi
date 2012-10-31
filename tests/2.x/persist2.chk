@@ -1,0 +1,37 @@
+// Check that persist works as expected
+
+var x = 0 | {};
+at (x == 2 ~ 1s) {
+  sleep (10ms); echo ("x has been 2 for 1s")
+} onleave {
+  sleep (10ms); echo ("x is no longer 2")
+};
+
+
+// Too short a delay
+x = 2; sleep (500ms);
+[00000001] 2
+x = 1; sleep (100ms);
+[00000002] 1
+
+// Long enough delay
+x = 2; sleep (2s);
+[00000003] 2
+[00000004] *** x has been 2 for 1s
+x = 1; sleep (100ms);
+[00000005] 1
+[00000006] *** x is no longer 2
+
+// Check that we can rearm it
+x = 2; sleep (2s);
+[00000007] 2
+[00000008] *** x has been 2 for 1s
+x = 1; sleep (100ms);
+[00000009] 1
+[00000010] *** x is no longer 2
+
+// Check that the time origin has not been perturbed by the trigger
+x = 2; sleep (500ms);
+[00000011] 2
+x = 1; sleep (100ms);
+[00000012] 1

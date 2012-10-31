@@ -1,0 +1,39 @@
+//#uobject test/all
+
+
+var changed = 0|;
+all.a = 1;
+[00000001] 1
+all2.setNotifyChangeByName("all.a")|;
+all2.lastChange = "";
+[00000003] ""
+all.&a.notifyChange(closure() { changed++})|;
+all.&a.notifyChange(closure() { changed++})|;
+
+//uobject write on notifychange var
+
+all.write(0,3);
+[00000004] 3
+
+all2.lastChange;
+[00000005] "all.a"
+
+all2.lastChangeVal;
+[00000006] 3
+
+changed;
+[00000007] 2
+
+//urbi write on notifychange var
+all2.lastChange = "";
+[00000008] ""
+all.a = 4;
+[00000009] 4
+all2.lastChange;
+[00000010] "all.a"
+
+all2.lastChangeVal;
+[00000011] 4
+
+changed;
+[00000012] 4

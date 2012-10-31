@@ -1,0 +1,15 @@
+function f()
+{
+  var t = scopeTag;
+  t:
+    while ({sleep(1s); true})
+      echo("foobar"),
+  sleep(3.5s)
+}|;
+f();
+[00000001] *** foobar
+[00000002] *** foobar
+[00000003] *** foobar
+sleep(2s);
+echo("zyxxy");
+[00000004] *** zyxxy

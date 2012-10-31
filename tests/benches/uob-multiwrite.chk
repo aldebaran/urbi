@@ -1,0 +1,9 @@
+//#plug test/all
+
+{
+  for| (1024)
+    all.multiWrite(0, 1024, 12.23)
+};
+
+"end";
+[00000000] "end"

@@ -1,0 +1,27 @@
+// Check synclines.
+load("666.u");
+[00000001] *** 666
+);
+[00000002:error] !!! input.u:@.1: syntax error: unexpected )
+
+// Load erroneous files.
+load("parse-error.u");
+[00000003:error] !!! parse-error.u:11.1: syntax error: unexpected )
+[00000004:error] !!!    called from: input.u:8.1-21: load
+
+);
+[00000005:error] !!! input.u:@.1: syntax error: unexpected )
+
+// Load files that load erroneous files.
+load("load-parse-error.u");
+[00000006:error] !!! parse-error.u:11.1: syntax error: unexpected )
+[00000007:error] !!!    called from: load-parse-error.u:11.1-21: load
+[00000008:error] !!!    called from: input.u:16.1-26: load
+
+);
+[00000009:error] !!! input.u:@.1: syntax error: unexpected )
+
+
+// Checking loading a nonexisting file.
+load("nonexisting.u");
+[00000010:error] !!! input.u:@.1-21: load: file not found: nonexisting.u

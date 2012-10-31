@@ -1,0 +1,34 @@
+// Check that not only the triggering but also the reevaluation is
+// stopped.
+
+var x = false;
+[00000001] false
+
+tag: {
+  at ({echo("eval"); x})
+    echo("in")
+  onleave
+    echo("out");
+};
+[00000002] *** eval
+
+echo("ALIVE");
+[00000003] *** ALIVE
+x = true;
+[00000004] *** eval
+[00000005] true
+[00000006] *** in
+x = false;
+[00000007] *** eval
+[00000008] false
+[00000009] *** out
+
+tag.stop();
+
+
+echo("DEAD");
+[00000010] *** DEAD
+x = true;
+[00000011] true
+x = false;
+[00000012] false

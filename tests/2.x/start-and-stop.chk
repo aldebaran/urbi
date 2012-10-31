@@ -1,0 +1,4 @@
+// Check that we do not stop a ready-to-start job when it doesn't deserve it
+function f() { return 1 } | {};
+f & 1; 42;
+[00000001] 42

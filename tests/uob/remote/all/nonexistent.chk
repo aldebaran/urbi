@@ -1,0 +1,5 @@
+//#uobject test/all
+uobjectsAll();
+
+all.nonexistent;
+[00000001:error] !!! input.u:@.1-15: lookup failed: nonexistent

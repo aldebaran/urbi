@@ -1,0 +1,39 @@
+// Test whenever on event
+
+var e = Event.new() |;
+var counter = 0 |;
+
+// Payload and no guard.
+whenever (e?(var inc))
+  counter += inc;
+e.emit(42);
+sleep(1s);
+counter;
+[00000001] 42
+
+// Payload and guard.
+whenever (e?(var inc) if inc == 100)
+  echo("caught 100");
+e.emit(42);
+sleep(1s);
+counter;
+[00000002] 84
+
+e.emit(100);
+sleep(1s);
+[00000003] *** caught 100
+counter;
+[00000004] 184
+
+var trigerred = e.trigger(1) |;
+sleep(1s);
+trigerred.stop() |;
+sleep(100ms);
+var counter2 = counter |;
+assert(100 < counter2);
+sleep(1s);
+assert(counter == counter2);
+
+e.emit(1);
+sleep(1s);
+assert(counter == counter2 + 1);

@@ -1,0 +1,63 @@
+//#uobject test/all
+
+function UObject.clearNotify(obj, varname)
+{
+  removeNotify = obj.__uobjectName + "." + varname |
+  obj.updateSlot(varname, 12) |
+  updateSlot("lastChange", "") |
+  {}
+}|;
+
+all.a = 1;
+[00000001] 1
+all2.setNotifyChangeByName("all.a") |
+all.setNotifyChangeByName("all.a") |
+all2.lastChange = "";
+[00000002] ""
+//uobject write on notifychange var
+
+all.a = 4;
+[00000003] 4
+all2.lastChange;
+[00000004] "all.a"
+all.lastChange;
+[00000005] "all.a"
+all2.clearNotify(all, "a") |
+all.lastChange = "" |
+all.a = 4;
+[00000006] 4
+all2.lastChange;
+[00000007] ""
+all.lastChange;
+[00000008] "all.a"
+all.lastChange = "" |;
+all.write(0,3);
+[00000009] 3
+
+all2.lastChange;
+[00000010] ""
+all.lastChange;
+[00000011] "all.a"
+
+all.clearNotify(all, "a") |
+all.a = 4 |
+all2.lastChange;
+[00000012] ""
+all.lastChange;
+[00000013] ""
+
+
+// Set it back on and off to be sure
+all2.setNotifyChangeByName("all.a")|;
+all.a = 4|;
+all2.lastChange;
+[00000014] "all.a"
+all.lastChange;
+[00000015] ""
+all.setNotifyChangeByName("all.a")|;
+all2.clearNotify(all, "a");
+all.a = 4|;
+all2.lastChange;
+[00000016] ""
+all.lastChange;
+[00000017] "all.a"

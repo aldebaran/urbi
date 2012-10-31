@@ -1,0 +1,80 @@
+// Check Mutex used as Tag
+
+var m = Mutex.new() | {};
+
+function f (name) {
+  var d = function (msg) { echo (name + ": " + msg) };
+  d ("waiting for mutex");
+  m:{
+    d ("got mutex, printing string 1 and waiting");
+    sleep (1s);
+    d ("printing string 2 and releasing");
+  };
+} | {};
+
+// Create functions waiting on mutex
+
+m.lock();
+
+f ("func1"),
+sleep (1s);
+[00000001] *** func1: waiting for mutex
+f ("func2"),
+sleep (1s);
+[00000002] *** func2: waiting for mutex
+f ("func3"),
+[00000003] *** func3: waiting for mutex
+sleep (1s);
+
+// Unblock them one by one and check that output is not intermixed
+
+m.unlock();
+[00000004] *** func1: got mutex, printing string 1 and waiting
+[00000005] *** func1: printing string 2 and releasing
+[00000006] *** func2: got mutex, printing string 1 and waiting
+[00000007] *** func2: printing string 2 and releasing
+[00000008] *** func3: got mutex, printing string 1 and waiting
+[00000009] *** func3: printing string 2 and releasing
+
+m: {};
+echo ("This is the end");
+[00000010] *** This is the end
+
+// Check with stop. (see Bug #4576)
+// Check that stop exceptions are not miss.
+// and that mutex are still honored.
+for& (var i: 4)
+{
+  echo("%d: stop" % [i]) |
+  m.stop() |
+  echo("%d: tag, acquire, wait?" % [i]) |
+  m: {
+    echo("%d: sleep" % [i]) |
+    try {
+      sleep(2s) |
+      echo("%d: wakeup" % [i])
+    } finally {
+      echo("%d: finish" % [i])
+    }
+  } |
+  echo("%d: release, untag, end" % [i]) |
+};
+
+[00000011] *** 0: stop
+[00000012] *** 0: tag, acquire, wait?
+[00000013] *** 0: sleep
+[00000014] *** 1: stop
+[00000015] *** 1: tag, acquire, wait?
+[00000016] *** 2: stop
+[00000017] *** 2: tag, acquire, wait?
+[00000018] *** 3: stop
+[00000019] *** 3: tag, acquire, wait?
+[00000020] *** 0: finish
+[00000021] *** 0: release, untag, end
+[00000022] *** 1: release, untag, end
+[00000023] *** 2: release, untag, end
+[00000024] *** 3: sleep
+[00000025] *** 3: wakeup
+[00000026] *** 3: finish
+[00000027] *** 3: release, untag, end
+

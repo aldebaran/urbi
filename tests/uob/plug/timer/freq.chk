@@ -1,0 +1,56 @@
+//#uobject test/timer
+//#no-fast
+
+// d used to be 200 for remote tests, but 100 seems enough.
+var d = 100|;
+
+var t = timer.new()|;
+sleep(500ms);
+assert
+{
+  !t.updated;
+  !t.setupUpdate(d);
+  !t.setupUpdate(d);
+  !t.setupUpdate(d);
+  !t.setupUpdate(d);
+  !t.setupUpdate(d);
+};
+sleep(2 * d * 1ms);
+assert
+{
+  t.updated > 0;
+  t.updated < 10;
+};
+
+assert
+{
+  !t.setupUpdate(-1);
+};
+sleep(d * 1ms);
+t.updated = 0|;
+sleep(d * 1ms);
+assert
+{
+  !t.updated();
+};
+
+assert
+{
+  !t.setupUpdate(d);
+  !t.setupUpdate(-1);
+  !t.setupUpdate(d);
+  !t.setupUpdate(-1);
+  !t.setupUpdate(d);
+  !t.setupUpdate(-1);
+  !t.setupUpdate(d);
+  !t.setupUpdate(-1);
+  !t.setupUpdate(d);
+  !t.setupUpdate(-1);
+}|;
+sleep(250ms);
+
+assert
+{
+  t.updated < 10;
+};
+

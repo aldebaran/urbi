@@ -1,0 +1,10 @@
+// Check that an atom is properly cloned
+
+var a = 1.clone();
+[00000001] 1
+
+a + 2;
+[00000002] 3
+
+a.protos;
+[00000003] [1]

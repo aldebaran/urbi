@@ -1,0 +1,61 @@
+var a = Tag.new("a")|;
+var a.b = a.new("a.b")|;
+a.b:waituntil(false)|echo ("boom"),
+
+sleep(0);
+a.b.stop();
+[00000001] *** boom
+
+a.b:waituntil(false)|echo ("boom"),
+
+sleep(0);
+a.stop();
+[00000002] *** boom
+
+var a.b.c = a.b.new("a.b.c")|;
+var a.b.c.k = a.b.c.new("a.b.c.k")|;
+a.b.c.k:waituntil(false)|echo ("boom"),
+
+sleep(0);
+a.stop();
+[00000003] *** boom
+
+a.b.c.k:waituntil(false)|echo ("boom"),
+
+sleep(0);
+a.b.stop();
+[00000004] *** boom
+
+a.b.c.k:waituntil(false)|echo ("boom"),
+
+sleep(0);
+a.b.c.stop();
+[00000005] *** boom
+
+a.b.c.k:waituntil(false)|echo ("boom"),
+
+sleep(0);
+a.b.c.k.stop();
+[00000006] *** boom
+
+var t = Tag.new() |;
+t: at sync (a.enter?) echo ("a.enter");
+t: at sync (a.b.enter?) echo ("a.b.enter");
+t: at sync (a.b.leave?) echo ("a.b.leave");
+t: at sync (a.leave?) echo ("a.leave");
+
+{ var b = a.b; b: {} }|
+
+sleep(0);
+[00000006] *** a.enter
+[00000007] *** a.b.enter
+[00000008] *** a.b.leave
+[00000009] *** a.leave
+
+a.b.freeze();
+{ a.b: {  } | echo ("boom") },
+
+sleep(0);
+a.stop();
+sleep(0);
+[00000010] *** boom

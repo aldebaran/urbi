@@ -1,0 +1,16 @@
+// This test is fragile: if the machine is overloaded, it is
+// possible that the loop is not stopped within the delays, so
+// we make them real large.
+var x = 0;
+[00000001] 0
+stopif (x > 0)
+  loop
+    {
+       echo ("Tac"); 
+       sleep (3s)
+    },
+[00000002] *** Tac
+sleep (500ms); 
+x = 1;
+[00000003] 1
+sleep (10s);

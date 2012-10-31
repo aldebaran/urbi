@@ -1,0 +1,16 @@
+var o = Object.new();
+[00000001] Object_0x836ef30
+UVar.new(o,"v")|;
+o.v = 12;
+[00000002] 12
+o.v;
+[00000003] 12
+o.&v.notifyChange(function() {cout << lobby.o.v})|;
+o.v = 10;
+[00000004:output] 10
+[00000005] 10
+o.v = 11;
+[00000006:output] 11
+[00000007] 11
+o.v;
+[00000008] 11

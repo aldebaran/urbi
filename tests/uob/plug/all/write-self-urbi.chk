@@ -1,0 +1,31 @@
+//#uobject test/all
+
+// The urbi code sent by c++ code will display stuffs otherwise.
+topLevel.enabled = false;
+
+// The C++ code is sending urbi code: everything will happen asynchronously.
+var all.z = 0 |;
+all.urbiWriteOwnByName("z", 20)|;
+var a = all.new(0)|;
+var a.z = 0|;
+a.urbiWriteOwnByName("z", 30)|;
+//cow from uobject
+var b = a.new(0)|;
+b.urbiWriteOwnByName("z", 40)|;
+
+detach({
+    sleep(1s);
+    assert
+    {
+      all.z == 20;
+      a.z == 30;
+      b.z == 40;
+    };
+});
+
+// In a separate detach to ensure it gets executed.
+detach({
+    sleep(1.2s);
+    System.shutdown()
+});
+var shutdown  = "DO NOT WANT!!";

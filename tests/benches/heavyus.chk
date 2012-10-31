@@ -1,0 +1,307 @@
+// Test with a lot of urbiscript.
+
+package lang.Point{} |;
+import Math.*;
+do(Point)
+{
+  var x = 0;
+  var y = 0;
+  function '=='(p2)
+  {
+    x == p2.x && y == p2.y
+  };
+  function init(xx=0, yy=0)
+  {
+    x=xx | y = yy
+  };
+  function set(px, py=0)
+  {
+    if (px.isA(Point))
+    {
+      x=px.x | y = px.y
+    }
+    else
+    {
+      x=px | y = py
+    }
+  };
+  for (var o: ["*", "/"])
+  {
+    var op = Float.getSlotValue(o);
+    setSlotValue(o, function(b)
+      {
+	Point.new(op.apply([x, b]),
+	op.apply([y, b]))
+      });
+  };
+  for (var o: ["+", "-"])
+  {
+    var op = Float.getSlotValue(o);
+    setSlotValue(o, function(b)
+      {
+	if (b.isA(Float))
+	{
+	  Point.new(
+	    op.apply([x, b]),
+	    op.apply([y, b]))
+	}
+	else
+	{
+	  Point.new(
+	    op.apply([x, b.x]),
+	    op.apply([y, b.y]))
+	}
+      })
+  };
+  function asString()
+  {
+    x.asString() + "," + y.asString()
+  };
+  function abs()
+  {
+    x.abs().max(y.abs())
+  };
+  function norm()
+  {
+    (x*x + y*y).sqrt()
+  };
+  function absConstrain(p2)
+  {
+    if (x.abs() > p2.x())
+      x = p2.x * x.sgn()|
+    if (y.abs() > p2.y)
+      y = p2.y * y.sgn()|
+  };
+}|
+
+class ShipInterface
+{
+  // Current position(R)
+  var position = Point.new();
+  // Current speed(R)
+  var speed = Point.new();
+  // Target acceleration(RW)
+  var acceleration = Point.new();
+  // Current energy reserve(R)
+  var energy = 1e100;
+  // Current armor status(R)
+  var armor = 0;
+  // Emited when a scan result is received(R).
+  var scanResult = Event.new();
+  /** Fire a bullet at givent angle in radian, with given speed and yield
+   * With your ultimate coilgun(tm), the cost is yield*speed*speed/2.
+   */
+   function fireBullet(var angle, var speed, var yield){};
+  // No you are not, yet.
+  var dead = false;
+  // Damage just received.
+  var lastDamage;
+  // Your mass (R)
+  var mass = 0;
+  // Your diameter (R)
+  var diameter = 1;
+  // hide me
+  var damageBuffer = 0;
+  var yield = 0; //debug
+}|
+
+
+function List.mfilter(l)
+{
+  filter(function(x) { l.apply([x])})
+}|
+
+class World
+{
+  class Limits
+  {
+    var accelerationMax = Point.new(10,10);
+  };
+  class Parameters
+  {
+    // Energy cost given for acceleration norm
+    function accelerationCost(x) { x**2};
+    // Speed loss due to frictio
+    function friction(s) { s/10};
+    function bulletFriction(s) { s/100};
+    /// Damage per yield
+    function damage(y) { y * 10};
+    /// Min speed before a bullet disapears (trigger mechanism failure).
+    var minBulletSpeed = 1;
+  };
+
+
+  var limits = Limits.new();
+  var p = Parameters.new();
+  function init()
+  {
+    do(this)
+    {
+      var ships = [];
+      var cemetary = []; // dead ships
+      var bullets = [];
+    }
+  };
+  function bulletMove(var b)
+  {
+    var w = this;
+    do(b)
+    {
+      position += speed;
+      speed -= w.p.bulletFriction(speed);
+      if (speed.norm() < w.p.minBulletSpeed || w.collidesArena(b.position))
+        dead = true
+    }
+  };
+  function shipMove(var s)
+  {
+    var w = this;
+    do(s)
+    {{
+      acceleration.absConstrain(w.limits.accelerationMax);
+      var ecost = w.p.accelerationCost(acceleration.norm());
+      if (ecost > energy)
+        throw ( "Insuficient energy! "  + ecost + " " + energy);
+      speed += acceleration;
+      // Apply friction factor
+      speed -= w.p.friction(s.speed);
+      // No speed limits should be required due to the consumption rule
+      position += speed;
+    }}
+  };
+  function collidesArena(var pos)
+  {
+    pos.x <0 || pos.y < 0 || pos.x>100 || pos.y > 100
+  };
+  /// Ship to ship collision
+  function collideCheck()
+  {
+    var res = [];
+    if (ships.size == 1)
+      return res;
+    for(var i: ships.size)
+    {
+      var s1 = ships[i];
+      if (collidesArena(s1.position))
+      {
+        s1.damageBuffer += s1.mass *  s1.speed.norm();
+        s1.speed = 0;
+      };
+      for(var j_: ships.size-i-1)
+      {
+        var j =i+j_+1;
+        var s2 = ships[j];
+        if ((s1.position-s2.position).norm() < (s1.diameter +s2.diameter)/2)
+        { // Collision!
+          // Simple model of complete absorbtion ASSUMES EQUAL MASS.
+          var mspeed = (s1.speed + s2.speed)/2;
+          var dspeed = s1.speed - s2.speed;
+          s1.speed = s2.speed = mspeed;
+          s1.damageBuffer += s2.mass * dspeed.norm()**2;
+          s2.damageBuffer += s1.mass * dspeed.norm()**2;
+          res << [s1, s2];
+        }
+      }
+    };
+    res
+  };
+  function bulletDamage()
+  {
+    for(var s: ships)
+    for(var b: bullets)
+    {
+      if (!b.dead
+        && (s.position-b.position).norm() < (s.diameter + b.diameter)/2)
+      {
+        // Cinetic damage from bullet is negligible.
+        echo(p.getSlotValue("damage"));
+        s.damageBuffer += p.damage(b.yield);
+        b.dead = true;
+      }
+    }
+  };
+  function dealDamage(s)
+  {
+    // FIXME: shield
+    s.armor -= s.damageBuffer;
+    if (s.armor <=0)
+    {
+      Lobby.wall("kabooom");
+      s.dead = true;
+    };
+    s.lastDamage = s.damageBuffer;
+    s.damageBuffer = 0;
+  };
+  function step()
+  {
+    // Init step
+    for(var s: ships)
+    {
+
+    };
+    // move
+    for(var s: ships)
+    {
+      try{
+        shipMove(s)
+      }
+      catch(var e)
+      {
+        Lobby.wall(e);
+        s.damageBuffer += 1e38; //program error = core overload
+      }
+    };
+    // bulletMove
+    for(var b:bullets)
+      bulletMove(b); // I just said that!
+    // collide
+    collideCheck();
+    // Bullet damage check
+    bulletDamage();
+    // deal the accumulated damage
+    for(var s: ships)
+      dealDamage(s);
+    cemetary += ships.mfilter(function() { dead});
+    ships = ships.mfilter(function() { !dead});
+    bullets = bullets.mfilter(function() { !dead});
+  };
+}|
+
+var nShip = 10 |
+var nBullets = 50 |
+
+World.init() |
+// Set infinite mode.
+World.p.minBulletSpeed = -1 | // never kill bullets
+World.p.damage = function(y) { 0 } |
+ShipInterface.diameter = -1 |
+ShipInterface.armor = 100 |
+World.collidesArena = function(x) { false} |
+
+for|(var i: nShip)
+{
+  var s = ShipInterface.new();
+  s.position = Point.new(random(100), random(100));
+  s.acceleration = Point.new(random(10)/100000, random(10)/100000);
+  World.ships << s;
+}|
+
+for|(var b: nBullets)
+{
+  var s = ShipInterface.new();
+  s.position = Point.new(random(100), random(100));
+  s.acceleration = Point.new(random(10), random(10));
+  World.bullets << s;
+}|
+
+1.srandom()|
+var frame = 0|
+var t = time|
+{
+  nonInterruptible;
+  //UNCOMMENT FOR VALGRIND
+  for|(400) World.step();
+  //time.print;
+  shutdown;
+};
+

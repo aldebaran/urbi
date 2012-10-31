@@ -1,0 +1,84 @@
+// an error must be displayed, wherever it happens
+f;
+[00000001:error] !!! input.u:@.1: lookup failed: f
+f,
+[00000002:error] !!! input.u:@.1: lookup failed: f
+detach(f)|;
+[00000003:error] !!! input.u:@.8: lookup failed: f
+[00000003:error] !!!    called from: input.u:@1.1-9: detach
+// and it must not impact other top-level tasks
+sleep(500ms) | f,
+sleep(1s) | 1;
+[00000005:error] !!! input.u:@1.16: lookup failed: f
+[00000006] 1
+
+// but it must stop parent block ASAP
+var x = 0|;
+{ f ; x=1 };
+[00000008:error] !!! input.u:@.3: lookup failed: f
+assert { x == 0 };
+
+// unless it is detached of course
+{ detach(f) ; sleep(100ms); x=1}|; //sleep to have deterministic order
+[00000010:error] !!! input.u:@.10: lookup failed: f
+[00000010:error] !!!    called from: input.u:@1.3-11: detach
+assert { x == 1 };
+
+// try again in detached code to be sure
+x = 0|;
+detach({ f ; x=1})|;
+[00000015:error] !!! input.u:@.10: lookup failed: f
+[00000016:error] !!!    called from: input.u:@1.1-18: detach
+sleep(500ms);
+assert { x == 0 };
+
+detach({ detach(f) ; sleep(100ms); x=1})|; //sleep to have deterministic order
+[00000018:error] !!! input.u:@.17: lookup failed: f
+[00000018:error] !!!    called from: input.u:@1.10-18: detach
+[00000018:error] !!!    called from: input.u:@2.1-40: detach
+sleep(500ms);
+assert { x == 1 };
+
+
+//corner cases
+1 & f,
+[00000022:error] !!! input.u:@.5: lookup failed: f
+sleep(300ms);
+
+f & 1,
+[00000023:error] !!! input.u:@.1: lookup failed: f
+sleep(300ms);
+
+{1 & f} & 1,
+[00000024:error] !!! input.u:@.6: lookup failed: f
+sleep(300ms);
+
+{f & 1} & 1,
+[00000025:error] !!! input.u:@.2: lookup failed: f
+sleep(300ms);
+
+1 & {1 & f},
+[00000026:error] !!! input.u:@.10: lookup failed: f
+sleep(300ms);
+
+1 & {f & 1},
+[00000027:error] !!! input.u:@.6: lookup failed: f
+
+// test that code is realy stopped for & and , nodes
+x = 0|;
+
+{ f, {x=0;sleep(100ms);x=1}};
+[00000028:error] !!! input.u:@.3: lookup failed: f
+assert { x == 0 };
+
+{ {x=0;sleep(100ms);x=2}, f};
+[00000030:error] !!! input.u:@.27: lookup failed: f
+assert { x == 0 };
+
+{ f& {x=0;x=3}};
+[00000032:error] !!! input.u:@.3: lookup failed: f
+assert { x == 0 };
+
+{ {x=0;x=4}& f};
+[00000034:error] !!! input.u:@.14: lookup failed: f
+assert { x == 0 };

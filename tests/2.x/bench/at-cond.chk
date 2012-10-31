@@ -1,0 +1,10 @@
+//#timeout 10
+var x = 0|
+var cnt = 0|;
+at (x>10) cnt++;
+//[00000001:warning] !!! input.u:@.1-15: expensive feature: at (<expression>), prefer at (<event>)
+
+for(1000)
+   {x = 100-x;1;2;3;4;5};
+cnt;
+[00000001] 500

@@ -1,0 +1,57 @@
+  assign: x=100 time:3s
+&
+  s = sample(x, 3, 1s);
+
+assertSample(s, [0, 33.333333, 66.666666]);
+
+
+// Check with freeze.
+x = 0|;
+  {
+    assign: x=100 time:3s
+  }
+&
+  {
+    s = sample(x, 2, 1s);
+    assign.freeze();
+    sleep (2s);
+    assign.unfreeze();
+    s += sample(x, 2, 1s);
+  };
+assertSample(s, [0, 33.333333, 33.333333, 66.666666]);
+
+// Freeze assignment, change value
+
+x = 0 |;
+
+  {
+    assign: x=100 time:3s
+  }
+&
+  {
+    s = sample(x, 2, 1s);
+    assign.freeze();
+    sleep (1s);
+    x = 400;
+    sleep (1s);
+    assign.unfreeze();
+    sleep(1s);
+    s += sample(x, 2, 1s);
+  };
+assertSample(s, [0, 33.333333, 66.666666, 100]);
+
+// Verify that modifiers are working on list members.
+
+x = [0, 0] |;
+
+  assign: x[0]=100 time:3s
+&
+  s = sample(x[0], 3, 1s);
+
+assertSample(s, [0, 33.333333, 66.666666]);
+
+
+// check zero displacement
+
+x = 0|
+x = 0 time:1s;

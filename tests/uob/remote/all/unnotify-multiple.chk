@@ -1,0 +1,61 @@
+//#uobject test/all
+//#plug test/all
+
+
+all.a = 1;
+[00000001] 1
+remall2.setNotifyChangeByName("all.a")|;
+remall.setNotifyChangeByName("all.a")|;
+remall2.lastChange = "";
+[00000002] ""
+//uobject write on notifychange var
+
+all.write(0,3);
+[00000003] 3
+sleep(200ms);
+remall2.lastChange;
+[00000004] "all.a"
+remall.lastChange;
+[00000005] "all.a"
+
+remall2.removeNotify = "all.a" |
+all.a = 20 |
+sleep(200ms);
+//all.&a.change.dict;
+remall2.lastChange = "";
+[00000006] ""
+all.a = 4;
+[00000007] 4
+sleep(200ms);
+remall2.lastChange;
+[00000008] ""
+remall.lastChange;
+[00000009] "all.a"
+
+remall.lastChange = ""|;
+// Set it back on and off to be sure
+remall2.setNotifyChangeByName("all.a")|;
+all.a = 4|;
+sleep(200ms);
+remall2.lastChange;
+[00000010] "all.a"
+remall.lastChange;
+[00000011] "all.a"
+remall.removeNotify = "all.a" | all.a = 12 | sleep(200ms);
+remall.lastChange = ""| remall2.lastChange = ""| sleep(200ms);
+
+all.a = 4|;
+sleep(200ms);
+remall2.lastChange;
+[00000012] "all.a"
+remall.lastChange;
+[00000013] ""
+
+remall2.removeNotify = "all.a" | all.a = 12 | sleep(200ms);
+remall.lastChange = ""| remall2.lastChange = ""|;
+all.a = 4|;
+sleep(200ms);
+remall2.lastChange;
+[00000014] ""
+remall.lastChange;
+[00000015] ""

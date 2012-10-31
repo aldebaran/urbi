@@ -1,0 +1,21 @@
+// Maybe no longer useful, as we use this kind of programming a lot in
+// the stdlib.
+function map (fn, l)
+{
+  var res = [];
+  while (l.size)
+  {
+    res << fn(l.head());
+    l = l.tail();
+  };
+  res
+}|;
+
+//var id = function (x) { x };
+//var square = function (x) { x*x };
+map (function (x) { x }, [1, 2, 3]);
+[00000001] [1, 2, 3]
+
+
+map (function (x) { x*x }, [1, 2, 3]);
+[00000002] [1, 4, 9]

@@ -1,0 +1,47 @@
+function () { x' };
+[00000001:warning] !!! input.u:@.15-16: `x'' is deprecated, use `x.'\'''.
+[00000002] function () {
+[:]  x.'\''
+[:]}
+
+function () { x'' };
+[00000003:warning] !!! input.u:@.15-17: `x''' is deprecated, use `x.'\'\'''.
+[00000004] function () {
+[:]  x.'\'\''
+[:]}
+
+function () { x'd };
+[00000005:warning] !!! input.u:@.15-17: `x'd' is deprecated, use `x.'\'d''.
+[00000006] function () {
+[:]  x.'\'d'
+[:]}
+
+function () { x'dd };
+[00000007:warning] !!! input.u:@.15-18: `x'dd' is deprecated, use `x.'\'dd''.
+[00000008] function () {
+[:]  x.'\'dd'
+[:]}
+
+function () { x'e };
+[00000009:warning] !!! input.u:@.15-17: `x'e' is deprecated, use `x.'\'e''.
+[00000010] function () {
+[:]  x.'\'e'
+[:]}
+
+function () { x'n };
+[00000011:warning] !!! input.u:@.15-17: `x'n' is deprecated, use `x.'\'n''
+[00000012] function () {
+[:]  x.'\'n'
+[:]}
+
+function () { x'in };
+[00000013:warning] !!! input.u:@.15-18: `x'in' is deprecated, use `x.'\'in''
+[00000014] function () {
+[:]  x.'\'in'
+[:]}
+
+function () { x'out };
+[00000015:warning] !!! input.u:@.15-19: `x'out' is deprecated, use `x.'\'out''
+[00000016] function () {
+[:]  x.'\'out'
+[:]}

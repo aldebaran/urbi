@@ -1,0 +1,29 @@
+// We segv on exceptions thrown from Socket.receive.  Issue #4789.
+// It seems that it happens only in debug builds.
+var echo =
+  do (Server.new())
+  {
+    at (connection?(var socket))
+      at (socket.received?(var data))
+      {
+        clog << "echo: Resend %s" % data;
+        socket.write(data);
+      };
+  }|;
+
+var client =
+  do (Socket.new())
+  {
+    function receive(var data)
+    {
+      1/0;
+    };
+  }|;
+
+every (100ms)
+  Socket.poll(),
+echo.listen("localhost", "0");
+clog << "connecting to %s:%s" % [echo.host, echo.port];
+
+client.connect(echo.host, echo.port);
+client.write("0");

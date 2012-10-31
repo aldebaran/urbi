@@ -1,0 +1,23 @@
+//#plug test/all
+//#uobject test/all
+
+// Test writing by passing reference to uvar
+
+remall.writeByUVar(remall.&a, 42)|;
+remall.a;
+[00000001] 42
+
+class t {}|;
+var t.all2 = remall.new(0)|;
+remall.writeByUVar(t.all2.&a, "foo")|;
+t.all2.a;
+[00000002] "foo"
+
+
+remall.writeByUVar(all.&a, 10)|;
+all.a;
+[00000003] 10
+
+all.writeByUVar(t.all2.&a, "bar")|;
+t.all2.a;
+[00000004] "bar"

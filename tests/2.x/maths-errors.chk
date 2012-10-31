@@ -1,0 +1,18 @@
+1 / 0;
+[00000001:error] !!! input.u:@.1-5: /: division by 0
+1 % 0;
+[00000002:error] !!! input.u:@.1-5: %: modulo by 0
+Math.sqrt(-10.0);
+[00000003:error] !!! input.u:@.1-16: sqrt: argument has to be positive
+Math.log(-10.0);
+[00000004:error] !!! input.u:@.1-15: log: argument has to be positive
+Math.acos(-100.0);
+[00000005:error] !!! input.u:@.1-17: acos: invalid range
+Math.asin(-100.0);
+[00000006:error] !!! input.u:@.1-17: asin: invalid range
+
+// The following message is surprising, but correct: Math.sqr runs
+// "foo".sqr, and String does not have any sqr slot.
+
+Math.sqr("foo");
+[00000007:error] !!! input.u:@.1-15: sqr: lookup failed: sqr

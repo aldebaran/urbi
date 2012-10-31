@@ -1,0 +1,29 @@
+var a = Object.new() |;
+
+var a . x = 1;
+[00000001] 1
+
+// Look up in the object itself.
+var a . get = function () { x } |;
+a . get();
+[00000002] 1
+
+var a . update = function (y) { x = y } |;
+a . update (2);
+[00000003] 2
+
+a . get();
+[00000004] 2
+
+a . update = function (y) { this . x = y }|;
+a . update (20);
+[00000005] 20
+
+
+// Two different 'x'.
+var a . move = function (x) { this . x = this . x + x }|;
+a . move (10);
+[00000006] 30
+
+a . x;
+[00000007] 30

@@ -1,0 +1,13 @@
+function Global.fibo(x)
+{
+  if (x < 2)
+    1
+  else
+    fibo(x - 1) + fibo(x - 2)
+}|;
+import Global.*;
+for (1024 * 16)
+  fibo(10);
+
+"end";
+[00000000] "end"

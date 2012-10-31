@@ -1,0 +1,12 @@
+// Check that scoping is right
+function f() { if (true) var i; i } | f();
+[00000001:error] !!! input.u:@.33: lookup failed: i
+[00000002:error] !!!    called from: input.u:2.39-41: f
+
+function g() { while (false) var i; i } | g();
+[00000003:error] !!! input.u:@.37: lookup failed: i
+[00000004:error] !!!    called from: input.u:6.43-45: g
+
+function h() { for (var j : 10) var i; i } | h();
+[00000005:error] !!! input.u:@.40: lookup failed: i
+[00000006:error] !!!    called from: input.u:10.46-48: h

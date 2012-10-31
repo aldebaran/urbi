@@ -1,0 +1,79 @@
+// /!\ do not use assert, because assert is implemented with functions.
+
+echo (12, 34);
+[00000001:error] !!! input.u:@.1-13: echo: argument 2: unexpected 34, expected a String
+
+
+// 0-ary.
+var zero = function () { 0 }|;
+zero();
+[00000001] 0
+
+zero(1);
+[00000002:error] !!! input.u:@.1-7: zero: expected 0 argument, given 1
+
+// 1-ary.
+var id = function (a) { a }|;
+id(1);
+[00000003] 1
+
+id(id(2));
+[00000004] 2
+
+
+id();
+[00000006:error] !!! input.u:@.1-4: id: expected 1 argument, given 0
+
+id(1, 2, 3);
+[00000007:error] !!! input.u:@.1-11: id: expected 1 argument, given 3
+
+
+// 2-ary.
+var add = function (a, b) { a + b }|;
+add();
+[00000008:error] !!! input.u:@.1-5: add: expected 2 arguments, given 0
+
+add(1);
+[00000009:error] !!! input.u:@.1-6: add: expected 2 arguments, given 1
+
+add(1, 2, 3);
+[00000010:error] !!! input.u:@.1-12: add: expected 2 arguments, given 3
+
+var mul = function (a, b) { a * b }|;
+add(1, 2);
+[00000011] 3
+
+mul(2, 2);
+[00000012] 4
+
+add(mul(2, 2), 1);
+[00000013] 5
+
+// Fields of an object.
+var c = Object.new()|;
+var c . x = 23;
+[00000014] 23
+
+var c . y = c.x * 100 + 3;
+[00000015] 2303
+
+var c . inc = function (a) { this.x = this.x + a }|;
+c.inc (1);
+[00000016] 24
+
+c.inc (2);
+[00000017] 26
+
+// Alternative function definition syntax.
+function c . dec (a)   { this.x = this.x - a }|;
+c.dec(3);
+[00000018] 23
+
+// This may cause segmentation fault if the interpreter does not keep a
+// reference on the evaluated code.
+var redef = function () { redef = function () { 2 }; 1 }|;
+
+redef();
+redef();
+[00000019] 1
+[00000020] 2

@@ -1,0 +1,86 @@
+23;
+[00000001] 23
+
+class ca { 2303 };
+[00000002] ca
+
+// Ensure setslot and updateslot are the ones we want.
+class cb {
+  var v = 1;
+  var w = 2;
+  w = 3;
+};
+[00000003] cb
+
+cb.v;
+[00000004] 1
+
+cb.w;
+[00000005] 3
+
+{
+  var a = 23;
+  class c {
+    a.print();
+  }
+};
+[00000006] 23
+[00000007] c
+
+//ensure c is not in lobby
+class c{};
+[00000008] c
+
+{
+  var a = 51;
+  a;
+  class ca {
+    var a = 1;
+    a
+  };
+  a
+};
+[00000009] 51
+
+
+class cc {
+  var a = 1;
+  echo(a);
+  class cd {
+    var a = 2;
+    echo(a);
+    class ce{
+      var a = 3;
+      echo(a)
+    };
+    echo(a);
+    class cf{
+      var a = 4;
+      echo(a)
+    };
+    echo(a)
+  };
+  echo(a);
+  a = 5;
+  echo(a)
+};
+[00000010] *** 1
+[00000011] *** 2
+[00000012] *** 3
+[00000013] *** 2
+[00000014] *** 4
+[00000015] *** 2
+[00000016] *** 1
+[00000017] *** 5
+[00000018] cc
+
+
+{
+  var a = 2000;
+  class ca {
+    var b = 303;
+    (a + b).print()
+  }
+};
+[00000019] 2303
+[00000020] ca

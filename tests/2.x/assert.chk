@@ -1,0 +1,46 @@
+assert (true);
+echo (1);
+[00000001] *** 1
+
+assert (false);
+[00000002:error] !!! input.u:@.9-13: failed assertion: false (false == false)
+
+assert(1 == 2);
+[00000003:error] !!! input.u:@.8-13: failed assertion: 1 == 2 (1 != 2)
+
+System.ndebug = true |;
+assert (false);
+echo (1);
+[00000004] *** 1
+
+System.ndebug = false |;
+assert (false);
+[00000005:error] !!! input.u:@.9-13: failed assertion: false (false == false)
+
+assert(1 in []);
+[00000006:error] !!! input.u:@.8-14: failed assertion: 1 in [] (1 not in [])
+
+assert(false && {throw 0});
+[00000007:error] !!! input.u:23.8-25: failed assertion: var '$t1' = false | if ('$t1')
+[:]{ { throw 0 } }
+[:]else
+[:]{ '$t1' }
+
+// Check that arguments are not evaluated more than once.
+function id
+{
+  var first = call.argAt(0);
+  var second = call.argAt(1);
+  clog << "(%s, %s)" % [first,second ];
+  true
+}|;
+
+{
+  var x = "";
+  assert
+  {
+    id(x += "1", x += "2");
+  };
+  x;
+};
+[00000008] "12"

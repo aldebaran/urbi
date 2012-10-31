@@ -1,0 +1,11 @@
+//#uobject test/all
+uobjectsAll();
+
+
+timeout(1s)
+  every(100ms)
+  {
+    var t = time;
+    all.writeByName("all.v", 42);
+    assert(t - all.v->timestamp < 0.1);
+  };

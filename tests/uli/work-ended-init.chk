@@ -1,0 +1,486 @@
+/*
+This is a FSM like that:
+
+   +--WorkEndedInit------------------------------------------------------+
+   |                                 	       	       	              	 |
+   |   +--Foo----------------+       	       	+--Bar----------------+  |
+   |   |                     |       	       	|                     |  |
+   |   |                     +----------------->|                     |  |
+   |   |                     |                  |                     |  |
+   |   |                     |       	       	|                     |  |
+   |   |                     |       	       	|                     |  |
+   |   |                     |       	       	|                     |  |
+   |   |                     |<-----------------+                     |  |
+   |   |                     |                 	|                     |  |
+   |   |                     |                  |                     |  |
+   |   +---------------------+                  +---------------------+  |
+   |                                                                     |
+   +---------------------------------------------------------------------+
+
+
+All generated files are inlined.
+
+*/
+
+/*!
+ * WorkEndedInit.u: Main graph implementation.
+ *
+ * Load this file in your server to run the graph.
+ *
+ * Created:
+ *      by: xml2urbi 2.0
+ *
+ * WARNING! All changes made in this file will be lost!
+ */
+
+
+// Load urbi-support files.
+/*
+ * node.u: This file is part of urbidev.
+ * Copyright (C) Gostai S.A.S., 2007.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ * For comments, bug reports and feedback: http://www.urbiforge.com
+ */
+
+/*
+ * array.u: This file is part of urbidev.
+ * Copyright (C) Gostai S.A.S., 2007.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ * For comments, bug reports and feedback: http://www.urbiforge.com
+ */
+
+// Array functions tool box.
+class Array; // List is a reserved identifier.
+
+/*!
+ * Return the index of the first inequality between two list.
+ *
+ * \param a1 array one.
+ * \param a2 array two.
+ */
+function Array.diff_index(a1, a2)
+{
+  // FIXME: while instead of for because for is buggy with an empty body.
+  // FIXME: Uggly code because of ticket #143.
+  // Should be written this way:
+  // for (i = 0; i < size(a1) && i < size(a2) && a1[i] == a2[i]; i++)
+  //   ;
+  var i = 0;
+  for| (i = 0; i < size(a1) && i < size(a2); i++)
+    if (a1[i] != a2[i])
+      return i;
+  return i;
+};
+
+// Base class of the nodes of a behavior graph.
+class Node
+{
+  var name;	// The node name.
+};
+
+/*
+ * node-start_code.u.template: This file is part of urbidev.
+ * Copyright (C) Gostai S.A.S., 2007.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ * For comments, bug reports and feedback: http://www.urbiforge.com
+ */
+
+// This template is preprocessed with sed. All " + name + " will be replaced.
+
+/*!
+ * Compute the code of the start function using the name attribute.
+ */
+function Node.start_code ()
+{
+  var ret = "
+function " + name + ".start (dst)
+{
+  // Initialize variables.
+  var " + name + ".workEnded = 0;
+  var " + name + ".startTime = time();
+  // Setup transitions.
+  var ret_transtion;
+  ret_transitions = transitions () |
+    {
+      stop " + name + ".work;
+      return ret_transitions
+    },
+  // Dispatch and work.
+  " + name + ".start+begin+end:
+    {
+      if (dst != \"\" || start_node != \"\")
+        {
+          var ret = dispatch (name, dst);
+          stop " + name + ".work;
+          return ret;
+        } &
+        {
+          " + name + ".work+begin+end: work() |
+          " + name + ".workEnded = 1 |
+          if (isdef(" + name + ".on_leave))
+            __wrap_on_leave__ ();
+        };
+      waituntil(false)
+    }
+};";
+  return ret;
+};
+
+at (Node.execute (code))
+  exec (code);
+
+/*!
+ * Node class Constructor. Dynamically define the start function.
+ *
+ * \param name_  The name of the node.
+ */
+function Node.init (name_)
+{
+  name = name_;
+  var code = start_code ();
+  // FIXME: no nested function def allowed, workaround
+  Node.execute!(code);
+};
+
+/*!
+ * Dispatch events. Start and stop nodes on the path from src to dst.
+ *
+ * \param src Name of the source node of the transition.
+ * \param dst Name of the destination node of the transition.
+ */
+function Node.dispatch (src, dst)
+{
+  var src_node;                     // The node to start.
+  var dst_node;                     // The argument to start.
+  var ret;                          // src_node.start return value.
+  var src_path = $(src + ".path");  // The path to the source node.
+  var dst_path;                     // The path to the destination node.
+  if (dst == "")
+    dst_path = src_path
+  else
+    dst_path = $(dst + ".path");
+  var index = Array.diff_index (src_path, dst_path);
+  var size_dst_path;
+  while (size(src_path) == index)
+    {
+      size_dst_path = size(dst_path);
+      if (size_dst_path < index)
+        "BehaviorGraph.dispatch:error: non sense"
+      else
+        {
+          dst_node = "";
+          // Choose the node to start.
+          if (size_dst_path > index)
+            {
+              if (size_dst_path == index + 1)
+                src_node = dst_path[size(dst_path) - 1]
+              else
+                {
+                  src_node = dst_path[index];
+                  dst_node = dst_path[size(dst_path) - 1]
+                }
+            }
+          else
+            src_node = $(src + ".start_node");
+          ret = $(src_node + ".start") (dst_node);
+        };
+      dst_path = $(ret + ".path");
+      index = Array.diff_index (src_path, dst_path);
+    };
+  return ret
+};
+
+
+// Load nodes code.
+/*!
+ * WorkEndedInit.u: WorkEndedInit state implementation.
+ *
+ * User friendly part of WorkEndedInit state implementation.
+ *
+ * Created:
+ *      by: xml2urbi 2.0
+ *
+ * WARNING! All changes made in this file will be lost!
+ */
+
+// Beginning of WorkEndedInit state.
+
+// Load WorkEndedInit core state definition.
+# line 1 "WorkEndedInit/WorkEndedInit-core.u"
+/*!
+ * WorkEndedInit-core.u: WorkEndedInit state implementation.
+ *
+ * Core part of WorkEndedInit state implementation.
+ *
+ * Created:
+ *      by: xml2urbi 2.0
+ *
+ * WARNING! All changes made in this file will be lost!
+ */
+
+/*
+The WorkEndedInit node.
+ */
+if (isdef(WorkEndedInit))
+  delete WorkEndedInit;
+var WorkEndedInit = Node.new("WorkEndedInit");
+
+// Initialize WorkEndedInit attributes.
+var WorkEndedInit.start_node = "Foo";
+var WorkEndedInit.path = [ "WorkEndedInit" ];
+var WorkEndedInit.nodes = [ "Bar", "Foo" ];
+var WorkEndedInit.parent = "";
+var WorkEndedInit.workEnded = 0;
+var WorkEndedInit.startTime = -1;
+
+// Setup WorkEndedInit transitions.
+function WorkEndedInit.transitions ()
+{
+  waituntil(false)
+};
+
+// FIXME: With $() for tags, we could avoid this function.
+function WorkEndedInit.__wrap_on_leave__ ()
+{
+  WorkEndedInit.on_leave+begin+end: { WorkEndedInit.on_leave () }
+};
+
+// End of WorkEndedInit state.
+# line 16 "WorkEndedInit/WorkEndedInit.u"
+
+// WorkEndedInit functions.
+
+
+function WorkEndedInit.begin ()
+{
+  var local.counter = 0;
+};
+
+function WorkEndedInit.work ()
+{
+  at (counter == 4)
+    stop WorkEndedInit.work;
+  waituntil(false);
+};
+
+function WorkEndedInit.on_leave ()
+{
+  WorkEndedInit.workEnded << WorkEndedInit.workEnded;
+  Foo.workEnded << Foo.workEnded;
+  Bar.workEnded << Bar.workEnded;
+  shutdown;
+};
+
+
+// End of WorkEndedInit state.
+/*!
+ * Bar.u: Bar state implementation.
+ *
+ * User friendly part of Bar state implementation.
+ *
+ * Created:
+ *      by: xml2urbi 2.0
+ *
+ * WARNING! All changes made in this file will be lost!
+ */
+
+// Beginning of Bar state.
+
+// Load Bar core state definition.
+# line 1 "WorkEndedInit/Bar-core.u"
+/*!
+ * Bar-core.u: Bar state implementation.
+ *
+ * Core part of Bar state implementation.
+ *
+ * Created:
+ *      by: xml2urbi 2.0
+ *
+ * WARNING! All changes made in this file will be lost!
+ */
+
+/*
+The Bar node.
+ */
+if (isdef(Bar))
+  delete Bar;
+var Bar = Node.new("Bar");
+
+// Initialize Bar attributes.
+var Bar.start_node = "";
+var Bar.path = [ "WorkEndedInit", "Bar" ];
+var Bar.nodes = [  ];
+var Bar.parent = "WorkEndedInit";
+var Bar.workEnded = 0;
+var Bar.startTime = -1;
+
+// Setup Bar transitions.
+function Bar.transitions ()
+{
+  // to Foo (Bar_Foo)
+  at (workEnded)
+    {
+      stop Bar.work;
+      return "Foo"
+    };
+  waituntil(false)
+};
+
+// FIXME: With $() for tags, we could avoid this function.
+function Bar.__wrap_on_leave__ ()
+{
+  Bar.on_leave+begin+end: { Bar.on_leave () }
+};
+
+// End of Bar state.
+# line 16 "WorkEndedInit/Bar.u"
+
+// Bar functions.
+
+function Bar.work ()
+{
+  wait(0.1s) | echo ("bar") |
+  Bar.counter << counter; counter++;
+};
+
+
+// End of Bar state.
+/*!
+ * Foo.u: Foo state implementation.
+ *
+ * User friendly part of Foo state implementation.
+ *
+ * Created:
+ *      by: xml2urbi 2.0
+ *
+ * WARNING! All changes made in this file will be lost!
+ */
+
+// Beginning of Foo state.
+
+// Load Foo core state definition.
+# line 1 "WorkEndedInit/Foo-core.u"
+/*!
+ * Foo-core.u: Foo state implementation.
+ *
+ * Core part of Foo state implementation.
+ *
+ * Created:
+ *      by: xml2urbi 2.0
+ *
+ * WARNING! All changes made in this file will be lost!
+ */
+
+/*
+The Foo node.
+ */
+if (isdef(Foo))
+  delete Foo;
+var Foo = Node.new("Foo");
+
+// Initialize Foo attributes.
+var Foo.start_node = "";
+var Foo.path = [ "WorkEndedInit", "Foo" ];
+var Foo.nodes = [  ];
+var Foo.parent = "WorkEndedInit";
+var Foo.workEnded = 0;
+var Foo.startTime = -1;
+
+// Setup Foo transitions.
+function Foo.transitions ()
+{
+  // to Bar (Foo_Bar)
+  at (workEnded)
+    {
+      stop Foo.work;
+      return "Bar"
+    };
+  waituntil(false)
+};
+
+// FIXME: With $() for tags, we could avoid this function.
+function Foo.__wrap_on_leave__ ()
+{
+  Foo.on_leave+begin+end: { Foo.on_leave () }
+};
+
+// End of Foo state.
+# line 16 "WorkEndedInit/Foo.u"
+
+// Foo functions.
+
+function Foo.work ()
+{
+  wait(0.1s) | echo ("foo") |
+  Foo.counter << counter; counter++;
+};
+
+
+// End of Foo state.
+
+// Stop old code.
+stop WorkEndedInit;
+// Start code.
+WorkEndedInit+begin+end:
+  {
+    // Start begin graph function.
+    // FIXME: This command is not in BehaviorGraph.start() because we cannot use
+    //        $() in tags.
+    WorkEndedInit.begin+begin+end:
+      {
+        if (isdef(WorkEndedInit.begin))
+          WorkEndedInit.begin ()
+      };
+    // Start the graph.
+    WorkEndedInit.start ("");
+  },
+
+// End of file `WorkEndedInit.u'.
+[00000001:WorkEndedInit] *** begin
+[00000001:WorkEndedInit.begin] *** begin
+[00000002:WorkEndedInit.begin] *** end
+[00000003:WorkEndedInit.start] *** begin
+[00000004:Foo.start] *** begin
+[00000005:Foo.work] *** begin
+[00000006:WorkEndedInit.work] *** begin
+[00000002] *** foo
+[00000008:Foo.counter] 0
+[00000009:Foo.work] *** end
+[00000010:Foo.start] *** end
+[00000011:Bar.start] *** begin
+[00000012:Bar.work] *** begin
+[00000003] *** bar
+[00000014:Bar.counter] 1
+[00000015:Bar.work] *** end
+[00000016:Bar.start] *** end
+[00000017:Foo.start] *** begin
+[00000018:Foo.work] *** begin
+[00000004] *** foo
+[00000020:Foo.counter] 2
+[00000021:Foo.work] *** end
+[00000022:Foo.start] *** end
+[00000023:Bar.start] *** begin
+[00000024:Bar.work] *** begin
+[00000005] *** bar
+[00000026:Bar.counter] 3
+[00000027:Bar.work] *** end
+[00000028:WorkEndedInit.work] *** end
+[00000029:WorkEndedInit.on_leave] *** begin
+[00000030:WorkEndedInit.workEnded] 1
+[00000031:Foo.workEnded] 1
+[00000032:Bar.workEnded] 1

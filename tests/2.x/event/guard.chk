@@ -1,0 +1,48 @@
+// Test guard on event catchers
+
+var e = Event.new() |;
+
+at(e?(var a) if a == 2)
+  echo("at: a = " + a);
+
+{
+  waituntil(e?(var a) if a == 3);
+  echo("waituntil: a = " + a);
+},
+
+
+whenever (e?(var a) if a == 4)
+  echo("whenever: a = " + a);
+
+var x = 0 |;
+var y = 0 |;
+whenever (e?(var a) if a == 5)
+  x++;
+
+e!(1);
+
+e!(2);
+[00000001] *** at: a = 2
+e!(2);
+[00000002] *** at: a = 2
+
+e!(3);
+[00000003] *** waituntil: a = 3
+e!(3);
+
+e!(4);
+[00000004] *** whenever: a = 4
+e!(4);
+[00000005] *** whenever: a = 4
+
+y = x|;
+e!(5) ~ 10ms|;
+clog << "" + y + " < " + x|;
+y < x;
+[00000006] true
+
+y = x|;
+e!(5) ~ 10ms|;
+clog << "" + y + " < " + x|;
+y < x;
+[00000007] true

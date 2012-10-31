@@ -1,0 +1,59 @@
+
+
+package a { var x = "a"}|
+package b { var x = "b"}|;
+
+
+{
+  import a.*;
+  {
+    x.print()&
+    x.print(),
+  };
+};
+sleep(100ms);"next";
+[00000001] "a"
+[00000001] "a"
+[00000001] "next"
+{
+  import a.*;
+  detach({x.print()});
+  disown({x.print()});
+}|;
+sleep(100ms);"next";
+[00000001] "a"
+[00000001] "a"
+[00000001] "next"
+
+[var f, var g] = {
+  import a.*;
+  [
+    function() { x.print() & x.print(),},
+    function() { detach({ x.print()}); disown({x.print()})}
+  ]
+}|;
+
+f()|;
+sleep(100ms);"next";
+[00000001] "a"
+[00000001] "a"
+[00000001] "next"
+
+g()|;
+sleep(100ms);"next";
+[00000001] "a"
+[00000001] "a"
+[00000001] "next"
+
+f(),
+sleep(100ms);"next";
+[00000001] "a"
+[00000001] "a"
+[00000001] "next"
+
+g(),
+sleep(100ms);"next";
+[00000001] "a"
+[00000001] "a"
+[00000001] "next"
+

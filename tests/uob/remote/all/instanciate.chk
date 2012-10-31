@@ -1,0 +1,13 @@
+//#plug test/all
+//#uobject test/all
+
+// Check C++ instanciation.
+var a = all.new(0).instanciate().instanciate().new(0).instanciate()|;
+all.writeByName(a.&a, 50)| a.a;
+[00000001] 50
+
+
+// Same test in remote
+var r = remall.new(0).instanciate().instanciate().new(0).instanciate()|;
+remall.writeByName(r.&a, 51)| r.a;
+[00000002] 51

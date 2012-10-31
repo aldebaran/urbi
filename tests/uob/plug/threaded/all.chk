@@ -1,0 +1,348 @@
+// Check all operations.
+//#uobject test/threaded
+//#no-fast
+// The windows machine, debug mode, needs really more time.
+//#timeout 3
+import Global.*;
+import Math.*;
+every|(100ms) 1,
+var delayTime = 500ms|;
+function delay()
+{
+  sleep(delayTime);
+}|;
+
+var lastChange = []|;
+Threaded.&lastChange.notifyChange(closure() { lastChange << Threaded.lastChange})|;
+function reset()
+{
+  lastChange = []|
+  Threaded.lastAccess = []|
+  {}
+}|;
+
+for(10)
+  Threaded.startThread();
+
+// Create 10 UVars Global.a to Global.j
+var vars = 10.seq().map(function(x) {String.fromAscii("a".toAscii() + x)})|;
+
+var modified = [0]*10|;
+for|(var i: 10)
+{
+  UVar.new(Global, vars[i]);
+  // Setup a notifychange that yield() (but no yield_for) on purpose.
+  Global.getSlot(vars[i]).notifyChange(
+    closure()
+    {
+      1;
+      2;
+      modified[i] = modified[i] + 1
+    })|;
+  Global.updateSlot(vars[i], i);
+}|;
+
+var fullvars = vars.map(function(x) {"Global." + x})|;
+
+// Reader/writer.
+
+function readVar(i)
+{
+  Global.getSlotValue(vars[i]).apply([Global])
+}|;
+function writeVar(i, v)
+{
+  Global.updateSlot(vars[i], v)
+}|;
+
+
+// UVar allocator
+var available = 10.seq()|;
+var availableLock = Mutex.new()|;
+function getAvailableId()
+{
+  availableLock:
+  {
+    var res = available.removeBack()|
+    //wall("getid: give " + res + " " + available)|
+    res
+  }
+}|;
+
+function releaseId(id)
+{
+  availableLock: available << id
+  //|wall("a: " + available);
+}|;
+
+
+
+
+function checkNotifyChange(i, rdelay = false)
+{
+  var me = "checkNotifyChange".fresh();
+  clog << "%s(%s, %s)" % [me, i, rdelay];
+  var v = getAvailableId();
+  //wall("checknotifychange " + i + " " + v +" " + vars[v]+" " + fullvars[v]);
+  if (rdelay)
+   Threaded.queueOp(i, Threaded.DELAY, [random(50000)]);
+  Threaded.queueOp(i, Threaded.CREATE_VAR, [fullvars[v]]);
+  var val = time();
+  if (rdelay)
+   Threaded.queueOp(i, Threaded.DELAY, [random(50000)]);
+  Threaded.queueOp(i, Threaded.WRITE_VAR, [0, val]);
+  delay();
+  var rval = readVar(v);
+  if (rval != val)
+   throw Exception.new("Read failed " + rval +" " + val);
+  Threaded.queueOp(i, Threaded.NOTIFY_CHANGE, [0]);
+  delay();
+  val = time();
+  writeVar(v, val);
+  delay();
+  if (!lastChange.has(fullvars[v]))
+    throw Exception.new("lastchange error %s %s"
+                        % [lastChange, vars[v]]);
+  Threaded.queueOp(i, Threaded.UNNOTIFY, [0]);
+  delay();
+  lastChange.remove(fullvars[v]);
+  val = time();
+  writeVar(v, val);
+  delay();
+  if (lastChange.has(fullvars[v]))
+    throw Exception.new("unnotify error");
+  if (rdelay)
+   Threaded.queueOp(i, Threaded.DELAY, [random(50000)]);
+
+  Threaded.queueOp(i, Threaded.DELETE_VAR, [0]);
+  releaseId(v);
+  clog << "%s(%s, %s): OK" % [me, i, rdelay];
+  return "OK";
+}|;
+
+function checkNotifyAccess(i, rdelay = false)
+{
+  var me = "checkNotifyAccess".fresh();
+  clog << "%s(%s, %s)" % [me, i, rdelay];
+  var v = getAvailableId();
+  //wall("checknotifyaccess " + i + " " + v +" " + vars[v] +" " + fullvars[v]);
+  if (rdelay)
+   Threaded.queueOp(i, Threaded.DELAY, [random(50000)]);
+
+  Threaded.queueOp(i, Threaded.CREATE_VAR, [fullvars[v]]);
+  var val = time();
+  writeVar(v, val);
+  if (rdelay)
+   Threaded.queueOp(i, Threaded.DELAY, [random(50000)]);
+  Threaded.queueOp(i, Threaded.READ_VAR, [0]);
+  delay();
+  var rv = Threaded.getLastRead(i);
+  if (rv != val)
+   throw Exception.new("Read failed");
+  Threaded.queueOp(i, Threaded.NOTIFY_ACCESS, [0]);
+  delay();
+  val = time();
+  readVar(v);
+  delay();
+  if (!Threaded.lastAccess.has(fullvars[v]))
+    throw Exception.new("lastaccess error %s %s"
+                        % [Threaded.lastAccess, vars[v]]);
+  Threaded.queueOp(i, Threaded.UNNOTIFY, [0]);
+  delay();
+  Threaded.lastAccess.remove(fullvars[v]);
+  val = time();
+  readVar(v);
+  delay();
+  if (Threaded.lastAccess.has(fullvars[v]))
+    throw Exception.new("unnotify error");
+  if (rdelay)
+   Threaded.queueOp(i, Threaded.DELAY, [random(50000)]);
+  Threaded.queueOp(i, Threaded.DELETE_VAR, [0]);
+  releaseId(v);
+  clog << "%s(%s, %s): OK" % [me, i, rdelay];
+  return "OK";
+}|
+
+function checkUpdate(rdelay = false)
+{
+  var me = "checkUpdate".fresh();
+  clog << "%s(%s)" % [me, rdelay];
+  var t = Threaded.new();
+  var tid = t.startThread();
+  if (rdelay)
+   t.queueOp(0, Threaded.DELAY, [random(50000)]);
+  t.queueOp(0, t.SET_UPDATE, [50]);
+  delay();sleep(200ms);
+  if (t.updated < 3)
+    throw Exception.new("setUpdate failed: " + t.updated);
+  if (rdelay)
+   t.queueOp(0, Threaded.DELAY, [random(50000)]);
+  t.queueOp(0, t.SET_UPDATE, [-1]);
+  delay();
+  t.updated = 0;
+  sleep(200ms);
+  if (t.updated)
+    throw Exception.new("setUpdate(0) failed: " + t.updated);
+  t.queueOp(0, t.DIE, []);
+  delay();
+  t.destroy();
+  clog << "%s(%s): OK" % [me, rdelay];
+  return "OK";
+}|;
+
+function checkTimer(rdelay = false)
+{
+  var me = "checkTimer".fresh();
+  clog << "%s(%s)" % [me, rdelay];
+  var t = Threaded.new();
+  var tid = t.startThread();
+  if (rdelay)
+   t.queueOp(tid, Threaded.DELAY, [random(50000)]);
+  t.queueOp(tid, t.SET_TIMER, [50]);
+  delay();sleep(200ms);
+  if (t.timerUpdated < 3)
+    throw Exception.new("setTimer failed: " + t.timerUpdated);
+  if (rdelay)
+   t.queueOp(tid, Threaded.DELAY, [random(50000)]);
+  t.queueOp(tid, t.UNSET_TIMER, [0]);
+  delay();
+  t.timerUpdated = 0;
+  sleep(200ms);
+  if (t.timerUpdated)
+    throw Exception.new("unsettimer(0) failed: " + t.timerUpdated);
+  t.queueOp(tid, t.DIE, []);
+  t.destroy();
+  clog << "%s(%s): OK" % [me, rdelay];
+  return "OK";
+}|;
+
+function checkBind(i, rdelay = false)
+{
+  var me = "checkBind".fresh();
+  clog << "%s(%s, %s)" % [me, i, rdelay];
+  var n = "canard".fresh();
+  if (rdelay)
+    Threaded.queueOp(i, Threaded.DELAY, [random(50000)]);
+  Threaded.queueOp(i, Threaded.BIND_FUNCTION, [n]);
+  delay();
+  var res = nil;
+  try {
+    res = Threaded.getSlotValue(n).apply([Threaded]);
+  }
+  catch(var e)
+  {
+    res = e
+  };
+  if (res != 42)
+    throw Exception.new("BindFunction error, call gave " + res);
+  clog << "%s(%s, %s): OK" % [me, i, rdelay];
+  return "OK";
+}|;
+
+
+function checkGetUObject(i, rdelay = false)
+{
+  var me = "checkGetUObject".fresh();
+  clog << "%s(%s, %s)" % [me, i, rdelay];
+  var t = Threaded.new();
+  var n = t.__uobjectName();
+  if (rdelay)
+    Threaded.queueOp(i, Threaded.DELAY, [random(50000)]);
+  Threaded.queueOp(i, Threaded.GETUOBJECT, ["canard"]);
+  delay();
+  var lr = Threaded.getLastRead(i);
+  if (lr != "0")
+    throw Exception.new("failing getuobject failure: " + lr);
+  if (rdelay)
+    Threaded.queueOp(i, Threaded.DELAY, [random(50000)]);
+  Threaded.queueOp(i, Threaded.GETUOBJECT, [n]);
+  delay();
+  lr = Threaded.getLastRead(i);
+  if (lr.split(".")[-1] != n)
+    throw Exception.new("getuobject failure: " + lr);
+
+  t.destroy();
+  clog << "%s(%s, %s): OK" % [me, i, rdelay];
+  return "OK";
+}|;
+
+checkNotifyChange(0);
+[00000001] "OK"
+
+
+reset();
+checkNotifyAccess(1);
+[00000002] "OK"
+
+reset();
+checkNotifyChange(2).print() & checkNotifyAccess(3).print();
+[00000003] "OK"
+[00000004] "OK"
+
+
+// Careful how you write the //ism, [a(), b()] does not evaluate a and
+// b in parallel.
+reset();
+// Increase delayTime if required.
+delayTime = 500ms|;
+var res=[]|
+3.seq().'each&'(closure(x) { res << checkNotifyChange(x)})|res;
+[00000005] ["OK", "OK", "OK"]
+
+res = []| reset();
+3.seq().'each&'(closure(x) { res << checkNotifyAccess(x+5)})|res;
+[00000006] ["OK", "OK", "OK"]
+
+res = [] | reset();
+for&(var i: 5)
+  res << checkNotifyChange(i)
+& for&(var i: 5)
+  res << checkNotifyAccess(i+5);
+res;
+[00000007] ["OK", "OK", "OK", "OK", "OK", "OK", "OK", "OK", "OK", "OK"]
+
+delayTime = 400ms|;
+res = [] | reset();
+for&(var i: 5)
+  res << checkNotifyChange(i, true)
+& for&(var i: 5)
+  res << checkNotifyAccess(i+5, true);
+res;
+[00000008] ["OK", "OK", "OK", "OK", "OK", "OK", "OK", "OK", "OK", "OK"]
+
+
+checkUpdate();
+[00000009] "OK"
+
+checkTimer();
+[00000010] "OK"
+
+checkBind(0);
+[00000011] "OK"
+
+checkGetUObject(0);
+[00000012] "OK"
+
+function checkAll(var rdelay)
+{
+  var me = "checkAll".fresh();
+  clog << "%s(%s)" % [me, rdelay];
+  var res = [] | reset();
+  res << checkGetUObject(6, rdelay)
+  & res << checkUpdate(rdelay)
+  & res << checkBind(0, rdelay)
+  & res << checkTimer(rdelay)
+  & res << checkBind(1, rdelay)
+  & res << checkNotifyChange(2, rdelay)
+  & res << checkNotifyAccess(3, rdelay)
+  & res << checkNotifyChange(4, rdelay)
+  & res << checkNotifyAccess(5, rdelay)
+  & res << checkGetUObject(7, rdelay);
+  clog << "%s(%s): OK" % [me, rdelay];
+  res;
+}|;
+checkAll(false);
+[00000013] ["OK", "OK", "OK", "OK", "OK", "OK", "OK", "OK", "OK", "OK"]
+
+checkAll(true);
+[00000014] ["OK", "OK", "OK", "OK", "OK", "OK", "OK", "OK", "OK", "OK"]

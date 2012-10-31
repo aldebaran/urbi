@@ -1,0 +1,46 @@
+// Based on 1.6/switch.chk.
+
+import gsrapi.*;
+
+//# --- ##
+//# a.  ##
+//# --- ##
+
+var a = Loadable.new() | {};
+
+a.on() | a.load;
+[00000001] true
+
+a.off() | a.load;
+[00000002] false
+
+a.toggle() | a.load;
+[00000003] true
+
+a.toggle() | a.load;
+[00000004] false
+
+
+//# --- ##
+//# D.  ##
+//# --- ##
+
+class D : Loadable {} | {};
+
+D.on() | D.load;
+[00000005] true
+
+D.toggle() | D.load;
+[00000006] false
+
+D.off() | D.load;
+[00000007] false
+
+
+//# --- ##
+//# E.  ##
+//# --- ##
+
+class E : Loadable { var load = true; } | {};
+E.toggle() | E.load;
+[00000008] false

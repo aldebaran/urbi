@@ -1,0 +1,8 @@
+class a
+{
+   // Defining a.b etc. here makes barely sense, so let's drop
+   // this misfeature for ever (k1 and k2, and descendants).
+   var b;
+   function d (f);
+   event g (j);
+};

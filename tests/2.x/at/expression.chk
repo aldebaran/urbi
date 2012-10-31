@@ -1,0 +1,18 @@
+// At some point, we did have a difference bw "at (a)" and "at
+// (this.a)" because it's not the same Ast structs: one is
+// <IMPLICIT>.a, while the other was This.a.  At some point, the AST
+// will remove the difference.
+
+var a = 0|;
+
+at (a == 1)
+  echo("a == 1");
+
+at (this.a == 2)
+  echo("this.a == 2");
+
+a = 1|;
+[00000001] *** a == 1
+
+a = 2|;
+[00000002] *** this.a == 2

@@ -1,0 +1,9 @@
+// Check that at is atomic.
+
+var e = Event.new()|;
+
+at(e?) 1.print() | e!;
+[00000001] 1
+// The at payload has no reason to execute before next line, so wait a bit.
+sleep(100ms); 2;
+[00000002] 2

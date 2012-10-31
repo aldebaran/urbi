@@ -1,0 +1,46 @@
+//#uobject test/all
+
+if (!isdef(Global.all))
+  var Global.all = remall|;
+if (!isdef(Global.all2))
+  var Global.all2 = remall2|;
+
+all.a = 1;
+[00000001] 1
+assert (all2.setNotifyChangeByName("all.a") == 0);
+assert (all2.lastChange = "" == "");
+//uobject write on notifychange var
+
+assert (all.write(0,3) == 3);
+
+assert (all2.lastChange == "all.a");
+
+assert (all2.lastChangeVal == 3);
+
+//urbi write on notifychange var
+all2.lastChange = "";
+[00000007] ""
+all.a = 4;
+[00000008] 4
+assert (all2.lastChange == "all.a");
+
+assert (all2.lastChangeVal == 4);
+all2.removeNotify = "all.a"|
+all.a = 12|;
+all2.lastChange = "";
+[00000011] ""
+all.a = 4;
+[00000012] 4
+assert (all2.lastChange == "");
+assert (all.write(0,3) == 3);
+
+assert (all2.lastChange == "");
+// Set it back on and off to be sure
+all2.setNotifyChangeByName("all.a")|;
+all.a = 4|;
+assert (all2.lastChange == "all.a");
+all2.removeNotify = "all.a" | all.a = 13 |
+all2.lastChange = "";
+[00000017] ""
+all.a = 4|;
+assert (all2.lastChange == "");

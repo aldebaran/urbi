@@ -1,0 +1,9 @@
+try {
+  System.loadModule("canard.so");
+  "impossible".print()
+}
+catch(var e)
+{
+  echo(e.asString().split(":").range(0,4).join(":"));
+};
+[00000001] *** input.u:2.3-32: loadModule: failed to open canard.so

@@ -1,0 +1,26 @@
+// Check that remote notifychange on owned UVar gives the correct value.
+//#plug test/all
+//#uobject test/all
+remall.lastChange = "" |;
+all.a = 1|;
+all.setOwned(0)|;
+all.write(0, 12)|;
+all.a = 5|;
+all.a;
+[00000001] 12
+remall.setNotifyChangeByUVar(all.&a)|;
+sleep(200ms);
+// Write from outside should not trigger notifychange.
+all.a = 10|;
+sleep(200ms);
+remall.lastChange;
+[00000002] ""
+all.read(0);
+[00000003] 10
+// Write from inside should, with the correct value.
+all.write(0, 42)|;
+sleep(200ms);
+remall.lastChange;
+[00000004] "all.a"
+remall.lastChangeVal;
+[00000005] 42

@@ -1,0 +1,12 @@
+var o = Object.new();
+[00000001] Object_0x836ef30
+UVar.new(o,"v")|;
+o.v = 12;
+[00000002] 12
+o.v;
+[00000003] 12
+o.&v.notifyAccess(function() {value++})|;
+o.v = 10 | o.v;
+[00000004] 11
+o.v;
+[00000005] 12

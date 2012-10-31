@@ -1,0 +1,26 @@
+// See issue 3486.
+
+// Check that changes of parents are seen from the children as changes
+// of values.
+
+var a = Object.new() |
+var a.x = Object.new() |
+var a.x.i = 1 |;
+
+at (a.x.i > 2)
+  echo ("at")
+onleave
+  echo("onleave");
+
+a.x.i = 3 |;
+[00000001] *** at
+
+a.x.i = 0 |;
+[00000002] *** onleave
+
+var y = Object.new() |
+var y.i = 4 |
+a.x = y |;
+[00000003] *** at
+a.x.i = 0 |;
+[00000004] *** onleave

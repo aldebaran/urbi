@@ -1,0 +1,29 @@
+//#timeout 2
+//#uobject test/all
+uobjectsAll();
+
+// Synchronisation between two processes running under qemu is tricky,
+// skip for now.
+//#skip-if case $host in (*arm*) true;; (*)false ;;esac
+
+// Check that yield blocks flow without blocking the kernel.
+var tag = Tag.new()|;
+var cnt = 0 |;
+tag: every (1s)
+  cnt++,
+
+sleep(0.5s)
+| 3.print()
+| all.yield_for(2s)
+| tag.stop()
+| -1;
+[00000001] 3
+[00000002] -1
+assert (3 <= cnt);
+
+// Check that remote works while yielding.
+all.yield_for(400ms) | echo("done"),
+sleep(50ms) | all.init(0);
+[00000003] 0
+sleep(400ms);
+[00000004] *** done

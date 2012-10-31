@@ -1,0 +1,19 @@
+// Test that cow is not incorrectly triggered.
+
+
+package a { var x = 0}|;
+
+// test on an object scope
+class b {
+  import a.*;
+  x = 1;
+  assert('package'.a.x == 1);
+  assert(!hasSlot("x"));
+}|;
+// and a local scope
+{
+  import a.*;
+  x = 2;
+  assert('package'.a.x == 2);
+  assert(!hasSlot("x"));
+}|;

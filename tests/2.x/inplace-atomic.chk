@@ -1,0 +1,30 @@
+// We must not evaluate several times the targets.
+//
+// See also 2.x/class.chk.
+cout.quote = false |
+class Base
+{
+  function foo ()
+  {
+    cout << "Hello world!";
+    return this;
+  };
+  var val = 0;
+};
+[00000001] Base
+
+Base.foo().val += 2;
+[00000002:output] Hello world!
+[00000003] 2
+
+Base.foo().val *= 2;
+[00000004:output] Hello world!
+[00000005] 4
+
+Base.foo().val /= 2;
+[00000006:output] Hello world!
+[00000007] 2
+
+Base.foo().val -= 2;
+[00000008:output] Hello world!
+[00000009] 0

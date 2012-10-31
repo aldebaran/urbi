@@ -1,0 +1,25 @@
+var a = 0;
+[00000001] 0
+
+while (a) echo ("toto");
+
+// Using "while"
+a = 2;
+[00000002] 2
+while (a) { echo ("toto"); a = a - 1 };
+[00000003] *** toto
+[00000004] *** toto
+
+// Using "while|".
+a = 2;
+[00000005] 2
+while|(a) { echo ("toto"); a = a - 1 };
+[00000006] *** toto
+[00000007] *** toto
+
+// Using "while,".
+a = 2;
+[00000008] 2
+while,(a) { echo ("toto") | a = a - 1 };
+[00000009] *** toto
+[00000010] *** toto

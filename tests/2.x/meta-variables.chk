@@ -1,0 +1,12 @@
+// Check that it is not possible to nuke the kernel using
+// metavariables.
+%exp: 1;
+[00000001:error] !!! input.u:@.1: syntax error: unexpected %
+
+%id: -1;
+[00000002:error] !!! input.u:@.1: syntax error: unexpected %
+
+// Check that locations are correct after a meta-variable.
+var exp = 3|;
+1 %exp: *;
+[00000003:error] !!! input.u:@.7: syntax error: unexpected :

@@ -1,0 +1,24 @@
+// Check that atoms are properly cloned
+
+var one = 1.clone();
+[00000001] 1
+var two = 2.clone();
+[00000002] 2
+
+one + two;
+[00000003] 3
+
+var one.foo = "foobar";
+[00000004] "foobar"
+
+one.foo;
+[00000005] "foobar"
+
+1.foo;
+[00000006:error] !!! input.u:@.1-5: lookup failed: foo
+
+two.foo;
+[00000007:error] !!! input.u:@.1-7: lookup failed: foo
+
+two;
+[00000008] 2

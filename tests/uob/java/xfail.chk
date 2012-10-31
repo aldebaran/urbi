@@ -1,0 +1,6 @@
+// There is no such object, so urbi-launch-java should fail.
+
+// test.u is not making the "waitForRemoteUObjects" because
+// "does.not.exist" is not associated contents.
+
+//#java does.not.exist

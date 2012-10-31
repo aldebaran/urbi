@@ -1,0 +1,16 @@
+assert
+{
+  1 . operator +(1) == 2;
+  2 . operator -(2) == 0;
+  3 . operator *(3) == 9;
+  4 . operator /(4) == 1;
+  5 . operator new() == 5;
+};
+
+// Check precedence between bitor and comparisons.
+// See issue #3246.
+assert
+{
+  1 bitor 1 in [1] && 2 bitor 2 in [2];
+  1 bitor 1 not in [] && 2 bitor 2 not in [];
+};

@@ -1,0 +1,27 @@
+//#plug test/all urbi/rtp
+//#remote test/all urbi/rtp
+
+UVar.new(Global, "val")|;
+Global.val = bigstring|;
+
+// Force RTP.
+Global.&val.rtp = true|;
+remall.setNotifyChangeByUVar(Global.&val)|;
+sleep(100ms);
+
+var r = remall.lobby.bytesReceived|
+var s = remall.lobby.bytesSent|
+for(10) { Global.val = time; sleep(100ms)};
+
+"OK";
+[00000001] "OK"
+assert
+{
+  // A few uvar updates, but no big strings
+  remall.lobby.bytesSent - s < bigstring.size;
+  // Idem
+  remall.lobby.bytesReceived  - r < bigstring.size;
+};
+
+"OK";
+[00000002] "OK"

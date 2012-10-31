@@ -1,0 +1,32 @@
+class test
+{
+  var period = 1s;
+  var Delta = 0.1s;
+  var n = 0;
+  var nb_test = 5;
+
+  function test()
+  {
+    every(period)
+    {
+      var t = time()
+      | var delta = period - (t - old_t)
+      | clog << "delta = " + delta + " vs Delta = " + Delta
+      | echo ({if (delta.abs() < Delta) "good" else "bad"})
+      | old_t = t
+      | n++
+    }
+  };
+
+  var old_t = time()
+}|;
+
+sleep(test.period)|
+test.test(),
+waituntil (test.nb_test <= test.n);
+
+[00000001] *** good
+[00000002] *** good
+[00000003] *** good
+[00000004] *** good
+[00000005] *** good

@@ -1,0 +1,31 @@
+//#uobject test/all
+
+
+var all.e = BIN 0;
+[00000001] BIN 0
+[:]
+all.writeB("all.e", "[00000000:ts] 1\n");
+[00000002] 0
+all.e;
+[00000003] BIN 16
+[00000004:ts] 1
+[:]
+var all.f = BIN 3 rgb 1 1;123
+[00000005] BIN 3 rgb 1 1
+[:]123
+all.writeI("all.f","[00000000:ts] 2\n");
+[00000006] 0
+all.f;
+[00000007] BIN 16 jpeg 42 42
+[00000008:ts] 2
+[:]
+
+var all.g = BIN 4 raw 1 16000 16 1;1234
+[00000009] BIN 4 raw 1 16000 16 1
+[:]1234
+all.writeSnd("all.g", "[00000000:ts] 3\n");
+[00000010] 0
+all.g;
+[00000011] BIN 16 raw 1 42 8 2
+[00000012:ts] 3
+[:]

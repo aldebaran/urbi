@@ -1,0 +1,21 @@
+// Publish-subscribe interface
+
+var ps = PubSub.new() | {};
+var s1 = ps.subscribe() | {};
+var s2 = ps.subscribe() | {};
+
+while(true) { echo(s1.getOne()) },
+{ sleep(1s); while(true) { echo(s2.getAll()) } },
+
+ps.publish(42);
+sleep(0);
+[00000001] 42
+[00000002] *** 42
+
+ps.publish(51);
+sleep(0);
+[00000003] 51
+[00000004] *** 51
+
+sleep(2s);
+[00000005] *** [42, 51]

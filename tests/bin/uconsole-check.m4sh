@@ -1,0 +1,457 @@
+#!/bin/sh
+
+## Copyright (C) 2006-2012, Gostai S.A.S.
+##
+## This software is provided "as is" without warranty of any kind,
+## either expressed or implied, including but not limited to the
+## implied warranties of fitness for a particular purpose.
+##
+## See the LICENSE file for more information.
+
+URBI_INIT
+m4_include([bin/kernel-check.m4sh])
+[
+
+# Avoid zombies and preserve debugging information.
+cleanup ()
+{
+  local exit_status="$?"
+
+  # Let a second C-c really kill us: restore default traps.
+  trap - 0 1 2 13 15
+
+  # In case we were caught by set -e, kill the children.
+  children_kill
+  children_harvest
+
+  rst_subsection "Debug outputs"
+  rst_pre "debug" debug
+
+  # If we have run uconsole (i.e., if we didn't SKIP, then report all
+  # the relevant information.
+  if test -n "$children"; then
+    # The results of running uconsole itself (our sole child).
+    children_report
+    # Debugging data often explains failures, so it should be first.
+    cat uconsole.debug.rst
+
+    # The numbered clients.
+    clients_rst_report
+    local children_sta=$(children_status)
+  fi
+
+  # If the user is running us VERBOSE, do not remove evidences of the
+  # crime.  Of course, do not remove the test dir before we finished
+  # reading its contents (children_status).
+  if test x"$VERBOSE" = x && $exit; then
+    cd ..
+    rm -rf $me.dir
+  fi
+
+  case $exit_status:$children_sta in
+    (0:0) ;;
+    (0:*) # Maybe a children exited for SKIP etc.
+	  exit $children_sta;;
+   (176:*) # We are skipping the test.
+          exit $exit_status;;
+    (*:*) # If uconsole-check failed, there is a big problem.
+	  error $exit_status "uconsole-check itself failed with $exit_status";;
+  esac
+  $exit
+}
+trap cleanup 0
+
+
+## ----------- ##
+## Functions.  ##
+## ----------- ##
+
+stderr ()
+{
+  local i
+  for i
+  do
+    echo >&2 "$(basename $0): $me: $i"
+    echo >&2
+  done
+}
+
+
+usage ()
+{
+  cat <<EOF
+usage: $0 [OPTIONS] FILE.chk
+
+This script is expected to be run from the build hierarchy, e.g.,
+
+  ../../../tests/uconsole-check ../../../tests/1.x/0-empty.chk
+or
+  uconsole-check 1.x/0-empty.chk  if builddir = srcdir
+
+Options:
+  -c, --clients NUM       number of concurrent clients [$clients]
+  -h, --help              display this message and exit
+		          see also the README file
+      --no-locations      remove locations from the actual output,
+                          in order to mock an interactive session
+      --no-error-verbose  the kernel was not compiled with error-verbose
+
+Expected variables:
+  srcdir             the location of the tests/ directory in src tree
+		     [$srcdir]
+  UCONSOLE           the urbi-server wrapper to use
+		     [$UCONSOLE]
+  VERBOSE            if set, do not remove the working directory
+		     if set to x, run set -x
+  INSTRUMENTATION    whether instrumenting the binaries [$INSTRUMENTATION]
+                     (true, false, or probability between 0 and 1).
+  BENCH		     benchmark memory and CPU usage if set to true/yes/1.
+EOF
+  exit 0
+}
+
+
+path_port ()
+{
+  case $(uname -s) in
+    (CYGWIN*)  cygpath --windows "$1";;
+    (*)	       echo "$1";;
+  esac
+}
+
+
+## ---------------------- ##
+## Processing chk files.  ##
+## ---------------------- ##
+
+# filter_input FILE.CHK
+# ---------------------
+# Extract input lines from FILE.CHK.
+filter_input ()
+{
+  <"$1" perl -wp \
+    -e "my \$log_categories = '$log_categories';" \
+    -e '
+    # Instead of removing answer lines, leave empty lines so that
+    # line numbers between input.u and *.chk match.
+    s/^\[(\d{6,15}(:.*)?|:.*)\].*//;
+
+    # Logger output.
+    s/^\[\s+(?:$log_categories)\s+\].*//;
+
+    # Remove removal-protection from trailing spaces.
+    s/#trailingws$//gm;
+   '
+}
+
+
+# neutralize args...
+# ------------------
+# Invoke bin/neutralize.
+neutralize ()
+{
+  perl $top_srcdir/tests/bin/neutralize         \
+    -Dabs_chk_dir="$abs_chk_dir"                \
+    -Dabs_chk_dir_can="$abs_chk_dir_can"        \
+    -Derror_verbose="$error_verbose"            \
+    -Dhost="$host"                              \
+    -Dlocations="$locations"                    \
+    -Dlog_categories="$log_categories"          \
+    -Dpwd="$(pwd -P)"                           \
+    -Drel_top_srcdir="$rel_top_srcdir"          \
+    "$@"
+}
+
+
+# filter_expected_output FILE.CHK
+# -------------------------------
+# Select the lines corresponding to output, normalizing the channel names.
+filter_expected_output ()
+{
+  neutralize --expected-output "$1"
+}
+
+
+# run_shell SYMBOL FILE.CHK
+# -------------------------
+# Run the shell commands introduced by "//SYMBOL"
+run_shell ()
+{
+  local cmd
+  cmd=$(perl -wn -e 's/^\/\/'"$1"'\s+// && print' <"$2")
+  if test -n "$cmd"; then
+    stderr "Running: $cmd"
+    sh -c "$cmd"
+  fi
+}
+
+
+# filter_effective_output FILE.OUT FILE.EXP
+# -----------------------------------------
+# Neutralize the insignificant differences in-place in FILE.OUT.  Use
+# FILE.EXP as reference file to implement [...] (see the doc of
+# Object.dump for instance).
+filter_effective_output ()
+{
+  if test -s "$1"; then
+    neutralize -Dreference="$2" --effective-output "$1"
+  else
+    stderr "$1: no output at all"
+  fi
+}
+
+
+# filter_expected_error FILE.CHK
+# ------------------------------
+# Select the lines corresponding to error output.
+filter_expected_error ()
+{
+  if test -s "$1"; then
+    neutralize --expected-error "$1"
+  fi
+}
+
+# filter_effective_error FILE.ERR
+# --------------------------------
+# Keep only the relevant part of STDERR (the selected logs).
+filter_effective_error ()
+{
+  filter_expected_error "$1"
+}
+
+
+## --------------------- ##
+## Auxiliary functions.  ##
+## --------------------- ##
+
+# Parse command line options
+]URBI_GET_OPTIONS([
+  (-c|--clients) shift; clients=$1;;
+  (-h|--help) usage ;;
+  (--no-locations)     locations=false ;;
+  (--no-error-verbose) error_verbose=false ;;
+
+  (*) test "x$file" = x ||
+	error USAGE "too many arguments"
+      # check.mk adds a leading "./" (so that, if it is an executable,
+      # the program be runnable without "." in $PATH) which annoys us.
+      chk=$(echo "$1" | sed -e 's,^\./,,')
+      ;;
+])[
+
+# uconsole_run CMD
+# ----------------
+# Launch uconsole.
+uconsole_run ()
+{
+  local cmdname="uconsole"
+  instrument -o "$cmdname.val" -- \
+      $1 --silent --clients=$clients
+  echo "$instrument_result" >$cmdname.cmd
+  stderr "Launching $cmdname"
+  $instrument_result >$cmdname.out 2>$cmdname.err 3>$cmdname.debug.rst &
+  children_register "$cmdname"
+}
+
+
+# client_rst_report NUM
+# ---------------------
+# Report the status of the client number NUM.
+client_rst_report ()
+{
+  local pfx="client.$1"
+
+  # Display input.
+  rst_subsection "$me: $pfx"
+
+  rst_pre "$pfx Input" $pfx.in
+
+  if test -f $pfx.out.raw; then
+    filter_effective_output $pfx.out.raw output.exp
+  fi >$pfx.out.eff
+  rst_expect output $pfx.out -F '^\[[0-9]*:#\]'
+
+  if test -f $pfx.err.raw; then
+    filter_effective_error $pfx.err.raw
+  fi >$pfx.err.eff
+  rst_expect error $pfx.err
+
+  rst_pre "$pfx Status"       $pfx.sta
+  rst_pre "$pfx Bench"        $pfx.bench
+
+  # Display Valgrind report.
+  rst_pre "$pfx Valgrind" $pfx.val
+}
+
+
+# clients_rst_report
+# ------------------
+# Report the status of all the (regular) clients.
+clients_rst_report ()
+{
+  local i="0"
+  while test $i -lt $clients;
+  do
+    client_rst_report $i
+    i=$(($i + 1))
+  done
+}
+
+
+## ------ ##
+## Main.  ##
+## ------ ##
+
+check_dir abs_top_builddir tests/bin/uconsole
+: ${UCONSOLE=$abs_top_builddir/tests/bin/uconsole}
+require_file $UCONSOLE
+
+: ${CLIENTS=1}
+clients=$CLIENTS
+# Whether the syntax errors are verbose.
+error_verbose=true
+# Whether we pass or fail.
+exit=true
+# Whether we keep and check the locations in the output.
+locations=true
+
+# check_dir srcdir bin/uconsole-check.as
+# check_dir abs_srcdir bin/uconsole-check.as
+
+get_options "$@"
+
+# Make it absolute.
+abs_chk=$(absolute "$chk")
+require_file "$abs_chk"
+
+# ../../../tests/2.x/modifier/accel.chk -> 2.x/modifier
+chk_dir=$(dirname "$chk" | sed -e "s,^$srcdir/,,")
+
+# /Users/akim/src/urbi/1.5/kernel/_build/i386-apple-darwin9.2.2/../..
+# Used to neutralize absolute paths in error messages.  Do not use
+# $top_srcdir_can (/Users/akim/src/urbi/1.5/kernel) here, since that's
+# not what the output message will use.
+abs_chk_dir=$abs_srcdir/$chk_dir
+
+# We also want the canonicalize path.
+abs_chk_dir_can=$(canonicalize "$abs_chk_dir")
+
+# ../../../tests/2.x/modifier/accel.chk -> 2.x/modifier/accel.
+me=$chk_dir/$(basename "$chk" ".chk")
+
+# Coding style: Do not accept underscores.
+case $me in
+ ( *_* )  # It's not a smiley: there is nothing cute about underscores.
+	  fatal "do not use underscores in file names, but dashes";;
+esac
+
+# URBI_PATH: Let uconsole find the files to load.
+urbi_path=$(absolute "$srcdir/$chk_dir")
+urbi_path=$(path_port "$urbi_path")
+
+save_IFS=$IFS
+IFS=:
+# Pass $chk_dir so that we can load files in 1.x, 2.x etc.
+for i in : . $chk_dir $URBI_PATH; do
+  IFS=$save_IFS
+  case $i in
+    (:) continue;;
+    (*)
+      if test -d "$i"; then
+        urbi_path=$urbi_path:$(path_port $(absolute "$i"))
+      fi
+      ;;
+  esac
+done
+
+# If URBI_PATH was empty, then it was defaulting to looking at
+# URBI_ROOT.  Because of the semantics of the envvars, if we just
+# prepend our stuff, URBI_ROOT is no longer honored.  Be sure to let
+# URBI_ROOT do its job by leaving a trailing colon.
+test -n "$URBI_PATH" ||
+  urbi_path=$urbi_path:
+export URBI_PATH=$urbi_path
+stderr "URBI_PATH=$URBI_PATH"
+
+normalize_boolean BENCH
+
+timeout_adjust $abs_chk
+
+# Convert to absolute paths.
+rel_top_srcdir=$top_srcdir
+export top_builddir=$abs_top_builddir
+export top_srcdir=$abs_top_srcdir
+export chkdir=$abs_chk_dir_can
+export test_name=$(basename "$chk")
+
+# If git is available, then use it to report accurate information
+# about the revision of the test suite.
+if (cd $abs_top_srcdir && git describe) >/dev/null 2>&1; then
+  stderr "git describe: $(cd $abs_top_srcdir && git describe --always)"
+fi
+
+# Move to a private test directory.
+mkcd $me.dir
+
+# If we can't run Java, skip.
+javaremotes=$(java_get $abs_chk)
+if test -n "$javaremotes"; then
+  xfind_prog urbi-launch-java
+  urbi_launch_java=$xfind_prog_result
+  run "Check Java Support" $urbi_launch_java --check ||
+    error SKIP "SKIP: Java support not available"
+fi
+
+
+# ------- #
+# Input.  #
+# ------- #
+
+log_categories='Category2?|ForcedCategory|Logger[\w.]*|SubCategory'
+# Compute input.
+input=input.u
+filter_input $abs_chk >$input
+
+# Gather all the test.u files from srcdir to the directory of the
+# current test.
+dir=$chk_dir/
+while true
+do
+  test ! -f $abs_srcdir/${dir}test.u ||
+    input="$abs_srcdir/${dir}test.u $input"
+  case $dir in
+    (*/) dir=$(echo "$dir" | sed -e 's,[^/]*/$,,');;
+    ('') break;;
+  esac
+done
+
+
+# ---------------- #
+# Prepare output.  #
+# ---------------- #
+
+# Compute expected outputs.
+filter_expected_output $abs_chk >output.exp
+filter_expected_error $abs_chk >error.exp
+
+
+# -------------- #
+# Run uconsole.  #
+# -------------- #
+
+# Run shell setup commands.
+run_shell '!' $abs_chk
+# Feed the input to the console.
+uconsole_run "$UCONSOLE $UCONSOLEFLAGS --quit $input"
+# Wait for uconsole to finish.  uconsole also has a built-in timeout,
+# so this time out should not fire.  If it does, it means that
+# something is wrong bw uconsole and uconsole-check.  So be sure to
+# use a longer basic timeout than in uconsole (it has 50).
+children_wait 70
+
+# Run shell cleanup commands.
+run_shell '\$' $abs_chk
+
+# It is trap on exit that builds the logs.
+$exit
+]

@@ -1,0 +1,14 @@
+skipIfSpace();
+
+// Make sure locations are correct after a deprecated construct.
+// Failure is likely because of the implementation in the scanner
+// which scans twice: first the old construct, which bounces on the
+// new one.  It is then easy advance the cursor of the two widths
+// instead of only the old one.
+foreach ++;
+[00000001:warning] !!! input.u:@.1-7: `foreach' is deprecated, use `for'
+[00000002:error] !!! input.u:8.9-10: syntax error: unexpected ++
+
+// Obsolete unit.
+assert(1m == 60s);
+[00000003:warning] !!! input.u:@.8-9: `1m' is deprecated, use `1min'

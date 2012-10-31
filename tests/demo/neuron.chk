@@ -1,0 +1,61 @@
+// Neuron class
+class Neuron
+{
+  var threshold = Float.inf;
+  var input = 0;
+  var trigger = Event.new();
+  var payload = 1;
+  var latency = 100ms;
+
+  function init(t, p)
+  {
+    input = input;
+    threshold = t;
+    payload = p;
+    trigger = Event.new();
+    at (input >= threshold)
+      fire();
+  };
+
+  function fire()
+  {
+    detach({trigger!(1) ~ latency})
+  };
+
+  function '<<'(neuron)
+  {
+    at (neuron.trigger?(var payload))
+      input += payload
+    onleave
+      input -= payload
+  };
+};
+
+[00000001] Neuron
+
+// Test it
+var i1 = Neuron.new(50, 1)|;
+var i2 = Neuron.new(50, 1)|;
+var o = Neuron.new(2, 1)|;
+
+
+at (o.trigger?(var x))
+  echo("BZZT")
+onleave
+  echo("POUF");
+
+o << i1;
+o << i2;
+
+echo("One trigger");
+i1.fire()|;
+sleep(500ms);
+[00000005] *** One trigger
+
+echo("Two triggers");
+i1.fire()|;
+i2.fire()|;
+sleep(500ms);
+[00000006] *** Two triggers
+[00000007] *** BZZT
+[00000008] *** POUF

@@ -1,0 +1,46 @@
+// Normal simple case.
+var a = BIN 10;0123456789
+[00000001] BIN 10
+[:]0123456789
+a.data;
+[00000002] "0123456789"
+a.keywords;
+[00000003] ""
+
+// Using keywords, and an empty data.
+a = BIN 0 foo 10 bar 20 30;
+[00000004] BIN 0 foo 10 bar 20 30
+[:]
+a.data;
+[00000005] ""
+a.keywords;
+[00000006] "foo 10 bar 20 30"
+
+// Stress the prescanner.
+a = BIN 10 123;((((((((((
+[00000007] BIN 10 123
+[:]((((((((((
+a.data;
+[00000008] "(((((((((("
+
+// Use weird chars: two \n.
+a = BIN 3 eol test;
+
+2
+[00000009] BIN 3 eol test
+[:]
+[:]
+[:]2
+a.data;
+[00000010] "\n\n2"
+
+// Stress the prescanner; the BIN behaves as if it was followed by a
+// ";", so check that the value that is behind is properly recovered.
+a = BIN 1;123;
+[00000011] BIN 1
+[:]1
+[00000012] 23
+
+
+// An unfinished BIN.  Does not work currently.
+// a = BIN 1024;

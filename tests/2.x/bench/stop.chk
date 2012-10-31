@@ -1,0 +1,10 @@
+
+
+var t = Tag.new() |;
+while(true)
+{
+  t: 1
+},
+for(1000) t.stop();
+1;
+[00000001] 1

@@ -1,0 +1,35 @@
+// Check that reaching the end of the block kills runners
+// launched with a comma.
+function f()
+{
+  {
+    var t = scopeTag;
+    t: { sleep(2s); echo("foo") },
+    echo("bar");
+    sleep(1s);
+    echo("baz");
+  };
+  sleep(2s);
+  echo("xyzzy");
+} | f();
+[00000001] *** bar
+[00000002] *** baz
+[00000003] *** xyzzy
+
+// Check that without the scopeTag, we get a different output
+function g()
+{
+  {
+    var t = scopeTag;
+    { sleep(2s); echo("foo") },
+    echo("bar");
+    sleep(1s);
+    echo("baz");
+  };
+  sleep(2s);
+  echo("xyzzy");
+} | g();
+[00000004] *** bar
+[00000005] *** baz
+[00000006] *** foo
+[00000007] *** xyzzy

@@ -1,0 +1,849 @@
+#!/bin/sh
+
+## Copyright (C) 2007-2011, Gostai S.A.S.
+##
+## This software is provided "as is" without warranty of any kind,
+## either expressed or implied, including but not limited to the
+## implied warranties of fitness for a particular purpose.
+##
+## See the LICENSE file for more information.
+URBI_INIT
+m4_include([bin/kernel-check.m4sh])
+[
+
+# This script is meant to run with a FD 3 prepared for it.
+# If fd 3 is not set up, then create it, bound to stderr.
+if ! echo 2>/dev/null >&3; then
+  exec 3>&2
+fi
+
+me=$(basename $0)
+
+
+# Avoid zombies and preserve debugging information.
+cleanup ()
+{
+  local exit_status="$?"
+
+  # Let a second C-c really kill us: restore default traps.
+  trap - 0 1 2 13 15
+
+  # In case we were caught by set -e, kill the children.
+  children_kill       >>debug
+  children_harvest    >>debug
+  children_check_skip >>debug
+  if $children_check_skip_result; then
+    exit_status=$(ex_to_int SKIP)
+  fi
+
+  rst_subsection "Debug outputs" >&3
+  rst_pre "debug" debug >&3
+
+  if test -n "$roscore"; then
+    rst_subsection "ROS Logs"
+    for i in $(find log -type f)
+    do
+      rst_pre "ROS Log $i" $i
+    done
+  fi >&3
+
+  local i_
+  for i_ in $children
+  do
+    # Results: Only the children whose report is not already output.
+    case $i_ in
+      (client.*);;
+
+      (*)
+	rst_subsection "$i_"
+	children_report "$i_"
+	;;
+    esac
+  done >&3
+
+  stderr "cleanup: exiting $exit_status$(ex_to_string $exit_status)"
+  exit $exit_status
+}
+trap cleanup 0
+
+
+## --------------------- ##
+## Auxiliary functions.  ##
+## --------------------- ##
+
+]URBI_GET_OPTIONS(
+[  (-c|--clients)  shift; CLIENTS=$1;;
+   (-f|--fast)    FAST_MODE=true;;
+   (-h|--help)    usage;;
+   (-m|--mode)
+       shift
+       case $1 in
+	 (auto|file|network) MODE=$1;;
+	    (*) error USAGE "invalid --mode: $1";;
+       esac
+       ;;
+   (-P|--period)  shift; period=$1;;
+   (-q|--quit)    quit=true;;
+   (-s|--silent)  silent=true;;
+   (*)  files="$files $1";;
+])[
+
+
+# Print usage
+usage ()
+{
+  cat <<EOF
+usage: $0 [OPTIONS] [FILES]
+
+Wrap a call to an Urbi server, possibly compiling needed UObjects.
+The FILES are sent to the server in two different MODEs, see below.
+
+The FILES may include special directives:
+
+  \`//#plug UOB...'     plug UObjects in the server
+                        e.g. \`//#plug test/all'.
+  \`//#remote UOB...'   spawn remote UObjects
+                        each line corresponds to a single urbi-launch
+                        invocation.  Several UOBJ on a single line
+                        loads several UObjects in a single remote.
+                        e.g. \`//#remote test/all'.
+  \`//#mode MODE'       force the MODE (file, or network).
+                        e.g.  \`//#mode network'.  See MODE values below.
+  \`//#java UOB...'     spawn remote Java UObjects.
+                        e.g.  \`//#java tests.all.All'
+  \`//#uobject UOB...'  same as plug, remote, or java, depending on the
+                        CHK file name.
+                        e.g.  \`//#java test/all'
+                        conversion to tests.all.All is then performed
+                        for the Java case.
+  \`//#roscore'         spawn a ROS core
+  \`//#server UOB...'   spawn a slave server with preloaded UObjects
+  \`//#timeout NUM...'  factors applied to all the timeouts
+  \`//#no-fast'         for tests that must not run in --fast mode
+  \`//#skip-if EXPR'    if the shell EXPR evaluates to true, skip
+                        this test.
+
+The UOB may have an optional numbered extension to allow for several
+instantiation of identical servers (e.g., \`uengine.1', \`uengine.2'
+and so forth).  The file servers.txt contains the list of the slave
+servers, one per line.
+
+Options:
+  -c, --clients NUM    number of clients attacking the server concurrently
+		       this is useful to check locks etc.   [$CLIENTS]
+  -f, --fast           fast mode                            [$FAST_MODE]
+  -h, --help           this message
+		       see also the README file
+  -m, --mode MODE      specify the input method  [$MODE]
+  -P, --period PERIOD  server period [$period]
+  -q, --quit           equip the input with closing instructions
+  -s, --silent         create log files, but don't send output to
+		       stdout and stderr
+
+MODE values:
+  file       feed the server via stdin (kernel only).
+	     much faster, but cannot support remote UObjects,
+	     nor several clients
+  network    use socat to feed the server.
+	     much slower
+  auto       use \`file' if kernel and no remotes, \`network' otherwise
+
+Environment variables (guessed in typical uses):
+  FAST_MODE        if true/yes/1, run the server with -f (fast mode)
+  INSTRUMENTATION  whether instrumenting the binaries [$INSTRUMENTATION]
+                   (true, false, or probability between 0 and 1).
+  BENCH		   if true/yes/1, benchmark cpu and memory usage.
+  MODE             default value for --mode [$MODE]
+  URBI_SERVER      the urbi-server path
+		   [$URBI_SERVER]
+  VALGRIND         the path to valgrind
+  VERBOSE          if equal to \`x', run \`set -x' and don't clean up
+EOF
+    exit 0
+}
+
+
+# uobject_name MODULE...
+# ----------------------
+# Return the name of the modules to load.  MODULE may have a
+# terminating numbered extensions (*.1, *.2), when we want to spawn
+# copies of the same uobject.
+uobject_name ()
+{
+  local i
+  for i
+  do
+    echo "$i" | sed -e 's/\.[0-9][0-9]*$//'
+  done
+}
+
+# uobject_jar MODULE...
+# ----------------------
+# Return the name of the jar to load.  MODULE may have a
+# terminating numbered extensions (*.1, *.2), when we want to spawn
+# copies of the same uobject.
+uobject_jar ()
+{
+  local i
+  for i
+  do
+    echo "$i" | sed -e 's/\.[0-9][0-9]*$//;s,\.,/,g;s/$/.jar/'
+  done
+}
+
+# input_generate FILES...
+# -----------------------
+# Send on stdout the FILE ready to be fed to the client.
+input_generate ()
+{
+  # This is very wrong, and fragile: we want to issue a line, before
+  # the test body, that requires the test.u files to be loaded.
+  # Expect the genuine chk file to be last, and upload the others
+  # first.
+  perl <<EOF
+  my @file = qw($*);
+  my \$mode = "$MODE";
+  my @remote = qw($remotes $javaremotes);
+  my \$quit = "$quit";
+
+  sub load
+  {
+    for my \$file (@_)
+    {
+      print "//#push 1 \"\$file\"\n";
+      print \`cat \$file\`;
+      print "//#pop\n";
+    }
+  }
+
+  load(@file[0..(\$#file - 1)]);
+
+  if (@remote)
+  {
+    print "// Wait for remote uobjects to be set up.\n";
+    print "waitForRemoteUObjects([",
+          join (", ", map { "\"\$_\"" } @remote),
+          "]);\n",
+          "\n";
+  }
+
+  load(\$file[\$#file]);
+
+  if (\$quit)
+  {
+    # In network mode, there are several clients sending the same code
+    # to the server, so kill the connection (quit), not the server
+    # (shutdown).  In file mode, exit immediately.  Besides,
+    # "quit"ting the ghostconnection (used via stdin) seems invalid.
+    my \$q = \$mode eq 'file' ? "shutdown" : "quit";
+    print "clog << \"\$q\"; \$q;\n";
+  }
+EOF
+}
+
+
+# spawn_client_named NAME [SERVER-ID]
+# -----------------------------------
+# Used only in the network mode.  NAME is the children name to use.
+# "server.in" is the output to send.
+spawn_client_named ()
+{
+  local pfx="$1"
+  local server="$2"
+  local port="$port"
+  if test -n "$server"; then
+    port=$(cat $server.port)
+  fi
+  cp server.in $pfx.in
+  local cmd="socat -lf$pfx.err.raw -d -d"
+  cmd="$cmd OPEN:$pfx.in,ignoreeof!!CREATE:$pfx.out.raw TCP4:localhost:$port"
+  echo "$cmd" >$pfx.cmd
+  $cmd &
+  children_register $pfx
+}
+
+
+# spawn_client NUM
+# ----------------
+# Spawns a regular numbered client.
+spawn_client ()
+{
+  local pfx="client.$1"
+  spawn_client_named $pfx
+  clients="$clients $pfx"
+}
+
+
+# urbi_launch ID ARGS
+# -------------------
+urbi_launch ()
+{
+  local id="$1"
+  shift
+  if test -z "$urbi_launch_found"; then
+    xfind_prog urbi-launch$EXEEXT
+    urbi_launch=$xfind_prog_result
+    urbi_launch_found=true
+  fi
+
+  instrument -o "$id.val" -- $urbi_launch "$@"
+  echo "$instrument_result" >$id.cmd
+  eval "$instrument_result >$id.out 2>$id.err &"
+  children_register $id
+}
+
+# urbi_launch_java ID ARGS
+# ------------------------
+urbi_launch_java ()
+{
+  local id="$1"
+  shift
+  if test -z "$urbi_launch_java_found"; then
+    xfind_prog urbi-launch-java
+    urbi_launch_java=$xfind_prog_result
+    urbi_launch_java_found=true
+  fi
+
+  instrument -o "$id.val" -- $urbi_launch_java "$@"
+  echo "$instrument_result" >$id.cmd
+  eval "$instrument_result >$id.out 2>$id.err &"
+  children_register $id
+}
+
+## ----- ##
+## ros.  ##
+## ----- ##
+
+# roscore_spawn
+# -------------
+# Launch roscore in background.
+#
+# The problem here is that there is no means to let ROS allocate its
+# own bind slot.  Try to run ros until it works.
+#
+# Besides, roscore might be too slow to boot, in which case our test
+# may use it before it's ready.  So wait for its signal.
+roscore_spawn ()
+{
+  local attempt=0
+  local attempts=20
+  local port
+  local cmd
+  local name
+
+  case " $ENABLED_MODULES " in
+    (*" ros "*);;
+    (*) error SKIP "SKIP: ROS support not compiled in";;
+  esac
+
+  : ${ROS_ROOT=@ROS_ROOT@}
+  test -d "$ROS_ROOT" ||
+    fatal "ROS_ROOT is not a directory: $ROS_ROOT"
+  : ${ROS_SETUP=@ROS_SETUP@}
+  test -s "$ROS_SETUP" -a -r "$ROS_SETUP" ||
+    fatal "ROS_SETUP is not a readable file: $ROS_SETUP"
+  . $ROS_SETUP ||
+    fatal "ROS_SET failed to load properly: $ROS_SETUP"
+
+  # There is no use to run this if we can't find roscore.
+  xfind_prog roscore
+
+  # Put all the logs from ROS here.
+  export ROS_HOME=$(pwd)
+
+  while true; do
+    name=$(printf "roscore-%02d" $attempt)
+    port=$(perl -we 'print 55000 + int(rand(1000));')
+    export ROS_MASTER_URI="http://localhost:$port"
+    cmd="roscore -p '$port'"
+    echo "$cmd" >$name.cmd
+    eval "$cmd </dev/null >$name.out 2>$name.err &"
+    children_register $name
+
+    # Wait for stdout/stderr to be meaning full.
+    timeout=10
+    timer=0
+    while true; do
+      # Success?
+      master_log=$(find . -name 'master.log')
+      if test -n "$master_log" &&
+         test -s "$master_log" &&
+          grep -F 'initialization complete, waiting for shutdown' $master_log; then
+        stderr "$name started ($ROS_MASTER_URI)"
+        echo "$port" >$name.port
+        break 2
+      fi
+      # Failure?
+      if test -s $name.err &&
+          grep -F 'roscore cannot run' $name.err; then
+        # Try again on another port.
+        stderr "failed to launch roscore -p $port: $(cat $name.err)"
+        if test $attempt -lt $attempts; then
+          attempt=$(expr "$attempt" + 1)
+          break
+        else
+          fatal "cannot launch roscore"
+        fi
+      fi
+      # Too soon?
+      if test "$timer" -lt "$timeout"; then
+        timer=$(expr "$timer" + 1)
+        sleep 1
+      else
+        fatal "roscore did not issue anything on stdout nor stderr"
+      fi
+    done
+  done
+}
+
+
+# roscore_shutdown
+# ----------------
+# The right means to shut it down is to send sigint.
+roscore_shutdown ()
+{
+  children_signal -INT "roscore-*"
+  # Give it a chance to kill its children before allowing the rest of
+  # this script to terminate it.
+  #
+  # FIXME: we need some pids_wait that just waits for children,
+  # currently it also kills the processes.
+  sleep 1
+}
+
+
+## -------- ##
+## server.  ##
+## -------- ##
+
+# server_id SERVER-LINE
+# server_uobjects SERVER-LINE
+# server_options SERVER-LINE
+# ---------------------------
+# A server line looks like:
+#    //# server foo.1 bar -- --port 55000 -e 'code;'
+#       id -> server-foo.1
+# uobjects -> /path/to/foo.la /path/to/bar.la
+#  options ->  --port 55000 -e 'code;'
+server_id ()
+{
+  echo "server-$1" | sed -e 's,/,-,g'
+}
+
+server_uobjects ()
+{
+  while test $# -ne 0 && test "$1" != '--'
+  do
+    uobject_name "$1"
+    shift
+  done
+}
+
+server_options ()
+{
+  while test "$1" != '--'
+  do
+    test $# -ne 0 || return 0
+    shift
+  done
+  shift
+  echo "$@"
+}
+
+
+# server_spawn SERVER-LINE
+# ------------------------
+# Run one of the //#servers.
+server_spawn ()
+{
+  local id
+  id=$(server_id "$@")
+  echo $id >>servers.txt
+  urbi_launch $id $(server_uobjects "$@") --start -- \
+    --port 0 --port-file $id.port $(server_options "$@")
+}
+
+# server_shutdown SERVER-LINE
+# ---------------------------
+# Send "shutdown;" to the Urbi server ID.
+server_shutdown ()
+{
+  local id
+  id=$(server_id "$@")
+  echo "shutdown;" >server.in
+  spawn_client_named $id-shutter $id
+}
+
+
+
+## --------- ##
+## servers.  ##
+## --------- ##
+
+# servers_map FUNCTION
+# --------------------
+# Call FUNCTION for each of the server-slaves.
+servers_map ()
+{
+  # Launch the remote servers.
+  local save_IFS
+  save_IFS="$IFS"
+  IFS=$as_nl
+  local i
+  for i in $servers
+  do
+    IFS=$save_IFS
+    $1 $i
+  done
+  IFS=$save_IFS
+}
+
+
+# servers_spawn
+# -------------
+# Run the //#servers.
+servers_spawn ()
+{
+  # A file that contains the list of the subservers.
+  : >servers.txt
+  servers_map server_spawn
+}
+
+# servers_shutdown
+# ----------------
+# Shutdown the //#servers.
+servers_shutdown ()
+{
+  servers_map server_shutdown
+}
+
+
+
+## ------- ##
+## world.  ##
+## ------- ##
+
+# spawn_network
+# -------------
+# Run everything in background, connected by network.
+spawn_network ()
+{
+  servers_spawn
+
+  # Spawn the server after the remote servers so that we can easily
+  # connect to them.
+  spawn_urbi_server $URBI_SERVER_FLAGS
+  port=$(tr -d "\\r" <server.port)
+  echo "server is using port $port" >>debug
+
+  # Launch the remote components, connected to the server.
+  local save_IFS
+  save_IFS=$IFS
+  IFS=$as_nl
+  local rs
+  for rs in $remotes
+  do
+    IFS=$save_IFS
+    # The name of the executable: that of the first remote in the
+    # //#remote line.
+    local id
+    local r
+    for r in $rs
+    do
+      id=$(echo "remote-$r" | sed -e 's,/,-,g')
+      break
+    done
+    urbi_launch $id --port-file server.port $(uobject_name $rs)
+  done
+
+  IFS=$as_nl
+  for rs in $javaremotes
+  do
+    IFS=$save_IFS
+    # The name of the executable: that of the first remote in the
+    # //#javaremote line.
+    for r in $rs
+    do
+      id=$(echo "remote-$r" | sed -e 's,/,-,g')
+      break
+    done
+    urbi_launch_java $id --port-file server.port $(uobject_jar $rs)
+  done
+  if test -n "$javaremotes"; then
+    sleep 1
+  fi
+
+  IFS=$save_IFS
+
+  # Spawn all the clients, quite concurrently, and feed them.
+  i=0
+  while test $i -lt $CLIENTS;
+  do
+    spawn_client $i
+    i=$(($i + 1))
+  done
+}
+
+bench_wrap ()
+{
+  normalize_boolean BENCH
+  if $BENCH; then
+    BENCHFLAGS="$bench_args $BENCHFLAGS"
+    bench_wrap_result="$abs_top_srcdir/build-aux/bin/bench $BENCHFLAGS -o client.0.bench --"
+  else
+    bench_wrap_result=
+  fi
+}
+
+# spawn_file
+# ----------
+# Run the server in background.  To ease checking,
+# name it "client.0" rather than "server".
+spawn_file ()
+{
+  local pfx="client.0"
+  cp server.in $pfx.in
+  bench_wrap
+  instrument -o "server.val" -- \
+     $URBI_SERVER $URBI_SERVER_FLAGS $pfx.in
+  local cmd="$bench_wrap_result $instrument_result"
+  echo "$cmd" >$pfx.cmd
+  eval "$cmd </dev/null >$pfx.out.raw 2>$pfx.err.raw &"
+  children_register $pfx
+  clients=$pfx
+}
+
+
+
+## -------------- ##
+## Main program.  ##
+## -------------- ##
+
+# Decode envvars.
+normalize_boolean FAST_MODE
+
+# Let the user chose the log level.
+#export GD_LEVEL=DUMP
+
+# Provide a means to have test that check the name of the machine.
+export HOSTNAME=$(hostname | sed -e 's/\..*//')
+
+: ${PACKAGE_TARNAME=@PACKAGE_TARNAME@}
+
+# Available UObject modules.
+: ${ENABLED_MODULES='@ENABLED_MODULES@'}
+
+# Do we have RTP support?
+: ${RTP=@HAVE_ORTP@}
+
+# Parse command line options.
+# The number of clients to spawn.
+: ${CLIENTS=1}
+# The list of client names (client.0 client.1 ... client.<CLIENTS - 1>).
+clients=
+files=
+: ${MODE=auto}
+period=32
+quit=false
+silent=false
+
+get_options "$@"
+
+# In case no files are submitted, read stdin.
+if test -z "$files"; then
+  files=$(mktemp input.XXXXXX)
+  # In case mktemp failed (set -e doesn't apply to $()), exit here.
+  test -f $files ||
+    fatal "cannot create tmp file: $files"
+  cat >$files
+fi
+
+# Initialize files.
+: >debug
+
+# The location of the check files.
+check_dir abs_top_srcdir tests/bin/uconsole.m4sh
+
+# Special directives.
+bench_args=$(directive_get bench-args $files)
+javaremotes=$(java_get $files)
+mode=$(directive_get mode $files)
+no_fast=$(directive_get no-fast $files)
+plugs=$(uobjects_get plug $files)
+remotes=$(uobjects_get remote $files)
+roscore=$(directive_get roscore $files)
+servers=$(directive_get server $files)
+
+stderr "plugs=$plugs"
+stderr "remotes=$remotes"
+
+timeout_adjust $files
+
+# Whether --fast is OK.
+if test -n "$no_fast"; then
+  FAST_MODE=false
+fi
+
+# If the test specifies the mode, then listen to it.
+if test -n "$mode"; then
+  MODE=$mode
+fi
+
+# Optimization: don't use networking when not needed.
+case $MODE:$remotes$javaremotes:$PACKAGE_TARNAME:$CLIENTS in
+  (auto::urbi-sdk:1)
+      # The only case where we can use file mode.
+      MODE=file;;
+  (auto:* | net:* | network:*)
+      # We need socat for this test.
+      run "socat version" socat -V >&3 ||
+        error SKIP "SKIP: socat is required"
+      MODE=network;;
+  (file:*)
+      ;;
+  (*:)
+      error SOFTWARE "invalid MODE: $MODE";;
+esac
+stderr "using $MODE MODE"
+
+# Help debugging.
+set |
+  $abs_top_srcdir/build-aux/bin/print-env -I - |
+  rst_pre "$me variables" >&3
+
+## ----- ##
+## ROS.  ##
+## ----- ##
+
+if test -n "$roscore"; then
+  roscore_spawn
+else
+  # This test does not need ROS, so let's not load it (for instance
+  # because since it has an active loop, it breaks the tests that
+  # check that we don't do active loops :).  It is automatically
+  # loaded if possible, and if $ROS_ROOT is defined.  So undefine it.
+  unset ROS_ROOT
+fi
+
+## -------------------------- ##
+## Optional Plugins/Remotes.  ##
+## -------------------------- ##
+
+all=$(echo $plugs $remotes | tr ' ' '\n' | sort -u | xargs echo)
+for i in $all;
+do
+  case $i in
+    (urbi/rtp)
+      # Use the --describe feature of urbi-launch in remote mode.
+      xfind_prog urbi-launch$EXEEXT
+      if GD_LEVEL=NONE $xfind_prog_result --remote "$i" -- --describe; then
+        stderr "$i support compiled in"
+      else
+        case $RTP in
+          (true)  fatal "missing: $i";;
+          (false) error SKIP "SKIP: not compiled: $i";;
+        esac
+      fi
+      ;;
+  esac
+done
+
+## --------- ##
+## Plugins.  ##
+## --------- ##
+
+if test -n "$plugs"; then
+  xfind_prog urbi-launch$EXEEXT
+  URBI_SERVER=$xfind_prog_result
+  URBI_SERVER_FLAGS="$URBI_SERVER_FLAGS --start $(uobject_name $plugs) --"
+fi
+
+
+## --------- ##
+## Remotes.  ##
+## --------- ##
+
+# Set up URBI_SERVER.
+: ${URBI_SERVER='@URBI_SERVER@'}
+find_urbi_server
+# We want no banner.
+URBI_SERVER_FLAGS="$URBI_SERVER_FLAGS --quiet"
+
+if $FAST_MODE && test -z "$remotes$javaremotes" ;then
+  URBI_SERVER_FLAGS="$URBI_SERVER_FLAGS --fast"
+fi
+
+# Check if the test accepts to run
+skipcond=$(directive_get skip-if $files)
+if test -n "$skipcond" && eval "$skipcond"; then
+  error SKIP "SKIP: the test requested to be skipped: $skipcond"
+fi
+
+input_generate $files >server.in
+
+# Give them a bit less than one minute (quite a lot).  We tried 30s,
+# but there were random timeouts.  It must be more that the timeout in
+# uconsole-check.
+timeout=50
+
+# Optimization: don't use networking when not needed.
+case $MODE in
+  (file)
+    spawn_file
+    # Wait for the (remaining) children (including the server itself), and
+    # kill the slow ones.
+    children_wait $timeout client.0 >>debug
+    test -z "$roscore" ||
+      roscore_shutdown
+    ;;
+
+  (network)
+    spawn_network
+    # Unfortunately if we are under Wine and hit some stub for a not
+    # yet implemented function, we will not know: the execution
+    # proceeds normally, and it's only our timeout which will kill the
+    # server.  We can save a lot of time and false timeouts by
+    # checking soon if we need to skip.
+    children_check_skip
+    if $children_check_skip_result; then
+      test -z "$roscore" ||
+        roscore_shutdown
+    else
+      # Wait for the clients to finish their job.
+      children_wait $timeout $clients >>debug
+
+      test -z "$roscore" ||
+        roscore_shutdown
+
+      # The clients are done, ask another client to shutdown the
+      # server.  If we actually timed-out waiting for the children,
+      # just fall through to children_kill.
+      #
+      # On bf-1 "quit" does not work properly for some unknown reason.
+      # So it uses "shutdown" instead of "quit".  Therefore, we cannot
+      # expect the shutter to succeed.  So if the server is not alive,
+      # no need for a shutter.
+      if $children_wait_result && children_alive server; then
+        servers_shutdown
+        echo 'shutdown;' >server.in
+        spawn_client_named server-shutter server
+	# Wait for the shutter to finish shutting the server down.
+	children_wait 2 server >>debug
+      fi
+    fi
+    ;;
+
+  (*)
+    error SOFTWARE "invalid MODE: $MODE"
+    ;;
+esac
+
+# We've waited enough.
+children_kill >>debug
+
+# We don't dump the results, this is handled by cleanup().
+children_harvest
+
+# Everybody should exit properly.
+exit $(children_status)
+]

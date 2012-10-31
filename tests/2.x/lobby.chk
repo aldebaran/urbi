@@ -1,0 +1,82 @@
+Lobby.send("23");
+[00000001:error] !!! input.u:@.1-16: send: must be called on Lobby derivative
+
+Lobby.write("23");
+[00000002:error] !!! input.u:@.1-17: write: must be called on Lobby derivative
+
+// Make sure we do output the result here, not elsewhere.
+// See https://redmine.gostai.com/issues/3658.
+Lobby.inspect();
+[00000059] *** Inspecting Lobby
+[00000059] *** ** Prototypes:
+[00000059] ***   Channel_0xb545f2a4
+[00000059] *** ** Local Slots:
+[00000059] ***   asLobby : const gettable
+[00000059] ***   asString : Code
+[00000059] ***   authors : Code
+[00000059] ***   banner : Code
+[00000059] ***   binaryMode : const gettable
+[00000059] ***   bytesReceived : gettable
+[00000059] ***     Properties:
+[00000059] ***      oget : Primitive = Primitive_0xb5406718
+[00000059] ***   bytesSent : gettable
+[00000059] ***     Properties:
+[00000059] ***      oget : Primitive = Primitive_0xb5406890
+[00000059] ***   clone : const gettable
+[00000059] ***   connected : true
+[00000059] ***   copyright : Code
+[00000059] ***   create : const gettable
+[00000059] ***   echo : Code
+[00000059] ***   echoEach : Code
+[00000059] ***   handleDisconnect : Code
+[00000059] ***   initialize : Code
+[00000059] ***   instances : gettable
+[00000059] ***     Properties:
+[00000059] ***      oget : Primitive = Primitive_0xb5406b80
+[00000059] ***   license : Code
+[00000059] ***   lobbies : gettable
+[00000059] ***     Properties:
+[00000059] ***      oget : Primitive = Primitive_0xb5406b80
+[00000059] ***   lobby : const gettable
+[00000059] ***     Properties:
+[00000059] ***      oget : Primitive = Primitive_0xb5406cf8
+[00000059] ***   onDisconnect : Event
+[00000059] ***   quit : gettable
+[00000059] ***     Properties:
+[00000059] ***      oget : Primitive = Primitive_0xb5406e70
+[00000059] ***   receive : const gettable
+[00000059] ***   reverseConnect : Code
+[00000059] ***   send : const gettable
+[00000059] ***   sigint_interrupt : Code
+[00000059] ***   sigint_shutdown : Code
+[00000059] ***   systemLobby : Lobby
+[00000059] ***   thanks : Code
+[00000059] ***   type : const gettable
+[00000059] ***   wall : Code
+[00000059] ***   write : const gettable
+
+var l = Lobby.create()|;
+l.inspect();
+[00000036] *** Inspecting Lobby_0x5
+[00000037] *** ** Prototypes:
+[00000038] ***   Lobby
+[00000039] *** ** Local Slots:
+[00000040] ***   connectionTag : Tag
+
+assert
+{
+  l.bytesReceived() == 0;
+  l.bytesSent() == 0;
+};
+
+// Check that lobbies are removed from the list of lobbies when destroyed.
+{
+  var s = Lobby.lobbies.size;
+  assert(Lobby.lobbies.size - s == 0);
+  var l = Lobby.create();
+  assert(Lobby.lobbies.size - s == 1);
+  l.quit();
+  l = nil;
+  assert(Lobby.lobbies.size - s == 0);
+};
+[00000041] *** disconnecting Lobby_0x6

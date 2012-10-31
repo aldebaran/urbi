@@ -1,0 +1,67 @@
+"foobar".split("b");
+[00000001] ["foo", "ar"]
+"foobar".split("b", nil, true);
+[00000002] ["foo", "b", "ar"]
+"foobar".split("o");
+[00000003] ["f", "", "bar"]
+"foobar".split("o", nil, false, false);
+[00000004] ["f", "bar"]
+"foobar".split("o", nil, true, false);
+[00000005] ["f", "o", "o", "bar"]
+"foobar".split("f");
+[00000006] ["", "oobar"]
+"foobar".split("r");
+[00000007] ["fooba", ""]
+"foobar".split("o");
+[00000008] ["f", "", "bar"]
+"foobar".split("x");
+[00000009] ["foobar"]
+"foobar".split("");
+[00000010] ["f", "o", "o", "b", "a", "r"]
+"".split("");
+[00000011] []
+"".split("foo");
+[00000012] [""]
+
+"foobar".split("oo");
+[00000013] ["f", "bar"]
+"fooobar".split("oo");
+[00000014] ["f", "obar"]
+"foooobar".split("oo");
+[00000015] ["f", "", "bar"]
+
+// test limit
+"foobar".split("o", 0, true, false);
+[00000016] ["foobar"]
+"foobar".split("o", 1, true, false);
+[00000017] ["f", "o", "obar"]
+"foobar".split("o", 2, true, false);
+[00000018] ["f", "o", "o", "bar"]
+"foobar".split("o", 3, true, false);
+[00000019] ["f", "o", "o", "bar"]
+
+
+var s = "one:two,three::four,:;five" | {};
+
+// test several delimiters
+s.split([":", ",", ";"]);
+[00000020] ["one", "two", "three", "", "four", "", "", "five"]
+s.split([":", ",", ";"], nil, false, false);
+[00000021] ["one", "two", "three", "four", "five"]
+"foobar".split(["o", "", "a"]);
+[00000022] ["f", "o", "o", "b", "a", "r"]
+"foobar".split([]);
+[00000023] ["foobar"]
+"".split(["foo", "bar"]);
+[00000024] [""]
+
+// test keep empty
+"foo ".split(" ", nil, false, false);
+[00000025] ["foo"]
+
+// test no-arguments variant (tokenizer)
+"  abc\ndef \t ghi\r\n".split();
+[00000026] ["abc", "def", "ghi"]
+
+"foobar".split(0, 0, 0, 0, 0);
+[00000027:error] !!! input.u:@.1-29: split: expected between 0 and 4 arguments, given 5

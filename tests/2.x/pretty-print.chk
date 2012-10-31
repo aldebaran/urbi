@@ -1,0 +1,72 @@
+// We don't maintain the original AST if space compilation mode.
+skipIfSpace();
+
+function () {
+  a++;
+  a--;
+  a += 0;
+  a -= 0;
+  a *= 1;
+  a /= 1;
+  // Test only one modifier, the printing order is undefined.
+  a = b foo: bar;
+  var Object.a = 0;
+  Object.a = 1;
+  class Foo: 1
+  {
+    blah
+  };
+  foo!;
+  foo!(1, 2, 3);
+  foo! ~ 42s;
+  [];
+  [ => ];
+  [
+    "a" => 1,
+  ];
+};
+[00000001] function () {
+[:]  a++;
+[:]  a--;
+[:]  a += 0;
+[:]  a -= 0;
+[:]  a *= 1;
+[:]  a /= 1;
+[:]  a = b foo: bar;
+[:]  var Object.a = 0;
+[:]  Object.a = 1;
+[:]  class Foo: 1
+[:]  {
+[:]    blah
+[:]  };
+[:]  foo!;
+[:]  foo!(1, 2, 3);
+[:]  foo! ~ 42;
+[:]  [];
+[:]  [ => ];
+[:]  [
+[:]    "a" => 1,
+[:]  ];
+[:]}
+
+
+function () {
+  for(var x: 3)  {};
+  for&(var x: 3) {};
+  for|(var x: 3) {};
+
+  while(var x = 3)  {};
+  while|(var x = 3) {};
+};
+[00000002] function () {
+[:]  for (var x : 3)
+[:]  {};
+[:]  for& (var x : 3)
+[:]  {};
+[:]  for| (var x : 3)
+[:]  {};
+[:]  while (var x = 3)
+[:]  {};
+[:]  while| (var x = 3)
+[:]  {};
+[:]}

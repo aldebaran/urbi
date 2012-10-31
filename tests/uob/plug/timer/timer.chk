@@ -1,0 +1,42 @@
+//#uobject test/timer
+//#no-fast
+
+var t = timer.new()|;
+
+assert
+{
+  sleep(500ms).isVoid();
+  t.updated == 0;
+
+  t.setupUpdate(100) == 0;
+  sleep(500ms).isVoid();
+  t.updated in Range.new(5, 7);
+
+  t.setupUpdate(-1) == 0;
+  sleep(200ms).isVoid();
+  (t.updated = 0) == 0;
+  sleep(400ms).isVoid();
+  t.updated == 0;
+
+  t.setupUpdate(100) == 0;
+  sleep(400ms).isVoid();
+  t.updated > 0;
+
+  !(t.timerup > 0);
+
+  var ts = t.setupTimer(100);
+  sleep(400ms).isVoid();
+  t.timerup in Range.new(4, 8);
+
+  (t.timerup = 0) == 0;
+  sleep(400ms).isVoid();
+  t.timerup > 0;
+  t.unsetupTimer(ts);
+  sleep(200ms).isVoid();
+  (t.timerup = 0) == 0;
+  sleep(400ms).isVoid();
+  !(t.timerup > 0);
+};
+
+removeLocalSlot("t")|;
+// Should die gracefuly.

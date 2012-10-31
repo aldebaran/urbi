@@ -1,0 +1,57 @@
+//#uobject test/threaded
+//#no-fast
+
+skipIfDebug();
+skipIfWindows();
+
+import Global.*;
+
+var num = 10|;
+var delay = 200ms|;
+UVar.new(Global, "x")|;
+var Global.count = 0|;
+Global.&x.notifyChange(closure() { Global.count++})|;
+
+// Start thread structures without any thread in it.
+for|(var i: num)
+{
+  Threaded.startThread();
+  Threaded.queueOp(i, Threaded.DIE, []);
+};
+sleep(delay);
+
+var tick = 0|;
+detach({
+  every|(100ms)
+    tick++;
+})|;
+// Queue the operations first, so that we can ignore how long it takes
+// to do it.  What we are interested in is how long it takes to
+// process them.
+for (var i: num)
+  Threaded.queueOp(i, Threaded.WRITE_VAR, ["Global.x", i]);
+tick = 0 |
+for& (var i: num)
+  Threaded.lockNoneDelayOp(i, 900000)|
+assert
+{
+  tick in Range.new(9 - 2, 9 + 2);
+  count == num;
+};
+
+// Check function lock, in parallel to no lock.
+// Use timing to detect if the operation is parallel or serial.
+for (var i: num)
+  Threaded.queueOp(i, Threaded.WRITE_VAR, ["Global.x", i]);
+Global.count = 0 | tick = 0 |
+for& (var i: num/2)
+  Threaded.lockFunctionDelayOp(i, 200000)
+& for& (var i: num/2)
+  Threaded.lockNoneDelayOp(i+num/2, 600000)
+|
+// We can take a big margin, if //isation fails tick=30
+assert
+{
+  tick in Range.new(10 - 5, 10 + 5);
+  count == num;
+};

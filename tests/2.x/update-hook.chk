@@ -1,0 +1,51 @@
+class C
+{
+  var slot = 51;
+  slot->updateHook =
+    function (slot, value)
+    {
+      echo (asString() + "." + slot + " := " + value.asString()) |
+      value
+    };
+}|;
+
+C.slot = 23;
+[00000001] *** C.slot := 23
+[00000002] 23
+
+// properties do not apply to children.
+var c = C.new()|;
+c.slot = 3;
+[00000003] *** C_0x100c27580.slot := 3
+[00000004] 3
+
+
+// Check the pattern used in urbi/uobject.u to inherited an updateHook.
+class Foo
+{
+  function init
+  {
+    var this.value = 0 |
+    setProperty("value", "updateHook", getSlotValue("updateHook"))
+  };
+
+  /// updateHook to pass to the children.
+  function updateHook(slot, newval)
+  {
+     echo (asString() + "." + slot + " := " + newval.asString()) |
+     newval
+  };
+} | {};
+
+var f1 = Foo.new()|;
+f1.value = 42|;
+[00000005] *** Foo_0x100c57360.value := 42
+
+var f2 = Foo.new()|;
+f2.value = 23|;
+[00000006] *** Foo_0x100c56de0.value := 23
+
+f1.value;
+[00000007] 42
+f2.value;
+[00000008] 23

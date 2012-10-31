@@ -1,0 +1,6 @@
+//#uobject test/ultest
+
+var ultest = uobjects.ultest.new()|
+
+for (100)
+  ultest.f;

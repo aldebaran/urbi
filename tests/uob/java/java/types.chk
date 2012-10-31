@@ -1,0 +1,28 @@
+//#java tests.java.Java
+assert
+{
+  Java.byte_(127) == 127;
+  Java.byte_(-128) == -128;
+  Java.byte_(128) == -128;
+
+  Java.short_(32_767) == 32_767;
+  Java.short_(-32_768) == -32_768;
+  Java.short_(32_768) == -32_768;
+
+  Java.int_(2_147_483_647) == 2_147_483_647;
+  Java.int_(-2_147_483_648) == -2_147_483_648;
+  Java.int_(2_147_483_648) == -2_147_483_648;
+
+
+  Java.long_(17_179_869_184) == 17_179_869_184;
+  Java.long_(-17_179_869_184) == -17_179_869_184;
+
+  // Urbi doesn't handle 2^63 (long long MAX)
+  Java.long_(9_223_370_000_000_000_000) == 9_223_370_000_000_000_000;
+  Java.long_(-9_223_372_036_854_775_808) == -9_223_372_036_854_775_808;
+};
+
+var b = Binary.new("canard", "coincoin")|;
+Java.ubinary(b);
+[00000014] BIN 8 canard
+[:]coincoin

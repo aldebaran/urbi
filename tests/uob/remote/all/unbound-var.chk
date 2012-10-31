@@ -1,0 +1,11 @@
+//#uobject test/all
+uobjectsAll();
+
+all.read(4);
+[00000001:error] !!! input.u:@.1-11: read: exception caught while calling remote method: invalid use of unbound UVar
+all.write(4, 15);
+[00000002:error] !!! input.u:@.1-16: write: exception caught while calling remote method: invalid use of unbound UVar
+all.setNotifyChange(4);
+[00000003:error] !!! input.u:@.1-22: setNotifyChange: exception caught while calling remote method: invalid use of unbound UVar
+all.setNotifyAccess(4);
+[00000004:error] !!! input.u:@.1-22: setNotifyAccess: exception caught while calling remote method: invalid use of unbound UVar

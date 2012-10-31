@@ -1,0 +1,15 @@
+// Exercize the UObject protocol without UObject.
+
+// Yes, this triggers a warning.
+if (!isdef(wiimote.load))
+  var wiimote.load;
+[00000001:error] !!! input.u:@.7-13: lookup failed: wiimote
+
+external var wiimote.load from dummy0;
+class wiimote {};
+[00000002] wiimote
+
+external object wiimote;
+uobjects.findUObject("wiimote").load = 1;
+[00000003:__ExternalMessage__] [1, "wiimote.load", 1, <TIMESTAMP>]
+[00000004] 1

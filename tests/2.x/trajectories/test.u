@@ -1,0 +1,59 @@
+/*
+ * Copyright (C) 2010, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+function sample//(Source, Number, Period)
+{
+  var number = call.evalArgAt(1)|
+  var period = call.evalArgAt(2)|
+  var res = [call.evalArgAt(0)] |
+  for (number - 1)
+  {
+    sleep(period)|
+    res << call.evalArgAt(0) |
+  }|
+  res
+}|;
+
+function assertSample (sample, reference)
+{
+  import Math.*;
+  // Larger precision is used because valgrind slows the server
+  // down. The test should run with 0.1 when INSTRUMENTATION=0.
+  var precision = 5 |
+  clog << "reference: " + reference |
+  clog << "sample:    " + sample |
+  assert (sample.size == reference.size) |
+  var diffs = [] |
+  var passes = [] |
+  var failures = [] |
+  for (var i: sample.size)
+  {
+    var d = abs (reference[i] - sample[i]) |
+    diffs << d |
+    if (precision < d)
+    {
+      passes << "FAIL" |
+      failures << (i, reference[i], sample[i])
+    }
+    else
+    {
+      passes << "PASS" |
+    }
+  } |
+  clog << "diffs:     " + diffs |
+  clog << "passes:    " + passes |
+  if (!failures.empty)
+    echo("Test failed, samples #%s are more that %s wrong"
+         % [failures, precision])
+}|;
+
+
+var x = 0 |
+var s;

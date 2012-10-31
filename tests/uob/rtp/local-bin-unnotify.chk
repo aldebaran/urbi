@@ -1,0 +1,62 @@
+//#plug test/all urbi/rtp
+//#remote test/all urbi/rtp
+skipIfWindows(); // FIXME: reenable for Urbi 3.
+
+remall.writeLastChangeVal = false|;
+UVar.new(Global, "val")|;
+Global.val = bigbin|;
+
+// Force RTP.
+Global.&val.rtp = true|;
+
+remall.setNotifyChangeByUVar(Global.&val)|;
+sleep(100ms);
+Global.val = bigbin|;
+var gvName = Global.&val.fullName|;
+sleep(100ms);
+
+for(10)
+{
+  Global.val = bigbin;
+  sleep(100ms);
+};
+// careful, removeNotify is processed in the onChange so ensure it is called.
+2;
+[00000001] 2
+var rtp = remall.lobby.__bindingFunc[gvName][0]|;
+remall.removeNotify = remall.lastChange|;
+"foo";
+[00000001] "foo"
+timeout(600ms)
+  every|(150ms)
+    Global.val = Binary.new("", "foo")|;
+"bar";
+[00000001] "bar"
+timeout(5s)
+  waituntil(remall.removeNotify == "");
+assert(remall.removeNotify == "");
+3;
+[00000002] 3
+// Wait a bit more until it is effective.
+sleep(200ms);
+for(3)
+{
+  Global.val = bigbin;
+  sleep(100ms);
+};
+
+4;
+[00000002] 4
+
+// Our UObject should have been destroyed.
+assert(!rtp.hasLocalSlot("stats"));
+
+5;
+[00000003] 5
+
+// ... second check for the same thing
+remall.lastChange = ""|;
+Global.val = bigbin|;
+sleep(400ms);
+remall.lastChange;
+[00000004] ""
