@@ -1,6 +1,3 @@
-[submodule "tests"]
-	path = tests
-	url = ssh://git@git.aldebaran.lan/urbi-sdk/tests.git
 [submodule "bison"]
 	path = bison
 	url = ssh://git@git.aldebaran.lan/urbi-sdk/bison.git
