@@ -344,3 +344,4 @@ add_subdirectory(src/object/urbi)
 add_subdirectory(share)
 #Requires lib uobject
 add_subdirectory(sdk-remote/src/uobjects)
+add_subdirectory(tests)
