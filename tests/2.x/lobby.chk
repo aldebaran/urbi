@@ -62,6 +62,8 @@ l.inspect();
 [00000038] ***   Lobby
 [00000039] *** ** Local Slots:
 [00000040] ***   connectionTag : Tag
+[00000000] ***   send : const gettable
+[00000000] ***   write : const gettable
 
 assert
 {
@@ -79,4 +81,3 @@ assert
   l = nil;
   assert(Lobby.lobbies.size - s == 0);
 };
-[00000041] *** disconnecting Lobby_0x6
