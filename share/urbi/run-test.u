@@ -8,7 +8,7 @@ function splitChk(content)
   var sin = [];
   var sout = [];
   var rOutput = Regexp.new("^\\[[0-9]{8}(:[a-zA-Z0-9_]+)?\\]");
-  var rVarError = Regexp.new("!!! input.u:@([+-]?[0-9]+)?");
+  var rVarError = Regexp.new("!!! input.u:@([+-]?[0-9]+)?\\.[0-9]+(-@([+-]?[0-9]+))?");
   var rOutputCont = Regexp.new("^\\[:]");
   var line = 1;
   for (var l: content)
@@ -27,8 +27,13 @@ function splitChk(content)
         if (rVarError.matches[1])
           nLine -= System.eval(rVarError.matches[1]);
         l = l.replace("@" + rVarError.matches[1], nLine.asString());
+        if (rVarError.matches[3])
+        {
+          nLine = line - 1 - System.eval(rVarError.matches[3]);
+          l = l.replace("@" + rVarError.matches[3], nLine.asString());
+        }
       };
-      if (objAddr.match(l))
+      while (objAddr.match(l))
       {
         l = l.replace(objAddr.matches[1], "_0xADDR");
       };
@@ -87,17 +92,27 @@ function runTest(chkFile)
   debug << ("expected output: " + sout);
   debug << "Creating lobby...";
   var effOut = [];
-  // Create a lobby for the test
-  var l = Lobby.create();
-  // Redirect its output to effOut
-  l.write = function(s) { for|(var i: s.split("\n")) effOut << i | {}};
-  l.send = function(msg, tag="":String)
+
+
+  // Override Lobby.create to redirect to us
+  var lc = Lobby.create;
+  Lobby.create->constant = false;
+  Lobby.create = function()
   {
-    if (tag)
-      tag = ":" + tag|
-    write("[00000000" + tag + "] " + msg.asString())|
-    {}
+    var l = lc.apply([Lobby]);
+    // Redirect its output to effOut
+    l.write = function(s) { for|(var i: s.split("\n")) effOut << i | {}};
+    l.send = function(msg, tag="":String)
+    {
+      if (tag)
+        tag = ":" + tag|
+      write("[00000000" + tag + "] " + msg.asString())|
+      {}
+    };
+    l
   };
+   // Create a lobby for the test
+  var l = Lobby.create();
   var ID = "_" + l.uid.asString();
   // Use a variable to detect end of test
   if (Object.test_finished.hasLocalSlot(ID))
@@ -124,7 +139,7 @@ function runTest(chkFile)
   //  log messages
   effOut = effOut.filter(closure(x) { !outClog.match(x)});
   effOut = effOut.map(closure(l) {
-      if (objAddr.match(l))
+      while (objAddr.match(l))
         l = l.replace(objAddr.matches[1], "_0xADDR")|
       l
   });
