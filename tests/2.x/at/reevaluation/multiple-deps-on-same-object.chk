@@ -5,10 +5,10 @@ var x = 0;
 [00000001] 0
 var y = 0;
 [00000002] 0
-
+var finished = false|;
 echo("setup at");
 [00000003] *** setup at
-at ({echo("eval"); x + y > 0})
+at ({if (!finished) echo("eval"); x + y > 0})
   echo("in");
 [00000004] *** eval
 
@@ -21,3 +21,4 @@ x = 1;
 
 echo("the end");
 [00000009] *** the end
+finished = true|;
