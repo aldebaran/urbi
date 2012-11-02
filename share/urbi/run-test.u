@@ -146,12 +146,32 @@ function runTest(chkFile)
   debug << ("Test output: " + effOut);
 
   // Compare expected and effective
-  if (effOut == sout)
+  // Some additional changes may be required, go line by line
+  var failed = effOut.size != sout.size;
+  var line = 0;
+  while (!failed && line < effOut.size)
   {
-    debug << "OK"|
-    true
-  }
-  else
+    var eff = effOut[line]|
+    var exp = sout[line]|
+    if (eff != exp)
+    {
+      // Additional checks
+      // <TIMESTAMP>
+      var m = exp.find("<TIMESTAMP>");
+      if (m>=0)
+      {
+        var rDouble = Regexp.new("[-+0-9.]+"); // close enough
+        if (eff.size > m)
+        {
+          if (rDouble.match(eff[m, 0]))
+            eff = eff.replace(rDouble.matches[0], "<TIMESTAMP>")
+        }
+      };
+      failed = (eff != exp)
+    };
+    ++line;
+  };
+  if (failed)
   {
     write("SOURCE:\n" + content.join("\n") + "\n\n");
     write("INPUT:\n" + sin.join("\n") + "\n");
@@ -162,6 +182,8 @@ function runTest(chkFile)
     debug << "FAIL"|
     false
   }
+  else
+    true
 }|;
 
 var Object.test_finished = Object.new()|;
