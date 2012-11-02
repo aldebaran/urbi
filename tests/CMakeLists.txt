@@ -1,17 +1,38 @@
-FILE(GLOB_RECURSE tests RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/2.x  2.x/*.chk)
+
+if (NOT DEFINED TEST_DIRS)
+  set(TEST_DIRS
+    0.x
+    1.x
+    2.x
+    demo
+    uob/plug
+    #uob/remote
+    #uob/rtp
+    #uob/java
+  )
+endif()
 
 set(BLACKLIST
-  mem-check_chk
-  load_load_chk
-  bench_sinus_chk
-  derive_chk
-  tfail-mem-check_chk
-  socket_receive_chk
-  filesystem_directory-events_chk
-  filesystem_directory_chk
-  filesystem_process_chk
-  global-local_chk
+  2_x_mem-check_chk
+  2_x_load_load_chk
+  2_x_bench_sinus_chk
+  2_x_derive_chk
+  2_x_tfail-mem-check_chk
+  2_x_socket_receive_chk
+  2_x_filesystem_directory-events_chk
+  2_x_filesystem_directory_chk
+  2_x_filesystem_process_chk
+  2_x_global-local_chk
   )
+
+set(tests
+
+ )
+
+FOREACH(dir ${TEST_DIRS})
+  FILE(GLOB_RECURSE dirtests RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}  ${dir}/*.chk)
+  list(APPEND tests ${dirtests})
+ENDFOREACH(dir)
 
 FOREACH(infileName ${tests})
   string(REPLACE "." "_" _out ${infileName})
@@ -21,7 +42,7 @@ FOREACH(infileName ${tests})
     MESSAGE("Test ${_out2} blacklisted, skipping")
   else()
     # We need to check fast mode at this point
-    file(READ 2.x/${infileName} _fcontent LIMIT 512)
+    file(READ ${infileName} _fcontent LIMIT 512)
     #MESSAGE("Got ${_fcontent}")
     string(FIND "${_fcontent}" "//#no-fast" _found)
     set(_fast "")

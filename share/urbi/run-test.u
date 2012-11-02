@@ -92,9 +92,9 @@ function runTest(chkFile)
   var debug = Logger.new("test");
   debug.'<<' = function(x) { this.log(x)};
   //debug.level = Logger.level.Dump;
-  var content = File.new("../tests/2.x/" + chkFile).content().data.split("\n");
+  var content = File.new("../tests/" + chkFile).content().data.split("\n");
   (var reqs, var sin, var sout) = splitChk(content);
-  var testu = fetchTestU("../tests/2.x/" + chkFile);
+  var testu = fetchTestU("../tests/" + chkFile);
   debug << ("input: " + sin);
   debug << ("expected output: " + sout);
   debug << "Creating lobby...";
@@ -124,7 +124,11 @@ function runTest(chkFile)
     switch(i[0])
     {
     case "plug":
-        System.loadModule(i[1])
+        System.loadModule(i[1]);
+    case "uobject":
+        System.loadModule(i[1]);
+    case "remote":
+      throw "not implemented"
     }
   };
 
