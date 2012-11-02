@@ -38,7 +38,7 @@
 
 namespace yy {
 /* Line 32 of stack.hh  */
-#line 42 "/home/bearclaw/aldebaran/libport/kernel/build-linux32/src/parser/stack.hh"
+#line 42 "/home/bearclaw/aldebaran/qi-2/urbi/kernel/build-linux32/src/parser/stack.hh"
   template <class T, class S = std::deque<T> >
   class stack
   {
@@ -137,7 +137,7 @@ namespace yy {
 
 } // yy
 /* Line 128 of stack.hh  */
-#line 141 "/home/bearclaw/aldebaran/libport/kernel/build-linux32/src/parser/stack.hh"
+#line 141 "/home/bearclaw/aldebaran/qi-2/urbi/kernel/build-linux32/src/parser/stack.hh"
 
 #endif // not BISON_STACK_HH[]dnl
 

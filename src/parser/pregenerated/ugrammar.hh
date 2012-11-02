@@ -37,7 +37,7 @@
 
 /* "%code requires" blocks.  */
 /* Line 146 of lalr1.cc  */
-#line 28 "/home/bearclaw/aldebaran/libport/kernel/src/parser/ugrammar.y"
+#line 29 "/home/bearclaw/aldebaran/qi-2/urbi/kernel/src/parser/ugrammar.y"
 
 #include <kernel/config.h> // YYDEBUG.
 
@@ -57,13 +57,13 @@
 #include <parser/fwd.hh>
 
 /* Line 146 of lalr1.cc  */
-#line 197 "/home/bearclaw/aldebaran/libport/kernel/src/parser/ugrammar.y"
+#line 198 "/home/bearclaw/aldebaran/qi-2/urbi/kernel/src/parser/ugrammar.y"
 
 #include <ast/flavor.hh>
 
 
 /* Line 146 of lalr1.cc  */
-#line 67 "/home/bearclaw/aldebaran/libport/kernel/build-linux32/src/parser/ugrammar.hh"
+#line 67 "/home/bearclaw/aldebaran/qi-2/urbi/kernel/build-linux32/src/parser/ugrammar.hh"
 
 
 
@@ -76,7 +76,7 @@
 
 namespace yy {
 /* Line 156 of lalr1.cc  */
-#line 80 "/home/bearclaw/aldebaran/libport/kernel/build-linux32/src/parser/ugrammar.hh"
+#line 80 "/home/bearclaw/aldebaran/qi-2/urbi/kernel/build-linux32/src/parser/ugrammar.hh"
 
   /// A char[S] buffer to store and retrieve objects.
   ///
@@ -171,7 +171,7 @@ namespace yy {
 
 } // yy
 /* Line 156 of lalr1.cc  */
-#line 175 "/home/bearclaw/aldebaran/libport/kernel/build-linux32/src/parser/ugrammar.hh"
+#line 175 "/home/bearclaw/aldebaran/qi-2/urbi/kernel/build-linux32/src/parser/ugrammar.hh"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -183,7 +183,7 @@ namespace yy {
 # undef YYERROR_VERBOSE
 # define YYERROR_VERBOSE 1
 #else
-# define YYERROR_VERBOSE 0
+# define YYERROR_VERBOSE 1
 #endif
 
 /* Enabling the token table.  */
@@ -194,7 +194,7 @@ namespace yy {
 
 namespace yy {
 /* Line 178 of lalr1.cc  */
-#line 198 "/home/bearclaw/aldebaran/libport/kernel/build-linux32/src/parser/ugrammar.hh"
+#line 198 "/home/bearclaw/aldebaran/qi-2/urbi/kernel/build-linux32/src/parser/ugrammar.hh"
 
   /// A Bison parser.
   class parser
@@ -1107,6 +1107,9 @@ namespace yy {
     /// For a symbol, its name in clear.
     static const char* const yytname_[];
 #endif
+
+    /// Convert the symbol name \a n to a form suitable for a diagnostic.
+    static std::string yytnamerr_ (const char *n);
 
 #if YYDEBUG
   /* YYRLINEYYN -- Source line where rule number YYN was defined.    */
@@ -2046,7 +2049,7 @@ namespace yy {
 
 } // yy
 /* Line 347 of lalr1.cc  */
-#line 2050 "/home/bearclaw/aldebaran/libport/kernel/build-linux32/src/parser/ugrammar.hh"
+#line 2053 "/home/bearclaw/aldebaran/qi-2/urbi/kernel/build-linux32/src/parser/ugrammar.hh"
 
 
 

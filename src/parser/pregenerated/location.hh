@@ -45,7 +45,7 @@
 
 namespace yy {
 /* Line 166 of location.cc  */
-#line 49 "/home/bearclaw/aldebaran/libport/kernel/build-linux32/src/parser/location.hh"
+#line 49 "/home/bearclaw/aldebaran/qi-2/urbi/kernel/build-linux32/src/parser/location.hh"
 
   /// Abstract a location.
   class location
@@ -160,6 +160,6 @@ namespace yy {
 
 } // yy
 /* Line 292 of location.cc  */
-#line 164 "/home/bearclaw/aldebaran/libport/kernel/build-linux32/src/parser/location.hh"
+#line 164 "/home/bearclaw/aldebaran/qi-2/urbi/kernel/build-linux32/src/parser/location.hh"
 
 #endif // not BISON_LOCATION_HH
