@@ -1,31 +1,81 @@
-var errBacktrace = Regexp.new("^\\[[0-9]{8}:error\\] \\!\\!\\!    called from")|;
-  
+var errBacktrace = Regexp.new("^\\[[0-9]{8}:(error|warning)\\] \\!\\!\\!    called from")|;
+var outClog = Regexp.new("^\\[[0-9]{8}:clog\\]");
+var objAddr = Regexp.new("(_0x[0-9a-f]{6,12})([^0-9a-f]|$)");
 
 function splitChk(content)
 {
   var reqs = [];
   var sin = [];
   var sout = [];
-  var regexp = Regexp.new("^\\[[0-9]{8}(:[a-zA-Z0-9_]+)?\\]");
+  var rOutput = Regexp.new("^\\[[0-9]{8}(:[a-zA-Z0-9_]+)?\\]");
+  var rVarError = Regexp.new("!!! input.u:@([+-]?[0-9]+)?");
+  var rOutputCont = Regexp.new("^\\[:]");
+  var line = 1;
   for (var l: content)
   {
     if (errBacktrace.match(l))
       {}
-    else if (regexp.match(l))
-      sout << ("[00000000" + l[9, 0])
+    else if (rOutput.match(l))
+    {
+      // Additional transformations
+      if (rVarError.match(l))
+      {
+        var nLine = line-1;
+        if (rVarError.matches[1])
+          nLine -= System.eval(rVarError.matches[1]);
+        l = l.replace("@" + rVarError.matches[1], nLine.asString());
+      };
+      if (objAddr.match(l))
+      {
+        l = l.replace(objAddr.matches[1], "_0xADDR");
+      };
+      sout << ("[00000000" + l[9, 0]);
+      sin << "";
+      ++line;
+    }
+    else if (rOutputCont.match(l))
+    {
+      sout << l[3, 0];
+      sin << "";
+      ++line;
+    }
     else
-      sin << l
+    {
+      sin << l;
+      ++line;
+    };
   };
   (reqs, sin, sout)
+}|;
+
+function fetchTestU(chkFile)
+{
+  var res = "";
+  var levels = chkFile.split("/").size();
+  var p = Path.new(chkFile).dirname;
+  while (levels >= 0)
+  {
+    try
+    {
+      var f = File.new(p / "test.u");
+      if (f.exists)
+        res += "//#line 1 \"" + (p/"test.u").asString() + "\"\n" + f.content.data;
+    }
+    catch(var e) {};
+    --levels;
+    p = p.dirname;
+  };
+  res;
 }|;
 
 function runTest(chkFile)
 {
   var debug = Logger.new("test");
-  debug.'<<' = function(x) { this.debug(x)};
+  debug.'<<' = function(x) { this.log(x)};
   //debug.level = Logger.level.Dump;
   var content = File.new("../tests/2.x/" + chkFile).content().data.split("\n");
   (var reqs, var sin, var sout) = splitChk(content);
+  var testu = fetchTestU(chkFile);
   debug << ("input: " + sin);
   debug << ("expected output: " + sout);
   debug << "Creating lobby...";
@@ -33,7 +83,7 @@ function runTest(chkFile)
   // Create a lobby for the test
   var l = Lobby.create();
   // Redirect its output to effOut
-  l.write = function(s) { effOut << s | {}};
+  l.write = function(s) { for|(var i: s.split("\n")) effOut << i | {}};
   l.send = function(msg, tag="")
   {
     if (tag)
@@ -45,7 +95,11 @@ function runTest(chkFile)
   // Use a variable to detect end of test
   if (Object.test_finished.hasLocalSlot(ID))
     Object.test_finished.removeSlot(ID);
+  l.receive("load(\"urbi/test-suite.u\");");
+  debug << "Injecting test.u";
+  l.receive(testu);
   debug << "Injecting input...";
+  l.receive("//#line 1 \"input.u\"\n");
   l.receive(sin.join("\n"));
   l.receive("var Object.test_finished." + ID + "=1|;\n");
   debug << "Waiting for test to finish...";
@@ -55,7 +109,15 @@ function runTest(chkFile)
     throw "timeout";
   debug << "Done";
   // Filter out stuff in effOut
+  //   error backtrace
   effOut = effOut.filter(closure(x) { !errBacktrace.match(x)});
+  //  log messages
+  effOut = effOut.filter(closure(x) { !outClog.match(x)});
+  effOut = effOut.map(closure(l) {
+      if (objAddr.match(l))
+        l = l.replace(objAddr.matches[1], "_0xADDR")|
+      l
+  });
   debug << ("Test output: " + effOut);
 
   // Compare expected and effective
@@ -98,7 +160,8 @@ function main()
       echo("Exception in test: " + e);
     };
   };
-  write("TEST SUITE RESULT: %s / %s OK\n" % [ tok, System.arguments.size]);
+  if (System.arguments.size > 1)
+    write("TEST SUITE RESULT: %s / %s OK\n" % [ tok, System.arguments.size]);
   tok ==  System.arguments.size
 }|;
 var result = main();
