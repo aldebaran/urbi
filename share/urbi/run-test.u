@@ -14,7 +14,10 @@ function splitChk(content)
   for (var l: content)
   {
     if (errBacktrace.match(l))
-      {}
+      {
+        sin << "";
+        ++line;
+      }
     else if (rOutput.match(l))
     {
       // Additional transformations
@@ -35,7 +38,10 @@ function splitChk(content)
     }
     else if (rOutputCont.match(l))
     {
-      sout << l[3, 0];
+      if (l.size == 3)
+        sout << ""
+      else
+        sout << l[3, 0];
       sin << "";
       ++line;
     }
@@ -55,13 +61,14 @@ function fetchTestU(chkFile)
   var p = Path.new(chkFile).dirname;
   while (levels >= 0)
   {
+    echo("Scanning " + Directory.current / p);
     try
     {
       var f = File.new(p / "test.u");
-      if (f.exists)
-        res += "//#line 1 \"" + (p/"test.u").asString() + "\"\n" + f.content.data;
+      echo("Adding " + (p / "test.u"));
+      res += "//#line 1 \"" + (p/"test.u").asString() + "\"\n" + f.content.data;
     }
-    catch(var e) {};
+    catch(var e) {echo(e)};
     --levels;
     p = p.dirname;
   };
@@ -75,7 +82,7 @@ function runTest(chkFile)
   //debug.level = Logger.level.Dump;
   var content = File.new("../tests/2.x/" + chkFile).content().data.split("\n");
   (var reqs, var sin, var sout) = splitChk(content);
-  var testu = fetchTestU(chkFile);
+  var testu = fetchTestU("../tests/2.x/" + chkFile);
   debug << ("input: " + sin);
   debug << ("expected output: " + sout);
   debug << "Creating lobby...";
@@ -84,7 +91,7 @@ function runTest(chkFile)
   var l = Lobby.create();
   // Redirect its output to effOut
   l.write = function(s) { for|(var i: s.split("\n")) effOut << i | {}};
-  l.send = function(msg, tag="")
+  l.send = function(msg, tag="":String)
   {
     if (tag)
       tag = ":" + tag|
@@ -95,7 +102,6 @@ function runTest(chkFile)
   // Use a variable to detect end of test
   if (Object.test_finished.hasLocalSlot(ID))
     Object.test_finished.removeSlot(ID);
-  l.receive("load(\"urbi/test-suite.u\");");
   debug << "Injecting test.u";
   l.receive(testu);
   debug << "Injecting input...";
@@ -103,11 +109,15 @@ function runTest(chkFile)
   l.receive(sin.join("\n"));
   l.receive("var Object.test_finished." + ID + "=1|;\n");
   debug << "Waiting for test to finish...";
-  // Fixme add a timeout
-  timeout(10s) waituntil(Object.test_finished.hasLocalSlot(ID));
+  // In fast mode, time of timeout is inpacted too
+  timeout(1h) waituntil(Object.test_finished.hasLocalSlot(ID));
   if (!Object.test_finished.hasLocalSlot(ID))
+  {
+    write("EFFECTIVE:\n<< "  +effOut.join("\n<< ") + "\n\n");
     throw "timeout";
+  };
   debug << "Done";
+  var rawEffOut = effOut;
   // Filter out stuff in effOut
   //   error backtrace
   effOut = effOut.filter(closure(x) { !errBacktrace.match(x)});
@@ -130,6 +140,7 @@ function runTest(chkFile)
   {
     write("SOURCE:\n" + content.join("\n") + "\n\n");
     write("INPUT:\n" + sin.join("\n") + "\n");
+    write("RAW EFFECTIVE:\n" + rawEffOut.join("\n<< ") + "\n\n");
     write("EXPECTED:\n>> " + sout.join("\n>> ") + "\n\n");
     write("EFFECTIVE:\n<< "  +effOut.join("\n<< ") + "\n\n");
     write("\n");
