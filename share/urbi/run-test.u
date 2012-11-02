@@ -10,14 +10,21 @@ function splitChk(content)
   var rOutput = Regexp.new("^\\[[0-9]{8}(:[a-zA-Z0-9_]+)?\\]");
   var rVarError = Regexp.new("!!! input.u:@([+-]?[0-9]+)?\\.[0-9]+(-@([+-]?[0-9]+))?");
   var rOutputCont = Regexp.new("^\\[:]");
+  var rDirective = Regexp.new("^//#");
   var line = 1;
   for (var l: content)
   {
+    if (rDirective.match(l))
+    {
+      reqs << l[3, 0].trim().split(" ");
+      echo("Adding directive " + reqs[-1]);
+    };
+    // Leave directive go in the file
     if (errBacktrace.match(l))
-      {
-        sin << "";
-        ++line;
-      }
+    {
+      sin << "";
+      ++line;
+    }
     else if (rOutput.match(l))
     {
       // Additional transformations
@@ -91,9 +98,8 @@ function runTest(chkFile)
   debug << ("input: " + sin);
   debug << ("expected output: " + sout);
   debug << "Creating lobby...";
-  var effOut = [];
 
-
+  var eout = [];
   // Override Lobby.create to redirect to us
   var lc = Lobby.create;
   Lobby.create->constant = false;
@@ -101,7 +107,7 @@ function runTest(chkFile)
   {
     var l = lc.apply([Lobby]);
     // Redirect its output to effOut
-    l.write = function(s) { for|(var i: s.split("\n")) effOut << i | {}};
+    l.write = function(s) { for|(var i: s.split("\n")) eout << i | {}};
     l.send = function(msg, tag="":String)
     {
       if (tag)
@@ -111,6 +117,17 @@ function runTest(chkFile)
     };
     l
   };
+
+  // Process directives...
+  for(var i: reqs)
+  {
+    switch(i[0])
+    {
+    case "plug":
+        System.loadModule(i[1])
+    }
+  };
+
    // Create a lobby for the test
   var l = Lobby.create();
   var ID = "_" + l.uid.asString();
@@ -132,15 +149,19 @@ function runTest(chkFile)
     throw "timeout";
   };
   debug << "Done";
+  var effOut = eout;
   var rawEffOut = effOut;
   // Filter out stuff in effOut
   //   error backtrace
   effOut = effOut.filter(closure(x) { !errBacktrace.match(x)});
   //  log messages
   effOut = effOut.filter(closure(x) { !outClog.match(x)});
+  var rExpecting = Regexp.new("unexpected.*(, expecting .*$)");
   effOut = effOut.map(closure(l) {
       while (objAddr.match(l))
         l = l.replace(objAddr.matches[1], "_0xADDR")|
+      if (rExpecting.match(l))
+        l = l.replace(rExpecting.matches[1], "")|
       l
   });
   debug << ("Test output: " + effOut);
