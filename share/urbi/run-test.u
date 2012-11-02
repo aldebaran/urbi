@@ -1,6 +1,6 @@
 var errBacktrace = Regexp.new("^\\[[0-9]{8}:(error|warning)\\] \\!\\!\\!    called from")|;
 var outClog = Regexp.new("^\\[[0-9]{8}:clog\\]");
-var objAddr = Regexp.new("(_0x[0-9a-f]{6,12})([^0-9a-f]|$)");
+var objAddr = Regexp.new("(_0x[0-9a-f]{1,12})([^0-9a-f]|$)");
 
 function splitChk(content)
 {
@@ -117,7 +117,7 @@ function runTest(chkFile)
     };
     l
   };
-
+  Lobby.create->constant = true;
   // Process directives...
   for(var i: reqs)
   {
@@ -200,6 +200,11 @@ function runTest(chkFile)
     write("EXPECTED:\n>> " + sout.join("\n>> ") + "\n\n");
     write("EFFECTIVE:\n<< "  +effOut.join("\n<< ") + "\n\n");
     write("\n");
+    if (System.getenv("DUMP_TEST_RESULT"))
+    {
+      OutputStream.new(File.create("/tmp/out.exp")) << sout.join("\n");
+      OutputStream.new(File.create("/tmp/out.eff")) << effOut.join("\n");
+    };
     debug << "FAIL"|
     false
   }
