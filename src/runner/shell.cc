@@ -55,6 +55,8 @@ namespace runner
     , binary_mode_(false)
     , parser_(new parser::UParser(input_))
   {
+    // Do not inherit backtrace, this is a new shell
+    state.call_stack_get().clear();
     name_set(name);
     GD_FINFO_TRACE("new shell: %s %p", name_get(), this);
   }
