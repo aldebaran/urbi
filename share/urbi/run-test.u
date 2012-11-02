@@ -89,6 +89,8 @@ function fetchTestU(chkFile)
 
 function runTest(chkFile)
 {
+  // Tests are run in build dir
+  System.setenv("URBI_SHARE", (System.urbiRoot / "../../share").asString());
   var debug = Logger.new("test");
   debug.'<<' = function(x) { this.log(x)};
   //debug.level = Logger.level.Dump;

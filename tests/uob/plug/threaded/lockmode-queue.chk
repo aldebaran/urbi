@@ -15,16 +15,16 @@ Threaded.queueOp(id, Threaded.WRITE_VAR, [gx, 2])|;
 Threaded.queueOp(id, Threaded.WRITE_VAR, [gx, 3])|;
 sleep(100ms);
 w;
-[000000001] []
+[00000001] []
 Threaded.lockFunctionDropDelayOp(id, 200000),
 Threaded.lockFunctionDropDelayOp(id, 200000),
 sleep(100ms);
 // Check that dropped calls return
 Threaded.lockFunctionDropDelayOp(id, 0)| 12.print(),
 sleep(500ms);
-[000000002] 12
+[00000002] 12
 w;
-[000000002] [1]
+[00000002] [1]
 Threaded.lockFunctionDropDelayOp(id, 0),
 sleep(200ms);
 w;
