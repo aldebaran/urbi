@@ -2128,7 +2128,9 @@ namespace urbi
       res->call(SYMBOL(uobjectInit));
       // Instanciate UObject.
       if (instanciate)
+      {
         foreach (urbi::baseURBIStarter* i, urbi::baseURBIStarter::list())
+        {
           if (i->name == cname)
           {
             bound_context.push_back(std::make_pair(name, name + ".new"));
@@ -2137,6 +2139,8 @@ namespace urbi
                            forceName?name:("getUObject." + name));
             return res;
           }
+        }
+      }
       return res;
     }
 

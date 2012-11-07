@@ -76,8 +76,8 @@ namespace urbi
         rFormatInfo f = new FormatInfo();
         f->init_(format.substr(cursor), false);
         if (prev
-            && (prev->rank_get() == 0 && f->rank_get() != 0
-                || f->rank_get() == 0 && prev->rank_get() != 0))
+            && ((prev->rank_get() == 0 && f->rank_get() != 0)
+                || (f->rank_get() == 0 && prev->rank_get() != 0)))
           FRAISE("format: cannot mix positional and "
                  "non-positional arguments: %s vs. %s",
                  *prev, *f);

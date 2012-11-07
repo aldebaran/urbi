@@ -129,7 +129,7 @@ namespace urbi
         if (sep != cursor
             && sep < pattern.size()
             && (pattern[sep] == '$'
-                || !piped && pattern[sep] == '%'))
+                || (!piped && pattern[sep] == '%')))
         {
           percented = pattern[sep] == '%';
           rank_ = lexical_cast<size_t>(pattern.substr(cursor, sep - cursor));
@@ -204,11 +204,13 @@ namespace urbi
       }
 
       if (piped)
+      {
         if (cursor < pattern.size())
           ++cursor;
-        else
+        else {
           RAISE("format: missing closing '|'");
-
+        }
+      }
       if (check_end && cursor < pattern.size())
         FRAISE("format: spurious characters after format: %s",
                pattern.substr(cursor));

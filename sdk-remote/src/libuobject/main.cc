@@ -182,8 +182,8 @@ namespace urbi
 
     // Wait for client to be connected if in server mode.
     // Also wait for initialization exchanges.
-    while (!client->isConnected() && !client->error()
-	   || client->connectionID().empty())
+    while ((!client->isConnected() && !client->error())
+           || client->connectionID().empty())
       usleep(20000);
 
     defaultContext = new impl::RemoteUContextImpl(

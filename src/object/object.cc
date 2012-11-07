@@ -184,11 +184,17 @@ namespace urbi
     Object::local_slot_get(key_type k) const
     {
       rObject res = slots_.get(this, k);
-      if( !fastHook)
-      if (res)
-        URBI_AT_HOOK(slotRemoved);
-      else
-        URBI_AT_HOOK(slotAdded);
+      if(!fastHook)
+      {
+        if (res)
+        {
+          URBI_AT_HOOK(slotRemoved);
+        }
+        else
+        {
+          URBI_AT_HOOK(slotAdded);
+        }
+      }
       return res;
     }
 

@@ -204,8 +204,10 @@ namespace urbi
     {
       List::value_type res;
       if (const runner::Job* r = value_ ? value_.get() : 0)
+      {
         foreach(runner::State::call_frame_type frame, r->state.backtrace_get())
           res.push_front(frame);
+      }
       return new List(res);
     }
 

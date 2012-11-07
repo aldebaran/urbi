@@ -796,8 +796,8 @@ namespace urbi
       pivot.allocated = true;
     }
     // Then factor YUV<->RGB conversion if necessary
-    if (pivot.imageFormat == IMAGE_RGB && targetformat == IMAGE_YCbCr
-        || pivot.imageFormat == IMAGE_YCbCr && targetformat == IMAGE_RGB)
+    if ((pivot.imageFormat == IMAGE_RGB && targetformat == IMAGE_YCbCr)
+        || (pivot.imageFormat == IMAGE_YCbCr && targetformat == IMAGE_RGB))
     {
       byte* src = pivot.data;
       if (!pivot.allocated)
