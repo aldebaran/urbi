@@ -16,6 +16,15 @@ uobject(uobject_all test test/all.uob/all.cc)
 set_target_properties(uobject_all
   PROPERTIES
      OUTPUT_NAME all)
+
+uobject(machine test test/machine.uob/machine.cc test/machine.uob/umachine.cc)
+uobject(generic test test/generic.uob/generic.cc)
+uobject(ultest test test/ultest.uob/ultest.cc)
+uobject(uaccess test test/uaccess.uob/uaccess.cc)
+uobject(uchange test test/uchange.uob/uchange.cc)
+uobject(timer test  test/timer.uob/timer.cc)
 uobject(threaded test test/threaded.uob/threaded.cc)
+uobject(subsumption test test/subsumption.uob/subsumption.cc)
+uobject(issue-3699 test test/issue-3699.uob/issue-3699.cc)
 uobject(fusion urbi urbi/fusion.uob/fusion.cc)
 
