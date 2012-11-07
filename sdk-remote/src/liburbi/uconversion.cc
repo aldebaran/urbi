@@ -59,7 +59,7 @@ namespace urbi
 
   int
   convertRGBtoYCbCr(const byte* in, size_t bufferSize,
-		    byte* out)
+                    byte* out)
   {
     for (size_t i = 0; i < bufferSize - 2; i += 3)
     {
@@ -67,9 +67,9 @@ namespace urbi
       ufloat g = in[i + 1];
       ufloat b = in[i + 2];
       /*
-	Y  =      (0.257 * R) + (0.504 * G) + (0.098 * B) + 16
-	Cr = V =  (0.439 * R) - (0.368 * G) - (0.071 * B) + 128
-	Cb = U = -(0.148 * R) - (0.291 * G) + (0.439 * B) + 128
+        Y  =      (0.257 * R) + (0.504 * G) + (0.098 * B) + 16
+        Cr = V =  (0.439 * R) - (0.368 * G) - (0.071 * B) + 128
+        Cb = U = -(0.148 * R) - (0.291 * G) + (0.439 * B) + 128
       */
       out[i]     = clamp( 0.257f * r + 0.504f * g + 0.098f * b +  16.0f);
       out[i + 1] = clamp(-0.148f * r - 0.291f * g + 0.439f * b + 128.0f);
@@ -80,7 +80,7 @@ namespace urbi
 
   int
   convertYCrCbtoYCbCr(const byte* in, size_t bufferSize,
-		      byte* out)
+                      byte* out)
   {
     for (size_t i = 0; i < bufferSize - 2; i += 3)
     {
@@ -96,7 +96,7 @@ namespace urbi
 
   int
   convertYCbCrtoRGB(const byte* in, size_t bufferSize,
-		    byte* out)
+                    byte* out)
   {
     // http://en.wikipedia.org/wiki/YUV#Converting_between_Y.27UV_and_RGB
     for (size_t i = 0; i < bufferSize - 2; i += 3)
@@ -238,7 +238,7 @@ namespace urbi
     {
       mem_source_mgr *src = (mem_source_mgr *) cinfo->src;
       if (src->pub.bytes_in_buffer != 0)
-	return TRUE;
+        return TRUE;
       src->eoi[0] = 0xFF;
       src->eoi[1] = JPEG_EOI;
       src->pub.bytes_in_buffer = 2;
@@ -254,9 +254,9 @@ namespace urbi
     {
       mem_source_mgr* src = (mem_source_mgr*) cinfo->src;
       if (num_bytes <= 0)
-	return;
+        return;
       if (static_cast<unsigned long> (num_bytes) > src->pub.bytes_in_buffer)
-	num_bytes = src->pub.bytes_in_buffer;
+        num_bytes = src->pub.bytes_in_buffer;
       src->pub.bytes_in_buffer -= num_bytes;
       src->pub.next_input_byte += num_bytes;
     }
@@ -306,7 +306,7 @@ namespace urbi
   {
     int
     write_jpeg(const byte* src, size_t w, size_t h, bool ycrcb,
-	       byte* dst, size_t& sz, int quality)
+               byte* dst, size_t& sz, int quality)
     {
       struct jpeg_compress_struct cinfo;
       struct jpeg_error_mgr jerr;
@@ -316,8 +316,8 @@ namespace urbi
       cinfo.err = jpeg_std_error(&jerr);
       jpeg_create_compress(&cinfo);
       mem_destination_mgr *dest = (struct mem_destination_mgr *)
-	(*cinfo.mem->alloc_small) ((j_common_ptr) & cinfo, JPOOL_PERMANENT,
-				   sizeof (mem_destination_mgr));
+        (*cinfo.mem->alloc_small) ((j_common_ptr) & cinfo, JPOOL_PERMANENT,
+                                   sizeof (mem_destination_mgr));
 
       cinfo.dest = (jpeg_destination_mgr*)dest;
       dest->pub.init_destination=&init_destination;
@@ -334,7 +334,7 @@ namespace urbi
       jpeg_set_defaults(&cinfo);
 
       jpeg_set_quality(&cinfo,
-		       quality, TRUE /* limit to baseline-JPEG values */);
+                       quality, TRUE /* limit to baseline-JPEG values */);
 
       jpeg_start_compress(&cinfo, TRUE);
 
@@ -342,10 +342,10 @@ namespace urbi
 
       while (cinfo.next_scanline < cinfo.image_height)
       {
-	/* pointer to JSAMPLE row[s] */
+        /* pointer to JSAMPLE row[s] */
         const JSAMPLE* row =
           (const JSAMPLE*) &src[cinfo.next_scanline * row_stride];
-	jpeg_write_scanlines(&cinfo, const_cast<JSAMPLE**>(&row), 1);
+        jpeg_write_scanlines(&cinfo, const_cast<JSAMPLE**>(&row), 1);
       }
 
       jpeg_finish_compress(&cinfo);
@@ -358,7 +358,7 @@ namespace urbi
     /*! Convert a jpeg image to YCrCb or RGB. Allocate the buffer with malloc.
      */
     void *read_jpeg(const char* jpgbuffer, size_t jpgbuffer_size, bool RGB,
-		    size_t& output_size, size_t& w, size_t& h)
+                    size_t& output_size, size_t& w, size_t& h)
     {
       struct jpeg_decompress_struct cinfo;
       struct urbi_jpeg_error_mgr jerr;
@@ -370,14 +370,14 @@ namespace urbi
          * need to clean up the JPEG object, close the input file, and
          * return.
          */
-	jpeg_destroy_decompress(&cinfo);
+        jpeg_destroy_decompress(&cinfo);
         GD_ERROR("JPEG error!");
-	return 0;
+        return 0;
       }
       jpeg_create_decompress(&cinfo);
       mem_source_mgr *source = (struct mem_source_mgr *)
-	(*cinfo.mem->alloc_small) ((j_common_ptr) & cinfo, JPOOL_PERMANENT,
-				   sizeof (mem_source_mgr));
+        (*cinfo.mem->alloc_small) ((j_common_ptr) & cinfo, JPOOL_PERMANENT,
+                                   sizeof (mem_source_mgr));
 
       cinfo.src = (jpeg_source_mgr *) source;
       source->pub.skip_input_data = skip_input_data;
@@ -399,15 +399,15 @@ namespace urbi
 
       while (cinfo.output_scanline < cinfo.output_height)
       {
-	/* jpeg_read_scanlines expects an array of pointers to scanlines.
-	 * Here the array is only one element long, but you could ask for
-	 * more than one scanline at a time if that's more convenient.
-	 */
-	JSAMPLE* row =
+        /* jpeg_read_scanlines expects an array of pointers to scanlines.
+         * Here the array is only one element long, but you could ask for
+         * more than one scanline at a time if that's more convenient.
+         */
+        JSAMPLE* row =
           (JSAMPLE *) &((char*) buffer)[cinfo.output_scanline
                                         * cinfo.output_components
                                         * cinfo.output_width];
-	jpeg_read_scanlines(&cinfo, &row, 1);
+        jpeg_read_scanlines(&cinfo, &row, 1);
       }
       jpeg_finish_decompress(&cinfo);
       jpeg_destroy_decompress(&cinfo);
@@ -419,37 +419,37 @@ namespace urbi
 
     //scale putting (scx, scy) at the center of destination image
     void scaleColorImage(byte* src, int sw, int sh,
-			 int scx, int scy, byte* dst,
-			 int dw, int dh, ufloat sx, ufloat sy)
+                         int scx, int scy, byte* dst,
+                         int dw, int dh, ufloat sx, ufloat sy)
     {
       for (int x = 0; x < dw; ++x)
-	for (int y = 0; y < dh; ++y)
-	{
-	  //find the corresponding point in source image
-	  ufloat fsrcx = (ufloat) (x-dw/2) / sx  + (ufloat) scx;
-	  ufloat fsrcy = (ufloat) (y-dh/2) / sy  + (ufloat) scy;
-	  int srcx = (int) fsrcx;
-	  int srcy = (int) fsrcy;
-	  if (srcx <= 0 || srcx >= sw - 1 || srcy <= 0 || srcy >= sh - 1)
-	    memset(dst + (x + y * dw) * 3, 0, 3);
-	  else //do the bilinear interpolation
-	  {
-	    ufloat xfactor = fsrcx - (ufloat) srcx;
-	    ufloat yfactor = fsrcy - (ufloat) srcy;
-	    for (int color = 0; color < 3; ++color)
-	    {
-	      ufloat up = (ufloat) src[(srcx + srcy * sw) * 3 + color]
-		* (1.0 - xfactor)
-		+ (ufloat) src[(srcx + 1 + srcy * sw) * 3 + color] * xfactor;
-	      ufloat down = (ufloat) src[(srcx + (srcy + 1) * sw) * 3 + color]
-		* (1.0 - xfactor)
-		+ (ufloat) src[(srcx + 1 + (srcy + 1) * sw) * 3 + color]
-		* xfactor;
-	      ufloat result = up * (1.0 - yfactor) + down * yfactor;
-	      dst[(x + y * dw) * 3 + color] = (byte) result;
-	    }
-	  }
-	}
+        for (int y = 0; y < dh; ++y)
+        {
+          //find the corresponding point in source image
+          ufloat fsrcx = (ufloat) (x-dw/2) / sx  + (ufloat) scx;
+          ufloat fsrcy = (ufloat) (y-dh/2) / sy  + (ufloat) scy;
+          int srcx = (int) fsrcx;
+          int srcy = (int) fsrcy;
+          if (srcx <= 0 || srcx >= sw - 1 || srcy <= 0 || srcy >= sh - 1)
+            memset(dst + (x + y * dw) * 3, 0, 3);
+          else //do the bilinear interpolation
+          {
+            ufloat xfactor = fsrcx - (ufloat) srcx;
+            ufloat yfactor = fsrcy - (ufloat) srcy;
+            for (int color = 0; color < 3; ++color)
+            {
+              ufloat up = (ufloat) src[(srcx + srcy * sw) * 3 + color]
+                * (1.0 - xfactor)
+                + (ufloat) src[(srcx + 1 + srcy * sw) * 3 + color] * xfactor;
+              ufloat down = (ufloat) src[(srcx + (srcy + 1) * sw) * 3 + color]
+                * (1.0 - xfactor)
+                + (ufloat) src[(srcx + 1 + (srcy + 1) * sw) * 3 + color]
+                * xfactor;
+              ufloat result = up * (1.0 - yfactor) + down * yfactor;
+              dst[(x + y * dw) * 3 + color] = (byte) result;
+            }
+          }
+        }
     }
 
   } // anonymous namespace
@@ -787,9 +787,9 @@ namespace urbi
       scaleColorImage(pivot.data,
                       pivot.width, pivot.height,
                       pivot.width / 2, pivot.height / 2,
-		      scaled, dest.width, dest.height,
-		      (ufloat) dest.width / (ufloat) src.width,
-		      (ufloat) dest.height / (ufloat) src.height);
+                      scaled, dest.width, dest.height,
+                      (ufloat) dest.width / (ufloat) src.width,
+                      (ufloat) dest.height / (ufloat) src.height);
       if (pivot.allocated)
         free(pivot.data);
       pivot.data = scaled;
@@ -963,7 +963,7 @@ namespace urbi
 
   template<class S, class D>
   void copy(const S* src, D* dst,
-	    int sc, int dc, int sr, int dr,
+            int sc, int dc, int sr, int dr,
             size_t count, bool sf, bool df)
   {
     long shift = 8 * (sizeof (S) - sizeof (D));
@@ -980,55 +980,55 @@ namespace urbi
       S s1, s2;
       s1 = src[so * sc];
       if (i != count - 1)
-	s2 = src[(so + 1) * sc];
+        s2 = src[(so + 1) * sc];
       else
-	s2 = s1; //nothing to interpolate with
+        s2 = s1; //nothing to interpolate with
       if (!sf)
       {
-	s1 = s1 ^ (1<<(sizeof (S)*8-1));
-	s2 = s2 ^ (1<<(sizeof (S)*8-1));
+        s1 = s1 ^ (1<<(sizeof (S)*8-1));
+        s2 = s2 ^ (1<<(sizeof (S)*8-1));
       }
       int v1 = (int) ((ufloat)(s1)*(1.0-factor) + (ufloat)(s2)*factor);
       int v2;
       if (sc==1)
-	v2 = v1;
+        v2 = v1;
       else
       {
-	s1 = src[so*sc+1];
-	if (i != count - 1)
-	  s2 = src[(so+1)*sc+1];
-	else
-	  s2 = s1; //nothing to interpolate with
-	if (!sf)
-	{
-	  s1 = s1 ^ (1<<(sizeof (S)*8-1));
-	  s2 = s2 ^ (1<<(sizeof (S)*8-1));
-	}
-	v2 = (int) ((ufloat)(s1)*(1.0-factor) + (ufloat)(s2)*factor);
+        s1 = src[so*sc+1];
+        if (i != count - 1)
+          s2 = src[(so+1)*sc+1];
+        else
+          s2 = s1; //nothing to interpolate with
+        if (!sf)
+        {
+          s1 = s1 ^ (1<<(sizeof (S)*8-1));
+          s2 = s2 ^ (1<<(sizeof (S)*8-1));
+        }
+        v2 = (int) ((ufloat)(s1)*(1.0-factor) + (ufloat)(s2)*factor);
       }
       D d1, d2;
       if (shift>=0)
       {
-	d1 = (D)(v1 >>shift);
-	d2 = (D)(v2 >>shift);
+        d1 = (D)(v1 >>shift);
+        d2 = (D)(v2 >>shift);
       }
       else
       {
-	d1 = (D)(v1) * (1 << -shift);
-	d2 = (D)(v2) * (1 << -shift);
+        d1 = (D)(v1) * (1 << -shift);
+        d2 = (D)(v2) * (1 << -shift);
       }
       if (!df)
       {
-	d1 = d1 ^ (1<<(sizeof (D)*8-1));
-	d2 = d2 ^ (1<<(sizeof (D)*8-1));
+        d1 = d1 ^ (1<<(sizeof (D)*8-1));
+        d2 = d2 ^ (1<<(sizeof (D)*8-1));
       }
       if (dc==2)
       {
-	dst[i*2] = d1;
-	dst[i*2+1] = d2;
+        dst[i*2] = d1;
+        dst[i*2+1] = d2;
       }
       else
-	dst[i] = (D) (((int)d1+(int)d2) /2);
+        dst[i] = (D) (((int)d1+(int)d2) /2);
     }
   }
 
@@ -1041,9 +1041,9 @@ namespace urbi
   convert (const USound &source, USound &dest)
   {
     if ((source.soundFormat != SOUND_RAW
-	 && source.soundFormat != SOUND_WAV)
-	|| (dest.soundFormat != SOUND_RAW
-	    && dest.soundFormat != SOUND_WAV))
+         && source.soundFormat != SOUND_WAV)
+        || (dest.soundFormat != SOUND_RAW
+            && dest.soundFormat != SOUND_WAV))
       return 1; //conversion not handled yet
     /* phase one: calculate required buffer size, set destination unspecified
      * fields */
@@ -1078,13 +1078,13 @@ namespace urbi
     // That's a big one!
     unsigned destSize =
       ((long long)(source.size
-		   - ((source.soundFormat == SOUND_WAV)?44:0))
+                   - ((source.soundFormat == SOUND_WAV)?44:0))
        * (long long)dest.channels
        * (long long)dest.rate
        * (long long)(dest.sampleSize/8))
       / ((long long)schannels
-	 *(long long)srate
-	 *(long long)(ssampleSize/8));
+         *(long long)srate
+         *(long long)(ssampleSize/8));
     if (dest.soundFormat == SOUND_WAV)
       destSize += sizeof (wavheader);
     if (dest.size<destSize)
@@ -1117,7 +1117,7 @@ namespace urbi
     if (dest.soundFormat == SOUND_WAV)
       dbuffer += sizeof (wavheader);
     int elementCount = dest.size - (dest.soundFormat == SOUND_WAV ?
-				    sizeof (wavheader) : 0);
+                                    sizeof (wavheader) : 0);
     elementCount /= (dest.channels * (dest.sampleSize / 8));
     switch (ssampleSize * 1000 + dest.sampleSize)
     {
@@ -1128,8 +1128,8 @@ namespace urbi
         pud(dbuffer, sbuffer, elementCount);
       else
         copy(dbuffer, sbuffer, schannels, dest.channels, srate, dest.rate,
-	     elementCount, ssampleFormat==SAMPLE_SIGNED, dest.sampleFormat ==
-	     SAMPLE_SIGNED);
+             elementCount, ssampleFormat==SAMPLE_SIGNED, dest.sampleFormat ==
+             SAMPLE_SIGNED);
       break;
     case 16008:
       copy((short*)sbuffer, dbuffer, schannels, dest.channels, srate,
@@ -1147,8 +1147,8 @@ namespace urbi
             elementCount);
       else
         copy((short*)sbuffer, (short*)dbuffer, schannels, dest.channels,
-	     srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED,
-	     dest.sampleFormat == SAMPLE_SIGNED);
+             srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED,
+             dest.sampleFormat == SAMPLE_SIGNED);
       break;
     case 8016:
       copy((char*)sbuffer, (short*)dbuffer, schannels, dest.channels,

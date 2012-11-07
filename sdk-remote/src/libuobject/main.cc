@@ -143,7 +143,7 @@ namespace urbi
 
   int
   initialize(const std::string& host, int port, size_t buflen,
-	     bool exitOnDisconnect, bool server,
+             bool exitOnDisconnect, bool server,
              bool useSyncClient)
   {
     GD_FINFO_TRACE("this is %s", program_name());
