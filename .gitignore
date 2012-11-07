@@ -16,3 +16,5 @@
 /src/ast/transformer.stamp
 /src/kernel/config.h.in
 /src/kernel/config.h.in~
+/build-*
+/CMakeLists.txt.user
