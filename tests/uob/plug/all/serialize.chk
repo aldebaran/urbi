@@ -1,6 +1,6 @@
 //#uobject test/all
 uobjectsAll();
-load("../../plug/all/serialize.u")|;
+load("../tests/uob/plug/all/serialize.u")|;
 
 // Check UBindFunctionRename.
 assert

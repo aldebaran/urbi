@@ -16,7 +16,7 @@ var c = all.new(1);
 [00000004:error] !!! input.u:@.9-18: new: all construction failed: init returned 1.
 
 var d = all.new(2);
-[00000005:error] !!! input.u:@.9-18: new: exception caught while calling uob_0xADDR.init: KABOOOM
+[00000005:error] !!! input.u:@.9-18: new: exception caught while calling getUObject.uob_0xADDR.init: KABOOOM
 
 all.getDestructionCount();
 [00000006] 2

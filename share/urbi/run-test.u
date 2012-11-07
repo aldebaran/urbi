@@ -102,6 +102,45 @@ function runTest(chkFile)
   debug << "Creating lobby...";
 
   var eout = [];
+
+  // override all output to redirect to us
+  Lobby.write->constant = false;
+  Lobby.send->constant = false;
+  Lobby.wall->constant = false;
+  var lw = Lobby.write;
+  var ls = Lobby.send;
+  Lobby.write = function(s)
+  {
+    if (this == Lobby)
+    {
+      var write = lw|
+      write(s)
+    }|
+    for|(var i: s.split("\n"))
+      eout << i |
+    {}
+  };
+  Lobby.send = function(msg, tag="":String)
+  {
+    if (this == Lobby)
+    {
+      var send = ls | // to get correct error message
+      send(msg, tag)
+    }|
+    if (tag)
+      tag = ":" + tag|
+    write("[00000000" + tag + "] " + msg.asString())|
+    {}
+  };
+  Lobby.wall = function(msg, tag="")
+  {
+    for| (var l in instances - [Lobby, systemLobby])
+    l.echo(msg, tag);
+  };
+  Lobby.write->constant = true;
+  Lobby.send->constant = true;
+  Lobby.wall->constant = true;
+  /* ALTERNATE HACK, but does not catch tests playing with systemLobby.
   // Override Lobby.create to redirect to us
   var lc = Lobby.create;
   Lobby.create->constant = false;
@@ -120,6 +159,7 @@ function runTest(chkFile)
     l
   };
   Lobby.create->constant = true;
+  */
   // Process directives...
   for(var i: reqs)
   {
@@ -128,7 +168,8 @@ function runTest(chkFile)
     case "plug":
         System.loadModule(i[1]);
     case "uobject":
-        System.loadModule(i[1]);
+      for|(var m: i.tail())
+        System.loadModule(m);
     case "remote":
       throw "not implemented"
     }
@@ -149,6 +190,10 @@ function runTest(chkFile)
   debug << "Waiting for test to finish...";
   // In fast mode, time of timeout is inpacted too
   timeout(1h) waituntil(Object.test_finished.hasLocalSlot(ID));
+  Lobby.write->constant = false;
+  Lobby.send->constant = false;
+  Lobby.write = lw;
+  Lobby.send = ls;
   if (!Object.test_finished.hasLocalSlot(ID))
   {
     write("EFFECTIVE:\n<< "  +effOut.join("\n<< ") + "\n\n");
@@ -222,6 +267,7 @@ var Object.test_finished = Object.new()|;
 
 function main()
 {
+  System.addSystemFile("urbi/run-test.u");
   var tok = 0;
   var tko = 0;
   var terr = 0;

@@ -95,7 +95,7 @@ class Hierarchy
 var base = "hierarchy" |;
 var dot = Path.new("%s.dot" % base) |;
 if (dot.exists)
-  System.system("rm %s" % dot);
+  System.system("rm %s" % dot)|;
 var h = Hierarchy.new(File.create(dot), Global) |;
 
 // Our playing dirty tricks with LD_LIBRARY_PATH make this fails, at

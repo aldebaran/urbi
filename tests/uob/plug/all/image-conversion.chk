@@ -4,9 +4,10 @@ var path = System.urbiShareDir / "images"/ "gostai-logo" |
 
 // Conversion to every Urbi format.
 // Yuv422 and grey4 are not supported by the convert function.
+// No jpeg, as binary conversion on compressed format is meaningless.
 var imageFormat =
   ["rgb", "YCbCr", "grey8", "yuv411_planar", "nv12", "yuv420_planar",
-   "jpeg", "ppm"]|;
+   "ppm"]|;
 
 var fail = 0|;
 
