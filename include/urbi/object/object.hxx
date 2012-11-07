@@ -261,8 +261,8 @@ namespace urbi
         getter(boost::bind(&bindvar_getter_<Self, T>, _1, attr));
       boost::function3<void, Self&, T, rObject>
         setter(boost::bind(&bindvar_setter_<Self, T>, _1, _2, attr));
-      slot_set(libport::Symbol(name), primitive(getter)->as<Object>(),
-               primitive(setter)->as<Object>());
+      slot_set(libport::Symbol(name), primitive(getter)->template as<Object>(),
+               primitive(setter)->template as<Object>());
     }
     namespace detail
     {
