@@ -87,8 +87,29 @@ function fetchTestU(chkFile)
   res;
 }|;
 
+function startRemote(name)
+{
+  var map = ["all" => ["remall", "remall2"]];
+  var args = ["--remote", name, "--", "--host", "127.0.0.1", "--port", System.listenPort.asString()];
+  var p = Process.new("sdk/bin/urbi-launch" /*lol*/, args);
+  p.runTo("remote.out");
+  // find uobject name
+  var base = name.split("/")[-1];
+  var uobjs = [base];
+  if (map.has(base))
+    uobjs = map[base];
+  for|(var uo: uobjs)
+  {
+    echo("waiting for " + uo);
+    timeout(5s) waituntil(uobjects.hasLocalSlot(uo));
+    echo("got it");
+  };
+  p
+}|;
+
 function runTest(chkFile)
 {
+  var processes = [];
   // Tests are run in build dir
   System.setenv("URBI_SHARE", (System.urbiRoot / "../../share").asString());
   var debug = Logger.new("test");
@@ -103,34 +124,71 @@ function runTest(chkFile)
 
   var eout = [];
 
+  // Process directives...
+  for(var i: reqs)
+  {
+    switch(i[0])
+    {
+    case "plug":
+        System.loadModule(i[1]);
+    case "uobject":
+      if (chkFile.find("remote/") != -1)
+      {
+        for|(var m: i.tail())
+          processes << startRemote(m);
+      }
+      else
+      {
+      for|(var m: i.tail())
+        System.loadModule(m);
+      };
+    case "remote":
+      for|(var m: i.tail())
+        processes << startRemote(m);
+    }
+  };
+
   // override all output to redirect to us
   Lobby.write->constant = false;
   Lobby.send->constant = false;
   Lobby.wall->constant = false;
   var lw = Lobby.write;
   var ls = Lobby.send;
+  var debugOut = System.getenv("TEE_TEST_OUTPUT");
   Lobby.write = function(s)
   {
-    if (this == Lobby)
+    if (hasLocalSlot("remoteIP"))
+      lw(s)
+    else if (this == Lobby)
     {
       var write = lw|
       write(s)
-    }|
-    for|(var i: s.split("\n"))
+    }
+    else
+    {
+      if (debugOut)
+        lw(s)|
+      for|(var i: s.split("\n"))
       eout << i |
-    {}
+      {}
+    }
   };
   Lobby.send = function(msg, tag="":String)
   {
-    if (this == Lobby)
+    if (hasLocalSlot("remoteIP"))
+      ls(msg, tag)
+    else if (this == Lobby)
     {
       var send = ls | // to get correct error message
       send(msg, tag)
-    }|
-    if (tag)
-      tag = ":" + tag|
-    write("[00000000" + tag + "] " + msg.asString())|
-    {}
+    }
+    else
+    {
+      if (tag)
+        tag = ":" + tag|
+      write("[00000000" + tag + "] " + msg.asString())|
+      {}
+    }
   };
   Lobby.wall = function(msg, tag="")
   {
@@ -160,20 +218,6 @@ function runTest(chkFile)
   };
   Lobby.create->constant = true;
   */
-  // Process directives...
-  for(var i: reqs)
-  {
-    switch(i[0])
-    {
-    case "plug":
-        System.loadModule(i[1]);
-    case "uobject":
-      for|(var m: i.tail())
-        System.loadModule(m);
-    case "remote":
-      throw "not implemented"
-    }
-  };
 
    // Create a lobby for the test
   var l = Lobby.create();
@@ -194,6 +238,16 @@ function runTest(chkFile)
   Lobby.send->constant = false;
   Lobby.write = lw;
   Lobby.send = ls;
+  for(var p: processes)
+  {
+
+    write("REMOTE: " + p.status + "\n");
+    p.kill();
+    p.join();
+    //write(p.stdout.content());
+    //write(p.stderr.content());
+    write("\nEND REMOTE\n");
+  };
   if (!Object.test_finished.hasLocalSlot(ID))
   {
     write("EFFECTIVE:\n<< "  +effOut.join("\n<< ") + "\n\n");
@@ -274,7 +328,8 @@ function main()
   for (var test: System.arguments)
   {
     echo("running %s..." % test)|
-    try {
+    try
+    {
       if (runTest(test))
         ++tok
       else
@@ -284,11 +339,16 @@ function main()
     {
       ++terr;
       echo("Exception in test: " + e);
+      e.backtrace().print();
     };
   };
   if (System.arguments.size > 1)
     write("TEST SUITE RESULT: %s / %s OK\n" % [ tok, System.arguments.size]);
   tok ==  System.arguments.size
 }|;
-var result = main();
-System._exit({ if (result) 0 else 1});
+
+if (!System.getenv("NO_MAIN"))
+{
+  var result = main();
+  System._exit({ if (result) 0 else 1});
+};

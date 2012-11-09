@@ -6,7 +6,7 @@ if (NOT DEFINED TEST_DIRS)
     2.x
     demo
     uob/plug
-    #uob/remote
+    uob/remote
     #uob/rtp
     #uob/java
   )
@@ -53,6 +53,6 @@ FOREACH(infileName ${tests})
     set(_fast "--fast")
     endif()
     MESSAGE("adding  ${infileName} ${_out} ${_out2} ")
-    qi_add_test(${_out2} urbi-launch ARGUMENTS -s -- ${_fast} urbi/run-test.u ${infileName} TIMEOUT 30)
+    qi_add_test(${_out2} urbi-launch ARGUMENTS -s -- ${_fast} --host 127.0.0.1 --port 0 urbi/run-test.u ${infileName} TIMEOUT 30)
   endif()
 ENDFOREACH(infileName)
