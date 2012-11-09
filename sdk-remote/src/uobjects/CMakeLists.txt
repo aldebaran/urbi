@@ -17,6 +17,7 @@ set_target_properties(uobject_all
   PROPERTIES
      OUTPUT_NAME all)
 
+uobject(remote test test/remote.uob/remote.cc)
 uobject(machine test test/machine.uob/machine.cc test/machine.uob/umachine.cc)
 uobject(generic test test/generic.uob/generic.cc)
 uobject(ultest test test/ultest.uob/ultest.cc)
