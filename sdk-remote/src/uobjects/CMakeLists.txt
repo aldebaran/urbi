@@ -17,11 +17,13 @@ set_target_properties(uobject_all
   PROPERTIES
      OUTPUT_NAME all)
 
+uobject(lib-urbi test test/lib-urbi.uob/liburbi.cc)
 uobject(remote test test/remote.uob/remote.cc)
 uobject(machine test test/machine.uob/machine.cc test/machine.uob/umachine.cc)
 uobject(generic test test/generic.uob/generic.cc)
 uobject(ultest test test/ultest.uob/ultest.cc)
 uobject(uaccess test test/uaccess.uob/uaccess.cc)
+uobject(uaccess3 test test/uaccess3.uob/uaccess.cc)
 uobject(uchange test test/uchange.uob/uchange.cc)
 uobject(timer test  test/timer.uob/timer.cc)
 uobject(threaded test test/threaded.uob/threaded.cc)
