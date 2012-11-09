@@ -32,6 +32,8 @@ add_definitions(-DLIBPORT_LIBDIRNAME="lib")
 
 if (HAVE_CUSTOM_BISON)
 
+MESSAGE("Using bison")
+
 #invoke flex on utoken.l
 qi_generate_src(
   ${CMAKE_CURRENT_BINARY_DIR}/src/parser/utoken.cc.raw
@@ -60,6 +62,7 @@ qi_generate_src(
   COMMAND ${BISON} ${BISON_OPTS} ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/ugrammar.y -o  ${CMAKE_CURRENT_BINARY_DIR}/src/parser/ugrammar.cc
 )
 else()
+  MESSAGE("No bison specified, using pregenerated grammar.")
   qi_generate_src(
   ${CMAKE_CURRENT_BINARY_DIR}/src/parser/ugrammar.cc
   SRC src/parser/ugrammar.y
@@ -328,7 +331,7 @@ add_definitions(-DBUILDING_URBI_SDK)
 # but this one needs to be correct, because DEPENDS does not honor OUTPUT_NAME
 qi_create_lib(uobject
   SUBFOLDER gostai/engine
-  DEPENDS port sched BOOST BOOST_SIGNALS BOOST_FILESYSTEM BOOST_DATE_TIME  BOOST_SYSTEM BOOST_THREAD
+  DEPENDS port sched serialize BOOST BOOST_SIGNALS BOOST_FILESYSTEM BOOST_DATE_TIME  BOOST_SYSTEM BOOST_THREAD
   SRC ${UOBJECT_PLUGIN_SRC}
 )
 

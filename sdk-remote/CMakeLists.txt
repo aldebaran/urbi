@@ -60,7 +60,7 @@ set(UOBJECT_REMOTE_SRC
 
 qi_create_lib(uobject-remote
   SUBFOLDER gostai/remote
-  DEPENDS port BOOST BOOST_DATE_TIME  BOOST_SYSTEM BOOST_THREAD
+  DEPENDS port serialize BOOST BOOST_DATE_TIME  BOOST_SYSTEM BOOST_THREAD
   SRC ${UOBJECT_REMOTE_SRC}
 )
 set_target_properties(uobject-remote
