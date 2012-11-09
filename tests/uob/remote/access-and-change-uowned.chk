@@ -8,7 +8,7 @@ uaccess.load;
 
 // uaccess.val access call should be looping, finally reaching 50 and
 // more.
-at (uaccess.val > 25) { echo ("ok"); quit};
+at (uaccess.val > 25) { echo ("ok"); };
 
 
 sleep(2s);

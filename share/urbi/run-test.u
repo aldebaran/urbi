@@ -1,6 +1,7 @@
 var errBacktrace = Regexp.new("^\\[[0-9]{8}:(error|warning)\\] \\!\\!\\!    called from")|;
 var outClog = Regexp.new("^\\[[0-9]{8}:clog\\]");
 var objAddr = Regexp.new("(_0x[0-9a-f]{1,12})([^0-9a-f]|$)");
+var disconnecting = Regexp.new("\\*\\*\\* disconnecting Lobby_");
 
 function splitChk(content)
 {
@@ -101,7 +102,7 @@ function startRemote(name)
   for|(var uo: uobjs)
   {
     echo("waiting for " + uo);
-    timeout(5s) waituntil(uobjects.hasLocalSlot(uo));
+    timeout(8s) waituntil(uobjects.hasLocalSlot(uo));
     echo("got it");
   };
   p
@@ -261,6 +262,8 @@ function runTest(chkFile)
   effOut = effOut.filter(closure(x) { !errBacktrace.match(x)});
   //  log messages
   effOut = effOut.filter(closure(x) { !outClog.match(x)});
+  //  lobby disconnect message (appear at random place)
+  effOut = effOut.filter(closure(x) { !disconnecting.match(x)});
   var rExpecting = Regexp.new("unexpected.*(, expecting .*$)");
   effOut = effOut.map(closure(l) {
       while (objAddr.match(l))

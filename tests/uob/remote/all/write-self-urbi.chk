@@ -1,5 +1,4 @@
 //#uobject test/all
-skipIfHostName("bf-1");
 uobjectsAll();
 
 
@@ -27,13 +26,8 @@ detach
 })|;
 
 // In a separate detach to ensure it gets executed.
-detach
-({
-  sleep(1.2s);
-  lobby.quit()
-})|;
 
-sleep();
+sleep(2s);
 /*
 setSlot("quit_", getSlot("quit"))|;
 var shutdown = "DO NOT WANT!!";

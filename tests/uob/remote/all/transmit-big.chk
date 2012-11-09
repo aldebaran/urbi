@@ -2,7 +2,7 @@
 //#timeout 3
 uobjectsAll();
 
-var size = 100000|;
+var size = 10000|;
 assert
 {
   all.transmitL([1] * size).size == size;

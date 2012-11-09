@@ -4,9 +4,9 @@ uobjectsAll();
 
 
 all.invalidRead();
-[00000001:error] !!! input.u:@.1-17: invalidRead: exception caught while calling all.invalidRead: invalid use of unbound UVar
+[00000001:error] !!! input.u:@.1-17: invalidRead: exception caught while calling remote method: invalid use of unbound UVar
 all.invalidWrite();
-[00000002:error] !!! input.u:@.1-18: invalidWrite: exception caught while calling all.invalidWrite: invalid use of unbound UVar
+[00000002:error] !!! input.u:@.1-18: invalidWrite: exception caught while calling remote method: invalid use of unbound UVar
 //all.writeByName("canard.coin", 12);
 //[00000003:error] !!! input.u:@.1-31: writeByName: UVar creation on non existing object: canard.coin
 //all.readByName("canard.coin");
@@ -16,7 +16,7 @@ all.&a.notifyChange(closure() {all.invalidRead()})|;
 all.setNotifyChange(0)|;
 all.a = 17|;
 [00000003:error] !!! exception caught while processing Event:
-[01234567:error] !!! input.u:17.1-3: updateSlot: exception caught while calling method: invalid use of unbound UVar
+[01234567:error] !!! input.u:17.1-3: updateSlot: exception caught while calling remote method: invalid use of unbound UVar
 [01234567:error] !!!    called from: input.u:15.32-48: invalidRead
 [00000005:error] !!!    called from: input.u:17.1-3: updateSlot
 
