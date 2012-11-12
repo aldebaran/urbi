@@ -1,0 +1,38 @@
+#! /bin/zsh
+
+usage ()
+{
+  echo >&2 "usage: $0 input.pdf output.pdf"
+  echo >&2 "   or: $0 input.pdf output.ps"
+  exit 1
+}
+
+if test $# != 2; then
+  usage
+fi
+
+in=$1
+out=$2
+
+## To PostScript.
+# Adobe Reader doesn't produce sound PostScript files when it uses its
+# standard input/output (e.g., you can't ``go back'' when viewing such
+# files).  Such issues don't happen with files (whose names are passed as
+# arguments), so use a temporary file instead.
+work_dir=$(mktemp -d)
+in_ps=$work_dir/in.ps
+book_ps=$work_dir/book.ps
+# Do not pass -optimzeForSpeed, it produces non DSC compliant PS,
+# which breaks the assumptions of psbook and psnup, and typically
+# result in broken fonts.
+acroread -toPostScript -pairs $in $in_ps
+psbook <$in_ps | psnup -2 >$book_ps
+
+case $out in
+  *.pdf) ps2pdf14 $book_ps $out;;
+   *.ps) psset --tumble $book_ps -o $out;;
+      *) usage;;
+esac
+
+# Remove intermediate products.
+rm -rf $work_dir

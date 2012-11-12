@@ -1,0 +1,198 @@
+% http://research.sun.com/self/papers/papers.html
+
+@Manual{agesen.00.self,
+  title =	 {The {SELF} 4.1 Programmer's Reference Manual},
+  author =	 {Ole Agesen and Lars Bak and Craig Chambers and
+                  Bay-Wei Chang and Urs Hölzle and John Maloney and
+                  Randall B. Smith and David Ungar and Mario Wolczko},
+  organization = {Sun Microsystems, Inc. and Stanford University},
+  year =	 2000,
+}
+
+@article{chambers.89.sigplan,
+  author =	 {Craig Chambers and David Ungar and E. Lee},
+  title =	 {An efficient implementation of {SELF} a
+                  dynamically-typed object-oriented language based on
+                  prototypes},
+  journal =	 {SIGPLAN Not.},
+  volume =	 24,
+  number =	 10,
+  year =	 1989,
+  issn =	 {0362-1340},
+  pages =	 {49--70},
+  doi =		 {http://doi.acm.org/10.1145/74878.74884},
+  publisher =	 {ACM},
+  address =	 {New York, NY, USA},
+}
+
+@article{chambers.91.lsc,
+  author =	 {Craig Chambers and David Ungar and Bay-Wei Chang and
+                  Urs H\"olzle},
+  title =	 {Parents are Shared Parts of Objects: Inheritance and
+                  Encapsulation in {SELF}},
+  journal =	 {Lisp and Symbolic Computation},
+  volume =	 4,
+  number =	 3,
+  pages =	 {0-},
+  year =	 1991,
+  url =		 {citeseer.ist.psu.edu/38819.html},
+  abstract =	 {The design of inheritance and encapsulation in SELF,
+                  an object-oriented language based on prototypes,
+                  results from understanding that inheritance allows
+                  parents to be shared parts of their children. The
+                  programmer resolves ambiguities arising from
+                  multiple inheritance by prioritizing an object's
+                  parents. Unifying unordered and ordered multiple
+                  inheritance supports differential programming of
+                  abstractions and methods, combination of unrelated
+                  abstractions, unequal combination of abstractions,
+                  and mixins. In SELF, a private slot may be accessed
+                  if the sending method is a shared part of the
+                  receiver, allowing privileged communication between
+                  related objects.  Thus, classless SELF enjoys the
+                  benefits of class-based encapsulation. }
+}
+
+@PhDThesis{chambers.92.phd,
+  author =	 {Craig Chambers},
+  title =	 {The Design and Implementation of the {SELF}
+                  Compiler, an Optimizing Compiler for Object-Oriented
+                  Programming Languages},
+  number =	 {STAN-CS-92-1420},
+  year =	 1992,
+  url =		 {citeseer.ist.psu.edu/chambers92design.html}
+}
+
+@TechReport{chambers.92.tr,
+  author =	 {Craig Chambers},
+  title =	 {The Design and Implementation of the {SELF}
+                  Compiler},
+  institution =	 {Department of Computer Science, Stanford University},
+  year =	 1992,
+  number =	 {STAN-CS-92-1420},
+  month =	 {March},
+  abstract =	 {Specializing all methods (i.e. not choosing the
+                  important ones with a profile) in SELF gives a
+                  speedup of 1.5-5 times.}
+}
+
+
+@article{smith.95.lncs,
+  author =	 {Randall B. Smith and David Ungar},
+  title =	 {Programming as an Experience: The Inspiration for
+                  Self},
+  journal =	 {Lecture Notes in Computer Science},
+  volume =	 952,
+  pages =	 {303--??},
+  year =	 1995,
+  url =		 {citeseer.ist.psu.edu/smith95programming.html}
+}
+
+@InProceedings{ungar.87.oopsla,
+  author =	 {David Ungar and Randall B. Smith},
+  title =	 {{SELF}: The Power of Simplicity},
+  booktitle =	 {Proceedings of the Conference on Object-Oriented
+                  Programming Systems, Languages, and Applications
+                  ({OOPSLA'87})},
+  journal =	 {SIGPLAN Notices},
+  volume =	 22,
+  number =	 12,
+  publisher =	 {ACM Press},
+  address =	 {New York, NY},
+  editor =	 {Norman Meyrowitz},
+  pages =	 {227--242},
+  year =	 1987,
+  url =		 {citeseer.ist.psu.edu/165630.html},
+  abstract =     {SELF is an object-oriented language for exploratory
+                  programming based on a small number of simple and
+                  concrete ideas: prototypes, slots, and
+                  behavior. Prototypes combine inheritance and
+                  instantiation to provide a framework that is simpler
+                  and more flexible than most object-oriented
+                  languages. Slots unite variables and procedures into
+                  a single construct. This permits the inheritance
+                  hierarchy to take over the function of lexical
+                  scoping in conventional languages. Finally, because
+                  SELF does not distinguish state from behavior, it
+                  narrows the gaps between ordinary objects,
+                  procedures, and closures. SELF's simplicity and
+                  expressiveness offer new insights into object-
+                  oriented computation.},
+  comment =       {A simple paper that provides a good introduction to
+                  prototype languages.  Contains some interesting
+                  discussion about how to implement local variables.
+                  The approach in SELF for prototypes is also
+                  interesting: cloning really fully copies the object,
+                  it does not merely link to it as a prototype.  So
+                  there are prototypical objects (which are cloned)
+                  and shared objects that hold the common behavior.
+                  That seems to problems such as "copy on write"
+                  nightmares.  Very different from what Io and Urbi do.},
+}
+
+@article{ungar.91.lsc,
+  author =	 {David Ungar and Craig Chambers and Bay-Wei Chang and
+                  Urs H\"olzle},
+  title =	 {Organizing Programs Without Classes},
+  journal =	 {Lisp and Symbolic Computation},
+  volume =	 4,
+  number =	 3,
+  pages =	 {0-},
+  year =	 1991,
+}
+
+@article{ungar.92.computer,
+  author =	 {David Ungar and Randall B. Smith and Craig Chambers
+                  and Urs H\"{o}lzle},
+  title =	 {Object, Message, and Performance: How they Coexist
+                  in {SELF}},
+  journal =	 {Computer},
+  volume =	 25,
+  number =	 10,
+  year =	 1992,
+  issn =	 {0018-9162},
+  pages =	 {53--64},
+  doi =		 {http://dx.doi.org/10.1109/2.161280},
+  publisher =	 {IEEE Computer Society Press},
+  address =	 {Los Alamitos, CA, USA},
+}
+
+@phdthesis{holzle.95.phd,
+  author =	 {Urs H\"{o}lzle},
+  title =	 {Adaptive optimization for {Self}: reconciling high
+                  performance with exploratory programming},
+  year =	 1995,
+  order_no =	 {UMI Order No. GAX95-12396},
+  publisher =	 {Stanford University},
+  address =	 {Stanford, CA, USA},
+}
+
+@inproceedings{holzle.94.oopsla,
+  author =	 {Urs H\"{o}lzle and David Ungar},
+  title =	 {A third-generation {SELF} implementation: reconciling
+                  responsiveness with performance},
+  booktitle =	 {Proceedings of the ninth annual conference on
+                  Object-oriented programming systems, language, and
+                  applications (OOPSLA'94)},
+  year =	 1994,
+  isbn =	 {0-89791-688-3},
+  pages =	 {229--243},
+  location =	 {Portland, Oregon, United States},
+  doi =		 {http://doi.acm.org/10.1145/191080.191116},
+  publisher =	 {ACM},
+  address =	 {New York, NY, USA},
+}
+
+@article{ungar.95.sigplan,
+  author =	 {David Ungar},
+  title =	 {Annotating objects for transport to other worlds},
+  journal =	 {SIGPLAN Not.},
+  volume =	 30,
+  number =	 10,
+  year =	 1995,
+  issn =	 {0362-1340},
+  pages =	 {73--87},
+  doi =		 {http://doi.acm.org/10.1145/217839.217845},
+  publisher =	 {ACM},
+  address =	 {New York, NY, USA},
+}

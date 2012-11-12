@@ -1,0 +1,263 @@
+#! /bin/sh
+
+# Avoid locale-related differences in the output (e.g., space before
+# colons).
+export LC_ALL=C
+
+set -e
+
+me=$(basename $0)
+
+## BEGIN
+#    svn-externals [OPTIONS] [DIRS]
+#
+# Handle the svn:externals dependencies of the DIRS (by default ".").
+#
+# Options:
+#   -h, --help, -h      display this message and exit
+#   -u, --update=DIR    upgrade the pinned externals directory DIR to the
+#                       newest version, and upgrade.
+#                       "all" means all the externals
+#   -U, --update-all    same as --update=all
+#   -s, --subscribe=URL add a pinned external on URL, under the same directory
+#                       name.  If there was already a dependency, pin it.
+#   -n, --dry-run       display the commands, don't run them
+#
+# URL aliases:
+#   gostai    https://svn.gostai.com/svn
+#   common      gostai/common
+#   jpeg           common/libjpeg-6b/jpeg-6b
+#   baux           common/project-template/trunk/build-aux
+#   libport        common/project-template/trunk/libport
+#   lurbi       gostai/liburbi-cpp/trunk
+#   uobj           lurbi/src/liburbi/uobject
+#   share     https://svn.lrde.epita.fr/svn/lrde-publis/trunk/share
+#
+# An svn:externals dependency is "pinned" if it has an explicit
+# revision number.
+## END
+
+## --------------------- ##
+## Standard components.  ##
+## --------------------- ##
+
+
+stderr ()
+{
+    echo >&2 "$me: $@"
+}
+
+fatal ()
+{
+    stderr "$@"
+    exit 1
+}
+
+usage ()
+{
+  # BSD sed is real piece of s.*t.
+  sed -n '/^## BEGIN/,/^## END/{s/^#$/# /;s/^# //;/^#/!p;}' $0
+}
+
+
+## --------------------- ##
+## Business components.  ##
+## --------------------- ##
+
+# url_aliases URL
+# ---------------
+# Decode the address URL, which might use other URL aliases.
+# Aliases are read from the usage notice, the big comment
+# at the start of this script.
+url_aliases ()
+{
+  case $1 in
+    http* )
+      echo "$1";;
+    *)
+      local loc=$1
+      local alias=$(echo "$loc" | sed 's,/.*,,')
+      local ext=$(echo   "$loc" | sed -n 's,^[^/]*/\(.*\),\1,p')
+      local url=$(usage |
+		  sed -n "/^URL aliases:/,/^# *\$/{
+			     /^ *$alias *\\([^ ].*\\)/{s//\1/;p;q;};
+			 }")
+      url=$(url_aliases "$url")
+      if test x"$ext" != x; then
+	url=$url/$ext
+      fi
+      echo "$url"
+      ;;
+  esac
+}
+
+# svn_youngest URL
+# ----------------
+# Return the youngest revision of repository URL.
+svn_youngest ()
+{
+  # Beware not to ignore the failure: pipes are not good.
+  local info=$(svn info "$1")
+  test -n "$info" ||
+    fatal "cannot get youngest revision number"
+  echo "$info" | sed -n '/Revision: /{s///;p;q;}'
+}
+
+
+# svn_externals_update_stream [DIR]
+# ---------------------------------
+# Upgrade the pinned svn:externals corresponding to DIR in STDIN, and
+# pass to STDOUT.  If DIR is empty, do it for all the directories.
+svn_externals_update_stream ()
+{
+  # "all" means, any directory here.
+  local request=$1
+  test x"$request" != xall ||
+    request=""
+
+  while read e
+  do
+    case $e in
+    # Keep comments.
+    '' | '#'*)
+      echo "$e"
+      ;;
+
+    # With revision.
+    *' -r '[0-9]*)
+      # Decode the svn:externals.
+      # % svn pg svn:externals .
+      # share -r 1569 https://svn.lrde.epita.fr/svn/lrde-publis/trunk/share
+      dir=$(echo "$e" | sed 's/ .*//')
+      if test -z "$request" || test "$request" = "$dir"; then
+	rev=$(echo "$e" | sed -n 's/.*-r \([0-9][0-9]*\) *.*/\1/p')
+	url=$(echo "$e" | sed -n 's/.* \(http\)/\1/p')
+	test -n "$url" ||
+	  fatal "cannot fetch the URL of $e"
+	new_rev=$(svn_youngest "$url")
+	test -n "$new_rev" ||
+	  fatal "cannot fetch the revision of $url"
+	echo "$dir -r $new_rev $url"
+      else
+	echo "$e"
+      fi
+      ;;
+
+    # Without revision.
+    *)
+      echo "$e"
+      ;;
+    esac
+  done
+}
+
+
+# svn_externals_update HOST-DIR PINNED-DIR
+# ----------------------------------------
+# Update all the pinned svn:externals to the most recent version.
+svn_externals_update ()
+{
+  local externals=$(svn propget svn:externals "$1" |
+		    svn_externals_update_stream "$2")
+  $run svn propset svn:externals "$externals" "$1"
+}
+
+
+# svn_externals_subscribe DIR URL
+# -------------------------------
+svn_externals_subscribe ()
+{
+  local host=$1
+  local url=$2
+  local dir=$(echo "$url" | sed -e 's,/$,,;s,.*/,,')
+  local rev=$(svn_youngest "$url")
+  externals=$(svn propget svn:externals "$host" |
+	      sed -e "/^$dir /d")
+  externals="$externals
+$dir -r $rev $url"
+  $run svn propset svn:externals "$externals" "$host"
+}
+
+
+
+## ------ ##
+## Main.  ##
+## ------ ##
+
+# List of upgrades.
+upgrades=
+# List of subscriptions.
+subscriptions=
+# List of directories to process.
+dirs=
+
+while test $# != 0
+do
+  case $1 in
+    # Handle --option=value by splitting apart and putting back on argv.
+    --*=*)
+      opt=`echo "$1" | sed -e 's/=.*//'`
+      val=`echo "$1" | sed -e 's/[^=]*=//'`
+      shift
+      set dummy "$opt" "$val" ${1+"$@"}; shift
+      ;;
+
+    # Handle --update-all as --update "all"
+    -U | --update-all | --upgrade-all )
+      shift
+      set dummy --update "all" ${1+"$@"}; shift
+      ;;
+  esac
+
+  case $1 in
+      -h | --help )
+	  usage
+	  exit 0
+	  ;;
+      -u | --update | --upgrade )
+	  updates="$updates $2"
+	  shift
+	  ;;
+      -s | --subscribe )
+	  subscriptions="$subscriptions $2"
+	  shift
+	  ;;
+      -n | --dry-run )
+	  run=stderr
+	  ;;
+      -*)
+	  fatal "invalid option: $1"
+	  ;;
+      *)
+	  dirs="$dirs $1"
+	  ;;
+  esac
+  shift
+done
+
+test -n "$dirs" || dirs=.
+
+for d in $dirs
+do
+  # Should we run svn up at the end?
+  update=false
+
+  for s in $subscriptions
+  do
+    svn_externals_subscribe "$d" $(url_aliases "$s")
+    update=true
+  done
+
+  for u in $updates
+  do
+    svn_externals_update "$d" "$u"
+    update=true
+  done
+
+  if $update; then
+    $run svn up
+    stderr "You should checkin $d, externals were updated."
+  fi
+done
+
+exit 0

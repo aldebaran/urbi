@@ -1,0 +1,199 @@
+#! /usr/bin/perl
+
+# Usage: vaucanson-g-to-tikz FILES
+#
+# Convert all the FILES to use TikZ instead of Vaucanson-G.  Copies of
+# the original FILES are left as *.bak.
+#
+# The main motivation for such a conversion is to get rid of PSTricks
+# which (i) has portability issues bw versions, (ii) requires passing
+# via DVI.  TikZ does not have these limitations.
+#
+# In THL the whole lecture notes + exams were converted using this
+# script, and the following preamble:
+# 
+# \usepackage{pgf,tikz}
+# \usetikzlibrary{automata}
+# \usetikzlibrary{arrows}
+# \tikzstyle{automaton}=[shorten >=1pt,
+#                        node distance=2cm,
+#                        pos=.4,
+#                        >=stealth',
+#                        initial text=]
+# \tikzstyle{accepting}=[accepting by arrow]
+# 
+# %% Support more angles for initial/accepting states.
+# %% From Alexandre Duret-Lutz.
+# \tikzoption{initial angle}{\tikzaddafternodepathoption{\def\tikz@initial@angle{#1}}}
+# \tikzoption{accepting angle}{\tikzaddafternodepathoption{\def\tikz@accepting@angle{#1}}}
+
+
+# geo
+# ---
+sub geo ($)
+{
+    my ($geo) = @_;
+    $geo =~ s/[\[\]]//g;
+    # Forget about the case, so that we can convert LoopN, LoopS
+    # etc. too.
+    return lc $geo;
+}
+
+# geo2rel ($direction)
+# --------------------
+# Convert NSEW in the corresponding above/below etc.
+sub geo2rel ($)
+{
+    my ($geo) = @_;
+    my $res = "";
+    $geo = geo($geo);
+
+    $res = "above" if $geo eq "n";
+    $res = "below" if $geo eq "s";
+    $res = "left"  if $geo eq "w";
+    $res = "right" if $geo eq "e";
+
+    $res;
+}
+
+# convert_state ($kind, $geo)
+# ---------------------------
+# $kind is Initial|Final
+# $geo is (n|s|...)
+# Helper for \State etc. conversion.
+sub convert_state ($$)
+{
+    my ($kind, $geo) = @_;
+    my $res = "";
+    $res = "initial" if $kind eq "Initial";
+    $res = "accepting" if $kind eq "Final";
+
+    if (defined $geo)
+    {
+	$geo = geo($geo);
+
+	# Handle NSEW.
+	my $rel = geo2rel($geo);
+	$res .= " $rel"
+	    if $rel ne '';
+
+	# Yes, we need to repeat: "accepting, accepting angle = XX".
+	$res .= ", $res angle = 45"  if $geo eq "ne";
+	$res .= ", $res angle = 135" if $geo eq "nw";
+	$res .= ", $res angle = 225" if $geo eq "sw";
+	$res .= ", $res angle = 315" if $geo eq "se";
+    }
+    print STDERR "@_ -> $res\n";
+    return $res;
+}
+
+# convert_vcpicture ($prefix, $contents)
+# --------------------------------------
+# $contents is the contents of a {VCPicture} environment, and $prefix
+# is everything that is between the beginning of the line that
+# contains the previous \VCDraw and the \begin{VCPicture}.  It is used
+# both to compute the output indentation, and to see if there are
+# prefix-commands such as \MediumScale.
+#
+# Returns a TikZ environment.
+sub convert_vcpicture ($$)
+{
+    my ($prefix, $input) = @_;
+    local $_ = $input;
+
+    # The prefix may contain request to change the scale.  The
+    # following is extracted from the soureces of Vaucanson-G:
+    #
+    # \newcommand{\LargeScale}{0.85}
+    # \newcommand{\MediumScale}{0.6}
+    # \newcommand{\SmallScale}{0.5}
+    # \newcommand{\TinyScale}{0.42}
+    print STDERR "                   Prefix: {$prefix}\n";
+
+    my $scale = "";
+    $scale = ", scale = 0.85" if $prefix =~ /LargePicture/;
+    $scale = ", scale = 0.6"  if $prefix =~ /MediumPicture/;
+    $scale = ", scale = 0.5"  if $prefix =~ /SmallPicture/;
+    $scale = ", scale = 0.42" if $prefix =~ /TinyPicture/;
+
+    # Gather initial/final states.
+
+    # \Initial, \Final
+    # ----------------
+    # In Vaucanson the fact that a state is initial/final is separated
+    # from the declaration of the state.  That's not the case in TikZ,
+    # so first gather information about declared initial/final states.
+    my %state;
+    s{\\(Initial|Final)(\[.*?\])?\{(.*?)\}}
+     {$state{$3} .= ", " . convert_state($1, $2);
+      ""}ge;
+
+    # \State, \StateVar
+    # -----------------
+    # StateVar means that the frame of the state can grow to cope
+    # with large content.
+    s{\\State(?:Var)?\[(.*?)\]\{(.*?)\}\{(.*?)\}}
+     {\\node[state$state{$3}] ($3) at $2 {\$$1\$};\n}g;
+    s{\\State(?:Var)?\{(.*?)\}\{(.*?)\}}
+     {\\node[state$state{$2}] ($2) at $1 {};\n}g;
+
+    # \EdgeL, \EdgeR
+    # --------------
+    # L means that the node information is on the left.
+    # I know that TikZ supports above/below, I don't know about left/right.
+    s{\\EdgeL\{(.*?)\}\{(.*?)\}\{(.*?)\}}
+     {\\path[->] ($1) edge node[above] {\$$3\$} ($2);\n}g;
+    s{\\EdgeR\{(.*?)\}\{(.*?)\}\{(.*?)\}}
+     {\\path[->] ($1) edge node[below] {\$$3\$} ($2);\n}g;
+
+    # \ArcL, \ArcR
+    # --------------
+    # The initial L changes the starting angle (Arc = 15 degre, LArc = 30).
+    # The optional [pos] specifies the position of the label (defaults to .45).
+    s{\\L?ArcL(?:\[.*?\])?\{(.*?)\}\{(.*?)\}\{(.*?)\}}
+     {\\path[->] ($1) edge [bend left] node[above] {\$$3\$} ($2);\n}g;
+    s{\\L?ArcR(?:\[.*?\])?\{(.*?)\}\{(.*?)\}\{(.*?)\}}
+     {\\path[->] ($1) edge [bend right] node[above] {\$$3\$} ($2);\n}g;
+
+    # \LoopX
+    # ------
+    my $rel;
+    s{\\Loop([NSEW]*)(?:\[.*?\])?\{(.*?)\}\{(.*?)\}}
+     {$rel = geo2rel($1);
+      "\\path[->] ($2) edge [loop $rel] node[$rel] {\$$3\$} ($2);\n"}ge;
+
+    # Check how much space there is in the prefix (before the \VCDraw).
+    my $space = $prefix;
+    $space =~ s/^(\s+).*/$1/;
+
+    # Remove all the indentation, and reindent.
+    s{^\s*}{  }gm;
+
+    # Add the TikZ environment call, and indent.
+    $_ = "\\begin{tikzpicture}[automaton$scale]\n$_\\end{tikzpicture}";
+    s{^}{$space}gm;
+
+    "% $prefix\n$_";
+}
+
+
+sub convert_file($)
+{
+    my ($file) = @_;
+    my ($bak) = "$file.bak";
+    rename ($file, $bak);
+    use IO::File;
+    my $in = new IO::File($bak);
+    my $out = new IO::File(">$file");
+    local $/ = undef;
+
+    $_ = $in->getline;
+    s{^([^\n]*)\\VCDraw\s*\{\s*\\begin\{VCPicture\}\{(.*?)\}(.*?)\\end\{VCPicture\}\}?}
+     {convert_vcpicture($1, $3)}gesm;
+    print $out $_;
+}
+
+for my $file (@ARGV)
+{
+    convert_file($file);
+}

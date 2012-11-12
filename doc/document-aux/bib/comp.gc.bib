@@ -1,0 +1,20 @@
+@InProceedings{marlow.08.ismm,
+  title =        {Parallel generational-copying garbage collection
+                  with a block-structured heap},
+  author =       {Simon Marlow and Tim Harris and Roshan P. James and
+                  Simon Peyton Jones},
+  abstract =     {We present a parallel generational-copying garbage
+                  collector implemented for the Glasgow Haskell
+                  Compiler. We use a block-structured memory
+                  allocator, which provides a natural granularity for
+                  dividing the work of GC between many threads,
+                  leading to a simple yet effective method for
+                  parallelising copying GC. The results are
+                  encouraging: we demonstrate wall-clock speedups of
+                  on average a factor of 2 in GC time on a commodity
+                  4-core machine with no programmer intervention,
+                  compared to our best sequential GC.},
+  booktitle =    {Proceedings of the International Symposium on Memory
+                  Management 2008},
+  year =         2008,
+}

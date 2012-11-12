@@ -1,0 +1,30 @@
+%%                                                       -*- LaTeX -*-
+%% Language definition of Lex/Flex for listings package
+%%
+
+%% Lex
+\lstdefinelanguage[]{Lex}%
+  {otherkeywords=%
+    {\%s,\%\%,\%\{,\%\}
+    },%
+    morecomment=[n]{/*}{*/},%
+    morestring=[b]{"},%
+    sensitive=true
+  }[keywords]%
+
+
+%% Lex: Flex
+
+%% Listings does not support ``moreotherkeywords.''
+\lstdefinelanguage[Flex]{Lex}%
+  {otherkeywords=%
+    {\%s,\%\%,\%\{,\%\},
+     \%option,\%x
+    },%
+    morecomment=[n]{/*}{*/},%
+    morecomment=[s]{//},%
+    morestring=[b]{"},%
+    sensitive=true
+  }[keywords]%
+
+\lstdefinelanguage{Flex}[Flex]{Lex}{}

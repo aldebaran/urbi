@@ -1,0 +1,39 @@
+%% myindex.sty: Seamless complex index entries.
+
+\NeedsTeXFormat{LaTeX2e}
+
+\ProvidesPackage{myindex}[2007/10/05 v0.1
+                          Factoring complex index entries]
+
+%% \indexing{KEY}{VALUE}
+%% ---------------------
+%% Declare that \myindex{KEY} should run \index{VALUE}.
+\newcommand{\indexing}[2]{%
+  \@namedef{myindex@#1}{\index{#2}}%
+}
+
+%% \@myindex{KEY}{TEXT}
+%% -------------------
+%% Run \index on KEY's VALUE if declared, otherwise on TEXT.
+\newcommand{\@myindex}[2]{%
+  \@ifundefined{myindex@#1}{%
+    \index{#2}%
+  }{%
+    \@nameuse{myindex@#1}%
+  }%
+}
+
+%% \myindex[KEY = TEXT]{TEXT}
+%% --------------------------
+%% Run \index on KEY's VALUE if declared, otherwise just KEY.
+\newcommand{\myindex}[2][\empty]{%
+  \ifx#1\empty%
+    \@myindex{#2}{#2}%
+  \else
+    \@myindex{#1}{#2}%
+  \fi%
+}
+
+\endinput
+
+%% myindex.sty ends here.

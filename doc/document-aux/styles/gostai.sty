@@ -1,0 +1,817 @@
+% This file aims at providing the core features needed to write Gostai
+% documents.  Not only reports, but also slides.  Therefore, don't put
+% too many things here: beamer must still be able to use these
+% features.
+%
+% Packages used for full reports are required from
+% gostai-documentation.sty. Arguably, the names are wrong.  Will be
+% fixed in the future.
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{gostai}[2011/05/31 v0.7 Gostai Document Style]
+
+% Number subsubsections and include them in the TOC
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+%% ---------- %%
+%% Packages.  %%
+%% ---------- %%
+
+\RequirePackage[draft,margin]{fixme}
+\RequirePackage[utf8]{inputenc}
+\RequirePackage{afterpage}
+\RequirePackage{array}
+\RequirePackage{colortbl}
+
+\RequirePackage{graphicx}
+%% Promote the use of PDF over PNG.  Remove extensions that we don't
+%% use.
+\RequirePackage{grfext}
+\RemoveGraphicsExtensions{.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPEG}
+\ifx\ifHtml\undefined
+\PrependGraphicsExtensions{.pdf}
+\fi
+
+\RequirePackage{hhline}
+\RequirePackage{mycxx}
+\RequirePackage{rotating}
+\RequirePackage{supertabular}
+\RequirePackage{texi}
+\RequirePackage{xspace}
+\RequirePackage{misc}
+
+
+%% --------- %%
+%% Options.  %%
+%% --------- %%
+
+%% Whether we are compiling the whole urbisdk doc or not.
+\newboolean[false]{urbisdk}
+
+
+%% ---------- %%
+%% Acronyms.  %%
+%% ---------- %%
+
+\newcommand{\UBinary}{\lstinline{UBinary}\xspace}
+\newcommand{\UImage}{\lstinline{UImage}\xspace}
+\newcommand{\UList}{\lstinline{UList}\xspace}
+\newcommand{\UObjectHub}{\lstinline{UObjectHub}\xspace}
+\newcommand{\UObject}{\lstinline{UObject}\xspace}
+\newcommand{\UObjects}{\lstinline{UObjects}\xspace}
+\newcommand{\USound}{\lstinline{USound}\xspace}
+\newcommand{\UVar}{\lstinline{UVar}\xspace}
+\newcommand{\UEvent}{\lstinline{UEvent}\xspace}
+\newcommand{\gsrapi}{Gostai Standard Robotics API\xspace}
+
+
+
+%% -------- %%
+%% tex4ht.  %%
+%% -------- %%
+
+%% \setHtmlFileName{NAME}
+%% ----------------------
+%%
+%% Declare that, in the event of a split-documentation (several HTML
+%% pages), the file corresponding to the current point in the
+%% documentation should be named NAME.html.  See
+%% build-aux/bin/tex4ht-post.
+\newcommand{\setHtmlFileName}[1]
+{%
+  \ifx\ifHtml\undefined\else%
+    \HCode{<!-- tex4ht:FileName="#1" -->}%
+  \fi%
+}
+
+
+%% -------- %%
+%% Floats.  %%
+%% -------- %%
+
+% Don't insert a float at the top of a page before it's referred to!
+\RequirePackage{flafter}
+
+\newcommand   {\floatpos}          {htbp}
+\newcommand   {\floatposh}         {!htb}
+\newcommand   {\flushfloat}        {\afterpage{\clearpage}}
+\setcounter   {topnumber}          {3} % Enable up to n floats at the top of pages
+\setcounter   {bottomnumber}       {2} % Enable up to n floats at the bottom of pages
+\renewcommand {\floatpagefraction} {0.8}
+
+
+%% ---------- %%
+%% Listings.  %%
+%% ---------- %%
+
+\RequirePackage{mylistings}
+
+\definecolor{keyword}{rgb}{0.2,0.2,0.8}
+\definecolor{comment}{rgb}{0.8,0.5,0}
+\definecolor{string}{rgb}{0.0,0.5,0.0}
+
+\definecolor{pastelgreen}{rgb}{.9, 1, .9}
+\definecolor{pastelblue}{rgb}{.9, .9, 1}
+\definecolor{pastelred}{rgb}{1, .9, .9}
+
+\definecolor{bg}{rgb}{0.9,0.9,1}    % Same as pastelblue.
+\definecolor{bnf}{rgb}{.9,1,.9}     % Same as pastelgreen.
+\definecolor{assert}{rgb}{1,0.9,.9} % Same as pastelred.
+
+\ifx\ifHtml\undefined
+  \newcommand{\textcmt}[1]{{\color{comment}\ttfamily{}#1}}
+  \newcommand{\textkwd}[1]{{\color{keyword}\ttfamily{}#1}}
+  \newcommand{\textstr}[1]{{\color{string}\ttfamily{}#1}}
+\else
+  \newcommand{\textcmt}[1]{\textcmtPre%
+    #1%
+    \textcmtPost}
+  \newcommand{\textkwd}[1]{\textkwdPre%
+    #1%
+    \textkwdPost}
+  \newcommand{\textstr}[1]{\textstrPre%
+    #1%
+    \textstrPost}
+\fi
+
+
+% Urbi SDK manual style.
+%
+% aboveskip=.6cm
+%
+%   Don't use it.  It looks ok on the PDF output, but it is actually
+%   useless: the document is just as nice without.  Yet it results in
+%   vertical space being lost in slides.  Of course the slides can set
+%   it to 0pt, yet again, I don't think we want it anyway.
+%
+% columns=fullflexible
+%
+%   When columns is not set to "fullflexible", listing is inserting
+%   spaces between each character to adjust the spacing.  Unfortunately
+%   the space are also "visible" in the copied/pasted snippets from the
+%   resulting PDF document.  This is a real nuisance.  So prefer
+%   "columns=fullflexible", and a fixed-space font.  But then, be sure
+%   to keepspaces=true.
+\lstdefinestyle{UrbiSDK}
+{
+  basicstyle=\ttfamily,
+  columns=fullflexible, % See comment above.
+  keepspaces=true,
+  backgroundcolor=\color{bg},
+  keywordstyle=\textkwd,
+  commentstyle=\textcmt,
+  stringstyle=\textstr,
+  captionpos=b,
+  frame=single,
+  showstringspaces=false,
+  % Always enable the use of \var{} in listings, including C++.
+  moredelim=[is][\var]{\\var\{}{\}},
+}
+
+% style varInString
+%
+% We'd like to use \var in strings too.  This requires to make strings
+% "transparent" (other style applies inside) and cumulative (cumulate
+% the style of strings, and of the inner entities.  As a result,
+% keywords appearing in the string will be typeset as keywords.  We
+% don't want that, so don't enable by default, do it only where the
+% user knows what she's doing.
+\lstdefinestyle{varInString}
+{
+  moredelim={**[s][stringstyle]{"}{"}},
+}
+
+\lstset{style=UrbiSDK}
+
+% This is so that \lstinline corresponds to urbiscript code in normal
+% size.
+%
+% FIXME: this is really dangerous: any listing environment that does
+% not define the language will be typeset as urbiscript.
+\lstset{language=[interactive]urbiscript}
+
+% A very very common need.
+\newcommand{\this}{\lstinline|this|\xspace}
+\newcommand{\that}{\var{that}\xspace}
+
+% In PDF, use a smaller font for the listing boxes than for the inline
+% code snippets.  it looks nicer, and helps to have 80 columns fit.
+% In HTML it does not look nice to have a smaller font, and we don't
+% have the same constraints on the width.
+\ifx\ifHtml\undefined
+  \lstdefinestyle{UrbiSDKEnv}
+  {
+    style=UrbiSDK,
+    basicstyle=\ttfamily\footnotesize,
+  }
+\else
+  \lstdefinestyle{UrbiSDKEnv}
+  {
+    style=UrbiSDK,
+  }
+\fi
+
+% \begin{bnf}
+% \end{bnf}
+% ------------------
+% urbiscript assertions.
+\ifx\ifHtml\undefined
+  \newcommand\bnfPre{}
+  \newcommand\bnfPost{}
+\fi
+\lstnewenvironment{bnf}[1][]
+  {\bnfPre%
+   \lstset{language=bnf,
+      style=UrbiSDKEnv,
+      backgroundcolor=\color{bnf},
+      floatplacement=\floatposh,
+      #1}}
+  {\bnfPost}
+
+% \begin{cxx}
+% \end{cxx}
+% -------------
+% C++ snippets
+\ifx\ifHtml\undefined
+  \newcommand\cxxPre{}
+  \newcommand\cxxPost{}
+\fi
+\lstnewenvironment{cxx}[1][]
+  {\cxxPre%
+    \lstset{language=C++,
+      style=UrbiSDKEnv,
+      #1}}
+  {\cxxPost}
+
+% \begin{java}
+% \end{java}
+% -------------
+% Java snippets
+\ifx\ifHtml\undefined
+  \newcommand\javaPre{}
+  \newcommand\javaPost{}
+\fi
+\lstnewenvironment{java}[1][]
+  {\javaPre%
+    \lstset{language=Java,
+      style=UrbiSDKEnv,
+      #1}}
+  {\javaPost}
+
+% \begin{shell}
+% \end{shell}
+% -------------
+\ifx\ifHtml\undefined
+  \newcommand\shellPre{}
+  \newcommand\shellPost{}
+\fi
+\lstnewenvironment{shell}[1][]
+  {\shellPre%
+    \lstset{language=bash,alsoletter={-,/},
+      style=UrbiSDKEnv,
+      morestring=[b]{'},
+      #1}}
+  {\shellPost}
+
+% \begin{urbiassert}
+% \end{urbiassert}
+% ------------------
+% urbiscript assertions.
+\ifx\ifHtml\undefined
+  \newcommand\urbiassertPre{}
+  \newcommand\urbiassertPost{}
+\fi
+\lstnewenvironment{urbiassert}[1][]
+  {\urbiassertPre%
+   \lstset{language=[interactive]urbiscript,
+      style=UrbiSDKEnv,
+      backgroundcolor=\color{assert},
+      floatplacement=\floatposh,
+      #1}}
+  {\urbiassertPost}
+
+% \begin{urbicomment}
+% \end{urbicomment}
+% -------------------
+% This is not output in the documentation at all (thrown away), but
+% included in the the extracted tests.  Put in there things to hide
+% from the user.
+\excludecomment{urbicomment}
+
+% \begin{urbiunchecked}
+% \end{urbiunchecked}
+% ---------------------
+% Same as {urbiscript}, but the content is not checked.  Should be
+% avoided.
+\ifx\ifHtml\undefined
+  \newcommand\urbiuncheckedPre{}
+  \newcommand\urbiuncheckedPost{}
+\fi
+\lstnewenvironment{urbiunchecked}[1][]
+  {\urbiuncheckedPre%
+   \lstset{language=[interactive]urbiscript,
+      style=UrbiSDKEnv,
+      floatplacement=\floatposh,
+      #1}}
+  {\urbiuncheckedPost}
+
+% \begin{urbiscript}
+% \end{urbiscript}
+% ------------------
+% urbiscript code.  Checked.
+\ifx\ifHtml\undefined
+  \newcommand\urbiscriptPre{}
+  \newcommand\urbiscriptPost{}
+\fi
+\lstnewenvironment{urbiscript}[1][]
+  {\urbiscriptPre%
+   \lstset{language=[interactive]urbiscript,
+      style=UrbiSDKEnv,
+      floatplacement=\floatposh,
+      #1}}
+  {\urbiscriptPost}
+
+
+% \begin{verbatim}
+% \end{verbatim}
+% ------------------
+% Undefine LaTeX's native verbatim environment, and use one on top of
+% lstlisting instead.
+%
+% Using the lstlistings seems natural, but it's not good, as it does
+% not use our default listing-environments default style
+% (UrbiSDKEnv).  Using \lstset{UrbiSDKEnv} is tempting, but wrong
+% again, because in that case we also change \lstinline's behavior.
+%
+% So define a new environment (verbatim is fine) and forbid the use of
+% lstlisting.
+%
+% Change the current language to {} instead of urbiscript.
+\let\verbatim\@undefined
+\let\verbatim@\@undefined
+\let\endverbatim\@undefined
+\ifx\ifHtml\undefined
+  \newcommand\verbatimPre{}
+  \newcommand\verbatimPost{}
+\fi
+\lstnewenvironment{verbatim}[1][]
+  {\verbatimPre%
+   \lstset{style=UrbiSDKEnv,language={},#1}}
+  {\verbatimPost}
+
+
+
+% \urbitrajectory{FILE-BASENAME}
+% ------------------------------
+\RequirePackage{multicol}
+\newcommand{\urbitrajectory}[1]
+{
+  \begin{multicols}{2}
+    \lstinputlisting[language=urbiscript,style=UrbiSDKEnv]{trajectories/#1.utraj}
+  \columnbreak
+    \resizebox{\linewidth}{!}{\input{trajectories/#1.pdftex_t}}
+  \end{multicols}
+}
+
+% \lstindex[LST-SET]{THING}
+% -------------------------
+% Use lstinline to output THING and to put it in the index.
+\newcommand{\lstindex}[2][]{%
+  \@myindex{#2}{#2@\lstinline[#1]{#2}}%
+                   \lstinline[#1]{#2}%
+}
+
+% \lstindexMain[LST-SET]{THING}
+% -----------------------------
+% Same as above, but put the page number in bold.  Use this one for
+% the main definitions.
+\newcommand{\lstindexMain}[2][]{%
+  \@myindex{#2}{#2@\lstinline[#1]{#2}|textbf}%
+  \lstinline[#1]{#2}%
+}
+
+%% \begin{lstitemize}
+%% \item[foo] Description of foo
+%% \item \lstinline|bar(\var{arg})|\\
+%%     Description of bar.
+%% \end{lstitemize}
+\newenvironment{lstitemize}[1]
+{%
+  \begin{itemize}%
+    \let\itemOrig\item%
+    \renewcommand{\item}[1][]{\itemOrig%
+      \ifx##1\empty\else%
+        \lstinline[#1]|##1|~\\%
+      \fi%
+    }%
+  }{%
+  \end{itemize}%
+}
+
+%% \begin{lstitemdexize}
+%% \item[foo] Description of foo
+%% \item \lstinline|bar(\var{arg})|\\
+%%     Description of bar.
+%% \end{lstitemdexize}
+%%
+%% Same as above, but puts in the index.
+\newenvironment{lstitemdexize}[1]
+{%
+  \begin{itemize}%
+    \let\itemOrig\item%
+    \renewcommand{\item}[1][]{\itemOrig%
+      \ifx##1\empty\else%
+        \lstindex[#1]{##1}~\\%
+      \fi%
+    }%
+  }{%
+  \end{itemize}%
+}
+
+%% Do not use lstitemdexize here, since we pass the whole signature in
+%% the case of C++.
+\newenvironment{cxxapi}[1][]
+{%
+  \begin{lstitemize}{language=C++,#1}%
+  }{%
+  \end{lstitemize}%
+}
+
+
+%% \sectionObject{OBJECT}
+%% ----------------------
+%% Start a section named OBJECT.  Store OBJECT as the \currentObject.
+\let\sectionGostaiOriginal\section
+\newcommand{\sectionObject}[1]
+{%
+  \sectionGostaiOriginal[#1]{\labelObject{#1}#1}%
+  %
+}
+
+\let\subsectionGostaiOriginal\subsection
+\newcommand{\subsectionObject}[1]
+{%
+  \subsectionGostaiOriginal[#1]{\labelObject{#1}#1}%
+  %
+}
+
+
+%% --------------- %%
+%% urbiscriptapi.  %%
+%% --------------- %%
+
+%% \begin{urbiscriptapi}[OBJECT = \currentObject]
+%% \item[asString] ...
+%% \item[receive](<arg1>, <arg2>) ...
+%% \item|'[]'|(<arg>)...
+%% \end{urbiscriptapi}
+%% -------------------
+%% An environment to define the slots of an OBJECT.
+%%
+%% We used to pass "language=urbiscript" to lst, but as a consequence,
+%% sometimes, some items were using
+%% "\lstindex[language=urbiscript,]{foo}" at one place, and
+%% "\lstindex{foo}" at others.  makeindex does not know that both are
+%% equivalent, so it issues two lines in the index, where we want only
+%% one.  Given that language=urbiscript is the default anyway, we no
+%% longer specify the language.
+%%
+%% Therefore, don't specify uselessly the language.
+
+% \item@slot
+%
+% dispatch to \item@slotSquare if followed by [, or
+% to \item@slotPipe if followed by |, or to \itemOrig otherwise.
+\def\item@slot{%
+  \@ifnextchar[{%]
+  \item@slotSquare%
+  }{%
+    \@ifnextchar|{%}
+    \item@slotPipe%
+    }{%
+      \itemOrig%
+    }%
+  }%
+}%
+
+% \item@slotSquare[SLOT]
+% \item@slotSquare[SLOT](<arg1>, <arg2>)
+\newcommand{\item@slotSquare}[1][]{
+  \@ifnextchar({\item@args{#1}}{\item@args{#1}()}%)
+}%
+% \item@slotPipe|SLOT|
+% \item@slotPipe|SLOT|(<arg1>, <arg2>)
+\def\item@slotPipe|#1|{%
+  \@ifnextchar({\item@args{#1}}{\item@args{#1}()}%)
+}%
+\newenvironment{urbiscriptapi}[1][]
+{%
+  \begin{itemize}%
+    \let\itemOrig\item%
+    \ifx#1\empty\else%
+      % Yes, it's scoped as one would expect.  No need to save/restore.
+      \renewcommand\currentObject{#1}%
+    \fi%
+    \renewcommand\item\item@slot%
+    % \item@args{slot}(args)
+    \def\item@args##1(##2){%
+      \itemOrig%
+      \ifx##1\empty\else%
+        \labelSlot{##1}%
+        \ifx##2\empty\else%
+          \lstinline[{moredelim=[is][\var]{<}{>}}]{(##2)}%
+        \fi%
+        ~\\%
+      \fi
+    }%
+  }{%
+  \end{itemize}%
+}
+
+
+%% ---------- %%
+%% Hyperref.  %%
+%% ---------- %%
+\RequirePackage{myhyperref}
+\hypersetup{colorlinks,
+            citecolor=blue,
+            linkcolor=blue,
+            unicode=true,   % non-Latin characters in Acrobat’s bookmarks
+            urlcolor=blue}
+\ifx\ifHtml\undefined\else%
+  % bookmark.sty expects these guys to be defined, but
+  % with TeX4ht, they are not.
+  \providecommand{\currentpdfbookmark}{}
+  \providecommand{\subpdfbookmark}{}
+  \providecommand{\belowpdfbookmark}{}
+\fi
+\RequirePackage{bookmark}
+%% When reading sectioning commands to define the Bookmarks, we
+%% disable these commands.  See hyperref's doc, section 4.1.2.
+%%
+%% I could not find a means to simplify things like
+%% "\lstinline{for&}".  I tried catcodes, but it failed, and I tried
+%% "ifthen{equal{#1}{for&}}", but TeX does not like it either.
+%% So use texorpdfstring instead.
+\pdfstringdefDisableCommands{%
+  \renewcommand{\lstinline}[1]{#1}%
+  \let\lstindex\lstinline%
+}
+
+
+%% \wref[REF = TEXT]{TEXT}
+%% -----------------------
+%% Wikipedia.
+\newcommand{\wref}[2][\empty]{%
+  \ifx#1\empty%
+    \href{http://en.wikipedia.org/wiki/#2}{#2}%
+  \else%
+    \href{http://en.wikipedia.org/wiki/#1}{#2}%
+  \fi%
+}
+
+
+%% \labelObject{ Object }
+%% ----------------------
+%% Announce that the current section (or subsection etc.) defines the
+%% object OBJECT.  Outputs no text.
+%%
+%% The \index cannot be put inside the \section, it breaks tex4ht when
+%% splitting at that boundary.  So we cannot use \lstindex.
+%%
+%% Pass [] to lstinline so that it matches exactly the definition in
+%% urbiscriptapi.  Otherwise makeindex makes them different entries.
+\newcommand{\labelObject}[1]
+{%
+  \label{sec:std:#1}%
+  \hypertarget{object:#1}{}%
+  \index{#1@\lstinline[]{#1}}%
+  \gdef\currentObject{#1}%
+}
+
+
+
+%% \refObject[ RealName = DisplayedName ]{ DisplayedName }
+%% -------------------------------------------------------
+%% Point to the definition of an USL class.
+\newcommand{\refObject}[2][\empty]
+{%
+  \ifx#1\empty%
+    \hyperlink{object:#2}{\lstinline{#2}}%
+  \else%
+    \hyperlink{object:#1}{\lstinline{#2}}%
+  \fi%
+}
+
+
+%% \slot[Object]{Slot}
+%% -------------------
+%% Render a slot name.
+\newcommand{\slot}[2][\empty]
+  {\ifx#1\empty%
+    \lstinline{#2}%
+  \else%
+    \lstinline{#1.#2}%
+  \fi}
+
+
+%% \lstIndexTwo[Style]{Key}{Subkey}
+%% --------------------------------
+%% Insert Key in the index, at Subkey.  For instance
+%% \lstIndexTwo{else}{if} inserts an entry for "else, if p.42", to
+%% avoid the confusion with \lstIndexTwo{else}{try} for instance.
+%%
+%% Indexes only, outputs nothing.
+\newcommand{\lstIndexTwo}[3][]
+{%
+  \index{#2@\lstinline[#1]{#2}!#3@\lstinline[#1]{#3}}%
+}
+
+
+
+%% \@indexSlot{ Object }{ Slot }
+%% -----------------------------
+%% Insert Object.Slot in the index.  Do not expect it to perform
+%% expansion of macros in its arguments.  In particular don't
+%% expect \currentObject to be expanded as first argument.
+%%
+%% Indexes only, outputs nothing.
+\newcommand{\@indexSlot}[2]
+{%
+  \lstIndexTwo{#2}{#1.~}%
+}
+
+%% \indexSlot{ Object }{ Slot }
+%% ----------------------------
+%% Insert Object.Slot in the index.  Expand Object first.
+\newcommand{\indexSlot}[2]
+{%
+  \edef\@tempInda{#1}%
+  \ifthenelse{\equal{#2}{!}}{\def\@tempIndb{"!}}{%
+  \ifthenelse{\equal{#2}{'!'}}{\def\@tempIndb{'"!'}}{%
+  \ifthenelse{\equal{#2}{!=}}{\def\@tempIndb{"!=}}{%
+  \ifthenelse{\equal{#2}{'!='}}{\def\@tempIndb{'"!='}}{%
+  \ifthenelse{\equal{#2}{!==}}{\def\@tempIndb{"!==}}{%
+  \ifthenelse{\equal{#2}{'!=='}}{\def\@tempIndb{'"!=='}}{%
+    \def\@tempIndb{#2}}}}}}}%
+  \@expandtwoargs \@indexSlot \@tempInda \@tempIndb
+}
+
+%% \labelSlot[OBJECT = \currentObject]{SLOT}
+%% -----------------------------------------
+%% Define an hypertarget for OBJECT.SLOT.
+\newcommand{\labelSlot}[2][\currentObject]
+{%
+  \hypertarget{slot:#1.#2}{}%
+  \indexSlot{#1}{#2}%
+  \lstinline{#2}%
+}
+
+%% \refSlot[Object]{Slot}
+%% ----------------------
+%% Set an hyperlink to Object.Slot, where Object defaults to
+%% \currentObject.  Display the link as "Object.Slot" if Object is
+%% provided, otherwise simply as "Slot".
+\newcommand{\refSlot}[2][\empty]
+  {\ifx#1\empty%
+    \hyperlink{slot:\currentObject.#2}{\lstinline{#2}}%
+  \else%
+    \hyperlink{slot:#1.#2}{\slot[#1]{#2}}%
+  \fi}
+
+%% \autorefObject{ ObjectName }
+%% ----------------------------
+%% Point to the section (without spelling the class name).
+\newcommand{\autorefObject}[1]
+  {\autoref{sec:std:#1}}
+
+%% FIXME: I don't know how to return to \newline here :(
+%% \begin{labeled}{MacroName}
+\newenvironment{labeled}[1]%
+  {\begin{list}{}{%
+        \def\@labeled@temp@a{\let\@labeled@MakeLabel}%
+        \expandafter\@labeled@temp@a \csname #1 \endcsname %
+        \renewcommand{\makelabel}[1]{\@labeled@MakeLabel{##1}\hfill\break}}}%
+  {\end{list}}
+
+%% A list of \env, \file, \option.
+%% I don't know how to factor.
+\newenvironment{envs}%
+  {\begin{list}{}{%
+    \renewcommand{\makelabel}[1]%
+       {\index{##1@\env{##1}}\env{##1}\hfill\break}}}%
+  {\end{list}}
+
+\newenvironment{files}%
+  {\begin{list}{}{%
+    \renewcommand{\makelabel}[1]%
+       {\index{##1@\file{##1}}\file{##1}\hfill\break}}}%
+  {\end{list}}
+
+\newenvironment{files*}%
+  {\begin{list}{}{%
+    \renewcommand{\makelabel}[1]%
+       {\file{##1}\hfill\break}}}%
+  {\end{list}}
+
+
+%% \begin{options}[General Options]
+%% \item[h]{help} Display a help message and exit.
+%% \item{version} Display version info and exit.
+%% \item[I]{include=\var{dir}} Add \var{dir} to the search path.
+%% \end{options}
+%%
+%% Beware that changing the definition of \item is not a good idea.
+%% We might depart from it some day.  The worst consequence is that
+%% inner lists have improper \item definitions.  So be sure to use
+%% \begin{sublist}...\end{sublist} inside.
+%%
+%% \begin{options}
+%% \item[n]{mode=\var{mode}} Set the mode.
+%%   \begin{sublist}
+%%     \begin{description}
+%%     \item[paranoid] Be really strict.
+%%     \item[rasta] Be really cool.
+%%     \end{description}
+%%   \end{sublist}
+%% \item{long} An option that supports only the long form.
+%% \item[s\var{arg}]{} An option that features only the short form.
+%% \end{options}
+\newenvironment{sublist}
+{%
+  \let\item\itemOrig%
+}{%
+}
+
+%% When we declare an option in the index, we had "--" behind it in
+%% its sorting key.  This is in order to avoid that the slot
+%% Socket.disconnect and the option --disconnect be grouped together
+%% in a single index entry.
+\newenvironment{options}[1][\empty]%
+{%
+  \ifx#1\empty\else%
+    \paragraph{#1}%
+  \fi%
+  \begin{description}%
+    \newcommand{\optionsItem}[2][\empty]{%
+      \ifx##1\empty%
+      \itemOrig[\index{##2--@\option{--##2}}\option{--##2}]%
+      \else\ifthenelse{\equal{##2}{}}{%
+        \itemOrig[\index{##1--@\option{-##1}}\option{-##1}]%
+      }{%
+      \itemOrig[\index{##1--@\option{-##1}}\index{##2--@\option{--##2}}%
+          \option{-##1}, \option{--##2}]%
+      }\fi%
+      ~\\
+    }%
+    \let\itemOrig\item%
+    \let\item\optionsItem%
+  }{%
+  \end{description}%
+}
+
+%% \begin{refObjects}
+%% \item[Object]
+%% \end{refObjects}
+\newenvironment{refObjects}
+{%
+  \begin{itemize}%
+    \let\itemOrig\item%
+    \renewcommand{\item}[1][]{\itemOrig \refObject{##1}}%
+  }{%
+  \end{itemize}%
+}
+
+
+%% ------------ %%
+%% Interfaces.  %%
+%% ------------ %%
+
+\newcommand{\refInterface}[2][\empty]%
+  {\refObject[#1]{Interface.#2}}
+
+%% \interface {InterfaceName}
+%% --------------------------
+\newcommand{\interface}[1]{%
+  \subsection[#1]{\labelObject{Interface.#1}\lstindex{#1}}%
+  %
+}
+
+%% \subinterface {SuperInterface} {InterfaceName}
+%% ----------------------------------------------
+\newcommand{\subinterface}[2]{%
+  \subsubsection[#2]{\labelObject{Interface.#2}\lstindex{#2}}%
+  Subclass of \refInterface{#1}.%
+}
+
+
+
+\endinput
+
+%%% Local Variables:
+%%% mode: latex
+%%% coding: utf-8
+%%% TeX-master: t
+%%% ispell-dictionary: "american"
+%%% End:

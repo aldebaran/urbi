@@ -1,0 +1,156 @@
+#! /usr/bin/perl -w
+
+# Usage: deacronym FILE...
+#
+# Looks for \acrodef in the *.{tex,sty} files all the subdirectories,
+# and replaces the various forms of \ac with the proper inlined
+# expansion in the FILEs.  The original FILEs will be backed up as
+# FILE.bak.  This is useful when a LaTeX must be delivered with little
+# dependencies.
+#
+# Bugs:
+#
+# Of course it has limitations: it is "static" instead of "dynamic",
+# i.e., instead of using the full form for the first \ac to be
+# expanded, it will expanded the first *occurrence* of \ac.  This is
+# usually what one wants.
+#
+# Besides it will obviously be wrong if \ac is used in macros.
+#
+# You will still have to remove possible definition of in the TeX
+# files and to remove the inclusion of acronym.sty.
+
+use strict;
+use IO::File;
+use File::Find;
+
+# key -> short.
+my %short;
+# key -> long.
+my %long;
+# key -> 1 if already expanded, undefined otherwise.
+my %done;
+
+# contents ($FILE_NAME)
+# ---------------------
+sub contents ($)
+{
+  my ($file) = @_;
+  local $/;			# Turn on slurp-mode.
+  my $f = new IO::File "< $file" or die "$file";
+  my $contents = $f->getline or die "$file";
+  $f->close;
+  return $contents;
+}
+
+# Learn from the current file, if a *.{sty,tex} file.
+sub learn
+{
+  my ($file) = $File::Find::name;
+  return
+      unless $file =~ /\.(sty|tex)$/;
+  print STDERR "Checking $file\n";
+  # Learn about all the occurrences of \acrodef{key}[SHORT]{LONG}.
+  my $contents = contents($file);
+  # When spanning several lines, not supported.
+  $contents =~ s(\\acrodef\{(\w+)\}\[(.*?)\]\{(.*)\}$)
+                ($short{$1} = $2; $long{$1} = $3; ""; )gme;
+}
+
+# handle MACRO, KEY
+# -----------------
+sub handle ($$)
+{
+  my ($macro, $key) = @_;
+
+  my $long = $long{$key};
+  my $short = $short{$key};
+
+  # If plural, "LONGs (SHORTs)".
+  if ($macro =~ /p/)
+    {
+      $short .= 's';
+      $long  .= 's';
+    }
+
+  # If reversed, "SHORT (LONG)".
+  my $full = ($macro =~ /r/
+              ? "$short ($long)"
+              : "$long ($short)");
+
+  my $res;
+  # If long, or short, don't consider the acronym is defined.
+  if ($macro =~ /s/)
+    {
+      # Short, just the acronym.
+      $res = $short;
+    }
+  elsif ($macro =~ /l/)
+    {
+      # Long, just the long.
+      $res = $long;
+    }
+  elsif ($macro =~ /f/)
+    {
+      # Full, the full version, even if defined already.
+      $res = $full;
+      $done{$key} = 1;
+    }
+  else
+    {
+      # Not full nor short, provide the full version only if first
+      # occurrence.
+      $res = defined $done{$key} ? $short : $full;
+      $done{$key} = 1;
+    }
+
+  print STDERR "\\$macro\{$key\} -> $res\n";
+  return $res;
+}
+
+# deacronym ($FILE)
+# -----------------
+# "Inline" uses of \ac* in $FILE.
+sub deacronym ($)
+{
+  my ($file) = @_;
+  my ($bak) = "$file.bak";
+  rename ($file, $bak) or die;
+  my $contents = contents ($bak);
+  # Perform all the sustitutions.
+  $contents =~ s(\\(ac[lprs]*)\{(.*?)\})
+                ( handle($1, $2); )ge;
+  my $out = new IO::File(">$file") or die;
+  print $out $contents;
+}
+
+## ------ ##
+## Main.  ##
+## ------ ##
+
+File::Find::find ({wanted => \&learn, no_chdir => 1 }, '.');
+for my $key (sort keys %short)
+{
+  print STDERR "$key -> $short{$key}, $long{$key}\n";
+}
+for my $file (@ARGV)
+{
+  deacronym($file);
+}
+
+### Setup "GNU" style for perl-mode and cperl-mode.
+## Local Variables:
+## perl-indent-level: 2
+## perl-continued-statement-offset: 2
+## perl-continued-brace-offset: 0
+## perl-brace-offset: 0
+## perl-brace-imaginary-offset: 0
+## perl-label-offset: -2
+## cperl-indent-level: 2
+## cperl-brace-offset: 0
+## cperl-continued-brace-offset: 0
+## cperl-label-offset: -2
+## cperl-extra-newline-before-brace: t
+## cperl-merge-trailing-else: nil
+## cperl-continued-statement-offset: 2
+## End:

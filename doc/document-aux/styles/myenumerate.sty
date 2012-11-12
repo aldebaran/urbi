@@ -1,0 +1,37 @@
+% Contributed by Didier Verna, so that \autoref works proprely with
+% enumerate.
+
+\RequirePackage{myhyperref}
+
+\def\label@enumerate#1{%
+  \@bsphack
+  \begingroup
+  \@onelevel@sanitize\@currentlabelname
+  \edef\@currentlabelname{%
+    \expandafter\strip@period\@currentlabelname\relax.\relax\@@@%
+  }%
+  \protected@write\@auxout{}{%
+    \string\newlabel{#1}{%
+      {\csname label\@enumctr\endcsname}%
+      {\thepage}%
+      {\@currentlabelname}%
+      {\@currentHref}{}%
+    }%
+  }%
+  \endgroup
+  \@esphack
+}
+\let\old@enum@\@enum@
+\def\@enum@{\old@enum@\let\label\label@enumerate}
+% Don't produce "item (i)", but "(i)".  Defining to empty produces " (i)".
+\renewcommand\itemautorefname{\@gobble}
+
+% For some reason it is very important to load enumerate *after* the
+% previous LaTeX snippet, otherwise references to floats defined in
+% the enumerate are displayed using the number of the item the float
+% is defined in, instead of the number of the float itself.
+\@ifpackageloaded{enumerate}
+{\PackageError{myenumerate}{references will be incorrect if
+    enumerate is loaded before myenumerate}}
+{}
+\RequirePackage{enumerate}

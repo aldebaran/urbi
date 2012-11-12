@@ -1,0 +1,14 @@
+%%                                                       -*- LaTeX -*-
+%% Language definition of Vaucanson C++ routines for listings package
+%%
+
+\lstdefinelanguage[]{Vaucanson}[]{STL}%
+{%
+  morekeywords={for_all_const,for_all,for_all_const_,%
+    for_all_,for_all_letters,for_all_states,for_all_transitions,%
+    for_all_final_states,for_all_initial_states},%
+  moreemph={[2]alphabet_t,transducer_t,automaton_t,%
+    semiring_elt_t,monoid_elt_t,hstate_t,map_t,state_t,state_set_t,
+    transition_t, htransition_t},%
+  emphstyle={[2]\sffamily}
+}[keywords,comments,strings]%

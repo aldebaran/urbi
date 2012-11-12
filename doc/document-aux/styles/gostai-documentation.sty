@@ -1,0 +1,350 @@
+%% This is for reports only, not slides.
+%% Read the comments in gostai.sty please.
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{gostai-documentation}[2011/05/31 v1.2 Gostai Documentation]
+
+\RequirePackage{revision}
+
+% Longer compilations, but marginpars properly placed.
+\RequirePackage{mparhack}
+
+%% -------------------- %%
+%% Bibliography/Index.  %%
+%% -------------------- %%
+
+% Index.  Must be before loading hyperref.
+\RequirePackage{myindex}
+\RequirePackage{index}
+\makeindex
+\RequirePackage{gostai}
+\RequirePackage{indexing}
+
+%% -------------------- %%
+%% Numbering chapters.  %%
+%% -------------------- %%
+
+\RequirePackage[chapter,numindex,numbib]{tocbibind}
+\RequirePackage[numindex,numbib]{tocbibind}
+\setindexname{\label{sec:index}Index}
+\renewcommand{\tocbibname}{\label{sec:bibliography}Bibliography}
+\newcommand{\chapterIndex}%
+{%
+  % A bug in tocbibind to my eyes: the cleardoublepage is still needed.
+  \cleardoublepage%
+  \phantomsection%
+  \printindex%
+  %% Provide a fixed name of the sheet that serves for the Index.
+  %% Don't name it "index", which collides with index.html.
+  \setHtmlFileName{index-of-terms}
+}
+
+% We also want to the tables of figures and tables to be chapters, not
+% chapter*.  These are taken from book.cls, and (i) use \chapter
+% instead of \chapter*, (ii) add a \label.  Beware that the mkboth
+% cannot be inside the \chapter command, contrary to what the original
+% definition does.
+
+% \listOf{LIST}{Name}
+% -------------------
+% For instance \listOf{lof}{\listfigurename}.
+\newcommand{\listOf}[2]
+{%
+    \if@twocolumn
+      \@restonecoltrue\onecolumn
+    \else
+      \@restonecolfalse
+    \fi
+    \chapter{#2}%
+    \label{sec:#1}%
+    \@mkboth{\MakeUppercase#2}%
+            {\MakeUppercase#2}%
+    \@starttoc{#1}%
+    \if@restonecol\twocolumn\fi
+    }
+\renewcommand\listoffigures{\listOf{lof}{\listfigurename}}
+\renewcommand\listoftables{\listOf{lot}{\listtablename}}
+\renewcommand\tableofcontents{\listOf{toc}{\contentsname}}
+
+
+%% -------- %%
+%% Format.  %%
+%% -------- %%
+
+% Margin width chosen so that 80 columns are displayed in listings.
+% This is needed to display nicely the banner of urbiscript
+% interactive sessions.
+\RequirePackage[a4paper,
+                hmargin=2.5cm,
+                vscale=0.85,   % 85% of the heigh goes to content.
+                               % Defaults to 0.7.
+                vmarginratio=1:1,  % Equal top and bottom margins.
+                                % Defaults to 2:3.
+                marginparwidth=2cm]{geometry}
+
+%% ---------- %%
+%% Metadata.  %%
+%% ---------- %%
+
+\newcommand{\subtitle}[1]{\def\@subtitle{#1}}
+\subtitle{}
+\newcommand{\titleImage}[2][width=\linewidth]{%
+  \def\@titleImageInsert{%
+    \includegraphics[#1]{#2}%
+  }%
+}
+\titleImage{}
+\newcommand{\abstract}[1]{\def\@abstract{#1}}
+\abstract{}
+
+%% Using "\theshorttitle" instead of "\@shorttitle" because in
+%% TeX4HT's cfg files @ does not seem to be letter (and toying with
+%% makeatletter seems to break pretty many things).
+\newcommand{\shorttitle}[1]{\def\theshorttitle{#1}}
+%% Could not find a means to use a good default value here (such as
+%% "\shorttitle{\@title \@subtitle}" because tex4ht goes crazy on
+%% these @.  Unfortunately if we redefined \title etc. (to define both
+%% \@title and \thetitle for instance) the output is no longer as
+%% expected.
+\shorttitle{}
+
+%% ----------- %%
+%% maketitle.  %%
+%% ----------- %%
+
+\ifx\ifHtml\undefined
+  \newcommand\abstractenvPre{}
+  \newcommand\abstractenvPost{}
+\fi
+\newenvironment{abstractenv}
+{%
+  \abstractenvPre%
+  \begin{minipage}{.7\linewidth}%
+}{%
+  \end{minipage}%
+  \abstractenvPost%
+}
+
+\renewcommand{\maketitle}
+{
+  \begin{titlepage}
+
+    \ifx\empty\@titleImage\else%
+      \begin{center}%
+        \@titleImageInsert%
+      \end{center}%
+    \fi%
+
+    \begin{center}
+      {\Huge\bf\@title\\}
+      \ifx\empty\@subtitle\else%
+        \vspace{.5cm}
+        \noindent\textbf{\LARGE \@subtitle}\par\nobreak%
+      \fi%
+      \ifx\empty\@author\else%
+        \vspace{1cm}
+        {\LARGE \@author\\}
+      \fi%
+      \ifx\empty\@date\else%
+        \vspace{1cm}
+        {\Large \@date\\}
+      \fi%
+      \ifx\empty\@abstract\else%
+        \vfill
+        \begin{abstractenv}
+          \@abstract
+        \end{abstractenv}
+      \fi%
+    \end{center}
+
+    \vfill
+    \vfill
+    \vfill
+
+    \begin{center}
+      \includegraphics[width=.6\linewidth]{figs/gostai}
+    \end{center}
+  \end{titlepage}
+}
+
+\AtBeginDocument
+{
+  \ifx\empty\@subtitle\else%
+    \hypersetup{pdftitle={\@title --- \@subtitle}}
+  \fi%
+  \hypersetup{pdfauthor={\@author}}
+}
+
+%% -------------- %%
+%% Environments.  %%
+%% -------------- %%
+
+\newtheorem{example}{Example}
+\newtheorem{note}{Note}
+
+\newenvironment{cygwin}
+{%
+  \paragraph{Cygwin Issues}%
+  \begin{quote}%
+    \itshape%
+  }{%
+  \end{quote}%
+}
+
+%% Legend of a figure/table.  Different from the caption, which is
+%% basically just the title of the figure.
+\newenvironment{legend}
+{%
+  \begin{quote}\small%
+  }{%
+  \end{quote}%
+}
+
+\newenvironment{windows}
+{%
+  \paragraph{Windows Issues}%
+  \begin{quote}%
+    \itshape%
+  }{%
+  \end{quote}%
+}
+
+
+%% --------- %%
+%% listing.  %%
+%% --------- %%
+
+% This is not appropriate for Beamer, so not in the lst style UrbiSDK.
+\lstset{xleftmargin=5mm,xrightmargin=5mm}
+
+
+% \grammar[GRAMMAR = tables/urbiscript.bnf]{RANGE}
+% ------------------------------------------------
+% For instance
+%
+%   \grammar{arithmetic-exp}
+%   \grammar{class-exp, lvalue-end, block-exp}
+%   \grammar{}
+%
+% Beware that the RANGE items must be in order in the file: the file is
+% *not* read several times.
+%
+% It may seem that having a rangesuffix is useless, but actually without
+% it markups such as "catch" and "catchall" both match "catch".  Luckily,
+% we can use \^^M which, in TeX parlance, means end-of-line.
+\newcommand{\grammar}[2][tables/urbiscript.bnf]{%
+  \bnfPre%
+  \lstinputlisting[style=UrbiSDKEnv,
+                   backgroundcolor=\color{bnf},
+                   language=bnf,
+                   morecomment={[is]{\#:}{\^^M}},
+                   includerangemarker=false,
+                   rangeprefix={\#:},rangesuffix={\^^M},
+                   linerange={#2}]
+          {#1}%
+  \bnfPost%
+}
+
+%% \marginNotation{Label}{Text}
+%% ----------------------------
+\newcommand{\marginNotation}[2]
+{%
+  \marginpar[{%
+    \vspace{3mm}%
+    \raggedleft%
+    \tiny \hyperref[#1]{#2}%
+  }]{%
+    \vspace{3mm}%
+    \raggedright%
+    \tiny \hyperref[#1]{#2}%
+  }%
+}
+
+\ifx\ifHtml\undefined
+  \renewcommand{\bnfPre}
+    {\marginNotation{sec:notations:bnf}{Grammar\\Excerpt}}
+  \renewcommand{\cxxPre}
+    {\marginNotation{sec:notations:cxx}{\Cxx}}
+  \renewcommand{\javaPre}
+    {\marginNotation{sec:notations:java}{\Java}}
+  \renewcommand{\shellPre}
+    {\marginNotation{sec:notations:shell}{Shell\\Session}}
+  \renewcommand{\urbiassertPre}
+    {\marginNotation{sec:notations:urbiassert}{Assertion\\Block}}
+  \renewcommand{\urbiscriptPre}
+    {\marginNotation{sec:notations:urbiassert}{\us\\Session}}
+  \renewcommand{\urbiuncheckedPre}
+    {\urbiscriptPre}
+\fi
+
+
+
+%% -------------- %%
+%% Experimental.  %%
+%% -------------- %%
+
+\newcommand{\experimentalremoved}
+{%
+  \begin{quote}%
+    This feature is experimental.  It might be changed, or even removed.
+    Feedback on its use would be appreciated.%
+  \end{quote}%
+}
+
+\newcommand{\experimental}
+{%
+  \begin{quote}%
+    This feature is experimental.  It might be changed in the future.
+    Feedback on its use would be appreciated.%
+  \end{quote}%
+}
+
+
+%% ------------------- %%
+%% Shift sectionning.  %%
+%% ------------------- %%
+
+\newcommand{\savesections}
+{%
+  \let\@partOrig\part%
+  \let\@chapterOrig\chapter%
+  \let\@sectionOrig\section%
+  \let\@subsectionOrig\subsection%
+  \let\@subsubsectionOrig\subsubsection%
+  \let\@paragraphOrig\paragraph%
+  \let\@subparagraphOrig\subparagraph%
+}
+\newcommand{\restoresections}
+{%
+  \let\part\@partOrig%
+  \let\chapter\@chapterOrig%
+  \let\section\@sectionOrig%
+  \let\subsection\@subsectionOrig%
+  \let\subsubsection\@subsubsectionOrig%
+  \let\paragraph\@paragraphOrig%
+  \let\subparagraph\@subparagraphOrig%
+}
+\newcommand{\lowersections}
+{%
+  \let\part\chapter%
+  \let\chapter\section%
+  \let\section\subsection%
+  \let\sectionGostaiOriginal\subsection%
+  \let\subsection\subsubsection%
+  \let\subsectionGostaiOriginal\subsubsection%
+  \let\subsubsection\paragraph%
+  \let\paragraph\subparagraph%
+}
+\newcommand{\raisesections}
+{%
+  \let\subparagraph\paragraph%
+  \let\paragraph\subsubsection%
+  \let\subsubsection\subsection%
+  \let\subsection\section%
+  \let\subsectionGostaiOriginal\section%
+  \let\section\chapter%
+  \let\sectionGostaiOriginal\chapter%
+  \let\chapter\part%
+}
+
+\endinput

@@ -1,0 +1,19 @@
+%%                                                       -*- LaTeX -*-
+%% Language definition of Tiger for listings package
+%%
+
+% By default, use EPITA Tiger.
+\lstset{defaultdialect=[EPITA]Tiger}
+
+\lstdefinelanguage[Appel]{Tiger}%
+  {morekeywords={array,break,do,else,end,for,function,if,in,let,nil,%
+                 of,then,to,type,var,while},%
+   morekeywords=[2]{:=,(,)*,<,>,+,-},
+   sensitive=true,%
+   morecomment=[n]{/*}{*/},%
+   morestring=[b]{"}%
+  }[keywords,comments,strings]%
+
+\lstdefinelanguage[EPITA]{Tiger}[Appel]{Tiger}%
+  {morekeywords={import,primitive}}%
+  [keywords,comments,strings]%

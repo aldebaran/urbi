@@ -1,0 +1,56 @@
+\RequirePackage{xspace}
+
+% Abbreviations/latinisms.
+\newcommand{\ie}{\emph{i.e.},}
+\newcommand{\eg}{\emph{e.g.},}
+\newcommand{\etc}{{\itshape etc.\/}\xspace}
+
+% Organizations.
+\newcommand{\LRDE}{\textsc{LRDE}\xspace}
+\newcommand{\lrde}{\textsc{LRDE}\xspace}
+\newcommand{\EPITA}{\textsc{EPITA}\xspace}
+\newcommand{\epita}{\textsc{EPITA}\xspace}
+\newcommand{\csi}{\textsc{CSI}\xspace}
+\newcommand{\cti}{CTI\xspace}
+
+% Projects.
+\newcommand{\metagene}{\textsc{Metagene}\xspace}
+\newcommand{\milena}{\textsc{Milena}\xspace}
+\newcommand{\olena}{\textsc{Olena}\xspace}
+\newcommand{\strategoxt}{\textsc{Stratego/XT}\xspace}
+\newcommand{\transformers}{\textsc{Transformers}\xspace}
+\newcommand{\vaucanson}{\textsc{Vaucanson}\xspace}
+
+% Robots
+\newcommand{\aibo}{Aibo}
+
+% Shorthands.
+\newcommand{\bslash}{\texttt{\symbol{92}}}
+
+\newcommand{\Caml}{Caml\xspace}
+\newcommand{\Clos}{\textsc{Clos}\xspace}
+\newcommand{\Cl}{\textsc{Common} \textsc{Lisp}\xspace}
+\newcommand{\Io}{Io\xspace}
+\newcommand{\Java}{Java\xspace}
+\newcommand{\Js}{JavaScript\xspace}
+\newcommand{\Lisp}{\textsc{Lisp}\xspace}
+\newcommand{\Lua}{Lua\xspace}
+\newcommand{\MatLab}{MatLab\xspace}
+\newcommand{\Pascal}{Pascal\xspace}
+\newcommand{\Python}{Python\xspace}
+\newcommand{\Ruby}{Ruby\xspace}
+
+\newcommand{\ai}{AI\xspace}
+\newcommand{\api}{API\xspace}
+\newcommand{\macosx}{Mac OS X}
+\newcommand{\sdk}{SDK\xspace}
+\newcommand{\umake}{\command{umake}\xspace}
+\newcommand{\urbi}{Urbi\xspace}
+\newcommand{\us}{urbiscript\xspace}
+\newcommand{\usdk}{\urbi SDK\xspace}
+\newcommand{\uwebots}{Urbi for \webots{}\xspace}
+\newcommand{\webots}{Webots\xspace}
+
+%% Local Variables:
+%% mode: latex
+%% End:

@@ -1,0 +1,181 @@
+@MastersThesis{dubois.89.phd,
+  author =	 {Patricia Dubois},
+  title =	 {{LM-OBJ}: Un Langage De Programmation Des Robots De
+                  Niveau Objet},
+  school =	 {CNAM, IMAG},
+  year =	 {1989},
+  abstract =	 {La programmation automatique des robots est un des
+                  grands axes de la recherche en robotique. Dans ce
+                  cadre, les membres du LIFIA ont développé SHARP. Ce
+                  logiciel fournit à partir de la description de la
+                  tâche à réaliser et de la géométrie des objets à
+                  manipuler, le plan d'actions permettant de réaliser
+                  le montage. Ce plan d'actions est écrit en LM-OBJ
+                  (Langage de Manipulation de niveau OBJet). Le
+                  travail présenté dans ce mémoire est la conception
+                  et la réalisation de l'interpréteur de LM-OBJ,
+                  permettant de faire exécuter par le robot les plans
+                  d'actions fournis par SHARP. Après avoir exposé
+                  comment se situe notre approche par rapport à celle
+                  plus classique des langages de manipulation
+                  (position relative entre deux objets plutôt que
+                  position absolue dans l'espace de travail en termes
+                  de repères cartésiens), nous décrivons les
+                  différentes instructions du langage : déplacements,
+                  saisies et lâchers d'objets, réalisation de
+                  contacts\ldots Afin de bien situer la place de
+                  LM-OBJ dans un logiciel de programmation automatique
+                  comme SHARP, nous exposons les réalisations
+                  antérieures dans le cadre de SHARP (planificateur,
+                  LM, fonctions amnistiantes). La structure de la base
+                  de données, comprenant notamment la description
+                  géométrique des objets à manipuler, est exposée en
+                  détail. Nous présentons les diverses solutions
+                  envisagées permettant de traduire une instruction
+                  LM-OBJ en une commande exécutable par le robot (en
+                  terme de repère déplaçable et de transformation
+                  géométrique à lui appliquer). Nous exposons comment
+                  les contacts sont réalisés à l'aide d'un capteur de
+                  forces afin d'exécuter des mouvements fins
+                  d'assemblage.},
+  address =	 {France},
+  month =	 {May},
+}
+
+@misc{elkner.04.www,
+  title =        {The {G}uido van {R}obot Programming Language},
+  author =       {Jeffrey Elknertitle},
+  year =         2004,
+  url =          {http://gvr.sourceforge.net/index.php},
+  abstract =     {Guido van Robot is a minimalistic programming
+                  language providing just enough syntax to help
+                  students learn the concepts of sequencing,
+                  conditional branching, looping and procedural
+                  abstraction. Its biggest strength is that it permits
+                  this learning in an environment that combines the
+                  thrill of problem-solving with instant visual
+                  feedback. In short, it is an interactive,
+                  introductory programming language that is excellent
+                  for learning the basic concepts of programming,
+                  applicable in any high-level language. Best of all,
+                  it's a whole lot of fun, too!  At this point, you
+                  are probably asking yourself, What is GvR,
+                  specifically? The gist of it is that it is a robot
+                  represented by a triangle on the screen that moves
+                  around in a world made up of streets and avenues,
+                  walls and beepers, which Guido can collect or
+                  set. His actions are completely guided by a program
+                  written by the user.  One other item of interest
+                  about GvR is that it is a student-created
+                  project. GvR was initially written by students at
+                  Yorktown High School in Arlington, Virginia, with
+                  the help of professional programmers serving as
+                  mentors. You can navigate to the History page to
+                  learn more about this part of the project.},
+  note =         {This is a toy language very much like Logo.  A robot
+                  is displayed on the screen in a flat 2d view, and
+                  you can move it around in a Python-like programming
+                  language.  Nothing about concurrency, a really poor
+                  language written as a student project.  But maybe
+                  some ideas can be used for an interactive
+                  environment to toy with Urbi.},
+}
+
+@ARTICLE{giacomo.00.ai,
+  AUTHOR =       {Giuseppe De Giacomo and Yves Lesp\'erance and Hector
+                  Levesque},
+  TITLE =        {Con{G}olog, A Concurrent Programming Language Based
+                  on the Situation Calculus},
+  JOURNAL =      {Artificial Intelligence},
+  VOLUME =       {121},
+  NUMBER =       {1--2},
+  PAGES =        {109--169},
+  abstract =     {As an alternative to planning, an approach to
+                  high-level agent control based on concurrent program
+                  execution is considered. A formal definition in the
+                  situation calculus of such a programming language is
+                  presented and illustrated with some examples. The
+                  language includes facilities for prioritizing the
+                  execution of con- current processes, interrupting
+                  the execution when certain conditions become true,
+                  and dealing with exogenous actions. The language
+                  differs from other procedural for- malisms for
+                  concurrency in that the initial state can be
+                  incompletely specified and the primitive actions can
+                  be user-defined by axioms in the situation
+                  calculus. Some mathematical properties of the
+                  language are proven, for instance, that the proposed
+                  semantics is equivalent to that given earlier for
+                  the portion of the language without concurrency.},
+  PDF =
+                  {http://www.cs.toronto.edu/cogrobo/Papers/ConGologAIJ.pdf},
+  YEAR =         2000
+}
+
+@TECHREPORT{pembeci.02.tr,
+  AUTHOR =       {Izzet Pembeci and Gregory D. Hager},
+  TITLE =        {A Comparative Review of Robot Programming Languages},
+  YEAR =         {2002},
+  NOTE =         {CIRL Lab Technical Report},
+  URL =
+                  {http://www.cs.jhu.edu/CIRL/publications/pdf/pembeci-review.pdf},
+  abstract =     {In this paper, we make a comparative review of a
+                  variety of &quot;intermediate-level &quot; robot
+                  languages that have emerged in recent years. We also
+                  describe a robot programming language called FROB
+                  (for Functional ROBotics). FROB is an example of an
+                  embedded, domain-specific language, hosted by the
+                  Haskell programming language. We present the basic
+                  concepts of the language, discuss the ability of
+                  FROB to model other programming architectures, and
+                  we compare it's capabilities to other extant
+                  languages that are reviewed.},
+}
+
+@InProceedings{peterson.99.icra,
+  author =       {John Peterson and Greg Hager and Paul Hudak},
+  title =        {A Language for Declarative Robotic Programming},
+  booktitle =    {International Conference on Robotics and Automation},
+  year =         1999,
+  abstract =     {We have applied methodologies developed for
+                  domain-specific embedded languages to create a
+                  high-level robot control language called Frob, for
+                  Functional Robotics. Frob supports a programming
+                  style that cleanly separates the what from the how
+                  of a robotic control program. That is, the what is a
+                  simple, easily understood definition of the control
+                  strategy using groups of equations and primitives
+                  which combine sets of these control system equations
+                  into a complex system. The how aspect of the program
+                  addresses the unpleasant details, such as the method
+                  used to realize these equations, the connection
+                  between the control equations and the sensors and
+                  effectors in the robot, and communication with other
+                  elements of the system. Frob is a system that
+                  supports rapid prototyping of new control
+                  strategies, enables software reuse through
+                  composition, and defines a system in a way that can
+                  be formally reasoned about and transformed.}
+}
+
+@TechReport{stolee.10.tr,
+  author =       {Kathryn T. Stolee},
+  title =        {Kodu Language and Grammar Specification},
+  institution =  {Microsoft Research},
+  year =         {2010},
+  month =        {August},
+  url =
+                  {http://research.microsoft.com/en-us/projects/kodu/kodugrammar.pdf},
+  abstract =     {We describe the language of Kodu using a grammar
+                  based on the notation for context-free
+                  grammars. This language specification should serve
+                  as a reference for researchers and teachers who seek
+                  to learn or study Kodu as a language. To make these
+                  resources more accessible to a broader audience, we
+                  have generated two different language
+                  descriptions. The first is a basic language
+                  description, which provides the general structure
+                  and syntax of a Kodu program. The second is an
+                  extension of the basic language that contains all
+                  the constructs implemented in the Kodu language.},
+}

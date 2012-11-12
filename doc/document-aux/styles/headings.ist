@@ -1,0 +1,8 @@
+%% A makeindex style file to get Headings ("Symbols", "A", "B", etc.)
+%% in the index.  Run "makeindex -s headings.ist".
+%%
+%% http://www.latex-community.org/forum/viewtopic.php?f=51&t=8096
+
+headings_flag 1
+heading_prefix "\\textbf\{\\Large{}"
+heading_suffix "\}"

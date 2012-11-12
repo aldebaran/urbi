@@ -1,0 +1,33 @@
+%%
+%% $Id: stratego.ldf 1593 2004-02-29 23:49:40Z adam $
+%%
+%% Language definition of Stratego for listings package
+%%
+
+%% Maybe using lierate should be controlable via an option, or using
+%% two language?  Stratego and [literate]Stratego?
+
+\lstdefinelanguage{Stratego}
+  {alsoletter={-},
+   otherkeywords={+,<+,+>,;,:=,>,<,?,!},
+   morekeywords=[1]{all,%
+     bagof,%
+     constructors,end,extend,fail,id,imports,in,let,
+     module,not,one,overlays,override,prim,rec,rules,script,signature,
+     some,sorts,strategies,stratego,test,thread,where,if,then,else,
+     switch,case,otherwise,depends,on},
+   sensitive,
+   morecomment=[l]{//},
+   morecomment=[n]{(*}{*)},
+   morecomment=[n]{/*}{*/},
+   morestring=[b]",
+   literate={|[}{{\texttt{|$\!\!$[}}}1%
+	    {]|}{{\texttt{]$\!\!$|}}}1%
+	    {->}{$\rightarrow$ }2%
+	    {=>}{$\Rightarrow$ }2
+  }[keywords,comments,strings]
+
+
+%% Local Variables:
+%% mode: LaTeX
+%% End:

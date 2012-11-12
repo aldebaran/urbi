@@ -1,0 +1,76 @@
+% See "make keywords" in kernel/src to keep up to date.
+\lstdefinelanguage[]{urbiscript}
+{
+  morekeywords={
+    BIN, __HERE__, and, and_eq, asm, assert, at, auto, bitand, bitor,
+    bool, break, call, case, catch, char, class, closure, compl,
+    const, const_cast, continue, default, do, double, dynamic_cast,
+    else, emit, enum, every, explicit, export, extern, external,
+    finally, float, for, foreach, freezeif, friend, function, goto,
+    if, in, inline, int, internal, long, loop, loopn, mutable,
+    namespace, not, not_eq, onleave, or, or_eq, private, protected,
+    public, register, reinterpret_cast, return, self, short, signed,
+    sizeof, static, static_cast, stopif, struct, switch, template,
+    this, throw, timeout, try, typedef, typeid, typename, union,
+    unsigned, using, var, virtual, volatile, waituntil, watch,
+    wchar_t, whenever, while, xor, xor_eq
+  },
+  morekeywords={
+    at\&, at\,, at\;, at\|, every\&, every\,, every\;, every\|, for\&,
+    for\,, for\;, for\|, loop\&, loop\,, loop\;, loop\|, while\&, while\,,
+    while\;, while\|
+  },
+  alsodigit={\&, \,, \|, \;},
+  morecomment=[l]{//},
+  morecomment=[n]{/*}{*/},
+  morestring=[b]{"},
+  % So that "'else'" is not displayed as a keyword.  But a'n should
+  % not wait for the closing "'".  That's [m], Matlab/Ada style.
+  % Does not work well with "a''" for instance, but it's deprecated,
+  % right?
+  morestring=[m][]{'},
+  % For some reason, the previous line does not handle the case where
+  % we have a "." right before, i.e., "a.'else'" still makes "else" a
+  % keyword.  But catching ".'" instead of just "'" does the trick.
+  morecomment=[s][]{.'}{'},
+  sensitive=true,
+  % When making an index entry about keywords with "|", makeindex can
+  % be quite annoying.  It seems much easier to use literals.  For
+  % instance: "\lstIndexTwo{for}{forPipe (var i: c)}".
+  literate={~}{{$\sim$}}1
+           {forPipe}{{\textkwd{for|}}}4
+           {everyPipe}{{\textkwd{every|}}}6
+           {loopPipe}{{\textkwd{loop|}}}5
+           {whilePipe}{{\textkwd{while|}}}6
+}
+
+\definecolor{urbiAnswers}{rgb}{0.5,0.5,0.5}
+
+\ifx\ifHtml\undefined
+  \newcommand\urbiAnswerPre{}
+  \newcommand\urbiAnswerPost{}
+\fi
+\newcommand{\urbiAnswer}[1]{%
+  \urbiAnswerPre%
+  \color{urbiAnswers}%
+  #1%
+  \urbiAnswerPost%
+}
+
+\lstdefinelanguage[interactive]{urbiscript}[]{urbiscript}
+{
+  % moredelim=[il][\urbiAnswerStyle]{..},
+  % Meta variable.
+  moredelim=[is][\ttfamily\itshape]{\\var\{}{\}},
+  moredelim=[il][\urbiAnswer]{[:]},
+  % This is a constraint to respect: anything that includes `[00'
+  % is considered to denote an interactive Urbi session, regardless of
+  % the rest of the line.  I can imagine lists of integers starting
+  % with '[0', but '[00' is less likely.  Just beware (and maybe a
+  % "make check" would be safer").
+  moredelim=[l][\urbiAnswer]{[00},
+  % morecomment=[il] is buggy, instead of removing everything until
+  % the end of line, it goes until the end of the environment.  Use
+  % we use a special opening/closing comment pair.
+  morecomment=[is]{/*(*/}{/*)*/},
+}

@@ -1,0 +1,75 @@
+@inproceedings{fournet.00.fsttcs,
+  author =       {C{\'e}dric Fournet and Luc Maranget and Cosimo
+                  Laneve and Didier R{\'e}my},
+  title =        {Inheritance in the Join Calculus},
+  booktitle =    {Foundations of Software Technology and Theoretical
+                  Computer Science},
+  year =         2000,
+  month =        dec,
+  series =       {Lecture Notes in Computer Science},
+  publisher =    {Springer-Verlag},
+  volume =       {1974},
+  abstract =     {We propose an object-oriented calculus with internal
+                  concurrency and class-based inheritance that is
+                  built upon the join calculus. Method calls, locks,
+                  and states are handled in a uniform manner, using
+                  labeled messages. Classes are partial message
+                  definitions that can be combined and transformed. We
+                  design operators for behavioral and synchronization
+                  inheritance. We also give a type system that
+                  statically enforces basic safety properties. Our
+                  model is compatible with the JoCaml implementation
+                  of the join calculus.  },
+  pdf =          {http://cristal.inria.fr/~remy/work/ojoin/ojoin.pdf},
+  html =         {http://cristal.inria.fr/~remy/work/ojoin/}
+}
+
+
+@misc{fournet.03.afp,
+  author =       {C\'edric Fournet and Fabrice Le Fessant and Luc
+                  Maranget and Alan Schmitt},
+  title =        {JoCaml: a Language for Concurrent Distributed and
+                  Mobile Programming},
+  booktitle =    {Advanced Functional Programming: 4th International
+                  School, AFP 2002},
+  editors =      {Johan Jeuring, Simon Peyton Jones},
+  year =         2003,
+  series =       {Lecture Notes in Computer Science},
+  volume =       2638,
+  publisher =    {Springer-Verlag},
+  abstract =     {In these lecture notes, we give an overview of
+                  concurrent, distributed, and mobile programming
+                  using JoCaml. JoCaml is an extension of the
+                  Objective Caml language. It extends OCaml with
+                  support for concurrency and synchronization, the
+                  distributed execution of programs, and the dynamic
+                  relocation of active program fragments during
+                  execution.}
+}
+
+@inproceedings{ma-quin.03.aplas,
+  author =       {{Ma Qin} and Luc Maranget},
+  title =        {Expressive Synchronization Types for Inheritance in
+                  the Join Calculus},
+  booktitle =    {Proc the First Asian Symposium on Programming
+                  Languages and Systems (APLAS'03)},
+  year =         2003,
+  series =       {Lecture Notes in Computer Science},
+  volume =       2895,
+  publisher =    {Springer-Verlag},
+  abstract =     {In prior work, Fournet et al. proposed an extension
+                  of the join calculus with class-based inheritance,
+                  aiming to provide a precise semantics for concurrent
+                  objects. However, as we show here, their system
+                  suffers from several limitations, which make it
+                  inadequate to form the basis of a practical
+                  implementation.  \\ In this paper, we redesign the
+                  static semantics for inheritance in the join
+                  calculus, equipping class types with more precise
+                  information. Compared to previous work, the new type
+                  system is more powerful, more expressive and
+                  simpler. Additionally, one runtime check of the old
+                  system is suppressed in the new design. We also
+                  prove the soundness of the new system, and have
+                  implemented type inference (Springer web page).  }
+}

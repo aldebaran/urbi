@@ -1,0 +1,106 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  This files contains initial values
+%  of Vaucanson's parameter
+%  Modify it to create your own style
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%
+% State aspect
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\SetStateLabelColor{black}		%% color
+\SetStateLabelScale{1}		%% float
+\SetStateLineStyle{solid}		%% aspect (other values: none, dashed, dotted)
+\SetStateLineWidth{.14mm}		%% length
+\SetStateLineColor{black}		%% color
+\SetStateFillStatus{none}		%% aspect
+\SetStateFillColor{black}		%% color
+\FixDimState{solid}{gray}{1}{gray}{white}  %% LineStyle,LineColor,LineCoef (*\StateLineWidth),LabelColor,FillColor
+\FixStateLineDouble{2}{5}               %% Double style: \StateLineDblCoef, \StateLineDblSep, coeffs applied to \StateLineWidth
+%%%%%%%%%%%%%%
+% Edge aspect
+%%%%%%%%%%%%%%
+\SetEdgeLabelColor{black}		%% color
+\SetEdgeLabelScale{1}		        %% float
+\SetEdgeLineStyle{solid}		%% aspect
+\SetEdgeLineWidth{.14mm}			%% length
+\SetEdgeLineColor{black}		%% color
+\SetArcAngle{17}			%% int (degree)
+\SetLArcAngle{30}			%% int (degree)
+\SetArcCurvature{0.7}			%% float
+\SetEdgeOffset{0pt}                     %% length
+\SetArcOffset{1pt}			%% length
+\SetLoopOffset{0pt}			%% length
+\renewcommand{\ForthBackEdgeOffset}{5}	%% float : coef*\EdgeLineWidth -> offset
+\FixDimEdge{solid}{1.2}{gray}{gray}     %% LineStyle,LineCoef,LineColor,LabelColor
+\FixEdgeBorder{2}{white}		%% int,color : coef*\EdgeLineWidth -> width of border
+\FixEdgeLineDouble{1.5}{2}		%% float : coefs*\EdgeLineWidth -> (width of lines, distance)
+%%%%%%%%%%%%%%
+% ZZ aspect
+%%%%%%%%%%%%%%
+\setlength{\ZZSize}{.9cm}		% length : apparent diameter
+\renewcommand{\ZZShape}{0.5}		% coef: opening of the ZZ
+\SetZZLineWidth{1.7}			% float
+\renewcommand{\TransLabelZZCoef}{0.6}	% float : coef*\ZZSize -> distance added for labels
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Scales  --- Default settings
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\LargeScale}{1.2}        %float : argument of a \scalebox
+\renewcommand{\MediumScale}{1}        %float
+\renewcommand{\SmallScale}{.7}		%float
+\renewcommand{\TinyScale}{0.5}		%float
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% State parameters  --- Default settings
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\MediumStateDiameter}{.8cm}		%length
+\setlength{\SmallStateDiameter}{.6cm}		%length
+\setlength{\LargeStateDiameter}{1.2cm}		%length
+\setlength{\VerySmallStateDiameter}{.3cm}	%length
+\renewcommand{\VSStateLineCoef}{.6}    		%float : coef *\StateLineWidth
+\renewcommand{\StateDblDimen}{outer}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\ArrowOnMediumState}{1}		%float : coef *\StateDiameter for size of initial and final arrows
+\renewcommand{\ArrowOnSmallState}{1} 		%float
+\renewcommand{\ArrowOnLargeState}{1}		%float
+\renewcommand{\ArrowOnVerySmallState}{5} 	%float
+\renewcommand{\LoopOnMediumState}{7}		%float : curvature
+\renewcommand{\LoopOnSmallState}{9} 		%float
+\renewcommand{\LoopOnLargeState}{5.5} 		%float
+\renewcommand{\LoopOnVariableState}{4.5} 		%float
+\renewcommand{\CLoopOnMediumState}{8}		%float
+\renewcommand{\CLoopOnSmallState}{12}		%float
+\renewcommand{\CLoopOnLargeState}{6}		%float
+\renewcommand{\CLoopOnVariableState}{5.2}		%float
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Edge parameters  --- Default settings
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\EdgeLabelPosit}{.5}   %per cent (use \Fix..LabelPosit with values in [10;90])
+\renewcommand{\EdgeLabelRevPosit}{.5}
+\renewcommand{\ArcLabelPosit}{.5}
+\renewcommand{\ArcLabelRevPosit}{.5}
+\renewcommand{\LArcLabelPosit}{.5}
+\renewcommand{\LArcLabelRevPosit}{.5}
+\renewcommand{\LoopLabelPosit}{.5}
+\renewcommand{\LoopLabelRevPosit}{.5}
+\renewcommand{\CLoopLabelPosit}{.5}
+\renewcommand{\CLoopLabelRevPosit}{.5}
+\renewcommand{\InitStateLabelPosit}{.10}
+\renewcommand{\InitStateLabelRevPosit}{.90}
+\renewcommand{\FinalStateLabelPosit}{.90}
+\renewcommand{\FinalStateLabelRevPosit}{.10}
+\SetEdgeArrowWidth{1.03mm}			%width of the edge arrow
+\SetEdgeArrowLengthCoef{1.37}				%float : coef*\EdgeArrowSizeDim length of EA
+\setlength{\EdgeDblArrowWidth}{1.3mm}		%width : size of EA for double transitions
+\renewcommand{\EdgeDblArrowLengthCoef}{1.09}	% 
+\SetEdgeArrowInsetCoef{0}				%float : coef*\EdgeArrowSizeDim
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Initialization
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\SetVCDirectory{}        %default dir=current dir
+\HideFrame
+\HideGrid
+\MediumPicture
+\HideName
+\RigidLabel
+\FullState				%% PlainState
+\MediumState

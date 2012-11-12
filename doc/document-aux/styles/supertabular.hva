@@ -1,0 +1,1 @@
+\newenvironment{supertabular}{\begin{tabular}}{\end{tabular}}

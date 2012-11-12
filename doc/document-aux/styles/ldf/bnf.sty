@@ -1,0 +1,51 @@
+%%
+%% BNF grammars.
+%%
+
+\ifx\ifHtml\undefined
+\newcommand{\ebnf@eq}{%
+  \textkwd{\raisebox{+.15ex}{:\kern-0.27em:}\kern-0.1em=}%
+}
+\newcommand{\ebnf@exp}[1]{%
+  \textkwd{${}^{#1}$}%
+}
+\newcommand{\ebnf@star}{%
+  \ebnf@exp{\star}%
+}
+\else
+\newcommand{\ebnf@eq}{%
+  \textkwd{::=}%
+}
+\newcommand{\ebnf@exp}[1]{%
+  \textkwd{$#1$}%
+}
+\newcommand{\ebnf@star}{%
+  \ebnf@exp{*}%
+}
+\fi
+
+\newcommand{\ebnf@pipe}{%
+  \textkwd{$\mid$}%
+}
+
+%% Not using otherkeywords for "(" and ")" and the like because it
+%% also applies inside the strings.
+\lstdefinelanguage{bnf}
+  {morestring=[b]",
+   morestring=[b]',
+   literate=*%
+     {<}{$\langle$}1
+     {>}{$\rangle$}1
+     {(}{{\textkwd{$($}}}1
+     {)}{{\textkwd{$)$}}}1
+     {::=}{{\ebnf@eq}}1
+     {|}{{\ebnf@pipe}}1
+     {*}{{\ebnf@star}}1
+     {+}{{\ebnf@exp{+}}}1
+     {?}{{\ebnf@exp{?}}}1,
+   morecomment=[l]\#
+  }[strings,comments,keywords]
+
+%% Local Variables:
+%% mode: LaTeX
+%% End:

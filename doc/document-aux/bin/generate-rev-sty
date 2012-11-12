@@ -1,0 +1,42 @@
+#! /usr/bin/perl -w
+
+use strict;
+
+my $changelog = $ARGV[0];
+-f $changelog || die "no such file: $changelog";
+
+$ENV{'LC_ALL'} = 'C';
+
+my %info;
+
+my $svn_info = `svn info $changelog || git log -n 1 --pretty=format:'Revision: %h
+Last Changed Author: %an
+Last Changed Date: %ai' $changelog`;
+$svn_info =~
+  s{^([\w\s]+):\s+(.*)$}
+   {
+     my $val = $2;
+     (my $key = $1) =~ s| ||g;
+     $info{$key} = $val;
+   }exmg;
+
+# Translate the date into something nicer to read.
+# Last Changed Date: 2008-06-04 17:37:38 +0200 (Wed, 04 Jun 2008)
+$info{LastChangedDate} =~
+    m/^(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+) ([+\d]+)(?: \((.*)\))?$/;
+$info{LastChangedYear} = $1;
+$info{LastChangedMonth} = $2;
+$info{LastChangedDay} = $3;
+$info{LastChangedHour} = $4;
+$info{LastChangedMinute} = $5;
+$info{LastChangedSecond} = $6;
+$info{LastChangedTimeZone} = $7;
+$info{LastChangedTimeShortDate} = $8 || '';
+
+# Be sure to define at least SvnRev, even if to nothing.
+$info{Rev} = $info{Revision} || '';
+
+for my $k (sort keys %info)
+{
+  print "\\newcommand{\\Svn$k}{$info{$k}}\n";
+}

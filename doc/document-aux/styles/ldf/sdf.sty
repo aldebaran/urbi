@@ -1,0 +1,35 @@
+% -*- LaTeX -*-
+
+\lstdefinelanguage{SDF}%
+{%
+  literate={->}{$\rightarrow$ }2,
+  otherkeywords={>,\{,\},;},%
+  alsoletter={-},
+  morekeywords=[1]{sorts,definition,module,context-free,syntax,lexical,prefer,%
+    reject,avoid,priorities,exports,imports,cons,right,left,assoc,bracket,%
+    variables,restrictions},%
+  sensitive,%
+  morecomment=[l]//,%
+  morecomment=[s]{/*}{*/},%
+  morecomment=[l]{\%\%},%
+  morecomment=[s]{(*}{*)},%
+  morestring=[b]{"}%
+}[keywords,comments,strings]%
+
+\lstdefinelanguage[Boxed]{SDF}[]{SDF}%
+  {morekeywords={pp,V,KW,H,is}}
+
+\lstdefinelanguage[AG]{SDF}[]{SDF}%
+  {alsolanguage=Stratego,
+    morekeywords={attributes},%
+    otherkeywords={:=}}
+
+\lstnewenvironment{agsdf}
+   {\lstset{language=[AG]SDF,mathescape=true}}
+   {}
+\lstnewenvironment{boxedsdf}
+   {\lstset{language=[Boxed]SDF,mathescape=true}}
+   {}
+\lstnewenvironment{sdf}
+   {\lstset{language=SDF,mathescape=true}}
+   {}

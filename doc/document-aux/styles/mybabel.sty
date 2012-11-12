@@ -1,0 +1,20 @@
+\NeedsTeXFormat{LaTeX2e}
+\@ifclassloaded{sig-alternate}
+{\PackageWarning{mybabel}{using babel with sig-alternate might break the cite command}}
+{}
+
+\@ifpackageloaded{myhyperref}
+{\PackageWarning{mybabel}{autoref names
+    might be incorrect if myhyperref is loaded before mybabel}}
+{}
+
+% Don't override the current language if defined.
+\@ifpackageloaded{babel}{}{
+  \PassOptionsToPackage{babel}{english}
+  \RequirePackageWithOptions{babel}[2004/11/20]
+}
+
+\RequirePackage{hevea}
+\input mybabel.hva
+
+\endinput

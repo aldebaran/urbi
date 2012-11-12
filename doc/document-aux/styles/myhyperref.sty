@@ -1,0 +1,122 @@
+\NeedsTeXFormat{LaTeX2e}
+\RequirePackage{myifthen}
+
+%% Hyperref should always be included last.
+%% In particular, do not load float.sty or listing.sty after it.
+%% Don't include it if we are using entcs, since it loads it with a
+%% different set of options.
+
+%% Before the version [2003/11/30], there are problems when using
+%% colons in labels and refs when babel is active.
+\RequirePackageWithOptions{hyperref}[2003/11/30]
+
+%% Required to be compatible with the entcs style.
+\@ifclassloaded{entcs}{}
+{
+  \hypersetup{bookmarks, bookmarksnumbered, bookmarksopen,
+	      breaklinks,
+	      plainpages=false}
+}
+
+%% -------- %%
+%% TeX4ht.  %%
+%% -------- %%
+\ifx\ifHtml\undefined\else
+  % Sadly enough, it seems that tex4ht is not doing what we expect on \url
+  % with macros as argument.
+  %
+  % Reported 2010-05-25 as
+  % <URL:https://puszcza.gnu.org.ua/bugs/index.php?131>.
+  %
+  % Besides, some magic prevents us from simply defining it here.  Do
+  % it much later.
+  \AtBeginDocument
+  {
+    \renewcommand{\nolinkurl}[1]{\texttt{#1}}
+    \renewcommand{\url}[1]{\href{#1}{\nolinkurl{#1}}}
+  }
+\fi
+
+
+%% ------------------------- %%
+%% Change the link display.  %%
+%% ------------------------- %%
+\RequirePackage{myifthen}
+\newboolean[true]{myhyperref@changeLinksColors}
+\@ifclassloaded{entcs}{\setboolean{myhyperref@changeLinksColors}{false}}
+
+% If not in Final mode, do not use colors.
+\ifx\IsAFinal\undefined
+  \setboolean{myhyperref@changeLinksColors}{false}
+\fi
+
+% If using Beamer, don't change the colors.
+\@ifclassloaded{beamer}{\setboolean{myhyperref@changeLinksColors}{false}}
+
+\ifthen{\boolean{myhyperref@changeLinksColors}}{%
+  \hypersetup{colorlinks, citecolor=blue, linkcolor=blue, urlcolor=blue}}
+
+
+
+%% -------------- %%
+%% autorefnames.  %%
+%% -------------- %%
+
+%% Thanks to Micha and Thomas H\'erault.
+\@ifpackageloaded{babel}%
+{%
+  \newcommand{\defautorefname}[3]{%
+    \expandafter\def\csname #1autorefname\endcsname{%
+      \iflanguage{french}{#3}{#2}%
+    }%
+  }%
+  %% Change the definition of \gf to avoid warnings such as:
+  %%
+  %% Package hyperref Warning: Token not allowed in a PDFDocEncoded string:
+  %% (hyperref)                \kern 2.18999pt plus 0.657pt minus 0.87599pt
+  %% (hyperref)                removed on input line 16.
+  %%
+  %% If using \og and \fg.
+  \renewcommand{\gf}[1]{\texorpdfstring{\og{}#1\fg{}}{«~#1~»}\xspace}%
+}%
+{%
+  \newcommand{\defautorefname}[3]{%
+    \expandafter\def\csname #1autorefname\endcsname{%
+      #2%
+    }%
+  }%
+}
+
+\defautorefname{algorithm} {Algorithm} {algorithme}
+\defautorefname{appendix}  {Appendix}  {annexe}
+\defautorefname{chapter}   {Chapter}   {chapitre}
+\defautorefname{definition}{Definition}{d\'efinition}
+\defautorefname{figure}    {Figure}    {figure}
+\defautorefname{lemma}     {Lemma}     {lemme}
+\defautorefname{section}   {Section}   {section}
+\defautorefname{subfigure} {Figure}    {figure}
+\defautorefname{subsection}{Section}   {section}
+\defautorefname{subsubsection}{Section}{section}
+\defautorefname{table}     {Table}     {tableau}
+\defautorefname{theorem}   {Theorem}   {th\'eor\`eme}
+
+%% Required to be compatible with the LNCS style.  Note that these
+%% names shall not be abbreviated at the beginning of a sentence.
+\@ifclassloaded{llncs}
+{
+  \renewcommand{\chapterautorefname}{Chap.}
+  \renewcommand{\sectionautorefname}{Sect.}
+  \renewcommand{\subsectionautorefname}{Sect.}
+  \renewcommand{\subsectionautorefname}{Sect.}
+  \renewcommand{\subsubsectionautorefname}{Sect.}
+  \renewcommand{\figureautorefname}{Fig.}
+  \renewcommand{\subfigureautorefname}{Fig.}
+}{}
+
+%\AtBeginDocument{
+%\makeatletter
+% \hypersetup{pdftitle=\@title,pdfauthor=\@author}
+%\makeatother
+%}
+
+\endinput

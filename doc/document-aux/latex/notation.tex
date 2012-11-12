@@ -1,0 +1,210 @@
+%% Copyright (C) 2010, 2011, 2012, Gostai S.A.S.
+%%
+%% This software is provided "as is" without warranty of any kind,
+%% either expressed or implied, including but not limited to the
+%% implied warranties of fitness for a particular purpose.
+%%
+%% See the LICENSE file for more information.
+
+\chapter{Notations}
+\label{sec:notations}
+
+This chapter defines the \dfn{notations} used in this document.
+
+\section{Words}
+
+\begin{itemize}
+\item \lstinline|code|\\
+  A \dfn{piece of code} (\us, \Java, \Cxx\ldots).
+
+\item \textcmt{comment}\\
+  A \dfn{comment} in some programming language.  For instance,
+  \lstinline|/* hello /* world */ ! */| is a comment in \us.
+
+\item \env{environment-variable}\\
+  An \dfn{environment variable} name, e.g., \env{PATH}.
+
+\item \file{file-name}\\
+  A \dfn{file name}.
+
+\item \textkwd{keyword}\\
+  A \dfn{keyword} in some programming language.  For instance,
+  \lstinline|watch| is an \us keyword.
+
+\item \var{meta-variable}\\
+  Depending on the context, a \dfn{variable} name (i.e., an identifier in
+  \Cxx or \us), or a \dfn{meta-variable} name.  A meta-variable denotes a
+  place where some syntactic construct may be entered.  For instance, in
+  \lstinline|while (\var{expression}) \var{statement}|, \var{expression} and
+  \var{statement} do not denote two variable names, but two placeholders
+  which can be filled with an arbitrary expression, and an arbitrary
+  statement.  For instance:
+
+  \lstinline|while (!tasks.empty) { tasks.removeFront.process }|.
+
+\item \textstr{string}\\
+  A \dfn{string} in some programming language.  For instance,
+  \lstinline|"Hello, world!"| is a string in \us.
+\end{itemize}
+
+\section{Frames}
+
+\subsection{\Cxx Code}
+\label{sec:notations:cxx}
+
+\Cxx source code is presented in frames as follows.
+
+\begin{cxx}
+class Int
+{
+public:
+  Foo(int v = 0)
+    : val_(v)
+  {}
+
+  void operator(int v)
+  {
+    std::swap(v, val_);
+    return v;
+  }
+
+  int operator() const
+  {
+    return val_;
+  }
+
+private:
+  int val_;
+};
+\end{cxx}
+
+%% Using lstlistings inside an \ifthen does not work, make it another file.
+\subsection{Grammar Excerpts}
+\label{sec:notations:bnf}
+
+The \dfn{grammar fragments} are written in \dfn{EBNF} (\dfn{Extended
+  Backus-Naur Form}).  The symbol \lstindex{::=} separates the left-hand
+symbol from the right-hand side part of the rule.  Infix \lstinline{|}
+denotes alternation, postfix-\lstinline{*} 0-or-more repetition,
+postfix-\lstinline{+} 1-or-more repetition, and postfix-\lstinline{?}
+denotes optional parts.  Terminal symbols are written in double-quotes, and
+non-terminals in angle-brackets.  Parentheses group.
+
+The following frame defines the grammar syntax expressed in the same grammar
+syntax.
+
+\begin{bnf}
+<grammar> ::= <rule>+
+
+<rule> ::= <symbol> "::=" <rhs>
+
+<rhs> ::= <rhs>*
+        | <rhs> "|" <rhs>
+        | <rhs> ("?" | "*" | "+")
+        | "(" <rhs> ")"
+        | <symbol>
+
+<symbol> ::= "<" <identifier> ">"
+           | '"' <escaped-character>* '"'
+           | "'" <escaped-character>* "'"
+\end{bnf}
+
+\ifthen{\boolean{urbisdk}\AND\boolean{urbiThree}}{%
+  \autoref{sec:grammar} provides the grammar of \us.}
+
+\subsection{\Java Code}
+\label{sec:notations:java}
+
+\Java source code is presented in frames as follows.
+
+\begin{java}
+import liburbi.main.*;
+public class Main
+{
+    /// Load urbijava library.
+    static
+    {
+        System.loadLibrary("urbijava");
+    }
+
+    public static void main(String argv[])
+    {
+      // Does nothing for now.
+    }
+}
+\end{java}
+
+\subsection{Shell Sessions}
+\label{sec:notations:shell}
+
+Interactive sessions with a (Unix) shell are represented as follows.
+
+\begin{shell}
+$ echo toto
+toto
+\end{shell}
+
+The user entered \samp{echo toto}, and the system answered \samp{toto}.
+\samp{\$} is the \dfn{prompt}: it starts the lines where the system invites
+the user to enter her commands.
+
+\subsection{\us Sessions}
+\label{sec:notations:us}
+
+Interactive sessions with \urbi are represented as follows.
+
+\begin{urbiscript}[firstnumber=1]
+echo("toto");
+[00000001] *** toto
+\end{urbiscript}
+
+Contrary to shell interaction (see \autoref{sec:notations:shell}), there is
+no prompt that marks the user-entered lines (here \lstinline|echo("toto");|,
+but, on the contrary, answers from the \urbi server start with a label that
+includes a timestamp (here \samp{00000001}), and possibly a channel name,
+\samp{output} in the following example.
+
+\begin{urbiscript}
+cout << "toto";
+[00000002:output] "toto"
+\end{urbiscript}
+
+
+\subsection{\us Assertions}
+\label{sec:notations:urbiassert}
+
+The following \dfn{assertion frame}:
+
+\begin{urbiassert}
+true;
+1 < 2;
+1 + 2 * 3 == 7;
+"foobar"[0, 3] == "foo";
+[1, 2, 3].map (function (a) { a * a }) == [1, 4, 9];
+[ => ].empty;
+\end{urbiassert}
+
+\noindent
+denotes the following assertion-block\ifthen{\boolean{urbisdk}}{ (see
+  \autoref{sec:lang:assert})} in an \us-session frame:
+
+\begin{urbiscript}
+assert
+{
+  true;
+  1 < 2;
+  1 + 2 * 3 == 7;
+  "foobar"[0, 3] == "foo";
+  [1, 2, 3].map (function (a) { a * a }) == [1, 4, 9];
+  [ => ].empty;
+};
+\end{urbiscript}
+
+%%% Local Variables:
+%%% coding: utf-8
+%%% mode: latex
+%%% TeX-master: "urbi-sdk"
+%%% ispell-dictionary: "american"
+%%% ispell-personal-dictionary: "../../urbi.dict"
+%%% fill-column: 76
+%%% End:

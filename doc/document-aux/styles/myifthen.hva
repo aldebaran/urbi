@@ -1,0 +1,16 @@
+%%					 -*- LaTeX -*-
+%%
+%% This file is read by HeVeA and LaTeX.
+
+\RequirePackage{ifthen}
+
+\newcommand{\ifthen}[2]{\ifthenelse{#1}{#2}{}}
+
+%% \newboolean[VALUE = false]{NAME}
+%% --------------------------------
+%% Redefine \newboolean so that the initial value is given.
+\let\myifthen@newboolean\newboolean
+\renewcommand{\newboolean}[2][false]{%
+  \myifthen@newboolean{#2}%
+  \setboolean{#2}{#1}%
+}

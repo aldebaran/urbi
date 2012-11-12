@@ -1,0 +1,29 @@
+%%
+%% Writing CF grammars.
+%%
+
+%% Example:
+%%
+%% \begin{lstlisting}[language=Grammar]
+%% T  -> F E'
+%% E' -> - F E' | eps
+%% F  -> N P'
+%% P' -> ^ N P' | eps
+%% N  -> ( T ) | n
+%% \end{lstlisting}
+
+\lstdefinelanguage{Grammar}
+  {literate=%
+    {->}{ $\rightarrow$ }3%
+    {eps}{$\varepsilon$}1
+    {|[}{{\texttt{|$\!\!$[}}}1%
+    {]|}{{\texttt{]$\!\!$|}}}1%
+    {->}{$\rightarrow$ }2%
+    {=>}{$\Rightarrow$ }2
+    {>}{$\rangle$}2
+    {<}{$\langle$}2
+  }
+
+%% Local Variables:
+%% mode: LaTeX
+%% End:

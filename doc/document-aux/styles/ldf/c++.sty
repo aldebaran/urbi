@@ -1,0 +1,19 @@
+%%                                                       -*- LaTeX -*-
+%% Additional language definitions of C++ for the listings package.
+%%
+
+% A modified definition of ISO C++ where built-in type names are
+% located in a second keyword category, so as to typeset them
+% differently.
+\lstdefinelanguage[ISO++]{C++}[ISO]{C++}%
+  {deletekeywords={bool,wchar_t,char,double,float,int,long,%
+      short,signed,unsigned,void},%
+    morekeywords={[2]bool,wchar_t,char,double,float,int,long,%
+      short,signed,unsigned,void},%
+  }%
+
+\lstdefinelanguage[Boost]{C++}[ISO]{C++}%
+{morekeywords={assert,foreach},%
+}
+
+\lstset{defaultdialect=[Boost]C++}

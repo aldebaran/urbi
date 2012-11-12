@@ -1,0 +1,19 @@
+%%                                                       -*- LaTeX -*-
+%% Language definition of Leopard for listings package
+%%
+
+% By default, use EPITA Leopard.
+\lstset{defaultdialect=[EPITA]Leopard}
+
+\lstdefinelanguage[Appel]{Leopard}%
+  {morekeywords={array,break,class,do,else,end,extends,for,function,if,in,%
+      let,method,new,nil,of,then,to,type,var,while},%
+   morekeywords=[2]{:=,(,)*,<,>,+,-},
+   sensitive=true,%
+   morecomment=[n]{/*}{*/},%
+   morestring=[b]{"}%
+  }[keywords,comments,strings]%
+
+\lstdefinelanguage[EPITA]{Leopard}[Appel]{Leopard}%
+  {morekeywords={import,primitive}}%
+  [keywords,comments,strings]%
