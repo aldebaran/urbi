@@ -31,3 +31,5 @@ uobject(subsumption test test/subsumption.uob/subsumption.cc)
 uobject(issue-3699 test test/issue-3699.uob/issue-3699.cc)
 uobject(fusion urbi urbi/fusion.uob/fusion.cc)
 
+uobject(rtp urbi urbi/rtp.uob/rtp.cc)
+qi_use_lib(rtp ORTP)

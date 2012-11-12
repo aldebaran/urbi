@@ -7,7 +7,7 @@ if (NOT DEFINED TEST_DIRS)
     demo
     uob/plug
     uob/remote
-    #uob/rtp
+    uob/rtp
     #uob/java
   )
 endif()
@@ -53,7 +53,7 @@ FOREACH(infileName ${tests})
     set(_fast "--fast")
     endif()
     # no fast mode for remotes
-    if (infileName MATCHES remote)
+    if (infileName MATCHES remote OR infileName MATCHES rtp)
       set(_fast "")
     endif()
     MESSAGE("adding  ${infileName} ${_out} ${_out2} ")

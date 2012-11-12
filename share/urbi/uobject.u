@@ -132,7 +132,11 @@ do (UObject)
         // The remote will try to do it but it will be too late, slots will
         // be gone, and we cannot wait for it as we have no way of knowing when
         // it will be done.
-        UObject.unnotify(this, sn, inf, lobby)|
+        try { // Exception from finalize will kill us
+        UObject.unnotify(this, sn, inf, lobby)
+        }
+        catch(var e)
+        {}|
         // Those may be closure that hold lobby or the object.
         s.get = nil|
         s.set = nil|
@@ -412,7 +416,7 @@ do (Slot)
   };
   function enableRTP()
   {disown({
-    Lobby.systemLobby.echo("enablertp")|
+    //Lobby.systemLobby.echo("enablertp")|
     // Propagate to all remotes.
     // First find the list of lobbies that have remotes
     var lobbies = System.lobbies().filter(

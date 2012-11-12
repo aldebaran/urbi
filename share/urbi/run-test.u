@@ -88,22 +88,27 @@ function fetchTestU(chkFile)
   res;
 }|;
 
-function startRemote(name)
+function startRemote(names)
 {
-  var map = ["all" => ["remall", "remall2"]];
-  var args = ["--remote", name, "--", "--host", "127.0.0.1", "--port", System.listenPort.asString()];
-  var p = Process.new("sdk/bin/urbi-launch" /*lol*/, args);
+  var map = ["all" => ["remall", "remall2"], "rtp"=>["URTP"]];
+  var args = ["--remote"];
+  args += names;
+  args += ["--", "--host", "127.0.0.1", "--port", System.listenPort.asString()];
+  var p = Process.new("sdk/bin/urbi-launch", args);
   p.runTo("remote.out");
   // find uobject name
-  var base = name.split("/")[-1];
-  var uobjs = [base];
-  if (map.has(base))
-    uobjs = map[base];
-  for|(var uo: uobjs)
+  for(var name: names)
   {
-    echo("waiting for " + uo);
-    timeout(8s) waituntil(uobjects.hasLocalSlot(uo));
-    echo("got it");
+    var base = name.split("/")[-1];
+    var uobjs = [base];
+    if (map.has(base))
+      uobjs = map[base];
+    for|(var uo: uobjs)
+    {
+      echo("waiting for " + uo);
+      timeout(8s) waituntil(uobjects.hasLocalSlot(uo));
+      echo("got it");
+    };
   };
   p
 }|;
@@ -131,12 +136,12 @@ function runTest(chkFile)
     switch(i[0])
     {
     case "plug":
-        System.loadModule(i[1]);
+      for(var m: i.tail())
+        System.loadModule(m);
     case "uobject":
       if (chkFile.find("remote/") != -1)
       {
-        for|(var m: i.tail())
-          processes << startRemote(m);
+        processes << startRemote(i.tail());
       }
       else
       {
@@ -144,8 +149,7 @@ function runTest(chkFile)
         System.loadModule(m);
       };
     case "remote":
-      for|(var m: i.tail())
-        processes << startRemote(m);
+        processes << startRemote(i.tail());
     }
   };
 
