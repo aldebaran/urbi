@@ -8,5 +8,5 @@ r.destroy()|;
 r2.destroy()|;
 remall.destroy()|;
 remall2.destroy()|;
-sleep(500ms);
+sleep(1s);
 assert( lobbies.size == s-1);
