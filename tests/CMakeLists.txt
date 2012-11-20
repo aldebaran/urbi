@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 2.8.5)
 
 if (NOT DEFINED TEST_DIRS)
   set(TEST_DIRS
