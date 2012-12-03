@@ -226,4 +226,10 @@ namespace urbi
   {
     return ctx_->kernelVersion();
   }
+
+  inline Barrier*
+  UContext::barrier()
+  {
+    return ctx_->barrier();
+  }
 }

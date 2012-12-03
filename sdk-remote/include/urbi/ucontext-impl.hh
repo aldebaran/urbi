@@ -155,6 +155,7 @@ namespace urbi
       /// The io_service used by this context.
       virtual boost::asio::io_service& getIoService() = 0;
 
+      virtual Barrier* barrier() = 0;
       /// RTP hooks for performance
       typedef void(*RTPSend)(UObject* rtp, const UValue& v);
       typedef void(*RTPSendGrouped)(UObject* rtp, const std::string&,

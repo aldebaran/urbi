@@ -35,6 +35,19 @@ namespace urbi
     UAutoValue(const UValue& v);
   };
 
+  /** A simple barrier. Use UContext::barrier() to get a new one.
+   * In plugin mode the returned Barrier is coroutine-friendly.
+   */
+  class Barrier
+  {
+  public:
+    virtual ~Barrier() {};
+    /// Blocks until release is called
+    virtual void wait() = 0;
+    /// Release all previous and future calls to wait(). Can only be called once
+    virtual void release() = 0;
+  };
+
   /** Methods available in both UObject and UVar
    *  Wrapper around UContextImpl to enable access through inheritance.
    */
@@ -93,6 +106,10 @@ namespace urbi
 
     /// Get the version of the kernel that will receive send() messages.
     std::pair<int, int> kernelVersion();
+
+    /// Return a new barrier suitable for this context.
+    Barrier* barrier();
+
     impl::UContextImpl* ctx_;
   };
 

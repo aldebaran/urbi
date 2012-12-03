@@ -224,6 +224,7 @@ namespace urbi
       virtual void instanciated(UObject* uob);
       virtual void lock();
       virtual void unlock();
+      virtual Barrier* barrier();
       virtual boost::asio::io_service& getIoService();
       static inline KernelUContextImpl* instance() {return instance_;}
 
@@ -1286,6 +1287,50 @@ namespace urbi
     void
     KernelUContextImpl::unlock()
     {
+    }
+
+    class KernelBarrier: public Barrier
+    {
+    public:
+      KernelBarrier()
+      {
+        tag = new object::rTag(new object::Tag);
+      }
+      ~KernelBarrier()
+      {
+        delete tag;
+      }
+      void wait()
+      {
+        if (server().isAnotherThread())
+        {
+          prom.get_future().wait();
+        }
+        else
+        {
+          libport::Finally f;
+          ::kernel::runner().state.apply_tag(*tag, &f);
+          (*tag)->freeze();
+        }
+      }
+      void release()
+      {
+        if (server().isAnotherThread())
+          server().schedule_fast(boost::bind(&KernelBarrier::release, this));
+        else
+        {
+          prom.set_value(0);
+          (*tag)->unfreeze();
+        }
+      }
+      boost::promise<int> prom;
+      object::rTag* tag;
+    };
+
+    Barrier*
+    KernelUContextImpl::barrier()
+    {
+      return new KernelBarrier();
     }
 
     KernelUObjectImpl::~KernelUObjectImpl()

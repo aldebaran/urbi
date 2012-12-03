@@ -1076,6 +1076,27 @@ namespace urbi
       else // we were not called by dispatch: send the terminating ';' ourselve.
         URBI_SEND_COMMAND_C((*outputStream), "");
     }
+
+    class RemoteBarrier: public Barrier
+    {
+    public:
+      virtual void wait()
+      {
+        p.get_future().wait();
+      }
+      virtual void release()
+      {
+        p.set_value(0);
+      }
+      virtual ~RemoteBarrier()
+      {
+      }
+      boost::promise<int> p;
+    };
+    Barrier* RemoteUContextImpl::barrier()
+    {
+      return new RemoteBarrier();
+    }
   } // namespace urbi::impl
 
   /*

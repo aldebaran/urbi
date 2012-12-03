@@ -80,7 +80,7 @@ namespace urbi
       ATTRIBUTE_CONST
       virtual void unlock();
       virtual boost::asio::io_service& getIoService();
-
+      virtual Barrier* barrier();
     public:
       /// Dispatch a message on our connection
       UCallbackAction dispatcher(const UMessage& msg);
