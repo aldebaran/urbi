@@ -754,7 +754,8 @@ UDictionary URTP::stats()
   res["dataBytesReceived"] = stats->recv;
   res["bytesReceived"] = stats->hw_recv;
   res["packetReceived"] = stats->packet_recv;
-  res["underrun"] = stats->unavaillable;
+  // unavailable entry no longuer present in ortp
+  //res["underrun"] = stats->unavaillable;
   res["latePacket"] = stats->outoftime;
   res["packetLoss"] = stats->cum_packet_loss;
   res["invalid"] = stats->bad;
