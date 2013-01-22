@@ -1,4 +1,4 @@
-<project name="kernel">
+<project name="urbi">
   <depends buildtime="true" runtime="true" names="libport" />
   <!-- Add your project dependencies here -->
   <!--
