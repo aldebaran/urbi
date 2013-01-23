@@ -44,7 +44,7 @@ src/libuvalue/usound.cc
 src/libuvalue/uvalue-common.cc
 )
 
-qi_create_lib(urbi ${URBI_SRC} DEPENDS port DL)
+qi_create_lib(urbi ${URBI_SRC} DEPENDS port DL QIJPEG)
 
 qi_stage_lib(urbi)
 
