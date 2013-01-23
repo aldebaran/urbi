@@ -2,9 +2,11 @@ cmake_minimum_required(VERSION 2.8)
 
 qi_create_bin(urbi-launch
   SRC src/bin/urbi-launch.cc src/liburbi/urbi-root.cc
-  DEPENDS port sched serialize DL
+  DEPENDS port sched serialize
   )
-#qi_use_lib(urbi-launch DL)
+if (NOT APPLE AND NOT WIN32)
+  qi_use_lib(urbi-launch DL)
+endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
