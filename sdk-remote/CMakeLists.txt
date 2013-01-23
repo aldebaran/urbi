@@ -56,6 +56,7 @@ if(JPEG_FOUND)
   qi_use_lib(urbi JPEG)
 else()
   message("Using INTERNAL JPEG")
+  add_definitions(-DJPEG_INTERNAL)
   qi_use_lib(urbi QIJPEG)
 endif()
 
