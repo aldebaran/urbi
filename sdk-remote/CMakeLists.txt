@@ -44,7 +44,22 @@ src/libuvalue/usound.cc
 src/libuvalue/uvalue-common.cc
 )
 
-qi_create_lib(urbi ${URBI_SRC} DEPENDS port DL QIJPEG)
+qi_create_lib(urbi ${URBI_SRC} DEPENDS port)
+
+# Look for system JPEG, use it if found, or use our internal version.
+find_package(JPEG)
+if(JPEG_FOUND)
+  message("Using SYSTEM JPEG")
+  set(JPEG_INCLUDE_DIRS ${JPEG_INCLUDE_DIR})
+  qi_use_lib(urbi JPEG)
+else()
+  message("Using INTERNAL JPEG")
+  qi_use_lib(urbi QIJPEG)
+endif()
+
+if (NOT APPLE AND NOT WIN32)
+ qi_use_lib(urbi DL)
+endif()
 
 qi_stage_lib(urbi)
 
