@@ -32,6 +32,7 @@
 # endif
 
 # include <libport/symbol.hh>
+# include <libport/detect-win32.h>
 
 # include <urbi/object/fwd.hh>
 
@@ -63,6 +64,26 @@ namespace urbi
     private:
       /// Boost multi index helper
       static Object* get_owner(const q_slot_type& slot);
+      #ifdef WIN32
+      /*
+      * visual studio glitch:
+      * std::pair<>.first is a base class member
+      * http://stackoverflow.com/questions/5908278/is-it-a-non-standard-stdpair-implementation-a-compiler-bug-or-a-non-standard
+      */
+      static inline location_type get_location(const q_slot_type& slot)
+      {
+        return slot.first;
+      }
+      typedef multi_index_container<
+        q_slot_type,
+        indexed_by<hashed_unique<global_fun<const q_slot_type&,
+                                            location_type,
+                                            get_location> >,
+                   hashed_non_unique<global_fun<const q_slot_type&,
+                                               Object*,
+                                               get_owner> > > >
+        content_type;
+      #else
       /// The boost multi index
       typedef multi_index_container<
         q_slot_type,
@@ -73,7 +94,7 @@ namespace urbi
                                                Object*,
                                                get_owner> > > >
         content_type;
-
+      #endif
       /// The location-wise index type
       typedef content_type::nth_index<0>::type loc_index_type;
       /// The owner-wise index type
