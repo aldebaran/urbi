@@ -13,7 +13,12 @@
 
 // BMI includes boost/foreach.hpp, which is troublesome (read
 // libport/foreach.hh).  Include this header to neutralize the issue.
-# include <libport/foreach.hh>
+// NOT !# include <libport/foreach.hh>
+
+# ifdef foreach
+#  undef foreach
+#  define FOREACH_WAS_SET
+# endif
 
 # include <boost/multi_index_container.hpp>
 # include <boost/multi_index/global_fun.hpp>
@@ -21,6 +26,10 @@
 # include <boost/multi_index/ordered_index.hpp>
 # include <boost/multi_index/hashed_index.hpp>
 # include <boost/multi_index/member.hpp>
+
+# ifdef FOREACH_WAS_SET
+#  define foreach BOOST_FOREACH
+# endif
 
 # include <libport/symbol.hh>
 
