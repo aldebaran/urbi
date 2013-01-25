@@ -1,0 +1,59 @@
+/*
+ * Copyright (C) 2006-2012, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+// Generated, do not edit by hand.
+
+/**
+ ** \file ast/at.hcc
+ ** \brief Implementation of ast::At.
+ */
+
+#include <ast/visitor.hh>
+#include <ast/at.hh>
+
+
+namespace ast
+{
+
+  At::At (const loc& location, const flavor_type& flavor,
+          const loc& flavor_location, bool sync, const rExp& cond,
+          const rExp& body, rExp onleave, rExp duration)
+    : Flavored (location, flavor),
+      flavor_location_ (flavor_location),
+      sync_ (sync),
+      cond_ (cond),
+      body_ (body),
+      onleave_ (onleave),
+      duration_ (duration)
+  {}
+
+  At::~At ()
+  {
+  }
+
+  void
+  At::accept (ConstVisitor& v) const
+  {
+    v.visit(this);
+  }
+
+  std::string At::node_type() const
+  {
+    return "At";
+  }
+
+  void
+  At::accept (Visitor& v)
+  {
+    v.visit(this);
+  }
+
+} // namespace ast
+

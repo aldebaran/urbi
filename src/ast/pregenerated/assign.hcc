@@ -1,0 +1,55 @@
+/*
+ * Copyright (C) 2006-2012, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+// Generated, do not edit by hand.
+
+/**
+ ** \file ast/assign.hcc
+ ** \brief Implementation of ast::Assign.
+ */
+
+#include <ast/visitor.hh>
+#include <ast/assign.hh>
+
+
+namespace ast
+{
+
+  Assign::Assign (const loc& location, const rExp& what, const rExp& value,
+                  const boost::optional<modifiers_type>& modifiers)
+    : Exp (location),
+      what_ (what),
+      value_ (value),
+      modifiers_ (modifiers)
+  {}
+
+  Assign::~Assign ()
+  {
+  }
+
+  void
+  Assign::accept (ConstVisitor& v) const
+  {
+    v.visit(this);
+  }
+
+  std::string Assign::node_type() const
+  {
+    return "Assign";
+  }
+
+  void
+  Assign::accept (Visitor& v)
+  {
+    v.visit(this);
+  }
+
+} // namespace ast
+

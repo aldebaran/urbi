@@ -1,0 +1,52 @@
+/*
+ * Copyright (C) 2006-2012, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+// Generated, do not edit by hand.
+
+/**
+ ** \file ast/return.hcc
+ ** \brief Implementation of ast::Return.
+ */
+
+#include <ast/visitor.hh>
+#include <ast/return.hh>
+
+
+namespace ast
+{
+
+  Return::Return (const loc& location, rExp value)
+    : Exp (location),
+      value_ (value)
+  {}
+
+  Return::~Return ()
+  {
+  }
+
+  void
+  Return::accept (ConstVisitor& v) const
+  {
+    v.visit(this);
+  }
+
+  std::string Return::node_type() const
+  {
+    return "Return";
+  }
+
+  void
+  Return::accept (Visitor& v)
+  {
+    v.visit(this);
+  }
+
+} // namespace ast
+

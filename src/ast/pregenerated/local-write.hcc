@@ -1,0 +1,39 @@
+/*
+ * Copyright (C) 2006-2012, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+// Generated, do not edit by hand.
+
+/**
+ ** \file ast/local-write.hcc
+ ** \brief Implementation of ast::LocalWrite.
+ */
+
+#include <ast/visitor.hh>
+#include <ast/local-write.hh>
+
+
+namespace ast
+{
+
+  LocalWrite::LocalWrite (const loc& location, const libport::Symbol& what,
+                          const rExp& value)
+    : Exp (location),
+      what_ (what),
+      value_ (value),
+      local_index_ (0)
+  {}
+
+  LocalWrite::~LocalWrite ()
+  {
+  }
+
+
+} // namespace ast
+

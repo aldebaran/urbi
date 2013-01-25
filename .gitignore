@@ -9,11 +9,6 @@
 /configure
 /dev/*.pyc
 /src/Makefile.in
-/src/ast/transformer.cc
-/src/ast/transformer.cc~
-/src/ast/transformer.hh
-/src/ast/transformer.hh~
-/src/ast/transformer.stamp
 /src/kernel/config.h.in
 /src/kernel/config.h.in~
 /build-*

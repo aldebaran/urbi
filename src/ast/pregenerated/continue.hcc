@@ -1,0 +1,51 @@
+/*
+ * Copyright (C) 2006-2012, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+// Generated, do not edit by hand.
+
+/**
+ ** \file ast/continue.hcc
+ ** \brief Implementation of ast::Continue.
+ */
+
+#include <ast/visitor.hh>
+#include <ast/continue.hh>
+
+
+namespace ast
+{
+
+  Continue::Continue (const loc& location)
+    : Exp (location)
+  {}
+
+  Continue::~Continue ()
+  {
+  }
+
+  void
+  Continue::accept (ConstVisitor& v) const
+  {
+    v.visit(this);
+  }
+
+  std::string Continue::node_type() const
+  {
+    return "Continue";
+  }
+
+  void
+  Continue::accept (Visitor& v)
+  {
+    v.visit(this);
+  }
+
+} // namespace ast
+

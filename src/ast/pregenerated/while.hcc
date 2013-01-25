@@ -1,0 +1,54 @@
+/*
+ * Copyright (C) 2006-2012, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+// Generated, do not edit by hand.
+
+/**
+ ** \file ast/while.hcc
+ ** \brief Implementation of ast::While.
+ */
+
+#include <ast/visitor.hh>
+#include <ast/while.hh>
+
+
+namespace ast
+{
+
+  While::While (const loc& location, const flavor_type& flavor,
+                const rExp& test, const rScope& body)
+    : Flavored (location, flavor),
+      test_ (test),
+      body_ (body)
+  {}
+
+  While::~While ()
+  {
+  }
+
+  void
+  While::accept (ConstVisitor& v) const
+  {
+    v.visit(this);
+  }
+
+  std::string While::node_type() const
+  {
+    return "While";
+  }
+
+  void
+  While::accept (Visitor& v)
+  {
+    v.visit(this);
+  }
+
+} // namespace ast
+

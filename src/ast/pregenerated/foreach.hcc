@@ -1,0 +1,56 @@
+/*
+ * Copyright (C) 2006-2012, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+// Generated, do not edit by hand.
+
+/**
+ ** \file ast/foreach.hcc
+ ** \brief Implementation of ast::Foreach.
+ */
+
+#include <ast/visitor.hh>
+#include <ast/foreach.hh>
+
+
+namespace ast
+{
+
+  Foreach::Foreach (const loc& location, const flavor_type& flavor,
+                    const rLocalDeclaration& index, const rExp& list,
+                    const rScope& body)
+    : Flavored (location, flavor),
+      index_ (index),
+      list_ (list),
+      body_ (body)
+  {}
+
+  Foreach::~Foreach ()
+  {
+  }
+
+  void
+  Foreach::accept (ConstVisitor& v) const
+  {
+    v.visit(this);
+  }
+
+  std::string Foreach::node_type() const
+  {
+    return "Foreach";
+  }
+
+  void
+  Foreach::accept (Visitor& v)
+  {
+    v.visit(this);
+  }
+
+} // namespace ast
+

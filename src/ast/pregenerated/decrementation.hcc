@@ -1,0 +1,52 @@
+/*
+ * Copyright (C) 2006-2012, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+// Generated, do not edit by hand.
+
+/**
+ ** \file ast/decrementation.hcc
+ ** \brief Implementation of ast::Decrementation.
+ */
+
+#include <ast/visitor.hh>
+#include <ast/decrementation.hh>
+
+
+namespace ast
+{
+
+  Decrementation::Decrementation (const loc& location, const rLValue& exp,
+                                  bool post)
+    : Unary (location, exp, post)
+  {}
+
+  Decrementation::~Decrementation ()
+  {
+  }
+
+  void
+  Decrementation::accept (ConstVisitor& v) const
+  {
+    v.visit(this);
+  }
+
+  std::string Decrementation::node_type() const
+  {
+    return "Decrementation";
+  }
+
+  void
+  Decrementation::accept (Visitor& v)
+  {
+    v.visit(this);
+  }
+
+} // namespace ast
+

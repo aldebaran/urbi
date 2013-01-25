@@ -1,0 +1,53 @@
+/*
+ * Copyright (C) 2006-2012, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+// Generated, do not edit by hand.
+
+/**
+ ** \file ast/op-assignment.hcc
+ ** \brief Implementation of ast::OpAssignment.
+ */
+
+#include <ast/visitor.hh>
+#include <ast/op-assignment.hh>
+
+
+namespace ast
+{
+
+  OpAssignment::OpAssignment (const loc& location, const rLValue& what,
+                              const rExp& value, const libport::Symbol& op)
+    : Write (location, what, value),
+      op_ (op)
+  {}
+
+  OpAssignment::~OpAssignment ()
+  {
+  }
+
+  void
+  OpAssignment::accept (ConstVisitor& v) const
+  {
+    v.visit(this);
+  }
+
+  std::string OpAssignment::node_type() const
+  {
+    return "OpAssignment";
+  }
+
+  void
+  OpAssignment::accept (Visitor& v)
+  {
+    v.visit(this);
+  }
+
+} // namespace ast
+

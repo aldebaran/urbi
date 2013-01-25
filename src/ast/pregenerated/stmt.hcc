@@ -1,0 +1,53 @@
+/*
+ * Copyright (C) 2006-2012, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+// Generated, do not edit by hand.
+
+/**
+ ** \file ast/stmt.hcc
+ ** \brief Implementation of ast::Stmt.
+ */
+
+#include <ast/visitor.hh>
+#include <ast/stmt.hh>
+
+
+namespace ast
+{
+
+  Stmt::Stmt (const loc& location, const flavor_type& flavor,
+              const rExp& expression)
+    : Flavored (location, flavor),
+      expression_ (expression)
+  {}
+
+  Stmt::~Stmt ()
+  {
+  }
+
+  void
+  Stmt::accept (ConstVisitor& v) const
+  {
+    v.visit(this);
+  }
+
+  std::string Stmt::node_type() const
+  {
+    return "Stmt";
+  }
+
+  void
+  Stmt::accept (Visitor& v)
+  {
+    v.visit(this);
+  }
+
+} // namespace ast
+

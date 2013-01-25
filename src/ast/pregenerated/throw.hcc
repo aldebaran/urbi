@@ -1,0 +1,52 @@
+/*
+ * Copyright (C) 2006-2012, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+// Generated, do not edit by hand.
+
+/**
+ ** \file ast/throw.hcc
+ ** \brief Implementation of ast::Throw.
+ */
+
+#include <ast/visitor.hh>
+#include <ast/throw.hh>
+
+
+namespace ast
+{
+
+  Throw::Throw (const loc& location, rExp value)
+    : Exp (location),
+      value_ (value)
+  {}
+
+  Throw::~Throw ()
+  {
+  }
+
+  void
+  Throw::accept (ConstVisitor& v) const
+  {
+    v.visit(this);
+  }
+
+  std::string Throw::node_type() const
+  {
+    return "Throw";
+  }
+
+  void
+  Throw::accept (Visitor& v)
+  {
+    v.visit(this);
+  }
+
+} // namespace ast
+

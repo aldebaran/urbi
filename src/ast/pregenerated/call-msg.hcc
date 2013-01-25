@@ -1,0 +1,51 @@
+/*
+ * Copyright (C) 2006-2012, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+// Generated, do not edit by hand.
+
+/**
+ ** \file ast/call-msg.hcc
+ ** \brief Implementation of ast::CallMsg.
+ */
+
+#include <ast/visitor.hh>
+#include <ast/call-msg.hh>
+
+
+namespace ast
+{
+
+  CallMsg::CallMsg (const loc& location)
+    : Exp (location)
+  {}
+
+  CallMsg::~CallMsg ()
+  {
+  }
+
+  void
+  CallMsg::accept (ConstVisitor& v) const
+  {
+    v.visit(this);
+  }
+
+  std::string CallMsg::node_type() const
+  {
+    return "CallMsg";
+  }
+
+  void
+  CallMsg::accept (Visitor& v)
+  {
+    v.visit(this);
+  }
+
+} // namespace ast
+

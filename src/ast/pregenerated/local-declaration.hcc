@@ -1,0 +1,58 @@
+/*
+ * Copyright (C) 2006-2012, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+// Generated, do not edit by hand.
+
+/**
+ ** \file ast/local-declaration.hcc
+ ** \brief Implementation of ast::LocalDeclaration.
+ */
+
+#include <ast/visitor.hh>
+#include <ast/local-declaration.hh>
+
+
+namespace ast
+{
+
+  LocalDeclaration::LocalDeclaration (const loc& location,
+                                      const libport::Symbol& what,
+                                      const rExp& value)
+    : LocalWrite (location, what, value),
+      constant_ (false),
+      list_ (false),
+      is_import_ (false),
+      is_star_ (false),
+      type_ (0)
+  {}
+
+  LocalDeclaration::~LocalDeclaration ()
+  {
+  }
+
+  void
+  LocalDeclaration::accept (ConstVisitor& v) const
+  {
+    v.visit(this);
+  }
+
+  std::string LocalDeclaration::node_type() const
+  {
+    return "LocalDeclaration";
+  }
+
+  void
+  LocalDeclaration::accept (Visitor& v)
+  {
+    v.visit(this);
+  }
+
+} // namespace ast
+

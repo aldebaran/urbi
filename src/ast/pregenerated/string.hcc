@@ -1,0 +1,52 @@
+/*
+ * Copyright (C) 2006-2012, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+// Generated, do not edit by hand.
+
+/**
+ ** \file ast/string.hcc
+ ** \brief Implementation of ast::String.
+ */
+
+#include <ast/visitor.hh>
+#include <ast/string.hh>
+
+
+namespace ast
+{
+
+  String::String (const loc& location, const std::string& value)
+    : Exp (location),
+      value_ (value)
+  {}
+
+  String::~String ()
+  {
+  }
+
+  void
+  String::accept (ConstVisitor& v) const
+  {
+    v.visit(this);
+  }
+
+  std::string String::node_type() const
+  {
+    return "String";
+  }
+
+  void
+  String::accept (Visitor& v)
+  {
+    v.visit(this);
+  }
+
+} // namespace ast
+

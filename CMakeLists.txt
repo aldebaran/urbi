@@ -60,21 +60,7 @@ qi_generate_src(
   SRC src/parser/ugrammar.y
   COMMAND ${BISON} ${BISON_OPTS} ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/ugrammar.y -o  ${CMAKE_CURRENT_BINARY_DIR}/src/parser/ugrammar.cc
 )
-else()
-  MESSAGE("No bison specified, using pregenerated grammar.")
-  qi_generate_src(
-  ${CMAKE_CURRENT_BINARY_DIR}/src/parser/ugrammar.cc
-  SRC src/parser/ugrammar.y
-  COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/pregenerated/ ${CMAKE_CURRENT_BINARY_DIR}/src/parser/
-  )
-  qi_generate_src(
-  ${CMAKE_CURRENT_BINARY_DIR}/src/parser/utoken.cc
-  SRC src/parser/ugrammar.y
-  COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/pregenerated/ ${CMAKE_CURRENT_BINARY_DIR}/src/parser/
-  )
-endif()
 
-# Go for plugin
 function(astgen target command)
  qi_generate_src(
    ${CMAKE_CURRENT_SOURCE_DIR}/${target}
@@ -95,36 +81,55 @@ astgen(src/ast/dot-printer.cc dot-printer)
 astgen(src/ast/serializer.hh serializer)
 astgen(src/ast/implicit.hh nodes)
 
+set(GENERATED_SRC
+  src/ast/visitor.hh
+  src/ast/implicit.hh
+  src/ast/all.cc
+  src/ast/cloner.hxx
+  src/ast/cloner.cc
+  src/ast/dot-printer.cc
+  src/ast/pretty-printer.cc
+  src/ast/transformer.cc
+  src/ast/default-visitor.hh
+  src/ast/fwd.hh
+)
 
-# To generate ast stuffs, you need to run the following commands
-#./dev/ast-nodes-gen  src/ast/ < src/ast/ast.yml
-#./dev/ast-all-gen  src/ast/ < src/ast/ast.yml
-#./dev/ast-cloner-gen  src/ast/ < src/ast/ast.yml
-#./dev/ast-dot-printer-gen  src/ast/ < src/ast/ast.yml
-#./dev/ast-fwd-gen  src/ast/ < src/ast/ast.yml
-#./dev/ast-node-mk-gen  src/ast/ < src/ast/ast.yml
-#./dev/ast-pretty-printer-gen  src/ast/ < src/ast/ast.yml
-#./dev/ast-readme-gen  src/ast/ < src/ast/ast.yml
-#./dev/ast-serializer-gen  src/ast/ < src/ast/ast.yml
-#./dev/ast-transformer-gen  src/ast/ < src/ast/ast.yml
-#./dev/ast-visitor-gen  src/ast/ < src/ast/ast.yml
+else()
+  MESSAGE("No bison specified, using pregenerated grammar and AST files.")
+  qi_generate_src(
+  ${CMAKE_CURRENT_BINARY_DIR}/src/parser/ugrammar.cc
+  SRC src/parser/ugrammar.y
+  COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/pregenerated/ ${CMAKE_CURRENT_BINARY_DIR}/src/parser/
+  )
+  qi_generate_src(
+  ${CMAKE_CURRENT_BINARY_DIR}/src/parser/utoken.cc
+  SRC src/parser/ugrammar.y
+  COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/pregenerated/ ${CMAKE_CURRENT_BINARY_DIR}/src/parser/
+  )
+
+  # HACK, to avoid a qi_generate_src rule for all 100 files,
+  # merge the ccs into one merged.cc and declare arule just for it
+  qi_generate_src(
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/merged.cc
+    SRC src/ast/ast.yml
+    COMMAND ${CMAKE_COMMAND} -E copy_directory   ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/pregenerated/ ${CMAKE_CURRENT_SOURCE_DIR}/src/ast/
+  )
+  set(GENERATED_SRC
+    src/ast/merged.cc
+  )
+
+endif(HAVE_CUSTOM_BISON)
 
 
 set(UOBJECT_PLUGIN_SRC
 ${CMAKE_CURRENT_BINARY_DIR}/include/urbi/kernel/config.h
-src/ast/implicit.hh
-src/ast/visitor.hh
-src/ast/all.cc
-  src/ast/analyzer.cc
+${GENERATED_SRC}
+src/ast/analyzer.cc
 src/ast/analyzer.hh
 src/ast/catches-type.cc
 src/ast/catches-type.hh
-src/ast/cloner.hxx
-src/ast/cloner.cc
-src/ast/default-visitor.hh
 src/ast/dot-print.cc
 src/ast/dot-print.hh
-src/ast/dot-printer.cc
 src/ast/event-match.cc
 src/ast/event-match.hh
 src/ast/event-match.hxx
@@ -137,7 +142,6 @@ src/ast/flavor.hh
 src/ast/flavor.hxx
 src/ast/formal.cc
 src/ast/formal.hh
-src/ast/fwd.hh
 src/ast/loc.cc
 src/ast/loc.hh
 src/ast/local-declarations-type.cc
@@ -148,12 +152,10 @@ src/ast/new-clone.hxx
 src/ast/parametric-ast.cc
 src/ast/parametric-ast.hh
 src/ast/parametric-ast.hxx
-src/ast/pretty-printer.cc
 src/ast/print.cc
 src/ast/print.hh
 src/ast/symbols-type.cc
 src/ast/symbols-type.hh
-src/ast/transformer.cc
 src/binder/bind.cc
 src/binder/bind.hh
 src/binder/binder.cc
