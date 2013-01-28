@@ -49,6 +49,10 @@ src/libuvalue/uvalue-common.cc
 
 qi_create_lib(urbi ${URBI_SRC} DEPENDS port)
 
+set_target_properties(urbi
+  PROPERTIES
+     COMPILE_FLAGS -DBUILDING_URBI_SDK)
+
 # Look for system JPEG, use it if found, or use our internal version.
 find_package(JPEG)
 if(JPEG_FOUND)
@@ -84,7 +88,8 @@ qi_create_lib(uobject-remote
 )
 set_target_properties(uobject-remote
   PROPERTIES
-     OUTPUT_NAME uobject)
+     OUTPUT_NAME uobject
+     COMPILE_FLAGS -DBUILDING_URBI_SDK)
 
 add_subdirectory(src/examples)
 add_subdirectory(include)
