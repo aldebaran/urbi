@@ -9,6 +9,7 @@ content = fin.readlines()
 for l in content:
   l = re.sub(r'<FlexLexer.h>', '"parser/flex-lexer.hh"', l)
   l = re.sub(r'class istream;', '#include <iostream>', l)
+  l = re.sub(r'unistd.h', 'libport/unistd.h', l)
   l = re.sub(r'([	 &])(cin|cout|cerr|[io]stream)', r'\\1std::$\\', l)
   fout.write(l)
 
