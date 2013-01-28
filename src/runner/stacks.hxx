@@ -31,7 +31,7 @@ namespace runner
   LIBPORT_SPEED_ALWAYS_INLINE
   Stacks::Stacks(rObject self)
     : toplevel_stack_()
-    , current_frame_(0, 0)
+    , current_frame_((rSlot*)0, (rSlot*)0)
     , depth_(0)
   {
     toplevel_stack_ << new Slot(self) << new Slot;

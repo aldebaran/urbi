@@ -157,7 +157,7 @@ namespace urbi
     Object::slot_locate_(key_type k) const
     {
       if (lookup_id_ == lookup_id)
-        return location_type(0, 0);
+        return location_type((Object*)0, rObject());
       lookup_id_ = lookup_id;
       if (rObject slot = local_slot_get(k))
         return location_type(const_cast<Object*>(this), slot);
@@ -176,7 +176,7 @@ namespace urbi
             return rec;
         }
       }
-      return location_type(0, 0);
+      return location_type((Object*)0, rObject());
     }
 
     static bool fastHook = getenv("URBI_FAST_HOOK");

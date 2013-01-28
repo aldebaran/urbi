@@ -82,7 +82,7 @@ namespace urbi
     {
       runner::Job& r = runner();
       value_type::iterator i =
-        value_.insert(value_.end(), value_type::value_type(&r, 0));
+        value_.insert(value_.end(), value_type::value_type(&r, rObject()));
 
       // No waiters are in the list, so mark it-self as the next waiter.
       if (rest_ == value_.end())
