@@ -122,51 +122,6 @@ basename(const std::string& path)
   return pos == path.npos ? path : path.substr(pos + 1);
 }
 
-/*-------------------------------------.
-| Crapy dynamic portability routines.  |
-`-------------------------------------*/
-
-#ifdef WIN32
-# define RTLD_LAZY 0
-# define RTLD_NOW 0
-# define RTLD_GLOBAL 0
-
-static RTLD_HANDLE
-dlopen(const char* name, int)
-{
-  RTLD_HANDLE res = LoadLibrary(name);
-  if (res)
-  {
-    char buf[BUFSIZ];
-    GetModuleFileName(res, buf, sizeof buf - 1);
-    buf[sizeof buf - 1] = 0;
-  }
-  return res;
-}
-
-static void*
-dlsym(RTLD_HANDLE module, const char* name)
-{
-  return static_cast<void*>(GetProcAddress(module, name));
-}
-
-static const char*
-dlerror(DWORD err = GetLastError())
-{
-  static char buf[1024];
-
-  FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-                0, err, 0,
-                (LPTSTR)buf, sizeof buf,
-                0);
-
-  return buf;
-}
-
-#else
-# include <dlfcn.h>
-#endif
-
 typedef std::vector<std::string> strings_type;
 static strings_type
 split(std::string lib)
