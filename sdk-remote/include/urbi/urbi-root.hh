@@ -16,14 +16,9 @@
 
 # include <libport/detect-win32.h>
 # include <libport/windows.hh>
+# include <libport/dlfcn.h> // for RTLD_HANDLE
 
 # include <urbi/export.hh>
-
-# ifdef WIN32
-typedef HMODULE RTLD_HANDLE;
-# else
-typedef void* RTLD_HANDLE;
-# endif
 
 # ifndef URBI_ROOT_NOT_DLL
 #  define URBI_SDK_MAYBE_API URBI_SDK_API
