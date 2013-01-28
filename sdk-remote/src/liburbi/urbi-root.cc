@@ -355,6 +355,10 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
   }
 }
 
+UrbiRoot::~UrbiRoot()
+{
+}
+
 RTLD_HANDLE
 UrbiRoot::library_load(const std::string& base)
 {

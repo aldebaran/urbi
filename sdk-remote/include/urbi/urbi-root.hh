@@ -37,7 +37,7 @@ public:
   /// \param program The command used to invoke urbi-launch or urbi.
   /// \param static_build true if this is a static build:do not dlopen anything
   UrbiRoot(const std::string& program, bool static_build=false);
-
+  ~UrbiRoot();
   /*---------------.
   | Entry points.  |
   `---------------*/
