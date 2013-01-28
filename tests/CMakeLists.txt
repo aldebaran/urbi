@@ -30,6 +30,8 @@ set(BLACKLIST
   0_x_2-xfail_chk  #test is xfail to test test suite
   2_x_lobby_chk #fail due to new test infrastructure
   uob_plug_issue-3699_chk #output is lost by new test suite
+  uob_plug_all_transmit_chk #use setLocale, might not be present on buildslave
+  uob_remote_all_transmit_chk
   )
 
 set(tests
