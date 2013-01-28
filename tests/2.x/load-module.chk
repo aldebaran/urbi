@@ -4,6 +4,7 @@ try {
 }
 catch(var e)
 {
-  echo(e.asString().split(":").range(0,4).join(":"));
+  // Error message provides platform-dependant information, filter it.
+  echo(e.asString().split(":").range(0,3).join(":"));
 };
-[00000001] *** input.u:2.3-32: loadModule: failed to open canard.so
+[00000001] *** input.u:2.3-32: loadModule
