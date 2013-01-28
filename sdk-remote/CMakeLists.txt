@@ -10,8 +10,10 @@ endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
+
 add_definitions(-DLIBPORT_LIBSFX="")
 add_definitions(-DLIBPORT_LIBDIRNAME="lib")
+add_definitions(-D_USE_MATH_DEFINES)
 
 set(URBI_SRC
 src/libuco/details.cc
