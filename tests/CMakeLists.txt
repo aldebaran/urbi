@@ -8,9 +8,12 @@ if (NOT DEFINED TEST_DIRS)
     demo
     uob/plug
     uob/remote
-    uob/rtp
     #uob/java
   )
+  qi_add_optional_package(ORTP)
+  if (WITH_ORTP)
+    list(APPEND TEST_DIRS uob/rtp)
+  endif()
 endif()
 
 set(BLACKLIST
