@@ -47,7 +47,7 @@ src/libuvalue/usound.cc
 src/libuvalue/uvalue-common.cc
 )
 
-qi_create_lib(urbi ${URBI_SRC} DEPENDS port)
+qi_create_lib(urbi SHARED ${URBI_SRC} DEPENDS port BOOST BOOST_DATE_TIME BOOST_SYSTEM BOOST_THREAD)
 
 set_target_properties(urbi
   PROPERTIES
@@ -83,6 +83,7 @@ set(UOBJECT_REMOTE_SRC
 
 qi_create_lib(uobject-remote
   SUBFOLDER gostai/remote
+  SHARED
   DEPENDS port serialize BOOST BOOST_DATE_TIME  BOOST_SYSTEM BOOST_THREAD
   SRC ${UOBJECT_REMOTE_SRC}
 )

@@ -332,6 +332,7 @@ add_definitions(-DBUILDING_URBI_SDK)
 # uobject-remote is renamed as uobject using a set_target_properties
 # but this one needs to be correct, because DEPENDS does not honor OUTPUT_NAME
 qi_create_lib(uobject
+  SHARED
   SUBFOLDER gostai/engine
   DEPENDS port sched serialize BOOST BOOST_SIGNALS BOOST_FILESYSTEM BOOST_DATE_TIME  BOOST_SYSTEM BOOST_THREAD
   SRC ${UOBJECT_PLUGIN_SRC}
