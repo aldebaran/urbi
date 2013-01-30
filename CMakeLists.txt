@@ -29,6 +29,8 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/include/urbi)
 add_definitions(-DLIBPORT_LIBSFX="")
 add_definitions(-DLIBPORT_LIBDIRNAME="lib")
 add_definitions(-D_USE_MATH_DEFINES)
+add_definitions(/w)
+
 
 if (HAVE_CUSTOM_BISON)
 
@@ -316,8 +318,21 @@ src/runner/state.hxx
 src/urbi/iostream.cc
 src/urbi/iostream.hh
 src/urbi/sdk.cc
+# Build in rObject modules, they require exported data symbols.
+src/object/urbi/logger.cc
+src/object/urbi/regexp.cc
+src/object/urbi/stream.cc
+src/object/urbi/input-stream.cc
+src/object/urbi/output-stream.cc
+# Needed by system.cc
 sdk-remote/src/libuco/urbi-main.cc
+sdk-remote/src/liburbi/urbi-root.cc
+sdk-remote/src/liburbi/urbi-launch.cc
 )
+
+if (NOT WIN32)
+  list(ADD UOBJECT_PLUGIN_SRC src/object/urbi/process.cc)
+endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/src)
@@ -328,16 +343,20 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/include/urbi/parser/)
 
 # For ast/factory.cc
 add_definitions(-D__SRCDIR__="")
-add_definitions(-DBUILDING_URBI_SDK)
+add_definitions(-DBUILDING_URBI_SDK -DBUILDING_URBI_MODULE)
+
 # uobject-remote is renamed as uobject using a set_target_properties
 # but this one needs to be correct, because DEPENDS does not honor OUTPUT_NAME
 qi_create_lib(uobject
   SHARED
   SUBFOLDER gostai/engine
-  DEPENDS port sched serialize BOOST BOOST_SIGNALS BOOST_FILESYSTEM BOOST_DATE_TIME  BOOST_SYSTEM BOOST_THREAD
+  DEPENDS uco port sched serialize BOOST BOOST_REGEX BOOST_SIGNALS BOOST_FILESYSTEM BOOST_DATE_TIME  BOOST_SYSTEM BOOST_THREAD
   SRC ${UOBJECT_PLUGIN_SRC}
 )
-
+set_target_properties(uobject
+  PROPERTIES
+     OUTPUT_NAME uobject
+     COMPILE_FLAGS -DBUILDING_URBI_SDK)
 
 
 qi_stage_lib(uobject)
@@ -345,7 +364,9 @@ qi_stage_lib(uobject)
 
 # Add a simple test:
 enable_testing()
-add_subdirectory(src/object/urbi)
+
+#Built-in due to symbol exporting problems
+#add_subdirectory(src/object/urbi)
 
 add_subdirectory(share)
 #Requires lib uobject

@@ -112,7 +112,7 @@ public:
   virtual
   void effectiveDisplay(const char* t)
   {
-    std::cout << t;
+    std::cout << t << std::flush;
   }
 
   bool fast;

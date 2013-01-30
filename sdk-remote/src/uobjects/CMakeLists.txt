@@ -1,8 +1,10 @@
 function(uobject name path)
+  # all uobjects can link with any of the uobjects
+  # except lib-urbi which uses liburbi
   qi_create_lib( ${name}
     SHARED
     SUBFOLDER gostai/uobjects/${path}
-    DEPENDS uobject
+    DEPENDS uobject-remote
     SRC ${ARGN}
   )
   set_target_properties( ${name}

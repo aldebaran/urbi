@@ -10,15 +10,14 @@
 
 class System.Platform
 {
-  var host = "@host@";
-  var hostAlias = "@host_alias@";
-  var hostCpu = "@host_cpu@";
-  var hostOs = "@host_os@";
-  var hostVendor = "@host_vendor@";
+  var host = "@CMAKE_SYSTEM@";
+  var hostAlias = host;
+  var hostCpu = "";
+  var hostOs = "@CMAKE_SYSTEM_NAME@";
 
   get isWindows()
   {
-    hostOs == "mingw32";
+    hostOs == "Windows";
   };
 
   get kind()
@@ -33,7 +32,5 @@ class System.Platform
   var compilationModeSpace = @COMPILATION_MODE_SPACE@;
   var compilationModeSpeed = @COMPILATION_MODE_SPEED@;
 
-  // Modules.
-  var enabledModules = @ENABLED_MODULES_U@|;
-  var disabledModules = @DISABLED_MODULES_U@|;
+  var enabledModules = [];
 };

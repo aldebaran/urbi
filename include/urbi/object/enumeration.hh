@@ -81,10 +81,16 @@
             e->getSlotValue(BOOST_PP_STRINGIZE(LIBPORT_SECOND(Elt)));
 
 # define URBI_ENUM_REGISTER(Name, UName, ...)                   \
-                                                                \
   static void                                                   \
   BOOST_PP_CAT(urbi_enum_create, __LINE__)()                    \
   {                                                             \
+    URBI_ENUM_REGISTER_IMPL(Name, UName, __VA_ARGS__);          \
+  }                                                             \
+  URBI_INITIALIZATION_REGISTER(&BOOST_PP_CAT(urbi_enum_create, \
+                                             __LINE__))
+
+# define URBI_ENUM_REGISTER_IMPL(Name, UName, ...)              \
+                                                                \
     std::string name = #UName;                                  \
     ::urbi::object::rObject dest =                              \
         ::urbi::object::resolve_namespace(name);                \
@@ -100,10 +106,6 @@
     dest->setSlotValue(name, e);                                \
     BOOST_PP_SEQ_FOR_EACH(URBI_ENUM_REG, Name,                  \
                           LIBPORT_LIST(__VA_ARGS__,));          \
-  }                                                             \
-                                                                \
-  URBI_INITIALIZATION_REGISTER(&BOOST_PP_CAT(urbi_enum_create,  \
-                                             __LINE__))
 
 
 #endif

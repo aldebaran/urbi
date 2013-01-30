@@ -33,7 +33,12 @@
 #else
 # define APPLE_LINUX_WINDOWS(Apple, Linux, Windows) Linux
 #endif
-
+extern "C"
+{
+  int
+  URBI_SDK_API
+  urbi_launch(int argc, const char* argv[], UrbiRoot& root);
+}
 static std::string
 mygetenv(const std::string& var, const std::string& val = "");
 
@@ -99,7 +104,12 @@ urbi_getenv(const std::string& logname,
 `--------*/
 
 static const std::string
+#ifdef URBI_COMPILATION_MODE_DEBUG
+  libext =    APPLE_LINUX_WINDOWS(".dylib", ".so", "_d.dll"),
+#else
   libext =    APPLE_LINUX_WINDOWS(".dylib", ".so", ".dll"),
+#endif
+  libpfx =    APPLE_LINUX_WINDOWS("li", "lib", ""),
   libdir =    APPLE_LINUX_WINDOWS("lib", "lib", "bin");
 
 const char separator = APPLE_LINUX_WINDOWS('/', '/', '\\');
@@ -351,7 +361,7 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
 #ifdef LIBPORT_ENABLE_SERIALIZATION
     //handle_libserialize_ = library_load("serialize");
 #endif
-    handle_liburbi_      = library_load("urbi");
+    //handle_liburbi_      = library_load("urbi");
   }
 }
 
@@ -420,7 +430,7 @@ UrbiRoot::load_plugin()
     xdlopen(program_,
             "plugin UObject implementation",
             urbi_getenv(program_, "ROOT_LIBPLUGIN",
-                        core_path() / "engine" / "libuobject"+library_suffix()),
+                        core_path() / "engine" / (libpfx + "uobject"+library_suffix())),
             // This exit status is understood by the test suite.  It
             // helps it skipping SDK Remote tests that cannot run
             // without Urbi SDK.
@@ -435,7 +445,7 @@ UrbiRoot::load_remote()
     xdlopen(program_,
             "remote UObject implementation",
             urbi_getenv(program_, "ROOT_LIBREMOTE",
-                        core_path() / "remote" / "libuobject"+library_suffix()),
+                        core_path() / "remote" / (libpfx + "uobject"+library_suffix())),
             EX_OSFILE);
 }
 
@@ -452,11 +462,7 @@ UrbiRoot::load_custom(const std::string& path_)
 int
 UrbiRoot::urbi_launch(int argc, const char** argv)
 {
-  urbi_launch_type f =
-    xdlsym<urbi_launch_type>(program_,
-                             "liburbi-launch", handle_liburbi_,
-                             "urbi_launch");
-  return f(argc, argv, *this);
+  return ::urbi_launch(argc, argv, *this);
 }
 
 int

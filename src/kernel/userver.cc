@@ -86,6 +86,8 @@
 #include <kernel/ughostconnection.hh>
 #include <kernel/uobject.hh>
 
+#include <object/urbi/logger.hh>
+
 using libport::program_name;
 using object::objects_type;
 using object::rObject;
@@ -165,6 +167,7 @@ namespace kernel
   {
     // Add the path we need to work from cmake build dir.
     search_path.push_back(libport::path(urbi_root.root() + "/../../share"));
+    search_path.push_back(libport::path(urbi_root.root() + "/../share"));
     TIMER_INIT();
     TIMER_PUSH("server");
     urbiserver = this;
@@ -319,6 +322,17 @@ namespace kernel
                            SYMBOL(sigint_shutdown));
     }
   }
+  static void register_logger_enum()
+  {
+    using namespace urbi::object;
+    URBI_ENUM_REGISTER_IMPL(Logger::levels::Level, Logger.Levels,
+                       (Logger::levels::none,  None),
+                       (Logger::levels::log,   Log),
+                       (Logger::levels::trace, Trace),
+                       (Logger::levels::debug, Debug),
+                       (Logger::levels::dump,  Dump));
+    
+  }
 
   void
   UServer::initialize(bool interactive)
@@ -417,6 +431,7 @@ namespace kernel
         sched::configuration.minimum_stack_size)
       ->name_set("pollLoop");
     scheduler_->idle_job_set(poll);
+    schedule_fast(&register_logger_enum);
   }
 
 

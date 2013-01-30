@@ -8,7 +8,7 @@
  * See the LICENSE file for more information.
  */
 
-load("urbi/test-suite.u");
+System.requireFile("urbi/test-suite.u");
 
 // For some reason, quit does not work properly on Debian Etch.  Issue
 // #5037.

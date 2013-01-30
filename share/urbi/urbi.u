@@ -106,13 +106,13 @@ if ("ros" in System.Platform.enabledModules && System.env["ROS_ROOT"])
 // UObject.searchPath, which is defined by urbi/uobject.u.
 if (!System.Platform.compilationModeSpace)
 {
+  System.requireFile("urbi/logger.u");
   System.requireFile("urbi/formatter.u");
   System.requireFile("urbi/input-stream.u");
-  System.requireFile("urbi/logger.u");
-  System.requireFile("urbi/process.u");
   System.requireFile("urbi/regexp.u");
 };
 Channel.topLevel.enabled = true |
 System.defaultIsSystem = false |
 // Used by initialization code to detect the end of urbi.u.
 var Object.loaded = true |;
+System.systemFiles = []|;

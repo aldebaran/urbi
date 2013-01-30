@@ -527,39 +527,9 @@ if (System.Platform.isWindows)
       }
       catch {}
     };
-    if (!hasLocalSlot("binsh"))
-      throw Exception.new("cannot find /bin/sh: " + binshs);
+    //if (!hasLocalSlot("binsh"))
+    //  throw Exception.new("cannot find /bin/sh: " + binshs);
 
     var this.count = 1;
-
-    // On Windows, use /bin/sh to please our tests.
-    overrideSlot("system",
-    function (command)
-    {
-      // For some reason I don't understand, the command is
-      // backgrounded on Windows (or by Wine).  So use some stamp file
-      // to mark the end of the command.  This also provides a means
-      // to get the real exit status with Wine.
-      var stamp = Path.new("%s.stamp" % count) |
-      ++count |
-      // As a subshell, not a subcommand ({ %s; }) so that if the
-      // command includes an "exit", then the stamp file is really
-      // created anyway with the right value.
-      command = "( %s ); echo $? >%s" % [command, stamp]|
-
-      // Escape all the quotes and backslashes, and call /bin/sh.
-      var cmd = binsh + " -c \"" |
-      for| (var c: command)
-        cmd += {if (c in ["\\", "\""]) "\\" else ""} + c |
-      cmd += "\"" |
-
-      // Run the command, wait for the stamp.
-      'system$old'(cmd) |
-      while| (!stamp.exists)
-        sleep(20ms)|
-      var res = File.new(stamp).asList()[0].asFloat() |
-      clog << ("system wrapper: " + command + ": " + cmd + ": " + res) |
-      res
-    });
-  }
+   }
 }|;

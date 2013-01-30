@@ -1,7 +1,14 @@
 cmake_minimum_required(VERSION 2.8)
 
+if (CMAKE_BUILD_TYPE STREQUAL Debug)
+  add_definitions(-DURBI_COMPILATION_MODE_DEBUG)
+endif()
+
 qi_create_bin(urbi-launch
-  SRC src/bin/urbi-launch.cc src/liburbi/urbi-root.cc
+  SRC
+    src/bin/urbi-launch.cc
+    src/liburbi/urbi-launch.cc
+    src/liburbi/urbi-root.cc
   DEPENDS port sched serialize
   )
 if (NOT APPLE AND NOT WIN32)
@@ -15,7 +22,10 @@ add_definitions(-DLIBPORT_LIBSFX="")
 add_definitions(-DLIBPORT_LIBDIRNAME="lib")
 add_definitions(-D_USE_MATH_DEFINES)
 
-set(URBI_SRC
+#In case we link to our libjpeg, mark it as static
+add_definitions(-DJPEG_INTERNAL)
+
+set(COMMON_SRC
 src/libuco/details.cc
 src/libuco/local.mk
 src/libuco/uevent.cc
@@ -26,6 +36,16 @@ src/libuco/ustarter.cc
 src/libuco/utable.cc
 src/libuco/uvar-common.cc
 src/libuco/version-check.cc
+src/libuvalue/exit.cc
+src/libuvalue/package-info.cc
+src/libuvalue/ubinary.cc
+src/libuvalue/uimage.cc
+src/libuvalue/ulist.cc
+src/libuvalue/usound.cc
+src/libuvalue/uvalue-common.cc
+)
+
+set(URBI_SRC
 src/liburbi/compatibility.hh
 src/liburbi/compatibility.hxx
 src/liburbi/kernel-version.cc
@@ -38,38 +58,29 @@ src/liburbi/urbi-launch.cc
 src/liburbi/urbi-root.cc
 src/liburbi/usyncclient.cc
 src/liburbi/utag.cc
-src/libuvalue/exit.cc
-src/libuvalue/package-info.cc
-src/libuvalue/ubinary.cc
-src/libuvalue/uimage.cc
-src/libuvalue/ulist.cc
-src/libuvalue/usound.cc
-src/libuvalue/uvalue-common.cc
 )
 
-qi_create_lib(urbi SHARED ${URBI_SRC} DEPENDS port BOOST BOOST_DATE_TIME BOOST_SYSTEM BOOST_THREAD)
 
-set_target_properties(urbi
+qi_create_lib(uco STATIC ${COMMON_SRC})
+set_target_properties(uco
   PROPERTIES
      COMPILE_FLAGS -DBUILDING_URBI_SDK)
+qi_stage_lib(uco)
+
+
+
 
 # Look for system JPEG, use it if found, or use our internal version.
 find_package(JPEG)
 if(JPEG_FOUND)
   message("Using SYSTEM JPEG")
   set(JPEG_INCLUDE_DIRS ${JPEG_INCLUDE_DIR})
-  qi_use_lib(urbi JPEG)
+  set(JPEG_PACKAGE JPEG)
 else()
   message("Using INTERNAL JPEG")
   add_definitions(-DJPEG_INTERNAL)
-  qi_use_lib(urbi QIJPEG)
+  set(JPEG_PACKAGE QIJPEG)
 endif()
-
-if (NOT APPLE AND NOT WIN32)
- qi_use_lib(urbi DL)
-endif()
-
-qi_stage_lib(urbi)
 
 set(UOBJECT_REMOTE_SRC
   src/libuobject/main.cc
@@ -84,13 +95,15 @@ set(UOBJECT_REMOTE_SRC
 qi_create_lib(uobject-remote
   SUBFOLDER gostai/remote
   SHARED
-  DEPENDS port serialize BOOST BOOST_DATE_TIME  BOOST_SYSTEM BOOST_THREAD
-  SRC ${UOBJECT_REMOTE_SRC}
+  DEPENDS uco port serialize ${JPEG_PACKAGE} BOOST BOOST_REGEX BOOST_DATE_TIME  BOOST_SYSTEM BOOST_THREAD
+  SRC ${UOBJECT_REMOTE_SRC} ${URBI_SRC}
 )
 set_target_properties(uobject-remote
   PROPERTIES
      OUTPUT_NAME uobject
      COMPILE_FLAGS -DBUILDING_URBI_SDK)
+
+qi_stage_lib(uobject-remote)
 
 add_subdirectory(src/examples)
 add_subdirectory(include)

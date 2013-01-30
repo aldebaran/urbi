@@ -9,7 +9,6 @@
  */
 
 requireFile("urbi/list.u");
-System.loadLibrary("urbi/stream");
 
 do (InputStream)
 {

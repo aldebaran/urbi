@@ -56,6 +56,7 @@
 #include <urbi/object/symbols.hh>
 #include <object/system.hh>
 #include <object/uvalue.hh>
+#include <object/urbi/logger.hh>
 
 namespace urbi
 {
@@ -95,6 +96,7 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER(Matrix);
     URBI_CXX_OBJECT_REGISTER(Vector);
     URBI_CXX_OBJECT_REGISTER(Subscription);
+
   } // namespace object
 } // namespace urbi
 
