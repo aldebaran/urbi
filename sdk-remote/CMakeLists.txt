@@ -62,9 +62,13 @@ src/liburbi/utag.cc
 
 
 qi_create_lib(uco STATIC ${COMMON_SRC})
+if (UNIX)
+  set (UNIX_FPIC -fPIC)
+endif()
+
 set_target_properties(uco
   PROPERTIES
-     COMPILE_FLAGS -DBUILDING_URBI_SDK)
+     COMPILE_FLAGS "${UNIX_FPIC} -DBUILDING_URBI_SDK")
 qi_stage_lib(uco)
 
 
