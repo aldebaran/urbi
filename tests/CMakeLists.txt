@@ -7,12 +7,15 @@ if (NOT DEFINED TEST_DIRS)
     2.x
     demo
     uob/plug
-    uob/remote
     #uob/java
   )
   qi_add_optional_package(ORTP)
   if (WITH_ORTP)
     list(APPEND TEST_DIRS uob/rtp)
+  endif()
+  # Remote uobject tests require urbi Process class.
+  if (NOT WIN32)
+    list(APPEND TEST_DIRS uob/remote)
   endif()
 endif()
 

@@ -29,7 +29,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/include/urbi)
 add_definitions(-DLIBPORT_LIBSFX="")
 add_definitions(-DLIBPORT_LIBDIRNAME="lib")
 add_definitions(-D_USE_MATH_DEFINES)
-add_definitions(/w)
+#add_definitions(/w)
 
 
 if (HAVE_CUSTOM_BISON)
@@ -331,7 +331,7 @@ sdk-remote/src/liburbi/urbi-launch.cc
 )
 
 if (NOT WIN32)
-  list(ADD UOBJECT_PLUGIN_SRC src/object/urbi/process.cc)
+  list(APPEND UOBJECT_PLUGIN_SRC src/object/urbi/process.cc)
 endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)

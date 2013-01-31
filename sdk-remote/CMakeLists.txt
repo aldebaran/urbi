@@ -103,6 +103,10 @@ set_target_properties(uobject-remote
      OUTPUT_NAME uobject
      COMPILE_FLAGS -DBUILDING_URBI_SDK)
 
+if (NOT APPLE AND NOT WIN32)
+  qi_use_lib(uobject-remote DL)
+endif()
+
 qi_stage_lib(uobject-remote)
 
 add_subdirectory(src/examples)
