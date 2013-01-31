@@ -3,6 +3,18 @@ var outClog = Regexp.new("^\\[[0-9]{8}:clog\\]");
 var objAddr = Regexp.new("(_0x[0-9a-f]{1,12})([^0-9a-f]|$)");
 var disconnecting = Regexp.new("\\*\\*\\* disconnecting Lobby_");
 
+function Object.splitNewline(s)
+{
+  var res = []|
+  var l = s.split("\r\n")|
+  for( var i: l)
+    res += i.split("\r")|
+  l = []|
+  for( var i: res)
+    l += i.split("\n")|
+  l
+};
+
 function splitChk(content)
 {
   var reqs = [];
@@ -121,7 +133,7 @@ function runTest(chkFile)
   var debug = Logger.new("test");
   debug.'<<' = function(x) { this.log(x)};
   //debug.level = Logger.level.Dump;
-  var content = File.new("../tests/" + chkFile).content().data.split("\n");
+  var content = splitNewline(File.new("../tests/" + chkFile).content().data);
   (var reqs, var sin, var sout) = splitChk(content);
   var testu = fetchTestU("../tests/" + chkFile);
   debug << ("input: " + sin);
@@ -173,8 +185,8 @@ function runTest(chkFile)
     {
       if (debugOut)
         lw(s)|
-      for|(var i: s.split("\n"))
-      eout << i |
+      for|(var i: Object.splitNewline(s))
+        eout << i |
       {}
     }
   };
@@ -211,7 +223,7 @@ function runTest(chkFile)
   {
     var l = lc.apply([Lobby]);
     // Redirect its output to effOut
-    l.write = function(s) { for|(var i: s.split("\n")) eout << i | {}};
+    l.write = function(s) { for|(var i: splitNewline(s)) eout << i | {}};
     l.send = function(msg, tag="":String)
     {
       if (tag)
@@ -255,7 +267,7 @@ function runTest(chkFile)
   };
   if (!Object.test_finished.hasLocalSlot(ID))
   {
-    write("EFFECTIVE:\n<< "  +effOut.join("\n<< ") + "\n\n");
+    write("EFFECTIVE:\n<< "  +eout.join("\n<< ") + "\n\n");
     throw "timeout";
   };
   debug << "Done";
