@@ -115,4 +115,3 @@ Channel.topLevel.enabled = true |
 System.defaultIsSystem = false |
 // Used by initialization code to detect the end of urbi.u.
 var Object.loaded = true |;
-System.systemFiles = []|;
