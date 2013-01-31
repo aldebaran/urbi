@@ -16,6 +16,7 @@
 #include <memory>
 #include <sstream>
 
+#include <libport/config.h>
 #include <libport/asio.hh>
 #include <libport/cerrno>
 #include <libport/cstdlib>
@@ -409,6 +410,16 @@ namespace urbi
         .path  (uobject_uobjects_path());
 
       libport::xlt_handle handle;
+#ifdef LIBPORT_COMPILATION_MODE_DEBUG
+      bool found = false;
+      try
+      {
+        handle = dl.open(filename + "_d");
+        found = true;
+      }
+      catch(...) {}
+      if (!found)
+#endif
       try
       {
         handle = dl.open(filename);
