@@ -20,8 +20,6 @@
 #include <sstream>
 #include <stdexcept>
 
-#include <urbi/uclient.hh>
-#include <urbi/uconversion.hh>
 #undef URBI
 #include <urbi/uobject.hh>
 #include <urbi/customuvar.hh>
@@ -168,7 +166,6 @@ public:
        sendEvent, sendEvent2Args, sendNamedEvent);
 
     UBindFunction(all, throwException);
-    UBindFunction(all, socketStats);
     UBindFunction(all, instanciate);
     UBindFunctions(all,
                    area, translate, makeRect, multiTranslate,
@@ -182,7 +179,7 @@ public:
     UBindFunctions(all, setLocale, getLocale);
 
     // Image conversion.
-    UBindFunctions(all, convert, imageDiff, removeAlpha);
+    UBindFunctions(all, imageDiff, removeAlpha);
 
     UBindCacheVar(all, writeLastChangeVal, bool);
     writeLastChangeVal = true;
@@ -207,16 +204,6 @@ public:
   ~all()
   {
     ++destructionCount;
-  }
-
-  urbi::UImage
-  convert(const urbi::UImage source, const std::string& id)
-  {
-    urbi::UImage res;
-    res.make();
-    res.imageFormat = urbi::parse_image_format(id);
-    urbi::convert(source, res);
-    return res;
   }
 
   // Used by MORSE.
@@ -1024,14 +1011,6 @@ public:
       throw "KABOOM";
   }
 
-  std::vector<unsigned long> socketStats()
-  {
-    std::vector<unsigned long> res;
-    if (urbi::UClient* cl = urbi::getDefaultClient())
-      res << cl->bytesSent()
-          << cl->bytesReceived();
-   return res;
-  }
 
   // Test templates UVar.as, UVar.==, UVar.fill
   void manyWriteTest(int i)
