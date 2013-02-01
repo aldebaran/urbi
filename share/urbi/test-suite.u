@@ -335,7 +335,7 @@ do (Location)
 | Range.  |
 `--------*/
 
-class Range : Container
+package lang.Range : Container
 {
   var first;
   var last;
