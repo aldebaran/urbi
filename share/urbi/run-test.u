@@ -1,6 +1,7 @@
 var errBacktrace = Regexp.new("^\\[[0-9]{8}:(error|warning)\\] \\!\\!\\!    called from")|;
 var outClog = Regexp.new("^\\[[0-9]{8}:clog\\]");
 var objAddr = Regexp.new("(_0x[0-9a-f]{1,12})([^0-9a-f]|$)");
+var objAddr2 = Regexp.new("(uob_[0-9a-f]{1,12})([^0-9a-f]|$)");
 var disconnecting = Regexp.new("\\*\\*\\* disconnecting Lobby_");
 
 function Object.splitNewline(s)
@@ -284,6 +285,8 @@ function runTest(chkFile)
   effOut = effOut.map(closure(l) {
       while (objAddr.match(l))
         l = l.replace(objAddr.matches[1], "_0xADDR")|
+      while (objAddr2.match(l))
+        l = l.replace(objAddr2.matches[1], "uob_0xADDR")|
       if (rExpecting.match(l))
         l = l.replace(rExpecting.matches[1], "")|
       l
