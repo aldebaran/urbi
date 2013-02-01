@@ -150,10 +150,10 @@ namespace kernel
 
   UServer::UServer(UrbiRoot& urbi_root)
     : mode_(mode_kernel)
-    , search_path(boost::assign::list_of
-                  (std::string(libport::xgetenv("URBI_PATH")))
-                  (urbi_root.share_dir()),
-                  ":")
+    //, search_path(boost::assign::list_of
+    //              (std::string(libport::xgetenv("URBI_PATH")))
+    //              (urbi_root.share_dir()),
+    //              ":")
     , opt_banner_(true)
     , fast_async_jobs_start_(false)
     , scheduler_(new sched::Scheduler(boost::bind(&UServer::getTime,
@@ -165,6 +165,9 @@ namespace kernel
     , urbi_root_(urbi_root)
     , return_value_(EX_OK)
   {
+    GD_INFO_TRACE("Entering UServer constructor.");
+    search_path.push_back(std::string(libport::xgetenv("URBI_PATH")), ":");
+    search_path.push_back(urbi_root.share_dir());
     // Add the path we need to work from cmake build dir.
     search_path.push_back(libport::path(urbi_root.root() + "/../../share"));
     search_path.push_back(libport::path(urbi_root.root() + "/../share"));
