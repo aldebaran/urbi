@@ -34,6 +34,7 @@ set(BLACKLIST
   2_x_lobby_chk #fail due to new test infrastructure
   uob_plug_issue-3699_chk #output is lost by new test suite
   uob_plug_all_transmit_chk #use setLocale, might not be present on buildslave
+  uob_plug_all_image-conversion_chk # all can no longuer depend on liburbi, to be fixed
   uob_remote_all_transmit_chk
   )
 
