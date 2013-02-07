@@ -109,7 +109,7 @@ static const std::string
 #else
   libext =    APPLE_LINUX_WINDOWS(".dylib", ".so", ".dll"),
 #endif
-  libpfx =    APPLE_LINUX_WINDOWS("li", "lib", ""),
+  libpfx =    APPLE_LINUX_WINDOWS("lib", "lib", ""),
   libdir =    APPLE_LINUX_WINDOWS("lib", "lib", "bin");
 
 const char separator = APPLE_LINUX_WINDOWS('/', '/', '\\');
