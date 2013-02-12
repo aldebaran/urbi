@@ -69,6 +69,14 @@ namespace runner
     delete parser_;
   }
 
+#ifdef SHELL_EXCEPTION_WORKAROUND
+   static object::rObject wrap_eval(Shell* ptr, const ast::Exp* exp)
+   {
+     object::rObject result = eval::ast(*ptr, exp);
+     return result;
+   }
+#endif
+
   void
   Shell::eval_print_(const ast::Exp* exp)
   {
@@ -83,7 +91,11 @@ namespace runner
 
     try
     {
+#ifdef SHELL_EXCEPTION_WORKAROUND
+      object::rObject res = wrap_eval(this, exp);
+#else
       object::rObject res = eval::ast(*this, exp);
+#endif
 
       // We need to keep checking for void here because it
       // cannot be passed to the << function.

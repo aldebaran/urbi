@@ -330,6 +330,10 @@ sdk-remote/src/liburbi/urbi-root.cc
 sdk-remote/src/liburbi/urbi-launch.cc
 )
 
+if (APPLE)
+  add_definitions(-DSHELL_EXCEPTION_WORKAROUND)
+endif()
+
 if (NOT WIN32)
   list(APPEND UOBJECT_PLUGIN_SRC src/object/urbi/process.cc)
 endif()
