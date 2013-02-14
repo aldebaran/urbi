@@ -94,6 +94,7 @@ qi_create_lib(uobject-remote
 set_target_properties(uobject-remote
   PROPERTIES
      OUTPUT_NAME uobject
+     INSTALL_NAME_DIR "@executable_path/../lib/gostai/engine"
      COMPILE_FLAGS -DBUILDING_URBI_SDK)
 
 if (NOT APPLE AND NOT WIN32)

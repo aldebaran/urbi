@@ -386,6 +386,7 @@ qi_create_lib(uobject
 set_target_properties(uobject
   PROPERTIES
      OUTPUT_NAME uobject
+     INSTALL_NAME_DIR "@executable_path/../lib/gostai/engine"
      COMPILE_FLAGS -DBUILDING_URBI_SDK)
 
 
