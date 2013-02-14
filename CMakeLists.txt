@@ -3,6 +3,9 @@ project(kernel)
 
 find_package(qibuild)
 
+qi_sanitize_compile_flags(HIDDEN_SYMBOLS)
+
+
 #find python
 find_program(_python_executable
     NAMES python2 python python.exe
@@ -330,8 +333,31 @@ sdk-remote/src/liburbi/urbi-root.cc
 sdk-remote/src/liburbi/urbi-launch.cc
 )
 
+
+set(UCO_SRC
+sdk-remote/src/libuco/details.cc
+sdk-remote/src/libuco/local.mk
+sdk-remote/src/libuco/uevent.cc
+sdk-remote/src/libuco/uobject-common.cc
+sdk-remote/src/libuco/uobject-hub-common.cc
+sdk-remote/src/libuco/uprop.cc
+sdk-remote/src/libuco/ustarter.cc
+sdk-remote/src/libuco/utable.cc
+sdk-remote/src/libuco/uvar-common.cc
+sdk-remote/src/libuco/version-check.cc
+sdk-remote/src/libuvalue/exit.cc
+sdk-remote/src/libuvalue/package-info.cc
+sdk-remote/src/libuvalue/ubinary.cc
+sdk-remote/src/libuvalue/uimage.cc
+sdk-remote/src/libuvalue/ulist.cc
+sdk-remote/src/libuvalue/usound.cc
+sdk-remote/src/libuvalue/uvalue-common.cc
+)
+
+
 if (APPLE)
-  add_definitions(-DSHELL_EXCEPTION_WORKAROUND)
+  # Workaround clang bug http://llvm.org/bugs/show_bug.cgi?id=14116
+  set(CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG -O1")
 endif()
 
 if (NOT WIN32)
@@ -354,8 +380,8 @@ add_definitions(-DBUILDING_URBI_SDK -DBUILDING_URBI_MODULE)
 qi_create_lib(uobject
   SHARED
   SUBFOLDER gostai/engine
-  DEPENDS uco port sched serialize BOOST BOOST_REGEX BOOST_SIGNALS BOOST_FILESYSTEM BOOST_DATE_TIME  BOOST_SYSTEM BOOST_THREAD
-  SRC ${UOBJECT_PLUGIN_SRC}
+  DEPENDS port sched serialize BOOST BOOST_REGEX BOOST_SIGNALS BOOST_FILESYSTEM BOOST_DATE_TIME  BOOST_SYSTEM BOOST_THREAD
+  SRC ${UCO_SRC} ${UOBJECT_PLUGIN_SRC}
 )
 set_target_properties(uobject
   PROPERTIES

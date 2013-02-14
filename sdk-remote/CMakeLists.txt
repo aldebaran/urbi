@@ -61,17 +61,6 @@ src/liburbi/utag.cc
 )
 
 
-qi_create_lib(uco STATIC ${COMMON_SRC})
-if (UNIX)
-  set (UNIX_FPIC -fPIC)
-endif()
-
-set_target_properties(uco
-  PROPERTIES
-     COMPILE_FLAGS "${UNIX_FPIC} -DBUILDING_URBI_SDK")
-qi_stage_lib(uco)
-
-
 
 
 # Look for system JPEG, use it if found, or use our internal version.
@@ -99,8 +88,8 @@ set(UOBJECT_REMOTE_SRC
 qi_create_lib(uobject-remote
   SUBFOLDER gostai/remote
   SHARED
-  DEPENDS uco port serialize ${JPEG_PACKAGE} BOOST BOOST_REGEX BOOST_DATE_TIME  BOOST_SYSTEM BOOST_THREAD
-  SRC ${UOBJECT_REMOTE_SRC} ${URBI_SRC}
+  DEPENDS port serialize ${JPEG_PACKAGE} BOOST BOOST_REGEX BOOST_DATE_TIME  BOOST_SYSTEM BOOST_THREAD
+  SRC ${COMMON_SRC} ${UOBJECT_REMOTE_SRC} ${URBI_SRC}
 )
 set_target_properties(uobject-remote
   PROPERTIES
