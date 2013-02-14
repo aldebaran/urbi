@@ -1118,6 +1118,13 @@ namespace eval
     pabort("Unreachable");
   }
 
+#ifdef SHELL_EXCEPTION_WORKAROUND
+static rObject ast_call(Job& job, const ast::Ast* e)
+{
+  rObject res = ast(job, e);
+  return res;
+}
+#endif
 
   LIBPORT_SPEED_ALWAYS_INLINE rObject
   Visitor::visit(const ast::Try* e)
@@ -1127,7 +1134,11 @@ namespace eval
     object::rObject res;
     try
     {
+#ifdef SHELL_EXCEPTION_WORKAROUND
+      res = ast_call(this_, e->body_get().get());
+#else
       res = ast(this_, e->body_get().get());
+#endif
     }
     catch (object::UrbiException& exn)
     {
@@ -1354,3 +1365,7 @@ namespace ast
 
 #undef INVALID
 } // namespace ast
+
+#ifdef SHELL_EXCEPTION_WORKAROUND
+#include <eval/ast.hxx>
+#endif

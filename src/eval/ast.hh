@@ -20,19 +20,25 @@
 # include <eval/action.hh>
 # include <urbi/runner/fwd.hh>
 
+#ifdef SHELL_EXCEPTION_WORKAROUND
+# define INLINE_AST_FUNCS
+#else
+# define INLINE_AST_FUNCS ATTRIBUTE_ALWAYS_INLINE
+# endif
 namespace eval
 {
-  ATTRIBUTE_ALWAYS_INLINE
+  INLINE_AST_FUNCS
   rObject ast_context(Job& job, const ast::Ast* e, rObject self);
 
-  ATTRIBUTE_ALWAYS_INLINE
+  INLINE_AST_FUNCS
   rObject ast(Job& job, ast::rConstAst ast);
 
-  ATTRIBUTE_ALWAYS_INLINE
+  INLINE_AST_FUNCS
   Action  ast(ast::rConstAst ast);
 
 } // namespace eval
-
+#ifndef SHELL_EXCEPTION_WORKAROUND
 # include <eval/ast.hxx>
+#endif
 
 #endif // ! EVAL_AST_HH
