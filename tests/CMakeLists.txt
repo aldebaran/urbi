@@ -70,3 +70,18 @@ FOREACH(infileName ${tests})
     qi_add_test(${_out2} urbi-launch ARGUMENTS -s -- ${_fast} --host 127.0.0.1 --port 0 urbi/run-test.u ${infileName} TIMEOUT 60)
   endif()
 ENDFOREACH(infileName)
+
+#doc tests
+FILE(GLOB_RECURSE doctex RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/../doc ../doc/*.tex)
+MESSAGE("Got ${doctex}")
+FOREACH(infileName ${doctex})
+  # Check if there is something
+  string(REPLACE "." "_" _out ${infileName})
+  string(REPLACE "/" "_" _out2 ${_out})
+  file(READ ../doc/${infileName} _fcontent)
+  string(FIND "${_fcontent}" "begin{urbi" _found)
+  if (${_found} GREATER -1)
+    #MESSAGE("adding  ${infileName} ${_out} ${_out2} ")
+    qi_add_test(${_out2} urbi-launch ARGUMENTS -s --  --host 127.0.0.1 --port 0 urbi/run-test.u ${infileName} TIMEOUT 60)
+  endif()
+ENDFOREACH(infileName)

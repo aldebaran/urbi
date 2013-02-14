@@ -3,7 +3,8 @@ var outClog = Regexp.new("^\\[[0-9]{8}:clog\\]");
 var objAddr = Regexp.new("(_0x[0-9a-f]{1,12})([^0-9a-f]|$)");
 var objAddr2 = Regexp.new("(uob_[0-9a-f]{2,12})([^0-9a-f]|$)");
 var disconnecting = Regexp.new("\\*\\*\\* disconnecting Lobby_");
-
+var timestamp = Regexp.new("^\\[[0-9]{8}");
+var errorLocation = Regexp.new("[0-9]+\\.[0-9]+(-[0-9]+)?: ");
 function Object.splitNewline(s)
 {
   var res = []|
@@ -16,6 +17,66 @@ function Object.splitNewline(s)
   l
 };
 
+function tex2Chk(filename)
+{
+  var content = File.new(filename).content.data.split("\n");
+  /*
+  What to expect:
+  \begin{urbiscript}
+  \begin{urbiscript}[firstnumber=1]
+  \begin{urbiscript}[otherstuff]
+  \begin{urbiassert}
+  \begin{urbiassert}[firstnumber=1]
+  corresponding end
+  */
+  var rBegin = Regexp.new("^\\\\begin\\{(urbiscript|urbiassert|urbicomment)\\}(\\[firstnumber=1\\])?");
+  var rEnd = Regexp.new("^\\\\end\\{(urbiscript|urbiassert|urbicomment)\\}");
+  var chk = [];
+  var isIn = false;
+  var isAssert = false;
+  var res = [];
+  function flush()
+  {
+    if (!chk.empty)
+      res << (["//#line 1"] + chk)| // no file name for those tests
+    chk = []
+  };
+  for| (var l: content)
+  {
+    if (!isIn)
+    {
+      if (rBegin.match(l))
+      {
+        isIn = true;
+        if (!rBegin.matches[2].empty)
+          flush();
+        isAssert = (rBegin.matches[1] == "urbiassert");
+        if (isAssert)
+          chk << "assert {";
+      }
+    }
+    else
+    {
+      if (rEnd.match(l))
+      {
+        isIn = false;
+        if (isAssert)
+          chk << "};"
+      }
+      else
+        chk << l
+    }
+  }|
+  flush() |
+  res
+}|;
+
+/* test tex2Chk
+var t = tex2Chk(System.arguments[0]);
+echo(t.map(function(x) { x.join("\n");}).join("\n---------------\n"));
+System._exit(0);
+*/
+
 function splitChk(content)
 {
   var reqs = [];
@@ -23,9 +84,13 @@ function splitChk(content)
   var sout = [];
   var rOutput = Regexp.new("^\\[[0-9]{8}(:[a-zA-Z0-9_]+)?\\]");
   var rVarError = Regexp.new("!!! input.u:@([+-]?[0-9]+)?\\.[0-9]+(-@([+-]?[0-9]+))?");
-  var rOutputCont = Regexp.new("^\\[:]");
+  var rOutputCont = Regexp.new("^\\[:] +");
   var rDirective = Regexp.new("^//#");
+  var ignoreStrings = [
+    "[     Logger     ]"
+  ];
   var line = 1;
+  var skipNext = false;
   for (var l: content)
   {
     if (rDirective.match(l))
@@ -33,8 +98,13 @@ function splitChk(content)
       reqs << l[3, 0].trim().split(" ");
       echo("Adding directive " + reqs[-1]);
     };
+    if (skipNext)
+    {
+      skipNext = false;
+      ++line;
+    }
     // Leave directive go in the file
-    if (errBacktrace.match(l))
+    else if (errBacktrace.match(l))
     {
       sin << "";
       ++line;
@@ -58,10 +128,20 @@ function splitChk(content)
       {
         l = l.replace(objAddr.matches[1], "_0xADDR");
       };
+      if (l[-1] == "\\")
+      {
+        var next = content[line];
+        if (rOutputCont.match(next))
+          next = next.replace(rOutputCont.matches[0], "");
+        l = l[0,-1] + next;
+       skipNext = true;
+      };
       sout << ("[00000000" + l[9, 0]);
       sin << "";
       ++line;
     }
+    else if (ignoreStrings.any(function(x) { l.find(x) != -1}))
+    {}
     else if (rOutputCont.match(l))
     {
       if (l.size == 3)
@@ -128,15 +208,36 @@ function startRemote(names)
 
 function runTest(chkFile)
 {
+  if (Path.new("../tests/" + chkFile).exists())
+  {
+    var content = splitNewline(File.new("../tests/" + chkFile).content().data);
+    runTestContent("../tests/" + chkFile, content);
+  }
+  else if (Path.new("../doc/" + chkFile).exists())
+  {
+    var ok = true;
+    var tests = tex2Chk("../doc/" + chkFile);
+    var i = 0;
+    for (var t: tests)
+    {
+      ok = ok && runTestContent("../doc/" + chkFile + "_" + i.asString(), t);
+      i++;
+    }|
+    ok
+  }
+  else throw ("Test " + chkFile + " not found")
+}|;
+
+function runTestContent(chkFile, content)
+{
   var processes = [];
   // Tests are run in build dir
   System.setenv("URBI_SHARE", (System.urbiRoot / "../../share").asString());
   var debug = Logger.new("test");
   debug.'<<' = function(x) { this.log(x)};
   //debug.level = Logger.level.Dump;
-  var content = splitNewline(File.new("../tests/" + chkFile).content().data);
   (var reqs, var sin, var sout) = splitChk(content);
-  var testu = fetchTestU("../tests/" + chkFile);
+  var testu = fetchTestU(chkFile);
   debug << ("input: " + sin);
   debug << ("expected output: " + sout);
   debug << "Creating lobby...";
@@ -251,7 +352,10 @@ function runTest(chkFile)
   l.receive("var Object.test_finished." + ID + "=1|;\n");
   debug << "Waiting for test to finish...";
   // In fast mode, time of timeout is inpacted too
-  timeout(1h) waituntil(Object.test_finished.hasLocalSlot(ID));
+  var waitFor = 1h;
+  if (System.env["PASS_THROUGH"])
+    waitFor = 5s;
+  timeout(waitFor) waituntil(Object.test_finished.hasLocalSlot(ID));
   Lobby.write->constant = false;
   Lobby.send->constant = false;
   Lobby.write = lw;
@@ -266,7 +370,7 @@ function runTest(chkFile)
     //write(p.stderr.content());
     write("\nEND REMOTE\n");
   };
-  if (!Object.test_finished.hasLocalSlot(ID))
+  if (!Object.test_finished.hasLocalSlot(ID)&& !System.env["PASS_THROUGH"])
   {
     write("EFFECTIVE:\n<< "  +eout.join("\n<< ") + "\n\n");
     throw "timeout";
@@ -296,6 +400,8 @@ function runTest(chkFile)
   // Compare expected and effective
   // Some additional changes may be required, go line by line
   var failed = effOut.size != sout.size;
+  if (failed)
+    debug << ("SIZE MISMATCH %s %s" % [effOut.size, sout.size]);
   var line = 0;
   while (!failed && line < effOut.size)
   {
@@ -315,18 +421,48 @@ function runTest(chkFile)
             eff = eff.replace(rDouble.matches[0], "<TIMESTAMP>")
         }
       };
-      failed = (eff != exp)
+      // Somehow we still need a layer of timestamp removal
+      if (timestamp.match(eff) && timestamp.match(exp))
+      {
+        eff[0,9] = "[00000000"|
+        exp[0,9] = "[00000000"|
+        //eff = eff[9,0]|
+        //exp = exp[9,0]
+      };
+      if (eff != exp)
+      {
+        // Some error message in exp lacks a line number, mostly in doc
+        // for better readability and maintainability
+        if (errorLocation.match(eff))
+        {
+          var m = errorLocation.matches[0]|
+          var p = eff.find(m)|
+          eff[p, p+m.length] = ""|
+          //var remove = eff.replace(errorLocation.matches[0], "")|
+          //if (remove == exp)
+          //  eff = remove
+        }
+      }|
+      failed = (eff != exp)|
+      /*if (failed)
+      {
+        debug << "FAIL " << eff|
+        debug << "FAIL " << exp
+      }*/
     };
     ++line;
   };
   if (failed)
   {
-    write("SOURCE:\n" + content.join("\n") + "\n\n");
-    write("INPUT:\n" + sin.join("\n") + "\n");
-    write("RAW EFFECTIVE:\n" + rawEffOut.join("\n<< ") + "\n\n");
-    write("EXPECTED:\n>> " + sout.join("\n>> ") + "\n\n");
-    write("EFFECTIVE:\n<< "  +effOut.join("\n<< ") + "\n\n");
-    write("\n");
+    if (!System.env["QUIET"])
+    {
+      write("SOURCE:\n" + content.join("\n") + "\n\n");
+      write("INPUT:\n" + sin.join("\n") + "\n");
+      write("RAW EFFECTIVE:\n" + rawEffOut.join("\n<< ") + "\n\n");
+      write("EXPECTED:\n>> " + sout.join("\n>> ") + "\n\n");
+      write("EFFECTIVE:\n<< "  +effOut.join("\n<< ") + "\n\n");
+      write("\n");
+    };
     if (System.getenv("DUMP_TEST_RESULT"))
     {
       OutputStream.new(File.create("/tmp/out.exp")) << sout.join("\n");

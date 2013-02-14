@@ -150,7 +150,7 @@ for (var i : [0, 1, 2])
     break
 }|
 jobs;
-[00009120] [Job<shell_11>, Job<shell_12>, Job<shell_13>]
+[00009120] [Job<shell_6>, Job<shell_7>, Job<shell_8>]
 // Wait for the jobs to be done.
 jobs.each (function (var j) { j.waitForTermination });
 assert (res == [0, 1, 0, 2, 1, 2]);
@@ -166,7 +166,7 @@ for (var i : [0, 1, 2])
     break
 }|
 jobs;
-[00009120] [Job<shell_14>, Job<shell_15>, Job<shell_16>]
+[00009120] [Job<shell_9>, Job<shell_10>, Job<shell_11>]
 // Give some time to get the output of the detached expressions.
 sleep(100ms);
 assert (res == [0, 1, 0]);
