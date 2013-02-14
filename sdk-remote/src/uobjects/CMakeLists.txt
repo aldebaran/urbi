@@ -4,9 +4,20 @@ function(uobject name path)
   qi_create_lib( ${name}
     SHARED
     SUBFOLDER gostai/uobjects/${path}
-    DEPENDS uobject-remote
     SRC ${ARGN}
   )
+  # Apple default to no unresolved,
+  # but stores library path which will not do with uobject
+  if (APPLE)
+    set_target_properties(${name}
+      PROPERTIES
+        LINK_FLAGS "-undefined dynamic_lookup"
+    )
+  endif()
+  # Win32 does not allow unresolved, but just uses lib name not path
+  if (WIN32)
+    qi_use_lib(${name} uobject-remote)
+  endif()
   set_target_properties( ${name}
     PROPERTIES
       PREFIX ""
