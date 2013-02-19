@@ -114,7 +114,7 @@ there are trailing items, the whole line is treated as a comment.
 \subsection{Identifiers}
 \label{sec:lang:id}
 
-\grammar{identifier-end}
+%% \grammar{identifier-end}
 
 \dfn{Identifiers} in \us are composed of one or more alphanumeric or
 underscore (\lstinline|_|) characters, not starting by a digit.
@@ -204,7 +204,7 @@ Math.pi == 200grad;
 \subsubsection{Dictionaries}
 \label{sec:lang:dictionary}
 
-\grammar{dictionary-literal}
+
 
 Literal \dfn{dictionaries} are represented with a comma-separated,
 potentially empty list of arbitrary associations enclosed in square brackets
@@ -396,7 +396,7 @@ _0__2;
 \subsubsection{Lists}
 \label{sec:lang:list}
 
-\grammar{list-literal}
+
 
 Literal \dfn{lists} are represented with a comma-separated, potentially
 empty list of arbitrary expressions enclosed in square brackets
@@ -548,7 +548,7 @@ parenthesized expression, the extra comma must be added.  See
 Objects meant to serve as prototypes are best defined using the
 \lstindexMain{class} construct.  See also the tutorial, \autoref{sec:tut:class}.
 
-\grammar{class-exp, lvalue-end, block-exp}
+
 
 This results in the (constant) definition of the name \var{lvalue} in the
 current context (\lstinline{class} construct can be used inside a scope or
@@ -909,7 +909,7 @@ provide them.
 \subsubsection{Arithmetic operators}
 \label{sec:lang:op:arith}
 
-\grammar{arithmetic-exp}
+
 
 \us supports classic \dfn{arithmetic operators}, with the classic semantics
 on numeric values. See \autoref{tab:arith} and the listing below.
@@ -939,7 +939,7 @@ on numeric values. See \autoref{tab:arith} and the listing below.
 \subsubsection{Assignment operators}
 \label{sec:lang:op:ass}
 
-\grammar{assign-exp}
+
 
 \dfn{Assignment} in \us can be performed with the \lstinline|=| operator.
 Assignment operators, such as \lstinline|+=|, are supported too, see
@@ -1293,7 +1293,7 @@ values.
 \subsubsection{Comparison operators}
 \label{sec:lang:op:comparison}
 
-\grammar{comparison-exp}
+
 
 \us supports classical \dfn{comparison operators}, plus a few of its
 own. See \autoref{tab:comparison} and the listing below.
@@ -1421,7 +1421,7 @@ var s = "abcdef";
 These core operators provide access to slots and their properties. See
 \autoref{tab:operators:object}.
 
-\grammar{getslot-exp,property-exp}
+
 
 \begin{operatorTable}{tab:operators:object}{Object operators}
   \operatordot\\\operatordota
@@ -1599,7 +1599,7 @@ floats and strings, and can be handled as such.  This is different from most
 \langC-like languages.  The syntax to declare named or \dfn{anonymous
   functions} is a follows:
 
-\grammar{function-end, block-exp, return-stm}
+
 
 In words: One can create an anonymous function thanks to the
 \lstindexMain{function} keyword (or \lstindexMain{closure}, see
@@ -2094,8 +2094,8 @@ There is some syntactic sugar for slot methods:
 
 \subsection{Properties}
 \label{sec:lang:prop}
+\label{sec:lang:prop:std}
 
-\grammar{property-exp}
 
 Slots can have properties, see \autoref{sec:tut:prop} for an introduction to
 properties.
@@ -2720,7 +2720,7 @@ expression.  In some programming languages it is also named
 \lstinline{with}.  It is a convenient means to avoid repeating the same
 target several times.
 
-\grammar{do-exp}
+
 
 It evaluates the \var{block}, with \this denoting the value of the
 \var{expression}, as shown below.  The whole construct evaluates to the
@@ -2739,7 +2739,7 @@ do (1024)
 
 \subsection{\lstinline{for}}
 \label{sec:lang:for}
-\grammar{forc-stm,foreach-stm,forn-stm}
+
 
 There are several kinds of \lstindexMain{for} loops:
 \begin{description}
@@ -2761,7 +2761,7 @@ Besides each kind of \lstinline{for} support several flavors; see
 
 \us support the classical \langC-like \lstinline{for} construct.
 
-\grammar{forc-stm}
+
 
 It has the exact same behavior as \langC's \lstinline{for}.  Using the
 following names:
@@ -2863,7 +2863,7 @@ expense of being selfish: no other piece of code may interleave.
 \lstinline{for} loop.  This is called \dfn{foreach loops} in some
 programming languages.
 
-\grammar{foreach-stm}
+
 
 There are two (sequential) flavors: \lstinline{for;} (the default) and
 \lstinline{for|}.
@@ -2936,7 +2936,7 @@ loop index is not available within the body, \lstinline|for (n)| is
 equivalent to \lstinline|for (var i: n)|.  It supports the same flavors:
 \lstinline|for;| (default), \lstinline{for|}, and \lstinline|for&|.
 
-\grammar{forn-stm}
+
 
 The loop evaluates to \lstinline{void}.
 
@@ -2981,7 +2981,7 @@ the argument needs not being an integer, any iterable value can be used.
 As in most programming languages, conditionals are expressed with
 \lstindexMain{if}.
 
-\grammar{if-stm,else-clause}
+
 
 First the condition (\var{statements}) is evaluated; if it evaluates to a
 value which is true (\autoref{sec:truth}), evaluate the \dfn{then-clause}
@@ -3042,7 +3042,7 @@ visible in both the then-clause and the else-clause, but do not escape the
 Endless loops can be created with \lstindexMain{loop}, which is equivalent to
 \lstinline|while (true)|.  The loop evaluates to \lstinline{void}.
 
-\grammar{loop-stm}
+
 
 There are two flavors: \lstinline{loop;} (default) and \lstinline{loop|}.
 
@@ -3151,7 +3151,7 @@ sw("foobar");
 \subsection{\lstinline{while}}
 \label{sec:lang:while}
 
-\grammar{while-stm}
+
 
 The \lstindexMain{while} loop is similar to \langC's one.
 
@@ -3296,7 +3296,7 @@ outer();
 Exceptions are \dfn[exception!catching]{caught} with the
 \lstinline{try}/\lstinline{catch} construct. Its syntax is as follows:
 
-\grammar{try-stm,catch-clause,else-clause,finally-clause,block-exp}
+
 
 It consists of a first block of statements (the \dfn{try-block}), from which
 we want to catch exceptions, and one or more catch clauses to stop the
@@ -3610,7 +3610,7 @@ finally { throw "finally" };
 \section{Assertions}
 \label{sec:lang:assert}
 
-\grammar{assert-exp}
+
 
 \dfn[assertion]{Assertions} allow to embed consistency checks in the code.
 They are particularly useful when developing a program since they allow
@@ -3744,7 +3744,7 @@ of traditional imperative constructs.
 To provide control over concurrent jobs, \us uses \refObject[Tag]{Tags}.  To
 put some statement under the control of a tag, the syntax is as follows:
 
-\grammar{tag-stm}
+
 
 The \var{expression} that controls the \var{statement} must evaluate to a
 \refObject{Tag}.
@@ -3860,7 +3860,7 @@ every (1s) { echo (2 / t); --t };
 
 It exists in several flavors, with the same syntax:
 
-\grammar{every-stm}
+
 
 \subsubsection{\lstinline{every;}}
 \label{sec:lang:every:semi}
@@ -4105,7 +4105,7 @@ The \lstinline{timeout} construct allows to interrupt a piece of code that
 took too long to run.  Its syntax is based on the
 \lstinline{try}/\lstinline{catch} construct (\autoref{sec:lang:catch}).
 
-\grammar{timeout-stm,catchall-clause,else-clause,finally-clause,block-exp}
+
 
 If the statement finishes its expiration before \var{duration} expires, then
 the optional \lstinline{else}-clause is run.  Otherwise, if \var{duration}
@@ -4294,7 +4294,7 @@ removeSlots("i");
 Using the \lstindexMain{at} construct, one can arm code that will be
 triggered each time some condition is true.
 
-\grammar{at-stm}
+
 
 There are two different kinds of \lstinline{at} statements, depending on the
 type of the ``condition'':
@@ -4779,7 +4779,7 @@ to \lstinline{waituntil}.
 \subsection{\lstinline{watch}}
 \label{sec:lang:watch}
 
-\grammar{watch-exp}
+
 
 The \lstindexMain{watch} construct is similar in spirit to using the
 \lstinline{at} construct to monitor expressions, except it enables you to be
