@@ -377,7 +377,6 @@ namespace urbi
             "vector: incorrect binary size");
       Target res(v.binary->common.size / elemSize);
       memcpy(&res(0), v.binary->common.data, v.binary->common.size);
-      GD_FINFO_DEBUG("made a Vector: %s", res);
       return res;
     }
   };
