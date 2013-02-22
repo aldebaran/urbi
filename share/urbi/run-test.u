@@ -35,10 +35,11 @@ function tex2Chk(filename)
   var isIn = false;
   var isAssert = false;
   var res = [];
+  var lineStart = 1;
   function flush()
   {
     if (!chk.empty)
-      res << (["//#line 1"] + chk)| // no file name for those tests
+      res << chk| // no file name for those tests
     chk = []
   };
   for| (var l: content)
@@ -51,6 +52,7 @@ function tex2Chk(filename)
         if (!rBegin.matches[2].empty)
           flush();
         isAssert = (rBegin.matches[1] == "urbiassert");
+        chk << "//#line %s" % (lineStart+1);
         if (isAssert)
           chk << "assert {";
       }
@@ -65,7 +67,8 @@ function tex2Chk(filename)
       }
       else
         chk << l
-    }
+    };
+    lineStart ++;
   }|
   flush() |
   res
@@ -84,7 +87,7 @@ function splitChk(content)
   var sout = [];
   var rOutput = Regexp.new("^\\[[0-9]{8}(:[a-zA-Z0-9_]+)?\\]");
   var rVarError = Regexp.new("!!! input.u:@([+-]?[0-9]+)?\\.[0-9]+(-@([+-]?[0-9]+))?");
-  var rOutputCont = Regexp.new("^\\[:] +");
+  var rOutputCont = Regexp.new("^\\[:]");
   var rDirective = Regexp.new("^//#");
   var ignoreStrings = [
     "[     Logger     ]"
