@@ -57,7 +57,7 @@
 #include <parser/fwd.hh>
 
 /* Line 146 of lalr1.cc  */
-#line 200 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 198 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
 
 #include <ast/flavor.hh>
 
@@ -422,97 +422,95 @@ namespace yy {
      TOK_LBRACE = 277,
      TOK_LBRACKET = 278,
      TOK_LPAREN = 279,
-     TOK_LVECTOR = 280,
-     TOK_RVECTOR = 281,
-     TOK_ONLEAVE = 282,
-     TOK_POINT = 283,
-     TOK_RBRACE = 284,
-     TOK_RBRACKET = 285,
-     TOK_RETURN = 286,
-     TOK_RPAREN = 287,
-     TOK_STOPIF = 288,
-     TOK_SWITCH = 289,
-     TOK_THROW = 290,
-     TOK_TILDA = 291,
-     TOK_TIMEOUT = 292,
-     TOK_TRY = 293,
-     TOK_VAR = 294,
-     TOK_WAITUNTIL = 295,
-     TOK_WATCH = 296,
-     TOK_WHENEVER = 297,
-     TOK_COMMA = 298,
-     TOK_SEMICOLON = 299,
-     TOK_AMPERSAND = 300,
-     TOK_PIPE = 301,
-     TOK_EVERY = 302,
-     TOK_FOR = 303,
-     TOK_LOOP = 304,
-     TOK_WHILE = 305,
-     TOK_AT = 306,
-     TOK_IDENTIFIER = 307,
-     TOK_ASSIGN = 308,
-     TOK_EMPTY = 309,
-     TOK_UNARY = 310,
-     TOK_PRIVATE = 311,
-     TOK_PROTECTED = 312,
-     TOK_PUBLIC = 313,
-     TOK_CLASS = 314,
-     TOK_PACKAGE = 315,
-     TOK_ENUM = 316,
-     TOK_EXTERNAL = 317,
-     TOK_IMPORT = 318,
-     TOK_CARET_EQ = 319,
-     TOK_MINUS_EQ = 320,
-     TOK_PERCENT_EQ = 321,
-     TOK_PLUS_EQ = 322,
-     TOK_SLASH_EQ = 323,
-     TOK_STAR_EQ = 324,
-     TOK_MINUS_MINUS = 325,
-     TOK_PLUS_PLUS = 326,
-     TOK_MINUS_GT = 327,
-     TOK_DO = 328,
-     TOK_ASSERT = 329,
-     TOK_DETACH = 330,
-     TOK_DISOWN = 331,
-     TOK_NEW = 332,
-     TOK_ANGLE = 333,
-     TOK_DURATION = 334,
-     TOK_FLOAT = 335,
-     TOK_EQ_GT = 336,
-     TOK_STRING = 337,
-     TOK_QUEST_MARK = 338,
-     TOK_CALL = 339,
-     TOK_THIS = 340,
-     TOK_BANG = 341,
-     TOK_BITAND = 342,
-     TOK_BITOR = 343,
-     TOK_CARET = 344,
-     TOK_COMPL = 345,
-     TOK_GT_GT = 346,
-     TOK_LT_LT = 347,
-     TOK_MINUS = 348,
-     TOK_PERCENT = 349,
-     TOK_PLUS = 350,
-     TOK_SLASH = 351,
-     TOK_STAR = 352,
-     TOK_STAR_STAR = 353,
-     TOK_EQ_TILDA_EQ = 354,
-     TOK_EQ_EQ = 355,
-     TOK_EQ_EQ_EQ = 356,
-     TOK_GT_EQ = 357,
-     TOK_GT = 358,
-     TOK_LT_EQ = 359,
-     TOK_LT = 360,
-     TOK_BANG_EQ = 361,
-     TOK_BANG_EQ_EQ = 362,
-     TOK_TILDA_EQ = 363,
-     TOK_AMPERSAND_AMPERSAND = 364,
-     TOK_PIPE_PIPE = 365,
-     TOK_PERCENT_UNSCOPE_COLON = 366,
-     TOK_PERCENT_EXP_COLON = 367,
-     TOK_PERCENT_LVALUE_COLON = 368,
-     TOK_PERCENT_ID_COLON = 369,
-     TOK_PERCENT_EXPS_COLON = 370
+     TOK_ONLEAVE = 280,
+     TOK_POINT = 281,
+     TOK_RBRACE = 282,
+     TOK_RBRACKET = 283,
+     TOK_RETURN = 284,
+     TOK_RPAREN = 285,
+     TOK_STOPIF = 286,
+     TOK_SWITCH = 287,
+     TOK_THROW = 288,
+     TOK_TILDA = 289,
+     TOK_TIMEOUT = 290,
+     TOK_TRY = 291,
+     TOK_VAR = 292,
+     TOK_WAITUNTIL = 293,
+     TOK_WATCH = 294,
+     TOK_WHENEVER = 295,
+     TOK_COMMA = 296,
+     TOK_SEMICOLON = 297,
+     TOK_AMPERSAND = 298,
+     TOK_PIPE = 299,
+     TOK_EVERY = 300,
+     TOK_FOR = 301,
+     TOK_LOOP = 302,
+     TOK_WHILE = 303,
+     TOK_AT = 304,
+     TOK_IDENTIFIER = 305,
+     TOK_ASSIGN = 306,
+     TOK_EMPTY = 307,
+     TOK_UNARY = 308,
+     TOK_PRIVATE = 309,
+     TOK_PROTECTED = 310,
+     TOK_PUBLIC = 311,
+     TOK_CLASS = 312,
+     TOK_PACKAGE = 313,
+     TOK_ENUM = 314,
+     TOK_EXTERNAL = 315,
+     TOK_IMPORT = 316,
+     TOK_CARET_EQ = 317,
+     TOK_MINUS_EQ = 318,
+     TOK_PERCENT_EQ = 319,
+     TOK_PLUS_EQ = 320,
+     TOK_SLASH_EQ = 321,
+     TOK_STAR_EQ = 322,
+     TOK_MINUS_MINUS = 323,
+     TOK_PLUS_PLUS = 324,
+     TOK_MINUS_GT = 325,
+     TOK_DO = 326,
+     TOK_ASSERT = 327,
+     TOK_DETACH = 328,
+     TOK_DISOWN = 329,
+     TOK_NEW = 330,
+     TOK_ANGLE = 331,
+     TOK_DURATION = 332,
+     TOK_FLOAT = 333,
+     TOK_EQ_GT = 334,
+     TOK_STRING = 335,
+     TOK_QUEST_MARK = 336,
+     TOK_CALL = 337,
+     TOK_THIS = 338,
+     TOK_BANG = 339,
+     TOK_BITAND = 340,
+     TOK_BITOR = 341,
+     TOK_CARET = 342,
+     TOK_COMPL = 343,
+     TOK_GT_GT = 344,
+     TOK_LT_LT = 345,
+     TOK_MINUS = 346,
+     TOK_PERCENT = 347,
+     TOK_PLUS = 348,
+     TOK_SLASH = 349,
+     TOK_STAR = 350,
+     TOK_STAR_STAR = 351,
+     TOK_EQ_TILDA_EQ = 352,
+     TOK_EQ_EQ = 353,
+     TOK_EQ_EQ_EQ = 354,
+     TOK_GT_EQ = 355,
+     TOK_GT = 356,
+     TOK_LT_EQ = 357,
+     TOK_LT = 358,
+     TOK_BANG_EQ = 359,
+     TOK_BANG_EQ_EQ = 360,
+     TOK_TILDA_EQ = 361,
+     TOK_AMPERSAND_AMPERSAND = 362,
+     TOK_PIPE_PIPE = 363,
+     TOK_PERCENT_UNSCOPE_COLON = 364,
+     TOK_PERCENT_EXP_COLON = 365,
+     TOK_PERCENT_LVALUE_COLON = 366,
+     TOK_PERCENT_ID_COLON = 367,
+     TOK_PERCENT_EXPS_COLON = 368
    };
 
     };
@@ -661,14 +659,6 @@ namespace yy {
     static inline
     symbol_type
     make_LPAREN (const location_type& l);
-
-    static inline
-    symbol_type
-    make_LVECTOR (const location_type& l);
-
-    static inline
-    symbol_type
-    make_RVECTOR (const location_type& l);
 
     static inline
     symbol_type
@@ -1204,13 +1194,13 @@ namespace yy {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 1998,           //< Last index in yytable_.
+      yylast_ = 1812,           //< Last index in yytable_.
       yynnts_ = 80,  //< Number of nonterminal symbols.
       yyempty_ = -2,
-      yyfinal_ = 88, //< Termination state number.
+      yyfinal_ = 87, //< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
-      yyntokens_ = 116,   //< Number of tokens.
+      yyntokens_ = 114,   //< Number of tokens.
     };
 
 
@@ -1262,10 +1252,9 @@ namespace yy {
       75,    76,    77,    78,    79,    80,    81,    82,    83,    84,
       85,    86,    87,    88,    89,    90,    91,    92,    93,    94,
       95,    96,    97,    98,    99,   100,   101,   102,   103,   104,
-     105,   106,   107,   108,   109,   110,   111,   112,   113,   114,
-     115
+     105,   106,   107,   108,   109,   110,   111,   112,   113
     };
-    const unsigned int user_token_number_max_ = 370;
+    const unsigned int user_token_number_max_ = 368;
     const token_number_type undef_token_ = 2;
 
     if (static_cast<int>(t) <= yyeof_)
@@ -1381,7 +1370,7 @@ namespace yy {
      335,   336,   337,   338,   339,   340,   341,   342,   343,   344,
      345,   346,   347,   348,   349,   350,   351,   352,   353,   354,
      355,   356,   357,   358,   359,   360,   361,   362,   363,   364,
-     365,   366,   367,   368,   369,   370
+     365,   366,   367,   368
     };
     return static_cast<token_type> (yytoken_number_[type]);
   }
@@ -1522,18 +1511,6 @@ namespace yy {
   parser::make_LPAREN (const location_type& l)
   {
     return symbol_type (token::TOK_LPAREN, l);
-  }
-
-  parser::symbol_type
-  parser::make_LVECTOR (const location_type& l)
-  {
-    return symbol_type (token::TOK_LVECTOR, l);
-  }
-
-  parser::symbol_type
-  parser::make_RVECTOR (const location_type& l)
-  {
-    return symbol_type (token::TOK_RVECTOR, l);
   }
 
   parser::symbol_type
@@ -2074,7 +2051,7 @@ namespace yy {
 
 } // yy
 /* Line 347 of lalr1.cc  */
-#line 2078 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.hh"
+#line 2055 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.hh"
 
 
 

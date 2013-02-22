@@ -620,8 +620,8 @@ stmt:
       }
       else
       {
-         $$ = MAKE(define_setter_getter, @$, $1, $2,
-          MAKE(routine, @$, false, @3, $3, $4));
+        REQUIRE_IDENTIFIER(@$, $1, "get or set");
+        $$ = MAKE(nil);
       }
     }
 ;
