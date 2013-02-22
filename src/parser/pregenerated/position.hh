@@ -1,4 +1,4 @@
-/* A Bison parser, made by GNU Bison 2.3b.655-27c2.  */
+/* A Bison parser, made by GNU Bison 2.3b.656-d4b2-dirty.  */
 
 /* Positions for Bison parsers in C++
 
@@ -45,7 +45,7 @@
 
 namespace yy {
 /* Line 39 of location.cc  */
-#line 49 "/home/bearclaw/aldebaran/qi-2/urbi/kernel/build-linux32/src/parser/position.hh"
+#line 49 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/position.hh"
   /// Abstract a position.
   class position
   {
@@ -140,5 +140,5 @@ namespace yy {
 
 } // yy
 /* Line 149 of location.cc  */
-#line 144 "/home/bearclaw/aldebaran/qi-2/urbi/kernel/build-linux32/src/parser/position.hh"
+#line 144 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/position.hh"
 #endif // not BISON_POSITION_HH

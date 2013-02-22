@@ -835,6 +835,15 @@ namespace ast
     return new List(loc, exps ? exps : new exps_type);
   }
 
+  rExp
+  Factory::make_vector(const location& loc,
+                     exps_type* exps)
+  {
+    PARAMETRIC_AST(desugar,
+      "Vector.new(%exp:1)");
+    return exp(desugar % make_list(loc, exps));
+  }
+
   // loop %body.
   rExp
   Factory::make_loop(const location&,

@@ -305,6 +305,11 @@ namespace ast
     make_list(const location& loc,
               exps_type* exps = 0) /* const */;
 
+    static
+    rExp
+    make_vector(const location& loc,
+              exps_type* exps = 0) /* const */;
+
     /// loop %body.
     static
     rExp

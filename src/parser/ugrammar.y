@@ -1167,12 +1167,33 @@ tuple:
 | Literals.  |
 `-----------*/
 
+/* vector < > literal syntax. Inside we cannot accept 'x<5'
+* as it obviously creates a conflict.
+* So create a new bitor-exps with only a subset of exprs accepted.
+*/
+%type <ast::exps_type*> bitor-exps bitor-exps.1;
+
+bitor-exps:
+ /* */ { $$ = new ast::exps_type; }
+| bitor-exps.1 comma.opt { std::swap($$, $1); }
+;
+
+bitor-exps.1:
+  bitor-exp { $$ = new ast::exps_type(1, $1); }
+| bitor-exps.1 "," bitor-exp { std::swap($$, $1); *$$ << $3;}
+;
+
+
+/*  FLOAT {  $$ =  MAKE(float, @$, $1);}
+*/
+
 literal-exp:
   float-exp      { std::swap($$, $1);  }
 | "angle"        { $$ = MAKE(float, @$, $1);  }
 | duration       { $$ = MAKE(float, @$, $1);  }
 | string         { $$ = MAKE(string, @$, $1); }
 | "[" exps "]"   { $$ = MAKE(list, @$, $2); }
+| "<" bitor-exps ">"   { $$ = MAKE(vector, @$, $2); }
 | dictionary     { $$ = $1; }
 | tuple          { $$ = MAKE(tuple, @$, $1); }
 ;
