@@ -133,6 +133,7 @@ namespace urbi
     void
     Slot::set(rObject value, Object* sender, libport::utime_t timestamp)
     {
+      static rObject void_object = capture(SYMBOL(void), Object::package_lang_get());
       GD_FINFO_DUMP("Slot::set, slot %s, sender %s, oset %s",
         this, sender, !!oset_);
       if (type_)
@@ -170,8 +171,10 @@ namespace urbi
       {
         object::objects_type args;
         args << value;
-        eval::call_apply(::kernel::runner(),
+        rObject res = eval::call_apply(::kernel::runner(),
                          const_cast<Slot*>(this), set_, SYMBOL(set), args);
+        if (res != void_object)
+          value_ = res;
       }
       if (sender && oset_)
       {
@@ -179,11 +182,13 @@ namespace urbi
           value = value_;
         object::objects_type args;
         args << sender << value << this;
-        eval::call_apply(::kernel::runner(),
+        rObject res = eval::call_apply(::kernel::runner(),
                          oset_.get(), SYMBOL(oset), args, 0,
                          boost::optional< ::ast::loc>(),
                           Primitive::CALL_IGNORE_EXTRA_ARGS
                          );
+        if (res != void_object)
+          value_ = res;
       }
       if (!sender)
       {
