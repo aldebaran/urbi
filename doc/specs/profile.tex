@@ -17,7 +17,7 @@ piece of code.
 
 One can profile a piece of code with the \refSlot[System]{profile} function.
 
-\begin{urbiscript}
+\begin{urbiunchecked}
 var profile = System.profile(function() { echo("foo") });
 [00000001] *** foo
 [00001672] Profile(
@@ -43,7 +43,7 @@ var profile = System.profile(function() { echo("foo") });
 [:]  |     asString |   2.21 |       1085 |     24 |       1 |        24 |
 [:]  '--------------'--------'------------'--------'---------'-----------'
 [:])
-\end{urbiscript}
+\end{urbiunchecked}
 
 The result is a \refObject{Profile} object that contains information about
 which functions where used when evaluating the given code, how many time they
@@ -61,7 +61,7 @@ resulting \refObject{Profile} every time the detached code is executed. This
 is extremely useful to profile asynchronous code based on \lstinline|at| for
 instance.
 
-\begin{urbiscript}
+\begin{urbiunchecked}
 var x = false|;
 // Make sure 'x' is visible whoever the caller of 'profiled' is.
 import this.*;
@@ -131,7 +131,7 @@ profile_async;
 [:]  |         init |   0.80 |        248 |      2 |       4 |     0.500 |
 [:]  '--------------'--------'------------'--------'---------'-----------'
 [:])
-\end{urbiscript}
+\end{urbiunchecked}
 
 %% See issue #4969.
 Note that part of the internal machinery shows in these figures (and left
@@ -160,26 +160,14 @@ by \refSlot[System]{profile} internal machinery.
 
 \item[Function]
   See \refObject{Profile.Function}.
-\begin{urbiscript}
-Profile.Function;
-[00004990] Function('', 0, 0, nan)
-\end{urbiscript}
 
 
 \item[maxFunctionCallDepth]%
   The maximum function call depth reached.
-\begin{urbiassert}
-// Example continued from Construction.
-profile.maxFunctionCallDepth == 5;
-\end{urbiassert}
 
 
 \item[totalCalls]%
   The total number of function calls made.
-\begin{urbiassert}
-// Example continued from Construction.
-profile.totalCalls == 12;
-\end{urbiassert}
 
 
 \item[totalTime]%
@@ -197,10 +185,7 @@ profile.totalCalls == 12;
   yields when it gives the opportunity to an other to be executed until this
   one yields and so on\dots This slot contains the number of scheduler
   yields.
-\begin{urbiassert}
-// Example continued from Construction.
-profile.yields == 0;
-\end{urbiassert}
+
 \end{urbiscriptapi}
 
 

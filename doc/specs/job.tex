@@ -25,13 +25,13 @@ A Job is typically constructed via \refSlot[Control]{detach},
 
 \begin{urbiscript}
 detach(sleep(10));
-[00202654] Job<shell_6>
+[00202654] Job<shell_7>
 
 disown(sleep(10));
-[00204195] Job<shell_7>
+[00204195] Job<shell_8>
 
 function () { sleep(10) }.spawn(false);
-[00274160] Job<shell_8>
+[00274160] Job<shell_9>
 \end{urbiscript}
 
 \subsection{Slots}
@@ -196,7 +196,7 @@ var t = detach(sleep(1))|;
 // Leave some time for s to be started.
 sleep(100ms);
 t.dumpState();
-[00004295] *** Job: shell_13
+[00004295] *** Job: shell_14
 [00004295] ***   State: sleeping
 [00004295] ***   Time Shift: 0.003ms
 [00004295] ***   Tags:
@@ -221,7 +221,7 @@ Job.current in Job.jobs;
 Job.current.name;
 [00004293] "shell"
 detach(sleep(1)).name;
-[00004297] "shell_14"
+[00004297] "shell_15"
 \end{urbiscript}
 
 

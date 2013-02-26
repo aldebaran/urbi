@@ -55,35 +55,8 @@ Lobby.create();
 \begin{urbiscriptapi}
 \item[authors] Credit the authors of \usdk.  See also \refSlot{thanks} and
   \autoref{sec:genesis}.
-\begin{urbiscript}
-lobby.authors();
-[00478679] *** Authors of Urbi:
-[00478679] ***  - Jean-Christophe Baillie (original designer)
-[00478679] ***
-[00478679] *** Urbi 2 and subsequent versions:
-[00478679] ***  - Akim Demaille
-[00478679] ***  - Matthieu Nottale
-[00478679] ***  - Quentin Hocquet
-[00478679] ***
-[00478679] *** See also `thanks;'.
-\end{urbiscript}
-
 
 \item[banner] Internal.  Display \usdk banner.
-\begin{urbiscript}
-lobby.banner();
-[00006124] *** ********************************************************
-[00006124] *** Urbi version 2.7.4 rev. 268868e
-[00006124] *** Copyright (C) 2004-2012 Gostai S.A.S.
-[00006124] ***
-[00006124] *** This program comes with ABSOLUTELY NO WARRANTY.  It can
-[00006124] *** be used under certain conditions.  Type `license;',
-[00006124] *** `authors;', or `copyright;' for more information.
-[00006124] ***
-[00006124] *** Check our community site: http://www.urbiforge.org.
-[00006124] *** ********************************************************
-\end{urbiscript}
-
 
 \item[bytesReceived] The number of bytes that were ``input'' to \this.  See
   also \refSlot{receive}.
@@ -111,8 +84,11 @@ removeSlot("l")|;
 // It does not seem to exist with Urbi 3.  It is probably related to
 // some issues with Lazy (as it reported an error about "code"
 // being an already defined slot).
+
+// Impossible to test in urbiscript test suite:
+// If we write to a slot in our custom Lobby.write, we break at-evaluation tests
 \end{urbicomment}
-\begin{urbiscript}
+\begin{urbiunchecked}
 var l = Lobby.create()|;
 assert (l.bytesSent == 0);
 
@@ -126,10 +102,7 @@ l.send("xx", "label");
 // 20 = "[00061783:label] xx\n".size.
 assert (l.bytesSent == 42);
 
-l.write("[01234567]\n");
-[01234567]
-assert (l.bytesSent == 53);
-\end{urbiscript}
+\end{urbiunchecked}
 \begin{urbicomment}
 removeSlots("l");
 \end{urbicomment}
@@ -187,19 +160,6 @@ every (1s) echo(5);
 \item[copyright](<deep> = true)%
   Display the copyright of \usdk.  Include copyright information
   about sub-components if \var{deep}.
-\begin{urbiscript}
-lobby.copyright(false);
-[00028588] *** Urbi version 2.7.4 rev. 268868e
-[00028588] *** Copyright (C) 2004-2012 Gostai S.A.S.
-
-lobby.copyright();
-[00041874] *** Urbi version 2.7.4 rev. 268868e
-[00041874] *** Copyright (C) 2004-2012 Gostai S.A.S.
-[00041874] ***
-[00041874] *** Libport version 2.7.4 rev. 268868e
-[00041874] *** Copyright (C) 2005-2012 Gostai S.A.S.
-\end{urbiscript}
-
 
 \item[create]
   Instantiate a new Lobby.
@@ -253,20 +213,6 @@ Lobby in Lobby.instances;
 
 \item[license]
   Display the end user license agreement of the \usdk.
-\begin{urbiscript}
-lobby.license();
-[00000000] ***                     GNU AFFERO GENERAL PUBLIC LICENSE
-[00000000] ***                        Version 3, 19 November 2007
-[00000000] ***
-[00000000] ***  Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>
-[00000000] ***  Everyone is permitted to copy and distribute verbatim copies
-[00000000] ***  of this license document, but changing it is not allowed.
-[00000000] ***
-[:][...]
-[00000000] *** For more information on this, and how to apply and follow the GNU AGPL, see
-[00000000] *** <http://www.gnu.org/licenses/>.
-\end{urbiscript}
-
 
 \item[lobby]
   The lobby of the current connection.  This is typically \this.
@@ -328,18 +274,6 @@ lobby.send("333");
 
 \item[thanks] Credit the contributors of \usdk.  See also \refSlot{authors}
   and \autoref{sec:genesis}.
-%% FIXME: Can't credit everyone because listings does not support UTF-8 in
-%% these environments... And Benoît Sigoure, for instance, has some.
-\begin{urbiscript}
-lobby.thanks();
-[00478679] *** Contributors to Urbi:
-[00478679] ***
-[00478679] ***  - Adam Oleksy <adam.oleksy@pwr.wroc.pl>
-[00478679] ***  - Alexandre Morgand
-[:][...]
-[00478679] ***
-[00478679] *** See also `authors;'.
-\end{urbiscript}
 
 \item[wall](<value>, <channel> = "")%
   Perform \lstinline|echo(\var{value}, \var{channel})| on all the
@@ -354,7 +288,7 @@ Lobby.wall("111", "foo");
   This is low-level routine.  Send the \refObject{String} \var{value}
   to the connection.  Note that because of buffering, the output might
   not be visible before an end-of-line character is output.
-\begin{urbiscript}
+\begin{urbiunchecked}
 lobby.write("[");
 lobby.write("999999999:");
 lobby.write("myTag] ");

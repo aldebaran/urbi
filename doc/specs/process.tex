@@ -190,7 +190,7 @@ do (Process.new("sleep", ["1"]))
 
 \item[stderr] An \refObject{InputStream} (the output of the Process is
   an input for \urbi) to the standard error stream of the process.
-\begin{urbiscript}
+\begin{urbiunchecked}
 do (Process.new("urbi-send", ["--no-such-option"]))
 {
   run();
@@ -202,7 +202,7 @@ do (Process.new("urbi-send", ["--no-such-option"]))
      "Try `urbi-send --help' for more information."];
   };
 }|;
-\end{urbiscript}
+\end{urbiunchecked}
 
 
 \item[stdin] An \refObject{OutputStream} (the input of the Process is

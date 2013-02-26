@@ -1,6 +1,7 @@
 var errBacktrace = Regexp.new("^\\[[0-9]{8}:(error|warning)\\] \\!\\!\\!    called from")|;
 var outClog = Regexp.new("^\\[[0-9]{8}:clog\\]");
 var objAddr = Regexp.new("(_0x[0-9a-f]{1,12})([^0-9a-f]|$)");
+var addr = Regexp.new("(0x[0-9a-f]{1,12})([^0-9a-f]|$)");
 var objAddr2 = Regexp.new("(uob_[0-9a-f]{2,12})([^0-9a-f]|$)");
 var disconnecting = Regexp.new("\\*\\*\\* disconnecting Lobby_");
 var timestamp = Regexp.new("^\\[[0-9]{8}");
@@ -14,6 +15,8 @@ function Object.splitNewline(s)
   l = []|
   for( var i: res)
     l += i.split("\n")|
+  //if (l[-1].empty)
+  //  l.removeBack()|
   l
 };
 
@@ -130,6 +133,10 @@ function splitChk(content)
       while (objAddr.match(l))
       {
         l = l.replace(objAddr.matches[1], "_0xADDR");
+      };
+      while (addr.match(l))
+      {
+        l = l.replace(addr.matches[1], "0xADDR");
       };
       if (l[-1] == "\\")
       {
@@ -277,7 +284,9 @@ function runTestContent(chkFile, content)
   var lw = Lobby.write;
   var ls = Lobby.send;
   var debugOut = System.getenv("TEE_TEST_OUTPUT");
-  Lobby.write = function(s)
+  Lobby.wall = function(msg, tag="") { systemLobby.echo(msg, tag)};
+
+  Lobby.write = function(s:String)
   {
     if (hasLocalSlot("remoteIP"))
       lw(s)
@@ -290,12 +299,14 @@ function runTestContent(chkFile, content)
     {
       if (debugOut)
         lw(s)|
+      var sz = s.size |
+      var hasnl = (!s.empty && s[-1] == "\n")|
       for|(var i: Object.splitNewline(s))
         eout << i |
       {}
     }
   };
-  Lobby.send = function(msg, tag="":String)
+  Lobby.send = function(msg:String, tag="":String)
   {
     if (hasLocalSlot("remoteIP"))
       ls(msg, tag)
@@ -308,14 +319,9 @@ function runTestContent(chkFile, content)
     {
       if (tag)
         tag = ":" + tag|
-      write("[00000000" + tag + "] " + msg.asString())|
+      write("[00000000" + tag + "] " + msg)|
       {}
     }
-  };
-  Lobby.wall = function(msg, tag="")
-  {
-    for| (var l in instances - [Lobby, systemLobby])
-    l.echo(msg, tag);
   };
   Lobby.write->constant = true;
   Lobby.send->constant = true;
@@ -343,7 +349,7 @@ function runTestContent(chkFile, content)
 
    // Create a lobby for the test
   var l = Lobby.create();
-  var ID = "_" + l.uid.asString();
+  var ID = "_" + l.uid.asString() + "foo".fresh();
   // Use a variable to detect end of test
   if (Object.test_finished.hasLocalSlot(ID))
     Object.test_finished.removeSlot(ID);
@@ -351,7 +357,7 @@ function runTestContent(chkFile, content)
   l.receive(testu);
   debug << "Injecting input...";
   l.receive("//#line 1 \"input.u\"\n");
-  l.receive(sin.join("\n"));
+  l.receive(sin.join("\n")+"\n");
   l.receive("var Object.test_finished." + ID + "=1|;\n");
   debug << "Waiting for test to finish...";
   // In fast mode, time of timeout is inpacted too
@@ -373,6 +379,11 @@ function runTestContent(chkFile, content)
     //write(p.stderr.content());
     write("\nEND REMOTE\n");
   };
+  // kill all code
+  l.connectionTag.stop();
+  // Silence this test just in case
+  l.write = function(args[]){};
+
   if (!Object.test_finished.hasLocalSlot(ID)&& !System.env["PASS_THROUGH"])
   {
     write("EFFECTIVE:\n<< "  +eout.join("\n<< ") + "\n\n");
@@ -406,7 +417,8 @@ function runTestContent(chkFile, content)
   if (failed)
     debug << ("SIZE MISMATCH %s %s" % [effOut.size, sout.size]);
   var line = 0;
-  while (!failed && line < effOut.size)
+  if (!failed)
+  while (line < effOut.size)
   {
     var eff = effOut[line]|
     var exp = sout[line]|
@@ -432,6 +444,10 @@ function runTestContent(chkFile, content)
         //eff = eff[9,0]|
         //exp = exp[9,0]
       };
+      while(addr.match(eff))
+      {
+        eff = eff.replace(addr.matches[1], "0xADDR")
+      };
       if (eff != exp)
       {
         // Some error message in exp lacks a line number, mostly in doc
@@ -446,12 +462,14 @@ function runTestContent(chkFile, content)
           //  eff = remove
         }
       }|
-      failed = (eff != exp)|
+      failed = failed || (eff != exp)|
       /*if (failed)
       {
         debug << "FAIL " << eff|
         debug << "FAIL " << exp
       }*/
+      effOut[line] = eff|
+      sout[line] = exp
     };
     ++line;
   };

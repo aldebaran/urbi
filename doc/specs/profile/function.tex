@@ -38,7 +38,7 @@ profiling system (and function to profile) once before the real measure.
 This ensures that all the code is loaded and ready to be run: profiling will
 be about computations, not about initializations.
 
-\begin{urbiscript}
+\begin{urbiunchecked}
 System.profile(function() { 20.fact() })|;
 
 var profile = System.profile(function() { 20.fact() });
@@ -64,8 +64,10 @@ profile.calls[0];
 [00123833] Function('fact', 20, 0.000120, 0.000006)
 profile.calls[0].isA(Profile.Function);
 [00123933] true
-\end{urbiscript}
-
+\end{urbiunchecked}
+\begin{urbicomment}
+var profile = System.profile(function() { 20.fact() })|;
+\end{urbicomment}
 \subsection{Slots}
 
 \begin{urbiscriptapi}

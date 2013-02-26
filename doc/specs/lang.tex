@@ -137,7 +137,7 @@ var this.a_name_with_underscores;
 var if;
 [00000498:error] !!! syntax error: unexpected if
 obj.if();
-[00013826:error] !!! syntax error: unexpected if, expecting & or identifier or new
+[00013826:error] !!! syntax error: unexpected if
 
 // However, keywords can be escaped with simple quotes.
 var 'if';
@@ -1737,11 +1737,14 @@ f(1);
 [00000002:error] !!! f: argument 1: unexpected 1, expected a Float
 // It did not work because 1 does not inherit from "1",
 // they are two different objects both inheriting from Float
-
 \end{urbiscript}
 
 Argument typing can be combined with default values, but the default value
 must come before the type:
+
+\begin{urbicomment}
+var __Float = Float|;
+\end{urbicomment}
 
 \begin{urbiscript}
 f = function(x=1 : Float) {x}|;
@@ -1759,8 +1762,12 @@ f();
 [00232426:error] !!! f: expected 1 argument, given 0
 f(1);
 [00235466:error] !!! f: argument 1: unexpected 1, expected a Float
-
 \end{urbiscript}
+
+\begin{urbicomment}
+Float = __Float|;
+removeSlot("__Float")|;
+\end{urbicomment}
 
 \subsection{Return value}
 \label{sec:lang:rv}
@@ -3641,8 +3648,8 @@ assert (fail);
 
 function lazyFail { call.evalArgAt(0); false }|;
 assert (lazyFail(1+2, "+" * 2));
-[00010241:error] !!! failed assertion: lazyFail(1.'+'(2), "+".'*'(2)) \
-[:]                  (lazyFail(3, ?) == false)
+[00010241:error] !!! failed assertion: lazyFail(1.'+'(2), "+".'*'(2))\
+[:] (lazyFail(3, ?) == false)
 \end{urbiscript}
 
 The following example is more realistic.
@@ -3667,11 +3674,11 @@ assert (areEqual());
 assert (areEqual(1));
 assert (areEqual(1, 0 + 1));
 assert (areEqual(1, 1, 1+1));
-[00001388:error] !!! failed assertion: areEqual(1, 1, 1.'+'(1)) \
-[:]              (areEqual(1, 1, 2) == false)
+[00001388:error] !!! failed assertion: areEqual(1, 1, 1.'+'(1))\
+[:] (areEqual(1, 1, 2) == false)
 assert (areEqual(1*2, 1+2));
-[00001393:error] !!! failed assertion: areEqual(1.'*'(2), 1.'+'(2)) \
-[:]              (areEqual(2, 3) == false)
+[00001393:error] !!! failed assertion: areEqual(1.'*'(2), 1.'+'(2))\
+[:] (areEqual(2, 3) == false)
 \end{urbiscript}
 
 Comparison operators are recognized, and displayed specially:
@@ -3760,7 +3767,7 @@ It is always evaluated before the \var{statement} itself.  The value of a
 tagged statement is that of the \var{statement}.
 \begin{urbiscript}
 id(Tag.new()):id(2);
-[00015631] *** Tag<tag_3>
+[00015631] *** Tag<tag_25>
 [00015631] *** 2
 [00015631] 2
 \end{urbiscript}

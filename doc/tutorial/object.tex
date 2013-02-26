@@ -77,7 +77,9 @@ before;
 assert(Pair.first === before.first);
 assert(Pair.first === after.first);
 \end{urbiscript}
-
+\begin{urbicomment}
+Pair.first = nil;
+\end{urbicomment}
 \section{Prototypes and Slot Lookup}
 
 In prototype-based language, \emph{is-a} relations (being an instance of
@@ -462,7 +464,7 @@ y.foo;
 x===y;
 [00000000] true
 x.foo = 43 | y.foo;
-[000000001] 43
+[00000001] 43
 \end{urbiscript}
 
 If \lstinline|x| is bound to a new object (e.g., 456), then the feature
