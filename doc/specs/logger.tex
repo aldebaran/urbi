@@ -25,7 +25,8 @@ proper level (in increase order of importance: \refSlot{dump},
 \refSlot{debug}, \refSlot{trace}, \refSlot{log}, \refSlot{warn},
 \refSlot{err}):
 
-\begin{urbiscript}
+%% Test infrastructure has currently no way to intercept log messages
+\begin{urbiunchecked}
 var logger = Logger.new("Category")|;
 
 logger.dump() << "Low level debug message"|;
@@ -36,11 +37,11 @@ logger.warn() << "something wrong happened, proceeding"|;
 
 logger.err() << "something really bad happened!"|;
 [       Category        ] something really bad happened!
-\end{urbiscript}
+\end{urbiunchecked}
 
 You may also directly use the logger and passing arguments to these slots.
 
-\begin{urbiscript}
+\begin{urbiunchecked}
 Logger.log("message", "Category") |;
 [       Category        ] message
 
@@ -50,7 +51,7 @@ Logger.log("message", "Category") :
 }|;
 [       Category        ] message
 [      SubCategory      ]   indented message
-\end{urbiscript}
+\end{urbiunchecked}
 
 \subsection{Existing Categories}
 \label{sec:logger:categories}
@@ -82,7 +83,7 @@ listed here.
 \lstinline|Logger| can be used as is, without being cloned. It is possible
 to clone \lstinline|Logger| defining a category and/or a level of debug.
 
-\begin{urbiscript}
+\begin{urbiunchecked}
 Logger.log("foo");
 [        Logger         ] foo
 [00004702] Logger<Logger>
@@ -98,7 +99,7 @@ l.log("foo")|;
 
 l.log("foo", "ForcedCategory") |;
 [    ForcedCategory     ] foo
-\end{urbiscript}
+\end{urbiunchecked}
 
 \subsection{Slots}
 
@@ -108,13 +109,13 @@ l.log("foo", "ForcedCategory") |;
   slot can only be used if both category and level have been defined when
   cloning.
 
-\begin{urbiscript}
+\begin{urbiunchecked}
 l = Logger.new("Category", Logger.Levels.Log);
 [00090939] Logger<Category>
 l << "abc";
 [       Category        ] abc
 [00091939] Logger<Category>
-\end{urbiscript}
+\end{urbiunchecked}
 
 
 \item[categories]%
@@ -128,7 +129,7 @@ c.isA(Dictionary);
 c["Urbi.Call"];
 // The four category families used by Urbi SDK.
 c.keys.map (function (var s) { s.split(".")[0] }).unique()
-  == ["Libport", "Sched", "Serialize", "Urbi"];
+  == ["Libport", "Runner", "Sched", "Serialize", "Urbi", "test"];
 \end{urbiassert}
 
 
@@ -136,12 +137,12 @@ c.keys.map (function (var s) { s.split(".")[0] }).unique()
   Report a debug \var{message} of \var{category} to the user. It will be
   shown if the debug level is \lstinline|Debug| or \lstinline|Dump|. Return
   \this to allow chained operations.
-\begin{urbiscript}
+\begin{urbiunchecked}
 // None of these are displayed unless the current level is at least DEBUG.
 Logger.debug() << "debug 1"|;
 Logger.debug("debug 2")|;
 Logger.debug("debug 3", "Category2")|;
-\end{urbiscript}
+\end{urbiunchecked}
 
 
 \item[disable](<pattern>)%
@@ -170,32 +171,32 @@ c2 << "Disabled";
   Report a debug \var{message} of \var{category} to the user. It will be
   shown if the debug level is \lstinline|Dump|. Return \this to allow
   chained operations.
-\begin{urbiscript}
+\begin{urbiunchecked}
 // None of these are displayed unless the current level is at least DEBUG.
 Logger.dump() << "dump 1"|;
 Logger.dump("dump 2")|;
 Logger.dump("dump 3", "Category2")|;
-\end{urbiscript}
+\end{urbiunchecked}
 
 
 \item[enable](<pattern>)%
   Enable the categories that match the \var{pattern}, i.e., suppress logs
   about these categories independently of the current \refSlot{level}.
   Affects existing and future categories.  See also \refSlot{disable}.
-\begin{urbiassert}
+\begin{urbiunchecked}
 // Disable any categories that starts with Logger.Foo, existing or not.
-Logger.disable("Logger.Foo*").isVoid;
+Logger.disable("Logger.Foo*");
 Logger.log("disabled", "Logger.Foo.Bar");
 Logger.log("disabled", "Logger.Foo.Baz");
 
 // Enable those that start with Logger.Foo.Bar.
-Logger.enable("Logger.Foo.Bar*").isVoid;
+Logger.enable("Logger.Foo.Bar*");
 Logger.log("enabled", "Logger.Foo.Bar");
 [    Logger.Foo.Bar     ] enabled
 Logger.log("enabled", "Logger.Foo.Bar.Qux");
 [  Logger.Foo.Bar.Qux   ] enabled
 Logger.log("disabled", "Logger.Foo.Baz");
-\end{urbiassert}
+\end{urbiunchecked}
 
 
 \item[err](<message> = "", <category> = category)%
@@ -212,40 +213,44 @@ Logger.log("disabled", "Logger.Foo.Baz");
 \item[level]%
   The current level of verbosity (see \refSlot{Levels}).  Can be read and
   assigned to.
-\begin{urbiassert}
+\begin{urbiunchecked}
 // Logger is enabled by default.
 Logger.categories["Logger"];
+[00000001] true
 // Log level is enabled by default.
-Logger.level == Logger.Levels.Log;
+Logger.level;
+[00000002] Log
 Logger.log("Logger enabled");
 [        Logger         ] Logger enabled
 
 // Disable it.
 Logger.level = Logger.Levels.None;
-Logger.level == Logger.Levels.None;
+Logger.level;
+[00000003] None
 Logger.log("Logger is disabled");
 
 // Enable it back.
 Logger.level = Logger.Levels.Log;
+[00000004] Log
 Logger.log("Logger enable again");
 [        Logger         ] Logger enable again
-\end{urbiassert}
+\end{urbiunchecked}
 
 
 \item[Levels]%
   An \refObject{Enumeration} of the log levels defined in
   \autoref{sec:tools:env}.
 
-\begin{urbiscript}
+\begin{urbiunchecked}
 Logger.Levels.values;
 [00000001] [None, Log, Trace, Debug, Dump]
-\end{urbiscript}
+\end{urbiunchecked}
 
 
 \item[log](<message> = "", <category> = category)%
   Report a debug \var{message} of \var{category} to the user. It will be
   shown if debug is not disabled. Return \this to allow chained operations.
-\begin{urbiscript}
+\begin{urbiunchecked}
 Logger.log() << "log 1"|;
 [       Logger        ] log 1
 
@@ -254,7 +259,7 @@ Logger.log("log 2")|;
 
 Logger.log("log 3", "Category")|;
 [      Category       ] log 3
-\end{urbiscript}
+\end{urbiunchecked}
 
 
 \item[onEnter]%
@@ -286,7 +291,7 @@ Logger.log("log 3", "Category")|;
   Therefore, \samp{+Urbi.*,-Urbi.At} and \samp{Urbi.*,-Urbi.At} are
   equivalent to \samp{-*,+Urbi.*,-Urbi.At}.
 
-\begin{urbiscript}
+\begin{urbiunchecked}
 var l1 = Logger.new("Logger")|;
 var l2 = Logger.new("Logger.Sub")|;
 var l3 = Logger.new("Logger.Sub.Sub")|;
@@ -309,7 +314,7 @@ check("-L*,+Logger", true, false, false);
 check("+Logger,-Logger.*", true, false, false);
 check("-*,+Logger.*,-Logger.Sub.*", false, true, false);
 check("+Logger*,-Logger.*,+Logger.Sub.*", true, false, true);
-\end{urbiscript}
+\end{urbiunchecked}
 
 \begin{urbicomment}
 // Restore the rights.
@@ -321,18 +326,18 @@ Logger.enable("*");
   Report a debug \var{message} of \var{category} to the user. It will be
   shown if the debug level is \lstinline|Trace|, \lstinline|Debug| or
   \lstinline|Dump|. Return \this to allow chained operations.
-\begin{urbiscript}
+\begin{urbiunchecked}
 // None of these are displayed unless the current level is at least TRACE.
 Logger.trace() << "trace 1"|;
 Logger.trace("trace 2")|;
 Logger.trace("trace 3", "Category2")|;
-\end{urbiscript}
+\end{urbiunchecked}
 
 
 \item[warn](<message> = "", <category> = category)%
   Report a warning \var{message} of \var{category} to the user. Return \this
   to allow chained operations.
-\begin{urbiscript}
+\begin{urbiunchecked}
 Logger.warn() << "warn 1"|;
 [       Logger        ] warn 1
 
@@ -341,7 +346,7 @@ Logger.warn("warn 2")|;
 
 Logger.warn("warn 3", "Category")|;
 [       Category       ] warn 3
-\end{urbiscript}
+\end{urbiunchecked}
 \end{urbiscriptapi}
 
 %%% Local Variables:

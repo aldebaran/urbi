@@ -347,6 +347,15 @@ function runTestContent(chkFile, content)
   Lobby.create->constant = true;
   */
 
+  debug << "Changing dir to test dir...";
+  var targetdir = "test_" + chkFile.replace(".", "_").replace("/", "_");
+  if (Path.new(targetdir).exists)
+    Directory.new(targetdir).removeAll();
+  Directory.create(targetdir);
+  System.searchPath += [Path.new(targetdir)];
+  Path.new(targetdir).cd();
+
+  debug << "Initializing hooks...";
    // Create a lobby for the test
   var l = Lobby.create();
   var ID = "_" + l.uid.asString() + "foo".fresh();
@@ -365,6 +374,12 @@ function runTestContent(chkFile, content)
   if (System.env["PASS_THROUGH"])
     waitFor = 5s;
   timeout(waitFor) waituntil(Object.test_finished.hasLocalSlot(ID));
+
+  Path.new("..").cd();
+  if (!System.env["KEEP_TEMP_DIR"])
+    Directory.new(targetdir).removeAll();
+
+
   Lobby.write->constant = false;
   Lobby.send->constant = false;
   Lobby.write = lw;

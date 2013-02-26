@@ -206,7 +206,7 @@ removeSlots("dir");
   \refSlot{createAll} creates them all as in the Unix \samp{make -p} command.
 \begin{urbiscript}
 Directory.create("dir1/dir2/dir3");
-[00000001:error] !!! create: no such file or directory: dir1/dir2/dir3
+[00000001:error] !!! create: no such file or directory: "dir1/dir2/dir3"
 var dir1 = Directory.create("dir1");
 [00000002] Directory("dir1")
 Directory.createAll("dir1/dir2/dir3");

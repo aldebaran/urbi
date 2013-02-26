@@ -3,7 +3,7 @@
 skipIfWindows(); // FIXME: reenable for Urbi 3.
 System.systemFiles = []|;
 // FIXME: On OS X, 9203 does not pass (see test.u).
-if (System.Platform.hostOs[0,6] == "darwin")
+if (System.Platform.hostOs.find("darwin") != -1)
   bigstring = bigString(9150)|;
 
 UVar.new(Global, "val")|;
