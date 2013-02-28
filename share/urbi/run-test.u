@@ -22,7 +22,8 @@ function Object.splitNewline(s)
 
 function tex2Chk(filename)
 {
-  var content = File.new(filename).content.data.split("\n");
+  var content = File.new(filename).content.data;
+  content = splitNewline(content);
   /*
   What to expect:
   \begin{urbiscript}
