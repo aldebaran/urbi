@@ -144,21 +144,21 @@ prototypes from an object thanks to \lstinline{addProto} and
 \begin{urbiscript}[firstnumber=1]
 // We create a fresh object.
 var c = Object.clone();
-[00000000] Object_0x1
+[00000000] Object_0x00000001
 // As expected, it has no 'slot' slot.
 c.slot;
 [00000000:error] !!! lookup failed: slot
 var p = Object.clone();
-[00000000] Object_0x2
+[00000000] Object_0x00000002
 var p.slot = 0;
 [00000000] 0
 c.addProto(p);
-[00000000] Object_0x1
+[00000000] Object_0x00000001
 // Now, 'slot' is found in c, because it is inherited from p.
 c.slot;
 [00000000] 0
 c.removeProto(p);
-[00000000] Object_0x1
+[00000000] Object_0x00000001
 // Back to our good old lookup error.
 c.slot;
 [00000000:error] !!! lookup failed: slot
@@ -241,13 +241,13 @@ The answer is, of course, no, as illustrated below.
 
 \begin{urbiscript}[firstnumber=1]
 var proto = Object.clone();
-[00000000] Object_0x1
+[00000000] Object_0x00000001
 var proto.x = 0;
 [00000000] 0
 var o1 = proto.clone();
-[00000000] Object_0x2
+[00000000] Object_0x00000002
 var o2 = proto.clone();
-[00000000] Object_0x3
+[00000000] Object_0x00000003
 // Are we modifying proto's x slot here?
 o1.x = 1;
 [00000000] 1
@@ -304,7 +304,7 @@ customize pairs printing --- don't give it too much attention for now.
 
 \begin{urbiscript}[firstnumber=1]
 var MyPair = Object.clone();
-[00000000] Object_0x1
+[00000000] Object_0x00000001
 do (MyPair)
 {
   var first = nil;

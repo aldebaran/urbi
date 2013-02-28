@@ -254,7 +254,7 @@ with local variables.
 
 \begin{urbiscript}[firstnumber=1]
 var o = Object.clone();
-[00000000] Object_0x0
+[00000000] Object_0x00000001
 // This syntax stores the function in the 'f' slot of 'o'.
 function o.f ()
 {
@@ -274,7 +274,7 @@ o.f;
 [:]  return 42;
 [:]}
 o.f();
-[00000000] *** This is f with target Object_0x0
+[00000000] *** This is f with target Object_0x00000001
 [00000000] 42
 \end{urbiscript}
 
@@ -466,11 +466,11 @@ function test(arg)
   echo(arg.uid); // print its uid
 } |;
 var x = Object.clone();
-[00000000] Object_0x1
+[00000000] Object_0x00000001
 x.uid;
-[00000000] "0x1"
+[00000000] "0x00000001"
 test(x);
-[00000000] *** 0x1
+[00000000] *** 0x00000001
 x.localSlotNames();
 [00000000] ["flag"]
 \end{urbiscript}
