@@ -166,7 +166,7 @@ namespace kernel
     , return_value_(EX_OK)
   {
     GD_INFO_TRACE("Entering UServer constructor.");
-    search_path.push_back(std::string(libport::xgetenv("URBI_PATH")), ":");
+    search_path.push_back(std::string(libport::xgetenv("URBI_PATH",".")), ":");
     search_path.push_back(urbi_root.share_dir());
     // Add the path we need to work from cmake build dir.
     search_path.push_back(libport::path(urbi_root.root() + "/../../share"));
