@@ -62,7 +62,6 @@ namespace urbi
       return yield_until(libport::utime() + delay);
     }
 
-
     template <typename T> void
     deletor(T* ptr)
     {
@@ -73,47 +72,6 @@ namespace urbi
     UContextImpl::addCleanup(T* ptr)
     {
       addCleanup(boost::bind(&deletor<T>, ptr));
-    }
-
-    inline void
-    UContextImpl::addCleanup(boost::function0<void> op)
-    {
-      aver(cleanup_list_.get());
-      aver(!cleanup_list_->empty());
-      cleanup_list_->back().push_back(op);
-    }
-
-    inline void
-    UContextImpl::pushCleanupStack()
-    {
-      CleanupList* cl = cleanup_list_.get();
-      if (!cl)
-      {
-        cl = new CleanupList;
-        cleanup_list_.reset(cl);
-      }
-      cl->resize(cl->size()+1);
-    }
-
-    inline void
-    UContextImpl::popCleanupStack()
-    {
-      foreach (boost::function0<void>& f, cleanup_list_->back())
-        f();
-      cleanup_list_->pop_back();
-    }
-
-    inline
-    UContextImpl::CleanupStack::CleanupStack(UContextImpl& owner)
-      : owner_(owner)
-    {
-      owner_.pushCleanupStack();
-    }
-
-    inline
-    UContextImpl::CleanupStack::~CleanupStack()
-    {
-      owner_.popCleanupStack();
     }
   }
 

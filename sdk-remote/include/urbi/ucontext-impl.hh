@@ -125,7 +125,7 @@ namespace urbi
        * The UObject API instanciates one for each call to a bound function or
        * notify.
        */
-      class CleanupStack
+      class URBI_SDK_API CleanupStack
       {
       public:
         CleanupStack(UContextImpl& owner);
