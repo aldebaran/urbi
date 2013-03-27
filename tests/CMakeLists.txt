@@ -52,7 +52,7 @@ FOREACH(infileName ${tests})
   string(REPLACE "/" "_" _out2 ${_out})
   list(FIND BLACKLIST ${_out2} _blacklisted)
   if(NOT ${_blacklisted} EQUAL -1)
-    MESSAGE("Test ${_out2} blacklisted, skipping")
+    qi_debug("Test ${_out2} blacklisted, skipping")
   else()
     # We need to check fast mode at this point
     file(READ ${infileName} _fcontent LIMIT 512)
@@ -73,7 +73,6 @@ ENDFOREACH(infileName)
 
 #doc tests
 FILE(GLOB_RECURSE doctex RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/../doc ../doc/*.tex)
-MESSAGE("Got ${doctex}")
 FOREACH(infileName ${doctex})
   # Check if there is something
   string(REPLACE "." "_" _out ${infileName})
