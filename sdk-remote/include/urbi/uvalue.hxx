@@ -10,7 +10,7 @@
 
 /// \file urbi/uvalue.hxx
 
-#include <libport/foreach.hh>
+#include <boost/foreach.hpp>
 #include <boost/numeric/ublas/blas.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/vector.hpp>
@@ -253,7 +253,7 @@ namespace urbi
       if (v.type != DATA_DICTIONARY)
         throw std::runtime_error("UValue is not a dictionary.");
       typedef UDictionary::value_type DictVal;
-      foreach (UDictionary::value_type& val, *v.dictionary)
+      BOOST_FOREACH (UDictionary::value_type& val, *v.dictionary)
         res[val.first] = uvalue_cast<V>(val.second);
       return res;
     }
@@ -268,7 +268,7 @@ namespace urbi
     v.clear();
     v.type = DATA_DICTIONARY;
     v.dictionary = new UDictionary;
-    foreach (const DictVal & val, d)
+    BOOST_FOREACH (const DictVal & val, d)
     {
       UValue nv;
       nv, val.second;
@@ -285,7 +285,7 @@ namespace urbi
   {
     array.clear();
     typedef const typename T::value_type constv;
-    foreach (constv& v, container)
+    BOOST_FOREACH (constv& v, container)
     {
       UValue val;
       val,v;
@@ -300,7 +300,7 @@ namespace urbi
   UList::as()
   {
     T res;
-    foreach (UValue* v, array)
+    BOOST_FOREACH (UValue* v, array)
       res.push_back(uvalue_caster<typename T::value_type>()(*v));
     return res;
   }

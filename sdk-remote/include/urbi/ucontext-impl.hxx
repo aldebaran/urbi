@@ -9,7 +9,6 @@
  */
 
 #include <libport/bind.hh>
-#include <libport/foreach.hh>
 
 namespace urbi
 {
