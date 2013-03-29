@@ -15,6 +15,8 @@ if (NOT APPLE AND NOT WIN32)
   qi_use_lib(urbi-launch DL)
 endif()
 
+qi_stage_bin(urbi-launch)
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 
