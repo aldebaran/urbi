@@ -105,5 +105,20 @@ endif()
 
 qi_stage_lib(uobject-remote)
 
+#uobject-remote is instaled at a custom location.
+#So we still need a liburbi for programs wanting to link with it
+qi_create_lib(urbi
+  SHARED
+  DEPENDS port serialize ${JPEG_PACKAGE} BOOST BOOST_REGEX BOOST_DATE_TIME  BOOST_SYSTEM BOOST_THREAD
+  SRC ${COMMON_SRC} ${URBI_SRC}
+)
+
+if (NOT APPLE AND NOT WIN32)
+  qi_use_lib(urbi DL)
+endif()
+
+qi_stage_lib(urbi)
+
+
 add_subdirectory(src/examples)
 add_subdirectory(include)
