@@ -113,6 +113,10 @@ qi_create_lib(urbi
   SRC ${COMMON_SRC} ${URBI_SRC}
 )
 
+set_target_properties(urbi
+  PROPERTIES
+    COMPILE_FLAGS -DBUILDING_URBI_SDK)
+
 if (NOT APPLE AND NOT WIN32)
   qi_use_lib(urbi DL)
 endif()
