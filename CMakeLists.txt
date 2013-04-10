@@ -103,14 +103,10 @@ set(GENERATED_SRC
 else()
   MESSAGE("No bison specified, using pregenerated grammar and AST files.")
   qi_generate_src(
-  ${CMAKE_CURRENT_BINARY_DIR}/src/parser/ugrammar.cc
-  SRC src/parser/ugrammar.y
-  COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/pregenerated/ ${CMAKE_CURRENT_BINARY_DIR}/src/parser/
-  )
-  qi_generate_src(
-  ${CMAKE_CURRENT_BINARY_DIR}/src/parser/utoken.cc
-  SRC src/parser/ugrammar.y
-  COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/pregenerated/ ${CMAKE_CURRENT_BINARY_DIR}/src/parser/
+    ${CMAKE_CURRENT_BINARY_DIR}/src/parser/ugrammar.cc
+    ${CMAKE_CURRENT_BINARY_DIR}/src/parser/utoken.cc
+    SRC src/parser/ugrammar.y src/ast/ast.yml
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/pregenerated/ ${CMAKE_CURRENT_BINARY_DIR}/src/parser/
   )
 
   # HACK, to avoid a qi_generate_src rule for all 100 files,
