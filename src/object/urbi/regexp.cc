@@ -38,7 +38,7 @@ namespace urbi
       proto_add(model);
     }
 
-    URBI_CXX_OBJECT_REGISTER_INIT(Regexp)
+    URBI_CXX_OBJECT_INIT(Regexp)
       : re_(".")
     {
       bind(libport::Symbol( "[]" ), &Regexp::operator[]);

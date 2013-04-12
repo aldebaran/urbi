@@ -33,9 +33,11 @@ namespace urbi
     | Registering.  |
     `--------------*/
 
+    /* embeded in main lib: moved to register.cc
     URBI_CXX_OBJECT_REGISTER(Stream);
     URBI_CXX_OBJECT_REGISTER(InputStream);
     URBI_CXX_OBJECT_REGISTER(OutputStream);
+    */
 
 
     /*-----------------------------.

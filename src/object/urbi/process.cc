@@ -106,7 +106,7 @@ namespace urbi
       proto_add(model);
     }
 
-    URBI_CXX_OBJECT_REGISTER_INIT(Process)
+    URBI_CXX_OBJECT_INIT(Process)
       : handle_(0)
       , name_(libport::path("true").basename())
       , pid_(0)

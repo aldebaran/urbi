@@ -217,7 +217,7 @@ namespace urbi
       return this;
     }
 
-    URBI_CXX_OBJECT_REGISTER_INIT(Logger)
+    URBI_CXX_OBJECT_INIT(Logger)
       : Tag()
       , category_(SYMBOL(Logger))
       , type_(types::info)

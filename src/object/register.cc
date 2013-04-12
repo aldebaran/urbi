@@ -57,7 +57,13 @@
 #include <object/system.hh>
 #include <object/uvalue.hh>
 #include <object/urbi/logger.hh>
-
+#include <object/urbi/stream.hh>
+#include <object/urbi/input-stream.hh>
+#include <object/urbi/output-stream.hh>
+#include <object/urbi/regexp.hh>
+#ifndef _MSVC_VER
+#include <object/urbi/process.hh>
+#endif
 namespace urbi
 {
   namespace object
@@ -96,7 +102,15 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER(Matrix);
     URBI_CXX_OBJECT_REGISTER(Vector);
     URBI_CXX_OBJECT_REGISTER(Subscription);
-
+    // Those are the modules, currently pluged in.
+#ifndef _MSVC_VER
+    URBI_CXX_OBJECT_REGISTER(Process);
+#endif
+    URBI_CXX_OBJECT_REGISTER(Stream);
+    URBI_CXX_OBJECT_REGISTER(InputStream);
+    URBI_CXX_OBJECT_REGISTER(OutputStream);
+    URBI_CXX_OBJECT_REGISTER(Regexp);
+    URBI_CXX_OBJECT_REGISTER(Logger);
   } // namespace object
 } // namespace urbi
 
