@@ -61,7 +61,7 @@
 #include <object/urbi/input-stream.hh>
 #include <object/urbi/output-stream.hh>
 #include <object/urbi/regexp.hh>
-#ifndef _MSVC_VER
+#ifndef _MSC_VER
 #include <object/urbi/process.hh>
 #endif
 namespace urbi
@@ -103,7 +103,7 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER(Vector);
     URBI_CXX_OBJECT_REGISTER(Subscription);
     // Those are the modules, currently pluged in.
-#ifndef _MSVC_VER
+#ifndef _MSC_VER
     URBI_CXX_OBJECT_REGISTER(Process);
 #endif
     URBI_CXX_OBJECT_REGISTER(Stream);
