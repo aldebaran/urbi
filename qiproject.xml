@@ -1,7 +1,4 @@
 <project name="urbi">
-  <depends buildtime="true" runtime="true" names="libport libqijpeg" />
-  <!-- Add your project dependencies here -->
-  <!--
-  <depends buildtime="true" runtime="true" names="foo" />
-  -->
+  <depends buildtime="true" names="libport libqijpeg" runtime="true" />
+  <maintainer email="mnottale@aldebaran-robotics.com">Matthieu Nottale</maintainer>
 </project>
