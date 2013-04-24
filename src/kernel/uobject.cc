@@ -1315,6 +1315,7 @@ namespace urbi
       }
       void release()
       {
+        GD_FINFO_TRACE("Barrier::release %s", this);
         if (server().isAnotherThread())
           server().schedule_fast(boost::bind(&KernelBarrier::release, this));
         else
@@ -1345,20 +1346,37 @@ namespace urbi
       GD_FINFO_TRACE("Initializing %s: %s", owner, owner->__name);
       if (server().isAnotherThread())
       {
+        static int uid = 1;
+        /* We must name the uobject now, in case the caller synchronously
+        *  tries to call stuff, which will push an async job with the object name.
+        *  Async jobs will be ordered properly so initialize will be first.
+        */
+        if (owner->__name.empty())
+          owner->__name = "__cxx_" + string_cast(++uid);
         server().schedule_fast(
           boost::bind(&KernelUObjectImpl::initialize, this,
                       owner));
         return;
       }
       owner_ = owner;
-      bool fromcxx = owner_->__name.empty();
+      bool fromcxx = owner_->__name.empty()
+       || (owner_->__name.size() >= 3 &&owner_->__name.substr(0, 5) == "__cxx");
+
       rObject r; // Must live until we call ref() on object_links's entry.
       if (fromcxx)
       {
         CAPTURE_GLOBAL(UObject);
         r = ::urbi::uobjects::uobject_new(UObject);
-        owner_->__name =
-        r->call(SYMBOL(__uobjectName))->as<object::String>()->value_get();
+        if (owner_->__name.empty())
+        {
+          r = ::urbi::uobjects::uobject_new(UObject);
+          owner_->__name =
+            r->call(SYMBOL(__uobjectName))->as<object::String>()->value_get();
+        }
+        else
+        {
+          r = ::urbi::uobjects::uobject_new(UObject, false, true, owner_->__name);
+        }
       }
       owner_->ctx_->registerObject(owner);
       rObject o = get_base(owner->__name);
@@ -2130,10 +2148,11 @@ namespace urbi
       \param proto proto object, created by uobject_make_proto() or uobject_new()
       \param forceName force the reported C++ name to be the class name
       \param instanciate true if the UObject should be instanciated, false if it
+      \param name if not empty, force this name
       already is.
     */
     rObject
-    uobject_new(rObject proto, bool forceName, bool instanciate)
+    uobject_new(rObject proto, bool forceName, bool instanciate, const std::string& fname)
     {
       rObject res = new object::Finalizable(proto->as<object::Finalizable>());
 
@@ -2149,6 +2168,8 @@ namespace urbi
         name = cname;
         where->slot_set_value(libport::Symbol(name), res);
       }
+      else if (!fname.empty())
+        name = fname;
       else
       {
         // boost::lexical_cast does not work on the way back, so dont

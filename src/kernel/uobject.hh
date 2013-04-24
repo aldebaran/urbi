@@ -27,7 +27,7 @@ namespace urbi
     /// Instanciate a new prototype inheriting from a UObject.
     urbi::object::rObject
     uobject_new(urbi::object::rObject proto,
-                bool forceName=false, bool instanciate = true);
+                bool forceName=false, bool instanciate = true, const std::string& fname = "");
 
     /// Initialize plugin UObjects.
     ::urbi::object::rObject
