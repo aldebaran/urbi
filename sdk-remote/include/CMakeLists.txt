@@ -17,6 +17,7 @@ urbi/uabstractclient.hxx
 urbi/ubinary.hh
 urbi/ubinary.hxx
 urbi/ublend-type.hh
+urbi/ucallbacks.hh
 urbi/uclient.hh
 urbi/ucontext-factory.hh
 urbi/ucontext.hh
