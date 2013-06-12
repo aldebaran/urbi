@@ -36,7 +36,6 @@ gdb/python/urbi/commands.py
 gdb/python/urbi/frames.py
 gdb/python/urbi/printers.py
 geshi/urbi.php
-pkgconfig/urbi.pc.in
 urbi/binary.u
 urbi/boolean.u
 urbi/call-message.u
