@@ -11,6 +11,7 @@ urbi/input-port.hxx
 urbi/kernel-version.hh
 urbi/package-info.hh
 urbi/qt_umain.hh
+urbi/revision-stub.hh
 urbi/socket.hh
 urbi/uabstractclient.hh
 urbi/uabstractclient.hxx
