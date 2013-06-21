@@ -173,12 +173,13 @@ function splitChk(content)
 
 function fetchTestU(chkFile)
 {
+  Logger.log("Fetching test.u files for " + chkFile);
   var res = "";
   var levels = chkFile.split("/").size();
   var p = Path.new(chkFile).dirname;
   while (levels >= 0)
   {
-    echo("Scanning " + Directory.current / p);
+    echo("Scanning " + p);
     try
     {
       var f = File.new(p / "test.u");
@@ -189,6 +190,7 @@ function fetchTestU(chkFile)
     --levels;
     p = p.dirname;
   };
+  Logger.log("Fetching test.u files done");
   res;
 }|;
 
@@ -223,6 +225,11 @@ function runTest(chkFile)
   {
     var content = splitNewline(File.new("../tests/" + chkFile).content().data);
     runTestContent("../tests/" + chkFile, content);
+  }
+  else if (Path.new(chkFile).exists())
+  {
+    var content = splitNewline(File.new(chkFile).content().data);
+    runTestContent(chkFile, content);
   }
   else if (Path.new("../doc/" + chkFile).exists())
   {
