@@ -64,70 +64,13 @@ x = false;
 
 See \autoref{sec:lang:at} for more details on \lstinline|at| statements.
 
-The \lstinline|whenever| construct is similar to \lstinline|at|, except the
-expression evaluation is systematically restarted when it finishes as long
-as the condition stands true.
 
-\begin{urbiscript}[firstnumber=1]
-var x = false;
-[00000000] false
-whenever (x)
-{
-  echo("ping");
-  sleep(1s);
-};
-x = true;
-[00000000] true
-sleep(3s);
-// Whenever keeps triggering
-[00000000] *** ping
-[00001000] *** ping
-[00002000] *** ping
-x = false;
-[00002000] false
-// Whenever stops triggering
-\end{urbiscript}
-
-Just like \lstinline|at| has \lstinline|onleave|, \lstinline|whenever|
-has \lstinline|else|: the given expression is evaluated as long as the
-condition is false.
-
-\begin{urbiscript}[firstnumber=1]
-var x = false;
-[00002000] false
-whenever (x)
-{
-  echo("ping");
-  sleep(1s);
-}
-else
-{
-  echo("pong");
-  sleep(1s);
-};
-sleep (3s);
-[00000000] *** pong
-[00001000] *** pong
-[00002000] *** pong
-x = true;
-[00003000] true
-sleep (3s);
-[00003000] *** ping
-[00004000] *** ping
-[00005000] *** ping
-x = false;
-[00006000] false
-sleep (2s);
-[00006000] *** pong
-[00007000] *** pong
-\end{urbiscript}
 
 \section{Events}
 \label{sec:tut:events}
 
 In addition to monitoring an expression with a watchdog, \us enables you to
-define events that can be caught with the \lstinline|at| and
-\lstinline|whenever| constructs we saw earlier. You can create events by
+define events that can be caught with the \lstinline|at| construct we saw earlier. You can create events by
 instantiating the \refObject{Event} prototype. They can then be emitted with
 the \lstinline|!| keyword.
 
@@ -146,43 +89,45 @@ myEvent! & myEvent!;
 [00000000] *** ping
 \end{urbiscript}
 
-Both \lstinline|at| and \lstinline|whenever| have the same behavior on
-punctual events. However, if you emit an event for a given duration,
-\lstinline|whenever| will keep triggering for this duration, contrary to
-\lstinline|at|.
+\lstinline|myEvent!| triggers an instantaneous event, which has no effect on
+\lstinline|at| registered after it:
 
-% FIXME: sleep(1s) is required at the end to make this test pass ...
-\begin{urbiunchecked}[firstnumber=1]
-var myEvent = Event.new();
-[00000000] Event_0xb558a588
-whenever (myEvent?)
-{
-  echo("ping (whenever)")|
-  sleep(200ms)
-};
-at (myEvent?)
-{
-  echo("ping (at)")|
-  sleep(200ms)
-};
-// Emit myEvent for .3 second.
-myEvent! ~ 300ms;
-[00000000] *** ping (whenever)
-[00000100] *** ping (whenever)
-[00000000] *** ping (at)
-\end{urbiunchecked}
+\begin{urbiscript}[firstnumber=1]
+var ev = Event.new();
+[00000000] Event_0xb5579008
+ev!;
+at(ev?) echo("ping");
+// Nothing happens unless ev is emitted again.
+\end{urbiscript}
+
+Events can be emited for a given duration using the \lstinline|~(duration)|
+construct after the \lstinline|!| :
+
+\begin{urbiscript}[firstnumber=1]
+var event = Event.new();
+[00000000] Event_0xb5579008
+// emit event for 1 second in parallel with the scope
+event!~(1s),
+// Use an at 100ms later, the event is still in triggered state.
+sleep(100ms) | at(event?) echo("ping");
+sleep(1s);
+[00000000] *** ping
+\end{urbiscript}
+
+Note in the example above that \lstinline|at| only triggers once for the whole
+duration of the emit.
 
 \subsection{Emitting events with a payload}
 \label{sec:tut:events:payload}
 
-Events behave very much like ``channels'': listeners use \lstinline|at| or
-\lstinline|whenever|, and producers use \lstinline|!|.  Fortunately, the
+Events behave very much like ``channels'': listeners use \lstinline|at|,
+and producers use \lstinline|!|.  Fortunately, the
 messages can include a \dfn{payload}, i.e., something sent in the
 ``message''.  The Event then behaves very much like an identifier of the
 message type.  To send/catch the payload, just pass arguments to
 \lstinline|!| and \lstinline|?|:
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var event = Event.new();
 [00000000] Event_0x00000001
 
@@ -288,6 +233,40 @@ e!([1, 2, "4"]);
 [00026327] *** e(x)
 [00026327] *** e([1, 2, x = 4])
 \end{urbiscript}
+
+Remember \lstinline{stopif}\ref{sec:tut:stopif} and
+\lstinline{freezeif}\ref{sec:tut:freezeif} from the previous section? They also
+accept an event in their condition:
+
+\begin{urbiscript}[firstnumber=1]
+var e = Event.new()|;
+var counter = 3|;
+stopif(e?(0)) while(true) { echo(counter); e!(counter); counter--;};
+[00026327] *** 3
+[00026327] *** 2
+[00026327] *** 1
+[00026327] *** 0
+\end{urbiscript}
+
+\subsection{waituntil}
+
+Sometimes it is useful to wait until a condition becomes true, or an event
+triggers. This task can be accomplished with the
+\lstinline{waituntil}\ref{sec:lang:waituntil} construct:
+
+\begin{urbiscript}
+counter = 0|;
+waituntil(counter == 2) | echo("Now!"), // in parallel
+for (var i: 4) { echo(i); counter = i};
+[00000001] *** 0
+[00000001] *** 1
+[00000001] *** 2
+[00000001] *** Now!
+[00000001] *** 3
+\end{urbiscript}
+
+
+
 
 %%% Local Variables:
 %%% coding: utf-8

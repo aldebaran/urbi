@@ -4480,6 +4480,10 @@ x = 3|; x = 2|; sleep (1s) | assert(!x_was_two_for_two_seconds);
 Your expression inside the \lstinline{at} should not have any side effect,
 or use any code that will delay execution (for instance sleep, waituntil...).
 
+Furthermore, \lstinline{at} will not work properly on expressions invoking
+user-defined C++ functions, since \lstinline{at} has no way to track when
+those change.
+
 \begin{urbiunchecked}
 // Do not do this, when and how many times the at condition will be evaluated
 // is not specified.

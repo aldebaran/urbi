@@ -184,6 +184,9 @@ parallel. Tags have a few control methods (see \refObject{Tag}):
 \item[stop] Stop the execution of the tagged code. The flows of
   execution that where stopped jump immediately at the end of the
   tagged block.
+  (if you are familiar with exceptions, imagine that \lstinline{tag.stop()} throws
+  an exception in all tasks tagged by tag, that is caught by outermost
+  occurence of \lstinline{tag:}).
 \item[block] Block the execution of the tagged code, that is:
   \begin{itemize}
   \item Stop it.
@@ -267,6 +270,63 @@ sleep(3.5s);
 [00010000] *** pong
 [00011000] *** ping
 \end{urbiscript}
+
+
+\section{timeout, freezeif and stopif}
+\label{sec:tut:timeout}
+
+\lstinline{timeout}, \lstinline{freezeif} and \lstinline{stopif} are three
+keywords that take advantage of the primitive parallelism tools we've seen
+above to provide useful constructs.
+
+\subsection{timeout}
+
+\begin{urbiscript}[firstnumber=1]
+var countdown = 3|;
+timeout(3.5s) every(1s) { echo(countdown); countdown --;}; echo("stopped");
+[00000001] *** 3
+[00000001] *** 2
+[00000001] *** 1
+[00000001] *** 0
+[00000001] *** stopped
+\end{urbiscript}
+
+As you can see from the above example, timeout stops (in a similar fashion to
+  \lstinline{Tag.stop()}) the given code after given duration.
+
+The timeout itself does not detach, so the timeout command lasts for the
+given duration, or until the command finishes, whichever comes first.
+
+\subsection{stopif and freezeif}
+\label{sec:tut:freezeif}
+\label{sec:tut:stopif}
+
+\lstinline{freezeif} and \lstinline{stopif} use similar construct, and
+freeze/stop (respectively) the given code when the condition is true.
+
+\begin{urbiscript}
+var b = false|;
+timeout(3.2s) detach({
+  freezeif(b) every(500ms) echo("tick"),
+  freezeif(!b) every(500ms) echo("tack")
+  })|;
+sleep(1.2s); b = true;
+[00000001] *** tick
+[00000001] *** tick
+[00000001] *** tick
+[00000001] true
+sleep(1s); b = false;
+[00000001] *** tack
+[00000001] *** tack
+[00000001] *** tack
+[00000001] false
+sleep(1s); echo("done");
+[00000001] *** tick
+[00000001] *** tick
+[00000001] *** done
+\end{urbiscript}
+
+
 
 \section{Advanced example with parallelism and tags}
 
