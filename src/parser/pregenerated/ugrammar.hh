@@ -1,4 +1,4 @@
-/* A Bison parser, made by GNU Bison 2.3b.656-d4b2-dirty.  */
+/* A Bison parser, made by GNU Bison 2.3b.656-d4b2.  */
 
 /* Skeleton interface for Bison LALR(1) parsers in C++
 
@@ -1194,7 +1194,7 @@ namespace yy {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 1812,           //< Last index in yytable_.
+      yylast_ = 1804,           //< Last index in yytable_.
       yynnts_ = 80,  //< Number of nonterminal symbols.
       yyempty_ = -2,
       yyfinal_ = 87, //< Termination state number.

@@ -1,4 +1,4 @@
-/* A Bison parser, made by GNU Bison 2.3b.656-d4b2-dirty.  */
+/* A Bison parser, made by GNU Bison 2.3b.656-d4b2.  */
 
 /* Stack handling for Bison parsers in C++
 

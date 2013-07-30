@@ -1,4 +1,4 @@
-/* A Bison parser, made by GNU Bison 2.3b.656-d4b2-dirty.  */
+/* A Bison parser, made by GNU Bison 2.3b.656-d4b2.  */
 
 /* Skeleton implementation for Bison LALR(1) parsers in C++
 
@@ -3117,7 +3117,7 @@ namespace yy {
 /* Line 828 of lalr1.cc  */
 #line 776 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     {
-      yylhs.value.as< ast::rExp >() = MAKE(freezeif, yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >());
+      yylhs.value.as< ast::rExp >() = MAKE(freezeif, yylhs.location, yystack_[3].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >(), yystack_[2].value.as< ast::rExp >());
     }
 /* Line 828 of lalr1.cc  */
 #line 3124 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
@@ -3127,7 +3127,7 @@ namespace yy {
 /* Line 828 of lalr1.cc  */
 #line 780 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     {
-      yylhs.value.as< ast::rExp >() = MAKE(stopif, yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >());
+      yylhs.value.as< ast::rExp >() = MAKE(freezeif_event, yylhs.location, yystack_[2].value.as< ast::EventMatch >(), yystack_[0].value.as< ast::rExp >());
     }
 /* Line 828 of lalr1.cc  */
 #line 3134 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
@@ -3137,7 +3137,7 @@ namespace yy {
 /* Line 828 of lalr1.cc  */
 #line 784 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     {
-      yylhs.value.as< ast::rExp >() = MAKE(switch, yystack_[5].location, yystack_[5].value.as< ast::rExp >(), yystack_[2].value.as< ::ast::Factory::cases_type >(), yystack_[1].value.as< ast::rNary >());
+      yylhs.value.as< ast::rExp >() = MAKE(stopif, yylhs.location, yystack_[3].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >(), yystack_[2].value.as< ast::rExp >());
     }
 /* Line 828 of lalr1.cc  */
 #line 3144 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
@@ -3147,28 +3147,28 @@ namespace yy {
 /* Line 828 of lalr1.cc  */
 #line 788 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     {
-      yylhs.value.as< ast::rExp >() = MAKE(timeout, yylhs.location,
-                yystack_[5].value.as< ast::rExp >(), yystack_[3].value.as< ast::rExp >(), yystack_[2].value.as< ast::rExp >(), yystack_[1].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >());
+      yylhs.value.as< ast::rExp >() = MAKE(stopif_event, yylhs.location, yystack_[2].value.as< ast::EventMatch >(), yystack_[0].value.as< ast::rExp >());
     }
 /* Line 828 of lalr1.cc  */
-#line 3155 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3154 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 82:
 /* Line 828 of lalr1.cc  */
-#line 793 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 792 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     {
-      yylhs.value.as< ast::rExp >() = new ast::Return(yylhs.location, yystack_[0].value.as< ast::rExp >());
+      yylhs.value.as< ast::rExp >() = MAKE(switch, yystack_[5].location, yystack_[5].value.as< ast::rExp >(), yystack_[2].value.as< ::ast::Factory::cases_type >(), yystack_[1].value.as< ast::rNary >());
     }
 /* Line 828 of lalr1.cc  */
-#line 3165 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3164 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 83:
 /* Line 828 of lalr1.cc  */
-#line 797 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 796 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     {
-      yylhs.value.as< ast::rExp >() = new ast::Break(yylhs.location);
+      yylhs.value.as< ast::rExp >() = MAKE(timeout, yylhs.location,
+                yystack_[5].value.as< ast::rExp >(), yystack_[3].value.as< ast::rExp >(), yystack_[2].value.as< ast::rExp >(), yystack_[1].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >());
     }
 /* Line 828 of lalr1.cc  */
 #line 3175 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
@@ -3178,7 +3178,7 @@ namespace yy {
 /* Line 828 of lalr1.cc  */
 #line 801 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     {
-      yylhs.value.as< ast::rExp >() = new ast::Continue(yylhs.location);
+      yylhs.value.as< ast::rExp >() = new ast::Return(yylhs.location, yystack_[0].value.as< ast::rExp >());
     }
 /* Line 828 of lalr1.cc  */
 #line 3185 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
@@ -3188,7 +3188,7 @@ namespace yy {
 /* Line 828 of lalr1.cc  */
 #line 805 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     {
-      yylhs.value.as< ast::rExp >() = MAKE(waituntil, yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[1].value.as< ast::rExp >());
+      yylhs.value.as< ast::rExp >() = new ast::Break(yylhs.location);
     }
 /* Line 828 of lalr1.cc  */
 #line 3195 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
@@ -3198,7 +3198,7 @@ namespace yy {
 /* Line 828 of lalr1.cc  */
 #line 809 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     {
-      yylhs.value.as< ast::rExp >() = MAKE(waituntil_event, yylhs.location, yystack_[1].value.as< ast::EventMatch >());
+      yylhs.value.as< ast::rExp >() = new ast::Continue(yylhs.location);
     }
 /* Line 828 of lalr1.cc  */
 #line 3205 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
@@ -3208,7 +3208,7 @@ namespace yy {
 /* Line 828 of lalr1.cc  */
 #line 813 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     {
-      yylhs.value.as< ast::rExp >() = MAKE(whenever, yylhs.location, yystack_[4].value.as< ast::rExp >(), yystack_[1].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >(), yystack_[3].value.as< ast::rExp >());
+      yylhs.value.as< ast::rExp >() = MAKE(waituntil, yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[1].value.as< ast::rExp >());
     }
 /* Line 828 of lalr1.cc  */
 #line 3215 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
@@ -3218,7 +3218,7 @@ namespace yy {
 /* Line 828 of lalr1.cc  */
 #line 817 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     {
-      yylhs.value.as< ast::rExp >() = MAKE(whenever_event, yylhs.location, yystack_[3].value.as< ast::EventMatch >(), yystack_[1].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >());
+      yylhs.value.as< ast::rExp >() = MAKE(waituntil_event, yylhs.location, yystack_[1].value.as< ast::EventMatch >());
     }
 /* Line 828 of lalr1.cc  */
 #line 3225 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
@@ -3226,180 +3226,180 @@ namespace yy {
 
   case 89:
 /* Line 828 of lalr1.cc  */
-#line 833 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rNary >() = 0;            }
+#line 821 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    {
+      yylhs.value.as< ast::rExp >() = MAKE(whenever, yylhs.location, yystack_[4].value.as< ast::rExp >(), yystack_[1].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >(), yystack_[3].value.as< ast::rExp >());
+    }
 /* Line 828 of lalr1.cc  */
-#line 3233 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3235 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 90:
 /* Line 828 of lalr1.cc  */
-#line 834 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ast::rNary >(), yystack_[0].value.as< ast::rNary >()); }
+#line 825 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    {
+      yylhs.value.as< ast::rExp >() = MAKE(whenever_event, yylhs.location, yystack_[3].value.as< ast::EventMatch >(), yystack_[1].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >());
+    }
 /* Line 828 of lalr1.cc  */
-#line 3241 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3245 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 91:
 /* Line 828 of lalr1.cc  */
-#line 839 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = 0;            }
+#line 841 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rNary >() = 0;            }
 /* Line 828 of lalr1.cc  */
-#line 3249 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3253 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 92:
 /* Line 828 of lalr1.cc  */
-#line 840 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >()); }
+#line 842 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ast::rNary >(), yystack_[0].value.as< ast::rNary >()); }
 /* Line 828 of lalr1.cc  */
-#line 3257 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3261 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 93:
 /* Line 828 of lalr1.cc  */
-#line 846 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 847 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     { yylhs.value.as< ast::rExp >() = 0;            }
 /* Line 828 of lalr1.cc  */
-#line 3265 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3269 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 94:
 /* Line 828 of lalr1.cc  */
-#line 847 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 848 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     { std::swap(yylhs.value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 3273 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3277 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 95:
 /* Line 828 of lalr1.cc  */
-#line 857 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    {}
+#line 854 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = 0;            }
 /* Line 828 of lalr1.cc  */
-#line 3281 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3285 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 96:
 /* Line 828 of lalr1.cc  */
-#line 858 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ::ast::Factory::cases_type >(), yystack_[1].value.as< ::ast::Factory::cases_type >()); yylhs.value.as< ::ast::Factory::cases_type >() << yystack_[0].value.as< ::ast::Factory::case_type >(); }
+#line 855 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 3289 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3293 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 97:
 /* Line 828 of lalr1.cc  */
-#line 864 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ::ast::Factory::case_type >() = ::ast::Factory::case_type(yystack_[2].value.as< ast::rMatch >(), yystack_[0].value.as< ast::rNary >()); }
+#line 865 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    {}
 /* Line 828 of lalr1.cc  */
-#line 3297 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3301 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 98:
 /* Line 828 of lalr1.cc  */
-#line 873 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::catches_type >() = ast::catches_type(); yylhs.value.as< ast::catches_type >() << yystack_[0].value.as< ast::rCatch >(); }
+#line 866 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ::ast::Factory::cases_type >(), yystack_[1].value.as< ::ast::Factory::cases_type >()); yylhs.value.as< ::ast::Factory::cases_type >() << yystack_[0].value.as< ::ast::Factory::case_type >(); }
 /* Line 828 of lalr1.cc  */
-#line 3305 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3309 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 99:
 /* Line 828 of lalr1.cc  */
-#line 874 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ast::catches_type >(), yystack_[1].value.as< ast::catches_type >());        yylhs.value.as< ast::catches_type >() << yystack_[0].value.as< ast::rCatch >(); }
+#line 872 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ::ast::Factory::case_type >() = ::ast::Factory::case_type(yystack_[2].value.as< ast::rMatch >(), yystack_[0].value.as< ast::rNary >()); }
 /* Line 828 of lalr1.cc  */
-#line 3313 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3317 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 100:
 /* Line 828 of lalr1.cc  */
-#line 879 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rMatch >() = new ast::Match(yylhs.location, yystack_[0].value.as< ast::rExp >(), 0);  }
+#line 881 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::catches_type >() = ast::catches_type(); yylhs.value.as< ast::catches_type >() << yystack_[0].value.as< ast::rCatch >(); }
 /* Line 828 of lalr1.cc  */
-#line 3321 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3325 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 101:
 /* Line 828 of lalr1.cc  */
-#line 880 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rMatch >() = new ast::Match(yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >()); }
+#line 882 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ast::catches_type >(), yystack_[1].value.as< ast::catches_type >());        yylhs.value.as< ast::catches_type >() << yystack_[0].value.as< ast::rCatch >(); }
 /* Line 828 of lalr1.cc  */
-#line 3329 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3333 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 102:
 /* Line 828 of lalr1.cc  */
-#line 883 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rMatch >() = 0; }
+#line 887 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rMatch >() = new ast::Match(yylhs.location, yystack_[0].value.as< ast::rExp >(), 0);  }
 /* Line 828 of lalr1.cc  */
-#line 3337 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3341 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 103:
 /* Line 828 of lalr1.cc  */
-#line 884 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ast::rMatch >(), yystack_[1].value.as< ast::rMatch >()); }
+#line 888 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rMatch >() = new ast::Match(yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 3345 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3349 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 104:
 /* Line 828 of lalr1.cc  */
-#line 888 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rCatch >() = MAKE(catch, yylhs.location, yystack_[1].value.as< ast::rMatch >(), yystack_[0].value.as< ast::rExp >()); }
+#line 891 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rMatch >() = 0; }
 /* Line 828 of lalr1.cc  */
-#line 3353 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3357 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 105:
 /* Line 828 of lalr1.cc  */
-#line 895 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = 0; }
+#line 892 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ast::rMatch >(), yystack_[1].value.as< ast::rMatch >()); }
 /* Line 828 of lalr1.cc  */
-#line 3361 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3365 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 106:
 /* Line 828 of lalr1.cc  */
 #line 896 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = yystack_[0].value.as< ast::rExp >(); }
+    { yylhs.value.as< ast::rCatch >() = MAKE(catch, yylhs.location, yystack_[1].value.as< ast::rMatch >(), yystack_[0].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 3369 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3373 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 107:
 /* Line 828 of lalr1.cc  */
-#line 902 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = 0;  }
+#line 903 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = 0; }
 /* Line 828 of lalr1.cc  */
-#line 3377 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3381 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 108:
 /* Line 828 of lalr1.cc  */
-#line 903 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 904 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     { yylhs.value.as< ast::rExp >() = yystack_[0].value.as< ast::rExp >(); }
 /* Line 828 of lalr1.cc  */
-#line 3385 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3389 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 109:
 /* Line 828 of lalr1.cc  */
-#line 908 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    {
-    yylhs.value.as< ast::rExp >() = MAKE(try, yylhs.location, yystack_[3].value.as< ast::rExp >(), yystack_[2].value.as< ast::catches_type >(), yystack_[1].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >());
-  }
+#line 910 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = 0;  }
 /* Line 828 of lalr1.cc  */
-#line 3395 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3397 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 110:
 /* Line 828 of lalr1.cc  */
-#line 912 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    {
-    yylhs.value.as< ast::rExp >() = MAKE(finally, yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >());
-  }
+#line 911 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = yystack_[0].value.as< ast::rExp >(); }
 /* Line 828 of lalr1.cc  */
 #line 3405 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
@@ -3408,7 +3408,7 @@ namespace yy {
 /* Line 828 of lalr1.cc  */
 #line 916 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     {
-    yylhs.value.as< ast::rExp >() = MAKE(throw, yylhs.location, yystack_[0].value.as< ast::rExp >());
+    yylhs.value.as< ast::rExp >() = MAKE(try, yylhs.location, yystack_[3].value.as< ast::rExp >(), yystack_[2].value.as< ast::catches_type >(), yystack_[1].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >());
   }
 /* Line 828 of lalr1.cc  */
 #line 3415 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
@@ -3416,20 +3416,20 @@ namespace yy {
 
   case 112:
 /* Line 828 of lalr1.cc  */
-#line 945 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 920 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     {
-      yylhs.value.as< ast::rExp >() = MAKE(loop, yylhs.location, yystack_[1].location, yystack_[1].value.as< ast::flavor_type >(), yystack_[0].value.as< ast::rExp >());
-    }
+    yylhs.value.as< ast::rExp >() = MAKE(finally, yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >());
+  }
 /* Line 828 of lalr1.cc  */
 #line 3425 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 113:
 /* Line 828 of lalr1.cc  */
-#line 949 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 924 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     {
-      yylhs.value.as< ast::rExp >() = MAKE(for, yylhs.location, yystack_[4].location, yystack_[4].value.as< ast::flavor_type >(), yystack_[2].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >());
-    }
+    yylhs.value.as< ast::rExp >() = MAKE(throw, yylhs.location, yystack_[0].value.as< ast::rExp >());
+  }
 /* Line 828 of lalr1.cc  */
 #line 3435 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
@@ -3438,7 +3438,7 @@ namespace yy {
 /* Line 828 of lalr1.cc  */
 #line 953 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     {
-      yylhs.value.as< ast::rExp >() = MAKE(for, yylhs.location, yystack_[8].location, yystack_[8].value.as< ast::flavor_type >(), yystack_[6].value.as< ast::rExp >(), yystack_[4].value.as< ast::rExp >(), yystack_[2].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >());
+      yylhs.value.as< ast::rExp >() = MAKE(loop, yylhs.location, yystack_[1].location, yystack_[1].value.as< ast::flavor_type >(), yystack_[0].value.as< ast::rExp >());
     }
 /* Line 828 of lalr1.cc  */
 #line 3445 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
@@ -3448,7 +3448,7 @@ namespace yy {
 /* Line 828 of lalr1.cc  */
 #line 957 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     {
-      yylhs.value.as< ast::rExp >() = MAKE(for, yylhs.location, yystack_[7].location, yystack_[7].value.as< ast::flavor_type >(), yystack_[4].location, yystack_[4].value.as< libport::Symbol >(), yystack_[2].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >());
+      yylhs.value.as< ast::rExp >() = MAKE(for, yylhs.location, yystack_[4].location, yystack_[4].value.as< ast::flavor_type >(), yystack_[2].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >());
     }
 /* Line 828 of lalr1.cc  */
 #line 3455 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
@@ -3458,165 +3458,165 @@ namespace yy {
 /* Line 828 of lalr1.cc  */
 #line 961 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     {
-      yylhs.value.as< ast::rExp >() = MAKE(while, yylhs.location, yystack_[4].location, yystack_[4].value.as< ast::flavor_type >(), yystack_[2].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >());
+      yylhs.value.as< ast::rExp >() = MAKE(for, yylhs.location, yystack_[8].location, yystack_[8].value.as< ast::flavor_type >(), yystack_[6].value.as< ast::rExp >(), yystack_[4].value.as< ast::rExp >(), yystack_[2].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >());
     }
 /* Line 828 of lalr1.cc  */
 #line 3465 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
-  case 119:
+  case 117:
 /* Line 828 of lalr1.cc  */
-#line 976 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = MAKE(scope, yylhs.location, 0, yystack_[0].value.as< ast::rExp >());  }
+#line 965 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    {
+      yylhs.value.as< ast::rExp >() = MAKE(for, yylhs.location, yystack_[7].location, yystack_[7].value.as< ast::flavor_type >(), yystack_[4].location, yystack_[4].value.as< libport::Symbol >(), yystack_[2].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >());
+    }
 /* Line 828 of lalr1.cc  */
-#line 3473 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3475 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
-  case 120:
+  case 118:
 /* Line 828 of lalr1.cc  */
-#line 977 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = MAKE(scope, yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >()); }
+#line 969 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    {
+      yylhs.value.as< ast::rExp >() = MAKE(while, yylhs.location, yystack_[4].location, yystack_[4].value.as< ast::flavor_type >(), yystack_[2].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >());
+    }
 /* Line 828 of lalr1.cc  */
-#line 3481 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3485 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 121:
 /* Line 828 of lalr1.cc  */
-#line 989 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< bool >() = true; }
+#line 984 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = MAKE(scope, yylhs.location, 0, yystack_[0].value.as< ast::rExp >());  }
 /* Line 828 of lalr1.cc  */
-#line 3489 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3493 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 122:
 /* Line 828 of lalr1.cc  */
-#line 990 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< bool >() = false; }
+#line 985 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = MAKE(scope, yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 3497 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3501 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 123:
 /* Line 828 of lalr1.cc  */
-#line 994 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = MAKE(assert, yylhs.location, yystack_[1].value.as< ast::rExp >()); }
+#line 997 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< bool >() = true; }
 /* Line 828 of lalr1.cc  */
-#line 3505 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3509 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 124:
 /* Line 828 of lalr1.cc  */
-#line 995 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = MAKE(assert, yylhs.location, yystack_[1].value.as< ast::exps_type* >()); }
+#line 998 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< bool >() = false; }
 /* Line 828 of lalr1.cc  */
-#line 3513 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3517 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 125:
 /* Line 828 of lalr1.cc  */
-#line 996 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = MAKE(detach, yylhs.location, yystack_[3].value.as< bool >(), yystack_[1].value.as< ast::rExp >()); }
+#line 1002 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = MAKE(assert, yylhs.location, yystack_[1].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 3521 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3525 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 126:
 /* Line 828 of lalr1.cc  */
-#line 997 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = MAKE(detach, yylhs.location, yystack_[1].value.as< bool >(), yystack_[0].value.as< ast::rExp >()); }
+#line 1003 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = MAKE(assert, yylhs.location, yystack_[1].value.as< ast::exps_type* >()); }
 /* Line 828 of lalr1.cc  */
-#line 3529 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3533 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 127:
 /* Line 828 of lalr1.cc  */
-#line 998 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = MAKE(isdef, yylhs.location, yystack_[1].value.as< ast::rCall >()); }
+#line 1004 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = MAKE(detach, yylhs.location, yystack_[3].value.as< bool >(), yystack_[1].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 3537 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3541 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 128:
 /* Line 828 of lalr1.cc  */
-#line 999 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = MAKE(watch, yylhs.location, yystack_[1].value.as< ast::rExp >()); }
+#line 1005 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = MAKE(detach, yylhs.location, yystack_[1].value.as< bool >(), yystack_[0].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 3545 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3549 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 129:
 /* Line 828 of lalr1.cc  */
-#line 1009 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rLValue >() = MAKE(call, yylhs.location, yystack_[0].value.as< libport::Symbol >()); }
+#line 1006 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = MAKE(isdef, yylhs.location, yystack_[1].value.as< ast::rCall >()); }
 /* Line 828 of lalr1.cc  */
-#line 3553 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3557 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 130:
 /* Line 828 of lalr1.cc  */
-#line 1010 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rLValue >() = MAKE(call, yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[0].value.as< libport::Symbol >()); }
+#line 1007 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = MAKE(watch, yylhs.location, yystack_[1].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 3561 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3565 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 131:
 /* Line 828 of lalr1.cc  */
-#line 1011 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rLValue >() = MAKE(call, yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[0].value.as< libport::Symbol >()); }
+#line 1017 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rLValue >() = MAKE(call, yylhs.location, yystack_[0].value.as< libport::Symbol >()); }
 /* Line 828 of lalr1.cc  */
-#line 3569 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3573 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 132:
 /* Line 828 of lalr1.cc  */
-#line 1015 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = MAKE(get_slot, yylhs.location, yystack_[0].value.as< libport::Symbol >()); }
+#line 1018 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rLValue >() = MAKE(call, yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[0].value.as< libport::Symbol >()); }
 /* Line 828 of lalr1.cc  */
-#line 3577 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3581 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 133:
 /* Line 828 of lalr1.cc  */
-#line 1016 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = MAKE(get_slot, yylhs.location, yystack_[3].value.as< ast::rExp >(), yystack_[0].value.as< libport::Symbol >()); }
+#line 1019 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rLValue >() = MAKE(call, yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[0].value.as< libport::Symbol >()); }
 /* Line 828 of lalr1.cc  */
-#line 3585 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3589 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 134:
 /* Line 828 of lalr1.cc  */
-#line 1020 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< libport::Symbol >(), yystack_[0].value.as< libport::Symbol >()); }
+#line 1023 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = MAKE(get_slot, yylhs.location, yystack_[0].value.as< libport::Symbol >()); }
 /* Line 828 of lalr1.cc  */
-#line 3593 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3597 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 135:
 /* Line 828 of lalr1.cc  */
-#line 1025 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    {
-    yylhs.value.as< ast::rExp >() = MAKE(binding, yylhs.location, false, yystack_[0].location, yystack_[0].value.as< ast::rExp >());
-  }
+#line 1024 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = MAKE(get_slot, yylhs.location, yystack_[3].value.as< ast::rExp >(), yystack_[0].value.as< libport::Symbol >()); }
 /* Line 828 of lalr1.cc  */
-#line 3603 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3605 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 136:
 /* Line 828 of lalr1.cc  */
-#line 1029 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    {
-    yylhs.value.as< ast::rExp >() = MAKE(binding, yylhs.location, true, yystack_[0].location, yystack_[0].value.as< ast::rExp >());
-  }
+#line 1028 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< libport::Symbol >(), yystack_[0].value.as< libport::Symbol >()); }
 /* Line 828 of lalr1.cc  */
 #line 3613 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 137:
 /* Line 828 of lalr1.cc  */
-#line 1036 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 1033 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     {
-    yylhs.value.as< ast::rExp >() = yystack_[0].value.as< ast::rLValue >();
+    yylhs.value.as< ast::rExp >() = MAKE(binding, yylhs.location, false, yystack_[0].location, yystack_[0].value.as< ast::rExp >());
   }
 /* Line 828 of lalr1.cc  */
 #line 3623 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
@@ -3624,19 +3624,39 @@ namespace yy {
 
   case 138:
 /* Line 828 of lalr1.cc  */
-#line 1040 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 1037 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    {
+    yylhs.value.as< ast::rExp >() = MAKE(binding, yylhs.location, true, yystack_[0].location, yystack_[0].value.as< ast::rExp >());
+  }
+/* Line 828 of lalr1.cc  */
+#line 3633 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+    break;
+
+  case 139:
+/* Line 828 of lalr1.cc  */
+#line 1044 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    {
+    yylhs.value.as< ast::rExp >() = yystack_[0].value.as< ast::rLValue >();
+  }
+/* Line 828 of lalr1.cc  */
+#line 3643 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+    break;
+
+  case 140:
+/* Line 828 of lalr1.cc  */
+#line 1048 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     {
     yylhs.value.as< ast::rExp >() = yystack_[1].value.as< ast::rLValue >();
     yylhs.value.as< ast::rExp >().unchecked_cast<ast::LValueArgs>()->arguments_set(yystack_[0].value.as< ast::exps_type* >());
     yylhs.value.as< ast::rExp >()->location_set(yylhs.location);
   }
 /* Line 828 of lalr1.cc  */
-#line 3635 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3655 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
-  case 139:
+  case 141:
 /* Line 828 of lalr1.cc  */
-#line 1053 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 1061 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     {
     // Compiled as "id . new (args)".
     ast::exps_type* args = yystack_[0].value.as< ast::exps_type* >();
@@ -3646,704 +3666,684 @@ namespace yy {
     up.deprecated(yylhs.location, "new Obj(x)", "Obj.new(x)");
   }
 /* Line 828 of lalr1.cc  */
-#line 3650 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
-    break;
-
-  case 140:
-/* Line 828 of lalr1.cc  */
-#line 1064 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >()); }
-/* Line 828 of lalr1.cc  */
-#line 3658 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
-    break;
-
-  case 141:
-/* Line 828 of lalr1.cc  */
-#line 1069 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< libport::Symbol >(), yystack_[0].value.as< libport::Symbol >()); }
-/* Line 828 of lalr1.cc  */
-#line 3666 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3670 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 142:
 /* Line 828 of lalr1.cc  */
-#line 1080 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    {
-    yylhs.value.as< ast::rExp >() = MAKE(routine, yylhs.location, yystack_[2].value.as< bool >(), yystack_[1].location, yystack_[1].value.as< ::ast::Formals* >(), yystack_[0].value.as< ast::rExp >());
-  }
+#line 1072 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 3676 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3678 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 143:
 /* Line 828 of lalr1.cc  */
-#line 1096 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = MAKE(float, yylhs.location, yystack_[0].value.as< libport::ufloat >()); }
+#line 1077 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< libport::Symbol >(), yystack_[0].value.as< libport::Symbol >()); }
 /* Line 828 of lalr1.cc  */
-#line 3684 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3686 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 144:
 /* Line 828 of lalr1.cc  */
-#line 1106 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< libport::ufloat >() = yystack_[0].value.as< libport::ufloat >();      }
+#line 1088 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    {
+    yylhs.value.as< ast::rExp >() = MAKE(routine, yylhs.location, yystack_[2].value.as< bool >(), yystack_[1].location, yystack_[1].value.as< ::ast::Formals* >(), yystack_[0].value.as< ast::rExp >());
+  }
 /* Line 828 of lalr1.cc  */
-#line 3692 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3696 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 145:
 /* Line 828 of lalr1.cc  */
-#line 1107 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< libport::ufloat >() = yystack_[1].value.as< libport::ufloat >() + yystack_[0].value.as< libport::ufloat >(); }
+#line 1104 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = MAKE(float, yylhs.location, yystack_[0].value.as< libport::ufloat >()); }
 /* Line 828 of lalr1.cc  */
-#line 3700 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3704 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 146:
 /* Line 828 of lalr1.cc  */
-#line 1121 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 1114 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< libport::ufloat >() = yystack_[0].value.as< libport::ufloat >();      }
+/* Line 828 of lalr1.cc  */
+#line 3712 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+    break;
+
+  case 147:
+/* Line 828 of lalr1.cc  */
+#line 1115 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< libport::ufloat >() = yystack_[1].value.as< libport::ufloat >() + yystack_[0].value.as< libport::ufloat >(); }
+/* Line 828 of lalr1.cc  */
+#line 3720 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+    break;
+
+  case 148:
+/* Line 828 of lalr1.cc  */
+#line 1129 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     {
     yylhs.value.as< ast::dictionary_elt_type >().first = yystack_[2].value.as< ast::rExp >();
     yylhs.value.as< ast::dictionary_elt_type >().second = yystack_[0].value.as< ast::rExp >();
   }
 /* Line 828 of lalr1.cc  */
-#line 3711 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
-    break;
-
-  case 147:
-/* Line 828 of lalr1.cc  */
-#line 1129 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    {
-    assocs_add(up, yystack_[0].location, yylhs.value.as< ast::dictionary_elts_type >(), yystack_[0].value.as< ast::dictionary_elt_type >());
-  }
-/* Line 828 of lalr1.cc  */
-#line 3721 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
-    break;
-
-  case 148:
-/* Line 828 of lalr1.cc  */
-#line 1133 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    {
-    std::swap(yylhs.value.as< ast::dictionary_elts_type >(), yystack_[2].value.as< ast::dictionary_elts_type >());
-    assocs_add(up, yystack_[0].location, yylhs.value.as< ast::dictionary_elts_type >(), yystack_[0].value.as< ast::dictionary_elt_type >());
-  }
-/* Line 828 of lalr1.cc  */
-#line 3732 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3731 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 149:
 /* Line 828 of lalr1.cc  */
-#line 1140 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { /* nothing */ }
+#line 1137 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    {
+    assocs_add(up, yystack_[0].location, yylhs.value.as< ast::dictionary_elts_type >(), yystack_[0].value.as< ast::dictionary_elt_type >());
+  }
 /* Line 828 of lalr1.cc  */
-#line 3740 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3741 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 150:
 /* Line 828 of lalr1.cc  */
 #line 1141 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ast::dictionary_elts_type >(), yystack_[1].value.as< ast::dictionary_elts_type >()); }
+    {
+    std::swap(yylhs.value.as< ast::dictionary_elts_type >(), yystack_[2].value.as< ast::dictionary_elts_type >());
+    assocs_add(up, yystack_[0].location, yylhs.value.as< ast::dictionary_elts_type >(), yystack_[0].value.as< ast::dictionary_elt_type >());
+  }
 /* Line 828 of lalr1.cc  */
-#line 3748 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3752 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 151:
 /* Line 828 of lalr1.cc  */
-#line 1146 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rDictionary >() = new ast::Dictionary(yylhs.location, yystack_[1].value.as< ast::dictionary_elts_type >()); }
+#line 1148 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { /* nothing */ }
 /* Line 828 of lalr1.cc  */
-#line 3756 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3760 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 152:
 /* Line 828 of lalr1.cc  */
-#line 1157 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::exps_type* >() = new ast::exps_type; }
+#line 1149 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ast::dictionary_elts_type >(), yystack_[1].value.as< ast::dictionary_elts_type >()); }
 /* Line 828 of lalr1.cc  */
-#line 3764 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3768 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 153:
 /* Line 828 of lalr1.cc  */
-#line 1158 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ast::exps_type* >(), yystack_[1].value.as< ast::exps_type* >()); }
+#line 1154 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rDictionary >() = new ast::Dictionary(yylhs.location, yystack_[1].value.as< ast::dictionary_elts_type >()); }
 /* Line 828 of lalr1.cc  */
-#line 3772 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3776 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 154:
 /* Line 828 of lalr1.cc  */
-#line 1159 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ast::exps_type* >(), yystack_[0].value.as< ast::exps_type* >()); }
+#line 1165 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::exps_type* >() = new ast::exps_type; }
 /* Line 828 of lalr1.cc  */
-#line 3780 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3784 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 155:
 /* Line 828 of lalr1.cc  */
-#line 1163 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::exps_type* >() = yystack_[1].value.as< ast::exps_type* >(); }
+#line 1166 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ast::exps_type* >(), yystack_[1].value.as< ast::exps_type* >()); }
 /* Line 828 of lalr1.cc  */
-#line 3788 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3792 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 156:
 /* Line 828 of lalr1.cc  */
-#line 1177 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::exps_type* >() = new ast::exps_type; }
+#line 1167 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ast::exps_type* >(), yystack_[0].value.as< ast::exps_type* >()); }
 /* Line 828 of lalr1.cc  */
-#line 3796 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3800 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 157:
 /* Line 828 of lalr1.cc  */
-#line 1178 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ast::exps_type* >(), yystack_[1].value.as< ast::exps_type* >()); }
+#line 1171 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::exps_type* >() = yystack_[1].value.as< ast::exps_type* >(); }
 /* Line 828 of lalr1.cc  */
-#line 3804 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3808 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 158:
 /* Line 828 of lalr1.cc  */
-#line 1182 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::exps_type* >() = new ast::exps_type(1, yystack_[0].value.as< ast::rExp >()); }
+#line 1185 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::exps_type* >() = new ast::exps_type; }
 /* Line 828 of lalr1.cc  */
-#line 3812 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3816 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 159:
 /* Line 828 of lalr1.cc  */
-#line 1183 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ast::exps_type* >(), yystack_[2].value.as< ast::exps_type* >()); *yylhs.value.as< ast::exps_type* >() << yystack_[0].value.as< ast::rExp >();}
+#line 1186 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ast::exps_type* >(), yystack_[1].value.as< ast::exps_type* >()); }
 /* Line 828 of lalr1.cc  */
-#line 3820 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3824 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 160:
 /* Line 828 of lalr1.cc  */
-#line 1191 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >());  }
+#line 1190 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::exps_type* >() = new ast::exps_type(1, yystack_[0].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 3828 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3832 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 161:
 /* Line 828 of lalr1.cc  */
-#line 1192 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = MAKE(float, yylhs.location, yystack_[0].value.as< libport::ufloat >());  }
+#line 1191 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ast::exps_type* >(), yystack_[2].value.as< ast::exps_type* >()); *yylhs.value.as< ast::exps_type* >() << yystack_[0].value.as< ast::rExp >();}
 /* Line 828 of lalr1.cc  */
-#line 3836 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3840 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 162:
 /* Line 828 of lalr1.cc  */
-#line 1193 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = MAKE(float, yylhs.location, yystack_[0].value.as< libport::ufloat >());  }
+#line 1199 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >());  }
 /* Line 828 of lalr1.cc  */
-#line 3844 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3848 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 163:
 /* Line 828 of lalr1.cc  */
-#line 1194 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = MAKE(string, yylhs.location, yystack_[0].value.as< std::string >()); }
+#line 1200 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = MAKE(float, yylhs.location, yystack_[0].value.as< libport::ufloat >());  }
 /* Line 828 of lalr1.cc  */
-#line 3852 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3856 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 164:
 /* Line 828 of lalr1.cc  */
-#line 1195 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = MAKE(list, yylhs.location, yystack_[1].value.as< ast::exps_type* >()); }
+#line 1201 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = MAKE(float, yylhs.location, yystack_[0].value.as< libport::ufloat >());  }
 /* Line 828 of lalr1.cc  */
-#line 3860 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3864 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 165:
 /* Line 828 of lalr1.cc  */
-#line 1196 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = MAKE(vector, yylhs.location, yystack_[1].value.as< ast::exps_type* >()); }
+#line 1202 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = MAKE(string, yylhs.location, yystack_[0].value.as< std::string >()); }
 /* Line 828 of lalr1.cc  */
-#line 3868 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3872 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 166:
 /* Line 828 of lalr1.cc  */
-#line 1197 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = yystack_[0].value.as< ast::rDictionary >(); }
+#line 1203 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = MAKE(list, yylhs.location, yystack_[1].value.as< ast::exps_type* >()); }
 /* Line 828 of lalr1.cc  */
-#line 3876 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3880 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 167:
 /* Line 828 of lalr1.cc  */
-#line 1198 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = MAKE(tuple, yylhs.location, yystack_[0].value.as< ast::exps_type* >()); }
+#line 1204 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = MAKE(vector, yylhs.location, yystack_[1].value.as< ast::exps_type* >()); }
 /* Line 828 of lalr1.cc  */
-#line 3884 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3888 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 168:
 /* Line 828 of lalr1.cc  */
-#line 1204 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< std::string >(), yystack_[0].value.as< std::string >());  }
+#line 1205 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = yystack_[0].value.as< ast::rDictionary >(); }
 /* Line 828 of lalr1.cc  */
-#line 3892 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3896 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 169:
 /* Line 828 of lalr1.cc  */
-#line 1205 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< std::string >(), yystack_[1].value.as< std::string >()); yylhs.value.as< std::string >() += yystack_[0].value.as< std::string >(); }
+#line 1206 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = MAKE(tuple, yylhs.location, yystack_[0].value.as< ast::exps_type* >()); }
 /* Line 828 of lalr1.cc  */
-#line 3900 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3904 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 170:
 /* Line 828 of lalr1.cc  */
-#line 1213 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = MAKE(position, yylhs.location); }
+#line 1212 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< std::string >(), yystack_[0].value.as< std::string >());  }
 /* Line 828 of lalr1.cc  */
-#line 3908 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3912 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 171:
 /* Line 828 of lalr1.cc  */
-#line 1224 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    {
-    yylhs.value.as< ast::EventMatch >() = MAKE(event_match, yylhs.location, yystack_[4].value.as< ast::rExp >(), yystack_[2].value.as< ast::exps_type* >(), yystack_[1].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >());
-  }
+#line 1213 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< std::string >(), yystack_[1].value.as< std::string >()); yylhs.value.as< std::string >() += yystack_[0].value.as< std::string >(); }
 /* Line 828 of lalr1.cc  */
-#line 3918 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3920 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 172:
 /* Line 828 of lalr1.cc  */
-#line 1231 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = 0; }
+#line 1221 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = MAKE(position, yylhs.location); }
 /* Line 828 of lalr1.cc  */
-#line 3926 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3928 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 173:
 /* Line 828 of lalr1.cc  */
 #line 1232 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >()); }
+    {
+    yylhs.value.as< ast::EventMatch >() = MAKE(event_match, yylhs.location, yystack_[4].value.as< ast::rExp >(), yystack_[2].value.as< ast::exps_type* >(), yystack_[1].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >());
+  }
 /* Line 828 of lalr1.cc  */
-#line 3934 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3938 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 174:
 /* Line 828 of lalr1.cc  */
-#line 1237 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 1239 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     { yylhs.value.as< ast::rExp >() = 0; }
 /* Line 828 of lalr1.cc  */
-#line 3942 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3946 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 175:
 /* Line 828 of lalr1.cc  */
-#line 1238 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 1240 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     { std::swap(yylhs.value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 3950 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3954 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 176:
 /* Line 828 of lalr1.cc  */
-#line 1248 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    {
-    yylhs.value.as< ast::rLValue >() = new ast::Subscript(yylhs.location, yystack_[1].value.as< ast::exps_type* >(), yystack_[3].value.as< ast::rExp >());
-  }
+#line 1245 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = 0; }
 /* Line 828 of lalr1.cc  */
-#line 3960 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3962 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 177:
 /* Line 828 of lalr1.cc  */
-#line 1263 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = new ast::This(yylhs.location); }
+#line 1246 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 3968 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3970 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 178:
 /* Line 828 of lalr1.cc  */
-#line 1264 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = new ast::CallMsg(yylhs.location); }
+#line 1256 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    {
+    yylhs.value.as< ast::rLValue >() = new ast::Subscript(yylhs.location, yystack_[1].value.as< ast::exps_type* >(), yystack_[3].value.as< ast::rExp >());
+  }
 /* Line 828 of lalr1.cc  */
-#line 3976 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3980 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 179:
 /* Line 828 of lalr1.cc  */
-#line 1268 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >()); }
+#line 1271 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = new ast::This(yylhs.location); }
 /* Line 828 of lalr1.cc  */
-#line 3984 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3988 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 180:
 /* Line 828 of lalr1.cc  */
-#line 1269 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ast::rExp >(), yystack_[1].value.as< ast::rExp >()); }
+#line 1272 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = new ast::CallMsg(yylhs.location); }
 /* Line 828 of lalr1.cc  */
-#line 3992 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 3996 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 181:
 /* Line 828 of lalr1.cc  */
-#line 1270 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = MAKE(noop, yylhs.location); }
+#line 1276 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 4000 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4004 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 182:
 /* Line 828 of lalr1.cc  */
-#line 1271 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = MAKE(call, yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[1].value.as< libport::Symbol >(), yystack_[0].value.as< ast::rExp >()); }
+#line 1277 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ast::rExp >(), yystack_[1].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 4008 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4012 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 183:
 /* Line 828 of lalr1.cc  */
-#line 1276 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >()); }
+#line 1278 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = MAKE(noop, yylhs.location); }
 /* Line 828 of lalr1.cc  */
-#line 4016 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4020 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 184:
 /* Line 828 of lalr1.cc  */
-#line 1277 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = new ast::Decrementation(yylhs.location, yystack_[0].value.as< ast::rLValue >(), false); }
+#line 1279 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = MAKE(call, yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[1].value.as< libport::Symbol >(), yystack_[0].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 4024 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4028 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 185:
 /* Line 828 of lalr1.cc  */
-#line 1278 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = new ast::Incrementation(yylhs.location, yystack_[0].value.as< ast::rLValue >(), false); }
+#line 1284 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 4032 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4036 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 186:
 /* Line 828 of lalr1.cc  */
-#line 1279 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = MAKE(call, yylhs.location, yystack_[0].value.as< ast::rExp >(), yystack_[1].value.as< libport::Symbol >(), new ast::exps_type()); }
+#line 1285 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = new ast::Decrementation(yylhs.location, yystack_[0].value.as< ast::rLValue >(), false); }
 /* Line 828 of lalr1.cc  */
-#line 4040 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4044 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 187:
 /* Line 828 of lalr1.cc  */
-#line 1280 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = MAKE(call, yylhs.location, yystack_[0].value.as< ast::rExp >(), yystack_[1].value.as< libport::Symbol >(), new ast::exps_type()); }
+#line 1286 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = new ast::Incrementation(yylhs.location, yystack_[0].value.as< ast::rLValue >(), false); }
 /* Line 828 of lalr1.cc  */
-#line 4048 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4052 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 188:
 /* Line 828 of lalr1.cc  */
-#line 1281 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 1287 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     { yylhs.value.as< ast::rExp >() = MAKE(call, yylhs.location, yystack_[0].value.as< ast::rExp >(), yystack_[1].value.as< libport::Symbol >(), new ast::exps_type()); }
 /* Line 828 of lalr1.cc  */
-#line 4056 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4060 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 189:
 /* Line 828 of lalr1.cc  */
-#line 1282 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 1288 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     { yylhs.value.as< ast::rExp >() = MAKE(call, yylhs.location, yystack_[0].value.as< ast::rExp >(), yystack_[1].value.as< libport::Symbol >(), new ast::exps_type()); }
 /* Line 828 of lalr1.cc  */
-#line 4064 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4068 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 190:
 /* Line 828 of lalr1.cc  */
-#line 1307 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >()); }
+#line 1289 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = MAKE(call, yylhs.location, yystack_[0].value.as< ast::rExp >(), yystack_[1].value.as< libport::Symbol >(), new ast::exps_type()); }
 /* Line 828 of lalr1.cc  */
-#line 4072 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4076 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 191:
 /* Line 828 of lalr1.cc  */
-#line 1308 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = MAKE(call, yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[1].value.as< libport::Symbol >(), yystack_[0].value.as< ast::rExp >()); }
+#line 1290 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = MAKE(call, yylhs.location, yystack_[0].value.as< ast::rExp >(), yystack_[1].value.as< libport::Symbol >(), new ast::exps_type()); }
 /* Line 828 of lalr1.cc  */
-#line 4080 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4084 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 192:
 /* Line 828 of lalr1.cc  */
-#line 1309 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = MAKE(call, yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[1].value.as< libport::Symbol >(), yystack_[0].value.as< ast::rExp >()); }
+#line 1315 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 4088 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4092 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 193:
 /* Line 828 of lalr1.cc  */
-#line 1310 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 1316 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     { yylhs.value.as< ast::rExp >() = MAKE(call, yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[1].value.as< libport::Symbol >(), yystack_[0].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 4096 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4100 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 194:
 /* Line 828 of lalr1.cc  */
-#line 1311 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 1317 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     { yylhs.value.as< ast::rExp >() = MAKE(call, yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[1].value.as< libport::Symbol >(), yystack_[0].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 4104 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4108 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 195:
 /* Line 828 of lalr1.cc  */
-#line 1312 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 1318 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     { yylhs.value.as< ast::rExp >() = MAKE(call, yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[1].value.as< libport::Symbol >(), yystack_[0].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 4112 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4116 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 196:
 /* Line 828 of lalr1.cc  */
-#line 1313 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 1319 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     { yylhs.value.as< ast::rExp >() = MAKE(call, yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[1].value.as< libport::Symbol >(), yystack_[0].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 4120 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4124 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 197:
 /* Line 828 of lalr1.cc  */
-#line 1314 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 1320 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     { yylhs.value.as< ast::rExp >() = MAKE(call, yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[1].value.as< libport::Symbol >(), yystack_[0].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 4128 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4132 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 198:
 /* Line 828 of lalr1.cc  */
-#line 1315 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 1321 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     { yylhs.value.as< ast::rExp >() = MAKE(call, yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[1].value.as< libport::Symbol >(), yystack_[0].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 4136 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4140 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 199:
 /* Line 828 of lalr1.cc  */
-#line 1316 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 1322 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     { yylhs.value.as< ast::rExp >() = MAKE(call, yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[1].value.as< libport::Symbol >(), yystack_[0].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 4144 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4148 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 200:
 /* Line 828 of lalr1.cc  */
-#line 1317 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 1323 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     { yylhs.value.as< ast::rExp >() = MAKE(call, yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[1].value.as< libport::Symbol >(), yystack_[0].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 4152 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4156 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 201:
 /* Line 828 of lalr1.cc  */
-#line 1343 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< libport::Symbol >(), yystack_[0].value.as< libport::Symbol >()); }
+#line 1324 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = MAKE(call, yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[1].value.as< libport::Symbol >(), yystack_[0].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 4160 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4164 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 202:
 /* Line 828 of lalr1.cc  */
-#line 1344 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< libport::Symbol >(), yystack_[0].value.as< libport::Symbol >()); }
+#line 1325 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = MAKE(call, yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[1].value.as< libport::Symbol >(), yystack_[0].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 4168 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4172 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 203:
 /* Line 828 of lalr1.cc  */
-#line 1345 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 1351 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     { std::swap(yylhs.value.as< libport::Symbol >(), yystack_[0].value.as< libport::Symbol >()); }
 /* Line 828 of lalr1.cc  */
-#line 4176 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4180 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 204:
 /* Line 828 of lalr1.cc  */
-#line 1346 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 1352 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     { std::swap(yylhs.value.as< libport::Symbol >(), yystack_[0].value.as< libport::Symbol >()); }
 /* Line 828 of lalr1.cc  */
-#line 4184 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4188 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 205:
 /* Line 828 of lalr1.cc  */
-#line 1347 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 1353 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     { std::swap(yylhs.value.as< libport::Symbol >(), yystack_[0].value.as< libport::Symbol >()); }
 /* Line 828 of lalr1.cc  */
-#line 4192 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4196 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 206:
 /* Line 828 of lalr1.cc  */
-#line 1348 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 1354 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     { std::swap(yylhs.value.as< libport::Symbol >(), yystack_[0].value.as< libport::Symbol >()); }
 /* Line 828 of lalr1.cc  */
-#line 4200 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4204 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 207:
 /* Line 828 of lalr1.cc  */
-#line 1349 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 1355 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     { std::swap(yylhs.value.as< libport::Symbol >(), yystack_[0].value.as< libport::Symbol >()); }
 /* Line 828 of lalr1.cc  */
-#line 4208 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4212 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 208:
 /* Line 828 of lalr1.cc  */
-#line 1350 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 1356 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     { std::swap(yylhs.value.as< libport::Symbol >(), yystack_[0].value.as< libport::Symbol >()); }
 /* Line 828 of lalr1.cc  */
-#line 4216 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4220 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 209:
 /* Line 828 of lalr1.cc  */
-#line 1351 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 1357 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     { std::swap(yylhs.value.as< libport::Symbol >(), yystack_[0].value.as< libport::Symbol >()); }
 /* Line 828 of lalr1.cc  */
-#line 4224 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4228 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 210:
 /* Line 828 of lalr1.cc  */
-#line 1352 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 1358 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     { std::swap(yylhs.value.as< libport::Symbol >(), yystack_[0].value.as< libport::Symbol >()); }
 /* Line 828 of lalr1.cc  */
-#line 4232 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4236 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 211:
 /* Line 828 of lalr1.cc  */
-#line 1356 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = MAKE(relation, yylhs.location, yystack_[1].value.as< ast::rExp >(), yystack_[0].value.as< ::ast::Factory::relations_type >()); }
+#line 1359 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< libport::Symbol >(), yystack_[0].value.as< libport::Symbol >()); }
 /* Line 828 of lalr1.cc  */
-#line 4240 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4244 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 212:
 /* Line 828 of lalr1.cc  */
-#line 1361 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { /* empty */ }
+#line 1360 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< libport::Symbol >(), yystack_[0].value.as< libport::Symbol >()); }
 /* Line 828 of lalr1.cc  */
-#line 4248 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4252 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 213:
 /* Line 828 of lalr1.cc  */
-#line 1362 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ::ast::Factory::relations_type >(), MAKE(relation, yystack_[2].value.as< ::ast::Factory::relations_type >(), yystack_[1].value.as< libport::Symbol >(), yystack_[0].value.as< ast::rExp >())); }
+#line 1364 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = MAKE(relation, yylhs.location, yystack_[1].value.as< ast::rExp >(), yystack_[0].value.as< ::ast::Factory::relations_type >()); }
 /* Line 828 of lalr1.cc  */
-#line 4256 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4260 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 214:
 /* Line 828 of lalr1.cc  */
-#line 1376 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >()); }
+#line 1369 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { /* empty */ }
 /* Line 828 of lalr1.cc  */
-#line 4264 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4268 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 215:
 /* Line 828 of lalr1.cc  */
-#line 1377 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = MAKE(and, yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >()); }
+#line 1370 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ::ast::Factory::relations_type >(), MAKE(relation, yystack_[2].value.as< ::ast::Factory::relations_type >(), yystack_[1].value.as< libport::Symbol >(), yystack_[0].value.as< ast::rExp >())); }
 /* Line 828 of lalr1.cc  */
-#line 4272 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4276 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 216:
 /* Line 828 of lalr1.cc  */
-#line 1378 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = MAKE(or,  yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >()); }
+#line 1384 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 4280 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4284 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 217:
 /* Line 828 of lalr1.cc  */
-#line 1383 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = MAKE(call, yylhs.location, yystack_[0].value.as< ast::rExp >(), SYMBOL(has),    yystack_[2].value.as< ast::rExp >()); }
+#line 1385 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = MAKE(and, yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 4288 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4292 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 218:
 /* Line 828 of lalr1.cc  */
-#line 1384 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = MAKE(call, yylhs.location, yystack_[0].value.as< ast::rExp >(), SYMBOL(hasNot), yystack_[3].value.as< ast::rExp >()); }
+#line 1386 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = MAKE(or,  yylhs.location, yystack_[2].value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 4296 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4300 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 219:
 /* Line 828 of lalr1.cc  */
-#line 1388 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::rExp >() = 0; }
+#line 1391 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = MAKE(call, yylhs.location, yystack_[0].value.as< ast::rExp >(), SYMBOL(has),    yystack_[2].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 4304 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4308 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 220:
 /* Line 828 of lalr1.cc  */
-#line 1389 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >()); }
+#line 1392 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = MAKE(call, yylhs.location, yystack_[0].value.as< ast::rExp >(), SYMBOL(hasNot), yystack_[3].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 4312 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4316 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 221:
 /* Line 828 of lalr1.cc  */
-#line 1400 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< unsigned >() = static_cast<unsigned int>(yystack_[0].value.as< libport::ufloat >()); }
+#line 1396 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::rExp >() = 0; }
 /* Line 828 of lalr1.cc  */
-#line 4320 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4324 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 222:
 /* Line 828 of lalr1.cc  */
-#line 1409 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    {
-    yylhs.value.as< ast::rExp >() = new ast::Unscope(yylhs.location, yystack_[0].value.as< unsigned >());
-  }
+#line 1397 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ast::rExp >(), yystack_[0].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 4330 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4332 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 223:
 /* Line 828 of lalr1.cc  */
-#line 1421 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    {
-    yylhs.value.as< ast::rExp >() = new ast::MetaExp(yylhs.location, yystack_[0].value.as< unsigned >());
-  }
+#line 1408 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< unsigned >() = static_cast<unsigned int>(yystack_[0].value.as< libport::ufloat >()); }
 /* Line 828 of lalr1.cc  */
 #line 4340 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 224:
 /* Line 828 of lalr1.cc  */
-#line 1429 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 1417 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     {
-    yylhs.value.as< ast::rLValue >() = new ast::MetaLValue(yylhs.location, new ast::exps_type(), yystack_[0].value.as< unsigned >());
+    yylhs.value.as< ast::rExp >() = new ast::Unscope(yylhs.location, yystack_[0].value.as< unsigned >());
   }
 /* Line 828 of lalr1.cc  */
 #line 4350 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
@@ -4351,9 +4351,9 @@ namespace yy {
 
   case 225:
 /* Line 828 of lalr1.cc  */
-#line 1437 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 1429 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     {
-    yylhs.value.as< ast::rLValue >() = new ast::MetaId(yylhs.location, 0, yystack_[0].value.as< unsigned >());
+    yylhs.value.as< ast::rExp >() = new ast::MetaExp(yylhs.location, yystack_[0].value.as< unsigned >());
   }
 /* Line 828 of lalr1.cc  */
 #line 4360 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
@@ -4361,9 +4361,9 @@ namespace yy {
 
   case 226:
 /* Line 828 of lalr1.cc  */
-#line 1441 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 1437 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     {
-    yylhs.value.as< ast::rLValue >() = new ast::MetaCall(yylhs.location, 0, yystack_[3].value.as< ast::rExp >(), yystack_[0].value.as< unsigned >());
+    yylhs.value.as< ast::rLValue >() = new ast::MetaLValue(yylhs.location, new ast::exps_type(), yystack_[0].value.as< unsigned >());
   }
 /* Line 828 of lalr1.cc  */
 #line 4370 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
@@ -4371,227 +4371,247 @@ namespace yy {
 
   case 227:
 /* Line 828 of lalr1.cc  */
-#line 1449 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 1445 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     {
-    assert(yystack_[4].value.as< ast::rLValue >().unsafe_cast<ast::LValueArgs>());
-    assert(!yystack_[4].value.as< ast::rLValue >().unsafe_cast<ast::LValueArgs>()->arguments_get());
-    yylhs.value.as< ast::rExp >() = new ast::MetaArgs(yylhs.location, yystack_[4].value.as< ast::rLValue >(), yystack_[1].value.as< unsigned >());
+    yylhs.value.as< ast::rLValue >() = new ast::MetaId(yylhs.location, 0, yystack_[0].value.as< unsigned >());
   }
 /* Line 828 of lalr1.cc  */
-#line 4382 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4380 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 228:
 /* Line 828 of lalr1.cc  */
-#line 1465 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::exps_type* >() = new ast::exps_type; }
+#line 1449 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    {
+    yylhs.value.as< ast::rLValue >() = new ast::MetaCall(yylhs.location, 0, yystack_[3].value.as< ast::rExp >(), yystack_[0].value.as< unsigned >());
+  }
 /* Line 828 of lalr1.cc  */
 #line 4390 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 229:
 /* Line 828 of lalr1.cc  */
-#line 1466 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ast::exps_type* >(), yystack_[1].value.as< ast::exps_type* >()); }
+#line 1457 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    {
+    assert(yystack_[4].value.as< ast::rLValue >().unsafe_cast<ast::LValueArgs>());
+    assert(!yystack_[4].value.as< ast::rLValue >().unsafe_cast<ast::LValueArgs>()->arguments_get());
+    yylhs.value.as< ast::rExp >() = new ast::MetaArgs(yylhs.location, yystack_[4].value.as< ast::rLValue >(), yystack_[1].value.as< unsigned >());
+  }
 /* Line 828 of lalr1.cc  */
-#line 4398 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4402 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 230:
 /* Line 828 of lalr1.cc  */
-#line 1470 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::exps_type* >() = new ast::exps_type(1, yystack_[0].value.as< ast::rExp >()); }
+#line 1473 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::exps_type* >() = new ast::exps_type; }
 /* Line 828 of lalr1.cc  */
-#line 4406 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4410 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 231:
 /* Line 828 of lalr1.cc  */
-#line 1471 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ast::exps_type* >(), yystack_[2].value.as< ast::exps_type* >()); *yylhs.value.as< ast::exps_type* >() << yystack_[0].value.as< ast::rExp >(); }
+#line 1474 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ast::exps_type* >(), yystack_[1].value.as< ast::exps_type* >()); }
 /* Line 828 of lalr1.cc  */
-#line 4414 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4418 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 232:
 /* Line 828 of lalr1.cc  */
-#line 1477 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::exps_type* >() = new ast::exps_type; }
+#line 1478 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::exps_type* >() = new ast::exps_type(1, yystack_[0].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 4422 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4426 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 233:
 /* Line 828 of lalr1.cc  */
-#line 1478 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ast::exps_type* >(), yystack_[1].value.as< ast::exps_type* >()); }
+#line 1479 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ast::exps_type* >(), yystack_[2].value.as< ast::exps_type* >()); *yylhs.value.as< ast::exps_type* >() << yystack_[0].value.as< ast::rExp >(); }
 /* Line 828 of lalr1.cc  */
-#line 4430 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4434 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 234:
 /* Line 828 of lalr1.cc  */
-#line 1482 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::exps_type* >() = new ast::exps_type(1, yystack_[0].value.as< ast::rExp >()); }
+#line 1485 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::exps_type* >() = new ast::exps_type; }
 /* Line 828 of lalr1.cc  */
-#line 4438 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4442 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 235:
 /* Line 828 of lalr1.cc  */
-#line 1483 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ast::exps_type* >(), yystack_[2].value.as< ast::exps_type* >()); *yylhs.value.as< ast::exps_type* >() << yystack_[0].value.as< ast::rExp >(); }
+#line 1486 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ast::exps_type* >(), yystack_[1].value.as< ast::exps_type* >()); }
 /* Line 828 of lalr1.cc  */
-#line 4446 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4450 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 236:
 /* Line 828 of lalr1.cc  */
-#line 1487 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ast::exps_type* >(), yystack_[2].value.as< ast::exps_type* >()); *yylhs.value.as< ast::exps_type* >() << yystack_[0].value.as< ast::rExp >(); }
+#line 1490 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::exps_type* >() = new ast::exps_type(1, yystack_[0].value.as< ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 4454 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4458 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 237:
 /* Line 828 of lalr1.cc  */
-#line 1492 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ast::exps_type* >(), yystack_[1].value.as< ast::exps_type* >()); }
+#line 1491 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ast::exps_type* >(), yystack_[2].value.as< ast::exps_type* >()); *yylhs.value.as< ast::exps_type* >() << yystack_[0].value.as< ast::rExp >(); }
 /* Line 828 of lalr1.cc  */
-#line 4462 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4466 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 238:
 /* Line 828 of lalr1.cc  */
-#line 1496 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ast::exps_type* >() = 0; }
+#line 1495 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ast::exps_type* >(), yystack_[2].value.as< ast::exps_type* >()); *yylhs.value.as< ast::exps_type* >() << yystack_[0].value.as< ast::rExp >(); }
 /* Line 828 of lalr1.cc  */
-#line 4470 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4474 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 239:
 /* Line 828 of lalr1.cc  */
-#line 1497 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ast::exps_type* >(), yystack_[0].value.as< ast::exps_type* >()); }
+#line 1500 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ast::exps_type* >(), yystack_[1].value.as< ast::exps_type* >()); }
 /* Line 828 of lalr1.cc  */
-#line 4478 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4482 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 240:
 /* Line 828 of lalr1.cc  */
-#line 1507 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { /* empty */ }
+#line 1504 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ast::exps_type* >() = 0; }
 /* Line 828 of lalr1.cc  */
-#line 4486 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4490 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 241:
 /* Line 828 of lalr1.cc  */
-#line 1508 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ::ast::symbols_type >(), yystack_[1].value.as< ::ast::symbols_type >()); yylhs.value.as< ::ast::symbols_type >().push_back(yystack_[0].value.as< libport::Symbol >()); }
+#line 1505 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ast::exps_type* >(), yystack_[0].value.as< ast::exps_type* >()); }
 /* Line 828 of lalr1.cc  */
-#line 4494 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4498 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 242:
 /* Line 828 of lalr1.cc  */
-#line 1513 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ::ast::rExp >() = yystack_[0].value.as< ast::rExp >();}
+#line 1515 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { /* empty */ }
 /* Line 828 of lalr1.cc  */
-#line 4502 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4506 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 243:
 /* Line 828 of lalr1.cc  */
-#line 1518 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ::ast::rExp >()=0;}
+#line 1516 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ::ast::symbols_type >(), yystack_[1].value.as< ::ast::symbols_type >()); yylhs.value.as< ::ast::symbols_type >().push_back(yystack_[0].value.as< libport::Symbol >()); }
 /* Line 828 of lalr1.cc  */
-#line 4510 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4514 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 244:
 /* Line 828 of lalr1.cc  */
-#line 1519 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ::ast::rExp >(), yystack_[0].value.as< ::ast::rExp >());}
+#line 1521 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ::ast::rExp >() = yystack_[0].value.as< ast::rExp >();}
 /* Line 828 of lalr1.cc  */
-#line 4518 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4522 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 245:
 /* Line 828 of lalr1.cc  */
-#line 1524 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ::ast::Formal >() = ::ast::Formal(yystack_[1].value.as< libport::Symbol >(), 0, yystack_[0].value.as< ::ast::rExp >());  }
+#line 1526 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ::ast::rExp >()=0;}
 /* Line 828 of lalr1.cc  */
-#line 4526 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4530 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 246:
 /* Line 828 of lalr1.cc  */
-#line 1525 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ::ast::Formal >() = ::ast::Formal(yystack_[3].value.as< libport::Symbol >(), yystack_[1].value.as< ast::rExp >(), yystack_[0].value.as< ::ast::rExp >()); }
+#line 1527 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ::ast::rExp >(), yystack_[0].value.as< ::ast::rExp >());}
 /* Line 828 of lalr1.cc  */
-#line 4534 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4538 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 247:
 /* Line 828 of lalr1.cc  */
-#line 1526 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ::ast::Formal >() = ::ast::Formal(yystack_[2].value.as< libport::Symbol >(), true); }
+#line 1532 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ::ast::Formal >() = ::ast::Formal(yystack_[1].value.as< libport::Symbol >(), 0, yystack_[0].value.as< ::ast::rExp >());  }
 /* Line 828 of lalr1.cc  */
-#line 4542 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4546 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 248:
 /* Line 828 of lalr1.cc  */
-#line 1532 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ::ast::Formals* >() = new ::ast::Formals(1, yystack_[0].value.as< ::ast::Formal >()); }
+#line 1533 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ::ast::Formal >() = ::ast::Formal(yystack_[3].value.as< libport::Symbol >(), yystack_[1].value.as< ast::rExp >(), yystack_[0].value.as< ::ast::rExp >()); }
 /* Line 828 of lalr1.cc  */
-#line 4550 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4554 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 249:
 /* Line 828 of lalr1.cc  */
-#line 1533 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ::ast::Formals* >(), yystack_[2].value.as< ::ast::Formals* >()); *yylhs.value.as< ::ast::Formals* >() << yystack_[0].value.as< ::ast::Formal >(); }
+#line 1534 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ::ast::Formal >() = ::ast::Formal(yystack_[2].value.as< libport::Symbol >(), true); }
 /* Line 828 of lalr1.cc  */
-#line 4558 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4562 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 250:
 /* Line 828 of lalr1.cc  */
-#line 1538 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ::ast::Formals* >() = new ::ast::Formals; }
+#line 1540 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ::ast::Formals* >() = new ::ast::Formals(1, yystack_[0].value.as< ::ast::Formal >()); }
 /* Line 828 of lalr1.cc  */
-#line 4566 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4570 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 251:
 /* Line 828 of lalr1.cc  */
-#line 1539 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { std::swap(yylhs.value.as< ::ast::Formals* >(), yystack_[1].value.as< ::ast::Formals* >()); }
+#line 1541 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ::ast::Formals* >(), yystack_[2].value.as< ::ast::Formals* >()); *yylhs.value.as< ::ast::Formals* >() << yystack_[0].value.as< ::ast::Formal >(); }
 /* Line 828 of lalr1.cc  */
-#line 4574 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4578 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 252:
 /* Line 828 of lalr1.cc  */
-#line 1544 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
-    { yylhs.value.as< ::ast::Formals* >() = 0; }
+#line 1546 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ::ast::Formals* >() = new ::ast::Formals; }
 /* Line 828 of lalr1.cc  */
-#line 4582 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4586 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
   case 253:
 /* Line 828 of lalr1.cc  */
-#line 1545 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 1547 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
     { std::swap(yylhs.value.as< ::ast::Formals* >(), yystack_[1].value.as< ::ast::Formals* >()); }
 /* Line 828 of lalr1.cc  */
-#line 4590 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4594 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+    break;
+
+  case 254:
+/* Line 828 of lalr1.cc  */
+#line 1552 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { yylhs.value.as< ::ast::Formals* >() = 0; }
+/* Line 828 of lalr1.cc  */
+#line 4602 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+    break;
+
+  case 255:
+/* Line 828 of lalr1.cc  */
+#line 1553 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+    { std::swap(yylhs.value.as< ::ast::Formals* >(), yystack_[1].value.as< ::ast::Formals* >()); }
+/* Line 828 of lalr1.cc  */
+#line 4610 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
     break;
 
 
 /* Line 828 of lalr1.cc  */
-#line 4595 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 4615 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
 	default:
           break;
       }
@@ -4840,289 +4860,286 @@ namespace yy {
   }
 
 
-  const short int parser::yypact_ninf_ = -257;
+  const short int parser::yypact_ninf_ = -267;
 
-  const short int parser::yytable_ninf_ = -259;
+  const short int parser::yytable_ninf_ = -261;
 
   const short int
   parser::yypact_[] =
   {
-     271,  -257,   673,  1136,    53,  -257,    55,  -257,  -257,  -257,
-      28,  -257,    20,  -257,    58,    69,   867,  1320,   951,  1472,
-      76,   117,  1472,   122,   146,  1548,   149,   156,   159,   -27,
-     168,   188,  1136,   197,  -257,  -257,   535,   535,   -27,   248,
-     535,   535,   535,   222,   194,  -257,  -257,   218,  -257,  -257,
-    -257,  -257,  -257,  -257,  1700,  1700,  1700,  1700,  1548,   193,
-     193,   193,   193,  -257,    90,   145,  -257,  -257,    74,    -9,
-       5,   286,   557,   -27,   563,  -257,  -257,   202,  -257,  -257,
-    -257,   204,  -257,  -257,  -257,   155,  -257,  -257,  -257,  -257,
-    -257,  1548,  1396,  1136,   -21,   262,   135,    80,  -257,    44,
-     266,     9,  -257,  -257,   258,   275,   279,   259,   274,    37,
-     283,   273,  -257,    86,  -257,  1396,  1396,  -257,  1396,    17,
-      42,   563,  1396,  1396,  1396,  -257,  -257,  1396,  1244,  -257,
-    1396,    13,     9,   500,   500,   298,  -257,   278,   288,   305,
-     257,   257,   257,  1396,  1396,  1396,   311,  -257,  -257,  -257,
-    -257,   563,   240,   323,  -257,  -257,  -257,  -257,  -257,  -257,
-    -257,  -257,  1136,  1136,  1396,  1396,   123,  1396,  1396,   113,
-    -257,   326,   352,   146,  1136,  1396,   -26,   535,  1396,  -257,
-    1027,  1396,  1396,  1396,  1396,  1396,  1396,  -257,  -257,   -27,
-    -257,   266,  1548,  1548,  1548,  1548,  1548,  1548,  1548,  1548,
-    1548,  1548,   700,  -257,  -257,  1136,  1136,   563,   107,   276,
-     139,  -257,  -257,   -27,  1396,   345,  1396,  -257,  -257,  -257,
-    1396,  -257,  -257,  -257,  -257,  1396,   136,   189,   247,   347,
-     146,     7,  -257,     0,   355,   272,     0,   369,   285,  1624,
-     360,  -257,   289,   317,  1396,  -257,   179,   146,   146,   -27,
-     379,  -257,   193,   383,    86,   387,   364,   392,  1396,  -257,
-    -257,  -257,  1548,  -257,  -257,   372,   366,    -1,  1396,   386,
-       1,    50,  -257,  -257,   382,   396,   377,   380,   385,   146,
-    -257,  -257,    86,   411,   -27,  -257,   193,  -257,     9,   398,
-     193,   410,    86,    86,    86,    86,    86,    86,  -257,   146,
-     718,   575,   701,   537,   537,   339,  -257,   339,  -257,  -257,
-    -257,  -257,  -257,  -257,  -257,  -257,  -257,  -257,  -257,  -257,
-    1548,  -257,  -257,  1136,  1136,  -257,   415,    86,    44,  -257,
-      86,   482,  1136,   421,  1136,  1396,   146,  -257,  1136,   428,
-    -257,  1396,   311,   416,  -257,  -257,   423,  1136,  1136,    38,
-    1396,  1136,  1136,     0,   424,  -257,  -257,  -257,  1396,  -257,
-     408,  -257,  -257,   429,   417,  -257,   401,   427,   146,  -257,
-    1396,  -257,  -257,   563,   448,  -257,   413,    -1,  -257,   113,
-    -257,  -257,   263,  -257,  -257,  -257,  -257,  -257,  -257,  -257,
-     434,  -257,  -257,   563,  -257,   450,  -257,  -257,  -257,   461,
-      41,   441,  -257,  -257,   146,  -257,    86,   386,  -257,  1136,
-     450,  -257,  -257,  -257,  1396,   180,  -257,  -257,   447,  1136,
-      86,   179,  -257,   -27,  -257,   430,   439,  -257,    86,  1396,
-    -257,  -257,  1396,  1396,   451,  -257,  -257,  -257,  -257,   101,
-     146,   450,  1396,  -257,  -257,   477,   450,  -257,   488,  1136,
-    1136,   472,  -257,  -257,  -257,   453,   475,    86,   232,    86,
-    -257,  1396,   485,   492,  -257,  -257,   428,    86,  1396,  -257,
-    -257,  1136,   479,   472,  1136,  -257,  -257,   465,  -257,   507,
-    1136,  -257,  -257,    86,  -257,  1136,  -257,  -257,   430,  1136,
-     155,  -257,   476,   155,  -257
+     336,  -267,   690,  1162,    51,  -267,    32,  -267,  -267,  -267,
+      30,  -267,    46,  -267,    54,    72,   893,  1346,   977,  1498,
+      82,    89,  1498,   108,   113,   766,   141,   146,   157,   -10,
+     165,   176,  1162,   182,  -267,  -267,  1692,  1692,   -10,    94,
+    1692,  1692,  1692,   203,   -11,  -267,  -267,   180,  -267,  -267,
+    -267,  -267,  -267,  -267,  1650,  1650,  1650,  1650,   766,   170,
+     170,   170,   170,  -267,    79,   132,  -267,  -267,   342,    22,
+      18,   196,   538,   -10,   558,  -267,  -267,   160,  -267,  -267,
+    -267,   164,  -267,  -267,  -267,   173,  -267,  -267,  -267,  -267,
+    -267,   766,  1422,  1162,   -38,   213,   101,    59,  -267,    15,
+     227,    11,  -267,  -267,   225,   224,   239,   236,   238,    55,
+     248,   250,  -267,   357,  -267,  1422,  1422,  -267,  1422,    68,
+     212,   558,  1422,  1422,  1422,  -267,  -267,  1422,  1270,  -267,
+    1422,    -8,    11,   521,   521,   270,  -267,   257,   261,   276,
+     462,   462,   462,  1422,  1422,  1422,   285,  -267,  -267,  -267,
+    -267,   558,   193,   282,  -267,  -267,  -267,  -267,  -267,  -267,
+    -267,  -267,  1162,  1162,  1422,  1422,   162,  1422,  1422,   103,
+    -267,   298,   219,   113,  1162,  1422,    13,  1692,  1422,  -267,
+    1053,  1422,  1422,  1422,  1422,  1422,  1422,  -267,  -267,   -10,
+    -267,   227,   766,   766,   766,   766,   766,   766,   766,   766,
+     766,   766,  1441,  -267,  -267,  1162,  1162,   558,    49,   299,
+     117,   166,  -267,  -267,   -10,  1422,   311,  1422,  -267,  -267,
+    -267,  1422,  -267,  -267,  -267,  -267,  1422,    49,   305,    70,
+     121,   320,   113,   140,  -267,    49,   326,   163,    49,   329,
+     189,  1574,   318,  -267,   191,   244,  1422,  -267,   249,   113,
+     113,   -10,   349,  -267,   170,   263,   357,   351,   337,   300,
+    1422,  -267,  -267,  -267,   766,  -267,  -267,   346,   226,     3,
+    1422,   360,     8,    -3,  -267,  -267,   344,   367,   340,   350,
+     353,   113,  -267,  -267,   357,   371,   -10,  -267,   170,  -267,
+      11,   302,   170,   374,   357,   357,   357,   357,   357,   357,
+    -267,   113,   565,   594,   728,   222,   222,   301,  -267,   301,
+    -267,  -267,  -267,  -267,  -267,  -267,  -267,  -267,  -267,  -267,
+    -267,  -267,   766,  -267,  -267,  1422,   285,   375,  1162,  1162,
+    -267,   379,   357,    15,  -267,   357,   395,   381,  1162,   394,
+    1162,  1422,   113,  -267,  1162,   402,  -267,   390,  -267,  -267,
+     392,  1162,  1162,    69,  1422,  1162,  1162,    49,   398,  -267,
+    -267,  -267,  1422,  -267,   383,  -267,  -267,   403,   388,  -267,
+     384,   401,   113,  -267,  1422,  -267,  -267,   558,   422,  -267,
+     387,     3,  -267,   103,  -267,  -267,    37,  -267,  -267,  -267,
+    -267,  -267,  -267,  -267,   408,  -267,  -267,   558,   357,   360,
+    1162,  -267,   424,  -267,  1162,  -267,  -267,   435,   118,   415,
+    -267,  -267,   113,  -267,  -267,  1162,   424,  -267,  -267,  -267,
+    1422,   259,  -267,  -267,   416,  1162,   357,   249,  -267,   -10,
+    -267,   404,   407,  -267,   357,  1422,  -267,  -267,  1422,  1422,
+     420,  -267,  -267,  -267,   434,  -267,  -267,  -267,   159,   113,
+     424,  1422,  -267,  -267,   424,  -267,   413,  1162,  1162,   433,
+    -267,  -267,  -267,   409,   436,   357,   211,   357,  -267,  1422,
+    -267,  1422,   447,   439,  -267,  -267,   402,   357,  -267,  1162,
+     440,   433,  1162,  -267,  -267,   421,  -267,   357,   460,  1162,
+    -267,  -267,  -267,  1162,  -267,  -267,   404,  1162,   173,  -267,
+     428,   173,  -267
   };
 
   const unsigned short int
   parser::yydefact_[] =
   {
-       0,     3,     0,    16,     0,     2,     0,   170,    83,    53,
-       0,    84,     0,    54,     0,     0,     0,   232,     0,   219,
-       0,     0,   219,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,   240,   134,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,   121,   122,   141,   161,   144,
-     143,   168,   178,   177,     0,     0,     0,     0,   156,     0,
-       0,     0,     0,     4,     0,    17,    19,   119,    25,   252,
-     183,     0,   137,   129,   212,   140,   160,   162,   166,   167,
-     179,   163,   190,   214,     5,    12,    13,     1,    11,    10,
-       9,     0,     0,    16,     0,     0,     0,   129,   149,   234,
-     252,   183,   129,   147,   254,     0,     0,   254,     0,   234,
-       0,     0,   154,   220,    82,     0,     0,   111,     0,     0,
-     137,   135,     0,     0,     0,   141,   132,     0,    22,   112,
-       0,     0,     0,   137,   137,     0,    46,     0,    47,     0,
-      51,   184,   185,     0,   228,     0,   238,   188,   189,   187,
-     186,   158,     0,   254,   221,   222,   223,   224,   225,     8,
-       7,     6,     0,    18,     0,     0,   238,     0,     0,   250,
-      57,     0,   252,     0,     0,   232,     0,     0,     0,   126,
-     232,     0,     0,     0,     0,     0,     0,    71,    72,     0,
-     138,   252,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,   211,   145,   169,    16,    16,   136,     0,     0,
-       0,    27,    26,     0,     0,     0,   255,   150,   151,   164,
-     255,   233,   181,   180,   155,   153,     0,     0,     0,   102,
-       0,    91,    98,   174,     0,     0,   174,     0,     0,     0,
-       0,    23,    25,     0,     0,   241,    29,     0,     0,    40,
-       0,    48,     0,     0,   230,     0,   256,     0,   232,   239,
-     139,   165,   255,   157,    21,    20,    63,   217,     0,   174,
-     215,   216,   259,   248,   254,     0,     0,     0,     0,     0,
-     142,    24,   234,     0,     0,   131,     0,   130,   182,     0,
-       0,     0,    69,    66,    70,    65,    68,    67,    73,     0,
-     198,   199,   196,   200,   197,   192,   195,   191,   194,   193,
-     207,   205,   206,   209,   208,   204,   203,   201,   202,   210,
-       0,    15,    14,     0,     0,   127,     0,   146,     0,   148,
-     235,   235,     0,     0,     0,     0,     0,   110,     0,   107,
-      99,     0,   238,     0,    86,   128,     0,     0,     0,   134,
-       0,     0,     0,   174,     0,    30,    31,    32,     0,    34,
-      37,    38,    39,     0,   254,    42,     0,     0,     0,   124,
-     257,   229,   123,   159,     0,    61,    64,   218,    52,   255,
-     251,   253,   243,    58,    59,    55,   176,   133,   226,   125,
-       0,   237,    56,   213,    78,    91,    28,    79,    95,   105,
-     100,     0,   104,    92,     0,   109,   175,   174,    85,     0,
-      91,    76,   118,   117,     0,     0,   113,   116,     0,     0,
-      33,    29,    44,   255,    41,     0,     0,   120,   231,     0,
-      62,   249,     0,     0,     0,   244,   245,   227,    77,    89,
-       0,    91,     0,   103,   108,   172,    91,    88,     0,    22,
-       0,    93,    35,    43,    45,     0,     0,    60,   243,   242,
-     247,     0,     0,     0,    96,   106,   107,   101,     0,   171,
-      87,     0,     0,    93,     0,    75,    49,     0,   246,     0,
-      16,    80,    81,   173,   115,     0,    74,    94,     0,    16,
-      90,   114,     0,    97,    50
+       0,     3,     0,    16,     0,     2,     0,   172,    85,    53,
+       0,    86,     0,    54,     0,     0,     0,   234,     0,   221,
+       0,     0,   221,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,   242,   136,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,   123,   124,   143,   163,   146,
+     145,   170,   180,   179,     0,     0,     0,     0,   158,     0,
+       0,     0,     0,     4,     0,    17,    19,   121,    25,   254,
+     185,     0,   139,   131,   214,   142,   162,   164,   168,   169,
+     181,   165,   192,   216,     5,    12,    13,     1,    11,    10,
+       9,     0,     0,    16,     0,     0,     0,   131,   151,   236,
+     254,   185,   131,   149,   256,     0,     0,   256,     0,   236,
+       0,     0,   156,   222,    84,     0,     0,   113,     0,     0,
+     139,   137,     0,     0,     0,   143,   134,     0,    22,   114,
+       0,     0,     0,   139,   139,     0,    46,     0,    47,     0,
+      51,   186,   187,     0,   230,     0,   240,   190,   191,   189,
+     188,   160,     0,   256,   223,   224,   225,   226,   227,     8,
+       7,     6,     0,    18,     0,     0,   240,     0,     0,   252,
+      57,     0,   254,     0,     0,   234,     0,     0,     0,   128,
+     234,     0,     0,     0,     0,     0,     0,    71,    72,     0,
+     140,   254,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,   213,   147,   171,    16,    16,   138,   176,     0,
+       0,     0,    27,    26,     0,     0,     0,   257,   152,   153,
+     166,   257,   235,   183,   182,   157,   155,   176,     0,     0,
+       0,   104,     0,    93,   100,   176,     0,     0,   176,     0,
+       0,     0,     0,    23,    25,     0,     0,   243,    29,     0,
+       0,    40,     0,    48,     0,     0,   232,     0,   258,     0,
+     234,   241,   141,   167,   257,   159,    21,    20,    63,   219,
+       0,   176,   217,   218,   261,   250,   256,     0,     0,     0,
+       0,     0,   144,    24,   236,     0,     0,   133,     0,   132,
+     184,     0,     0,     0,    69,    66,    70,    65,    68,    67,
+      73,     0,   200,   201,   198,   202,   199,   194,   197,   193,
+     196,   195,   209,   207,   208,   211,   210,   206,   205,   203,
+     204,   212,     0,    15,    14,     0,   240,     0,     0,     0,
+     129,     0,   148,     0,   150,   237,   237,     0,     0,     0,
+       0,     0,     0,   112,     0,   109,   101,     0,    88,   130,
+       0,     0,     0,   136,     0,     0,     0,   176,     0,    30,
+      31,    32,     0,    34,    37,    38,    39,     0,   256,    42,
+       0,     0,     0,   126,   259,   231,   125,   161,     0,    61,
+      64,   220,    52,   257,   253,   255,   245,    58,    59,    55,
+     178,   135,   228,   127,     0,   239,    56,   215,   177,   176,
+       0,    79,    93,    28,     0,    81,    97,   107,   102,     0,
+     106,    94,     0,   111,    87,     0,    93,    76,   120,   119,
+       0,     0,   115,   118,     0,     0,    33,    29,    44,   257,
+      41,     0,     0,   122,   233,     0,    62,   251,     0,     0,
+       0,   246,   247,   229,   174,    78,    77,    80,    91,     0,
+      93,     0,   105,   110,    93,    90,     0,    22,     0,    95,
+      35,    43,    45,     0,     0,    60,   245,   244,   249,     0,
+     173,     0,     0,     0,    98,   108,   109,   103,    89,     0,
+       0,    95,     0,    75,    49,     0,   248,   175,     0,    16,
+      82,    83,   117,     0,    74,    96,     0,    16,    92,   116,
+       0,    99,    50
   };
 
   const short int
   parser::yypgoto_[] =
   {
-    -257,  -257,  -257,  -257,  -257,   -14,     2,    88,    78,    10,
-      64,  -257,   108,  -257,   397,   419,  -257,  -257,    45,  -257,
-      43,   436,   160,  -257,    36,  -257,  -256,    65,  -257,  -257,
-    -257,    83,  -257,   308,  -257,    82,  -257,  -257,    62,    -2,
-      31,  -257,  -257,  -257,   334,  -257,  -257,  -257,  -257,  -257,
-    -257,  -257,  -257,  -257,  -111,  -257,  -229,   354,  -257,  -257,
-    -257,   529,   -50,  -257,  -257,    -8,   534,  -257,  -141,  -163,
-    -257,  -257,    96,   176,  -257,  -257,   -32,   -99,  -257,  -257
+    -267,  -267,  -267,  -267,  -267,   -13,     2,    71,     6,   184,
+      40,  -267,    56,  -267,   347,   450,  -267,  -267,   -14,  -267,
+      36,   396,   112,  -267,    17,  -267,  -266,    19,  -267,  -267,
+    -267,    27,  -267,   268,  -267,    28,  -267,  -267,    61,    -2,
+     356,  -267,  -267,  -267,   288,  -267,  -267,  -267,  -267,  -267,
+    -267,  -267,  -267,  -267,  -100,  -267,  -209,   231,  -267,  -267,
+    -267,   485,   -53,  -267,  -267,    -7,   490,  -267,  -141,  -160,
+    -267,  -267,    43,   128,  -267,  -267,  -125,  -105,  -267,  -267
   };
 
   const short int
   parser::yydefgoto_[] =
   {
-      -1,     4,     5,    63,    84,    85,    86,    65,   240,    66,
-      67,   358,   359,   360,   247,    68,   363,   364,   455,   139,
-     100,   172,   375,   376,   101,   463,   339,   475,   439,   464,
-     231,   401,   336,   232,   441,   405,   414,    71,    72,   102,
+      -1,     4,     5,    63,    84,    85,    86,    65,   242,    66,
+      67,   362,   363,   364,   249,    68,   367,   368,   463,   139,
+     100,   172,   379,   380,   101,   473,   345,   483,   448,   474,
+     233,   409,   342,   234,   450,   413,   420,    71,    72,   102,
       74,    75,    76,    77,   103,   104,   105,    78,   110,    79,
-     152,   153,    80,    81,   234,   469,   343,    82,   320,    83,
-     202,   114,   155,   255,   256,   291,   107,   112,   190,   260,
-     131,   435,   436,   273,   274,   275,   173,   217,   371,   276
+     152,   153,    80,    81,   209,   470,   327,    82,   322,    83,
+     202,   114,   155,   257,   258,   293,   107,   112,   190,   262,
+     131,   441,   442,   275,   276,   277,   173,   218,   375,   278
   };
 
   const short int
   parser::yytable_[] =
   {
-      73,    73,    96,   269,    64,   259,   164,   346,   221,   106,
-     156,   157,   158,   237,    97,   169,   229,   284,   174,  -259,
-     165,   165,   338,    35,    35,   259,   229,   126,   175,   170,
-      73,   176,   175,   230,   341,   176,   135,   244,    70,    70,
-     378,   170,   129,   164,    92,    69,    69,   164,   125,   125,
-     164,   412,    70,    87,   263,    88,   121,   165,   413,    69,
-     442,   165,   171,   245,   165,    91,   180,   223,    70,   285,
-     165,   191,   132,   132,   171,    69,   132,   132,   132,   209,
-     164,   342,    93,   215,   215,   215,   286,   120,   119,   151,
-     159,    73,   164,    94,   165,   191,    89,    90,   133,   134,
-     115,   177,   140,   141,   142,   177,   165,   167,   168,   461,
-     187,   188,   189,   164,   213,   462,   120,   120,   120,   120,
-     120,   215,   207,   214,   418,   215,    73,   165,   215,    70,
-      35,   160,   161,   354,   215,   179,    69,   323,   241,   438,
-     279,   116,   164,   268,   167,   168,   118,   258,   167,   168,
-     272,   167,   168,   120,   447,   125,   165,   167,   166,   299,
-      73,    73,   212,  -258,    70,   278,   332,   283,    16,   325,
-     215,    69,    73,   122,   287,   380,   205,   206,   445,   407,
-     123,   167,   168,   124,   281,   466,   164,   298,   162,   163,
-     470,   215,   127,   167,   168,   164,   205,   206,    70,    70,
-     165,   259,   367,    73,    73,    69,    69,   321,   322,   165,
-      70,   326,   128,   288,   167,   168,   144,    69,   145,   333,
-     215,   130,   449,   300,   301,   302,   303,   304,   305,   306,
-     307,   308,   309,   355,   356,   357,   388,   280,   164,   120,
-     390,    70,    70,   167,   168,   433,   143,   365,    69,    69,
-     264,   265,   165,   164,   120,   120,   120,   120,   120,   120,
-     120,   120,   120,   120,   215,   424,   136,   165,   146,   432,
-     121,   154,     1,   215,     2,     3,   433,   334,   164,   203,
-    -137,   180,   387,  -137,   204,   137,   434,   167,   168,   211,
-     169,   164,   165,   373,   337,   164,   167,   168,   138,   216,
-     220,   120,   345,   218,   222,   165,   324,   219,    16,   165,
-     178,   361,   362,   224,   225,   348,   215,   205,   206,   351,
-     249,    73,    73,   164,   120,   187,   188,   189,   250,   252,
-      73,   215,    73,   394,   395,   258,    73,   165,   251,   167,
-     168,   261,   397,   385,   399,    73,    73,   352,   403,    73,
-      73,   393,   277,  -137,   167,   168,   215,   410,   411,    70,
-      70,   416,   417,   392,   262,   268,    69,    69,    70,   215,
-      70,   335,   164,   166,    70,    69,   169,    69,   278,   167,
-     168,    69,   120,    70,    70,   344,   165,    70,    70,   164,
-      69,    69,   167,   168,    69,    69,   167,   168,   164,   347,
-     402,   215,   350,   165,   164,   366,   370,    73,   147,   148,
-     149,   150,   165,   368,   369,   162,   374,    73,   165,   446,
-     341,   453,   372,   379,   167,   168,   381,   382,   389,   451,
-     383,   198,   427,   200,   201,   384,    99,   109,   113,   386,
-     391,   113,   396,   398,   404,    70,   408,    73,    73,   421,
-     215,   425,    69,   409,   419,    70,   422,   426,   423,   241,
-     473,   429,    69,   374,   437,   338,   490,   215,   444,    73,
-     440,   443,    73,   167,   168,   493,   215,   450,    73,   460,
-     454,   484,   215,    73,   487,    70,    70,    73,   164,   456,
-     167,   168,    69,    69,   164,   491,   468,   474,   480,   167,
-     168,   477,   165,   476,   465,   167,   168,    70,   165,   485,
-      70,   208,  -236,   246,    69,   488,    70,    69,   471,   481,
-     489,    70,   -36,    69,   180,    70,   494,   472,    69,   452,
-     210,   248,    69,   492,   226,   227,   430,   228,   486,   340,
-       7,   233,   235,   236,   479,     9,   238,   242,   482,   243,
-     329,   117,   111,    13,   478,   431,    15,    16,    17,    18,
-       0,     0,   253,   254,   257,     0,   215,     0,   187,   188,
-     189,     0,   215,     0,    27,     0,     0,     0,    29,     0,
-       0,   180,     0,   266,   267,    35,   270,   271,     0,   167,
-     168,     0,     0,     0,   282,   167,   168,   289,     0,   282,
-     292,   293,   294,   295,   296,   297,    43,    44,    45,    46,
-     125,    48,    49,    50,     0,    51,     0,    52,    53,   181,
-     182,   183,   184,   185,   186,   187,   188,   189,   197,   198,
-     199,   200,   201,   327,     0,   328,     0,     0,    58,   330,
-       0,     0,     0,     0,   331,    60,    61,    62,   192,   193,
-     194,     0,   195,   196,   197,   198,   199,   200,   201,     0,
-     192,     0,   194,   353,   195,   196,   197,   198,   199,   200,
-     201,     0,     0,   -16,     6,     0,     0,   282,     7,     0,
-       8,     0,     0,     9,    10,    11,     0,   377,     0,     0,
-      12,    13,    14,     0,    15,    16,    17,    18,     0,     0,
-       0,     0,    19,     0,    20,    21,    22,     0,    23,    24,
-      25,    26,    27,    28,   -16,   -16,    29,     0,    30,    31,
-      32,    33,    34,    35,     0,     0,     0,     0,     0,     0,
-      36,    37,    38,    39,    40,     0,     0,     0,     0,     0,
-       0,    41,    42,     0,    43,    44,    45,    46,    47,    48,
-      49,    50,     0,    51,   400,    52,    53,    54,     0,     0,
-     406,    55,     0,     0,    56,     0,    57,     0,     0,   415,
-       0,     0,     0,     0,     0,     0,    58,   420,     0,     0,
-       0,     0,    59,    60,    61,    62,   192,     0,     0,   428,
-     195,   196,   197,   198,   199,   200,   201,   310,   311,   312,
-     313,   314,   315,   316,   317,   318,   319,   195,   196,   197,
-     198,   199,   200,   201,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,   448,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,   457,     0,
-       0,   458,   459,     0,     0,     0,     0,     0,     0,     0,
-       0,   467,     0,     0,     0,     0,     0,     0,    95,     0,
-       0,     0,     7,     0,     8,     0,     0,     9,    10,    11,
-     400,     0,     0,     0,    12,    13,    14,   483,    15,    16,
-      17,    18,     0,     0,   -16,     0,    19,     0,    20,    21,
-      22,     0,    23,    24,    25,    26,    27,    28,   -16,   -16,
-      29,     0,    30,    31,    32,    33,    34,    35,     0,     0,
-       0,     0,     0,     0,    36,    37,    38,    39,    40,     0,
-       0,     0,     0,     0,     0,    41,    42,     0,    43,    44,
-      45,    46,    47,    48,    49,    50,     0,    51,     0,    52,
-      53,    54,   108,     0,     0,    55,     7,     0,    56,     0,
-      57,     9,    10,     0,     0,     0,     0,     0,     0,    13,
-      58,     0,    15,    16,    17,    18,    59,    60,    61,    62,
-       0,  -152,     0,     0,     0,     0,     0,     0,    25,     0,
-      27,     0,     0,     0,    29,     0,     0,     0,     0,     0,
-       0,    35,     0,     0,     0,     0,     0,     0,    36,    37,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,    41,
-      42,     0,    43,    44,    45,    46,    47,    48,    49,    50,
-       0,    51,     7,    52,    53,    54,     0,     9,    10,    55,
-       0,     0,    56,     0,    57,    13,     0,     0,    15,    16,
-      17,    18,     0,     0,    58,     0,     0,     0,     0,     0,
-      59,    60,    61,    62,    25,     0,    27,     0,     0,     0,
-      29,     0,     0,     0,     0,     0,     0,    35,     0,     0,
-       0,     0,     0,     0,    36,    37,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,    41,    42,     0,    43,    44,
-      45,    46,    47,    48,    49,    50,     0,    51,     0,    52,
-      53,    54,     0,     0,     0,    55,     0,     0,    56,     0,
-      57,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-      58,     0,     0,     0,     0,     0,    59,    60,    61,    62,
-     290,     7,     0,     8,     0,     0,     9,    10,    11,     0,
-       0,     0,     0,    12,    13,    14,     0,    15,    16,    17,
-      18,     0,     0,     0,     0,    19,     0,    20,    21,    22,
-       0,    23,    24,    25,    26,    27,    28,     0,     0,    29,
-       0,    30,    31,    32,    33,    34,    35,     0,     0,     0,
-       0,     0,     0,    36,    37,    38,    39,    40,     0,     0,
+      73,    73,   222,    96,    64,   261,   271,   156,   157,   158,
+     106,   144,   170,   145,    97,   228,   246,   165,   337,    70,
+      70,   164,   236,  -261,   239,   261,   347,   126,   165,   350,
+      73,   174,    88,    70,   175,   165,   135,   176,    69,    69,
+      35,   175,   247,   438,   176,   171,   169,   281,   265,    70,
+     439,    87,    69,   132,   132,   164,   286,   132,   132,   132,
+     440,   164,   382,    35,   119,   125,   301,    91,    69,   165,
+      92,   191,   170,    89,    90,   165,   164,   231,    93,   159,
+     210,   216,   418,   325,   232,   224,   120,   216,   125,   419,
+     165,    73,   216,   214,   215,   191,    94,   133,   134,   216,
+     339,   140,   141,   142,   167,   171,   115,   177,   287,    35,
+      70,   179,   136,   116,   177,   120,   120,   120,   120,   120,
+     160,   161,   167,   168,   164,   288,    73,   164,   213,    69,
+     326,   137,   118,   216,   125,    16,   446,   451,   165,   216,
+     274,   165,   205,   206,   138,    70,   358,   329,   424,   231,
+     455,   340,   120,  -260,   216,   344,   167,   168,   205,   206,
+      73,    73,   167,   168,    69,   122,   399,   471,   285,   164,
+     123,   384,    73,   472,   289,   162,   163,   167,   168,    70,
+      70,   124,   270,   165,   476,   261,   260,   300,   478,   127,
+     444,    70,   280,   349,   290,   164,   330,   164,    69,    69,
+     128,   371,   216,    73,    73,   216,   130,   323,   324,   165,
+      69,   165,   331,   282,   205,   206,   129,   164,    16,   352,
+     178,   355,    70,    70,   439,   167,   168,   143,   167,   168,
+     146,   165,   164,   266,   267,   392,   180,   203,   120,   394,
+     212,    69,    69,   169,   204,   280,   165,   216,   154,   369,
+     164,   169,   219,   120,   120,   120,   120,   120,   120,   120,
+     120,   120,   120,   430,   165,   164,   217,   220,   223,   164,
+     167,   168,   343,   216,   356,   166,   378,   221,   225,   165,
+     187,   188,   189,   165,   391,   147,   148,   149,   150,   365,
+     366,   226,   251,   372,   263,   216,   167,   168,   167,   168,
+     254,   457,   120,   359,   360,   361,   164,   252,   164,   260,
+     216,   253,   243,   197,   198,   199,   200,   201,   167,   168,
+     165,   389,   165,   264,   279,   120,    73,    73,   216,   328,
+     376,   270,   393,   167,   168,   338,    73,     1,    73,     2,
+       3,   396,    73,   216,   341,    70,    70,   216,   164,    73,
+      73,   167,   168,    73,    73,    70,   348,    70,   283,   351,
+     354,    70,   165,   164,    69,    69,   167,   168,    70,    70,
+     167,   168,    70,    70,    69,   370,    69,   165,   373,   374,
+      69,   121,   410,   120,   216,   383,   216,    69,    69,   162,
+     386,    69,    69,   198,   325,   200,   201,   385,    73,   390,
+     387,   164,    73,   388,   395,   400,   403,   167,   168,   167,
+     168,   404,   433,    73,   151,   165,   406,    70,   412,   164,
+     414,    70,   415,    73,   427,  -238,   166,   461,   425,   429,
+     428,   432,    70,   165,   431,   435,    69,   378,   443,   344,
+      69,   216,    70,   479,   449,   452,   458,   207,   468,   167,
+     168,    69,   453,   469,   462,    73,    73,   464,   482,   484,
+     489,    69,   485,   480,   167,   168,   490,    99,   109,   113,
+     493,   496,   113,   497,    70,    70,   498,    73,   502,   216,
+      73,   250,   500,   460,   501,  -139,   180,    73,  -139,   475,
+     211,    73,   436,    69,    69,    73,    70,   216,   488,    70,
+     494,   346,   167,   168,   491,   334,    70,   117,   111,   486,
+      70,   437,   401,   402,    70,    69,     0,     0,    69,     0,
+     167,   168,   405,     0,   407,    69,     0,     0,   411,    69,
+     187,   188,   189,    69,   248,   416,   417,     0,     0,   422,
+     423,     0,   208,   -36,     0,   180,     0,     0,   302,   303,
+     304,   305,   306,   307,   308,   309,   310,   311,  -139,     0,
+       0,     0,   180,     0,     0,   227,   229,     0,   230,     0,
+       0,     0,   235,   237,   238,     0,     0,   240,   244,     0,
+     245,     0,     0,     0,   445,     0,     0,     0,   447,   187,
+     188,   189,     0,   255,   256,   259,     0,   121,     0,   454,
+     181,   182,   183,   184,   185,   186,   187,   188,   189,   459,
+       0,     0,     0,     0,   268,   269,     0,   272,   273,     0,
+     377,     0,     0,     0,     0,   284,     0,     0,   291,     0,
+     284,   294,   295,   296,   297,   298,   299,     0,     0,     0,
+       0,   243,   481,   192,   193,   194,     0,   195,   196,   197,
+     198,   199,   200,   201,   195,   196,   197,   198,   199,   200,
+     201,     0,     0,   492,     0,   332,   495,   333,     0,     0,
+       0,   335,     0,     0,     0,     0,   336,   499,   397,   192,
+       0,   194,     0,   195,   196,   197,   198,   199,   200,   201,
+     -16,     6,     0,     0,     0,     7,   357,     8,     0,     0,
+       9,    10,    11,     0,     0,     0,     0,    12,    13,    14,
+     284,    15,    16,    17,    18,     0,     0,     0,     0,    19,
+     381,    20,    21,    22,     0,    23,    24,    25,    26,    27,
+      28,   -16,   -16,    29,     0,    30,    31,    32,    33,    34,
+      35,     0,     0,     0,     0,     0,     0,    36,    37,    38,
+      39,    40,     0,     0,     0,     0,     0,     0,    41,    42,
+       0,    43,    44,    45,    46,    47,    48,    49,    50,     0,
+      51,     7,    52,    53,    54,   398,     9,    10,    55,     0,
+       0,    56,     0,    57,    13,     0,     0,    15,    16,    17,
+      18,   408,     0,    58,     0,     0,     0,     0,     0,    59,
+      60,    61,    62,    25,   421,    27,     0,     0,     0,    29,
+       0,     0,   426,   192,     0,     0,    35,   195,   196,   197,
+     198,   199,   200,   201,   434,     0,     0,     0,     0,     0,
        0,     0,     0,     0,    41,    42,     0,    43,    44,    45,
       46,    47,    48,    49,    50,     0,    51,     0,    52,    53,
       54,     0,     0,     0,    55,     0,     0,    56,     0,    57,
        0,     0,     0,     0,     0,     0,     0,     0,     0,    58,
-       0,     0,     0,     0,     0,    59,    60,    61,    62,     7,
-       0,     8,     0,     0,     9,    10,    11,     0,     0,     0,
-       0,    12,    13,    14,     0,    15,    16,    17,    18,     0,
-       0,     0,     0,    19,     0,    20,    21,    22,     0,    23,
-      24,   239,    26,    27,    28,     0,     0,    29,     0,    30,
-      31,    32,    33,    34,    35,     0,     0,     0,     0,     0,
-       0,    36,    37,    38,    39,    40,     0,     0,     0,     0,
-       0,     0,    41,    42,     0,    43,    44,    45,    46,    47,
-      48,    49,    50,     0,    51,     7,    52,    53,    54,     0,
-       9,    10,    55,     0,     0,    56,     0,    57,    13,     0,
-       0,    15,    16,    17,    18,     0,     0,    58,     0,     0,
-       0,     0,     0,    59,    60,    61,    62,    25,     0,    27,
-       0,     0,     0,    29,     0,     0,     0,     0,     0,     0,
-      35,     0,     0,     0,     0,     0,     0,    36,    37,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,    41,    42,
-       0,    43,    44,    45,    46,    47,    48,    49,    50,    98,
+     456,     0,     0,     0,     0,     0,    60,    61,    62,     0,
+       0,     0,     0,     0,     0,   465,     0,     0,   466,   467,
+       0,     0,     0,     0,    95,     0,     0,     0,     7,     0,
+       8,   477,     0,     9,    10,    11,     0,     0,     0,     0,
+      12,    13,    14,     0,    15,    16,    17,    18,     0,   487,
+     -16,   408,    19,     0,    20,    21,    22,     0,    23,    24,
+      25,    26,    27,    28,   -16,   -16,    29,     0,    30,    31,
+      32,    33,    34,    35,     0,     0,     0,     0,     0,     0,
+      36,    37,    38,    39,    40,     0,     0,     0,     0,     0,
+       0,    41,    42,     0,    43,    44,    45,    46,    47,    48,
+      49,    50,     0,    51,     0,    52,    53,    54,   108,     0,
+       0,    55,     7,     0,    56,     0,    57,     9,    10,     0,
+       0,     0,     0,     0,     0,    13,    58,     0,    15,    16,
+      17,    18,    59,    60,    61,    62,     0,  -154,     0,     0,
+       0,     0,     0,     0,    25,     0,    27,     0,     0,     0,
+      29,     0,     0,     0,     0,     0,     0,    35,     0,     0,
+       0,     0,     0,     0,    36,    37,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,    41,    42,     0,    43,    44,
+      45,    46,    47,    48,    49,    50,     0,    51,     7,    52,
+      53,    54,     0,     9,    10,    55,     0,     0,    56,     0,
+      57,    13,     0,     0,    15,    16,    17,    18,     0,     0,
+      58,     0,     0,     0,     0,     0,    59,    60,    61,    62,
+      25,     0,    27,     0,     0,     0,    29,     0,     0,     0,
+       0,     0,     0,    35,     0,     0,     0,     0,     0,     0,
+      36,    37,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,    41,    42,     0,    43,    44,    45,    46,    47,    48,
+      49,    50,     0,    51,     0,    52,    53,    54,     0,     0,
+       0,    55,     0,     0,    56,     0,    57,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,    58,     0,     0,     0,
+       0,     0,    59,    60,    61,    62,   292,     7,     0,     8,
+       0,     0,     9,    10,    11,     0,     0,     0,     0,    12,
+      13,    14,     0,    15,    16,    17,    18,     0,     0,     0,
+       0,    19,     0,    20,    21,    22,     0,    23,    24,    25,
+      26,    27,    28,     0,     0,    29,     0,    30,    31,    32,
+      33,    34,    35,     0,     0,     0,     0,     0,     0,    36,
+      37,    38,    39,    40,     0,     0,     0,     0,     0,     0,
+      41,    42,     0,    43,    44,    45,    46,    47,    48,    49,
+      50,     0,    51,     0,    52,    53,    54,     0,     0,     0,
+      55,     0,     0,    56,     0,    57,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,    58,     0,     0,     0,     0,
+       0,    59,    60,    61,    62,     7,     0,     8,     0,     0,
+       9,    10,    11,     0,     0,     0,     0,    12,    13,    14,
+       0,    15,    16,    17,    18,     0,     0,     0,     0,    19,
+       0,    20,    21,    22,     0,    23,    24,   241,    26,    27,
+      28,     0,     0,    29,     0,    30,    31,    32,    33,    34,
+      35,     0,     0,     0,     0,     0,     0,    36,    37,    38,
+      39,    40,     0,     0,     0,     0,     0,     0,    41,    42,
+       0,    43,    44,    45,    46,    47,    48,    49,    50,     0,
       51,     7,    52,    53,    54,     0,     9,    10,    55,     0,
        0,    56,     0,    57,    13,     0,     0,    15,    16,    17,
       18,     0,     0,    58,     0,     0,     0,     0,     0,    59,
@@ -5130,186 +5147,185 @@ namespace yy {
        0,     0,     0,     0,     0,     0,    35,     0,     0,     0,
        0,     0,     0,    36,    37,     0,     0,     0,     0,     0,
        0,     0,     0,     0,    41,    42,     0,    43,    44,    45,
-      46,    47,    48,    49,    50,     0,    51,     7,    52,    53,
+      46,    47,    48,    49,    50,    98,    51,     7,    52,    53,
       54,     0,     9,    10,    55,     0,     0,    56,     0,    57,
       13,     0,     0,    15,    16,    17,    18,     0,     0,    58,
        0,     0,     0,     0,     0,    59,    60,    61,    62,    25,
-       0,    27,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,    27,     0,     0,     0,    29,     0,     0,     0,     0,
        0,     0,    35,     0,     0,     0,     0,     0,     0,    36,
       37,     0,     0,     0,     0,     0,     0,     0,     0,     0,
       41,    42,     0,    43,    44,    45,    46,    47,    48,    49,
       50,     0,    51,     7,    52,    53,    54,     0,     9,    10,
       55,     0,     0,    56,     0,    57,    13,     0,     0,    15,
       16,    17,    18,     0,     0,    58,     0,     0,     0,     0,
-       0,    59,    60,    61,    62,    25,     0,    27,     0,     0,
-       0,    29,     0,     0,     0,     0,     0,     0,    35,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,    59,    60,    61,    62,    25,     0,    27,   312,   313,
+     314,   315,   316,   317,   318,   319,   320,   321,    35,     0,
+       0,     0,     0,     0,     0,    36,    37,     0,     0,     0,
        0,     0,     0,     0,     0,     0,    41,    42,     0,    43,
       44,    45,    46,    47,    48,    49,    50,     0,    51,     7,
       52,    53,    54,     0,     9,    10,    55,     0,     0,    56,
        0,    57,    13,     0,     0,    15,    16,    17,    18,     0,
-       0,    58,     0,     0,     0,     0,     0,     0,    60,    61,
+       0,    58,     0,     0,     0,     0,     0,    59,    60,    61,
       62,    25,     0,    27,     0,     0,     0,    29,     0,     0,
-       0,     0,     0,     0,   349,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,   353,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,    41,    42,     0,    43,    44,    45,    46,    47,
       48,    49,    50,     0,    51,     7,    52,    53,    54,     0,
        9,     0,    55,     0,     0,    56,     0,    57,    13,     0,
        0,    15,    16,    17,    18,     0,     0,    58,     0,     0,
        0,     0,     0,     0,    60,    61,    62,     0,     0,    27,
-       0,     0,     0,    29,     0,     0,     0,     0,     0,     0,
-      35,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,    41,    42,
+       0,     0,     0,    29,     0,     0,     0,     7,     0,     0,
+      35,     0,     9,     0,     0,     0,     0,     0,     0,     0,
+      13,     0,     0,    15,    16,    17,    18,     0,    41,    42,
        0,    43,    44,    45,    46,   125,    48,    49,    50,     0,
-      51,     0,    52,    53,    54,     0,     0,     0,    55,     0,
-       0,    56,     0,    57,     0,     0,     0,     0,     0,     0,
+      51,    27,    52,    53,    54,    29,     0,     0,    55,     0,
+       0,    56,    35,    57,     0,     0,     0,     0,     0,     0,
        0,     0,     0,    58,     0,     0,     0,     0,     0,     0,
-      60,    61,    62
+      60,    61,    62,    43,    44,    45,    46,   125,    48,    49,
+      50,     0,    51,     0,    52,    53,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,    58,     0,     0,     0,     0,
+       0,     0,    60,    61,    62
   };
 
   const short int
   parser::yycheck_[] =
   {
-       2,     3,    16,   166,     2,   146,     6,   236,   107,    17,
-      60,    61,    62,   124,    16,    24,     9,    43,    13,    20,
-      20,    20,    15,    50,    50,   166,     9,    29,    23,    50,
-      32,    26,    23,    16,    34,    26,    38,    24,     2,     3,
-     269,    50,    32,     6,    24,     2,     3,     6,    75,    75,
-       6,    13,    16,     0,   153,     0,    25,    20,    20,    16,
-      19,    20,    83,    50,    20,    37,    24,    30,    32,    95,
-      20,    73,    36,    37,    83,    32,    40,    41,    42,    93,
-       6,    81,    24,    84,    84,    84,   112,    25,    24,    58,
-       0,    93,     6,    24,    20,    97,    41,    42,    36,    37,
-      24,    96,    40,    41,    42,    96,    20,   107,   108,     8,
-      68,    69,    70,     6,    34,    14,    54,    55,    56,    57,
-      58,    84,    91,    79,   353,    84,   128,    20,    84,    93,
-      50,    41,    42,   244,    84,    71,    93,    30,   128,   395,
-     172,    24,     6,    20,   107,   108,    24,    24,   107,   108,
-      37,   107,   108,    91,   410,    75,    20,   107,    84,   191,
-     162,   163,    27,    50,   128,    26,    30,   175,    22,    30,
-      84,   128,   174,    24,   176,   274,    41,    42,   407,   342,
-      24,   107,   108,    24,   174,   441,     6,   189,    43,    44,
-     446,    84,    24,   107,   108,     6,    41,    42,   162,   163,
-      20,   342,   252,   205,   206,   162,   163,   205,   206,    20,
-     174,   213,    24,   177,   107,   108,    22,   174,    24,    30,
-      84,    24,    42,   192,   193,   194,   195,   196,   197,   198,
-     199,   200,   201,    54,    55,    56,   286,   173,     6,   177,
-     290,   205,   206,   107,   108,    13,    24,   249,   205,   206,
-     162,   163,    20,     6,   192,   193,   194,   195,   196,   197,
-     198,   199,   200,   201,    84,   364,    18,    20,    50,     6,
-     239,    78,     1,    84,     3,     4,    13,    30,     6,    77,
-      23,    24,   284,    26,    80,    37,    23,   107,   108,    27,
-      24,     6,    20,   262,   230,     6,   107,   108,    50,    41,
-      41,   239,    30,    28,    30,    20,    30,    28,    22,    20,
-      24,   247,   248,    30,    41,    30,    84,    41,    42,    30,
-      22,   323,   324,     6,   262,    68,    69,    70,    50,    24,
-     332,    84,   334,   323,   324,    24,   338,    20,    50,   107,
-     108,   101,   332,   279,   334,   347,   348,    30,   338,   351,
-     352,   320,    26,    96,   107,   108,    84,   347,   348,   323,
-     324,   351,   352,   299,    41,    20,   323,   324,   332,    84,
-     334,    24,     6,    84,   338,   332,    24,   334,    26,   107,
-     108,   338,   320,   347,   348,    30,    20,   351,   352,     6,
-     347,   348,   107,   108,   351,   352,   107,   108,     6,    30,
-     336,    84,    42,    20,     6,    26,    42,   409,    54,    55,
-      56,    57,    20,    30,    27,    43,    50,   419,    20,   409,
-      34,   423,    30,    41,   107,   108,    30,    50,    30,   419,
-      50,    92,   368,    94,    95,    50,    17,    18,    19,    28,
-      30,    22,    27,    22,    16,   409,    30,   449,   450,    41,
-      84,    50,   409,    30,    30,   419,    27,    30,    41,   449,
-     450,    13,   419,    50,    30,    15,   480,    84,   404,   471,
-       9,    30,   474,   107,   108,   489,    84,    30,   480,    28,
-      50,   471,    84,   485,   474,   449,   450,   489,     6,    50,
-     107,   108,   449,   450,     6,   485,    19,    25,    13,   107,
-     108,    26,    20,    50,   440,   107,   108,   471,    20,    30,
-     474,    92,    30,    13,   471,    50,   480,   474,    30,    27,
-      13,   485,    22,   480,    24,   489,    50,   449,   485,   421,
-      94,   134,   489,   488,   115,   116,   376,   118,   473,   231,
-       5,   122,   123,   124,   461,    10,   127,   128,   466,   130,
-     216,    22,    18,    18,   458,   379,    21,    22,    23,    24,
-      -1,    -1,   143,   144,   145,    -1,    84,    -1,    68,    69,
-      70,    -1,    84,    -1,    39,    -1,    -1,    -1,    43,    -1,
-      -1,    24,    -1,   164,   165,    50,   167,   168,    -1,   107,
-     108,    -1,    -1,    -1,   175,   107,   108,   178,    -1,   180,
-     181,   182,   183,   184,   185,   186,    71,    72,    73,    74,
-      75,    76,    77,    78,    -1,    80,    -1,    82,    83,    62,
-      63,    64,    65,    66,    67,    68,    69,    70,    91,    92,
-      93,    94,    95,   214,    -1,   216,    -1,    -1,   103,   220,
-      -1,    -1,    -1,    -1,   225,   110,   111,   112,    85,    86,
-      87,    -1,    89,    90,    91,    92,    93,    94,    95,    -1,
-      85,    -1,    87,   244,    89,    90,    91,    92,    93,    94,
-      95,    -1,    -1,     0,     1,    -1,    -1,   258,     5,    -1,
-       7,    -1,    -1,    10,    11,    12,    -1,   268,    -1,    -1,
-      17,    18,    19,    -1,    21,    22,    23,    24,    -1,    -1,
-      -1,    -1,    29,    -1,    31,    32,    33,    -1,    35,    36,
-      37,    38,    39,    40,    41,    42,    43,    -1,    45,    46,
-      47,    48,    49,    50,    -1,    -1,    -1,    -1,    -1,    -1,
-      57,    58,    59,    60,    61,    -1,    -1,    -1,    -1,    -1,
-      -1,    68,    69,    -1,    71,    72,    73,    74,    75,    76,
-      77,    78,    -1,    80,   335,    82,    83,    84,    -1,    -1,
-     341,    88,    -1,    -1,    91,    -1,    93,    -1,    -1,   350,
-      -1,    -1,    -1,    -1,    -1,    -1,   103,   358,    -1,    -1,
-      -1,    -1,   109,   110,   111,   112,    85,    -1,    -1,   370,
-      89,    90,    91,    92,    93,    94,    95,    97,    98,    99,
-     100,   101,   102,   103,   104,   105,   106,    89,    90,    91,
-      92,    93,    94,    95,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,   414,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,   429,    -1,
-      -1,   432,   433,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,   442,    -1,    -1,    -1,    -1,    -1,    -1,     1,    -1,
-      -1,    -1,     5,    -1,     7,    -1,    -1,    10,    11,    12,
-     461,    -1,    -1,    -1,    17,    18,    19,   468,    21,    22,
-      23,    24,    -1,    -1,    27,    -1,    29,    -1,    31,    32,
-      33,    -1,    35,    36,    37,    38,    39,    40,    41,    42,
-      43,    -1,    45,    46,    47,    48,    49,    50,    -1,    -1,
-      -1,    -1,    -1,    -1,    57,    58,    59,    60,    61,    -1,
-      -1,    -1,    -1,    -1,    -1,    68,    69,    -1,    71,    72,
-      73,    74,    75,    76,    77,    78,    -1,    80,    -1,    82,
-      83,    84,     1,    -1,    -1,    88,     5,    -1,    91,    -1,
-      93,    10,    11,    -1,    -1,    -1,    -1,    -1,    -1,    18,
-     103,    -1,    21,    22,    23,    24,   109,   110,   111,   112,
-      -1,    30,    -1,    -1,    -1,    -1,    -1,    -1,    37,    -1,
-      39,    -1,    -1,    -1,    43,    -1,    -1,    -1,    -1,    -1,
-      -1,    50,    -1,    -1,    -1,    -1,    -1,    -1,    57,    58,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    68,
-      69,    -1,    71,    72,    73,    74,    75,    76,    77,    78,
-      -1,    80,     5,    82,    83,    84,    -1,    10,    11,    88,
-      -1,    -1,    91,    -1,    93,    18,    -1,    -1,    21,    22,
-      23,    24,    -1,    -1,   103,    -1,    -1,    -1,    -1,    -1,
-     109,   110,   111,   112,    37,    -1,    39,    -1,    -1,    -1,
-      43,    -1,    -1,    -1,    -1,    -1,    -1,    50,    -1,    -1,
-      -1,    -1,    -1,    -1,    57,    58,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    68,    69,    -1,    71,    72,
-      73,    74,    75,    76,    77,    78,    -1,    80,    -1,    82,
-      83,    84,    -1,    -1,    -1,    88,    -1,    -1,    91,    -1,
-      93,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-     103,    -1,    -1,    -1,    -1,    -1,   109,   110,   111,   112,
-     113,     5,    -1,     7,    -1,    -1,    10,    11,    12,    -1,
-      -1,    -1,    -1,    17,    18,    19,    -1,    21,    22,    23,
-      24,    -1,    -1,    -1,    -1,    29,    -1,    31,    32,    33,
-      -1,    35,    36,    37,    38,    39,    40,    -1,    -1,    43,
-      -1,    45,    46,    47,    48,    49,    50,    -1,    -1,    -1,
-      -1,    -1,    -1,    57,    58,    59,    60,    61,    -1,    -1,
+       2,     3,   107,    16,     2,   146,   166,    60,    61,    62,
+      17,    22,    50,    24,    16,   115,    24,    20,   227,     2,
+       3,     6,   122,    20,   124,   166,   235,    29,    20,   238,
+      32,    13,     0,    16,    23,    20,    38,    26,     2,     3,
+      50,    23,    50,     6,    26,    83,    24,   172,   153,    32,
+      13,     0,    16,    36,    37,     6,    43,    40,    41,    42,
+      23,     6,   271,    50,    24,    75,   191,    37,    32,    20,
+      24,    73,    50,    41,    42,    20,     6,     9,    24,     0,
+      93,    84,    13,    34,    16,    30,    25,    84,    75,    20,
+      20,    93,    84,    34,    79,    97,    24,    36,    37,    84,
+      30,    40,    41,    42,   107,    83,    24,    96,    95,    50,
+      93,    71,    18,    24,    96,    54,    55,    56,    57,    58,
+      41,    42,   107,   108,     6,   112,   128,     6,    27,    93,
+      81,    37,    24,    84,    75,    22,   402,    19,    20,    84,
+      37,    20,    41,    42,    50,   128,   246,    30,   357,     9,
+     416,    30,    91,    50,    84,    15,   107,   108,    41,    42,
+     162,   163,   107,   108,   128,    24,   326,     8,   175,     6,
+      24,   276,   174,    14,   176,    43,    44,   107,   108,   162,
+     163,    24,    20,    20,   450,   326,    24,   189,   454,    24,
+     399,   174,    26,    30,   177,     6,    30,     6,   162,   163,
+      24,   254,    84,   205,   206,    84,    24,   205,   206,    20,
+     174,    20,   214,   173,    41,    42,    32,     6,    22,    30,
+      24,    30,   205,   206,    13,   107,   108,    24,   107,   108,
+      50,    20,     6,   162,   163,   288,    24,    77,   177,   292,
+      27,   205,   206,    24,    80,    26,    20,    84,    78,   251,
+       6,    24,    28,   192,   193,   194,   195,   196,   197,   198,
+     199,   200,   201,   368,    20,     6,    41,    28,    30,     6,
+     107,   108,   232,    84,    30,    84,    50,    41,    30,    20,
+      68,    69,    70,    20,   286,    54,    55,    56,    57,   249,
+     250,    41,    22,    30,   101,    84,   107,   108,   107,   108,
+      24,    42,   241,    54,    55,    56,     6,    50,     6,    24,
+      84,    50,   128,    91,    92,    93,    94,    95,   107,   108,
+      20,   281,    20,    41,    26,   264,   328,   329,    84,    30,
+      30,    20,    30,   107,   108,    30,   338,     1,   340,     3,
+       4,   301,   344,    84,    24,   328,   329,    84,     6,   351,
+     352,   107,   108,   355,   356,   338,    30,   340,   174,    30,
+      42,   344,    20,     6,   328,   329,   107,   108,   351,   352,
+     107,   108,   355,   356,   338,    26,   340,    20,    27,    42,
+     344,    25,   342,   322,    84,    41,    84,   351,   352,    43,
+      50,   355,   356,    92,    34,    94,    95,    30,   400,    28,
+      50,     6,   404,    50,    30,    30,    27,   107,   108,   107,
+     108,    30,   372,   415,    58,    20,    22,   400,    16,     6,
+      30,   404,    30,   425,    41,    30,    84,   429,    30,    41,
+      27,    30,   415,    20,    50,    13,   400,    50,    30,    15,
+     404,    84,   425,    30,     9,    30,    30,    91,    28,   107,
+     108,   415,   412,    19,    50,   457,   458,    50,    25,    50,
+      13,   425,    26,   457,   107,   108,    27,    17,    18,    19,
+      30,    50,    22,    13,   457,   458,   489,   479,    50,    84,
+     482,   134,   496,   427,   497,    23,    24,   489,    26,   449,
+      94,   493,   380,   457,   458,   497,   479,    84,   471,   482,
+     481,   233,   107,   108,   476,   217,   489,    22,    18,   466,
+     493,   383,   328,   329,   497,   479,    -1,    -1,   482,    -1,
+     107,   108,   338,    -1,   340,   489,    -1,    -1,   344,   493,
+      68,    69,    70,   497,    13,   351,   352,    -1,    -1,   355,
+     356,    -1,    92,    22,    -1,    24,    -1,    -1,   192,   193,
+     194,   195,   196,   197,   198,   199,   200,   201,    96,    -1,
+      -1,    -1,    24,    -1,    -1,   115,   116,    -1,   118,    -1,
+      -1,    -1,   122,   123,   124,    -1,    -1,   127,   128,    -1,
+     130,    -1,    -1,    -1,   400,    -1,    -1,    -1,   404,    68,
+      69,    70,    -1,   143,   144,   145,    -1,   241,    -1,   415,
+      62,    63,    64,    65,    66,    67,    68,    69,    70,   425,
+      -1,    -1,    -1,    -1,   164,   165,    -1,   167,   168,    -1,
+     264,    -1,    -1,    -1,    -1,   175,    -1,    -1,   178,    -1,
+     180,   181,   182,   183,   184,   185,   186,    -1,    -1,    -1,
+      -1,   457,   458,    85,    86,    87,    -1,    89,    90,    91,
+      92,    93,    94,    95,    89,    90,    91,    92,    93,    94,
+      95,    -1,    -1,   479,    -1,   215,   482,   217,    -1,    -1,
+      -1,   221,    -1,    -1,    -1,    -1,   226,   493,   322,    85,
+      -1,    87,    -1,    89,    90,    91,    92,    93,    94,    95,
+       0,     1,    -1,    -1,    -1,     5,   246,     7,    -1,    -1,
+      10,    11,    12,    -1,    -1,    -1,    -1,    17,    18,    19,
+     260,    21,    22,    23,    24,    -1,    -1,    -1,    -1,    29,
+     270,    31,    32,    33,    -1,    35,    36,    37,    38,    39,
+      40,    41,    42,    43,    -1,    45,    46,    47,    48,    49,
+      50,    -1,    -1,    -1,    -1,    -1,    -1,    57,    58,    59,
+      60,    61,    -1,    -1,    -1,    -1,    -1,    -1,    68,    69,
+      -1,    71,    72,    73,    74,    75,    76,    77,    78,    -1,
+      80,     5,    82,    83,    84,   325,    10,    11,    88,    -1,
+      -1,    91,    -1,    93,    18,    -1,    -1,    21,    22,    23,
+      24,   341,    -1,   103,    -1,    -1,    -1,    -1,    -1,   109,
+     110,   111,   112,    37,   354,    39,    -1,    -1,    -1,    43,
+      -1,    -1,   362,    85,    -1,    -1,    50,    89,    90,    91,
+      92,    93,    94,    95,   374,    -1,    -1,    -1,    -1,    -1,
       -1,    -1,    -1,    -1,    68,    69,    -1,    71,    72,    73,
       74,    75,    76,    77,    78,    -1,    80,    -1,    82,    83,
       84,    -1,    -1,    -1,    88,    -1,    -1,    91,    -1,    93,
       -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,   103,
-      -1,    -1,    -1,    -1,    -1,   109,   110,   111,   112,     5,
-      -1,     7,    -1,    -1,    10,    11,    12,    -1,    -1,    -1,
-      -1,    17,    18,    19,    -1,    21,    22,    23,    24,    -1,
-      -1,    -1,    -1,    29,    -1,    31,    32,    33,    -1,    35,
-      36,    37,    38,    39,    40,    -1,    -1,    43,    -1,    45,
-      46,    47,    48,    49,    50,    -1,    -1,    -1,    -1,    -1,
-      -1,    57,    58,    59,    60,    61,    -1,    -1,    -1,    -1,
-      -1,    -1,    68,    69,    -1,    71,    72,    73,    74,    75,
-      76,    77,    78,    -1,    80,     5,    82,    83,    84,    -1,
-      10,    11,    88,    -1,    -1,    91,    -1,    93,    18,    -1,
-      -1,    21,    22,    23,    24,    -1,    -1,   103,    -1,    -1,
-      -1,    -1,    -1,   109,   110,   111,   112,    37,    -1,    39,
-      -1,    -1,    -1,    43,    -1,    -1,    -1,    -1,    -1,    -1,
-      50,    -1,    -1,    -1,    -1,    -1,    -1,    57,    58,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    68,    69,
-      -1,    71,    72,    73,    74,    75,    76,    77,    78,    79,
+     420,    -1,    -1,    -1,    -1,    -1,   110,   111,   112,    -1,
+      -1,    -1,    -1,    -1,    -1,   435,    -1,    -1,   438,   439,
+      -1,    -1,    -1,    -1,     1,    -1,    -1,    -1,     5,    -1,
+       7,   451,    -1,    10,    11,    12,    -1,    -1,    -1,    -1,
+      17,    18,    19,    -1,    21,    22,    23,    24,    -1,   469,
+      27,   471,    29,    -1,    31,    32,    33,    -1,    35,    36,
+      37,    38,    39,    40,    41,    42,    43,    -1,    45,    46,
+      47,    48,    49,    50,    -1,    -1,    -1,    -1,    -1,    -1,
+      57,    58,    59,    60,    61,    -1,    -1,    -1,    -1,    -1,
+      -1,    68,    69,    -1,    71,    72,    73,    74,    75,    76,
+      77,    78,    -1,    80,    -1,    82,    83,    84,     1,    -1,
+      -1,    88,     5,    -1,    91,    -1,    93,    10,    11,    -1,
+      -1,    -1,    -1,    -1,    -1,    18,   103,    -1,    21,    22,
+      23,    24,   109,   110,   111,   112,    -1,    30,    -1,    -1,
+      -1,    -1,    -1,    -1,    37,    -1,    39,    -1,    -1,    -1,
+      43,    -1,    -1,    -1,    -1,    -1,    -1,    50,    -1,    -1,
+      -1,    -1,    -1,    -1,    57,    58,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    68,    69,    -1,    71,    72,
+      73,    74,    75,    76,    77,    78,    -1,    80,     5,    82,
+      83,    84,    -1,    10,    11,    88,    -1,    -1,    91,    -1,
+      93,    18,    -1,    -1,    21,    22,    23,    24,    -1,    -1,
+     103,    -1,    -1,    -1,    -1,    -1,   109,   110,   111,   112,
+      37,    -1,    39,    -1,    -1,    -1,    43,    -1,    -1,    -1,
+      -1,    -1,    -1,    50,    -1,    -1,    -1,    -1,    -1,    -1,
+      57,    58,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    68,    69,    -1,    71,    72,    73,    74,    75,    76,
+      77,    78,    -1,    80,    -1,    82,    83,    84,    -1,    -1,
+      -1,    88,    -1,    -1,    91,    -1,    93,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,   103,    -1,    -1,    -1,
+      -1,    -1,   109,   110,   111,   112,   113,     5,    -1,     7,
+      -1,    -1,    10,    11,    12,    -1,    -1,    -1,    -1,    17,
+      18,    19,    -1,    21,    22,    23,    24,    -1,    -1,    -1,
+      -1,    29,    -1,    31,    32,    33,    -1,    35,    36,    37,
+      38,    39,    40,    -1,    -1,    43,    -1,    45,    46,    47,
+      48,    49,    50,    -1,    -1,    -1,    -1,    -1,    -1,    57,
+      58,    59,    60,    61,    -1,    -1,    -1,    -1,    -1,    -1,
+      68,    69,    -1,    71,    72,    73,    74,    75,    76,    77,
+      78,    -1,    80,    -1,    82,    83,    84,    -1,    -1,    -1,
+      88,    -1,    -1,    91,    -1,    93,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,   103,    -1,    -1,    -1,    -1,
+      -1,   109,   110,   111,   112,     5,    -1,     7,    -1,    -1,
+      10,    11,    12,    -1,    -1,    -1,    -1,    17,    18,    19,
+      -1,    21,    22,    23,    24,    -1,    -1,    -1,    -1,    29,
+      -1,    31,    32,    33,    -1,    35,    36,    37,    38,    39,
+      40,    -1,    -1,    43,    -1,    45,    46,    47,    48,    49,
+      50,    -1,    -1,    -1,    -1,    -1,    -1,    57,    58,    59,
+      60,    61,    -1,    -1,    -1,    -1,    -1,    -1,    68,    69,
+      -1,    71,    72,    73,    74,    75,    76,    77,    78,    -1,
       80,     5,    82,    83,    84,    -1,    10,    11,    88,    -1,
       -1,    91,    -1,    93,    18,    -1,    -1,    21,    22,    23,
       24,    -1,    -1,   103,    -1,    -1,    -1,    -1,    -1,   109,
@@ -5317,25 +5333,25 @@ namespace yy {
       -1,    -1,    -1,    -1,    -1,    -1,    50,    -1,    -1,    -1,
       -1,    -1,    -1,    57,    58,    -1,    -1,    -1,    -1,    -1,
       -1,    -1,    -1,    -1,    68,    69,    -1,    71,    72,    73,
-      74,    75,    76,    77,    78,    -1,    80,     5,    82,    83,
+      74,    75,    76,    77,    78,    79,    80,     5,    82,    83,
       84,    -1,    10,    11,    88,    -1,    -1,    91,    -1,    93,
       18,    -1,    -1,    21,    22,    23,    24,    -1,    -1,   103,
       -1,    -1,    -1,    -1,    -1,   109,   110,   111,   112,    37,
-      -1,    39,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    39,    -1,    -1,    -1,    43,    -1,    -1,    -1,    -1,
       -1,    -1,    50,    -1,    -1,    -1,    -1,    -1,    -1,    57,
       58,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
       68,    69,    -1,    71,    72,    73,    74,    75,    76,    77,
       78,    -1,    80,     5,    82,    83,    84,    -1,    10,    11,
       88,    -1,    -1,    91,    -1,    93,    18,    -1,    -1,    21,
       22,    23,    24,    -1,    -1,   103,    -1,    -1,    -1,    -1,
-      -1,   109,   110,   111,   112,    37,    -1,    39,    -1,    -1,
-      -1,    43,    -1,    -1,    -1,    -1,    -1,    -1,    50,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,   109,   110,   111,   112,    37,    -1,    39,    97,    98,
+      99,   100,   101,   102,   103,   104,   105,   106,    50,    -1,
+      -1,    -1,    -1,    -1,    -1,    57,    58,    -1,    -1,    -1,
       -1,    -1,    -1,    -1,    -1,    -1,    68,    69,    -1,    71,
       72,    73,    74,    75,    76,    77,    78,    -1,    80,     5,
       82,    83,    84,    -1,    10,    11,    88,    -1,    -1,    91,
       -1,    93,    18,    -1,    -1,    21,    22,    23,    24,    -1,
-      -1,   103,    -1,    -1,    -1,    -1,    -1,    -1,   110,   111,
+      -1,   103,    -1,    -1,    -1,    -1,    -1,   109,   110,   111,
      112,    37,    -1,    39,    -1,    -1,    -1,    43,    -1,    -1,
       -1,    -1,    -1,    -1,    50,    -1,    -1,    -1,    -1,    -1,
       -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
@@ -5344,14 +5360,18 @@ namespace yy {
       10,    -1,    88,    -1,    -1,    91,    -1,    93,    18,    -1,
       -1,    21,    22,    23,    24,    -1,    -1,   103,    -1,    -1,
       -1,    -1,    -1,    -1,   110,   111,   112,    -1,    -1,    39,
-      -1,    -1,    -1,    43,    -1,    -1,    -1,    -1,    -1,    -1,
-      50,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    68,    69,
+      -1,    -1,    -1,    43,    -1,    -1,    -1,     5,    -1,    -1,
+      50,    -1,    10,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      18,    -1,    -1,    21,    22,    23,    24,    -1,    68,    69,
       -1,    71,    72,    73,    74,    75,    76,    77,    78,    -1,
-      80,    -1,    82,    83,    84,    -1,    -1,    -1,    88,    -1,
-      -1,    91,    -1,    93,    -1,    -1,    -1,    -1,    -1,    -1,
+      80,    39,    82,    83,    84,    43,    -1,    -1,    88,    -1,
+      -1,    91,    50,    93,    -1,    -1,    -1,    -1,    -1,    -1,
       -1,    -1,    -1,   103,    -1,    -1,    -1,    -1,    -1,    -1,
-     110,   111,   112
+     110,   111,   112,    71,    72,    73,    74,    75,    76,    77,
+      78,    -1,    80,    -1,    82,    83,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,   103,    -1,    -1,    -1,    -1,
+      -1,    -1,   110,   111,   112
   };
 
   const unsigned char
@@ -5377,36 +5397,37 @@ namespace yy {
       50,    83,   135,   190,    13,    23,    26,    96,    24,   124,
       24,    62,    63,    64,    65,    66,    67,    68,    69,    70,
      182,   153,    85,    86,    87,    89,    90,    91,    92,    93,
-      94,    95,   174,    77,    80,    41,    42,   154,   129,   119,
-     135,    27,    27,    34,    79,    84,    41,   191,    28,    28,
-      41,   191,    30,    30,    30,    41,   129,   129,   129,     9,
-      16,   144,   147,   129,   168,   129,   129,   168,   129,    37,
-     122,   123,   129,   129,    24,    50,    13,   128,   128,    22,
-      50,    50,    24,   129,   129,   177,   178,   129,    24,   182,
-     183,   101,    41,   191,   121,   121,   129,   129,    20,   183,
-     129,   129,    37,   187,   188,   189,   193,    26,    26,   190,
-     124,   123,   129,   179,    43,    95,   112,   153,   138,   129,
-     113,   179,   129,   129,   129,   129,   129,   129,   153,   190,
-     154,   154,   154,   154,   154,   154,   154,   154,   154,   154,
-      97,    98,    99,   100,   101,   102,   103,   104,   105,   106,
-     172,   120,   120,    30,    30,    30,   153,   129,   129,   158,
-     129,   129,    30,    30,    30,    24,   146,   124,    15,   140,
-     147,    34,    81,   170,    30,    30,   170,    30,    30,    50,
-      42,    30,    30,   129,   168,    54,    55,    56,   125,   126,
-     127,   124,   124,   130,   131,   153,    26,   176,    30,    27,
-      42,   192,    30,   154,    50,   136,   137,   129,   170,    41,
-     191,    30,    50,    50,    50,   124,    28,   153,   176,    30,
-     176,    30,   124,   154,   123,   123,    27,   123,    22,   123,
-     129,   145,   124,   123,    16,   149,   129,   183,    30,    30,
-     123,   123,    13,    20,   150,   129,   123,   123,   170,    30,
-     129,    41,    27,    41,   191,    50,    30,   124,   129,    13,
-     136,   187,     6,    13,    23,   185,   186,    30,   140,   142,
-       9,   148,    19,    30,   124,   170,   123,   140,   129,    42,
-      30,   123,   126,   153,    50,   132,    50,   129,   129,   129,
-      28,     8,    14,   139,   143,   124,   140,   129,    19,   169,
-     140,    30,   122,   123,    25,   141,    50,    26,   186,   145,
-      13,    27,   149,   129,   123,    30,   141,   123,    50,    13,
-     119,   123,   132,   119,    50
+      94,    95,   174,    77,    80,    41,    42,   154,   129,   168,
+     119,   135,    27,    27,    34,    79,    84,    41,   191,    28,
+      28,    41,   191,    30,    30,    30,    41,   129,   168,   129,
+     129,     9,    16,   144,   147,   129,   168,   129,   129,   168,
+     129,    37,   122,   123,   129,   129,    24,    50,    13,   128,
+     128,    22,    50,    50,    24,   129,   129,   177,   178,   129,
+      24,   182,   183,   101,    41,   191,   121,   121,   129,   129,
+      20,   183,   129,   129,    37,   187,   188,   189,   193,    26,
+      26,   190,   124,   123,   129,   179,    43,    95,   112,   153,
+     138,   129,   113,   179,   129,   129,   129,   129,   129,   129,
+     153,   190,   154,   154,   154,   154,   154,   154,   154,   154,
+     154,   154,    97,    98,    99,   100,   101,   102,   103,   104,
+     105,   106,   172,   120,   120,    34,    81,   170,    30,    30,
+      30,   153,   129,   129,   158,   129,   129,   170,    30,    30,
+      30,    24,   146,   124,    15,   140,   147,   170,    30,    30,
+     170,    30,    30,    50,    42,    30,    30,   129,   168,    54,
+      55,    56,   125,   126,   127,   124,   124,   130,   131,   153,
+      26,   176,    30,    27,    42,   192,    30,   154,    50,   136,
+     137,   129,   170,    41,   191,    30,    50,    50,    50,   124,
+      28,   153,   176,    30,   176,    30,   124,   154,   129,   183,
+      30,   123,   123,    27,    30,   123,    22,   123,   129,   145,
+     124,   123,    16,   149,    30,    30,   123,   123,    13,    20,
+     150,   129,   123,   123,   170,    30,   129,    41,    27,    41,
+     191,    50,    30,   124,   129,    13,   136,   187,     6,    13,
+      23,   185,   186,    30,   170,   123,   140,   123,   142,     9,
+     148,    19,    30,   124,   123,   140,   129,    42,    30,   123,
+     126,   153,    50,   132,    50,   129,   129,   129,    28,    19,
+     169,     8,    14,   139,   143,   124,   140,   129,   140,    30,
+     122,   123,    25,   141,    50,    26,   186,   129,   145,    13,
+      27,   149,   123,    30,   141,   123,    50,    13,   119,   123,
+     132,   119,    50
   };
 
   const unsigned char
@@ -5420,24 +5441,25 @@ namespace yy {
      123,   123,   123,   134,   134,   123,   123,   135,   135,   135,
      136,   137,   137,   129,   129,   129,   129,   129,   129,   129,
      129,   138,   138,   138,   123,   123,   123,   123,   123,   123,
-     123,   123,   123,   123,   123,   123,   123,   123,   123,   139,
-     139,   140,   140,   141,   141,   142,   142,   143,   144,   144,
-     145,   145,   146,   146,   147,   148,   148,   149,   149,   123,
-     123,   123,   123,   123,   123,   123,   123,   150,   150,   138,
-     138,   151,   151,   138,   138,   138,   138,   138,   138,   152,
-     152,   152,   138,   138,   153,   154,   154,   138,   138,   155,
-     154,   153,   138,   156,   157,   157,   158,   159,   159,   160,
-     160,   161,   162,   162,   162,   163,   164,   164,   165,   165,
-     166,   166,   166,   166,   166,   166,   166,   166,   167,   167,
-     166,   168,   169,   169,   170,   170,   152,   166,   166,   138,
-     138,   138,   138,   171,   171,   171,   171,   171,   171,   171,
-     154,   154,   154,   154,   154,   154,   154,   154,   154,   154,
-     154,   172,   172,   172,   172,   172,   172,   172,   172,   172,
-     172,   173,   174,   174,   129,   129,   129,   129,   129,   175,
-     175,   176,   129,   138,   152,   152,   152,   138,   177,   177,
-     178,   178,   179,   179,   180,   180,   181,   182,   183,   183,
-     184,   184,   185,   186,   186,   187,   187,   187,   188,   188,
-     189,   189,   190,   190,   191,   191,   192,   192,   193,   193
+     123,   123,   123,   123,   123,   123,   123,   123,   123,   123,
+     123,   139,   139,   140,   140,   141,   141,   142,   142,   143,
+     144,   144,   145,   145,   146,   146,   147,   148,   148,   149,
+     149,   123,   123,   123,   123,   123,   123,   123,   123,   150,
+     150,   138,   138,   151,   151,   138,   138,   138,   138,   138,
+     138,   152,   152,   152,   138,   138,   153,   154,   154,   138,
+     138,   155,   154,   153,   138,   156,   157,   157,   158,   159,
+     159,   160,   160,   161,   162,   162,   162,   163,   164,   164,
+     165,   165,   166,   166,   166,   166,   166,   166,   166,   166,
+     167,   167,   166,   168,   169,   169,   170,   170,   152,   166,
+     166,   138,   138,   138,   138,   171,   171,   171,   171,   171,
+     171,   171,   154,   154,   154,   154,   154,   154,   154,   154,
+     154,   154,   154,   172,   172,   172,   172,   172,   172,   172,
+     172,   172,   172,   173,   174,   174,   129,   129,   129,   129,
+     129,   175,   175,   176,   129,   138,   152,   152,   152,   138,
+     177,   177,   178,   178,   179,   179,   180,   180,   181,   182,
+     183,   183,   184,   184,   185,   186,   186,   187,   187,   187,
+     188,   188,   189,   189,   190,   190,   191,   191,   192,   192,
+     193,   193
   };
 
   const unsigned char
@@ -5450,25 +5472,26 @@ namespace yy {
        0,     2,     1,     3,     5,     1,     1,     1,     3,     7,
       10,     2,     4,     1,     1,     4,     4,     1,     3,     3,
        3,     1,     2,     3,     4,     3,     3,     3,     3,     3,
-       3,     2,     2,     3,     8,     7,     5,     6,     5,     5,
-       8,     8,     2,     1,     1,     5,     4,     7,     6,     0,
-       3,     0,     2,     0,     2,     0,     2,     4,     1,     2,
-       1,     3,     0,     3,     3,     0,     2,     0,     2,     5,
-       4,     2,     2,     5,     9,     8,     5,     1,     1,     1,
-       5,     1,     1,     4,     4,     4,     2,     4,     4,     1,
-       3,     3,     2,     4,     1,     2,     3,     1,     2,     3,
-       1,     1,     3,     1,     1,     2,     3,     1,     3,     1,
-       2,     3,     0,     2,     1,     3,     0,     2,     1,     3,
-       1,     1,     1,     1,     3,     3,     1,     1,     1,     2,
-       1,     5,     0,     2,     0,     2,     4,     1,     1,     1,
-       3,     3,     3,     1,     2,     2,     2,     2,     2,     2,
-       1,     3,     3,     3,     3,     3,     3,     3,     3,     3,
-       3,     1,     1,     1,     1,     1,     1,     1,     1,     1,
-       1,     2,     0,     3,     1,     3,     3,     3,     4,     0,
-       1,     1,     2,     2,     2,     2,     4,     5,     0,     2,
-       1,     3,     0,     2,     1,     3,     3,     3,     0,     1,
-       0,     2,     2,     0,     1,     3,     5,     4,     1,     3,
-       0,     2,     0,     3,     0,     1,     0,     1,     0,     1
+       3,     2,     2,     3,     8,     7,     5,     6,     6,     5,
+       6,     5,     8,     8,     2,     1,     1,     5,     4,     7,
+       6,     0,     3,     0,     2,     0,     2,     0,     2,     4,
+       1,     2,     1,     3,     0,     3,     3,     0,     2,     0,
+       2,     5,     4,     2,     2,     5,     9,     8,     5,     1,
+       1,     1,     5,     1,     1,     4,     4,     4,     2,     4,
+       4,     1,     3,     3,     2,     4,     1,     2,     3,     1,
+       2,     3,     1,     1,     3,     1,     1,     2,     3,     1,
+       3,     1,     2,     3,     0,     2,     1,     3,     0,     2,
+       1,     3,     1,     1,     1,     1,     3,     3,     1,     1,
+       1,     2,     1,     5,     0,     2,     0,     2,     4,     1,
+       1,     1,     3,     3,     3,     1,     2,     2,     2,     2,
+       2,     2,     1,     3,     3,     3,     3,     3,     3,     3,
+       3,     3,     3,     1,     1,     1,     1,     1,     1,     1,
+       1,     1,     1,     2,     0,     3,     1,     3,     3,     3,
+       4,     0,     1,     1,     2,     2,     2,     2,     4,     5,
+       0,     2,     1,     3,     0,     2,     1,     3,     3,     3,
+       0,     1,     0,     2,     2,     0,     1,     3,     5,     4,
+       1,     3,     0,     2,     0,     3,     0,     1,     0,     1,
+       0,     1
   };
 
 
@@ -5526,24 +5549,25 @@ namespace yy {
      533,   546,   587,   600,   601,   607,   613,   660,   661,   662,
      673,   682,   686,   703,   707,   723,   724,   725,   726,   727,
      728,   736,   737,   748,   759,   763,   767,   771,   775,   779,
-     783,   787,   792,   796,   800,   804,   808,   812,   816,   833,
-     834,   839,   840,   846,   847,   857,   858,   864,   873,   874,
-     879,   880,   883,   884,   888,   895,   896,   902,   903,   907,
-     911,   915,   944,   948,   952,   956,   960,   966,   966,   976,
-     977,   989,   990,   994,   995,   996,   997,   998,   999,  1009,
-    1010,  1011,  1015,  1016,  1020,  1024,  1028,  1035,  1039,  1052,
-    1064,  1069,  1079,  1096,  1106,  1107,  1120,  1128,  1132,  1140,
-    1141,  1146,  1157,  1158,  1159,  1163,  1177,  1178,  1182,  1183,
-    1191,  1192,  1193,  1194,  1195,  1196,  1197,  1198,  1204,  1205,
-    1213,  1223,  1231,  1232,  1237,  1238,  1247,  1263,  1264,  1268,
-    1269,  1270,  1271,  1276,  1277,  1278,  1279,  1280,  1281,  1282,
-    1307,  1308,  1309,  1310,  1311,  1312,  1313,  1314,  1315,  1316,
-    1317,  1343,  1344,  1345,  1346,  1347,  1348,  1349,  1350,  1351,
-    1352,  1356,  1361,  1362,  1376,  1377,  1378,  1383,  1384,  1388,
-    1389,  1400,  1408,  1420,  1428,  1436,  1440,  1448,  1465,  1466,
-    1470,  1471,  1477,  1478,  1482,  1483,  1487,  1492,  1496,  1497,
-    1507,  1508,  1513,  1518,  1519,  1524,  1525,  1526,  1532,  1533,
-    1538,  1539,  1544,  1545,  1548,  1548,  1549,  1549,  1550,  1550
+     783,   787,   791,   795,   800,   804,   808,   812,   816,   820,
+     824,   841,   842,   847,   848,   854,   855,   865,   866,   872,
+     881,   882,   887,   888,   891,   892,   896,   903,   904,   910,
+     911,   915,   919,   923,   952,   956,   960,   964,   968,   974,
+     974,   984,   985,   997,   998,  1002,  1003,  1004,  1005,  1006,
+    1007,  1017,  1018,  1019,  1023,  1024,  1028,  1032,  1036,  1043,
+    1047,  1060,  1072,  1077,  1087,  1104,  1114,  1115,  1128,  1136,
+    1140,  1148,  1149,  1154,  1165,  1166,  1167,  1171,  1185,  1186,
+    1190,  1191,  1199,  1200,  1201,  1202,  1203,  1204,  1205,  1206,
+    1212,  1213,  1221,  1231,  1239,  1240,  1245,  1246,  1255,  1271,
+    1272,  1276,  1277,  1278,  1279,  1284,  1285,  1286,  1287,  1288,
+    1289,  1290,  1315,  1316,  1317,  1318,  1319,  1320,  1321,  1322,
+    1323,  1324,  1325,  1351,  1352,  1353,  1354,  1355,  1356,  1357,
+    1358,  1359,  1360,  1364,  1369,  1370,  1384,  1385,  1386,  1391,
+    1392,  1396,  1397,  1408,  1416,  1428,  1436,  1444,  1448,  1456,
+    1473,  1474,  1478,  1479,  1485,  1486,  1490,  1491,  1495,  1500,
+    1504,  1505,  1515,  1516,  1521,  1526,  1527,  1532,  1533,  1534,
+    1540,  1541,  1546,  1547,  1552,  1553,  1556,  1556,  1557,  1557,
+    1558,  1558
   };
 
   // Print the state stack on the debug stream.
@@ -5579,9 +5603,9 @@ namespace yy {
 
 } // yy
 /* Line 1131 of lalr1.cc  */
-#line 5583 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
+#line 5607 "/home/bearclaw/qi-2/urbi/urbi/build-sys-linux-i686/src/parser/ugrammar.cc"
 /* Line 1132 of lalr1.cc  */
-#line 1552 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
+#line 1560 "/home/bearclaw/qi-2/urbi/urbi/src/parser/ugrammar.y"
 
 
 // The error function that 'bison' calls.
