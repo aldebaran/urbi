@@ -242,7 +242,7 @@ getLocale("LC_IMAGINARY");
   found.  Return the last value of the file.
 \begin{urbiscript}
 // Create the file ``123.u'' that contains exactly ``var t = 123;''.
-File.save("123.u", "var t = 123;");
+File.save("123.u", "var this.t = 123;");
 assert
 {
   load("123.u") == 123;
@@ -434,14 +434,14 @@ System.resetStats().isVoid;
   Look for \var{file} in the \refSlot{searchPath} and return its
   \refObject{Path}.  Throw a \refSlot[Exception]{FileNotFound} error if the
   file cannot be found.
-\begin{urbiscript}
+\begin{urbiunchecked}
 // Create the file ``123.u'' that contains exactly ``123;''.
 File.save("123.u", "123;");
 assert
 {
   searchFile("123.u") == Path.cwd / Path.new("123.u");
 };
-\end{urbiscript}
+\end{urbiunchecked}
 
 
 \item[searchPath] The \urbi path (i.e., the directories where the \us files

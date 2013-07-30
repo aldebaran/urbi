@@ -4211,6 +4211,66 @@ finally       { echo("finally"); "finally-value" };
 
 Alternatively, you may use the \refObject{Timeout} object.
 
+\subsection{\lstinline{stopif}}
+\label{sec:lang:stopif}
+
+\begin{urbiunchecked}
+stopif(condition) { code};
+\end{urbiunchecked}
+
+The \lstinline{stopif} constructs interrupts its code block argument when the
+condition becomes true. It is syntaxic sugar for:
+
+\begin{urbiunchecked}
+var t = Tag.new()|
+detach({ waituntil(condition) | t.stop()});
+t: { code};
+\end{urbiunchecked}
+
+The condition can be an arbitrary expression, or an event match.
+
+\begin{urbiscript}
+
+var e = Event.new()|;
+stopif(e?) every(500ms) echo("running"),
+sleep(1.2s); e!; echo("stopped");
+[00000001] *** running
+[00000002] *** running
+[00000002] *** running
+[00000003] *** stopped
+
+\end{urbiscript}
+
+\subsection{\lstinline{freezeif}}
+\label{sec:lang:freezeif}
+
+The \lstinline{freezeif} construct is similar to \lstinline{stopif}, but
+freeze/unfreeze the code argument when the condition is true/false.
+
+\begin{urbiscript}
+var b = false|;
+timeout(3.2s) detach({
+  freezeif(b) every(500ms) echo("tick"),
+  freezeif(!b) every(500ms) echo("tack")
+  })|;
+sleep(1.2s); b = true;
+[00000001] *** tick
+[00000001] *** tick
+[00000001] *** tick
+[00000001] true
+sleep(1s); b = false;
+[00000001] *** tack
+[00000001] *** tack
+[00000001] *** tack
+[00000001] false
+sleep(1s); echo("done");
+[00000001] *** tick
+[00000001] *** tick
+[00000001] *** done
+\end{urbiscript}
+
+The condition can be an arbitrary expression, or an event match.
+
 \subsection{\lstinline{while,}}
 \lstIndexTwo{while}{while,}
 \label{sec:lang:while:comma}
