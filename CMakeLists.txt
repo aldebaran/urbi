@@ -105,7 +105,7 @@ else()
   qi_generate_src(
     ${CMAKE_CURRENT_BINARY_DIR}/src/parser/ugrammar.cc
     ${CMAKE_CURRENT_BINARY_DIR}/src/parser/utoken.cc
-    SRC src/parser/ugrammar.y src/ast/ast.yml
+    SRC src/parser/ugrammar.y src/ast/ast.yml src/parser/pregenerated/ugrammar.cc
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/src/parser/pregenerated/ ${CMAKE_CURRENT_BINARY_DIR}/src/parser/
   )
 
