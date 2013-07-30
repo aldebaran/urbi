@@ -775,11 +775,38 @@ namespace ast
                % init % inc % test % body);
   }
 
+  rExp
+  Factory::make_freezeif_event(const location& l,
+                         EventMatch& cond,
+                         rExp body)
+  {
+    PARAMETRIC_AST(make_on, "'$freezeif_in'.freeze()");
+    PARAMETRIC_AST(make_off, "'$freezeif_in'.unfreeze()");
+    rExp ev = make_at_event(l, l, flavor_none, true, cond, exp(make_on), exp(make_off));
+    PARAMETRIC_AST
+      (desugar,
+       "{"
+       "  var '$freezeif_ex' = Tag.new(\"$freezeif_ex\") |"
+       "  var '$freezeif_in' = Tag.new(\"$freezeif_in\") |"
+       "  '$freezeif_ex' :"
+       "  {"
+       "     %exp:1 |"
+       "    '$freezeif_in' :"
+       "    {"
+       "      %exp:2 |"
+       "      '$freezeif_ex'.stop() |"
+       "    }"
+       "  }"
+       "}"
+        );
+    return exp(desugar % ev % body);
+  }
 
   rExp
-  Factory::make_freezeif(const location&,
+  Factory::make_freezeif(const location& l,
                          rExp cond,
-                         rExp body) // const
+                         rExp body,
+                         rExp duration) // const
   {
     PARAMETRIC_AST
       (desugar,
@@ -800,7 +827,29 @@ namespace ast
        "  }"
        "}"
         );
-    return exp(desugar % cond % body);
+    PARAMETRIC_AST
+      (desugar_duration,
+       "{"
+       "  var '$freezeif_ex' = Tag.new(\"$freezeif_ex\") |"
+       "  var '$freezeif_in' = Tag.new(\"$freezeif_in\") |"
+       "  '$freezeif_ex' :"
+       "  {"
+       "    at(%exp:1 ~ %exp:3)"
+       "      '$freezeif_in'.freeze()"
+       "    onleave"
+       "      '$freezeif_in'.unfreeze() |"
+       "    '$freezeif_in' :"
+       "    {"
+       "      %exp:2 |"
+       "      '$freezeif_ex'.stop() |"
+       "    }"
+       "  }"
+       "}"
+        );
+    if (!duration)
+      return exp(desugar % cond % body );
+    else
+      return exp(desugar_duration % cond % body % duration);
   }
 
   rExp
@@ -1113,9 +1162,7 @@ namespace ast
     return make_scope(new Nary(l));
   }
 
-  rExp
-  Factory::make_stopif(const location&,
-                       rExp cond, rExp body) // const
+  static rExp make_stopif_(const Factory::location&, rExp waituntil, rExp body)
   {
     PARAMETRIC_AST
       (desugar,
@@ -1124,11 +1171,27 @@ namespace ast
        "  '$stopif':"
        "  {"
        "    { %exp:2 | '$stopif'.stop() } &"
-       "    { waituntil(%exp:1) | '$stopif'.stop() }"
+       "    { %exp:1 | '$stopif'.stop() }"
        "  } |"
        "}"
         );
-    return exp(desugar % cond % body);
+    return exp(desugar % waituntil % body);
+  }
+
+  rExp
+  Factory::make_stopif(const location& l,
+                       rExp cond, rExp body, rExp duration) // const
+  {
+    rExp wu = make_waituntil(l, cond, duration);
+    return make_stopif_(l, wu, body);
+  }
+
+  rExp
+  Factory::make_stopif_event(const location& l,
+                       EventMatch& cond, rExp body) // const
+  {
+    rExp wu = make_waituntil_event(l, cond);
+    return make_stopif_(l, wu, body);
   }
 
   rExp
@@ -1311,6 +1374,12 @@ namespace ast
   Factory::make_waituntil_event(const location& loc,
                                 EventMatch& event) // const
   {
+    if (event.duration)
+    {
+      PARAMETRIC_AST(desugar_event, "%exp:1.persists(%exp:2)");
+      event.event = exp(desugar_event % event.event % event.duration);
+    }
+
     if (!event.pattern)
     {
       PARAMETRIC_AST(desugar, "%exp:1.'waituntil'(nil)");

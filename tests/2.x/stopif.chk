@@ -4,3 +4,30 @@ stopif (false) { echo ("foo"); sleep (1s); echo ("bar") }; echo ("baz");
 [00000001] *** foo
 [00000002] *** bar
 [00000003] *** baz
+
+var b = false|;
+var e = Event.new()|;
+var x = 0|;
+
+stopif(b ~ 1s) every|(1s) x++,
+sleep(1.5s) | b = true|;
+sleep(2s);
+x;
+[00000004] 3
+
+x=0|;
+
+stopif(e? ~1s) every|(1s) x++,
+sleep(1.5s) | e!~inf,
+sleep(2s);
+x;
+[00000004] 3
+
+x=0|;
+
+stopif(e?(5, var inu) ~1s) every|(1s) x++,
+sleep(1.5s) | e!(5, 12)~inf,
+sleep(2s);
+x;
+[00000004] 3
+

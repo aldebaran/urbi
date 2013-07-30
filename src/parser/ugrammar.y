@@ -772,13 +772,21 @@ stmt:
     {
       $$ = MAKE(if, @$, $3, $5, $6);
     }
-| "freezeif" "(" exp ")" stmt
+| "freezeif" "(" exp tilda.opt ")" stmt
     {
-      $$ = MAKE(freezeif, @$, $3, $5);
+      $$ = MAKE(freezeif, @$, $3, $6, $4);
     }
-| "stopif" "(" exp ")" stmt
+| "freezeif" "(" event_match ")" stmt
     {
-      $$ = MAKE(stopif, @$, $3, $5);
+      $$ = MAKE(freezeif_event, @$, $3, $5);
+    }
+| "stopif" "(" exp tilda.opt ")" stmt
+    {
+      $$ = MAKE(stopif, @$, $3, $6, $4);
+    }
+| "stopif" "(" event_match ")" stmt
+    {
+      $$ = MAKE(stopif_event, @$, $3, $5);
     }
 | "switch" "(" exp ")" "{" cases default.opt "}"
     {

@@ -19,3 +19,39 @@ x = 2;
 [00000007] *** foo
 [00000008] *** foo
 [00000009] 2
+
+var y = 0|;
+freezeif(y == 1 ~ 0.8s) every|(500ms) echo("bar"),
+sleep(1s) | y = 1|sleep(2s)| "stop";
+
+[00000001] *** bar
+[00000001] *** bar
+[00000001] *** bar
+[00000001] *** bar
+[00000001] "stop"
+
+
+var e = Event.new()|;
+var t = Tag.new()|;
+
+t:freezeif(e?) every|(500ms) echo("baz"),
+t: sleep(100ms) | every|(500ms) echo("tick"),
+sleep(300ms) | 1;
+[00000001] *** baz
+[00000001] *** tick
+[00000001] 1
+e!~1.1s; 2;
+[00000001] *** tick
+[00000001] *** tick
+[00000001] 2
+sleep(1s); 3;
+[00000001] *** baz
+[00000001] *** tick
+[00000001] *** baz
+[00000001] *** tick
+[00000001] 3
+
+
+
+
+

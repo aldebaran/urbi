@@ -283,7 +283,12 @@ namespace ast
     static
     rExp
     make_freezeif(const location& loc,
-                  rExp cond, rExp body) /* const */;
+                  rExp cond, rExp body, rExp duration) /* const */;
+
+    static
+    rExp
+    make_freezeif_event(const location& loc,
+                  EventMatch& cond, rExp body) /* const */;
 
     /// \param iffalse can be 0.
     static
@@ -436,7 +441,12 @@ namespace ast
     static
     rExp
     make_stopif(const location& loc,
-                rExp cond, rExp body) /* const */;
+                rExp cond, rExp body, rExp duration) /* const */;
+
+    static
+    rExp
+    make_stopif_event(const location& loc,
+                EventMatch& cond, rExp body) /* const */;
 
     static
     rExp
