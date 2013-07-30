@@ -813,6 +813,7 @@ namespace ast
        "{"
        "  var '$freezeif_ex' = Tag.new(\"$freezeif_ex\") |"
        "  var '$freezeif_in' = Tag.new(\"$freezeif_in\") |"
+       "  if(%exp:3) '$freezeif_in'.freeze()|"
        "  '$freezeif_ex' :"
        "  {"
        "    at(%exp:1)"
@@ -847,7 +848,7 @@ namespace ast
        "}"
         );
     if (!duration)
-      return exp(desugar % cond % body );
+      return exp(desugar % cond % body % cond );
     else
       return exp(desugar_duration % cond % body % duration);
   }
