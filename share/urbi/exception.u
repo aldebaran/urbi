@@ -397,7 +397,17 @@ package lang.Exception.Lookup: 'package'.lang.Exception
 
   function message()
   {
-    var res = "lookup failed: %s" % msg |
+    var res = ""|
+    if (System.env["URBI_LOOKUP_PRINT_LOCATION"])
+    {
+      var os = obj.uid|
+      try { os = obj.asString()} catch(var e) {}|
+      res = "lookup failed: %s on %s" % [msg, os] |
+    }
+    else
+    {
+      res = "lookup failed: %s" % msg
+    }|
     if (suggested)
       res += " (possible misspelling of %s)" % suggested |
     res
