@@ -59,7 +59,7 @@ package lang.Channel
     {
       var toPrint = { if (quote) x.asTopLevelPrintable() else x.asString() }|
       if (!toPrint.isNil())
-	{if (hasSlot("lobby")) lobby else Lobby.lobby()}.send(toPrint, name);
+        {if (hasSlot("lobby")) lobby() else Lobby.lobby()}.send(toPrint, name);
     }
   };
 };
