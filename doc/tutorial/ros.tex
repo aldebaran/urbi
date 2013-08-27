@@ -1,0 +1,514 @@
+%% Copyright (C) 2010-2011, Aldebaran Robotics
+%%
+%% This software is provided "as is" without warranty of any kind,
+%% either expressed or implied, including but not limited to the
+%% implied warranties of fitness for a particular purpose.
+%%
+%% See the LICENSE file for more information.
+\newcommand{\rosRef}[2]{%
+  \href{http://www.ros.org/wiki/ROS/#1}{#2}%
+  \footnote{\url{http://www.ros.org/wiki/ROS/#1}}%
+}
+
+\newcommand{\rosref}[2][]{%
+  \ifthenelse{\equal{#1}{}}{%
+    \rosRef{#2}{#2}%
+  }{%
+    \rosRef{#1}{#2}%
+  }%
+}
+\chapter{Urbi for ROS Users}
+\setHtmlFileName{ros-tutorial}
+\label{sec:tut:ros}
+
+
+This chapter extends the \rosref[Tutorials]{ROS official tutorials}.  Be
+sure to complete this tutorial before reading this document.
+
+\section{Communication on topics}
+
+First we will take back examples about topics; make sure that talker and
+listener in the \file{beginner\_tutorial} package are compiled. You can
+recompile it with the following command:
+
+\begin{shell}
+$ rosmake beginner_tutorial
+\end{shell}
+
+\subsection{Starting a process from \urbi}
+
+To communicate with ROS components, you need to launch them. You can do it
+by hand, or ask \urbi to do it for you. To launch new processes through
+\urbi, we will use the class \refObject{Process}.
+
+Let's say we want to start \command{roscore}, and the talker of the beginner
+tutorial.  Open an \urbi shell by typing the command \samp{rlwrap urbi
+  -i}.  Here \command{rlwrap} makes \samp{urbi -i} acts like a shell prompt,
+with features like line editing, history, \ldots
+
+\begin{urbiunchecked}
+var core = Process.new("roscore", []);
+[00000001] Process roscore
+var talker = Process.new("rosrun", ["beginner_tutorial", "talker"]);
+[00000002] Process rosrun
+core.run;
+talker.run;
+\end{urbiunchecked}
+
+At this point, the processes are launched. The first argument of
+\lstinline{Process.new} is the name of the command to launch, the second is
+a list of arguments.
+
+Then you can check the status of the processes, get their stdout/stderr
+buffers, kill them in \us (see \refObject{Process}).
+
+
+\subsection{Listening to Topics}
+
+First you need to make sure that \command{roscore} is running, and the ROS
+module is loaded correctly:
+
+\begin{urbiunchecked}
+Global.hasLocalSlot("Ros");
+[00016931] true
+\end{urbiunchecked}
+
+\noindent
+Then we can get the list of launched nodes:
+
+\begin{urbiunchecked}
+Ros.nodes;
+\end{urbiunchecked}
+
+This returns a \refObject{Dictionary} with the name of the node as key, and
+a dictionary with topics subscribed, topics advertised, topics advertised as
+value.
+
+We can check that our talker is registered, and on which channel it
+advertises:
+
+\begin{urbiunchecked}
+// Get the structure.
+// "|;" is an idiom to discard the display of the return value.
+var nodes = Ros.nodes|;
+
+// List of nodes (keys).
+nodes.keys;
+[00000002] ["/rosout", "/urbi_1273060422295250703", "/talker"]
+
+// Details of the node "talker".
+nodes["talker"]["publish"];
+[00000003] ["/rosout", "/chatter"]
+\end{urbiunchecked}
+
+Here we see that this node advertises \file{/rosout} and
+\file{/chatter}. Let's subscribe to \file{/chatter}:
+
+\begin{urbiunchecked}
+// Initialize the subscription object.
+var chatter = Ros.Topic.new("/chatter")|;
+// Subscribe.
+chatter.subscribe;
+// This is the way we are called on new message.
+var chatTag = Tag.new|;
+chatTag: at (chatter.onMessage?(var e))
+  // This will be executed on each message.
+  echo(e);
+\end{urbiunchecked}
+
+In this code, \lstinline{e} is a Dictionary that follows the structure of
+the ROS message. Here is an example of what this code produces:
+
+\begin{urbiunchecked}
+[00000004] *** ["data" => "Hello there! This is message [4]"]
+[00000005] *** ["data" => "Hello there! This is message [5]"]
+[00000006] *** ["data" => "Hello there! This is message [6]"]
+\end{urbiunchecked}
+
+We can also get a template for the message structure on this channel with:
+
+\begin{urbiunchecked}
+chatter.structure;
+[00000007] ["data" => ""]
+\end{urbiunchecked}
+
+To stop temporarily the \refSlot[Global]{echo}, we take advantages of tags
+(\autoref{sec:tut:tags}), by doing \lstinline{chatTag.freeze}.  Same thing
+goes with unfreeze.  Of course you could also call
+\lstinline{chatter.unsubscribe}, which unsubscribes you completely from this
+channel.
+
+
+\subsection{Advertising on Topics}
+
+To advertise a topic, this is roughly the same procedure.
+
+
+\subsubsection{Simple Talker}
+
+Here is a quick example:
+
+\begin{urbiunchecked}
+// Initialize our object.
+var talker = Ros.Topic.new("/chatter")|;
+// Advertise (providing the ROS Type of this topic).
+talker.advertise("std_msgs/String");
+
+// Get a template of our structure.
+var msg = talker.structure.new;
+msg["data"] = "Hello ROS world"|;
+talker << msg;
+\end{urbiunchecked}
+
+We have just sent our first message to ROS, here if you launch the chatter,
+you will be able to get the message we have just sent.
+
+The \lstinline{<<} operator is an convenient alias for
+\refSlot[Ros.Topic]{publish}.
+
+
+
+\subsubsection{Turtle Simulation}
+\label{sec:turtlesim}
+
+Now we are going to move the turtle with \urbi. First let's launch the
+turtle node:
+
+\begin{urbiunchecked}
+var turtle = Process.new("rosrun", ["turtlesim", "turtlesim_node"])|;
+turtle.run;
+\end{urbiunchecked}
+
+\refSlot[Ros]{topics} shows that this turtle subscribes to a topic
+\file{/turtle1/command\_velocity}. Let's advertise on it:
+
+\begin{urbiunchecked}
+var velocity = Ros.Topic.new("/turtle1/command_velocity")|;
+velocity.advertise("turtlesim/Velocity");
+velocity.structure;
+[00000001] ["linear" => 0, "angular" => 0]
+\end{urbiunchecked}
+
+
+Now we want to have it moving in circle with a small sinusoid wave.  This
+goes in two step.  First, we set up the infrastructure so that changes in
+\urbi are seamlessly published in ROS.
+
+\begin{urbiunchecked}
+// Get our template structure.
+var m = velocity.structure.new |;
+m["linear"] = 0.8 |;
+var angular = 0 |;
+// Every time angular is changed, we send a message.
+at (angular->changed?)
+{
+  m["angular"] = angular;
+  velocity << m
+};
+\end{urbiunchecked}
+
+\noindent
+In the future \urbi will provide helping functions to spare the user from
+the need to perform this ``binding''.  But once this binding done, all the
+features of \us can be used transparently.
+
+\begin{multicols}{2}
+  For instance we can assign a sinusoidal trajectory to \samp{angular},
+  which results in the screen-shot on the right-hand side.
+
+\begin{urbiunchecked}[xrightmargin=0cm,xleftmargin=0cm]
+// For 20 seconds, bind "angular" to a sine.
+timeout (20s)
+  angular = 0.3 sin: 2s ampli: 2;
+\end{urbiunchecked}
+
+Every time \lstinline{angular} is changed, a new message is sent on the
+Topic \file{/turtle1/command\_velocity}, thus updating the position of the
+turtle.  After 20 seconds the command is stopped.
+
+\columnbreak
+
+\begin{center}
+  \includegraphics[width=0.45\textwidth]{img/turtlesim-tutorial}
+\end{center}
+
+\end{multicols}
+
+\bigskip
+
+Alternatively, \refObject[Tag]{Tags} could have been used to get more
+control over the trajectory:
+
+\begin{urbiunchecked}
+// A Tag to control the following endless statement.
+var angTag = Tag.new|;
+
+angTag:
+  // Bind "angular" to a trajectory.
+  // Put in background thanks to ",", since this statement is never ending.
+  angular = 0.3 sin: 2s ampli: 2,
+
+// Leave 20 seconds to the turtle...
+sleep(20s);
+
+// before freezing it.
+angTag.freeze;
+\end{urbiunchecked}
+
+We won't cover this code in details, but the general principle is that
+\lstinline{angular} is updated every 20ms with the values of a sinusoid wave
+trajectory with 0.3 as average value, 2 seconds for the period and 2 for the
+amplitude.  See \refObject{TrajectoryGenerator} for more information.  After
+20 seconds the tag is frozen, pausing the trajectory generation and the
+\lstinline{at}.
+
+
+
+\section{Using Services}
+
+Services work the same way topics do, with minor differences.
+
+Let's take back the turtle simulation example (\autoref{sec:turtlesim}).
+Then we can list the available services, and filter out loggers:
+
+\begin{urbiunchecked}
+var logger = Regexp.new("(get|set)_logger") |;
+var services = Ros.services.keys |;
+for (var s in services)
+  if (s not in logger)
+    echo(s);
+[00000001] *** "/clear"
+[00000001] *** "/kill"
+[00000001] *** "/turtle1/teleport_absolute"
+[00000001] *** "/turtle1/teleport_relative"
+[00000001] *** "/turtle1/set_pen"
+[00000001] *** "/reset"
+[00000001] *** "/spawn"
+\end{urbiunchecked}
+
+The \lstinline{closure} construct allows us to keep access to the local
+variables, here \lstinline{logger}.
+
+Now there is a service called \file{/spawn}; to initialize it:
+
+\begin{urbiunchecked}
+var spawn = Ros.Service.new("/spawn", false) |;
+waituntil(spawn.initialized);
+\end{urbiunchecked}
+
+The \lstinline{new} function takes the service name as first argument, and
+as second argument whether the connection should be kept alive.
+
+Since the creation of this object checks the service name, you should wait
+until \lstinline{initialized} is true to use this service.  You can also see
+the structure of the request with \lstinline{spawn.reqStruct}, and the
+structure of the response with \lstinline{spawn.resStruct}.
+
+Now let's spawn a turtle called Jenny, at position (4, 4).
+
+\begin{urbiunchecked}
+var req = spawn.reqStruct.new |;
+req["x"] = 4 |
+req["y"] = 4 |
+req["name"] = "Jenny" |;
+spawn.request(req);
+[00000001] ["name" => "Jenny"]
+\end{urbiunchecked}
+
+\section{Image Publisher from ROS to \urbi}
+
+This section will use topics manipulation with advertising and subscription.
+Be sure to understand these topics before doing this tutorial.
+
+\paragraph{Requirements}
+
+You have to finish the image Publisher/Subscriber tutorial
+(\url{http://www.ros.org/wiki/image_transport/Tutorials}) before doing this
+tutorial.
+
+First, we will make a ROS Publisher and subscribe to it with \urbi.  Make
+sure that Publisher \samp{learning\_image\_transport} package is compiled:
+
+\begin{shell}
+$ rosmake learning_image_transport
+\end{shell}
+
+We will also run \command{urbi} with a network connection opened (e.g., on
+port 54000) to allow \command{urbi-image} (\autoref{sec:tools:urbi-image})
+to connect to it.
+
+\begin{shell}
+$ urbi --host=127.0.0.1 --port=54000 -- -f
+\end{shell}
+
+Also, you have to run \command{roscore} to communicate with ROS.
+
+\begin{urbiunchecked}
+var core = Process.new("roscore", []);
+[00000001] Process roscore
+core.run;
+\end{urbiunchecked}
+
+
+\paragraph{Run the Publisher}
+The Publisher is a process that will send a image and wait for a Subscriber
+to get it.
+
+\begin{urbiunchecked}
+// In this example the image is in the current directory.
+var publisher =
+  Process.new("rosrun",
+              ["learning_image_transport", "my_publisher", "test.jpg"]);
+[0000002] Process rosrun
+publisher.run;
+\end{urbiunchecked}
+
+\paragraph{Using a camera to display}
+By default, \command{urbi-image} displays the images that are available via
+the \lstinline{camera} device (see \autoref{sec:tools:urbi-image}).  To
+simplify the setup, let's define a pseudo \lstinline{camera} which will
+store the data received:
+
+\begin{urbiunchecked}
+class Global.camera: Loadable
+{
+  // A variable to store image data.
+  UVar.new(this, "val");
+  val = 0;
+}|;
+\end{urbiunchecked}
+
+
+\paragraph{Subscribe to the topic}
+Now, our Publisher is running and we have a camera waiting for data.  All we
+need to do is connecting to the Publisher with a topic, the Subscriber.
+
+\begin{figure}[htp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{img/ros-image-publisher}
+  \caption{Output from \command{rxgraph}}
+  \label{fig:ros:img-pub}
+\end{figure}
+
+Have a look at the different topics created by the Publisher, for instance
+by running \command{rxgraph}, which generates the graph in
+\autoref{fig:ros:img-pub}.  As you can see, seven topics are available for
+the camera. We will use the \file{/camera/image/compressed} topic for this
+example.  For further information about the image format in ROS see
+\url{http://www.ros.org/doc/api/sensor_msgs/html/msg/CompressedImage.html}.
+
+\begin{urbiunchecked}
+var cameraTopic = Ros.Topic.new("/camera/image/compressed")|;
+at (cameraTopic.onMessage?(var imgMsg))
+{
+  // Converting the ROS image to Urbi format.
+  imgMsg["data"].keywords = imgMsg["format"]|
+  // We can now store the data into camera.
+  if (!camera.val)
+    echo("Image well received. Store the image into the camera") |
+  camera.val = imgMsg["data"];
+},
+// Waiting for the "publisher" Process to be set up.
+sleep(2s);
+cameraTopic.subscribe;
+\end{urbiunchecked}
+
+We are now connected and ready to display.
+
+\begin{urbiunchecked}
+[00000003] *** Image well received. Store the image into the camera
+\end{urbiunchecked}
+
+In a new terminal run \command{urbi-image}:
+
+\begin{shell}
+$ urbi-image
+Monitor created window 62914561
+***Frame rate: 5.000000 fps***
+\end{shell}
+
+You have now your image displayed in a window.
+
+\section{Image Subscriber from \urbi to ROS}
+
+Now, we want to send images to ROS using a \urbi Publisher.
+Make sure \command{roscore} is running and
+\samp{learning\_image\_transport} package is compiled.
+
+\paragraph{Run the Subscriber}
+
+The basic Subscriber in the \samp{learning\_image\_transport} package
+is expecting a \file{/camera/image} topic. To avoid modifying the
+Subscriber code in ROS, we will simply ask to the Subscriber topic
+to accept \file{/camera/image/compressed} topics.
+
+\begin{urbiunchecked}
+var subscriber =
+  Process.new("rosrun",
+              ["learning_image_transport", "my_subscriber",
+              "_image_transport:=compressed"]);
+[00037651] Process rosrun
+subscriber.run;
+\end{urbiunchecked}
+
+\paragraph{Publishing images with \urbi}
+
+The \file{sensor\_msgs/CompressedImage} message format provides a
+structure that requires a few changes.
+
+\begin{urbiunchecked}
+// File.new("...").content returns a Binary.
+var urbiImage = File.new("test.jpg").content|;
+urbiImage.keywords = "jpeg"|;
+
+var publisher = Ros.Topic.new("/camera/image/compressed")|;
+// Advertising the type of message used.
+publisher.advertise("sensor_msgs/CompressedImage");
+
+var rosImg = publisher.structure.new|;
+// The rosImg is a dictionary containing a Binary and a String.
+rosImg["data"] = urbiImage|;
+rosImg["format"] = "jpeg"|;
+\end{urbiunchecked}
+
+This message contains more fields but you need only these two to
+send an image.
+
+Now, you just have to publish the image.
+
+\begin{urbiunchecked}
+// Publishing at regular intervals.
+every (500ms)
+{
+  publisher << img;
+},
+\end{urbiunchecked}
+
+Communication is done, the image should be displayed.
+
+\section{Remote communication}
+
+We have worked with a \command{roscore} running on the machine as the ROS
+processes but the purpose of using ROS with \urbi is to communicate with a
+remote machine.  All you need is to setup your network configuration to
+avoid unexpected behaviors (see \rosref{NetworkSetup}).
+
+Make sure the ROS environment variables are well set, especially
+\env{ROS\_URI}, \env{ROS\_HOSTNAME}, \env{ROS\_IP}.
+
+See \rosref{Tutorials/MultipleMachines} for additional information.
+
+Try our tutorials remotely to check if the connection is set correctly.
+
+\paragraph{To go further\ldots}
+Please see the Urbi/ROS Reference Manual, \autoref{sec:specs:ros}.
+
+
+%%% Local Variables:
+%%% coding: utf-8
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% ispell-dictionary: "american"
+%%% ispell-personal-dictionary: "../urbi.dict"
+%%% fill-column: 76
+%%% End:
