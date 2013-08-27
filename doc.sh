@@ -20,6 +20,7 @@ cp ../../doc/document-aux/figs/urbi-sdk/2.7/cube-and-disc.png urbi-sdk0x.png
 cp ../../doc/document-aux/figs/gostai.png urbi-sdk1x.png
 cp ../../doc/img/urbi-architecture.png urbi-sdk2x.png
 cd ..
+rm -rf urbi-sdk.htmldir
 mv urbi-sdk.htmldir.tmp urbi-sdk.htmldir
 
 MAKEINDEX="makeindex -s headings.ist" TEXINDY="texindy --module makeindex" TEX4HT="tex4ht -cunihtf -utf8" ../doc/document-aux/bin/texi2dvi --pdf --tidy --build-dir=tmp.t2d --batch  -I ../doc/document-aux/styles -I ../doc/document-aux/bib -I ../doc/document-aux/ -I ../doc -o urbi-naming.pdf ../doc/urbi-naming.tex
