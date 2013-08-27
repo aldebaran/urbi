@@ -47,6 +47,61 @@ importance, yet the \file{*.uob} extension makes clear that it is a UObject.
 In what follows, \var{urbi-root} denotes the top-level directory of your
 \usdk package, see \autoref{sec:install:install}.
 
+\subsection{Compiling with qibuild}
+
+\href{https://community.aldebaran-robotics.com/doc/qibuild/}{qibuild} is a set
+of tools on top of cmake to help manage dependencies, among other things. The link
+above contains instructions to install qibuild and to get you started.
+
+Once qibuild is installed, add urbi-sdk to a new toolchain using the \lstinline|toolchain.xml|
+file provided in the root directory of urbi:
+
+\begin{shell}
+$ qitoolchain create urbi-sdk toolchain.xml
+\end{shell}
+
+Then setup a new work directory for your uobject:
+
+\begin{shell}
+$ mkdir work
+$ cd work
+$ qibuild init
+\end{shell}
+
+In this new working directory, create a new project for your uobject:
+
+\begin{shell}
+$ qisrc create uobject
+$ cd uobject
+\end{shell}
+
+This will create the uobject directory, with a skeleton CMakeLists.txt in it.
+Modify it to add your uobject:
+
+\begin{verbatim}
+cmake_minimum_required(VERSION 2.8)
+project(uobject)
+
+find_package(qibuild)
+
+find_package(urbi REQUIRED)
+
+qi_create_lib(uobject MODULE uobject.cc DEPENDS uobject)
+\end{verbatim}
+
+Configure and build using:
+
+\begin{shell}
+$ qibuild configure -c urbi-sdk
+$ qibuild make -c urbi-sdk
+\end{shell}
+
+This will produce the file \lstinline|build-urbi-sdk/lib/uobject.dll|, or
+uobject.so depending on your architecture.
+
+You can then load this uobject using urbi-launch(\ref{sec:tools:urbi-launch:uobject}).
+
+
 \subsection{Compiling by hand}
 
 On Unix platforms, compiling by hand into a shared library is
