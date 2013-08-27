@@ -1,0 +1,435 @@
+#! /usr/bin/perl -w
+
+=head1 NAME
+
+tex4ht-post - post-process tex4ht generated HTML files
+
+=head1 SYNOPSIS
+
+tex4ht-post [OPTIONS...] FILE...
+
+=head1 OPTIONS
+
+General options:
+
+=over 4
+
+=item B<-h>, B<--help>
+
+Display this message and exit.  More complete with B<--verbose>.
+
+=item B<-i>, B<--index>=I<file>
+
+Rename I<file> as F<index.html>.
+
+=item B<-q>, B<--quiet>
+
+Be less verbose.  Accumulates.
+
+=item B<-v>, B<--verbose>
+
+Be more verbose.  Accumulates.
+
+=back
+
+=head1 DESCRIPTION
+
+Post-process tex4ht-generated files.  Steps:
+
+=over 4
+
+=item file-names
+
+Gather all the new file names of the FILE... and rename them.  The new
+names are either specified by the embedded comments:
+
+  <!-- tex4ht:FileName=".*" -->
+
+or forged from the E<lt>titleE<gt> entities (i.e., from the section
+name).  See C<\setFileName> in F<gostai-report.sty>:
+
+  %% \setHtmlFileName{NAME}
+  %% ----------------------
+  %%
+  %% Declare that, in the event of a split-documentation (several HTML
+  %% pages), the file corresponding to the current point in the
+  %% documentation should be named NAME.html.  See
+  %% build-aux/bin/tex4ht-post.
+  \newcommand{\setHtmlFileName}[1]
+  {%
+    \ifx\ifHtml\undefined\else%
+      \HCode{<!-- tex4ht:FileName="#1" -->}%
+    \fi%
+  }
+
+Beware C<\setHtmlFileName> must be B<inside> the sectionning command,
+otherwise it will apply to the previous file.  Keep in mind that LaTeX
+splits at sectionning boundary, not at input source files.
+
+Rename occurrences in all the output files.  Beware that the renaming
+might be too brutal: any occurrence of the old name (but with
+word-boundaries at both side, using the C<\b> regexp operator) is
+replaced by the new one.
+
+=item fix-split-href
+
+For some reason, some C<\autoref> links are output completely broken.
+For instance:
+
+  combined with functional programing, as described in <a
+  href="#section.1" >Section&#x00A0;<a
+  href="functional-programming.html#x16-7900010">10</a></a>.
+
+or
+
+  pre-built Urbi SDK, see <a
+  href="#section.1" >Section&#x00A0;<a
+  href="installation.html#x21-9300013">13</a></a>.
+
+or
+
+  required (see <a
+  href="#subsection.1" >Section&#x00A0;<a
+  href="migration-from-urbiscript-1-to-urbiscript-2.html#x23-15200015.1.1">15.1.1</a></a>). Since the semantics of the assignment requires that it evaluates to
+
+Fix them.  I.e., convert these examples to
+
+  combined with functional programing, as described in <a
+  href="functional-programming.html#x16-7900010">Section&#x00A0;10</a>.
+
+and
+
+  pre-built Urbi SDK, see <a
+  href="installation.html#x21-9300013">Section&#x00A0;13</a>.
+
+and
+
+  required (see <a
+  href="migration-from-urbiscript-1-to-urbiscript-2.html#x23-15200015.1.1">Section&#x00A0;15.1.1</a>). Since the semantics of the assignment requires that it evaluates to
+
+=item lstlisting
+
+Remove the incorrect </p> inside our listings environments:
+
+  </p><!--l. 56--><p class="indent" >   <div class="bnf">
+  </p>
+     <!--l. 56--><pre class="listings"><span
+
+  ->
+
+  </p><!--l. 56--><p class="indent" >   <div class="bnf">
+     <!--l. 56--><pre class="listings"><span
+
+Likewise for lstinputlisting:
+
+  <div class="bnf"></p><!--l. 48--><div class="lstinputlisting">
+
+  ->
+
+  <div class="bnf"><!--l. 48--><div class="lstinputlisting">
+
+=item span-reduce
+
+ reduce the number of <span> that we have:
+
+  <span
+  class="cmtt-10x-x-109">var</span></span><span
+  class="cmtt-10x-x-109">&#x00A0;</span><span
+  class="cmtt-10x-x-109">logTopic</span><span
+  class="cmtt-10x-x-109">&#x00A0;</span><span
+  class="cmtt-10x-x-109">=</span><span
+  class="cmtt-10x-x-109">&#x00A0;</span><span
+  class="cmtt-10x-x-109">Ros</span><span
+  class="cmtt-10x-x-109">.</span><span
+  class="cmtt-10x-x-109">Topic</span><span
+  class="cmtt-10x-x-109">.</span><span
+  class="cmtt-10x-x-109">new</span>
+
+into
+
+  <span class="cmtt-10x-x-109">var&#x00A0;logTopic&#x00A0;=&#x00A0;Ros.Topic.new</span>
+
+but also series of two spans opened and closed uselessly.
+
+  <!--l. 3890--><span class="listings-nested"><span class="urbianswer"><span class="cmtt-10x-x-109">[00</span></span><span class="urbianswer"><span
+  class="cmtt-10x-x-109">000846]</span></span><span class="urbianswer"><span
+  class="cmtt-10x-x-109">&#x00A0;</span></span><span class="urbianswer"><span
+  class="cmtt-10x-x-109">***</span></span><span class="urbianswer"><span
+  class="cmtt-10x-x-109">&#x00A0;</span></span><span class="urbianswer"><span
+  class="cmtt-10x-x-109">x</span></span><span class="urbianswer"><span
+  class="cmtt-10x-x-109">&#x00A0;</span></span><span class="urbianswer"><span
+  class="cmtt-10x-x-109">is</span></span><span class="urbianswer"><span
+  class="cmtt-10x-x-109">&#x00A0;</span></span><span class="urbianswer"><span
+  class="cmtt-10x-x-109">now</span></span><span class="urbianswer"><span
+  class="cmtt-10x-x-109">&#x00A0;</span></span><span class="urbianswer"><span
+  class="cmtt-10x-x-109">even</span></span><span class="urbianswer"><span
+  class="cmtt-10x-x-109">&#x00A0;</span></span><span class="urbianswer"><span
+  class="cmtt-10x-x-109">(2)</span></span></a>&#x00A0;</span><br /><span class="label"><a
+   id="x31-374028r28"></a></span>
+
+into
+
+  <!--l. 3890--><span class="listings-nested"><span class="urbianswer"><span class="cmtt-10x-x-109">[00000846]&#x00A0;***&#x00A0;x&#x00A0;is&#x00A0;now&#x00A0;even&#x00A0;(2)</span></span></a>&#x00A0;</span><br /><span class="label"><a
+   id="x31-374028r28"></a></span>
+
+=item trailing-spaces
+
+Remove all trailing spaces.
+
+=back
+
+=cut
+
+BEGIN
+{
+  use File::Basename;
+  unshift @INC, dirname($0) . '/../lib/perl';
+}
+
+use strict;
+use BuildAux::FileUtils;
+use BuildAux::Verbose;
+use File::Basename;
+use BuildAux::XFile;
+
+# old-name => new-name.
+my %new_name;
+
+=head1 FUNCTIONS
+
+=over 4
+
+=item C<gather_name($file)>
+
+Read C<$file>, return its suggested name.
+
+=cut
+
+sub gather_name ($)
+{
+  my ($file) = @_;
+  my $res;
+  my $in = new BuildAux::XFile $file;
+  while (my $line = $in->getline)
+  {
+    if ($line =~ m{<!-- tex4ht:FileName="(.*?)" -->})
+    {
+      $res = $1;
+      # Exit the reading of the file.
+      last;
+    }
+    elsif ($line =~ m{<title>(.+?)</title>})
+    {
+      $res = lc $1;
+      # Get rid of arabic (chapters) and roman (parts) digits.
+      $res =~ s/^[\divx]+\s+//;
+      $res =~ s/\W+/-/g;
+    }
+  }
+  $res ? "$res.html" : $file;
+}
+
+=item C<gather_names(@file)>
+
+Read all the C<@file>s, fill C<%new_name>.  Don't accept clashes;
+first arrived, first served.
+
+=cut
+
+sub gather_names (@)
+{
+  my (@file) = @_;
+  my %old_name;
+  for my $file (@file)
+  {
+    # --index initializes %new_name.
+    my $new = (defined $new_name{$file}
+               ? $new_name{$file}
+               : gather_name($file));
+
+    if (defined $old_name{$new})
+    {
+      verbose (1,
+               "name clash between $old_name{$new} and $file: $new");
+      $new = $file;
+    }
+
+    $new_name{$file} = $new;
+    $old_name{$new} = $file;
+  }
+
+  verbose (2,
+           "file names:",
+           map {sprintf "%-20s => %s", $_, $new_name{$_} } sort keys %new_name);
+}
+
+=item C<step($file, $name, $contents, $iterations, $size, $time)
+
+=cut
+
+sub step($$\$\$\$\$)
+{
+  my ($file, $name, $contents, $iterations, $size, $time) = @_;
+  my $size_new = length($$contents);
+  my $time_new = time;
+  verbose 1, sprintf ("%30s: %15s: %2d%% (%d, %ds)",
+                      $file,
+                      $name,
+                      ($$size - $size_new) / $$size * 100,
+                      $$iterations,
+                      $time_new - $$time);
+  $$size = $size_new;
+  $$time = $time_new;
+  $$iterations = 1;
+}
+
+=item C<process_file($file)>
+
+Process C<$file>: rename links, and rename C<$file> itself.
+
+=cut
+
+sub process_file ($)
+{
+  my ($old) = @_;
+
+  # Rename first, so that the diffs are against the final name.
+  my $file = $new_name{$old};
+  file_rename($old, $file);
+
+  my $contents = contents ($file);
+  for my $old (keys %new_name)
+  {
+    # Do not rename "urbi-sdk.htmldir" into "index.htmldir", only
+    # "urbi-sdk.html" into "index.html".
+    $contents =~ s/\b$old\b/$new_name{$old}/g;
+  }
+
+  my $size = length($contents);
+  my $time = time;
+  my $iterations = 1;
+
+  # fix-split-href.
+  $contents =~
+    s{
+       <a\s+href="(\#(?:sub)*section.*?)"\s*>(.*?)
+         <a\s+href="(.*?)"\s*>(.*?)</a>
+         \s*
+       </a>
+     }
+     {<a href="$3">$2$4</a>}xgs;
+  step($file, "fix-split-href", $contents, $iterations, $size, $time);
+
+  # lstlisting
+  $contents =~
+    s{
+       </p>\s*
+       (?=<!--l.\s+\d+--><pre\s+class="listings">)
+     }
+     {}xgs;
+  $contents =~
+    s{
+       (?<=<div\ class="bnf">)\s*</p>
+     }
+     {}xgs;
+
+  step($file, "lstlisting", $contents, $iterations, $size, $time);
+
+  # span-reduce.
+  #
+  # Don't use "(.*?)" to catch the body of the span: the regexp is too
+  # greedy, and jumps above </span>.  The result would be very wrong
+  # (e.g., keyword faces remain active in the remainder of the
+  # documentation example).
+  while ($contents =~
+         s{
+            <span\s+class="(cmtt-10x-x-109)"\s*>
+            ([^<]*?)
+            </span>
+            <span\s+class="\1"\s*>
+           }
+         {<span class="$1">$2}xgs)
+  {
+    ++$iterations;
+  }
+  step($file, "span-reduce-1", $contents, $iterations, $size, $time);
+
+  while ($contents =~
+         s{
+           <span\s+class="(\w+)">\s*
+           <span\s+class="(cmtt-10x-x-109)"\s*>\s*
+           (
+             (?:
+               [^<]*
+               </span>\s*
+               </span>\s*
+               <span\s+class="\1">\s*
+               <span\s+class="\2"\s*>\s*
+             )+
+           )
+          }
+          {
+            my $fst = $1;
+            my $snd = $2;
+            my $body = $3;
+            $body =~
+            s{
+               </span>\s*
+               </span>\s*
+               <span\s+class="$fst"\s*>\s*
+               <span\s+class="$snd"\s*>
+              }{}xgs;
+            "<span class=\"$fst\"><span class=\"$snd\">$body"
+          }xgse)
+  {
+    ++$iterations;
+    verbose 1, "iterations: $iterations", length($contents);
+  }
+  step($file, "span-reduce-2", $contents, $iterations, $size, $time);
+
+  # trailing-spaces
+  $contents =~ s/\s+$//gm;
+  step($file, "trailing-spaces", $contents, $iterations, $size, $time);
+  file_update($file, $contents, nobak => 1);
+}
+
+=item C<getopt()>
+
+Process the command line options.
+
+=cut
+
+sub getopt ()
+{
+  use BuildAux::Getopt qw($message);
+  $message = "post-process tex4ht generated HTML files";
+  BuildAux::Getopt::getopt
+    (
+     "i|index=s" => sub { $new_name{$_[1]} = "index.html" },
+    );
+}
+
+## ------ ##
+## Main.  ##
+## ------ ##
+
+getopt;
+gather_names @ARGV;
+map { process_file $_ } @ARGV;
+
+### Setup "Gostai" style for perl-mode and cperl-mode.
+## Local Variables:
+## perl-indent-level: 2
+## perl-continued-statement-offset: 2
+## perl-continued-brace-offset: -2
+## perl-brace-offset: 0
+## perl-brace-imaginary-offset: 0
+## perl-label-offset: -2
+## cperl-indent-level: 2
+## cperl-brace-offset: 0
+## cperl-continued-brace-offset: -2
+## cperl-label-offset: -2
+## cperl-extra-newline-before-brace: t
+## cperl-merge-trailing-else: nil
+## cperl-continued-statement-offset: 2
+## End:

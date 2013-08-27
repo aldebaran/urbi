@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 # texi2dvi --- produce DVI (or PDF) files from Texinfo (or (La)TeX) sources.
 # $Id: texi2dvi,v 1.150 2009/04/15 15:15:33 akim Exp $
 #
