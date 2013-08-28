@@ -92,7 +92,7 @@ var 'package'.gsrapi.Localizer = Group.new() | do ('package'.gsrapi.Localizer)
     if (Localization.hasLocalSlot(keyString))
       Localization.getSlotValue(keyString)
     else
-      eval(keyString).asString
+      System.eval(keyString).asString()
   };
 
   function '[]='
@@ -346,13 +346,13 @@ package gsrapi.Component
   };
 
   // Store at each level a map nodename->[loc1, loc2...]
-  function Object.cacheNames()
+  function Object.cacheNames(excludeList = [])
   {
     // Avoid problems with group updateslot.
     if (hasLocalSlot("cachedNames"))
       removeLocalSlot("cachedNames") |
     var this.cachedNames = Dictionary.new() |
-    if (isA(Group))
+    if (isA(Group) && ! (componentName in excludeList))
       for| (var m: members)
       {
         m.cacheNames() |
@@ -363,15 +363,17 @@ package gsrapi.Component
   };
 
   /// Call makeCompactName() on all components and devices.
-  function Object.makeCompactNames(where=Global, constify=true, cache=true)
+  function Object.makeCompactNames(where=Global, constify=true, cache=true, excludeList = [])
   {
+    if (componentName in excludeList)
+      return|
     if (cache)
-      cacheNames() |
+      cacheNames(excludeList) |
     if (!cache)
       makeCompactName(where, constify) |
     if (isA(Group))
         for| (var m: members)
-          m.makeCompactNames(where, constify, false)
+          m.makeCompactNames(where, constify, false, excludeList)
   };
 
   /** Generate the compact name for current Device/Component.
