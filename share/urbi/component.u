@@ -126,7 +126,7 @@ var 'package'.gsrapi.Localizer = Group.new() | do ('package'.gsrapi.Localizer)
     add(val) |
     dict.set(key, val) |
     var val.componentLocalization = okey |
-    if (!okey.isA(Localization))
+    if (!okey.isA(Localization) && !okey.isA(Float))
       Lobby.wall("Warning, key " + okey +" is not a Localization")|
     val.parentComponent = this |
     val.componentName = key |
