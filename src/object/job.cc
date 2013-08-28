@@ -57,6 +57,8 @@ namespace urbi
       BIND(resetStats);
       BINDG(stats);
       BINDG(status);
+      BINDG(interruptible);
+      BINDG(frozen);
       BINDG(tags);
       BIND(terminate);
       BINDG(timeShift);
@@ -97,6 +99,18 @@ namespace urbi
       return value_
         ? value_.get()->state.tag_stack_get()
         : runner::State::tag_stack_type();
+    }
+
+    bool
+    Job::interruptible() const
+    {
+      return !value_ || !value_->non_interruptible_get();
+    }
+
+    bool
+    Job::frozen() const
+    {
+      return value_ && value_->frozen();
     }
 
     std::string

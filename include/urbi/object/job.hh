@@ -44,6 +44,8 @@ namespace urbi
       const std::string& name() const;
       std::string status() const;
       rObject stats() const;
+      bool frozen() const;
+      bool interruptible() const;
       void resetStats();
       const runner::tag_stack_type tags() const;
       void terminate();
