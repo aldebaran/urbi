@@ -23,19 +23,19 @@ do (System.PackageInfo.new("Urbi"))
 
   // The Copyright of this project.
   var copyrightYears =
-    "2004-2012";
+    "2004-2013";
 
   // The SCM date string.
   var date =
-    "2012-06-07 10:58:43 +0200";
+    "2013-01-01 10:58:43 +0200";
 
   // The day part of the SCM date string.
   var day =
-    "June 7, 2012";
+    "January 1, 2013";
 
   // The SCM complete description string, with slashes.
   var description =
-    "2.7.4-1758-g87e0b91";
+    "3.0.0";
 
   // The SCM identification string.
   var id =
@@ -43,11 +43,11 @@ do (System.PackageInfo.new("Urbi"))
 
   // The SCM major version component (Major.Minor.SubMinor).
   var major =
-    2;
+    3;
 
   // The SCM minor version component (Major.Minor.SubMinor).
   var minor =
-    7;
+    0;
 
   // Name of the project.
   var name =
@@ -63,15 +63,15 @@ do (System.PackageInfo.new("Urbi"))
 
   // Name and version.
   var string =
-    "Urbi 2.8";
+    "Urbi 3.0";
 
   // The SCM SubMinor version component (Major.Minor.SubMinor).
   var subMinor =
-    4;
+    0;
 
   // The SCM complete version string, with dashes.
   var tarballVersion =
-    "2.7.4-1758-g87e0b91";
+    "3.0.0";
 
   // Name of the Tarball.
   var tarname =
@@ -79,13 +79,13 @@ do (System.PackageInfo.new("Urbi"))
 
   // The SCM version string.
   var version =
-    "2.7.4";
+    "3.0.0";
 
   // Version and revision together.
   var versionRev =
-    "version 2.7.4 patch 1758 revision 87e0b91";
+    "version 3.0.0";
 
   // The SCM version integer (Major * 1e6 + Minor * 1e3 + SubMinor).
   var versionValue =
-    2007004;
+    3000000;
 };
