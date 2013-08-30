@@ -76,7 +76,7 @@ $ cd uobject
 \end{shell}
 
 This will create the uobject directory, with a skeleton CMakeLists.txt in it.
-Modify it to add your uobject:
+Modify it to add your uobject, assuming you have one source file named uobject.cc :
 
 \begin{verbatim}
 cmake_minimum_required(VERSION 2.8)
@@ -85,7 +85,8 @@ project(uobject)
 find_package(qibuild)
 
 find_package(urbi REQUIRED)
-
+# Workaround a long-standing glitch
+add_definitions(-D_USE_MATH_DEFINES)
 qi_create_lib(uobject MODULE uobject.cc DEPENDS uobject)
 \end{verbatim}
 
