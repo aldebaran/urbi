@@ -45,7 +45,7 @@ uobject(issue-3699 test test/issue-3699.uob/issue-3699.cc)
 uobject(fusion urbi urbi/fusion.uob/fusion.cc)
 
 qi_add_optional_package(ORTP)
-if(WITH_ORTP)
+if(ORTP_LIBRARIES)
   uobject(rtp urbi urbi/rtp.uob/rtp.cc)
   qi_use_lib(rtp ORTP)
 endif()

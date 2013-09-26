@@ -1298,6 +1298,15 @@ namespace urbi
       }
       ~KernelBarrier()
       {
+        // tag can only be deleted from the urbi thread because of the
+        // static allocator
+        if (server().isAnotherThread())
+          server().schedule_fast(boost::bind(&KernelBarrier::rtagDelete, tag));
+        else
+          delete tag;
+      }
+      static void rtagDelete(object::rTag* tag)
+      {
         delete tag;
       }
       void wait()
