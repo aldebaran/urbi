@@ -1294,7 +1294,14 @@ namespace urbi
     public:
       KernelBarrier()
       {
-        tag = new object::rTag(new object::Tag);
+        if (server().isAnotherThread())
+        {
+          boost::promise<int> prom;
+          server().schedule_fast(boost::bind(&KernelBarrier::doInitialize, this, &prom));
+          prom.get_future().wait();
+        }
+        else
+          tag = new object::rTag(new object::Tag);
       }
       ~KernelBarrier()
       {
@@ -1304,6 +1311,11 @@ namespace urbi
           server().schedule_fast(boost::bind(&KernelBarrier::rtagDelete, tag));
         else
           delete tag;
+      }
+      void doInitialize(boost::promise<int>* prom)
+      {
+        tag = new object::rTag(new object::Tag);
+        prom->set_value(0);
       }
       static void rtagDelete(object::rTag* tag)
       {
