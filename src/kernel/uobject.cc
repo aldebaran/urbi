@@ -1291,8 +1291,29 @@ namespace urbi
 
     class KernelBarrier: public Barrier
     {
+    private:
+      class Storage
+      {
+      public:
+        Storage() : tag(0) {}
+        ~Storage()
+        {
+          if (server().isAnotherThread())
+            server().schedule_fast(boost::bind(&KernelBarrier::Storage::rtagDelete, tag));
+          else
+            rtagDelete(tag);
+        }
+        static void rtagDelete(object::rTag* t)
+        {
+          delete t;
+        }
+        boost::promise<int> prom;
+        object::rTag* tag;
+      };
+      typedef boost::shared_ptr<Storage> StoragePtr;
     public:
       KernelBarrier()
+      : storage(new Storage)
       {
         if (server().isAnotherThread())
         {
@@ -1301,52 +1322,46 @@ namespace urbi
           prom.get_future().wait();
         }
         else
-          tag = new object::rTag(new object::Tag);
+          storage->tag = new object::rTag(new object::Tag);
       }
       ~KernelBarrier()
       {
-        // tag can only be deleted from the urbi thread because of the
-        // static allocator
-        if (server().isAnotherThread())
-          server().schedule_fast(boost::bind(&KernelBarrier::rtagDelete, tag));
-        else
-          delete tag;
       }
       void doInitialize(boost::promise<int>* prom)
       {
-        tag = new object::rTag(new object::Tag);
+        storage->tag = new object::rTag(new object::Tag);
         prom->set_value(0);
-      }
-      static void rtagDelete(object::rTag* tag)
-      {
-        delete tag;
       }
       void wait()
       {
+        StoragePtr s = storage;
         if (server().isAnotherThread())
         {
-          prom.get_future().wait();
+          s->prom.get_future().wait();
         }
         else
         {
           libport::Finally f;
-          ::kernel::runner().state.apply_tag(*tag, &f);
-          (*tag)->freeze();
+          ::kernel::runner().state.apply_tag(*s->tag, &f);
+          (*s->tag)->freeze();
         }
+      }
+      static void doRelease(StoragePtr s)
+      {
+        s->prom.set_value(0);
+        (*s->tag)->unfreeze();
       }
       void release()
       {
         GD_FINFO_TRACE("Barrier::release %s", this);
         if (server().isAnotherThread())
-          server().schedule_fast(boost::bind(&KernelBarrier::release, this));
+          server().schedule_fast(boost::bind(&KernelBarrier::doRelease, storage));
         else
         {
-          prom.set_value(0);
-          (*tag)->unfreeze();
+          doRelease(storage);
         }
       }
-      boost::promise<int> prom;
-      object::rTag* tag;
+      StoragePtr storage;
     };
 
     Barrier*
