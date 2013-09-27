@@ -34,6 +34,11 @@ add_definitions(-DLIBPORT_LIBDIRNAME="lib")
 add_definitions(-D_USE_MATH_DEFINES)
 #add_definitions(/w)
 
+# stack allocation seems to produce weird things on atom builds
+if (I_AM_A_ROBOT)
+  add_definitions(-DURBI_NO_VLENGTH_ARRAY)
+endif ()
+
 
 if (HAVE_CUSTOM_BISON)
 
