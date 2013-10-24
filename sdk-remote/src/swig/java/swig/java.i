@@ -913,6 +913,9 @@ namespace urbi
 
 namespace urbi
 {
+  // java.lang.Object.wait function cannot be overloaded..
+  %rename("block") Barrier::wait;
+
   %ignore UContext::send(const char *);
   %ignore UContext::send(const void*, size_t);
   %ignore UContext::yield_for(libport::utime_t) const;
