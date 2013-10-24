@@ -28,8 +28,6 @@ import urbi.*;
 ///
 ///    var f = Feature3.new("Global.a");
 ///    // [00075686] object_12
-///    // [00075696] val1 is changed and is equal to 'some string'
-///    // [00075738] val2 is changed and is equal to 42
 ///    f.val1 = "another string";
 ///    // [00093754] "another string"
 ///    // [00093755] val1 is changed and is equal to 'another string'

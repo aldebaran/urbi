@@ -26,9 +26,8 @@ import urbi.*;
 ///
 ///    var f = Feature2.new();
 ///    // [00005575] object_12
-///    (f.localSlotNames - Feature2.localSlotNames).sort;
-///    // [00015742] ["asobject_12", "val1", "val1_quote_n", "val2",
-///    // "val2_quote_n"]
+///    (f.localSlotNames() - Feature2.localSlotNames()).sort();
+///    // [00015742] ["asobject_12", "protos", "val1", "val2" ]
 ///    f.val1;
 ///    // [00019710] "some string"
 ///    f.val2;

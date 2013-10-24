@@ -26,7 +26,7 @@ import urbi.*;
 ///
 /// When you test it from urbiscript it gives:
 ///
-///     Feature4.new;
+///     Feature4.new();
 ///     // [00005826] Update called 1 time.
 ///     // [00005826] myTimerFunction called 1 time.
 ///     // [00005833] object_13
