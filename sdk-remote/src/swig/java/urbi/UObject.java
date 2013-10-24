@@ -28,7 +28,7 @@ import java.lang.RuntimeException;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.HashMap;
-import urbi.urbi;
+import urbi.urbijava;
 import urbi.UObjectCPP;
 import urbi.UVar;
 import urbi.URBIStarterJAVA;
@@ -500,7 +500,7 @@ public class UObject extends UObjectCPP
         }
         new_argv[0] = "UObject";
         UrbiRoot root = new UrbiRoot("urbi-launch", false);
-        urbi.main (new_argv.length, new_argv, root);
+        urbijava.main (new_argv.length, new_argv, root);
     }
 
     /// internal

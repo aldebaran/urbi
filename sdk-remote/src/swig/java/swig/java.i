@@ -8,7 +8,7 @@
  * See the LICENSE file for more information.
  */
 
-%module(directors="1") urbi
+%module(directors="1") urbijava
 
  // Disable warnings we are not interested in.
  // 312. Unnamed nested class not currently supported (ignored).

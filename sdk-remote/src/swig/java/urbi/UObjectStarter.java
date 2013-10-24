@@ -13,7 +13,7 @@ package urbi;
 import java.lang.reflect.Method;
 import java.lang.reflect.Constructor;
 
-import urbi.urbi;
+import urbi.urbijava;
 import urbi.URBIStarterJAVA;
 import urbi.UContextImpl;
 import urbi.UObjectCPP;
@@ -31,7 +31,7 @@ public class UObjectStarter extends URBIStarterJAVA
         String rn = n;
         if (("").equals(rn))
             rn = uobject_name; //getName();
-        urbi.setCurrentContext (ctx);
+        urbijava.setCurrentContext (ctx);
         UObjectCPP res = null;
 
         try
