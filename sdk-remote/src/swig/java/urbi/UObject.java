@@ -26,6 +26,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Constructor;
 import java.lang.RuntimeException;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.HashMap;
 import urbi.urbi;
 import urbi.UObjectCPP;
 import urbi.UVar;
@@ -581,13 +583,31 @@ public class UObject extends UObjectCPP
         return res;
     }
 
+    /// Create a map of builtin types name strings => builtin type Class
+    private Map<String,Class> builtinTypeNamesToClassMap = new HashMap<String,Class>();
+    {
+        builtinTypeNamesToClassMap.put("bool", Boolean.TYPE);
+        builtinTypeNamesToClassMap.put("byte", Byte.TYPE);
+        builtinTypeNamesToClassMap.put("char", Character.TYPE);
+        builtinTypeNamesToClassMap.put("double", Double.TYPE);
+        builtinTypeNamesToClassMap.put("float", Float.TYPE);
+        builtinTypeNamesToClassMap.put("int", Integer.TYPE);
+        builtinTypeNamesToClassMap.put("long", Long.TYPE);
+        builtinTypeNamesToClassMap.put("short", Short.TYPE);
+        builtinTypeNamesToClassMap.put("void", Void.TYPE);
+    }
+
     /// internal
     protected Class[] stringTypeToClassType (String[] typeArray)
         throws java.lang.ClassNotFoundException
     {
         Class[] params = new Class[typeArray.length];
         for (int i = 0; i < typeArray.length; ++i) {
-            params[i] = Class.forName (typeArray[i]);
+            if (builtinTypeNamesToClassMap.containsKey(typeArray[i])) {
+                params[i] = builtinTypeNamesToClassMap.get(typeArray[i]);
+            } else {
+                params[i] = Class.forName(typeArray[i]);
+            }
         }
         return params;
     }
