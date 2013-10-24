@@ -19,17 +19,17 @@ public class Command extends UCallbackInterface
 {
     public Command()
     {
-	super ();
+        super ();
     }
 
     public UCallbackAction onMessage (UMessage msg)
     {
-	if (!(UMessageType.MESSAGE_DATA == msg.getType ()) ||
-	    !(UDataType.DATA_DOUBLE == msg.getValue ().getType ()))
-	    return UCallbackAction.URBI_CONTINUE;
+        if (!(UMessageType.MESSAGE_DATA == msg.getType ()) ||
+            !(UDataType.DATA_DOUBLE == msg.getValue ().getType ()))
+            return UCallbackAction.URBI_CONTINUE;
 
-	double val = msg.getValue ().doubleValue ();
-	URBIMirror.d.send (msg.getTag() + ".val = " + val + ";");
-	return UCallbackAction.URBI_CONTINUE;
+        double val = msg.getValue ().doubleValue ();
+        URBIMirror.d.send (msg.getTag() + ".val = " + val + ";");
+        return UCallbackAction.URBI_CONTINUE;
     }
 }

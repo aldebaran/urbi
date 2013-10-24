@@ -19,83 +19,83 @@ import javax.sound.sampled.*;
 
 import urbi.UClient;
 
-public class	SendSoundSampler extends JFrame
+public class    SendSoundSampler extends JFrame
 {
-    private	UClient	client;
+    private UClient client;
 
-    public		SendSoundSampler()
+    public      SendSoundSampler()
     {
-	super("Send Sound Sampler");
-	setDefaultCloseOperation(EXIT_ON_CLOSE);
-	createUI();
-	setVisible(true);
-	pack();
-	setVisible(true);
+        super("Send Sound Sampler");
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        createUI();
+        setVisible(true);
+        pack();
+        setVisible(true);
 
     }
 
-    public		SendSoundSampler(UClient c)
+    public      SendSoundSampler(UClient c)
     {
-	super("Send Sound Sampler");
-	client = c;
-	setDefaultCloseOperation(EXIT_ON_CLOSE);
-	createUI();
-	setVisible(true);
-	pack();
-	setVisible(true);
+        super("Send Sound Sampler");
+        client = c;
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        createUI();
+        setVisible(true);
+        pack();
+        setVisible(true);
 
     }
 
-    public void		setClient(UClient c)
+    public void     setClient(UClient c)
     {
-	this.client = c;
+        this.client = c;
     }
 
-    public UClient	getClient()
+    public UClient  getClient()
     {
-	return client;
+        return client;
     }
 
-    private void	createUI()
+    private void    createUI()
     {
-	setFont(new Font("Serif", Font.PLAIN, 12));
-	setSize(200, 350);
-	Container content = getContentPane();
+        setFont(new Font("Serif", Font.PLAIN, 12));
+        setSize(200, 350);
+        Container content = getContentPane();
 
-	final JButton play = new JButton("Play");
-	play.setEnabled(true);
-	ActionListener saveListener = new ActionListener()
-	    {
-		public void actionPerformed(ActionEvent e)
-		{
-		    FileDialog		fd = new FileDialog(SendSoundSampler.this);
-		    fd.setVisible(true);
-		    if (fd.getFile() == null)
-			return ;
-		    String path = fd.getDirectory() + fd.getFile();
-		    try
-		    {
-			SoundUtilities.sendSound(path, client);
-		    }
-		    catch (IOException ie)
-		    {
-		    }
-		}
-	    };
-	play.addActionListener(saveListener);
-	Panel	bottom = new Panel(new GridLayout(2, 1));
-	Panel	topBottom = new Panel();
-	topBottom.add(play);
-	bottom.add(topBottom);
-	content.add(bottom, BorderLayout.CENTER);
+        final JButton play = new JButton("Play");
+        play.setEnabled(true);
+        ActionListener saveListener = new ActionListener()
+            {
+                public void actionPerformed(ActionEvent e)
+                {
+                    FileDialog      fd = new FileDialog(SendSoundSampler.this);
+                    fd.setVisible(true);
+                    if (fd.getFile() == null)
+                        return ;
+                    String path = fd.getDirectory() + fd.getFile();
+                    try
+                    {
+                        SoundUtilities.sendSound(path, client);
+                    }
+                    catch (IOException ie)
+                    {
+                    }
+                }
+            };
+        play.addActionListener(saveListener);
+        Panel   bottom = new Panel(new GridLayout(2, 1));
+        Panel   topBottom = new Panel();
+        topBottom.add(play);
+        bottom.add(topBottom);
+        content.add(bottom, BorderLayout.CENTER);
 
-	addWindowListener(new WindowAdapter()
-	    {
-		public void windowClosing(WindowEvent e)
-		{
-		    dispose();
-		    System.exit(0);
-		}
-	    });
+        addWindowListener(new WindowAdapter()
+            {
+                public void windowClosing(WindowEvent e)
+                {
+                    dispose();
+                    System.exit(0);
+                }
+            });
     }
 }

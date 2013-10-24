@@ -29,47 +29,47 @@ import java.util.Map;
 public class Main {
 
     static {
-	try
-	{
-	    /// Load the c++ native library.
-	    System.loadLibrary("urbijava");
-	}
-	catch (java.lang.UnsatisfiedLinkError e)
-	{
-	    System.out.println ("Loading exception: " + e);
+        try
+        {
+            /// Load the c++ native library.
+            System.loadLibrary("urbijava");
+        }
+        catch (java.lang.UnsatisfiedLinkError e)
+        {
+            System.out.println ("Loading exception: " + e);
 
-	    // DEBUG INFORMATIONS
-	    System.out.println();
-	    System.out.println("----------- Java.library.path -------------");
-	    String lib_path = System.getProperty("java.library.path");
-	    System.out.println(lib_path);
+            // DEBUG INFORMATIONS
+            System.out.println();
+            System.out.println("----------- Java.library.path -------------");
+            String lib_path = System.getProperty("java.library.path");
+            System.out.println(lib_path);
 
-	    // get the system environment variables
-	    System.out.println();
-	    System.out.println("---------- ENVIRONMENT VARIABLES ----------");
-	    Map<String, String> envMap = System.getenv();
-	    // print the system environment variables
-	    for (String key : envMap.keySet())
-		System.out.println(key + " = " +  envMap.get(key));
-	    System.out.println();
+            // get the system environment variables
+            System.out.println();
+            System.out.println("---------- ENVIRONMENT VARIABLES ----------");
+            Map<String, String> envMap = System.getenv();
+            // print the system environment variables
+            for (String key : envMap.keySet())
+                System.out.println(key + " = " +  envMap.get(key));
+            System.out.println();
 
-	    System.exit (1);
-	}
+            System.exit (1);
+        }
     }
 
     public static void main(String argv[]) {
-       try
-       {
-           /// Start the 'SimpleUObject' UObject
-           UObject.UStart (SimpleUObject.class);
+        try
+        {
+            /// Start the 'SimpleUObject' UObject
+            UObject.UStart (SimpleUObject.class);
 
-           /// Call the main in UObject. This main
-           /// will never return.
-           UObject.main (argv);
-       }
-       catch (Exception e)
-       {
-           System.out.println (e);
-       }
+            /// Call the main in UObject. This main
+            /// will never return.
+            UObject.main (argv);
+        }
+        catch (Exception e)
+        {
+            System.out.println (e);
+        }
     }
 }

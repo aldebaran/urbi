@@ -10,13 +10,13 @@
 
 package urbi;
 
-public interface		SoundAction
+public interface        SoundAction
 {
-        public void		captureAudio();
+    public void     captureAudio();
 
-        public void		playAudio();
+    public void     playAudio();
 
-        public void		stopAudio();
+    public void     stopAudio();
 
-        public void		saveAudio(String path);
+    public void     saveAudio(String path);
 }

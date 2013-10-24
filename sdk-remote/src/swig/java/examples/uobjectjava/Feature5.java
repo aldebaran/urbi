@@ -47,8 +47,8 @@ public class Feature5 extends UObject
     // -------------------- //
 
     public Feature5 (String str) {
-	super (str);
-	UBindFunction (this, "init");
+        super (str);
+        UBindFunction (this, "init");
     }
 
     // --------------------------------------- //
@@ -57,12 +57,12 @@ public class Feature5 extends UObject
 
     public int init (UValue somevar_name) {
 
-	/// These function are used to demonstrate the setting and the
-	/// getting of an UVar extern to this UObject.  Please see
-	/// comments on theses functions below.
-	UBindFunction (this, "getValue");
-	UBindFunction (this, "setValue");
-	return 0;
+        /// These function are used to demonstrate the setting and the
+        /// getting of an UVar extern to this UObject.  Please see
+        /// comments on theses functions below.
+        UBindFunction (this, "getValue");
+        UBindFunction (this, "setValue");
+        return 0;
     }
 
 
@@ -78,25 +78,25 @@ public class Feature5 extends UObject
     ///
     public int getValue (String name) {
 
-	/// Create an UVar with the name of an existing UVar, and
-	/// retrieve its value synchronously:
-	UVar tmp = new UVar (name);
-	tmp.syncValue(); /// ! WARNING ! This call can freeze your
-			 /// UObject if the server does not answer.
-	myUrbiEcho (name + " equals " + tmp.getUValue ());
+        /// Create an UVar with the name of an existing UVar, and
+        /// retrieve its value synchronously:
+        UVar tmp = new UVar (name);
+        tmp.syncValue(); /// ! WARNING ! This call can freeze your
+        /// UObject if the server does not answer.
+        myUrbiEcho (name + " equals " + tmp.getUValue ());
 
-	return 0;
+        return 0;
     }
 
     /// Here we demonstrate the setting of an UVar external to this
     /// UObject
     public void setValue (String name, UValue value) {
 
-	/// Create an UVar with the name of an existing UVar
-	UVar tmp = new UVar (name);
-	/// And assign a value to it. The walue will be set on the
-	/// UVar existing on the server. All is transparent.
-	tmp.setValue(value);
+        /// Create an UVar with the name of an existing UVar
+        UVar tmp = new UVar (name);
+        /// And assign a value to it. The walue will be set on the
+        /// UVar existing on the server. All is transparent.
+        tmp.setValue(value);
     }
 
 
@@ -104,14 +104,14 @@ public class Feature5 extends UObject
     /// server.
     private void myUrbiEcho (String str) {
 
-	/// If the message to echo contains ", replace them by ' (it
-	/// is necessary because the message send to the server is
-	/// enclosed in "):
-	str = str.replace ('"', '\'');
+        /// If the message to echo contains ", replace them by ' (it
+        /// is necessary because the message send to the server is
+        /// enclosed in "):
+        str = str.replace ('"', '\'');
 
-	/// Send the message to the system lobby (will be displayed in
-	/// user lobby) 'UObject.send'
-	send ("Lobby.systemLobby.send (\"" + str +  "\");");
+        /// Send the message to the system lobby (will be displayed in
+        /// user lobby) 'UObject.send'
+        send ("Lobby.systemLobby.send (\"" + str +  "\");");
     }
 
 }
