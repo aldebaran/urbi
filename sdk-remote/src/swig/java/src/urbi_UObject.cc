@@ -241,7 +241,7 @@ registerNotify(JNIEnv *env,
 }
 
 
-JNIEXPORT void JNICALL
+void
 Java_urbi_UObject_registerNotifyChange(JNIEnv *env,
                                        jobject obj,
                                        jlong var,
@@ -258,7 +258,7 @@ Java_urbi_UObject_registerNotifyChange(JNIEnv *env,
 		  method_name, method_signature, return_type, arg_nb, "var", types);
 }
 
-JNIEXPORT void JNICALL
+void
 Java_urbi_UObject_registerNotifyOnRequest(JNIEnv *env,
                                           jobject obj,
                                           jlong var,
@@ -277,7 +277,7 @@ Java_urbi_UObject_registerNotifyOnRequest(JNIEnv *env,
 
 
 
-JNIEXPORT void JNICALL
+void
 Java_urbi_UObject_registerFunction(JNIEnv *env,
                                    jobject,
                                    jobject obj,
@@ -328,7 +328,7 @@ Java_urbi_UObject_registerFunction(JNIEnv *env,
 }
 
 
-JNIEXPORT jstring JNICALL
+jstring
 Java_urbi_UObject_registerTimerFunction(JNIEnv *env,
                                         jobject,
                                         jobject obj,
