@@ -126,3 +126,15 @@ qi_stage_lib(urbi)
 
 add_subdirectory(src/examples)
 add_subdirectory(include)
+
+# Scripts
+
+file(READ sdk/umake-common UMAKE_COMMON)
+set(PACKAGE_BRAND "gostai")
+set(exec_prefix "\${prefix}")
+set(bindir "\${exec_prefix}/bin")
+set(libdir "\${exec_prefix}/lib")
+set(brandlibdir "\${libdir}/${PACKAGE_BRAND}")
+set(libdirname "lib")
+configure_file(sdk/urbi-launch-java.in ${CMAKE_CURRENT_BINARY_DIR}/sdk/urbi-launch-java @ONLY)
+install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/sdk/urbi-launch-java DESTINATION bin)

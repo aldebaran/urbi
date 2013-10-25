@@ -134,6 +134,8 @@ if $check; then
        "is Java support compiled?"
 else
   classpath="$classpath:$liburbi_jar"
+  # Add URBI_ROOT
+  export URBI_ROOT=$prefix
   # Add standart location to uobject path
   export URBI_UOBJECT_PATH="$URBI_UOBJECT_PATH:.:$prefix/share/sdk-remote/java"
   exec java -Djava.library.path="$library_path" \
