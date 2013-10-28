@@ -7,8 +7,10 @@ if (NOT DEFINED TEST_DIRS)
     2.x
     demo
     uob/plug
-    uob/java
   )
+  if (NOT I_AM_A_ROBOT)
+    list(APPEND TEST_DIRS uob/java)
+  endif()
   qi_add_optional_package(ORTP)
   if (WITH_ORTP)
     list(APPEND TEST_DIRS uob/rtp)

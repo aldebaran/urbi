@@ -403,5 +403,7 @@ enable_testing()
 add_subdirectory(share)
 #Requires lib uobject
 add_subdirectory(sdk-remote/src/uobjects)
-add_subdirectory(sdk-remote/src/swig/java)
+if (NOT I_AM_A_ROBOT)
+  add_subdirectory(sdk-remote/src/swig/java)
+endif()
 add_subdirectory(tests)
