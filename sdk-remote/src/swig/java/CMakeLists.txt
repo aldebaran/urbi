@@ -98,11 +98,13 @@ set(URBIJAVA_SOURCE
   urbi/UMain.java
   urbi/Log.java
 )
+
 add_jar(liburbijava
-  ${SWIG_OUTDIR}/*.java
   ${GNUBYTECODE_SOURCE}
   ${URBIJAVA_SOURCE}
+  ${SWIG_OUTDIR}
 )
+
 add_dependencies(liburbijava urbijava)
 install_jar(liburbijava share/sdk-remote/java/lib/)
 
@@ -112,12 +114,8 @@ qi_install_data(
   ${URBIJAVA_SOURCE}
   SUBFOLDER sdk-remote/java KEEP_RELATIVE_PATHS
 )
-file(GLOB SWIG_GENERATED_FILES "${SWIG_OUTDIR}/*.java")
-install(FILES
-  ${SWIG_GENERATED_FILES}
-  DESTINATION share/sdk-remote/java/urbi
-)
-
+# Install swig generated files by copying swig outdir directory
+install(DIRECTORY ${SWIG_OUTDIR} DESTINATION share/sdk-remote/java)
 
 # Tests jars
 add_jar(All tests/all/All.java)
