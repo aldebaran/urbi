@@ -25,6 +25,8 @@ qi_swig_wrap_java(urbijava swig/java.i
   DEPENDS
   qi urbi uobject-remote
 )
+target_link_libraries(urbijava ${JAVA_JVM_LIBRARY})
+
 if(UNIX AND NOT APPLE)
   # Set rpath so that our native lib find uobject remote lib.
   set_target_properties(urbijava PROPERTIES
