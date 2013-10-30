@@ -383,20 +383,21 @@ package lang.Exception.Lookup: 'package'.lang.Exception
   var suggested = nil;
 
   var fixSpelling = true;
-
+  var deep = true;
   // \param m     the invalid slot name
   // \param o     the object into which the lookup is performed
   // \param deep  whether to report inherited slot names too.
-  function init(var m, var o, var deep = true)
+  function init(var m, var o, var deep_ = true)
   {
     msg = m |
     obj = o |
-    if (fixSpelling)
-      suggested = m.closest({ if (deep) o.slotNames() else o.localSlotNames() })|
+    deep = deep_
   };
 
   function message()
   {
+    if (fixSpelling && suggested === nil)
+      suggested = msg.closest({ if (deep) obj.slotNames() else obj.localSlotNames() })|
     var res = ""|
     if (System.env["URBI_LOOKUP_PRINT_LOCATION"])
     {
