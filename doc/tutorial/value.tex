@@ -100,11 +100,11 @@ often filled with zeroes in this document.
 We're now getting back to our empty object. We want to give it two
 slots, \lstinline{a} and \lstinline{b}, with values \lstinline|42| and
 \lstinline|"foo"| respectively. We can do this with the
-\lstinline{setSlot} method, which takes the slot name and
+\lstinline{setSlotValue} method, which takes the slot name and
 its value.
 
 \begin{urbiscript}
-o.setSlot("a", 42);
+o.setSlotValue("a", 42);
 [00000000] 42
 o.inspect();
 [00009837] *** Inspecting Object_0x00000000
@@ -118,7 +118,7 @@ Here we successfully created our first slot, \lstinline|a|. A good
 shorthand for setting slot is using the \lstinline{var} keyword.
 
 \begin{urbiscript}
-// This is equivalent to o.setSlot("b", "foo").
+// This is equivalent to o.setSlotValue("b", "foo").
 var o.b = "foo";
 [00000000] "foo"
 o.inspect();
@@ -134,9 +134,9 @@ The latter form with \lstinline{var} is preferred, but you need to know
 the name of the slot at the time of writing the code. With the former
 one, you can compute the slot name at execution time. Likewise, you
 can read a slot with a run-time determined name with the
-\lstinline{getSlot} method, which takes the slot name as
+\lstinline{getSlotValue} method, which takes the slot name as
 argument.  The following listing illustrates the use of
-\lstinline{getSlot} and \lstinline{setSlot} to read and write slots whose
+\lstinline{getSlotValue} and \lstinline{setSlotValue} to read and write slots whose
 names are unknown at code-writing time.
 
 % mefyl: FIXME: I never introduced that '+' concatenates strings.
@@ -144,14 +144,14 @@ names are unknown at code-writing time.
 \begin{urbiscript}
 function set(object, name, value)
 {
-  // We have to use setSlot here, since we don't
+  // We have to use setSlotValue here, since we don't
   // know the actual name of the slot.
   object.setSlotValue("x_" + name, value)
 }|;
 
 function get(object, name)
 {
-  // We have to use getSlot here, since we don't
+  // We have to use getSlotValue here, since we don't
   // know the actual name of the slot.
   object.getSlotValue("x_" + name)
 }|;
@@ -172,7 +172,7 @@ get(x, "bar");
 
 Right, now we can create fresh objects, create slots in them and read
 them afterward, even if their name is dynamically computed, with
-\lstinline{getSlot} and \lstinline{setSlot}. Now, you might wonder if
+\lstinline{getSlotValue} and \lstinline{setSlotValue}. Now, you might wonder if
 there's a method to update the value of the slot. Guess what, there's
 one, and it's named\ldots \lstinline{updateSlot} (originality
 award). Getting back to our \lstinline{o} object, let's try to update one
@@ -204,8 +204,8 @@ Likewise, prefer the '\lstinline{=}' notation whenever
 possible, but you'll need \lstinline{updateSlot} to update a slot whose
 name you don't know at code-writing time.
 
-Note that defining the same slot twice, be it with \lstinline{setSlot} or
-\lstinline{var}, is an error. The slot must be defined once with setSlot,
+Note that defining the same slot twice, be it with \lstinline{setSlotValue} or
+\lstinline{var}, is an error. The slot must be defined once with setSlotValue,
 and subsequent writes must be done with \lstinline{updateSlot}.
 
 \begin{urbiscript}
@@ -244,11 +244,12 @@ o.d = 0;
 
 \section{Methods}
 
-Methods in \us are simply object slots containing functions. We made a
-little simplification earlier by saying that \lstinline|obj.slot| is
-equivalent to \lstinline|obj.getSlot("slot")|: if the fetched value is
-executable code such as a function, the dot form evaluates it, as
-illustrated below. Inside a method, \this gives access to
+Methods in \us are simply object slots containing functions. Using
+\lstinline|obj.slot| if \lstinline|slot| contains a function will
+return the function itself. Use \lstinline|obj.slot()| to evaluate
+the function instead.
+
+Inside a method, \this gives access to
 the target --- as in \Cxx.  It can be omitted if there is no ambiguity
 with local variables.
 
@@ -278,20 +279,12 @@ o.f();
 [00000000] 42
 \end{urbiscript}
 
-This was designed this way so as one can replace an attribute, such as
-an integer, with a function that computes the value. This enables to
-replace an attribute with a method without changing the object
-interface, since the parentheses are optional.
-
-This implies that \lstinline|getSlot| can be a better tool for object
-inspection to avoid invoking slots, as shown below.
+Let's use \lstinline|getSlotValue| to introspect some functions:
 
 \begin{urbiscript}
-// The 'empty' method of strings returns whether the string is empty.
-"foo".empty;
-[00000000] false
-"".empty;
-[00000000] true
+// The 'asList' method of strings returns the characters in a list.
+"foo".asList();
+[00003447] ["f", "o", "o"]
 // Using getSlot, we can fetch the function without calling it.
 "".getSlotValue("asList");
 [00000000] function () { split("") }
