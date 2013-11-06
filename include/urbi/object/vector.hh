@@ -101,6 +101,10 @@ namespace urbi
       size_t index(int) const;
 
       virtual std::string as_string() const;
+      std::vector<ufloat> as_list() const;
+
+      std::string serialize(unsigned int wordSize, bool little_endian) const;
+      value_type  zip(const std::vector<rVector>& others) const;
 
       value_type&       value_get();
       const value_type& value_get() const;
