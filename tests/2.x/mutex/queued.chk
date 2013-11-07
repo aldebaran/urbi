@@ -1,0 +1,81 @@
+
+var m = Mutex.new()|;
+var shared = ""|;
+var count = 0|;
+var count2 = 0|;
+
+// Check the fresh default value trick works
+function check(v = String.fresh()) { v}|;
+check() != check();
+[00000001] true
+
+{var x = 0; var y = 0; x=check() & y = check(); x!=y};
+[00000002] true
+
+function sequence(uniq=String.fresh())
+{
+  m: {
+    shared = uniq;
+    if (shared != uniq) throw "Mutex failure 1";
+    if (shared != uniq) throw "Mutex failure 2";
+    if (shared != uniq) throw "Mutex failure 3";
+    if (shared != uniq) throw "Mutex failure 4";
+    if (shared != uniq) throw "Mutex failure 5";
+    ++count2;
+  };
+  ++count;
+}|;
+
+sequence();
+[00000001] 1
+
+{sequence() & sequence()} | count;
+[00000002] 3
+
+// run a ton of them shifting by some cycles
+for&(var i: 10) {for(i) {}; sequence()} | count;
+[00000003] 13
+for&(var i: 10) {for(10-i){}; sequence()} | count;
+[00000003] 23
+for&(10) sequence() | count;
+[00000003] 33
+for&(var i: 10) {for(i) {1;2}; sequence()} | count;
+[00000003] 43
+for&(var i: 10) {for(10-i){1;2}; sequence()} | count;
+[00000003] 53
+
+// Test the throw just in case
+m = Tag.new()|;
+
+try {
+  sequence() & sequence();
+  false
+  }
+catch (var e)
+{
+  true
+};
+[00000004] true
+
+
+// let's try with a 0 queue
+count = 0|;
+count2 = 0|;
+m = Mutex.new(0)|;
+{sequence() & sequence()} | count2;
+[00000001] 1
+for&(10) sequence() | count2;
+[00000002] 2
+
+m = Mutex.new(1)|;
+{sequence() & sequence()} | count2;
+[00000001] 4
+for&(10) sequence() | count2;
+[00000002] 6
+
+m = Mutex.new(2)|;
+{sequence() & sequence()} | count2;
+[00000001] 9
+for&(10) sequence() | count2;
+[00000002] 12
+

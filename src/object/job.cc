@@ -63,6 +63,7 @@ namespace urbi
       BIND(terminate);
       BINDG(timeShift);
       BIND(waitForTermination);
+      BIND(breakTag);
     }
 
     const Job::value_type&
@@ -243,6 +244,16 @@ namespace urbi
     Job::timeShift() const
     {
       return value_ ? value_->time_shift_get() / 1000000.0 : 0;
+    }
+
+    void
+    Job::breakTag(int depth, rObject value)
+    {
+      if (depth < 0)
+      {
+        depth = value_->state.tag_stack_size() + depth;
+      }
+      value_->async_throw(sched::StopException(depth, value));
     }
   }; // namespace object
 }

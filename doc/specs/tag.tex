@@ -308,12 +308,14 @@ onEnter and onLeave.
 
 \begin{urbiscript}
 {
-  function cook();
-  var withGas = Tag.new("withGas");
-  var withGas.onEnter = turnGasOn; // copy the function
-  var withGas.onLeave = turnGasOff;
-  withGas : {
-    // Cooking code...
+  function cook()
+  {
+    var withGas = Tag.new("withGas");
+    var withGas.onEnter = turnGasOn; // copy the function
+    var withGas.onLeave = turnGasOff;
+    withGas : {
+      // Cooking code...
+    }|
   }|
 };
 \end{urbiscript}

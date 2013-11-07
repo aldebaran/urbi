@@ -23,9 +23,17 @@ do (Mutex)
   function asMutex() { this };
   var asString = Object.getSlotValue("asString");
 
-  function init()
+  function init(maxQueue=inf)
   {
     var this.sem = Semaphore.new(1) |
+    if (maxQueue == inf)
+      initInf()
+    else
+      initMaxQueue(maxQueue)
+  };
+
+  function initInf()
+  {
     function this.onEnter()
     {
       if (!Job.current.hasSlot("$mutexRelease"))
@@ -36,6 +44,8 @@ do (Mutex)
       // This will not be executed if the semaphore is not acquired, but we
       // have to save this state because the unlock would be executed in all
       // cases.
+      // This fixes the use case where job is terminated (by a stop for example)
+      // while in lock()
       l.removeBack() |
       l.insertBack(true) |
     } |
@@ -46,6 +56,29 @@ do (Mutex)
         this.unlock() |
       l.removeBack() |
     } |
+  };
+
+  function initMaxQueue(maxQueue)
+  {
+    var this.queueSize = 0|
+    var this.ownerJob = nil|
+    function this.onEnter()
+    {
+      if (this.ownerJob && queueSize >= maxQueue)
+        Job.current.breakTag(-1, nil)|
+      queueSize++|
+      this.lock()|
+      queueSize--|
+      this.ownerJob = Job.current
+    }|
+    function this.onLeave()
+    {
+      if (ownerJob == Job.current)
+      {
+        this.unlock()|
+        ownerJob = 0
+      }
+    }
   };
 
   function lock()

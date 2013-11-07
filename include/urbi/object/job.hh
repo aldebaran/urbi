@@ -52,7 +52,7 @@ namespace urbi
       libport::ufloat timeShift() const;
       void waitForTermination();
       rObject lobby_get();
-
+      void breakTag(int depth, rObject value);
     private:
       value_type value_;
     };
