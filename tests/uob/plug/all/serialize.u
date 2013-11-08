@@ -16,8 +16,8 @@ package lang.Point: UValueSerializable
 
 package lang.Rect: UValueSerializable
 {
-  var a = Point.new;
-  var b = Point.new;
+  var a = Point.new();
+  var b = Point.new();
   function asString()
   {
     "[] " + a + " " + b

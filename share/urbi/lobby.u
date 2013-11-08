@@ -136,10 +136,10 @@ do (Lobby)
       {
         if (args.size == 2 && !args[1].empty)
           write("[%08d:%s] %s\n"
-                % [(time*1000).round, args[1], args[0]])
+                % [(time*1000).round(), args[1], args[0]])
         else
           write("[%08d] %s\n"
-                % [(time*1000).round, args[0]])
+                % [(time*1000).round(), args[0]])
       }|
       // Prevent call to quit as it would close the ghost connection
       var quitBackend = &quit|

@@ -168,13 +168,13 @@ package lang.Exception.Arity: Exception
     this.routine = routine |
     this.effective = effective |
     this.min = min |
-    if (!max.isVoid)
+    if (!max.isVoid())
       this.max = max |
   };
 
   function message()
   {
-    if (max.isVoid)
+    if (max.isVoid())
       "expected %s argument%s, given %s"
       % [min, {if (1 < min) "s" else ""}, effective]
     else if (max == Float.inf)
@@ -315,7 +315,7 @@ package lang.Exception.Type: 'package'.lang.Exception
     if (expectedTypes.size > 1)
       expectedTypes.range(0, expectedTypes.size - 1)
                    .join(", a ", "a ", " or a %s")
-                   % expectedTypes.back
+                   % expectedTypes.back()
     else
       "a %s" % expectedTypes[0]
   };

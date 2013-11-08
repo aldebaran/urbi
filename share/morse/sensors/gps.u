@@ -21,7 +21,7 @@ do (Morse)
     {
       publisher = Ros.Topic.new("/ATRV/GPS") |
       // Ros receives a type "std_msgs/String" message.
-      publisher.subscribe |
+      publisher.subscribe() |
       waituntil(Ros.subscriberAvailable(publisher.name)) |
       at (publisher.onMessage?(var msg))
         data = msg["data"] |

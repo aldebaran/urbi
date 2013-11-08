@@ -23,7 +23,7 @@ do (Morse)
     {
       publisher = Ros.Topic.new("/ATRV/Motion_Controller") |
       publisher.advertise("geometry_msgs/Twist") |
-      var msg = publisher.structure.new |
+      var msg = publisher.structure.new() |
       waituntil(Ros.publisherAvailable(Ros.name)) |
     };
 

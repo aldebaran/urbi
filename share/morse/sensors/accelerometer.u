@@ -21,7 +21,7 @@ do (Morse)
     {
       subscriber = Ros.Topic.new("/ATRV/Accelerometer") |
       // Ros receives a type "std_msgs/String" message.
-      subscriber.subscribe |
+      subscriber.subscribe() |
       waituntil(Ros.subscriberAvailable(subscriber.name)) |
       at (subscriber.onMessage?(var msg))
         data = msg["data"] |

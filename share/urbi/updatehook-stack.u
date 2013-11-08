@@ -23,7 +23,7 @@ function 'package'.lang.UpdateHookStack (name, value)
   for| (var hook: myself.hooks)
   {
     res = hook(name, res)|
-    if (res.isVoid)
+    if (res.isVoid())
       return value
   }|
   res
@@ -35,7 +35,7 @@ do ('package'.lang.getSlotValue("UpdateHookStack"))
 
   function init()
   {
-    var this.hooks = hooks.clone;
+    var this.hooks = hooks.clone();
   };
 
   function addHook(f)
@@ -56,7 +56,7 @@ function 'package'.lang.installUpdateHookStack(o, slot)
       return;
   }|
 
-  o.setProperty(slot, "updateHook", getSlotValue("UpdateHookStack").new)|
+  o.setProperty(slot, "updateHook", getSlotValue("UpdateHookStack").new())|
 
   function setProperty(name, prop, v)
   {
@@ -70,7 +70,7 @@ function 'package'.lang.installUpdateHookStack(o, slot)
 
   o.setProperty = setProperty|
 
-  if (!old.isVoid)
+  if (!old.isVoid())
     o.setProperty(slot, "updateHook", old)|
 
   void;

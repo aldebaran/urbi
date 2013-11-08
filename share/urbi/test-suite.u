@@ -234,7 +234,7 @@ do (Object)
 | Dictionary.  |
 `-------------*/
 
-// Determinism: Dictionary.asList and Dictionary.asString.
+// Determinism: Dictionary.asList() and Dictionary.asString().
 do (Dictionary)
 {
   overrideSlot("keys",
@@ -279,7 +279,7 @@ do (Float)
 {
   var randomCounter = 0;
   // Chosen by fair dice roll.  Guaranteed to be random.
-  // 200.map(function (v) { 100.random }).join(", ");
+  // 200.map(function (v) { 100.random() }).join(", ");
   var randomValue = [1, 97, 71, 28, 37, 58, 77, 97, 94, 4, 9, 31, 45,
     75, 35, 98, 42, 99, 68, 12, 60, 57, 94, 8, 95, 68, 13, 30, 6, 62,
     42, 65, 82, 52, 67, 21, 95, 12, 71, 1, 90, 31, 38, 57, 16, 90, 40,
@@ -468,7 +468,7 @@ do (System)
       sleep(0);
     };
 
-    if (loc.isNil)
+    if (loc.isNil())
       loc = Location.here(-1);
     memCheck(f, loc);
   };
