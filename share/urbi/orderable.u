@@ -19,3 +19,6 @@ package lang.Orderable
   function '>'  (rhs) { this >= rhs  && this != rhs };
   function '>=' (rhs) { rhs  <  this || this == rhs };
 };
+
+true.addProto(Orderable);
+false.addProto(Orderable);
