@@ -409,7 +409,7 @@ namespace urbi
     List::hash() const
     {
       URBI_AT_HOOK(contentChanged);
-      rHash res = new Hash(boost::hash_value(proto));
+      rHash res = new Hash(hash_value(proto));
       foreach (const rObject& o, content_)
         res->combine(o);
       return res;
