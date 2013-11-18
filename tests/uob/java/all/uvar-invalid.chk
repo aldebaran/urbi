@@ -1,1 +1,31 @@
-../../remote/all/uvar-invalid.chk
+// Test that invalid usage of UVar does not stop the engine.
+//#uobject test/all
+uobjectsAll();
+
+
+all.invalidRead();
+[00000001:error] !!! input.u:invalidRead: exception caught while calling remote method: java.lang.RuntimeException: invalid use of unbound UVar
+all.invalidWrite();
+[00000002:error] !!! input.u:invalidWrite: exception caught while calling remote method: java.lang.RuntimeException: invalid use of unbound UVar
+//all.writeByName("canard.coin", 12);
+//[00000003:error] !!! input.u:@.1-31: writeByName: UVar creation on non existing object: canard.coin
+//all.readByName("canard.coin");
+//[00000004:error] !!! input.u:@.1-6: readByName: UVar creation on non existing object: canard.coin
+
+all.&a.notifyChange(closure() {all.invalidRead()})|;
+all.setNotifyChange(0)|;
+all.a = 17|;
+[00000003:error] !!! exception caught while processing Event:
+[01234567:error] !!! input.u:updateSlot: exception caught while calling remote method: java.lang.RuntimeException: invalid use of unbound UVar
+[01234567:error] !!!    called from: input.u:15.32-48: invalidRead
+[00000005:error] !!!    called from: input.u:17.1-3: updateSlot
+
+
+all.lastChange;
+[00000006] "remall.a"
+
+//all.lastChange = ""|;
+//all.a = 17|;
+//
+//all.lastChange;
+//[00000007] "all.a"

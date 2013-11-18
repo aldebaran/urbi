@@ -1,1 +1,18 @@
-../../remote/all/throw.chk
+//#uobject test/all
+uobjectsAll();
+
+all.throwException(0);
+[00000001:error] !!! input.u:throwException: exception caught while calling remote method: java.lang.Error: KABOOM
+
+all.throwException(1);
+[00000002:error] !!! input.u:throwException: exception caught while calling remote method: java.lang.RuntimeException: KABOOM
+1;
+[00000003] 1
+
+detach(all.throwException(1))|;
+[00000004:error] !!! input.u:@.1-29: detach: exception caught while calling remote method: KABOOM
+[00000005:error] !!!    called from: input.u:@1.8-28: throwException
+[00000005:error] !!!    called from: input.u:@2.1-29: detach
+
+sleep(100ms); 2;
+[00000006] 2

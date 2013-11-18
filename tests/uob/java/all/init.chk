@@ -1,1 +1,22 @@
-../../plug/all/init.chk
+//#uobject test/all
+uobjectsAll();
+
+var a = all.new(0) |;
+a.initCalled();
+[00000001] 1
+
+var b = a.new(0) |;
+b.initCalled();
+[00000002] 1
+
+all.getDestructionCount();
+[00000003] 0
+
+var c = all.new(1);
+[00000004:error] !!! input.u:@.9-18: new: remall construction failed: init returned 1.
+
+var d = all.new(2);
+[00000005:error] !!! input.u:new: exception caught while calling remote method: java.lang.RuntimeException: KABOOOM
+
+all.getDestructionCount();
+[00000006] 2
