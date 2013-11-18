@@ -34,6 +34,7 @@
 #include <urbi/object/symbols.hh>
 #include <urbi/sdk.hh>
 
+#include <sys/wait.h>
 
 #define XRUN(Function, Args)                    \
   do {                                          \
