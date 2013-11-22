@@ -1046,9 +1046,10 @@ namespace urbi
       }
       if (server().isAnotherThread())
       {
-        server().schedule_fast(boost::bind(&KernelUContextImpl::call,
-                                           this, object, method,
-                                           v1, v2, v3, v4, v5, v6));
+        server().schedule(SYMBOL("uobjectSchedule"),
+          boost::bind(&KernelUContextImpl::call,
+            this, object, method,
+            v1, v2, v3, v4, v5, v6));
         return;
       }
       GD_FINFO_DUMP("Call %s.%s", object, method);
