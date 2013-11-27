@@ -34,6 +34,85 @@ m: echo("this is critical section");
 As a critical section, two pieces of code tagged by the same ``Mutex''
 will never be executed at the same time.
 
+Mutexes must be used when manipulating data structures in a non atomic way to
+avoid inconsistent states.
+
+Consider this apparently simple code:
+
+\begin{urbiscript}[firstnumber=1]
+function appendAndTellIfFirst(list, val)
+{
+  var res = list.empty;
+  list << val;
+  res
+}|;
+var l = [];
+[00000001] []
+appendAndTellIfFirst(l, 1);
+[00000002] true
+appendAndTellIfFirst(l, 2);
+[00000002] false
+\end{urbiscript}
+
+Now look what happens if called twice in parallel:
+
+\begin{urbiscript}
+l = [];
+[00000001] []
+var res1; var res2;
+res1 = appendAndTellIfFirst(l, 1) & res2 = appendAndTellIfFirst(l, 2)|;
+res1;
+[00000002] true
+res2;
+[00000003] true
+l.sort(); // order is unspecified
+[00000004] [1, 2]
+\end{urbiscript}
+
+Both tasks checked if the list was empty at the same time, and then appened the
+element.
+
+A mutex will solve this problem:
+
+\begin{urbiscript}
+l = [];
+[00000001] []
+var m = Mutex.new();
+[00000000] Mutex_0x964ed40
+// redefine the function using the mutex
+appendAndTellIfFirst = function (list, val)
+{m:{
+  var res = list.empty;
+  list << val;
+  res
+}}|;
+// check again
+res1 = appendAndTellIfFirst(l, 1) & res2 = appendAndTellIfFirst(l, 2)|;
+// we do not know which one was first, but only one was
+[res1, res2].sort();
+[00000001] [false, true]
+l.sort();
+[00000004] [1, 2]
+\end{urbiscript}
+
+Mutex constructor accepts an optional maximum queue size: code blocks
+trying to wait when maximum queue size is reached will not be executed:
+
+\begin{urbiscript}[firstnumber=1]
+var m = Mutex.new(1)|;
+var e = Event.new()|;
+at(e?)
+  m: { echo("executing at"); sleep(200ms);};
+e!;e!;e!;
+sleep(600ms);
+[00000001] *** executing at
+[00000001] *** executing at
+\end{urbiscript}
+
+As you can see above the message is only displayed twice: First at got executed
+right away, the second was queued and executed when the first one finished, and
+the third one got stopped.
+
 \subsection{Slots}
 
 \begin{urbiscriptapi}

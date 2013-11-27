@@ -42,7 +42,7 @@ package lang.Kernel1
   function isvoid()
   {
     deprecated("isvoid(o)", "o.isVoid") |
-    call.evalArgAt(0).acceptVoid.isVoid
+    call.evalArgAt(0).acceptVoid().isVoid()
   };
 
   function noop()

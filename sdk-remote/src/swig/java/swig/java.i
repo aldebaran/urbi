@@ -8,7 +8,7 @@
  * See the LICENSE file for more information.
  */
 
-%module(directors="1") urbi
+%module(directors="1") urbijava
 
  // Disable warnings we are not interested in.
  // 312. Unnamed nested class not currently supported (ignored).
@@ -913,6 +913,9 @@ namespace urbi
 
 namespace urbi
 {
+  // java.lang.Object.wait function cannot be overloaded..
+  %rename("block") Barrier::wait;
+
   %ignore UContext::send(const char *);
   %ignore UContext::send(const void*, size_t);
   %ignore UContext::yield_for(libport::utime_t) const;

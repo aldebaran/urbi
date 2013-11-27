@@ -168,13 +168,13 @@ package lang.Exception.Arity: Exception
     this.routine = routine |
     this.effective = effective |
     this.min = min |
-    if (!max.isVoid)
+    if (!max.isVoid())
       this.max = max |
   };
 
   function message()
   {
-    if (max.isVoid)
+    if (max.isVoid())
       "expected %s argument%s, given %s"
       % [min, {if (1 < min) "s" else ""}, effective]
     else if (max == Float.inf)
@@ -315,7 +315,7 @@ package lang.Exception.Type: 'package'.lang.Exception
     if (expectedTypes.size > 1)
       expectedTypes.range(0, expectedTypes.size - 1)
                    .join(", a ", "a ", " or a %s")
-                   % expectedTypes.back
+                   % expectedTypes.back()
     else
       "a %s" % expectedTypes[0]
   };
@@ -383,20 +383,21 @@ package lang.Exception.Lookup: 'package'.lang.Exception
   var suggested = nil;
 
   var fixSpelling = true;
-
+  var deep = true;
   // \param m     the invalid slot name
   // \param o     the object into which the lookup is performed
   // \param deep  whether to report inherited slot names too.
-  function init(var m, var o, var deep = true)
+  function init(var m, var o, var deep_ = true)
   {
     msg = m |
     obj = o |
-    if (fixSpelling)
-      suggested = m.closest({ if (deep) o.slotNames() else o.localSlotNames() })|
+    deep = deep_
   };
 
   function message()
   {
+    if (fixSpelling && suggested === nil)
+      suggested = msg.closest({ if (deep) obj.slotNames() else obj.localSlotNames() })|
     var res = ""|
     if (System.env["URBI_LOOKUP_PRINT_LOCATION"])
     {

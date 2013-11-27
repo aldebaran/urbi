@@ -53,106 +53,106 @@ public class Colormap extends UObject
 
     /// Java constructor
     public Colormap (String str) {
-	super (str);
-	UBindFunction (this, "init");
+        super (str);
+        UBindFunction (this, "init");
     }
 
     /// Urbi constructor
     public int init(String source, /// We expect the name of a camera variable or any UImage variable
-		    double _Ymin,
-		    double _Ymax,
-		    double _Cbmin,
-		    double _Cbmax,
-		    double _Crmin,
-		    double _Crmax,
-		    double _threshold)
+                    double _Ymin,
+                    double _Ymax,
+                    double _Cbmin,
+                    double _Cbmax,
+                    double _Crmin,
+                    double _Crmax,
+                    double _threshold)
     {
-	UBindVar(x, "x");
-	UBindVar(y, "y");
-	UBindVar(visible, "visible");
-	UBindVar(ratio, "ratio");
-	UBindVar(threshold, "threshold");
-	UBindVar(ymin, "ymin");
-	UBindVar(ymax, "ymax");
-	UBindVar(cbmin, "cbmin");
-	UBindVar(cbmax, "cbmax");
-	UBindVar(crmin, "crmin");
-	UBindVar(crmax, "crmax");
+        UBindVar(x, "x");
+        UBindVar(y, "y");
+        UBindVar(visible, "visible");
+        UBindVar(ratio, "ratio");
+        UBindVar(threshold, "threshold");
+        UBindVar(ymin, "ymin");
+        UBindVar(ymax, "ymax");
+        UBindVar(cbmin, "cbmin");
+        UBindVar(cbmax, "cbmax");
+        UBindVar(crmin, "crmin");
+        UBindVar(crmax, "crmax");
 
-	UNotifyChange(source, "newImage");
+        UNotifyChange(source, "newImage");
 
-	// initialization
-	ymin.setValue (_Ymin);
-	ymax.setValue (_Ymax);
-	cbmin.setValue (_Cbmin);
-	cbmax.setValue (_Cbmax);
-	crmin.setValue (_Crmin);
-	crmax.setValue (_Crmax);
-	threshold.setValue (_threshold);
-	x.setValue (-1);
-	y.setValue (-1);
-	visible.setValue (0);
-	ratio.setValue (0);
-	return 0;
+        // initialization
+        ymin.setValue (_Ymin);
+        ymax.setValue (_Ymax);
+        cbmin.setValue (_Cbmin);
+        cbmax.setValue (_Cbmax);
+        crmin.setValue (_Crmin);
+        crmax.setValue (_Crmax);
+        threshold.setValue (_threshold);
+        x.setValue (-1);
+        y.setValue (-1);
+        visible.setValue (0);
+        ratio.setValue (0);
+        return 0;
     }
 
 
     public int newImage(UVar img)
     {
-	if (getLoad ().doubleValue () < 0.5)
-	    return 1;
+        if (getLoad ().doubleValue () < 0.5)
+            return 1;
 
-	UImage img1 = img.uimageValue ();  //ptr copy
-	long w = img1.getWidth ();
-	long h = img1.getHeight ();
+        UImage img1 = img.uimageValue ();  //ptr copy
+        long w = img1.getWidth ();
+        long h = img1.getHeight ();
 
-	//lets cache things
-	int ymax = this.ymax.intValue ();
-	int ymin = this.ymin.intValue ();
-	int crmin = this.crmin.intValue ();
-	int crmax = this.crmax.intValue ();
-	int cbmin = this.cbmin.intValue ();
-	int cbmax = this.cbmax.intValue ();
+        //lets cache things
+        int ymax = this.ymax.intValue ();
+        int ymin = this.ymin.intValue ();
+        int crmin = this.crmin.intValue ();
+        int crmax = this.crmax.intValue ();
+        int cbmin = this.cbmin.intValue ();
+        int cbmax = this.cbmax.intValue ();
 
-	long x=0,y=0,xx=0,yy=0,xy=0;
-	int size = 0;
+        long x=0,y=0,xx=0,yy=0,xy=0;
+        int size = 0;
 
-	byte[] data = img1.getData ();
-	for (int i = 0; i < w; i++)
-	    for (int j = 0; j < h; j++) {
+        byte[] data = img1.getData ();
+        for (int i = 0; i < w; i++)
+            for (int j = 0; j < h; j++) {
 
-		int lum = data[(int) (i+j*w)*3] & 0xff;
-		int cb  = data[(int) (i+j*w)*3+1] & 0xff;
-		int cr  = data[(int) (i+j*w)*3+2] & 0xff;
+                int lum = data[(int) (i+j*w)*3] & 0xff;
+                int cb  = data[(int) (i+j*w)*3+1] & 0xff;
+                int cr  = data[(int) (i+j*w)*3+2] & 0xff;
 
-		if ( (lum  >= ymin) &&
-		     (lum  <= ymax) &&
-		     (cb >= cbmin) &&
-		     (cb <= cbmax) &&
-		     (cr >= crmin) &&
-		     (cr <= crmax) ) {
-		    size++;
-		    x += i;
-		    y += j;
-		    xx += i*i;
-		    yy += j*j;
-		    xy += i*j;
-		}
-	    }
+                if ( (lum  >= ymin) &&
+                     (lum  <= ymax) &&
+                     (cb >= cbmin) &&
+                     (cb <= cbmax) &&
+                     (cr >= crmin) &&
+                     (cr <= crmax) ) {
+                    size++;
+                    x += i;
+                    y += j;
+                    xx += i*i;
+                    yy += j*j;
+                    xy += i*j;
+                }
+            }
 
-	this.ratio.setValue ((double)size / (double)(w*h));
-	if (size > (int)(threshold.doubleValue () * (double)(w*h)))
-	{
-	    this.visible.setValue (1);
-	    this.x.setValue (0.5 - ((double)x / ((double)size * (double)w)));
-	    this.y.setValue (0.5 - ((double)y / ((double)size * (double)h)));
-	}
-	else {
-	    this.x.setValue (-1);
-	    this.y.setValue (-1);
-	    this.visible.setValue (0);
-	}
+        this.ratio.setValue ((double)size / (double)(w*h));
+        if (size > (int)(threshold.doubleValue () * (double)(w*h)))
+        {
+            this.visible.setValue (1);
+            this.x.setValue (0.5 - ((double)x / ((double)size * (double)w)));
+            this.y.setValue (0.5 - ((double)y / ((double)size * (double)h)));
+        }
+        else {
+            this.x.setValue (-1);
+            this.y.setValue (-1);
+            this.visible.setValue (0);
+        }
 
-	return 1;
+        return 1;
     }
 }

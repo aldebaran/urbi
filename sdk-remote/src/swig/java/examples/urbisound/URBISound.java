@@ -15,32 +15,32 @@ import java.io.IOException;
 import urbi.*;
 import urbi.*;
 
-public class	URBISound
+public class    URBISound
 {
     static {
-	System.loadLibrary("urbijava");
+        System.loadLibrary("urbijava");
     }
 
-    static public UClient	robotC = null;
+    static public UClient   robotC = null;
 
-    static public SoundSampler		soundSampler = null;
+    static public SoundSampler      soundSampler = null;
 
     public static void main(String[] args)
     {
-	if (args.length != 1)
-	{
-	    System.err.println("Usage: urbisound robot");
-	    System.exit(1);
-	}
-	robotC = new UClient(args[0]);
+        if (args.length != 1)
+        {
+            System.err.println("Usage: urbisound robot");
+            System.exit(1);
+        }
+        robotC = new UClient(args[0]);
 
-	CallSound	sound = new CallSound();
-	robotC.setCallback(sound, "sound");
+        CallSound   sound = new CallSound();
+        robotC.setCallback(sound, "sound");
 
-	robotC.send("sound<< ping;");
-	soundSampler = new SoundSampler();
-	soundSampler.setAction(sound);
+        robotC.send("sound<< ping;");
+        soundSampler = new SoundSampler();
+        soundSampler.setAction(sound);
 
-	urbi.execute ();
+        urbi.execute ();
     }
 }

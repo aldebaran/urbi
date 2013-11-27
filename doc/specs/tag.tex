@@ -302,6 +302,26 @@ is:
 };
 \end{urbiscript}
 
+If you need your enter/leave functions to be called synchronously and very
+efficiently, you can as an alternative to enter/leave define the {\i local} slots
+onEnter and onLeave.
+
+\begin{urbiscript}
+{
+  function cook()
+  {
+    var withGas = Tag.new("withGas");
+    var withGas.onEnter = turnGasOn; // copy the function
+    var withGas.onLeave = turnGasOff;
+    withGas : {
+      // Cooking code...
+    }|
+  }|
+};
+\end{urbiscript}
+
+The onEnter and onLeave must be local slots, inheritence will not work for them.
+
 Alternatively, the \lstinline|try|/\lstinline|finally| construct provides an
 elegant means to achieve the same result (\autoref{sec:lang:except:finally}).
 

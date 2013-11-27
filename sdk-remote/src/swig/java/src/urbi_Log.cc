@@ -13,7 +13,7 @@
 
 GD_INIT();
 
-JNIEXPORT void JNICALL
+URBIJAVA_API JNIEXPORT void JNICALL
 Java_urbi_Log_info (JNIEnv *env, jobject,
                     jstring category,
                     jstring msg,
@@ -37,7 +37,7 @@ Java_urbi_Log_info (JNIEnv *env, jobject,
   env->ReleaseStringUTFChars(category, category_);
 }
 
-JNIEXPORT void JNICALL
+URBIJAVA_API JNIEXPORT void JNICALL
 Java_urbi_Log_error (JNIEnv *env, jobject,
                      jstring category,
                      jstring msg,

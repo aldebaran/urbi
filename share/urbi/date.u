@@ -17,6 +17,6 @@ do (Date)
 
   function timestamp()
   {
-    asFloat;
+    asFloat();
   };
 };

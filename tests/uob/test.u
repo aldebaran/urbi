@@ -47,7 +47,7 @@ function waitForRemoteUObjects (var files)
       catch
       {
         clog << "UObject not loaded: %s from file %s (loaded: %s)"
-                % [uo, file, uobjects.localSlotNames];
+                % [uo, file, uobjects.localSlotNames()];
         throw;
       };
 }|;

@@ -28,7 +28,7 @@ do (Morse)
       publisher = Ros.Topic.new("/ATRV/Sick") |
       // Ros receives a type "sensor_msgs/LaserScan" message.
 
-      publisher.subscribe |
+      publisher.subscribe() |
       waituntil(Ros.subscriberAvailable(publisher.name)) |
       at (publisher.onMessage?(var msg))
       {

@@ -20,7 +20,7 @@ do (true)
   setProtos([Singleton]);
   var asString = "true";
   var asBool = this;
-
+  function '<' (b) { false};
   var '!' = false;
 };
 
@@ -33,6 +33,6 @@ do (false)
   setProtos([Singleton]);
   var asString = "false";
   var asBool = this;
-
+  function '<' (b) { b};
   var '!' = true;
 };

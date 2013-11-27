@@ -36,7 +36,7 @@ package monitoring
         if (c2.size == 2)
         {
           if (hasSlot(c2[1]))
-            c2[1] = getSlot(c2[1].asString);
+            c2[1] = getSlot(c2[1].asString());
           comps[1] = c2[0] + " --> " + c2[1];
         }
       };
@@ -52,7 +52,7 @@ package monitoring
     resetConnectionStats();
     sleep(samplingTime);
     var res = UConnection.getAll().map(
-      function(x) { [x.asString(), x.displayStats(), x.totalCallTime]});
+      function(x) { [x.asString(), x.displayStats(), x.totalCallTime()]});
     res = res.sort(function(x, y) {x[2] > y[2]});
     for|(var i in res)
       echo("%s %% %s %s" %

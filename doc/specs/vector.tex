@@ -208,6 +208,12 @@ v[4] = 7;
 
 \end{urbiassert}
 
+\item[asList]%
+  Return this as a list.
+\begin{urbiassert}
+  <>.asList() == [];
+  <1,-1>.asList() == [1, -1];
+\end{urbiassert}
 
 \item[asVector]%
   Return \this.
@@ -429,6 +435,20 @@ Vector.new([0, 1, 2, 3]).size == 4;
 <1, 0, 1, 0, 0, 1>.trueIndexes() == <0, 2, 5>;
 \end{urbiassert}
 
+\item[zip](<others>)%
+  Zip this vector with the given list of other vectors, which can be of different sizes.
+
+\begin{urbiassert}
+ <0,3>.zip([<1, 4>, <2, 5>]) == <0, 1, 2, 3, 4, 5>
+\end{urbiassert}
+
+\item[serialize](<wordSize>, <littleEndian>)%
+  Serialize to binary integral data.
+
+\begin{urbiassert}
+  <1, 2>.serialize(2, false) == "\x01\x00\x02\x00";
+  <1, 2>.serialize(2, true)  == "\x00\x01\x00\x02";
+\end{urbiassert}
 
 \item[type]%
   \lstinline|"Vector"|.

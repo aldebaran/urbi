@@ -111,6 +111,7 @@ namespace urbi
       BIND(SBL_SBR, operator[]);
       BIND(SBL_SBR_EQ, set);
       BIND(asString, as_string);
+      BIND(asList, as_list);
       BIND(combAdd);
       BIND(combDiv);
       BIND(combMul);
@@ -124,6 +125,8 @@ namespace urbi
       BINDG(size);
       BIND(sum);
       BIND(trueIndexes);
+      BIND(serialize);
+      BIND(zip);
       BIND(uvalueSerialize);
       bind(libport::Symbol("scalar" "EQ"), &Vector::scalarEQ);
       bind(libport::Symbol("scalar" "GT"), &Vector::scalarGT);
@@ -144,6 +147,12 @@ namespace urbi
       }
       s << '>';
       return s.str();
+    }
+
+    std::vector<ufloat>
+    Vector::as_list() const
+    {
+      return std::vector<ufloat>(value_.begin(), value_.end());
     }
 
     ufloat
@@ -174,6 +183,37 @@ namespace urbi
     Vector::distance(const value_type& that) const
     {
       return norm_2(*this - that);
+    }
+
+    Vector::value_type
+    Vector::zip(const std::vector<rVector>& others) const
+    {
+      // Make it homogeneous
+      std::vector<const value_type*> vals;
+      std::vector<unsigned> sizes;
+      vals.resize(others.size()+1);
+      sizes.resize(others.size()+1);
+      vals[0] = &value_;
+      sizes[0] = value_.size();
+      unsigned total = value_.size();
+      for (unsigned i=0; i<others.size(); ++i)
+      {
+        vals[i+1] = &others[i]->value_;
+        sizes[i+1] = vals[i+1]->size();
+        total += vals[i+1]->size();
+      }
+      value_type result(total);
+      unsigned s = vals.size();
+      unsigned p = 0; // result position
+      unsigned r = 0; // source index
+      while (p < total)
+      {
+        for (unsigned i=0; i<s; ++i)
+          if (sizes[i] > r)
+            result[p++] = (*(vals[i]))[r];
+        ++r;
+      }
+      return result;
     }
 
     size_t
@@ -283,6 +323,24 @@ namespace urbi
         if (value_(i) != b(i))
           return value_(i) < b(i);
       return size() < b.size();
+    }
+
+    std::string
+    Vector::serialize(unsigned int wordSize, bool le) const
+    {
+      std::string res(wordSize * value_.size(), 0);
+      for (unsigned i=0; i< value_.size(); ++i)
+      {
+        long val = value_[i];
+        char* start = &res[i * wordSize];
+        if (le)
+          for (unsigned b=0; b<wordSize; ++b)
+            *(start+wordSize - b - 1) = val >> (b*8);
+        else
+          for (unsigned b=0; b<wordSize; ++b)
+            *(start+b) = val >> (b*8);
+      }
+      return res;
     }
 
     rObject

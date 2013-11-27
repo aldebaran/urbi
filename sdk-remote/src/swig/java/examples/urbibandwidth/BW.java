@@ -8,7 +8,7 @@
  * See the LICENSE file for more information.
  */
 
-    package examples.urbibandwidth;
+package examples.urbibandwidth;
 
 import java.io.IOException;
 
@@ -21,43 +21,43 @@ public class BW extends UCallbackInterface
 
     public BW()
     {
-	super ();
+        super ();
     }
 
     public UCallbackAction onMessage(UMessage msg)
     {
-	if (!(UMessageType.MESSAGE_DATA == msg.getType ()))
-	{
-	    System.err.println ("Error: received non data message.");
-	    return UCallbackAction.URBI_CONTINUE;
-	}
-	UValue value = msg.getValue ();
-	if (!(UDataType.DATA_BINARY == value.getType ()))
-	{
-	    System.err.println ("Error: received non binary message.");
-	    return UCallbackAction.URBI_CONTINUE;
-	}
-	UBinary bin = value.ubinaryValue ();
-	if (!(UBinaryType.BINARY_IMAGE == bin.getType ()))
-	{
-	    System.err.println ("Error: received non image message.");
-	    return UCallbackAction.URBI_CONTINUE;
-	}
-	UImage img = bin.uimageValue ();
+        if (!(UMessageType.MESSAGE_DATA == msg.getType ()))
+        {
+            System.err.println ("Error: received non data message.");
+            return UCallbackAction.URBI_CONTINUE;
+        }
+        UValue value = msg.getValue ();
+        if (!(UDataType.DATA_BINARY == value.getType ()))
+        {
+            System.err.println ("Error: received non binary message.");
+            return UCallbackAction.URBI_CONTINUE;
+        }
+        UBinary bin = value.ubinaryValue ();
+        if (!(UBinaryType.BINARY_IMAGE == bin.getType ()))
+        {
+            System.err.println ("Error: received non image message.");
+            return UCallbackAction.URBI_CONTINUE;
+        }
+        UImage img = bin.uimageValue ();
 
-	totalsize += (img.getSize () + msg.getTag ().length () + 20);
+        totalsize += (img.getSize () + msg.getTag ().length () + 20);
 
-	if (msg.getTag() != "be")
-	{
-	    long	end = msg.getClient ().getCurrentTime ();
-	    long	tmp = end - URBIBandWidth.starttime;
-	    long	tmp2 = totalsize * 1000 / (end - URBIBandWidth.starttime);
+        if (msg.getTag() != "be")
+        {
+            long    end = msg.getClient ().getCurrentTime ();
+            long    tmp = end - URBIBandWidth.starttime;
+            long    tmp2 = totalsize * 1000 / (end - URBIBandWidth.starttime);
 
-	    System.out.println("received " + totalsize + " bytes in " +
-			       tmp + " milliseconds: bandwidth is " +
-			       tmp2 + " bytes per second.");
-	    //URBIBandWidth.over = true;
-	}
-	return UCallbackAction.URBI_CONTINUE;
+            System.out.println("received " + totalsize + " bytes in " +
+                               tmp + " milliseconds: bandwidth is " +
+                               tmp2 + " bytes per second.");
+            //URBIBandWidth.over = true;
+        }
+        return UCallbackAction.URBI_CONTINUE;
     }
 }

@@ -1,4 +1,4 @@
 <project name="urbi">
-  <depends buildtime="true" names="libport libqijpeg" runtime="true" />
+  <depends buildtime="true" names="libport libqijpeg libqi" runtime="true" />
   <maintainer email="mnottale@aldebaran-robotics.com">Matthieu Nottale</maintainer>
 </project>

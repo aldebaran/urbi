@@ -23,7 +23,7 @@ do (Morse)
     {
       subscriber = Ros.Topic.new("/ATRV/Odometry") |
       // Ros receives a type "nav_msgs/Odometry" message.
-      subscriber.subscribe |
+      subscriber.subscribe() |
       waituntil(Ros.subscriberAvailable(subscriber.name)) |
       at (subscriber.onMessage?(var msg))
       {

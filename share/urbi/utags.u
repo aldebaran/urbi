@@ -20,7 +20,7 @@ output.'<<' = function(x)
    if (enabled)
     {
       var toPrint = { if (quote) x.asTopLevelPrintable() else x.asString() }|
-      if (!toPrint.isNil)
+      if (!toPrint.isNil())
 	lobby.write(toPrint);
     };
     this
@@ -33,7 +33,7 @@ do (Dictionary)
   '[]' = function(var k)
   {
     if (_default)
-      getWithDefault(k, _default.clone, true)
+      getWithDefault(k, _default.clone(), true)
     else
       if (!has(k))
         _default
@@ -60,13 +60,13 @@ do (Dictionary)
 var sourcefile = System.arguments[0];
 
 // open file
-var fileLines = File.new(sourcefile).asList;
+var fileLines = File.new(sourcefile).asList();
 // Locate urbi executable
 var binDir = System.searchFile("urbi/urbi.u").dirname / "../../../bin/";
 assert(binDir.exists);
-var tempName = "/tmp/utags-" + String.fresh;
+var tempName = "/tmp/utags-" + String.fresh();
 var command =
-  binDir.asString + "/serialize"
+  binDir.asString() + "/serialize"
   + " " + sourcefile
   + " 3>" + tempName
   + " 2>/dev/null"
@@ -88,9 +88,9 @@ var SFX = "\tclass:\tsignature:()";
 
 function locToRegex(loc)
 {
-  var lineNo = locToLine(loc).asFloat;
+  var lineNo = locToLine(loc).asFloat();
   var line = fileLines[lineNo-1];
-  line = line.trim;
+  line = line.trim();
   "/" + line.replace("/", "\\/") + "/;\""
 };
 
@@ -124,7 +124,7 @@ function getLValueName(tree)
 
 function recurse(tree)
 {
-  if (tree.isA(String) || tree.isNil)
+  if (tree.isA(String) || tree.isNil())
     {}
   else if (tree.isA(List))
   {
@@ -158,7 +158,7 @@ function recurse(tree)
 
     recurse(tree.content);
     recurse(tree.body);
-    currentClass.removeBack;
+    currentClass.removeBack();
   }
   else if (tree["type"] == "Assign")
   {

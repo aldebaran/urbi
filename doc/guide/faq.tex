@@ -837,6 +837,38 @@ class myObject
 myInstance = myObject.new(10, 20);
 \end{urbiunchecked}
 
+\subsubsection{How do I call a constructor of a parent class?}
+
+The \lstinline|init| function of parent classes is not called automatically
+when calling \lstinline|new| on ba child classe. It is the responsibility of
+the child to invoke \lstinline|init| itself, using \refSlot[Code]{apply}:
+
+\begin{urbiunchecked}
+package MyModule
+{
+  class Parent
+  {
+    function init(x)
+    {
+      var this.x = x;
+    };
+  };
+
+  class Child: Parent
+  {
+    function init(x, y)
+    {
+      Parent.init.apply([this, x]);
+      var this.y = y;
+    }
+  };
+};
+import MyModule;
+var c = MyModule.Child.new(1, 2);
+[00028287] Child_0xb48e0e48
+c.x;
+[00029646] 1
+\end{urbiunchecked}
 
 \subsubsection{How can I manipulate the list of prototypes of my objects?}
 The \lstindex{protos} method returns a list (which can be manipulated)

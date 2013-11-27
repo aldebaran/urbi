@@ -28,8 +28,6 @@ import urbi.*;
 ///
 ///    var f = Feature3.new("Global.a");
 ///    // [00075686] object_12
-///    // [00075696] val1 is changed and is equal to 'some string'
-///    // [00075738] val2 is changed and is equal to 42
 ///    f.val1 = "another string";
 ///    // [00093754] "another string"
 ///    // [00093755] val1 is changed and is equal to 'another string'
@@ -86,26 +84,26 @@ public class Feature3 extends UObject
         ///    [int|void] functionName ()
         /// or
         ///    [int|void] functionName (UVar v)
-	///
-	///  or any of
-	///    [int|void] functionName (<TYPE> v)
-	///
-	///  with <TYPE> in
-	///     urbi.UValue, urbi.UVar, urbi.UList, urbi.UBinary,
-	///     urbi.UImage, urbi.USound, urbi.UDictionary,
-	///     java.lang.String, java.lang.Integer,
-	///     java.lang.Boolean, java.lang.Double, java.lang.Float,
-	///     java.lang.Long, java.lang.Short, java.lang.Character,
-	///     java.lang.Byte, int, boolean, byte, char, short, long,
-	///     float, double
-	///
+        ///
+        ///  or any of
+        ///    [int|void] functionName (<TYPE> v)
+        ///
+        ///  with <TYPE> in
+        ///     urbi.UValue, urbi.UVar, urbi.UList, urbi.UBinary,
+        ///     urbi.UImage, urbi.USound, urbi.UDictionary,
+        ///     java.lang.String, java.lang.Integer,
+        ///     java.lang.Boolean, java.lang.Double, java.lang.Float,
+        ///     java.lang.Long, java.lang.Short, java.lang.Character,
+        ///     java.lang.Byte, int, boolean, byte, char, short, long,
+        ///     float, double
+        ///
         ///
         /// if you choose the second prototype, then the UVar you
         /// registered will be given as parameter to your callback
         /// function.
-	/// if you choose the third, then your callback will be given
-	/// the value of the UVar you registered cast'ed to the desired
-	/// type.
+        /// if you choose the third, then your callback will be given
+        /// the value of the UVar you registered cast'ed to the desired
+        /// type.
         ///
         /// NB2: here, the functions we register are unique (there is
         /// only one function named "val1Change" in this UObject, so
@@ -132,7 +130,7 @@ public class Feature3 extends UObject
             /// UVar named "somevar_name" given as parameter
             UNotifyChange (somevar_name, "somevarChange");
         }
-	return 0;
+        return 0;
     }
 
     // ------------------------------------------------- //

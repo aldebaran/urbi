@@ -1,4 +1,4 @@
-//#java tests.java.Java
+//#uobject tests/java/Java
 assert
 {
   Java.byte_(127) == 127;

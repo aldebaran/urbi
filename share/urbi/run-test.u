@@ -219,6 +219,59 @@ function startRemote(names)
   p
 }|;
 
+function startRemoteJava(names)
+{
+  // Some hack to find the correct Java UObjects jars from the names
+  // of the C++ UObjects.
+  var jars = names.map(function(name) {
+    // Java UObjects jar are all in the same directory, use only name.
+    name = name.split("/").back();
+    if (name.length) {
+      // Java UObjects jar have same name as C++ one, with first
+      // letter capilized.
+      name[0] = name[0].toUpper();
+      name += ".jar";
+    }
+  });
+
+  // Compute buildroot path.
+  var buildroot;
+  if (System.urbiRoot.absolute)
+    buildroot = System.urbiRoot / ".."
+  else
+    buildroot = Path.cwd() / System.urbiRoot / "..";
+
+  System.setenv("URBI_ROOT", (System.urbiRoot).asString());
+  System.setenv("URBI_UOBJECT_PATH", (buildroot / "sdk-remote/src/swig/java/").asString());
+
+  var map = ["all" => ["remall", "remall2"], "rtp"=>["URTP"]];
+  var libraryPath = buildroot / "sdk/lib";
+  var classpath = buildroot / "sdk-remote/src/swig/java/liburbijava.jar";
+  var args = [ "-Djava.library.path=%s" % libraryPath,
+    "-classpath", classpath.asString(), "urbi.UMain" ];
+  args += jars;
+  args += ["--", "--host", "127.0.0.1", "--port", System.listenPort.asString()];
+  echo (args);
+  var p = Process.new("java", args);
+
+  p.runTo("remote.out");
+  // find uobject name
+  for(var name: names)
+  {
+    var base = name.split("/")[-1];
+    var uobjs = [base];
+    if (map.has(base))
+      uobjs = map[base];
+    for|(var uo: uobjs)
+    {
+      echo("waiting for " + uo);
+      timeout(2s) waituntil(uobjects.hasLocalSlot(uo));
+      echo("got it");
+    };
+  };
+  p
+}|;
+
 function runTest(chkFile)
 {
   if (Path.new("../tests/" + chkFile).exists())
@@ -276,12 +329,19 @@ function runTestContent(chkFile, content)
         processes << startRemote(i.tail());
       }
       else
-      {
-      for|(var m: i.tail())
-        System.loadModule(m);
-      };
+        if (chkFile.find("java/") != -1)
+        {
+          processes << startRemoteJava(i.tail());
+        }
+        else
+        {
+          for|(var m: i.tail())
+            System.loadModule(m);
+        };
     case "remote":
         processes << startRemote(i.tail());
+    case "java":
+        processes << startRemoteJava(i.tail());
     }
   };
 

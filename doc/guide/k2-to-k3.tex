@@ -41,3 +41,19 @@ safely ignore, and false positives in \us 3 code.
 Since \refObject{Slot}s are now exposed in urbiscript, the \us 2
 \refSlot[Slot]{getSlot} and \refSlot[Slot]{setSlot} have been renamed to
 \refSlot[Slot]{getSlotValue} and \refSlot[Slot]{setSlotValue}.
+
+\section{Packages}
+
+Since packages (\ref{sec:tut:import}) were introduced, some functions are
+no longuer directly accessible without the proper import or package prefix.
+One notable instance is the content of \refObject{System}:
+
+\begin{urbiunchecked}
+hostName;
+[02623134:error] !!! 29.1-8: lookup failed: hostName
+System.hostName;
+[02627733] "redlance"
+import System.*;
+hostName;
+[02635245] "redlance"
+\end{urbiunchecked}

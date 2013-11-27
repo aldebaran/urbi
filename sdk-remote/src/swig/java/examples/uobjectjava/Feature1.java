@@ -82,18 +82,18 @@ public class Feature1 extends UObject
         /// NB: The functions you can bind must follow these rules:
         ///   1) They must have between 0 and 16 arguments.
         ///   2) Their arguments can be of type:
-	///     urbi.UValue, urbi.UVar, urbi.UList, urbi.UBinary,
-	///     urbi.UImage, urbi.USound, urbi.UDictionary,
-	///     java.lang.String, java.lang.Integer,
-	///     java.lang.Boolean, java.lang.Double, java.lang.Float,
-	///     java.lang.Long, java.lang.Short, java.lang.Character,
-	///     java.lang.Byte, int, boolean, byte, char, short, long,
-	///     float, double
+        ///     urbi.UValue, urbi.UVar, urbi.UList, urbi.UBinary,
+        ///     urbi.UImage, urbi.USound, urbi.UDictionary,
+        ///     java.lang.String, java.lang.Integer,
+        ///     java.lang.Boolean, java.lang.Double, java.lang.Float,
+        ///     java.lang.Long, java.lang.Short, java.lang.Character,
+        ///     java.lang.Byte, int, boolean, byte, char, short, long,
+        ///     float, double
         ///   3) Their return type must be one of the following type:
-	///     void, urbi.UValue, urbi.UVar, urbi.UList,
-	///     urbi.UBinary, urbi.UImage, urbi.USound,
-	///     urbi.UDictionary, java.lang.String, int, boolean,
-	///     byte, char, short, long, float, double
+        ///     void, urbi.UValue, urbi.UVar, urbi.UList,
+        ///     urbi.UBinary, urbi.UImage, urbi.USound,
+        ///     urbi.UDictionary, java.lang.String, int, boolean,
+        ///     byte, char, short, long, float, double
         /// You can specify the arguments if there is more than one
         /// function with the same name in your UObject:
         String[] parameters = { "int",
@@ -105,7 +105,7 @@ public class Feature1 extends UObject
         //SomeClass c = new SomeClass ();
         //UBindFunction (c, "someFunction");
 
-	/// You don't have to pass this if you bind functions of this object.
+        /// You don't have to pass this if you bind functions of this object.
         UBindFunction ("testFunction3");
 
         return 0;

@@ -16,7 +16,7 @@
  * This class can output a string in dot format describing the data flow
  * between UObjects. The amount of details displayed can be configured.
  */
-var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
+var uobjects.DataFlow = UObject.new() | do (uobjects.DataFlow)
 {
   var __uobjectName = "DataFlow";
   class CustomString
@@ -30,11 +30,11 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
     };
     function asString()
     {
-      s_.asString
+      s_.asString()
     };
     function asPrintable()
     {
-      delim_[0] + s_.asString + delim_[1]
+      delim_[0] + s_.asString() + delim_[1]
     };
   };
   /** Edge Filtering level.
@@ -65,16 +65,16 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
       uvarBindings.getWithDefault(ctx[ctx.size-1][0], [], true)
         .insertUnique(uvar)|
       //if (uvar.ownerName != ctx[ctx.size-1][0])
-        usedVars[uvar.asString] = 1
+        usedVars[uvar.asString()] = 1
     };
     monitor: at(UVar.traceSet?(var obj, var uvar, var ctx))
     {
       try
       {
-        uvarSetters.getWithDefault(ctx[ctx.size-1][0], Dictionary.new, true)
+        uvarSetters.getWithDefault(ctx[ctx.size-1][0], Dictionary.new(), true)
           .getWithDefault(ctx[ctx.size-1][1], [], true).insertUnique(uvar)|
         //if (uvar.ownerName != ctx[ctx.size-1][0])
-        usedVars[uvar.asString] = 1
+        usedVars[uvar.asString()] = 1
       }
       catch {}
     };
@@ -82,10 +82,10 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
     {
       try
       {
-        uvarGetters.getWithDefault(ctx[ctx.size-1][0], Dictionary.new, true)
+        uvarGetters.getWithDefault(ctx[ctx.size-1][0], Dictionary.new(), true)
           .getWithDefault(ctx[ctx.size-1][1], [], true).insertUnique(uvar) |
         //if (uvar.ownerName != ctx[ctx.size-1][0])
-        usedVars[uvar.asString] = 1
+        usedVars[uvar.asString()] = 1
       }
       catch {}
     };
@@ -94,7 +94,7 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
   function stopMonitor()
   {
     uobjects.setTrace(0);
-    monitor.stop;
+    monitor.stop();
   };
   /// Clear all data acquired by monitoring.
   function reset()
@@ -127,10 +127,10 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
   /// Return the dataflow graph as [nodes, edges].
   function makeGraph()
   {
-    var nodes = Dictionary.new;
+    var nodes = Dictionary.new();
     var edges = [];
     // check all uobjects, pass 1: create UVar nodes
-    for| (var s: uobjects.localSlotNames)
+    for| (var s: uobjects.localSlotNames())
     {
       var o = uobjects.getSlotValue(s);
       if (debug) wall("processing " + o);
@@ -147,22 +147,22 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
       if (showBind)
       for|(var v: uvarBindings.getWithDefault(oname, []))
       {
-        var vname = v.asString.replace(".", "__");
+        var vname = v.asString().replace(".", "__");
         wall("checking " + oname +"<>" + vname.split("__")[0]);
         if (vname.split("__")[0] == oname)
           continue;
         edges.insertBack([oname, vname, ["len" => 2,  "style" => "dotted"]]);
       };
       // Check all its uvars
-      for| (var vn: o.localSlotNames)
+      for| (var vn: o.localSlotNames())
       {
-        var v = o.getSlotValue(vn).acceptVoid;
+        var v = o.getSlotValue(vn).acceptVoid();
         if (!v.isA(UVar))
           continue;
         if (v.change.dict.empty && v.access.dict.empty
-            && !usedVars.has(v.asString))
+            && !usedVars.has(v.asString()))
           continue;
-        var vname = v.asString.replace(".", "__");
+        var vname = v.asString().replace(".", "__");
         var vlabel = { if (showOwnership) vn else olabel + "." + vn};
         // One node for the UVar.
         nodes[vname] =
@@ -175,7 +175,7 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
       }
     };
     // check all uobjects, pass 2: create links
-    for| (var s: uobjects.localSlotNames)
+    for| (var s: uobjects.localSlotNames())
     {
       var o = uobjects.getSlotValue(s);
       if (debug) wall("processing " + o);
@@ -185,15 +185,15 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
       var oname = o.__uobjectName;
       var olabel = niceName(s);
       // Check all its uvars
-      for| (var vn: o.localSlotNames)
+      for| (var vn: o.localSlotNames())
       {
-        var v = o.getSlotValue(vn).acceptVoid;
+        var v = o.getSlotValue(vn).acceptVoid();
         if (!v.isA(UVar))
           continue;
         if (v.change.dict.empty && v.access.dict.empty
-            && !usedVars.has(v.asString))
+            && !usedVars.has(v.asString()))
           continue;
-        var vname = v.asString.replace(".", "__");
+        var vname = v.asString().replace(".", "__");
         var vlabel = { if (showOwnership) vn else olabel + "." + vn};
         // One edge with notifyChange
         var handleNotify = closure(p, kind, arrowkind)
@@ -242,7 +242,7 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
               ( filter >=2 ||
                  (filter >=1 && ["init", "new"].has(method.split(".")[1]))))
             continue;
-          var vname = v.asString.replace(".", "__");
+          var vname = v.asString().replace(".", "__");
           if (!nodes.has(vname))
             continue;
           nodes[vname]["useCount"]++;
@@ -287,9 +287,9 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
   {
     var onodes = graph[0];
     var oedges = graph[1];
-    var nodes  = Dictionary.new;
-    var edges = List.new;
-    var hashedEdges = Dictionary.new;
+    var nodes  = Dictionary.new();
+    var edges = List.new();
+    var hashedEdges = Dictionary.new();
     for|(var e:oedges)
     {
       var o1 = e[0].split("__")[0];
@@ -317,7 +317,7 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
         "on " + niceName(e[0].replace("__", ".")) + " change"
       }};
     };
-    [nodes, hashedEdges.asList.map(function(v) { v.second})]
+    [nodes, hashedEdges.asList().map(function(v) { v.second})]
   };
 
   /// Add UObject statistics data to the graph. Modifies the graph inplace.
@@ -385,7 +385,7 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
     };
 
     // Now create connector_profiles and links, update/create UVars
-    for|(var on: uobjects.localSlotNames)
+    for|(var on: uobjects.localSlotNames())
     {
       var o = getSlotValue(on);
       if (o.hasSlot("get_component_profile_") && o.__uobjectName == on)
@@ -428,7 +428,7 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
               };
               var edge = [m.replace(".", "__"), cn];
               if (polarity)
-                edge = edge.reverse;
+                edge = edge.reverse();
               edge.insertBack(
                 ["kind" => "connection", "arrowhead" => "normal"]);
               edges.insertBack(edge);
@@ -457,7 +457,7 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
           if (!noprop)
             res += ", ";
           noprop = false;
-          res += e.first + "=" + e.second.asPrintable +" ";
+          res += e.first + "=" + e.second.asPrintable() +" ";
         }
       };
       res += "];\n";
@@ -474,7 +474,7 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
           if (!noprop)
             res += ", ";
           noprop = false;
-          res += n.first + " = " + n.second.asPrintable;
+          res += n.first + " = " + n.second.asPrintable();
         }
       };
       res += "]" + ";\n";
@@ -488,19 +488,19 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
     var ngraph = filterRTC(addStats(makeGraph));
     if (makeShortGraph)
       ngraph = shortGraph(ngraph)|
-    if (ngraph.asString.size != graph.asString.size)
+    if (ngraph.asString().size != graph.asString().size)
     {
       graph = ngraph;
       var d = dotify(graph);
       var f = File.create("/tmp/dataflow.dot");
-      f.remove;
+      f.remove();
       OutputStream.new(f) << d;
       var p = Process.new("neato", ["-Tjpeg", "/tmp/dataflow.dot"]);
       p.runTo("/tmp/dataflow.jpg");
       waituntil(p.done);
       //sleep(300ms);
       var content = File.new("/tmp/dataflow.jpg").content;
-      File.new("/tmp/dataflow.jpg").remove;
+      File.new("/tmp/dataflow.jpg").remove();
       content.keywords = "jpeg 100 100";
       val = content;
     }
@@ -514,11 +514,11 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
       step
   };
 
-  var monitor = Tag.new;
-  var uvarBindings = Dictionary.new;
-  var uvarSetters = Dictionary.new;
-  var uvarGetters = Dictionary.new;
-  var usedVars = Dictionary.new;
+  var monitor = Tag.new();
+  var uvarBindings = Dictionary.new();
+  var uvarSetters = Dictionary.new();
+  var uvarGetters = Dictionary.new();
+  var usedVars = Dictionary.new();
 
   UVar.new(this, "val");
   var graph;

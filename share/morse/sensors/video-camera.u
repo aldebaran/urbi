@@ -33,7 +33,7 @@ do (Morse)
     {
       // Ros receives a type "sensor_msgs/Image" message.
       subscriber = Ros.Topic.new("/ATRV/CameraMain") |
-      subscriber.subscribe |
+      subscriber.subscribe() |
       waituntil(Ros.subscriberAvailable(subscriber.name)) |
     };
 

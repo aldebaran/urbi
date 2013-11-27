@@ -15,29 +15,29 @@ import java.io.IOException;
 import urbi.*;
 import urbi.*;
 
-public class	UPing extends UCallbackInterface
+public class    UPing extends UCallbackInterface
 {
-	public UPing()
-	{
-	    super ();
-	}
+    public UPing()
+    {
+        super ();
+    }
 
-	public UCallbackAction onMessage(UMessage msg)
-	{
-		long	tv = System.currentTimeMillis();
-		long	ptime = tv - URBIPing.sendtime;
+    public UCallbackAction onMessage(UMessage msg)
+    {
+        long    tv = System.currentTimeMillis();
+        long    ptime = tv - URBIPing.sendtime;
 
-		if ((URBIPing.pingCount == 0) || URBIPing.mintime > ptime)
-			URBIPing.mintime = ptime;
-		if ((URBIPing.pingCount == 0) || URBIPing.maxtime < ptime)
-			URBIPing.maxtime = ptime;
-		URBIPing.avgtime += ptime;
-		URBIPing.pingCount++;
-		System.out.println("ping reply from " + URBIPing.rname + ": seq="
-						   + URBIPing.pingCount + " time=" + ptime + " ms");
-		URBIPing.received = true;
-		if (URBIPing.pingCount == URBIPing.count)
-			URBIPing.over = true;
-		return UCallbackAction.URBI_CONTINUE;
-	}
+        if ((URBIPing.pingCount == 0) || URBIPing.mintime > ptime)
+            URBIPing.mintime = ptime;
+        if ((URBIPing.pingCount == 0) || URBIPing.maxtime < ptime)
+            URBIPing.maxtime = ptime;
+        URBIPing.avgtime += ptime;
+        URBIPing.pingCount++;
+        System.out.println("ping reply from " + URBIPing.rname + ": seq="
+                           + URBIPing.pingCount + " time=" + ptime + " ms");
+        URBIPing.received = true;
+        if (URBIPing.pingCount == URBIPing.count)
+            URBIPing.over = true;
+        return UCallbackAction.URBI_CONTINUE;
+    }
 }

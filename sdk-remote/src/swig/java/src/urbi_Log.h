@@ -9,6 +9,7 @@
  */
 
 #include <jni.h>
+#include "api.h"
 
 #ifndef _Included_urbi_Log
 #define _Included_urbi_Log
@@ -16,10 +17,10 @@
 extern "C" {
 #endif
 
-JNIEXPORT void JNICALL Java_urbi_Log_info
+URBIJAVA_API JNIEXPORT void JNICALL Java_urbi_Log_info
 (JNIEnv *, jobject, jstring, jstring, jstring, jstring, jint);
 
-JNIEXPORT void JNICALL Java_urbi_Log_error
+URBIJAVA_API JNIEXPORT void JNICALL Java_urbi_Log_error
 (JNIEnv *, jobject, jstring, jstring, jstring, jstring, jint);
 
 #ifdef __cplusplus

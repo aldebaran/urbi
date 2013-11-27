@@ -458,7 +458,7 @@ do (Slot)
   // \a fnName and return \a compatF, otherwise return \a f.
   function backwards(var fnName, f, compatF)
   {
-    if (!compatF.isNil)
+    if (!compatF.isNil())
     {
       logger.warn() << ("%s(handle, func) is deprecated, use %s(func)"
                       % [fnName, fnName])|
@@ -652,16 +652,16 @@ do (UValue)
   function asString()
   {
     if (transparent)
-      extract.asString
+      extract.asString()
     else
       '$id'
   };
   function asTopLevelPrintable()
   {
     if (transparent)
-      extractAsToplevelPrintable
+      extractAsToplevelPrintable()
     else
-      '$id'.asTopLevelPrintable
+      '$id'.asTopLevelPrintable()
   };
   var asPrintable = getSlotValue("asTopLevelPrintable");
 };
@@ -696,7 +696,7 @@ do (Global.&evaluate)
   set = function(v)
   {
     var res = System.eval(v).acceptVoid()|
-    if (!res.isVoid)
+    if (!res.isVoid())
       setOutputValue(res)
   };
 };
@@ -1167,7 +1167,7 @@ package lang.'external'
     for|(var n: l.__bindingCount.keys())
     {
       var parts = n.split(".")|
-      if (parts[0] == "VAR" && !l.__bindingCount.getWithDefault(n, nil).isNil)
+      if (parts[0] == "VAR" && !l.__bindingCount.getWithDefault(n, nil).isNil())
         VAR.getSlot(parts[1]).dereference()
     }|
     // Kill hookPoint
