@@ -33,10 +33,18 @@ A foreword that applies to any package, not just \usdk: \strong{building or
 
 \subsection{Getting and installing qibuild}
 
+The simplest and recommended way if you have python and pip is:
+
+\begin{shell}
+$ pip install qibuild
+\end{shell}
+
+Otherwise you can build it from sources:
+
 \begin{shell}
 $ git clone https://github.com/aldebaran/qibuild
 $ cd qibuild
-$ ./install-qibuild.sh
+$ python setup.py install # without pip
 \end{shell}
 
 \subsection{Setting up an urbi worktree}
@@ -47,7 +55,7 @@ $ cd work
 $ qisrc init
 $ qisrc add https://github.com/aldebaran/libport.git
 $ qisrc add https://github.com/aldebaran/urbi.git
-$ qisrc add https://github.com/aldebaran/qjpeg.git
+$ qisrc add https://github.com/aldebaran/libjpeg.git
 \end{shell}
 
 \subsection{Building}
@@ -72,7 +80,7 @@ tarball.
 \subsection{Installing}
 
 \begin{shell}
-$ qibuild install urbi <INSTALL\_DIR>
+$ qibuild install urbi <INSTALL\_DIR> # add --release for release build
 \end{shell}
 
 \section{Run}
