@@ -601,7 +601,8 @@ function main()
     {
       ++terr;
       echo("Exception in test: " + e);
-      e.backtrace().print();
+      if (e.hasSlot("backtrace"))
+        e.backtrace().print();
     };
   };
   if (System.arguments.size > 1)
