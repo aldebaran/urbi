@@ -69,7 +69,12 @@ FOREACH(infileName ${tests})
       set(_fast "")
     endif()
     #MESSAGE("adding  ${infileName} ${_out} ${_out2} ")
-    qi_add_test(${_out2} urbi-launch ARGUMENTS -s -- ${_fast} --host 127.0.0.1 --port 0 urbi/run-test.u ${infileName} TIMEOUT 60 NO_INSTALL)
+    qi_add_test(${_out2} urbi-launch
+      ARGUMENTS -s -- ${_fast} --host 127.0.0.1 --port 0 urbi/run-test.u ${infileName}
+      TIMEOUT 60
+      NO_INSTALL
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/..
+    )
   endif()
 ENDFOREACH(infileName)
 
@@ -88,6 +93,11 @@ FOREACH(infileName ${doctex})
     if (${_found_nofast} EQUAL -1)
       set(_fast "--fast")
     endif()
-    qi_add_test(${_out2} urbi-launch ARGUMENTS -s --  ${_fast} --host 127.0.0.1 --port 0 urbi/run-test.u ${infileName} TIMEOUT 60 NO_INSTALL)
+    qi_add_test(${_out2} urbi-launch
+      ARGUMENTS -s --  ${_fast} --host 127.0.0.1 --port 0 urbi/run-test.u ${infileName}
+      TIMEOUT 60
+      NO_INSTALL
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/..
+    )
   endif()
 ENDFOREACH(infileName)
