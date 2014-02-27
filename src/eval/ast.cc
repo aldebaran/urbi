@@ -1021,7 +1021,7 @@ namespace eval
       std::string s(str->call(SYMBOL(asString))->as<object::String>()->value_get());
       s = '[' + s + ']';
       runner::Job& job = ::kernel::server().getCurrentRunner();
-      job.state.call_stack_get() << std::make_pair(s, t->location_get());
+      job.state.call_stack_get() << std::make_pair(libport::Symbol(s), t->location_get());
       FINALLY((( runner::Job&, job)),
         job.state.call_stack_get().pop_back());
       rObject res = ast(this_, t->exp_get().get());
