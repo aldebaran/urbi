@@ -20,5 +20,5 @@ package lang.Orderable
   function '>=' (rhs) { rhs  <  this || this == rhs };
 };
 
-true.addProto(Orderable);
-false.addProto(Orderable);
+true.protos  = [Singleton, Orderable];
+false.protos = [Singleton, Orderable];
