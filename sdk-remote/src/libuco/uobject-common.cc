@@ -163,7 +163,7 @@ namespace urbi
         taskLock);
        GD_FINFO_TRACE("Queued async op: with lock %s: %s", taskLock.get(),
                       h->getState());
-      if (h->getState() == libport::ThreadPool::TaskHandle::DROPPED)
+      if (h->getState() == libport::ThreadPool::TaskHandle::DROPPED && onDone)
       {
         UValue res;
         onDone(res, 0);
