@@ -9,11 +9,7 @@
 
 Robotic middleware and programming language.
 
-More informations: http://www.urbiforge.org
-
 Instructions about building Urbi SDK are now part of the HTML/PDF
-documentation.  Please, see
-
-        http://www.gostai.com/downloads/urbi/3.0/doc/urbi-sdk.htmldir/build.html
+documentation. Source included in the repository, in the doc folder.
 
 
