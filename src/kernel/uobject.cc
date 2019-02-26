@@ -53,6 +53,14 @@
 
 #include <urbi/ucontext-factory.hh>
 
+#if defined WIN32
+# define APPLE_LINUX_WINDOWS(Apple, Linux, Windows) Windows
+#elif defined __APPLE__
+# define APPLE_LINUX_WINDOWS(Apple, Linux, Windows) Apple
+#else
+# define APPLE_LINUX_WINDOWS(Apple, Linux, Windows) Linux
+#endif
+
 GD_CATEGORY(Urbi.UObject);
 
 // Make it more readable.
@@ -2155,9 +2163,9 @@ namespace urbi
       where->bind(SYMBOL(searchPath),    &uobject_uobjectsPath,
                   &uobject_uobjectsPathSet);
       uobjects_path
-        .push_back(libport::xgetenv("URBI_UOBJECT_PATH", ".:"),
+        .push_back(libport::xgetenv("URBI_UOBJECT_PATH", APPLE_LINUX_WINDOWS(".:", ".:", ".;")),
                    kernel::urbiserver->urbi_root_get().uobjects_path(),
-                   ":");
+                   APPLE_LINUX_WINDOWS(":", ":", ";"));
       return object::void_class;
     }
 
